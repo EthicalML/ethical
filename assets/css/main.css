@@ -2789,7 +2789,7 @@
 		.button.special {
 			background-color: #10c79b;
 			box-shadow: none;
-			color: #000 !important;
+			color: #fff !important;
 		}
 
 			input[type="submit"].special:hover,
