@@ -207,9 +207,10 @@
 										mode:		mode,
 										top:		top,
 										bottom:		bottom,
-										initialize:	function(t) { $this.addClass('inactive'); },
-										terminate:	function(t) { $this.removeClass('inactive'); },
-										enter:		function(t) { $this.removeClass('inactive'); },
+                                        // Uncomment below if you want the effects of stuff appearing
+										//initialize:	function(t) { $this.addClass('inactive'); },
+										//terminate:	function(t) { $this.removeClass('inactive'); },
+										//enter:		function(t) { $this.removeClass('inactive'); },
 
 										// Uncomment the line below to "rewind" when this spotlight scrolls out of view.
 
@@ -263,9 +264,10 @@
 							$this.scrollex({
 								top:		250,
 								bottom:		0,
-								initialize:	function(t) { $this.addClass('inactive'); },
-								terminate:	function(t) { $this.removeClass('inactive'); },
-								enter:		function(t) { $this.removeClass('inactive'); },
+                                // Uncomment the below if you want to have the transition actions
+								//initialize:	function(t) { $this.addClass('inactive'); },
+								//terminate:	function(t) { $this.removeClass('inactive'); },
+								//enter:		function(t) { $this.removeClass('inactive'); },
 
 								// Uncomment the line below to "rewind" when this wrapper scrolls out of view.
 
