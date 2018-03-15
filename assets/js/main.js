@@ -60,7 +60,7 @@
 				$(
 					'<div id="titleBar">' +
 						'<a href="#navPanel" class="toggle"></a>' +
-						'<span class="title">' + $('#logo').html() + '</span>' +
+						'<span class="title">The Institute for Ethical ML</span>' +
 					'</div>'
 				)
 					.appendTo($body);
@@ -313,8 +313,8 @@
 			var mouseX = 0, mouseY = 0;
 			var windowHalfX = window.innerWidth / 2;
 			var windowHalfY = window.innerHeight / 2;
-			init();
-			animate();
+			//init();
+			//animate();
 			function init() {
 				container = document.createElement( 'div' );
                 container.style.position = "absolute";
