@@ -3348,6 +3348,7 @@
 		position: relative;
 		text-align: center;
 		z-index: 21;
+        overflow: hidden;
 	}
 
 		#banner:before {
