@@ -304,7 +304,7 @@
 				._parallax();
 
 
-        $(function() {
+        function initialiseParticles() {
 
             var lowSpecs = false;
             var runOnce = false;
@@ -441,7 +441,9 @@
 				count += 0.1;
 			}
 
-        });
+        }
+
+        //$(initialiseParticles());
 
 	});
 
