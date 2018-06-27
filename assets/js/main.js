@@ -443,7 +443,7 @@
 
         }
 
-        //$(initialiseParticles());
+        $(initialiseParticles());
 
 	});
 
