@@ -313,8 +313,8 @@
 			var camera, scene, renderer;
 			var particles, particle, count = 0;
 			var mouseX = 0, mouseY = 0;
-			var windowHalfX = window.innerWidth / 2;
-			var windowHalfY = window.innerHeight / 2;
+			var windowHalfX = window.innerWidth;
+			var windowHalfY = window.innerHeight;
 			init();
 			animate();
 			function init() {
@@ -358,8 +358,8 @@
 				window.addEventListener( 'resize', onWindowResize, false );
 			}
 			function onWindowResize() {
-				windowHalfX = window.innerWidth / 2;
-				windowHalfY = window.innerHeight / 2;
+				windowHalfX = window.innerWidth;
+				windowHalfY = window.innerHeight;
 				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();
 				renderer.setSize( window.innerWidth, window.innerHeight );
