@@ -1579,12 +1579,12 @@
 		-ms-transition: border-color 0.2s ease-in-out, color 0.2s ease-in-out;
 		transition: border-color 0.2s ease-in-out, color 0.2s ease-in-out;
 		border-bottom: dotted 1px;
-		color: #01C3A7;
+		color: #01C3A7 !important;
 		text-decoration: none;
 	}
 
 		a:hover {
-			color: #01C3A7 !important;
+			color: #7fffec !important;
 			border-bottom-color: transparent;
 		}
 
@@ -2440,7 +2440,7 @@
 
 				.icon.major.alt:before {
 					color: #272833 !important;
-					text-shadow: 1px 0 0 #01C3A7, -1px 0 0 #01C3A7, 0 1px 0 #01C3A7, 0 -1px 0 #01C3A7;
+					text-shadow: 1px 0 0 #FFFFFF, -1px 0 0 #FFFFFF, 0 1px 0 #FFFFFF, 0 -1px 0 #FFFFFF;
 				}
 
 /* Image */
