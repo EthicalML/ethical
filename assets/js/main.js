@@ -420,7 +420,7 @@
                         }
                         console.log(lowSpecs)
                         console.log(fps);
-                    }, 5000);
+                    }, 50);
                 }        
 			}
 			function render() {
