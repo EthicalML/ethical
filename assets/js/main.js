@@ -392,36 +392,47 @@
                     stats.update();
                 }
 
+                function turnOff() {
+                    console.log("Specs of computer seems too low. Turning off animation...")
+                    lowSpecs = true;        
+
+                    document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
+                    document.removeEventListener( 'touchstart', onDocumentTouchStart, false );
+                    document.removeEventListener( 'touchmove', onDocumentTouchMove, false );
+                    window.removeEventListener( 'resize', onWindowResize, false );
+
+                    contImage = document.createElement( 'div' );
+                    contImage.style.position = "absolute";
+                    contImage.style.bottom = 0;
+                    contImage.style.left = 0;
+                    contImage.style.backgroundImage = "url(images/particles-static.png)"
+                    contImage.style.backgroundSize = "cover";
+                    contImage.style.width = "100%"
+                    contImage.style.height = "100%";
+                    document.getElementById("banner").appendChild( contImage );
+
+                    container.remove();
+                }
+
                 if (!runOnce) {
                     console.log("starting timeout...")
                     runOnce = true;
                     setTimeout(function() {
                         var fps = stats.getFPS();
                         if(fps < 5) {
-                            console.log("Specs of computer seems too low. Turning off animation...")
-                            lowSpecs = true;        
-
-                            document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
-                            document.removeEventListener( 'touchstart', onDocumentTouchStart, false );
-                            document.removeEventListener( 'touchmove', onDocumentTouchMove, false );
-                            window.removeEventListener( 'resize', onWindowResize, false );
-
-                            contImage = document.createElement( 'div' );
-                            contImage.style.position = "absolute";
-                            contImage.style.bottom = 0;
-                            contImage.style.left = 0;
-                            contImage.style.backgroundImage = "url(../../images/particles-static.png)"
-                            contImage.style.backgroundSize = "cover";
-                            contImage.style.width = "100%"
-                            contImage.style.height = "100%";
-                            document.getElementById("banner").appendChild( contImage );
-
-                            container.remove();
+                            turnOff();
                         }
                         console.log(lowSpecs)
                         console.log(fps);
                     }, 50);
+                    
+                    // Turn off after 60 seconds, as otherwise it will just consume battery
+                    setTimeout(function() {
+                        turnOff();
+                    }, 15000);
                 }        
+
+                
 			}
 			function render() {
 				camera.position.x += ( mouseX - camera.position.x ) * .05;

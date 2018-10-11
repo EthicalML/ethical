@@ -62,7 +62,7 @@
 
 				<section id="banner">
 					<div class="content" style="text-align: center">
-                        <h2 style="font-size: 4em; color: #01C3A7; font-weight: bold; text-align: center">The Machine Learning Pledge</h2>
+                        <h2 style="font-size: 4em; color: #01C3A7; font-weight: bold; text-align: center">Sign The Machine Learning Pledge</h2>
 						<img class="logo-image" src="images/logos/eml-logo-white.png" alt="" style="max-width: 440px; width: 80%; margin-top: 30px" />
 						<header>
                             <h2 style="font-weight: bold">Make a commitment to develop AI responsibly</h2>
@@ -214,11 +214,11 @@
 					<div class="content">
                         <header>
 							<h2 id="commitment-2">2. Bias Evaluation</h2>
-                            <p>I commit to continuously develop processes that allow me to understand and evaluate bias in development and production.</p>
+                            <p>I commit to continuously develop processes that allow me to understand, document and monitor bias in development and production.</p>
 						</header>
-						<p>When building systems that have to make non-trivial decisions, we will always face an inherent bias - it is impossible to avoid.</p>
-                        <p>However, technologists should understand the implications of the bias present, and based on that make sure we can take reasonable precautions and approaches to minimise undesired bias when training a model, including data labelling, simulation or generation efforts</p>
-                        <p>Similarly, once the model is deployed in production, it is important that we establish a way to monitor these models for potential biases that may arise and act accordingly.</p>
+						<p>When building systems that have to make non-trivial decisions, we will always face with computational and societal bias that is inherent in data, which is impossible to avoid, but is possible to document and/or mitigate.</p>
+                        <p>However, instead of focusing on how ethics or morals can be embeded in the algorithms themselves, technologists should focus on building processes and methods to identify and document the inherent bias in the data, features and inference results, and subsequently the implications of this bias.</p> 
+                        <p>Given that the implications of the bias identified are specific to the domain, and use-case of the technology, the technologists should be able to create, identify and explain the bias in the data, so the right processes can be put in place to mitigate potential risks<p>
 						<ul class="actions">
 							<li><a href="#pledge-form" class="button">Sign the pledge</a></li>
 						</ul>
@@ -249,8 +249,8 @@
 								<section class="4u$ 6u(medium) 12u$(xsmall)">
 									<span class="icon alt major fa-area-chart"></span>
 									<h3>Equity, equality and beyond</h3>
-                                    <p>It is important to remember that for any non-trivial  problem, we will always encounter bias. It is critical to ensure reasonable effort is invested from technologists to understand, evaluate and document potential biases on data, but when it comes to bias, there are an incredible number of combinations and subjective opinions.</p>
-                                    <p>It is up to the technologist to be able to define what the metrics for acceptable performance should be for a model to be deployed in production. Likewise, it will be important for our fellow developers to frown upon bad practices in this, as we would do when a developer doesn't add unit tests.</p>
+                                    <p>It is important to remember that for any non-trivial  problem, we will always encounter bias. It is critical to ensure reasonable effort is invested from technologists to understand, evaluate and document potential biases on data, as opposed to trying to add the morals/ethics on the algorithms themselves.</p>
+                                    <p>The technologists should focus on explaining and documenting the findings so the right metrics can be defined for an acceptable performance in production define what the metrics for acceptable performance should be for a model to be deployed in production. Similarly, there are situations where full automation is too risky, and a human-in-the-loop design is most suitable as per <a href="#commitment-1">commitment #1</a>.</p>
 								</section>
                             </div>
                         </div>
@@ -264,7 +264,7 @@
 							<h2 id="commitment-3">3. Displacement Strategy</h2>
                             <p>I commit to always consider and propose ideas to mitigate the impact relevant workers will face when medium to large-scale processes are being automated</p>
 						</header>
-						<p>When rolling out automation systems, technologists should take into consideration the implications for workers that it will be automating, and develop a plan accordingly.</p>
+						<p>When rolling out automation systems, technologists should take into consideration the implications for the workers affected by the automation, and develop a plan accordingly.</p>
 						<p>Developing rollout / deployment plans should take the organisation- and industry-level impact into consideration, and should be addressed irrespective of the background of workers (i.e. skilled or otherwise).</p>
                         <p>When this is addressed from the design stages, it is often possible to even have a positive impact on the rollout of the technology.</p>
 						<ul class="actions">
@@ -359,10 +359,11 @@
 					<div class="content">
 						<header>
 							<h2 id="commitment-5">5. Compliance by design</h2>
-                            <p>I commit to improve transparency and explainability of machine learning models where reasonable</p>
+                            <p>I commit to develop tools and processes to continuously improve transparency and explainability of machine learning models where reasonable</p>
 						</header>
-                        <p>With the deep learning and machine learning hype, it may be tempting to always throw large amounts of data into complex machine learning pipelines, however technologists should ensure there is a fundamental understanding and ability to explain the results based on features and models chosen.</p>
-                        <p>It is possible to use different tools and approaches to make models more explainable, such as by adding domain knowledge through features themselves - although on certain situations accuracy may decrease, the transparency and explainability gains may be significant.</p>
+                        <p>With the deep learning hype, technologists often throw large amounts of data into complex ML pipelines hoping something will work without caring about inner functionings. However technologists should must invest reasonable efforts where necessary to continuously improve tools and process that allow them to explain results based on features and models chosen.</p>
+                        <p>It is possible to use different tools and approaches to make models more explainable, such as by adding domain knowledge through features themselves instead of just allowing deep/complex models to infer them. </p>
+                        <p>Even though on certain situations accuracy may decrease, the transparency and explainability gains may be significant.</p>
                         <ul class="actions">
 							<li><a href="#pledge-form" class="button">Sign the pledge</a></li>
 						</ul>
@@ -419,6 +420,37 @@
 					<a href="#four" class="goto-next scrolly">Next</a>
 				</section>
                 
+                <section id="four" class="wrapper style1 special fade-up">
+					<div class="container">
+						<header class="major">
+							<h2>6. Reproducible systems</h2>
+                            <p>What are some examples to develop infrastructure that enables me for reproducibilitity?</p>
+						</header>
+						<div class="box alt">
+							<div class="row uniform">
+								<section class="4u 6u(medium) 12u$(xsmall)">
+									<span class="icon alt major fa-flask"></span>
+									<h3>Complex Models for Exploration</h3>
+                                    <p>Currently there is a lot of great work being done in deep learning, however the tradeoff of complex models comes with an explainability tradeoff. Sometimes there is no other option but to use these models, but often it is possible to challenge this tradeoff.</p>
+                                    <p>Complex models exploit the ability to identify complex patterns in the data. This could be used to the technologist's , as sometimes it is possible to obtain an understanding of the </p>
+								</section>
+								<section class="4u 6u$(medium) 12u$(xsmall)">
+									<span class="icon alt major fa-comment"></span>
+                                    <h3>Explainable through features</h3>
+                                    <p>.</p>
+								</section>
+								<section class="4u$ 6u(medium) 12u$(xsmall)">
+									<span class="icon alt major fa-area-chart"></span>
+									<h3></h3>
+                                    <p>.</p>
+								</section>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                
+
 				
 				<section id="two" class="spotlight style2 right">
 					<span class="image fit main"><img src="images/trustrobot.png" alt="" /></span>
@@ -436,9 +468,36 @@
 					</div>
 					<a href="#three" class="goto-next scrolly">Next</a>
 				</section>
-
+ 
+                <section id="four" class="wrapper style1 special fade-up">
+					<div class="container">
+						<header class="major">
+							<h2>7. Trust beyond user</h2>
+                            <p>What are some examples around building trust with stakeholdes that interact with my models and systems?</p>
+						</header>
+						<div class="box alt">
+							<div class="row uniform">
+								<section class="4u 6u(medium) 12u$(xsmall)">
+									<span class="icon alt major fa-flask"></span>
+									<h3>Complex Models for Exploration</h3>
+                                    <p>Currently there is a lot of great work being done in deep learning, however the tradeoff of complex models comes with an explainability tradeoff. Sometimes there is no other option but to use these models, but often it is possible to challenge this tradeoff.</p>
+                                    <p>Complex models exploit the ability to identify complex patterns in the data. This could be used to the technologist's , as sometimes it is possible to obtain an understanding of the </p>
+								</section>
+								<section class="4u 6u$(medium) 12u$(xsmall)">
+									<span class="icon alt major fa-comment"></span>
+                                    <h3>Explainable through features</h3>
+                                    <p>.</p>
+								</section>
+								<section class="4u$ 6u(medium) 12u$(xsmall)">
+									<span class="icon alt major fa-area-chart"></span>
+									<h3></h3>
+                                    <p>.</p>
+								</section>
+                            </div>
+                        </div>
+                    </div>
+                </section>
                 
-
 				<section id="three" class="spotlight style3 left">
 					<span class="image fit main bottom"><img src="images/pairprogramming.jpg" alt="" /></span>
 					<div class="content">
@@ -455,6 +514,36 @@
 					</div>
 					<a href="#four" class="goto-next scrolly">Next</a>
 				</section>
+ 
+                <section id="four" class="wrapper style1 special fade-up">
+					<div class="container">
+						<header class="major">
+							<h2>8. Data risk awareness</h2>
+                            <p>What are some examples where I should focus to become aware of potential risks in my data and models?</p>
+						</header>
+						<div class="box alt">
+							<div class="row uniform">
+								<section class="4u 6u(medium) 12u$(xsmall)">
+									<span class="icon alt major fa-flask"></span>
+									<h3>Complex Models for Exploration</h3>
+                                    <p></p>
+								</section>
+								<section class="4u 6u$(medium) 12u$(xsmall)">
+									<span class="icon alt major fa-comment"></span>
+                                    <h3>Explainable through features</h3>
+                                    <p>.</p>
+								</section>
+								<section class="4u$ 6u(medium) 12u$(xsmall)">
+									<span class="icon alt major fa-area-chart"></span>
+									<h3></h3>
+                                    <p>.</p>
+								</section>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                
 
                 
 				<section id="four" class="wrapper style1 special fade-up">
