@@ -424,7 +424,7 @@
                         }
                         console.log(lowSpecs)
                         console.log(fps);
-                    }, 5000);
+                    }, 50);
                     
                     // Turn off after 60 seconds, as otherwise it will just consume battery
                     setTimeout(function() {
