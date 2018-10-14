@@ -225,7 +225,7 @@
                 <section id="four" class="wrapper style1 special fade-up">
 					<div class="container">
 						<header class="major">
-							<h2>1. Human Aumentation</h2>
+							<h2>1. Human Augmentation</h2>
                             <p>What are some examples where I should look towards adding human-in-the-loop review processes?</p>
 						</header>
 						<div class="box alt">
@@ -233,12 +233,13 @@
 								<section class="4u 6u(medium) 12u$(xsmall)">
 									<span class="icon alt major fa-flask"></span>
 									<h3>Automatic Prision Sentence Scrutiny</h3>
-                                    <p>The deployment of a fully end-to-end machine learning systems predicts <a href="https://www.wired.com/2017/04/courts-using-ai-sentence-criminals-must-stop-now/">sentences of humans to prision sentences</a> is a classic example of a system that should be deployed carefuly, ideally with a human-in-the-loop review. Especially given that in this example, the inner workings of the model cannot be explained which is addressed in <a href="#commitment-5">Commitment #5</a>.</p>
+                                    <p><a href="https://www.wired.com/2017/04/courts-using-ai-sentence-criminals-must-stop-now/">A fully end-to-end machine learning system that predicts prison sentences automatically</a> is a classic example of a system that should be deployed carefuly, ideally with a human-in-the-loop review. Especially given that in this example, the inner workings of the model cannot be explained which is addressed in <a href="#commitment-5">Commitment #5</a>.</p>
 								</section>
 								<section class="4u 6u$(medium) 12u$(xsmall)">
 									<span class="icon alt major fa-comment"></span>
 									<h3>Fraud Detection Evaluation</h3>
-                                    <p>These is a prime example where a human-in-the-loop process design is necessary during evaluation. Although it's impossible to assess all cases, it is important establish a process where a domain expert is able to assess specific cases where an anomality or relevant pattern arises, automating the manual process of searching large datasets manually</p>
+                                    <p>Fraud detection prediction is a perfect example where a human-in-the-loop process design should be necessary. Instead of fully removing humans from the process completely, a domain expert can be requested to verify some of the results from the model to ensure the performance is aligned with the objectives.</p>
+                                    <p>Often a partial automation (i.e. having 3 people instead of 50 performing a specific process) may still have significant value, and provide an extra layer of safety.</p>
 								</section>
 								<section class="4u$ 6u(medium) 12u$(xsmall)">
 									<span class="icon alt major fa-area-chart"></span>
@@ -258,9 +259,9 @@
 							<h2 id="commitment-2">2. Bias Evaluation</h2>
                             <p>I commit to continuously develop processes that allow me to understand, document and monitor bias in development and production.</p>
 						</header>
-						<p>When building systems that have to make non-trivial decisions, we will always face with computational and societal bias that is inherent in data, which is impossible to avoid, but is possible to document and/or mitigate.</p>
-                        <p>However, instead of focusing on how ethics or morals can be embeded in the algorithms themselves, technologists should focus on building processes and methods to identify and document the inherent bias in the data, features and inference results, and subsequently the implications of this bias.</p> 
-                        <p>Given that the implications of the bias identified are specific to the domain, and use-case of the technology, the technologists should be able to create, identify and explain the bias in the data, so the right processes can be put in place to mitigate potential risks<p>
+						<p>When building systems that have to make non-trivial decisions, we will always face the computational and societal bias that is inherent in data, which is impossible to avoid, but is possible to document and/or mitigate.</p>
+                        <p>However, technologists should not focus on how ethics or morals can be embedded in the algorithms themselves. Instead, technologists should focus on building processes & methods to identify & document the inherent bias in the data, features and inference results, and subsequently the implications of this bias.</p> 
+                        <p>Given that the implications of the bias identified are specific to the domain, and use-case of the technology, technologists should be able to create, identify and explain the bias in the data, so the right processes can be put in place to mitigate potential risks<p>
 						<ul class="actions">
 							<li><a href="#pledge-form" class="button">Sign the pledge</a></li>
 						</ul>
@@ -279,20 +280,20 @@
 								<section class="4u 6u(medium) 12u$(xsmall)">
 									<span class="icon alt major fa-flask"></span>
 									<h3>Pragmatic Evaluation of Bias</h3>
-                                    <p>As a technologist it is important to obtain an understanding of how potential biases might arise. Once the different sub-categories for bias are identified it's positive to evaluate the results on a brakedown based on precision, recall and accuracy for each of the potential inference groups.</p>
+                                    <p>As a technologist it is important to obtain an understanding of how potential biases might arise. Once the different sub-categories for bias are identified it's possible to evaluate the results on a breakdown based on precision, recall and accuracy for each of the potential inference groups.</p>
                                     <p><a href="https://pair-code.github.io/what-if-tool/">Google's what if tool on income classification</a> provides an interactive way to visualise and assess for model and data bias - it's possible to see that "race" and "sex" are two of the strongest features.</p>
 								</section>
 								<section class="4u 6u$(medium) 12u$(xsmall)">
 									<span class="icon alt major fa-comment"></span>
                                     <h3>Having "the right" datasets</h3>
-                                    <p>Whenther it is from manual labelling, collecting from a data-source or generating it through simulations,  it is important to appreciate that getting access to representative and balanced datasets is a non-trivial task.</p>
-                                    <p>"Don't expect good data by boring the hell out of underpaid people" - wise knowledge from the Core SpaCy Team, and basically a solid wake-up call for technologists so they are able to make explicit efforts when getting access or generating training or evaluation datasets.</p>
+                                    <p>Whether it is from manual labelling, collecting from a data-source or generating it through simulations,  it is important to appreciate that getting access to representative and balanced datasets is a non-trivial task.</p>
+                                    <p><a href="https://explosion.ai/blog/supervised-learning-data-collection">"Don't expect good data by boring the hell out of underpaid people"</a> - wise knowledge from the Core SpaCy Team, and basically a solid wake-up call for technologists so they are able to make explicit efforts when getting access or generating training or evaluation datasets.</p>
 								</section>
 								<section class="4u$ 6u(medium) 12u$(xsmall)">
 									<span class="icon alt major fa-area-chart"></span>
 									<h3>Equity, equality and beyond</h3>
                                     <p>It is important to remember that for any non-trivial  problem, we will always encounter bias. It is critical to ensure reasonable effort is invested from technologists to understand, evaluate and document potential biases on data, as opposed to trying to add the morals/ethics on the algorithms themselves.</p>
-                                    <p>The technologists should focus on explaining and documenting the findings so the right metrics can be defined for an acceptable performance in production define what the metrics for acceptable performance should be for a model to be deployed in production. Similarly, there are situations where full automation is too risky, and a human-in-the-loop design is most suitable as per <a href="#commitment-1">commitment #1</a>.</p>
+                                    <p>Technologists should focus on explaining and documenting the findings so the right metrics can be defined for an acceptable performance in production define what the metrics for acceptable performance should be for a model to be deployed in production. Similarly, there are situations where full automation is too risky, and a human-in-the-loop design is most suitable as per <a href="#commitment-1">commitment #1</a>.</p>
 								</section>
                             </div>
                         </div>
@@ -307,7 +308,7 @@
 							<h2 id="commitment-3">3. Explainability by design</h2>
                             <p>I commit to develop tools and processes to continuously improve transparency and explainability of machine learning models where reasonable</p>
 						</header>
-                        <p>With the deep learning hype, technologists often throw large amounts of data into complex ML pipelines hoping something will work without caring about inner functionings. However technologists should must invest reasonable efforts where necessary to continuously improve tools and process that allow them to explain results based on features and models chosen.</p>
+                        <p>With the deep learning hype, technologists often throw large amounts of data into complex ML pipelines hoping something will work without caring about inner functionality. However technologists should invest reasonable efforts where necessary to continuously improve tools and process that allow them to explain results based on features and models chosen.</p>
                         <p>It is possible to use different tools and approaches to make models more explainable, such as by adding domain knowledge through features themselves instead of just allowing deep/complex models to infer them. </p>
                         <p>Even though on certain situations accuracy may decrease, the transparency and explainability gains may be significant.</p>
                         <ul class="actions">
@@ -331,13 +332,13 @@
 								<section class="4u 6u(medium) 12u$(xsmall)">
 									<span class="icon alt major fa-area-chart"></span>
 									<h3>Explainability through feature importance</h3>
-                                    <p>Often the challenge of explainability can be simplified by reducing the scope of what needs to be explainable. In some occations, it is possible to increase explainability of the model by analysing the features and inference results.</p>
-                                    <p>Getting a better understanding on the importance of each feature on each result would enable technologists to explain the model itself. There are several tools that can help for this, including <a href="https://ai.googleblog.com/2018/09/the-what-if-tool-code-free-probing-of.html">Tensorboard's What-if Screen</a>, as well as <a href="https://github.com/slundberg/shap">"SHapley Additive exPlanations"</a> which allow for understanding of the effect of features.</p>
+                                    <p>Often the challenge of explainability can be simplified by reducing the scope of what needs to be explainable. In some occasions, it is possible to increase explainability of the model by analysing the features and inference results.</p>
+                                    <p>Getting a better understanding on the importance of each feature on each result would enable technologists to explain the model itself. There are several tools that can help for this, including <a href="https://ai.googleblog.com/2018/09/the-what-if-tool-code-free-probing-of.html">Tensorboard's What-if Screen</a>, as well as <a href="https://github.com/slundberg/shap">"SHAP (SHapley Additive exPlanations)"</a> which allow for understanding of the effect of features.</p>
 								</section>
 								<section class="4u$ 6u$(medium) 12u$(xsmall)">
 									<span class="icon alt major fa-comment"></span>
                                     <h3>Domain Knowledge to increase Explainability</h3>
-                                    <p><a href="https://www.youtube.com/watch?v=Um7grgYdBQQ">Bons.ai has a great insight on explainability</a> that shows how it is possible to introduce explainability even in very complex models by introducing domain knowlege.</p>
+                                    <p><a href="https://www.youtube.com/watch?v=Um7grgYdBQQ">Bons.ai has a great insight on explainability</a> that shows how it is possible to introduce explainability even in very complex models by introducing domain knowledge.</p>
                                     <p>Deep learning models are able to identify and abstract complex patterns that humans may not be able to see in data. However, there are many situations where introducing a-priori expert domain knowledge into the features, or abstracting key patterns identified in the deep learning models as actual features, it would be possible to break down the model into subsequent, more explainable pieces. </p>
 								</section>
                             </div>
@@ -354,7 +355,7 @@
                             <p>I commit to continuously improve my machine learning infrastructure to enable for a reasonable level of reproducibility</p>
 						</header>
 
-                        <p>Often production machine learning systems don' t have the capabilities to diagnose effectively when something bad happens with a model - let alone, reproduce the same results.</p>
+                        <p>Often production machine learning systems don't have the capabilities to diagnose effectively when something bad happens with a model, let alone reproduce the same results.</p>
                         <p> In production systems, it is important to perform standard procedures, such as reverting a model to a previous version, or reproducing an input to debug a specific functionality</p>
                         <p>Fortunately there is a lot of great work around reproducibility in data science, including various ways to build audit trails, store computational graphs, store data as it is transformed through a pipeline, etc. which should be adopted to have reasonable level of reproducibility.</p>
 						<ul class="actions">
@@ -368,7 +369,7 @@
 					<div class="container">
 						<header class="major">
 							<h2>4. Reproducible systems</h2>
-                            <p>What are some examples to develop infrastructure that enables me for reproducibilitity?</p>
+                            <p>What are some examples to develop infrastructure that enables reproducibility?</p>
 						</header>
 						<div class="box alt">
 							<div class="row uniform">
@@ -377,13 +378,13 @@
 								<section class="4u 6u(medium) 12u$(xsmall)">
 									<span class="icon alt major fa-flask"></span>
 									<h3>Abstracting Each Computational Step</h3>
-                                    <p>In order to make a machine learning model reproducible, it is necessary to abstracting it's constituent components: namely 1) data, 2) configuration/environemnt, and 3) computational graph. If all these three points are abstracted, it is possible to have reproducibility of that specific computation.</p>
+                                    <p>In order to make a machine learning model reproducible, it is necessary to abstract its constituent components: namely 1) data, 2) configuration/environment, and 3) computational graph. If all these three points are abstracted, it is possible to have reproducibility of that specific computation.</p>
                                     <p><a href="https://www.youtube.com/watch?v=eOzl-LFqYFM">Pachyderm has an excellent breakdown of how to abstract each computational step</a> together with its components. This provides a transparent and compliant environment for machine learning in development and production.</p>
 								</section>
 								<section class="4u 6u$(medium) 12u$(xsmall)">
 									<span class="icon alt major fa-comment"></span>
                                     <h3>Choosing the level of abstraction</h3>
-                                    <p>It is often imprtant to decide what the level of abstraction will be, as it is possible to focus on building very complex layers to abstract multiple machine learning libraries with specific data input/output formats.</p>
+                                    <p>It is often important to decide what the level of abstraction will be, as it is possible to focus on building very complex layers to abstract multiple machine learning libraries with specific data input/output formats.</p>
                                     <p>There are multiple formats for trained machine learning models - the most popular include: <a href="https://onnx.ai/"> Open Neural Network Exchange Format</a>, <a href="https://www.khronos.org/nnef">Neural Network Exchange Format</a>, and <a href="http://dmg.org/">Predictive Model Markup Language</a></p>
 								</section>
                             </div>
@@ -424,11 +425,11 @@
 									<span class="icon alt major fa-area-chart"></span>
 									<h3>Processes to Reduce Impact</h3>
                                     <p>There are currently a lot of articles covering the jobs being automated by AI (e.g. assembly line workers, field technicians, call center workers, etc), as well as technical articles providing insights on how to deploy machine learning models across production systems.</p>
-                                    <p>However it's often forgotten about the importance the individuals in the midst of that automation. Fortunately business change has existed for a long time, and currently startups have been partnering with delivery partners such as <a href="https://en.wikipedia.org/wiki/Big_Three_%28management_consultancies%29">the Big Three Management Consultancy</a> firms. It is important for technologists to understandtheir potential impact, and subsequently the actions that can be taken to mitigate the impact</p>
+                                    <p>However it's often forgotten about the importance the individuals in the midst of that automation. Fortunately business change has existed for a long time, and currently startups have been partnering with delivery partners such as <a href="https://en.wikipedia.org/wiki/Big_Three_%28management_consultancies%29">the Big Three Management Consultancy</a> firms. It is important for technologists to understand their potential impact, and subsequently the actions that can be taken to mitigate the impact</p>
 								</section>
 								<section class="4u 6u(medium) 12u$(xsmall)">
 									<span class="icon alt major fa-flask"></span>
-									<h3>AI Business Change Strateges</h3>
+									<h3>AI Business Change Strategies</h3>
                                     <p>When planning the rollout of a new technology to automate a process, there is a number of people who's role or at least responsibilities will be automated. If this is not taken into consideration, these people will not have a transition plan, which would affect overall performance.</p>
                                     <p>Technologists should make sure they are able to raise the relevant concerns when business change or operational transformation plans are being set up, as this would make a significant positive impact in the rollout of the technology. For this, startups are starting to partner with digital transformation and management consulting companies to co-deliver large-scale deployments</p>
 								</section>
@@ -436,7 +437,7 @@
 									<span class="icon alt major fa-comment"></span>
 									<h3>Jevon's Paradox</h3>
                                     <p>A very interesting concept relevant to the current state of AI is Jevon's paradox. This paradox basically talks about how during the industrial revolution, innovations allowed for machines to perform the same output with less coal consumption.</p>
-                                    <p>Intuitively, it was thought that this would mean that the total coal required to power the industry would decrease. What happened instead is that given the cost to perform the same action decreased and got commoditised, more demand arised and the total coal consumption to power the industry actually increased. Analogous to this could be the rise of Excel, and in some areas, the rise of AI.</p>
+                                    <p>Intuitively, it was thought that this would mean that the total coal required to power the industry would decrease. What happened instead is that given the cost to perform the same action decreased and got commoditised, more demand arose and the total coal consumption to power the industry actually increased. Analogous to this could be the rise of Excel, and in some areas, the rise of AI.</p>
 								</section>
                             </div>
                         </div>
@@ -511,7 +512,7 @@
 					<div class="container">
 						<header class="major">
 							<h2>7. Trust beyond the user</h2>
-                            <p>What are some examples around building trust with stakeholdes that interact with my models and systems?</p>
+                            <p>What are some examples around building trust with stakeholders that interact with my models and systems?</p>
 						</header>
 						<div class="box alt">
 							<div class="row uniform">
@@ -527,7 +528,7 @@
 									<span class="icon alt major fa-comment"></span>
                                     <h3>Personal Data via Metadata</h3>
                                     <p>Technologists should make explicit effort to understand the potential implications of meta-data involved, and whether the metadata can expose unexpected personal information from relevant users or stakeholders.</p>
-                                    <p><a href="https://www.affectiva.com/emotion-ai-overview/">Affectiva is a good example of this</a>, a silicon valley startup that is able to infer the emotions from a human in a video. When communicating to a user that the data that will be stored is the audio, it may not be clear to them that data such as emotions will be extracted from it, and may cause worry if things like this aren't raised from the start.</p>
+                                    <p><a href="https://www.affectiva.com/emotion-ai-overview/">"Affectiva" is a good example of this</a>, a silicon valley startup that is able to infer the emotions from a human in a video. When communicating to a user that the data that will be stored is the audio, it may not be clear to them that data such as emotions will be extracted from it, and may cause worry if things like this aren't raised from the start.</p>
 								</section>
                             </div>
                         </div>
@@ -543,7 +544,7 @@
 						</header>
 						<p>Autonomous decision-making systems open the doors to new potential security breaches.</p>
                         <p>More importantly, it is critical to be aware that most security breaches occur due to human error as opposed to actual hacks (i.e. someone sending the dataset attached in an email by accident, or losing their laptop/phone)</p>
-                        <p>Technologists should commit to prepare for both types of security risks through explicit efforts, such as educating relevant personel, establishing processes around data, and assess implications of ML backdoors (such as adversarial attacks).</p>
+                        <p>Technologists should commit to prepare for both types of security risks through explicit efforts, such as educating relevant personnel, establishing processes around data, and assess implications of ML backdoors (such as adversarial attacks).</p>
 						<ul class="actions">
 							<li><a href="#pledge-form" class="button">Sign the pledge</a></li>
 						</ul>
@@ -564,7 +565,7 @@
 								<section class="4u 6u(medium) 12u$(xsmall)">
 									<span class="icon alt major fa-flask"></span>
 									<h3>Adversarial Patch Tricking Models</h3>
-                                    <p>It is worth remembering that given machine learning systems are simple functions that given the right inputs, it's possible to obtain an expected output. Adversarial patches can be used to trick machine learning models to missclassify examples by only adding small noise to the input - the <a href="https://www.youtube.com/watch?v=c_5EH3CBtD0">AI Journal has a great video where they show how this could trick self-driving cars</a>.</p>
+                                    <p>It is worth remembering that given machine learning systems are simple functions that given the right inputs, it's possible to obtain an expected output. Adversarial patches can be used to trick machine learning models to misclassify examples by only adding small noise to the input - the <a href="https://www.youtube.com/watch?v=c_5EH3CBtD0">AI Journal has a great video where they show how this could trick self-driving cars</a>.</p>
                                     <p><a href="https://securityintelligence.com/how-can-companies-defend-against-adversarial-machine-learning-attacks-in-the-age-of-ai/">Security intelligence has a great write-up on this</a>, as well as some suggestions on how to protect ourselves. As always with cybersecurity it is impossible to  fully protect from attackers, but it's certainly possible to introduce processes that mitigate basic loopholes.</p>
 								</section>
 								<section class="4u 6u$(medium) 12u$(xsmall)">
