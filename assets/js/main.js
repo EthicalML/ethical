@@ -429,7 +429,7 @@
                     // Turn off after 60 seconds, as otherwise it will just consume battery
                     setTimeout(function() {
                         turnOff();
-                    }, 15000);
+                    }, 20000);
                 }        
 
                 
