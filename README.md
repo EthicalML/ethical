@@ -9,5 +9,5 @@ This repository contains the live website for The Institute for Ethical AI & Mac
 
 This repository is open for contributions by the community. 
 
-You can either submit a [https://github.com/EthicalML/ethical/pulls](pull request), or submit an [https://github.com/EthicalML/ethical/issues](issue/request).
+You can either submit a [pull request](https://github.com/EthicalML/ethical/pulls), or submit an [issue/request](https://github.com/EthicalML/ethical/issues).
 
