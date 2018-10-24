@@ -3972,7 +3972,7 @@
 		/* Spotlight */
 
 			.spotlight .image.main {
-				max-height: 50vh;
+				/* max-height: 50vh; */
 			}
 
 			.spotlight .content {
