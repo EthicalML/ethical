@@ -309,20 +309,35 @@
             var lowSpecs = false;
             var runOnce = false;
 			var SEPARATION = 50, AMOUNTX = 50, AMOUNTY = 50;
-			var container, stats;
+			var stats;
 			var camera, scene, renderer;
+
+			var container = document.createElement( 'div' );
+            container.style.position = "absolute";
+            container.style.top = 0;
+            container.style.height = "100%";
+            container.style.width = "100%";var windowHalfY = getHeight() / 0.90;
+            document.getElementById("banner").appendChild( container );
+            console.log(container);
+
+            function getWidth() {
+                return container.clientWidth;
+            }
+            function getHeight() {
+                return container.clientHeight;
+            }
+
 			var particles, particle, count = 0;
 			var mouseX = 0, mouseY = 0;
-			var windowHalfX = window.innerWidth / 2;
-			var windowHalfY = window.innerHeight / 0.90;
+			var windowHalfX = getWidth() / 2;
+
+
 			init();
 			animate();
-			function init() {
-				container = document.createElement( 'div' );
-                container.style.position = "absolute";
-                container.style.top = 0;
-				document.getElementById("banner").appendChild( container );
-				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
+
+            function init() {
+				
+				camera = new THREE.PerspectiveCamera( 75, getWidth() / getHeight(), 1, 10000 );
 				camera.position.z = 1000;
 				scene = new THREE.Scene();
 				particles = new Array();
@@ -346,7 +361,7 @@
 				}
 				renderer = new THREE.CanvasRenderer();
 				renderer.setPixelRatio( window.devicePixelRatio );
-				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setSize( getWidth(), getHeight() );
 				container.appendChild( renderer.domElement );
                 //remove all stats for stast box
 				stats = new Stats();
@@ -358,11 +373,11 @@
 				window.addEventListener( 'resize', onWindowResize, false );
 			}
 			function onWindowResize() {
-				windowHalfX = window.innerWidth / 2;
-				windowHalfY = window.innerHeight / 0.90;
-				camera.aspect = window.innerWidth / window.innerHeight;
+				windowHalfX = getWidth() / 2;
+				windowHalfY = getHeight() / 0.90;
+				camera.aspect = getWidth() / getHeight();
 				camera.updateProjectionMatrix();
-				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setSize( getWidth(), getHeight() );
 			}
 			//
 			function onDocumentMouseMove( event ) {
@@ -429,7 +444,7 @@
                     // Turn off after 60 seconds, as otherwise it will just consume battery
                     setTimeout(function() {
                         turnOff();
-                    }, 20000);
+                    }, 2000000);
                 }        
 
                 
