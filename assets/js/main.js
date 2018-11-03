@@ -316,7 +316,7 @@
             container.style.position = "absolute";
             container.style.top = 0;
             container.style.height = "100%";
-            container.style.width = "100%";var windowHalfY = getHeight() / 0.90;
+            container.style.width = "100%";
             document.getElementById("banner").appendChild( container );
             console.log(container);
 
@@ -329,7 +329,9 @@
 
 			var particles, particle, count = 0;
 			var mouseX = 0, mouseY = 0;
-			var windowHalfX = getWidth() / 2;
+            var windowHalfX = getWidth() / 2;
+            var windowHalfY = getHeight() / 0.90;
+            console.log(windowHalfX, windowHalfY)
 
 
 			init();
@@ -446,8 +448,6 @@
                         turnOff();
                     }, 2000000);
                 }        
-
-                
 			}
 			function render() {
 				camera.position.x += ( mouseX - camera.position.x ) * .05;
