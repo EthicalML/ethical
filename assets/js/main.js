@@ -446,7 +446,7 @@
                     // Turn off after 60 seconds, as otherwise it will just consume battery
                     setTimeout(function() {
                         turnOff();
-                    }, 2000000);
+                    }, 20000);
                 }        
 			}
 			function render() {
