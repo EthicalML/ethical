@@ -1620,7 +1620,7 @@
 	}
 
 	h3 {
-		font-size: 1.35em;
+		font-size: 1.30em;
 		line-height: 1.5em;
 	}
 
@@ -2779,7 +2779,7 @@
 		input[type="reset"].big,
 		input[type="button"].big,
 		.button.big {
-			font-size: 1.35em;
+			font-size: 1.30em;
 		}
 
 		input[type="submit"].special,
