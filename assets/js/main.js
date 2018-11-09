@@ -434,14 +434,14 @@
                 if (!runOnce) {
                     console.log("starting timeout...")
                     runOnce = true;
-                    //setTimeout(function() {
+                    setTimeout(function() {
                         var fps = stats.getFPS();
                         if(fps < 5) {
                             turnOff();
                         }
                         console.log(lowSpecs)
                         console.log(fps);
-                    //}, 5000);
+                    }, 5000);
                     
                     // Turn off after 60 seconds, as otherwise it will just consume battery
                     setTimeout(function() {
