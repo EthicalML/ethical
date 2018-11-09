@@ -2862,7 +2862,6 @@
 		height: 100vh;
 		overflow: hidden;
 		position: relative;
-        min-height: 1200px;
 	}
 
 		.spotlight:nth-last-of-type(1) {
