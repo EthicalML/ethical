@@ -2466,7 +2466,6 @@
 			position: absolute;
 			left: 0;
 			top: 0;
-			background-image: url("images/overlay.png");
 			width: 100%;
 			height: 100%;
 			z-index: 1;
@@ -3997,15 +3996,19 @@
 				padding: 3em 1.25em;
 			}
 
-				#footer .copyright {
-					line-height: inherit;
-				}
+            #footer .copyright {
+                line-height: inherit;
+            }
 
-					#footer .copyright li {
-						border-left: 0;
-						display: block;
-						margin: 0;
-						padding: 0;
-					}
+            #footer .copyright li {
+                border-left: 0;
+                display: block;
+                margin: 0;
+                padding: 0;
+            }
 
-	}
+    }
+        .stylelong {
+            min-height: 1200px !important;
+        }
+
