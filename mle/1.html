@@ -1,0 +1,992 @@
+<!DOCTYPE HTML>
+<!--
+	Landed by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>The Machine Learning Engineer Newsletter</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="google-site-verification" content="9rfgBQEvfnZ7HS_kBzINrlrJ-_sJcyJxqEUltqvP9Og" />
+        <meta name="author" content="The Machine Learning Engineer Newsletter">
+        <meta name="description" content="Curated articles, tutorials and blog posts from experienced Machine Learning professionals. Obtain insights on best practices, tools and techniques in machine learning explainability, reproducibility, model evaluation, feature analysis and beyond.">
+        <link rel="canonical" href="https://ethical.institute">
+        <link rel="icon" href="images/logos/eml-logo-white.png">
+
+
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+
+        <!-- FACEBOOK -->
+        <meta property="og:url" content="https://ethical.institute">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="The Machine Learning Engineer Newsletter">
+        <meta property="og:description" content="Curated articles, tutorials and blog posts from experienced Machine Learning professionals. Obtain insights on best practices, tools and techniques in machine learning explainability, reproducibility, model evaluation, feature analysis and beyond.">
+        <meta property="og:image" content="https://ethical.institute/images/mle.jpg">
+
+
+
+        <!-- THE TWITTER -->
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="@EthicalML">
+        <meta name="twitter:creator" content="@EthicalML">
+        <meta name="twitter:title" content="The Machine Learning Engineer Newsletter">
+        <meta name="twitter:description" content="Curated articles, tutorials and blog posts from experienced Machine Learning professionals. Obtain insights on best practices, tools and techniques in machine learning explainability, reproducibility, model evaluation, feature analysis and beyond.">
+        <meta name="twitter:image:src" content="https://ethical.institute/images/mle.jpg">
+
+
+        <!-- G++ -->
+        <meta itemprop="name" content="The Machine Learning Engineer Newsletter">
+        <meta itemprop="description" content="Curated articles, tutorials and blog posts from experienced Machine Learning professionals. Obtain insights on best practices, tools and techniques in machine learning explainability, reproducibility, model evaluation, feature analysis and beyond.">
+        <meta itemprop="image" content="https://ethical.institute/images/mle.jpg">
+
+
+
+
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="/assets/css/main.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="/assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="/assets/css/ie8.css" /><![endif]-->
+
+        <script src="/assets/js/jquery.min.js"></script>
+        <script src="/assets/js/jquery.scrolly.min.js"></script>
+        <script src="/assets/js/jquery.dropotron.min.js"></script>
+        <script src="/assets/js/jquery.scrollex.min.js"></script>
+        <script src="/assets/js/skel.min.js"></script>
+        <script src="/assets/js/util.js"></script>
+        <script src="/assets/js/three.min.js"></script>
+        <!--[if lte IE 8]><script src="/assets/js/ie/respond.min.js"></script><![endif]-->
+        <script src="/assets/js/Projector.js"></script>
+        <script src="/assets/js/CanvasRenderer.js"></script>
+        <script src="/assets/js/stats.min.js"></script>
+        <script src="/assets/js/main.js"></script>
+
+	</head>
+
+	<body class="landing">
+		<div id="page-wrapper">
+
+			<!-- Header -->
+				<header id="header">
+                    <h1 id="logo"><a href="index.html"><img src="/images/logos/eml-logo-white.png" height="15px"> The Institute for Ethical AI & Machine Learning</a></h1>
+					<nav id="nav">
+						<ul style="font-weight: bold">
+							<li><a href="/index.html">Home</a></li>
+							<li>
+                            <a href="/principles.html">Principles</a>
+                            <ul>
+                                <li><a href="/principles.html#commitment-1">#1 Human Augmentation</a></li>
+                                <li><a href="/principles.html#commitment-2">#2 Bias Evaluation</a></li>
+                                <li><a href="/principles.html#commitment-3">#3 Explainability</a></li>
+                                <li><a href="/principles.html#commitment-4">#4 Reproducible Operations</a></li>
+                                <li><a href="/principles.html#commitment-5">#5 Displacement Strategy</a></li>
+                                <li><a href="/principles.html#commitment-6">#6 Practical Accuracy</a></li>
+                                <li><a href="/principles.html#commitment-7">#7 Trust by Privacy</a></li>
+                                <li><a href="/principles.html#commitment-8">#8 Security Risks</a></li>
+                            </ul>
+                            <li>
+                                <a href="/rfx.html">AI-RFX Framework</a>
+                            </li>
+                            <li>
+                                <a href="/mle.html">Machine Learning Newsletter</a>
+                            </li>
+	
+                            </li>
+							<li><a href="/index.html#contact" class="button special">Contact us or Join</a></li>
+						</ul>
+					</nav>
+				</header>
+
+			<!-- Main -->
+<style>
+table, tbody, tr, td {
+    padding: 0 0 0 0 !important;
+    background-color: transparent !important;
+    border-collapse: separate !important;
+    margin: 0 0 0 0 !important;
+}
+</style>
+				<div id="main" class="wrapper style1">
+					<div class="container">
+						<!-- Text -->
+
+						<header class="major">
+							<h2>Subscribe to the Machine Learning Engineer Newsletter</h2>
+							<p>Receive curated articles, tutorials and blog posts from experienced Machine Learning professionals. </p>
+
+                                <iframe width="540" height="416" src="https://my.sendinblue.com/users/subscribe/js_id/3rb9p/id/2" frameborder="0" scrolling="auto" allowfullscreen style="display: block;margin-left: auto;margin-right: auto;max-width: 100%; margin-top: -40px; margin-bottom: -200px"></iframe>
+
+                                <br>
+
+                        <section>
+
+                            <table class="m_1824462685425684759main-template" style="background-color:rgb(28,29,38)" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#1c1d26" align="center">
+
+    <tbody><tr style="display:none!important;font-size:1px"><td></td><td></td></tr>
+    <tr>
+        <td valign="top" align="center">
+        
+            <table class="m_1824462685425684759templateContainer" style="max-width:590px!important;width:590px" width="100%" cellspacing="0" cellpadding="0" border="0">
+        <tbody><tr>
+
+        <td valign="top" align="center">
+
+            <table class="m_1824462685425684759rnb-del-min-width" style="min-width:590px" name="Layout_4961" id="m_1824462685425684759Layout_4961" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="m_1824462685425684759rnb-del-min-width" style="min-width:590px" valign="top" align="center">
+                        <table width="100%" height="38" cellspacing="0" cellpadding="0" border="0">
+                            <tbody><tr>
+                                <td valign="top" height="38">
+                                    <img style="display:block;max-height:38px;max-width:20px" alt="" src="https://ci4.googleusercontent.com/proxy/NStLqinGzlrl0Uv8-rAI5eE7m0ezwKObWROWYPLy-coqnPYdPzA5ZFBimPjxE1A9t35k9-Cbg1Syh3EC8WtXDN9wGSdz=s0-d-e1-ft#http://3rb9p.img.bh.d.sendibt3.com/7rlnxgd92ve.gif" class="CToWUd" width="20" height="38">
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+            </td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div>
+                
+                
+                
+                
+            
+                <table name="Layout_7" id="m_1824462685425684759Layout_7" width="100%" cellspacing="0" cellpadding="0" border="0"><tbody><tr>
+                    <td valign="top" align="center"><table class="m_1824462685425684759rnb-container" style="height:0px;background-color:transparent;border-bottom:5px solid rgb(16,199,155);border-radius:0px;border-collapse:separate;padding-left:20px;padding-right:20px" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent"><tbody><tr>
+                                <td class="m_1824462685425684759rnb-container-padding">
+
+                                    <table class="m_1824462685425684759rnb-columns-container" style="margin:auto" cellspacing="0" cellpadding="0" border="0" align="center">
+                                        <tbody><tr>
+
+                                            <td class="m_1824462685425684759rnb-force-col" align="center">
+
+                                                <table class="m_1824462685425684759rnb-col-1" cellspacing="0" cellpadding="0" border="0" align="center">
+
+                                                    <tbody><tr>
+                                                        <td height="10"></td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td style="font-family:'Roboto','Verdana',Geneva,sans-serif;color:#3c4858;text-align:center">
+
+                                                            <span style="color:#3c4858"><div style="line-height:48px"><span style="font-size:28px"><strong><span style="color:#10c79b"><span style="font-size:36px"><span style="font-size:48px">THE ML</span></span> <span style="font-size:48px">ENGINEER </span></span><br>
+<span style="font-size:48px"><span style="color:#ffffff">Issue #1 </span></span></strong></span><br>
+&nbsp;</div>
+</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td height="10"></td>
+                                                    </tr>
+                                                    </tbody></table>
+                                                </td></tr>
+                                    </tbody></table></td>
+                            </tr>
+
+                        </tbody></table>
+
+                    </td>
+                </tr>
+
+            </tbody></table>
+                
+                
+            
+        </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <table class="m_1824462685425684759rnb-del-min-width" style="min-width:590px" name="Layout_7132" id="m_1824462685425684759Layout_7132" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="m_1824462685425684759rnb-del-min-width" style="min-width:590px" valign="top" align="center">
+                        <table width="100%" height="38" cellspacing="0" cellpadding="0" border="0">
+                            <tbody><tr>
+                                <td valign="top" height="38">
+                                    <img style="display:block;max-height:38px;max-width:20px" alt="" src="https://ci4.googleusercontent.com/proxy/NStLqinGzlrl0Uv8-rAI5eE7m0ezwKObWROWYPLy-coqnPYdPzA5ZFBimPjxE1A9t35k9-Cbg1Syh3EC8WtXDN9wGSdz=s0-d-e1-ft#http://3rb9p.img.bh.d.sendibt3.com/7rlnxgd92ve.gif" class="CToWUd" width="20" height="38">
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+            </td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div>
+            
+                
+                
+                
+                <table class="m_1824462685425684759rnb-del-min-width" style="min-width:100%" name="Layout_9" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="m_1824462685425684759rnb-del-min-width" valign="top" align="center">
+                        <table class="m_1824462685425684759rnb-container" style="background-color:transparent;padding-left:20px;padding-right:20px;border-collapse:separate;border-radius:0px;border-bottom:5px solid rgb(16,199,155)" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px;line-height:0px" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="m_1824462685425684759rnb-container-padding" valign="top" align="left">
+
+                                                <table class="m_1824462685425684759rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="m_1824462685425684759rnb-force-col" style="padding-right:0px" valign="top">
+
+                                                            <table valign="top" class="m_1824462685425684759rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td style="font-size:14px;font-family:'Roboto','Verdana',Geneva,sans-serif,sans-serif;color:#3c4858;line-height:21px"><div style="line-height:48px"><span style="font-size:36px"><strong><span style="color:#ffffff">This week on <a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/WH_EQSRin8JH3xIr-UrwI2mlcvzzaqtkrBV5xTugwV1XVjMr2rZfisvp6aA-GwYXTusXxuQUgFhFS4fVawnOoFdcti1u8Gf6nlzHe3Pedl6GRj11vg" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/WH_EQSRin8JH3xIr-UrwI2mlcvzzaqtkrBV5xTugwV1XVjMr2rZfisvp6aA-GwYXTusXxuQUgFhFS4fVawnOoFdcti1u8Gf6nlzHe3Pedl6GRj11vg&amp;source=gmail&amp;ust=1545059679454000&amp;usg=AFQjCNHQYkjgZdEH8UuEMs9fJqGZekiYYQ">Issue #1:</a></span></strong></span></div>
+
+<div style="line-height:24px"><strong><span style="font-size:18px"><span style="color:#ffffff">Combating class <a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/5zTM_Fh_yvXStdIQg3b83cpFF_FMNAlAXngXejvm56ds_RJtYpNCguC5V7xKsvEoaQsn1YGSZYmpv861j_03Rb3QjRXhzYyBpK8krO7av4J3lP0VvQ" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/5zTM_Fh_yvXStdIQg3b83cpFF_FMNAlAXngXejvm56ds_RJtYpNCguC5V7xKsvEoaQsn1YGSZYmpv861j_03Rb3QjRXhzYyBpK8krO7av4J3lP0VvQ&amp;source=gmail&amp;ust=1545059679454000&amp;usg=AFQjCNGLXg7OqfTyk6w1AOIOMVCMJSXIJQ">imbalance</a>, machine learning <a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/hIy-bnRH9jes0AjNk9D39twyCKUEsPAz6-SSeFEYOUz313NFzuiJZJz0-Dpac1rqPCtY0r7fKkhvU_NovWEydBtdJwZOYAqclDk5XlqqpGvBEP43" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/hIy-bnRH9jes0AjNk9D39twyCKUEsPAz6-SSeFEYOUz313NFzuiJZJz0-Dpac1rqPCtY0r7fKkhvU_NovWEydBtdJwZOYAqclDk5XlqqpGvBEP43&amp;source=gmail&amp;ust=1545059679454000&amp;usg=AFQjCNHgFLRHioP5NCGqUrerbtxREbqVMQ">reproducibility</a>, data science career <a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/4ruDqpV_4nkPrtV2NwUKewAZVCJCCzrdryVo5JM-kMr-Ym974dVmixanml2U1a1Fro7wRrOU3DKZr9-mZ7Vu_SsHlqcLCK_zrNt7Hx4LHxSTPCo9" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/4ruDqpV_4nkPrtV2NwUKewAZVCJCCzrdryVo5JM-kMr-Ym974dVmixanml2U1a1Fro7wRrOU3DKZr9-mZ7Vu_SsHlqcLCK_zrNt7Hx4LHxSTPCo9&amp;source=gmail&amp;ust=1545059679454000&amp;usg=AFQjCNEo_z_pMpBapOJRmguSATewACo2UA">transitions</a>, empowering <a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/NkxPQ1ptPBldanD5zcoy45DppQfHHFabXIkc4kT4XFPJz68ACNlDeegEkWZTci4I58hBVCzVYSZsEIUGhneEEoAC4sXQSWBl3X9Q4iGMibPlMCUn" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/NkxPQ1ptPBldanD5zcoy45DppQfHHFabXIkc4kT4XFPJz68ACNlDeegEkWZTci4I58hBVCzVYSZsEIUGhneEEoAC4sXQSWBl3X9Q4iGMibPlMCUn&amp;source=gmail&amp;ust=1545059679454000&amp;usg=AFQjCNHml3_gbKHn3xnMo62yfThKeAiaFw">curiosity</a>, automating boring <a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/BHYrxwoPgl29JZF1aP5POZtzP1zrPZR8rTW4TOCy_0_huAzQYta3erky2MppWp02Z4LkkMr3jex5mUTBjJWk6GzzEurycWi8ZOzj7fWTjdUwS9ip" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/BHYrxwoPgl29JZF1aP5POZtzP1zrPZR8rTW4TOCy_0_huAzQYta3erky2MppWp02Z4LkkMr3jex5mUTBjJWk6GzzEurycWi8ZOzj7fWTjdUwS9ip&amp;source=gmail&amp;ust=1545059679454000&amp;usg=AFQjCNGnI9f4Pqm94JEgIcDMvk4ZDNA_Iw">tasks</a>, Facebook's new <a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/IXLScrs9NevQoea-05S0wo8XeKc0Zv1zDnGOViaxWPhk3wL58ahl5Ty2CCVcx-MiuvTDzK2R0OtUDt4c8YAJ2CV2fEn0hiSs43RfP61O1wUuOZ5p-A" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/IXLScrs9NevQoea-05S0wo8XeKc0Zv1zDnGOViaxWPhk3wL58ahl5Ty2CCVcx-MiuvTDzK2R0OtUDt4c8YAJ2CV2fEn0hiSs43RfP61O1wUuOZ5p-A&amp;source=gmail&amp;ust=1545059679454000&amp;usg=AFQjCNElD5uk0EJJGU8wi4UCsA4BOwL_Vw">library</a> and some awesome featured open source ML libraries!</span></span></strong></div>
+
+<div style="line-height:24px">&nbsp;</div>
+
+<div style="line-height:48px"><span style="font-size:36px"><strong><span style="color:#ffffff">Support the ML Engineer! </span></strong></span></div>
+
+<div style="line-height:24px"><strong><span style="font-size:18px"><span style="color:#ffffff">Forward the email, or share <a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/Js47ErQdPPYX7uuu0iREuHvAdycivjiNoLOcYD3tZi-_PMemJP3q-IPaYH5gqCPzDNMNLL427g8VsKoZSkcz5FiGfuWA54kQ5401UE1Or7CEiHI6UA" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/Js47ErQdPPYX7uuu0iREuHvAdycivjiNoLOcYD3tZi-_PMemJP3q-IPaYH5gqCPzDNMNLL427g8VsKoZSkcz5FiGfuWA54kQ5401UE1Or7CEiHI6UA&amp;source=gmail&amp;ust=1545059679454000&amp;usg=AFQjCNHydO7QXyTHxhyZp5SSiJ4YMLjDHA">the online version</a> on <img goomoji="1f426" data-goomoji="1f426" style="margin:0 0.2ex;vertical-align:middle;max-height:24px" alt="🐦" src="https://mail.google.com/mail/e/1f426" data-image-whitelisted="" class="CToWUd"> <a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/UhepGtU3L41iP8W9sAUcCBwvmiT4CKal9-7oAjC8cC2mAl5igvVD3vhP6WRu-t4VtEbY-1bQCzm8olRPNfgnO0Sv-RAJHRMe4GG5EJCaDRoPBg6YtA" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/UhepGtU3L41iP8W9sAUcCBwvmiT4CKal9-7oAjC8cC2mAl5igvVD3vhP6WRu-t4VtEbY-1bQCzm8olRPNfgnO0Sv-RAJHRMe4GG5EJCaDRoPBg6YtA&amp;source=gmail&amp;ust=1545059679454000&amp;usg=AFQjCNGHnTmOrGUx-K9kOmINnGAuVosAOw">Twitter</a>,&nbsp; <img goomoji="1f4bc" data-goomoji="1f4bc" style="margin:0 0.2ex;vertical-align:middle;max-height:24px" alt="💼" src="https://mail.google.com/mail/e/1f4bc" data-image-whitelisted="" class="CToWUd"> <a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/GhiTXa3kz4UnORyiLVM62pzwIZIZV3aabYV5CaDwLIhB01VfG4ZyURfHzimi_3cTM8K2e-ChV0U-DKAHYghOX708MvuCmypxa-A70iQjayFxpH-AXg" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/GhiTXa3kz4UnORyiLVM62pzwIZIZV3aabYV5CaDwLIhB01VfG4ZyURfHzimi_3cTM8K2e-ChV0U-DKAHYghOX708MvuCmypxa-A70iQjayFxpH-AXg&amp;source=gmail&amp;ust=1545059679454000&amp;usg=AFQjCNGnK4T5Bawmlap23EyFNATTo4pedA">Linkedin</a> and&nbsp; <img goomoji="1f4d5" data-goomoji="1f4d5" style="margin:0 0.2ex;vertical-align:middle;max-height:24px" alt="📕" src="https://mail.google.com/mail/e/1f4d5" data-image-whitelisted="" class="CToWUd"> <a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/tZeOyUw0yYO_Z21riNDLaNHFEhvRAhN-GSBkKqgbg3L6tV_2zVaVQt7mizbwi9uDgqkTRFsG4Tg0cT4Nhzamjn4ZgFT0Ojxpdg38q_jssCoQ50F4yg" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/tZeOyUw0yYO_Z21riNDLaNHFEhvRAhN-GSBkKqgbg3L6tV_2zVaVQt7mizbwi9uDgqkTRFsG4Tg0cT4Nhzamjn4ZgFT0Ojxpdg38q_jssCoQ50F4yg&amp;source=gmail&amp;ust=1545059679454000&amp;usg=AFQjCNFpuD0BlHOTdHYje66GagbhSf1lOA">Facebook</a>!</span></span></strong></div>
+
+<div style="line-height:24px"><strong>&nbsp;</strong></div>
+
+<div style="line-height:24px">&nbsp;</div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px;line-height:0px;border-bottom:0px" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+                
+                
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <table class="m_1824462685425684759rnb-del-min-width" style="min-width:590px" name="Layout_9012" id="m_1824462685425684759Layout_9012" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="m_1824462685425684759rnb-del-min-width" style="min-width:590px" valign="top" align="center">
+                        <table width="100%" height="38" cellspacing="0" cellpadding="0" border="0">
+                            <tbody><tr>
+                                <td valign="top" height="38">
+                                    <img style="display:block;max-height:38px;max-width:20px" alt="" src="https://ci4.googleusercontent.com/proxy/NStLqinGzlrl0Uv8-rAI5eE7m0ezwKObWROWYPLy-coqnPYdPzA5ZFBimPjxE1A9t35k9-Cbg1Syh3EC8WtXDN9wGSdz=s0-d-e1-ft#http://3rb9p.img.bh.d.sendibt3.com/7rlnxgd92ve.gif" class="CToWUd" width="20" height="38">
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+            </td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div>
+            
+                
+                
+                
+                <table class="m_1824462685425684759rnb-del-min-width" style="min-width:100%" name="Layout_20" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="m_1824462685425684759rnb-del-min-width" valign="top" align="center">
+                        <table class="m_1824462685425684759rnb-container" style="background-color:transparent;padding-left:20px;padding-right:20px;border-collapse:separate;border-radius:0px;border-bottom:0px none rgb(200,200,200)" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px;line-height:0px" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="m_1824462685425684759rnb-container-padding" valign="top" align="left">
+
+                                                <table class="m_1824462685425684759rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="m_1824462685425684759rnb-force-col" style="padding-right:0px" valign="top">
+
+                                                            <table valign="top" class="m_1824462685425684759rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td style="font-size:14px;font-family:Arial,Helvetica,sans-serif,sans-serif;color:#3c4858;line-height:21px"><div style="line-height:48px"><a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/L-SxUSIBLvKJw-f5Sx_cPe37OOH1nS4R6fSqCVvSopGJdq4F-DcbTLC8JSK_anpqL1OXcIrE6xX2mrQWKVIkLMz3YXWsDnTI4XUF1B6GDEQ-XW3-wg" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/L-SxUSIBLvKJw-f5Sx_cPe37OOH1nS4R6fSqCVvSopGJdq4F-DcbTLC8JSK_anpqL1OXcIrE6xX2mrQWKVIkLMz3YXWsDnTI4XUF1B6GDEQ-XW3-wg&amp;source=gmail&amp;ust=1545059679454000&amp;usg=AFQjCNE_sxw5dLwkg9E6Z_1xzaqFJGE2-g"><span style="font-size:36px">Combat Imbalanced Classes</span></a></div>
+
+<div style="line-height:24px"><span style="font-size:18px"><span style="color:#ffffff">8 Tactics to Combat Imbalanced Classes in Your Machine Learning Dataset. Very comprehensible article providing some of the best practices when approaching class imbalance. </span></span></div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px;line-height:0px;border-bottom:0px" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+                
+                
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div>
+            
+                
+                
+                
+                <table class="m_1824462685425684759rnb-del-min-width" style="min-width:100%" name="Layout_22" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="m_1824462685425684759rnb-del-min-width" valign="top" align="center">
+                        <table class="m_1824462685425684759rnb-container" style="background-color:transparent;padding-left:20px;padding-right:20px;border-collapse:separate;border-radius:0px;border-bottom:0px none rgb(200,200,200)" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px;line-height:0px" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="m_1824462685425684759rnb-container-padding" valign="top" align="left">
+
+                                                <table class="m_1824462685425684759rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="m_1824462685425684759rnb-force-col" style="padding-right:0px" valign="top">
+
+                                                            <table valign="top" class="m_1824462685425684759rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td style="font-size:14px;font-family:Arial,Helvetica,sans-serif,sans-serif;color:#3c4858;line-height:21px"><div style="line-height:48px"><a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/TVlYbcZDMdOM_uTXWQr7qZBPrc4vZUABV6NXeVPehHgnsY1weJtKuy6UfwWGiQmel5MYRhKauVdJceHNoJoaZrcYGvhSoiuo0XjjATKXeawHibWrLA" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/TVlYbcZDMdOM_uTXWQr7qZBPrc4vZUABV6NXeVPehHgnsY1weJtKuy6UfwWGiQmel5MYRhKauVdJceHNoJoaZrcYGvhSoiuo0XjjATKXeawHibWrLA&amp;source=gmail&amp;ust=1545059679454000&amp;usg=AFQjCNFuI2JLjVOE-u3a54O5yPeuLgFNlg"><span style="font-size:36px">Compliant machine learning</span></a></div>
+
+<div style="line-height:24px"><span style="font-size:18px"><span style="color:#ffffff">Great video that discusses the challenges of <a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/_Tn9zVO9206gIl0jSUN8U7stMKC4fKYkL-f0NZHk-iaBtNLzk6r52Sop-QmXKC3fd89UU5pbG8mCl7WFyA0BFIQtHarAmeHfvhzdFWMI7oE-GtgH" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/_Tn9zVO9206gIl0jSUN8U7stMKC4fKYkL-f0NZHk-iaBtNLzk6r52Sop-QmXKC3fd89UU5pbG8mCl7WFyA0BFIQtHarAmeHfvhzdFWMI7oE-GtgH&amp;source=gmail&amp;ust=1545059679454000&amp;usg=AFQjCNFDyppb3KPW7PEDgRwdmD1Ym9T2zQ">explainability</a> and <a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/-9SMYrl7Rbqr-BCOs9FWTxNeRJlm6PbuxK6hXhRnD6Ngb_OK__lZWs3k87MxjKAiGAkVim8-PyKw1FaPmbZQc-cCZHVzFC5x_vrU6yfhtcAIbbIu" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/-9SMYrl7Rbqr-BCOs9FWTxNeRJlm6PbuxK6hXhRnD6Ngb_OK__lZWs3k87MxjKAiGAkVim8-PyKw1FaPmbZQc-cCZHVzFC5x_vrU6yfhtcAIbbIu&amp;source=gmail&amp;ust=1545059679454000&amp;usg=AFQjCNEdEH1FLF9JpHYJR1t01dUZjiy1uA">reproducibility</a> in production machine learning. It provides an abstraction of production machine learning into a compliant pipeline at each computational step. It is presented with an example using <a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/M8i2NsB0WFJMjL62xyb2XY8xhLpsGHs7G0nSrug2M45cmZ301Oo7wn1kqo9kNRR80KHlAQdWExvpS2WqNveRFNFmi1FHDllxiY04ssgebKX_XCLA" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/M8i2NsB0WFJMjL62xyb2XY8xhLpsGHs7G0nSrug2M45cmZ301Oo7wn1kqo9kNRR80KHlAQdWExvpS2WqNveRFNFmi1FHDllxiY04ssgebKX_XCLA&amp;source=gmail&amp;ust=1545059679454000&amp;usg=AFQjCNFU1ijuzg9K2QuIzv97NPOGyIeH4g">Pachyderm</a> for the "compliant" pipeline, and <a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/M5GaBn1hNgKsx9jL8sXhR2R6yWBdLIWIic2G-_Q2UK8TunqY2k22tPrqG1O9SEsIAJFl5flCeV8AG-5R6DE9JuCy--BUwCW1sAypVivO9qQl21xL" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/M5GaBn1hNgKsx9jL8sXhR2R6yWBdLIWIic2G-_Q2UK8TunqY2k22tPrqG1O9SEsIAJFl5flCeV8AG-5R6DE9JuCy--BUwCW1sAypVivO9qQl21xL&amp;source=gmail&amp;ust=1545059679454000&amp;usg=AFQjCNFC9k2M8u17Bifvf5KJvWxL14SiMQ">Seldon</a> for serving the production model.&nbsp; </span></span></div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px;line-height:0px;border-bottom:0px" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+                
+                
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div>
+            
+                
+                
+                
+                <table class="m_1824462685425684759rnb-del-min-width" style="min-width:100%" name="Layout_19" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="m_1824462685425684759rnb-del-min-width" valign="top" align="center">
+                        <table class="m_1824462685425684759rnb-container" style="background-color:transparent;padding-left:20px;padding-right:20px;border-collapse:separate;border-radius:0px;border-bottom:0px none rgb(200,200,200)" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px;line-height:0px" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="m_1824462685425684759rnb-container-padding" valign="top" align="left">
+
+                                                <table class="m_1824462685425684759rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="m_1824462685425684759rnb-force-col" style="padding-right:0px" valign="top">
+
+                                                            <table valign="top" class="m_1824462685425684759rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td style="font-size:14px;font-family:Arial,Helvetica,sans-serif,sans-serif;color:#3c4858;line-height:21px"><div style="line-height:48px"><a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/xBwpkq3NwM_vdfRgj3rVbJNBGJ1_ODXdfoJhmtOrWxM8g_rm9emFbQj5ve9YJSiizfhAUnKqd1mcNUNsZTzbenWFBP1AJzUyx5e3HPsUPiQwFROL" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/xBwpkq3NwM_vdfRgj3rVbJNBGJ1_ODXdfoJhmtOrWxM8g_rm9emFbQj5ve9YJSiizfhAUnKqd1mcNUNsZTzbenWFBP1AJzUyx5e3HPsUPiQwFROL&amp;source=gmail&amp;ust=1545059679454000&amp;usg=AFQjCNF8jahO6HwhtlxRA9uRYrxNzxRAJg"><span style="font-size:36px">Data science career transitions</span></a></div>
+
+<div style="line-height:24px"><span style="font-size:18px"><span style="color:#ffffff">"What got people hired back in 2017 doesn’t work today, and the disparity between data science hiring standards today and those that will apply one or two years from now will probably be even bigger". This article provides an interesting path to approach a career change into data science coming from 3 angles: complete beginners, software engineers, and recent STEM grads.</span></span></div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px;line-height:0px;border-bottom:0px" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+                
+                
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div>
+            
+                
+                
+                
+                <table class="m_1824462685425684759rnb-del-min-width" style="min-width:100%" name="Layout_18" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="m_1824462685425684759rnb-del-min-width" valign="top" align="center">
+                        <table class="m_1824462685425684759rnb-container" style="background-color:transparent;padding-left:20px;padding-right:20px;border-collapse:separate;border-radius:0px;border-bottom:0px none rgb(200,200,200)" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px;line-height:0px" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="m_1824462685425684759rnb-container-padding" valign="top" align="left">
+
+                                                <table class="m_1824462685425684759rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="m_1824462685425684759rnb-force-col" style="padding-right:0px" valign="top">
+
+                                                            <table valign="top" class="m_1824462685425684759rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td style="font-size:14px;font-family:Arial,Helvetica,sans-serif,sans-serif;color:#3c4858;line-height:21px"><div style="line-height:48px"><a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/o61mqjF3CDeTHlIOpkIMHprWKlDFDKPeTHlNqBI4EEQomh3P2Tu1q-2rqbMHcGIxx01Y-ntKhidp3j-u-Wl1J9fzDzSnNOADDJ4YzjVh4wrXOlrz0g" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/o61mqjF3CDeTHlIOpkIMHprWKlDFDKPeTHlNqBI4EEQomh3P2Tu1q-2rqbMHcGIxx01Y-ntKhidp3j-u-Wl1J9fzDzSnNOADDJ4YzjVh4wrXOlrz0g&amp;source=gmail&amp;ust=1545059679454000&amp;usg=AFQjCNHooR6Gy4CJ_q-3kPl_Dw89ltWTOg"><span style="font-size:36px">Curiousity driven data science</span></a></div>
+
+<div style="line-height:24px"><span style="font-size:18px"><span style="color:#ffffff">This article proposes that it's possible to introduce a culture of innovation by empowering data scientists through their innate curiousity. It covers: 1) ensure data science is its own entity within an organisation, 2) equip data scientists with the right tools, and 3) build a culture that supports a process for learning and experimentation </span></span></div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px;line-height:0px;border-bottom:0px" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+                
+                
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div>
+            
+                
+                
+                
+                <table class="m_1824462685425684759rnb-del-min-width" style="min-width:100%" name="Layout_21" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="m_1824462685425684759rnb-del-min-width" valign="top" align="center">
+                        <table class="m_1824462685425684759rnb-container" style="background-color:transparent;padding-left:20px;padding-right:20px;border-collapse:separate;border-radius:0px;border-bottom:0px none rgb(200,200,200)" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px;line-height:0px" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="m_1824462685425684759rnb-container-padding" valign="top" align="left">
+
+                                                <table class="m_1824462685425684759rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="m_1824462685425684759rnb-force-col" style="padding-right:0px" valign="top">
+
+                                                            <table valign="top" class="m_1824462685425684759rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td style="font-size:14px;font-family:Arial,Helvetica,sans-serif,sans-serif;color:#3c4858;line-height:21px"><div style="line-height:48px"><a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/ImbKeCJBsPQojwptg91BRZViQBez30J_3qi5efgym2WS7XSajIRE5Q9xEJvu_T4YD-yXRy6FfXhGwmT-KkVtyEGhIF21gB0PyDOxyGNX6UfWCUARQA" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/ImbKeCJBsPQojwptg91BRZViQBez30J_3qi5efgym2WS7XSajIRE5Q9xEJvu_T4YD-yXRy6FfXhGwmT-KkVtyEGhIF21gB0PyDOxyGNX6UfWCUARQA&amp;source=gmail&amp;ust=1545059679454000&amp;usg=AFQjCNHRKiUZsC6c2ojF-HNf35phD2y2RA"><span style="font-size:36px">Automate boring tasks</span></a></div>
+
+<div style="line-height:24px"><span style="font-size:18px"><span style="color:#ffffff">Awesome piece based on the "<a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/fkdBI8Y9XNuQMTBgbHbaIdtF_RVOp31mmgIIWsnpdcyDrEZqs0jiYIBUUYDSFZxtrD-QRRVrhGVdw2epnqJFsjeE05F5ng9uxORabiONWKnugk0i" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/fkdBI8Y9XNuQMTBgbHbaIdtF_RVOp31mmgIIWsnpdcyDrEZqs0jiYIBUUYDSFZxtrD-QRRVrhGVdw2epnqJFsjeE05F5ng9uxORabiONWKnugk0i&amp;source=gmail&amp;ust=1545059679454000&amp;usg=AFQjCNGqU1D9Kh3qoFPdPsa9xCx-VoGmgA">automate your boring stuff</a>" book + <a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/FcaB8wxb7epeDgZNHHZiRGeNW1I9tYi4nAK7ifxtO990Mm8hzBe2wPqWGvpRrrCUfJ9AtKaKjeGZXmYkJFaLtKLVQNQWarOc4GePqqFOftkVpyLOOw" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/FcaB8wxb7epeDgZNHHZiRGeNW1I9tYi4nAK7ifxtO990Mm8hzBe2wPqWGvpRrrCUfJ9AtKaKjeGZXmYkJFaLtKLVQNQWarOc4GePqqFOftkVpyLOOw&amp;source=gmail&amp;ust=1545059679454000&amp;usg=AFQjCNEPbM-x4a-6_ZJo_29yHebIZbBgCQ">Slacker</a>, an open source Python library to interact with Slack. The article provides examples of how they super-charged ML workflows </span></span></div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px;line-height:0px;border-bottom:0px" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+                
+                
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div>
+            
+                
+                
+                
+                <table class="m_1824462685425684759rnb-del-min-width" style="min-width:100%" name="Layout_17" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="m_1824462685425684759rnb-del-min-width" valign="top" align="center">
+                        <table class="m_1824462685425684759rnb-container" style="background-color:transparent;padding-left:20px;padding-right:20px;border-collapse:separate;border-radius:0px;border-bottom:0px none rgb(200,200,200)" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px;line-height:0px" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="m_1824462685425684759rnb-container-padding" valign="top" align="left">
+
+                                                <table class="m_1824462685425684759rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="m_1824462685425684759rnb-force-col" style="padding-right:0px" valign="top">
+
+                                                            <table valign="top" class="m_1824462685425684759rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td style="font-size:14px;font-family:Arial,Helvetica,sans-serif,sans-serif;color:#3c4858;line-height:21px"><div style="line-height:48px"><a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/1xCOBVeaWwJ7IfAqdPcomx_TRX3tj8I2yuXotSwgk5r8mXffDEvYpM-kZurzpqVC_HVREfVhhS372a-5OECnOkvJHfBkQCvBKfeP4PujkFXL-s_y4Q" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/1xCOBVeaWwJ7IfAqdPcomx_TRX3tj8I2yuXotSwgk5r8mXffDEvYpM-kZurzpqVC_HVREfVhhS372a-5OECnOkvJHfBkQCvBKfeP4PujkFXL-s_y4Q&amp;source=gmail&amp;ust=1545059679455000&amp;usg=AFQjCNEU1zKGgDAQxRccCiqDgKmboqTdAQ"><span style="font-size:36px">Facebook open sources PyText</span></a></div>
+
+<div style="line-height:24px"><span style="font-size:18px"><span style="color:#ffffff">Facebook open sources "a modeling framework that blurs the boundaries between experimentation and large-scale deployment." It's based on PyTorch, and provides a set of classifiers, sequence taggers, etc. (</span><a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/WY7lWswPmsn5aoRPXvxq6UPMo-_YY5lFC8ajFtoUA2IvRpGn0bjDcktZejJRkgBYQiFyufti8jnjw2q3dbspSRiedjU1fYThab9LHh-i4Vkn8_dZaQ" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/WY7lWswPmsn5aoRPXvxq6UPMo-_YY5lFC8ajFtoUA2IvRpGn0bjDcktZejJRkgBYQiFyufti8jnjw2q3dbspSRiedjU1fYThab9LHh-i4Vkn8_dZaQ&amp;source=gmail&amp;ust=1545059679455000&amp;usg=AFQjCNGgEof3b-QFbp6Ws76LKZ5d5ceDSw">GitHub Repository<span style="color:#ffffff">)</span></a></span></div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px;line-height:0px;border-bottom:0px" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+                
+                
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div>
+            
+                
+                
+                
+                <table class="m_1824462685425684759rnb-del-min-width" style="min-width:100%" name="Layout_23" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="m_1824462685425684759rnb-del-min-width" valign="top" align="center">
+                        <table class="m_1824462685425684759rnb-container" style="background-color:transparent;padding-left:20px;padding-right:20px;border-collapse:separate;border-radius:0px;border-bottom:0px none rgb(200,200,200)" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px;line-height:0px" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="m_1824462685425684759rnb-container-padding" valign="top" align="left">
+
+                                                <table class="m_1824462685425684759rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="m_1824462685425684759rnb-force-col" style="padding-right:0px" valign="top">
+
+                                                            <table valign="top" class="m_1824462685425684759rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td style="font-size:14px;font-family:Arial,Helvetica,sans-serif,sans-serif;color:#3c4858;line-height:21px"><div style="line-height:48px"><a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/RC4_vvjyoPaBPSzOQMzspb_92EfaNki7TIdBxrZYpBYBxqAx7xECRF7lv-TaqEzxE32uaezhi4ctOo6FZ2rv9GwqtjZdNWuAHN1yU0yWWRc3jCQE-w" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/RC4_vvjyoPaBPSzOQMzspb_92EfaNki7TIdBxrZYpBYBxqAx7xECRF7lv-TaqEzxE32uaezhi4ctOo6FZ2rv9GwqtjZdNWuAHN1yU0yWWRc3jCQE-w&amp;source=gmail&amp;ust=1545059679455000&amp;usg=AFQjCNGv2OtDOWmHR-rcqfUsVyREa3NwHw"><span style="font-size:36px">MLOps = ML Operations</span></a></div>
+
+<div style="line-height:24px"><span style="font-size:18px"><span style="color:#ffffff">Our Awesome Machine Learning Operations list has seen some great contributions these last few days. This edition's featured open source libraries focus majorly around <a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/qlhsnQ0vVqEBmniB6j4uMLDEMy3_SgV8Vm9DThLR3-mHEAo46ZEhopkT6Zry8v2X1H90TPk1H6bO6W-Y520Hc23hsqGtcVeFZipZWHdvaU2Q13I8Lw" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/qlhsnQ0vVqEBmniB6j4uMLDEMy3_SgV8Vm9DThLR3-mHEAo46ZEhopkT6Zry8v2X1H90TPk1H6bO6W-Y520Hc23hsqGtcVeFZipZWHdvaU2Q13I8Lw&amp;source=gmail&amp;ust=1545059679455000&amp;usg=AFQjCNFVh5yF39JWeJWP9oJuGPijlkKQow">reproducibility</a>, and include: </span></span></div>
+
+<ul>
+	<li style="line-height:24px"><span style="font-size:18px"><span style="color:#ffffff"><strong><a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/4KYeAtIz79eXFlU6rKGkEOL4WgIcKMbUfGiTfXdZU2JKf8vgDYvCBBw7wrTngrT4k2GHGDVutlFmB4xNgTAYj_-ldCymYPyeyQfuTl0mfy5LWqCYIw" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/4KYeAtIz79eXFlU6rKGkEOL4WgIcKMbUfGiTfXdZU2JKf8vgDYvCBBw7wrTngrT4k2GHGDVutlFmB4xNgTAYj_-ldCymYPyeyQfuTl0mfy5LWqCYIw&amp;source=gmail&amp;ust=1545059679455000&amp;usg=AFQjCNFBSRJyMFRD-cqXtFVSe3Jq5buJzw">MLFlow</a></strong> - Open source platform to manage the ML lifecycle, including experimentation, reproducibility and deployment.</span></span></li>
+	<li style="line-height:24px"><span style="font-size:18px"><span style="color:#ffffff"><strong><a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/GO-ojHVgxTl2i-XNu1kfWm73pSPkQuzJLSZeeCuZvkOQ6A73YJduTS-z_X0HNMK8UwUY4mB-A2CZJchBdRZT4vlZuNn9I07idxLG0pkpHMNdG2aIQQ" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/GO-ojHVgxTl2i-XNu1kfWm73pSPkQuzJLSZeeCuZvkOQ6A73YJduTS-z_X0HNMK8UwUY4mB-A2CZJchBdRZT4vlZuNn9I07idxLG0pkpHMNdG2aIQQ&amp;source=gmail&amp;ust=1545059679455000&amp;usg=AFQjCNHyR9vZZPFMj7iMiTwSFkRFY_1vJQ">Sacred</a></strong> - Tool to help you configure, organize, log and reproduce machine learning experiments.</span></span></li>
+	<li style="line-height:24px"><span style="font-size:18px"><span style="color:#ffffff"><strong><a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/AKkHZSvh3sqG2r-kFPuYdDlRwxEZ3kLHTWZMRTQ4NsdXm6y8eEV4rY8JLbWg0gvXgsao2kvBPdYqXqmcd3mKzuqGJ5A9SH2ul8xumUThW7klZlFwzw" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/AKkHZSvh3sqG2r-kFPuYdDlRwxEZ3kLHTWZMRTQ4NsdXm6y8eEV4rY8JLbWg0gvXgsao2kvBPdYqXqmcd3mKzuqGJ5A9SH2ul8xumUThW7klZlFwzw&amp;source=gmail&amp;ust=1545059679455000&amp;usg=AFQjCNGGyGTHArdkouXl1E3A-SYAZew9hw">FGLab</a></strong> -Machine learning dashboard, designed to make prototyping experiments easier.</span></span></li>
+	<li style="line-height:24px"><span style="font-size:18px"><span style="color:#ffffff"><strong><a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/OlpU8ziVSljGXU-bHiD9tcjvLnkzA562B0j96Nq0YkXVIrO7XxutVH7g1W7slJBmpO3YbSN1MuAnHdlIxNSPinUYdLAGc2gop68hQsJNcoGKKZsGEw" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/OlpU8ziVSljGXU-bHiD9tcjvLnkzA562B0j96Nq0YkXVIrO7XxutVH7g1W7slJBmpO3YbSN1MuAnHdlIxNSPinUYdLAGc2gop68hQsJNcoGKKZsGEw&amp;source=gmail&amp;ust=1545059679455000&amp;usg=AFQjCNFI9nPy7cwAbG7ixMftFzPfDsIjZw">StudioML</a></strong> - Model management framework which minimizes the overhead involved with scheduling, running, monitoring and managing artifacts of your machine learning experiments.</span></span></li>
+</ul>
+
+<div style="line-height:24px">&nbsp;</div>
+
+<div style="line-height:24px"><span style="font-size:18px"><span style="color:#ffffff">If you know of any libraries that are not in the list, please do give us a heads up or feel free to <a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/kB7x3MPXQw_PYkujmrbk9h179wYTL9uHA-87yvuHE6BUFyYWctrWz9_kKd93L43bxsqXFfMoeKaFCfmVzDXd1_W2tebl5FtSJAVdQ7n9FxRRWYiV_w" style="text-decoration:underline;color:rgb(16,199,155)" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/kB7x3MPXQw_PYkujmrbk9h179wYTL9uHA-87yvuHE6BUFyYWctrWz9_kKd93L43bxsqXFfMoeKaFCfmVzDXd1_W2tebl5FtSJAVdQ7n9FxRRWYiV_w&amp;source=gmail&amp;ust=1545059679455000&amp;usg=AFQjCNE6oim01CECLHF46BHab7XCMymMjQ">add a pull request</a>!&nbsp; </span></span></div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px;line-height:0px;border-bottom:0px" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+                
+                
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <table class="m_1824462685425684759rnb-del-min-width" style="min-width:590px" name="Layout_8812" id="m_1824462685425684759Layout_8812" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="m_1824462685425684759rnb-del-min-width" style="min-width:590px" valign="top" align="center">
+                        <table width="100%" height="38" cellspacing="0" cellpadding="0" border="0">
+                            <tbody><tr>
+                                <td valign="top" height="38">
+                                    <img style="display:block;max-height:38px;max-width:20px" alt="" src="https://ci4.googleusercontent.com/proxy/NStLqinGzlrl0Uv8-rAI5eE7m0ezwKObWROWYPLy-coqnPYdPzA5ZFBimPjxE1A9t35k9-Cbg1Syh3EC8WtXDN9wGSdz=s0-d-e1-ft#http://3rb9p.img.bh.d.sendibt3.com/7rlnxgd92ve.gif" class="CToWUd" width="20" height="38">
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+            </td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div>
+                
+                
+                
+                
+                <table class="m_1824462685425684759rnb-del-min-width" style="min-width:100%" name="Layout_15" id="m_1824462685425684759Layout_15" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="m_1824462685425684759rnb-del-min-width" valign="top" align="center">
+                        <table class="m_1824462685425684759rnb-container" style="max-width:100%;min-width:100%;table-layout:fixed;background-color:transparent;border-radius:0px;border-collapse:separate;padding-left:20px;padding-right:20px" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+                            <tbody><tr>
+                                <td style="font-size:1px;line-height:0px" height="20">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td class="m_1824462685425684759rnb-container-padding" valign="top" align="left">
+
+                                    <table class="m_1824462685425684759rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                        <tbody><tr>
+
+                                            <td class="m_1824462685425684759rnb-force-col m_1824462685425684759img-block-center" style="padding-right:20px" width="180" valign="top">
+
+                                                <table valign="top" class="m_1824462685425684759rnb-col-2-noborder-onright" width="180" cellspacing="0" cellpadding="0" border="0" align="left">
+
+
+                                                    <tbody><tr>
+                                                        <td style="line-height:0px" class="m_1824462685425684759img-block-center" width="100%" valign="top" align="left">
+                                                            <div style="border-top:0px none #000;border-right:0px None #000;border-bottom:0px None #000;border-left:0px None #000;display:inline-block"><div><img alt="" style="vertical-align:top;float:left;width:180px;max-width:666px!important" class="m_1824462685425684759rnb-col-2-img-side-xl CToWUd a6T" src="https://ci6.googleusercontent.com/proxy/Kr2R9QHdQbd3nOuJJFG8LzlGNwRYJe2Hc4Sb1v3MY9XOGfV0ORWMhD0VCORY2EjAErQwYMvYfKMixYYqMOV29JMgCzPB=s0-d-e1-ft#http://3rb9p.img.bh.d.sendibt3.com/7rlopwd92ve.png" tabindex="0" width="180" vspace="0" hspace="0" border="0"><div class="a6S" dir="ltr" style="opacity: 0.01;"><div id=":3dp" class="T-I J-J5-Ji aQv T-I-ax7 L3 a5q" title="Download" role="button" tabindex="0" aria-label="Download attachment " data-tooltip-class="a1V"><div class="aSK J-J5-Ji aYr"></div></div></div></div><div style="clear:both"></div></div></td>
+                                                    </tr>
+                                                    </tbody></table>
+                                                </td><td class="m_1824462685425684759rnb-force-col" valign="top">
+
+                                                <table valign="top" class="m_1824462685425684759rnb-last-col-2" width="350" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                    <tbody><tr>
+                                                        <td style="font-size:24px;font-family:Arial,Helvetica,sans-serif;color:#3c4858;text-align:left">
+                                                            <span style="color:#3c4858"><span style="font-size:36px"><span style="color:#ffffff"><strong>About us</strong></span></span></span></td>
+                                                    </tr><tr>
+                                                        <td style="font-size:1px;line-height:0px" height="10">&nbsp;</td>
+                                                    </tr><tr>
+                                                        <td class="m_1824462685425684759rnb-mbl-float-none" style="font-size:14px;font-family:Arial,Helvetica,sans-serif;color:#3c4858;float:right;width:350px;line-height:21px"><div><span style="font-size:18px"><span style="color:#ffffff">The Institute for Ethical AI &amp; Machine Learning is a UK-based research centre that carries out world-class research into responible machine learning systems.</span></span></div>
+</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="font-size:1px;line-height:0px" height="10">&nbsp;</td>
+                                                    </tr><tr>
+                                                        <td valign="top">
+                                                            <table class="m_1824462685425684759rnb-btn-col-content" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td style="font-size:20px;font-family:Arial,Helvetica,sans-serif;text-align:center;color:#ffffff;font-weight:normal;padding-left:14px;padding-right:14px;background-color:#10c79b;border-radius:4px;border-top:0px None #000;border-right:0px None #000;border-bottom:0px None #000;border-left:0px None #000;border-collapse:separate" width="auto" valign="middle" height="32" bgcolor="#10c79b" align="center">
+                                                                        <span style="color:#ffffff;font-weight:normal">
+                                                                        <a style="text-decoration:none;color:#ffffff;font-weight:normal" href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/vP4byXxwzig34NnoZuV3XjbMueZY4-TiOft5CyqUDtc-AzzX1dOdwbSq0GRZcZIPlQ0Se_vFZhJa99PGJzYKTQfzFXhUXLK0ifxt1kvS5MMmMRHctg" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/vP4byXxwzig34NnoZuV3XjbMueZY4-TiOft5CyqUDtc-AzzX1dOdwbSq0GRZcZIPlQ0Se_vFZhJa99PGJzYKTQfzFXhUXLK0ifxt1kvS5MMmMRHctg&amp;source=gmail&amp;ust=1545059679455000&amp;usg=AFQjCNGVgt6HivuXENx7t0YawuxlI7HYxQ">Check out our website</a>
+                                                                        
+                                                                       </span>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody></table>
+                                                        </td>
+
+                                                    </tr></tbody></table>
+                                                </td>
+
+                                            </tr></tbody></table></td>
+                            </tr>
+                            <tr>
+                                <td style="font-size:1px;line-height:0px" height="20">&nbsp;</td>
+                            </tr>
+                        </tbody></table>
+
+                    </td>
+                </tr>
+            </tbody></table>
+            
+
+                
+            
+        </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <table class="m_1824462685425684759rnb-del-min-width" style="min-width:590px" name="Layout_4988" id="m_1824462685425684759Layout_4988" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="m_1824462685425684759rnb-del-min-width" style="min-width:590px" valign="top" align="center">
+                        <table width="100%" height="38" cellspacing="0" cellpadding="0" border="0">
+                            <tbody><tr>
+                                <td valign="top" height="38">
+                                    <img style="display:block;max-height:38px;max-width:20px" alt="" src="https://ci4.googleusercontent.com/proxy/NStLqinGzlrl0Uv8-rAI5eE7m0ezwKObWROWYPLy-coqnPYdPzA5ZFBimPjxE1A9t35k9-Cbg1Syh3EC8WtXDN9wGSdz=s0-d-e1-ft#http://3rb9p.img.bh.d.sendibt3.com/7rlnxgd92ve.gif" class="CToWUd" width="20" height="38">
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+            </td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div>
+                
+                
+                
+                
+                <table class="m_1824462685425684759rnb-del-min-width" style="min-width:100%;line-height:10px" name="Layout_12" id="m_1824462685425684759Layout_12" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="m_1824462685425684759rnb-del-min-width" style="min-width:590px" valign="top" align="center">
+                        <table class="m_1824462685425684759rnb-container" style="background-color:rgb(255,255,255)" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" align="center">
+                            <tbody><tr>
+                                <td valign="top" align="center">
+                                    <table cellspacing="0" cellpadding="0" border="0">
+                                        <tbody><tr>
+                                            <td>
+                                                <div style="display:block;border-radius:5px;width:590;max-width:1202px!important;border-top:0px None #000;border-right:0px None #000;border-bottom:0px None #000;border-left:0px None #000;border-collapse:separate;border-radius:0px">
+                                                    <div><img class="m_1824462685425684759rnb-header-img CToWUd" alt="" style="display:block;float:left;border-radius:5px" src="https://ci3.googleusercontent.com/proxy/MGraObg6aumuU3PBtwBPpCt0vE-F8p4ctjt4jH8atnx7XcqHdniWuHd8zxBLPzm2wKf4vnTWGDvfmA-4Imf8sTFqpig_=s0-d-e1-ft#http://3rb9p.img.bh.d.sendibt3.com/7rlpicd92ve.png" width="590" vspace="0" hspace="0" border="0"></div><div style="clear:both"></div>
+                                                    </div></td>
+                                        </tr>
+                                    </tbody></table>
+
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr></tbody></table>
+            
+                
+                
+            
+        </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div>
+                
+                <table class="m_1824462685425684759rnb-del-min-width m_1824462685425684759rnb-tmpl-width" style="min-width:590px" name="Layout_" id="m_1824462685425684759Layout_" width="100%" cellspacing="0" cellpadding="0" border="0">
+                    <tbody><tr>
+                        <td class="m_1824462685425684759rnb-del-min-width" style="min-width:590px;background-color:transparent" valign="top" bgcolor="transparent" align="center">
+                            <table class="m_1824462685425684759rnb-container" width="590" cellspacing="0" cellpadding="0" border="0" align="center">
+                                <tbody><tr>
+                                    <td style="font-size:1px;line-height:0px" height="20">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td class="m_1824462685425684759rnb-container-padding" style="font-size:14px;font-family:Arial,Helvetica,sans-serif;color:#888888" valign="top" align="left">
+
+                                        <table class="m_1824462685425684759rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                            <tbody><tr>
+                                                <td class="m_1824462685425684759rnb-force-col" style="padding-right:20px;padding-left:20px" valign="top">
+
+                                                    <table valign="top" class="m_1824462685425684759rnb-col-2" style="border-bottom:0" width="264" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                        <tbody><tr>
+                                                            <td valign="top">
+                                                                <table class="m_1824462685425684759rnb-btn-col-content" cellspacing="0" cellpadding="0" border="0" align="left">
+                                                                    <tbody><tr>
+                                                                        <td style="font-size:14px;font-family:Arial,Helvetica,sans-serif;color:#888888" class="m_1824462685425684759rnb-text-center" valign="middle" align="left">
+                                                                            <div></div>
+                                                                        </td></tr>
+                                                                </tbody></table>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody></table>
+                                                    </td><td class="m_1824462685425684759rnb-force-col m_1824462685425684759rnb-social-width" style="padding-right:15px" valign="top">
+
+                                                    <table valign="top" class="m_1824462685425684759rnb-last-col-2" width="246" cellspacing="0" cellpadding="0" border="0" align="right">
+
+                                                        <tbody><tr>
+                                                            <td valign="top">
+                                                                <table class="m_1824462685425684759rnb-social-align" style="float:right" cellspacing="0" cellpadding="0" border="0" align="right">
+                                                                    <tbody><tr>
+                                                                        <td class="m_1824462685425684759rnb-text-center" width="125" valign="middle" align="right">
+                                                                            <div class="m_1824462685425684759rnb-social-center">
+                                                                            <table style="float:left;display:inline-block" cellspacing="0" cellpadding="0" border="0" align="left">
+                                                                            <tbody><tr>
+                                                                                    <td style="padding:0px 5px 5px 0px" align="left">
+                                                                            <span style="color:#ffffff;font-weight:normal">
+                                                                                <a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/TVzXFQNrES3wakpw0JKow7nKZlfc8ciHT35lLQ7heWb09O85Kqssb-cDk5F9VsnF6iQVA-gJKDtDWLRtstTWcP5XUcwUjl51bho66LDvBym6nXt_jg" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/TVzXFQNrES3wakpw0JKow7nKZlfc8ciHT35lLQ7heWb09O85Kqssb-cDk5F9VsnF6iQVA-gJKDtDWLRtstTWcP5XUcwUjl51bho66LDvBym6nXt_jg&amp;source=gmail&amp;ust=1545059679455000&amp;usg=AFQjCNFdC_6sysJ_iVz_4Jlyk4jvmeQNCw"><img alt="Facebook" style="vertical-align:top" src="https://ci3.googleusercontent.com/proxy/S1Y24hdcIqLJPgJu6Jid7ObyerunVyu5y81nKTiRZG9BC9kwT4cRy9MBN298_TOM7DiD1ROZG8j2_FvuOfk-PgIKNmqK=s0-d-e1-ft#http://3rb9p.img.bh.d.sendibt3.com/7rlqasd92ve.png" class="CToWUd" vspace="0" hspace="0" border="0"></a></span>
+                                                                            </td></tr></tbody></table>
+                                                                            </div><div class="m_1824462685425684759rnb-social-center">
+                                                                            <table style="float:left;display:inline-block" cellspacing="0" cellpadding="0" border="0" align="left">
+                                                                            <tbody><tr>
+                                                                                    <td style="padding:0px 5px 5px 0px" align="left">
+                                                                            <span style="color:#ffffff;font-weight:normal">
+                                                                                <a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/axINfKtZsleKZ5jR8adrB_as9xIQNk0CHBtW__wrxh7Wr301R4laiWawgLs4PzhvAbcasuJBeHnIG_aEL5V7zup5UumiMYPEUjt4RsFx9NHknbdoCQ" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/axINfKtZsleKZ5jR8adrB_as9xIQNk0CHBtW__wrxh7Wr301R4laiWawgLs4PzhvAbcasuJBeHnIG_aEL5V7zup5UumiMYPEUjt4RsFx9NHknbdoCQ&amp;source=gmail&amp;ust=1545059679455000&amp;usg=AFQjCNGNzcFezOREG9fZNmoOW7Mn9cyNnQ"><img alt="Twitter" style="vertical-align:top" src="https://ci6.googleusercontent.com/proxy/6NCfNUsk-bLVq-zlpeJdHhzpC9vWkV9D8Yh15z_iDOxEN1BtfVBvvlkEsImjlcOnSLcLA0lBFqISSX33dtNHJLs9vGDy=s0-d-e1-ft#http://3rb9p.img.bh.d.sendibt3.com/7rlr38d92ve.png" class="CToWUd" vspace="0" hspace="0" border="0"></a></span>
+                                                                            </td></tr></tbody></table>
+                                                                            </div><div class="m_1824462685425684759rnb-social-center">
+                                                                            <table style="float:left;display:inline-block" cellspacing="0" cellpadding="0" border="0" align="left">
+                                                                            <tbody><tr>
+                                                                                    <td style="padding:0px 5px 5px 0px" align="left">
+                                                                            <span style="color:#ffffff;font-weight:normal">
+                                                                                <a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/A8t3S0HytXCN4kQASsGwiONpS9-eocbEov8n7we9r6XARhsjLIyvWnUtGDB7Npzd12nuuP8sLUTN3wuamDFTFd8t7CaB9068oH_Lf5Uc5O9zwPVIqg" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/A8t3S0HytXCN4kQASsGwiONpS9-eocbEov8n7we9r6XARhsjLIyvWnUtGDB7Npzd12nuuP8sLUTN3wuamDFTFd8t7CaB9068oH_Lf5Uc5O9zwPVIqg&amp;source=gmail&amp;ust=1545059679455000&amp;usg=AFQjCNEwuOr8Giy0yzPsOEZcu7d8bQyw1Q"><img alt="LinkedIn" style="vertical-align:top" src="https://ci5.googleusercontent.com/proxy/8tPe36m1ib3DmO7cjosVkEXp0vCPpnlbu_ddW7vjdm3I2g-yzOw16v9wlWEWhgr-84BcW7SRz-Cn7Ktju4MRHhsKbq7P=s0-d-e1-ft#http://3rb9p.img.bh.d.sendibt3.com/7rlrvod92ve.png" class="CToWUd" vspace="0" hspace="0" border="0"></a></span>
+                                                                            </td></tr></tbody></table>
+                                                                            </div></td>
+                                                                    </tr>
+                                                                </tbody></table>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody></table>
+                                                    </td></tr>
+                                        </tbody></table></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-size:1px;line-height:0px" height="20">&nbsp;</td>
+                                </tr>
+                            </tbody></table>
+
+                        </td>
+                    </tr></tbody></table>
+                
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div>
+                
+                <table class="m_1824462685425684759rnb-del-min-width m_1824462685425684759rnb-tmpl-width" style="min-width:590px" name="Layout_3" id="m_1824462685425684759Layout_3" width="100%" cellspacing="0" cellpadding="0" border="0">
+                    <tbody><tr>
+                        <td class="m_1824462685425684759rnb-del-min-width" style="min-width:590px;background-color:transparent" valign="top" bgcolor="transparent" align="center">
+                            <table class="m_1824462685425684759rnb-container" style="padding-right:20px;padding-left:20px;background-color:transparent" width="590" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent" align="center">
+                                <tbody><tr>
+                                    <td style="font-size:1px;line-height:0px" height="10">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div style="font-size:14px;color:#888888;font-weight:normal;text-align:center;font-family:'Roboto','Verdana',Geneva,sans-serif"><div>This email was sent to a@ethical.institute
+<div>You received this email because you are registered with The Institute for Ethical AI &amp; Machine Learning's newsletter "The Machine Learning Engineer"</div>
+
+<div>&nbsp;</div>
+</div>
+</div>
+                                        <div style="font-size:14px;font-weight:normal;text-align:center;font-family:'Roboto','Verdana',Geneva,sans-serif">
+                                            <a style="text-decoration:underline;color:#10c79b;font-size:14px;font-weight:normal;font-family:Arial,Helvetica,sans-serif" href="http://3rb9p.r.bh.d.sendibt3.com/mk/un/dOaM6zM6YvdhsBo6HvDDo26hBcjBCzPSGTpowKFVGBvvd93IQO1DHAwKM_rgI-IVlo4uT3UWo_TM5iTaYfbEEDjxPU23tF7edeHNCfHwBEI27TadhQdgvgyT7IAT6xFF6KoyPEv1Msw3" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/un/dOaM6zM6YvdhsBo6HvDDo26hBcjBCzPSGTpowKFVGBvvd93IQO1DHAwKM_rgI-IVlo4uT3UWo_TM5iTaYfbEEDjxPU23tF7edeHNCfHwBEI27TadhQdgvgyT7IAT6xFF6KoyPEv1Msw3&amp;source=gmail&amp;ust=1545059679456000&amp;usg=AFQjCNE3Mr3X4_cqu6I7lJ9m9m7K0n0x3g">Unsubscribe here</a></div>
+                                    </td></tr>
+                                <tr>
+                                    <td style="font-size:1px;line-height:0px" height="10">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div style="text-align:center">
+                                            <div style="font-family:Arial,Helvetica,sans-serif;color:#888888;opacity:0.8">Sent by</div><a href="http://3rb9p.r.bh.d.sendibt3.com/mk/cl/70MWx1J19FR08J5bwVMRNoeqnPE5nOrlnWHIi1FlmNsmrnXr50qf0ThDEBd89AuD5K06s1R0N73bZ7pGg6caxfNikntf4gPLrBBBZGvCiY3_NIYVEg" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://3rb9p.r.bh.d.sendibt3.com/mk/cl/70MWx1J19FR08J5bwVMRNoeqnPE5nOrlnWHIi1FlmNsmrnXr50qf0ThDEBd89AuD5K06s1R0N73bZ7pGg6caxfNikntf4gPLrBBBZGvCiY3_NIYVEg&amp;source=gmail&amp;ust=1545059679456000&amp;usg=AFQjCNEd6idu7co_hyWCRs8wnyKD5mVdSg"><img alt="SendinBlue" style="margin:auto" src="https://ci4.googleusercontent.com/proxy/6Pld9JN4OXXmmvtXNP_FRKd66IZUTe6394_QOuDFz-LvS43W3UzXUfwrhIdIAwcXktdQyK5KLsAmte6_A3laHjWhMm50=s0-d-e1-ft#http://3rb9p.img.bh.d.sendibt3.com/7rlso4d92ve.png" class="CToWUd" width="121" vspace="0" hspace="0" height="33" border="0"></a>
+                                        </div></td>
+                                </tr><tr>
+                                    <td style="font-size:1px;line-height:0px" height="10">&nbsp;</td>
+                                </tr></tbody></table>
+                        </td>
+                    </tr>
+                </tbody></table>
+                
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div>
+                
+                <table class="m_1824462685425684759rnb-del-min-width m_1824462685425684759rnb-tmpl-width" style="min-width:590px" name="Layout_4" id="m_1824462685425684759Layout_4" width="100%" cellspacing="0" cellpadding="0" border="0">
+                    <tbody><tr>
+                        <td class="m_1824462685425684759rnb-del-min-width" style="min-width:590px" valign="top" align="center">
+                            <table class="m_1824462685425684759rnb-container m_1824462685425684759rnb-yahoo-width" style="padding-right:20px;padding-left:20px;background-color:transparent" width="590" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent" align="center">
+                                <tbody><tr>
+                                    <td style="font-size:1px;line-height:0px" height="20">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-size:14px;color:#888888;font-weight:normal;text-align:center;font-family:'Roboto','Verdana',Geneva,sans-serif">
+                                        <div>© 2018 The Institute for Ethical AI &amp; Machine Learning</div>
+                                    </td></tr>
+                                <tr>
+                                    <td style="font-size:1px;line-height:0px" height="20">&nbsp;</td>
+                                </tr>
+                            </tbody></table>
+                        </td>
+                    </tr>
+                </tbody></table>
+                
+            </div></td>
+    </tr></tbody></table>
+            
+                        </td>
+        </tr>
+        </tbody></table>
+
+
+                        </section>
+                    </div>
+                </div>
+
+		<!-- Scripts -->
+			<script src="/assets/js/jquery.min.js"></script>
+			<script src="/assets/js/jquery.scrolly.min.js"></script>
+			<script src="/assets/js/jquery.dropotron.min.js"></script>
+			<script src="/assets/js/jquery.scrollex.min.js"></script>
+			<script src="/assets/js/skel.min.js"></script>
+			<script src="/assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="/assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="/assets/js/main.js"></script>
+
+			<!-- Footer -->
+				<footer id="footer">
+					<ul class="icons">
+						<li><a href="https://twitter.com/EthicalML" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+                        <li><a href="https://facebook.com/EthicalML" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+						<li><a href="https://www.linkedin.com/company/the-institute-for-ethical-machine-learning/" class="icon fa-linkedin"><span class="label">LinkedIn</span></a></li>
+						<li><a href="https://github.com/EthicalML" class="icon fa-github"><span class="label">GitHub</span></a></li>
+                        <li><a href="mailto:a@ethical.institute" class="icon fa-envelope"><span class="label">Email</span></a></li>
+					</ul>
+					<ul class="copyright">
+						<li>&copy; The Institute for Ethical AI & ML. 
+                            All rights reserved.</li>
+					</ul>
+				</footer>
+
+
+		<!-- Scripts -->
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-89407852-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-89407852-2');
+    </script>
+
+
+	</body>
+</html>
