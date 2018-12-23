@@ -3487,6 +3487,10 @@
 
 	@media screen and (max-width: 1280px)/* , screen and (max-height: 1000px) */  {
 
+            header h1 a  {
+                display: none;
+            }
+
 		/* Basic */
 
 			body, input, select, textarea {
@@ -3537,6 +3541,7 @@
 /* Medium */
 
 	@media screen and (max-width: 980px)/* , screen and (max-height: 800px) */  {
+
 
 		/* Basic */
 
