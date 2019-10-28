@@ -1,0 +1,1431 @@
+<!DOCTYPE HTML>
+<!--
+	Landed by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>The Machine Learning Engineer Newsletter</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="google-site-verification" content="9rfgBQEvfnZ7HS_kBzINrlrJ-_sJcyJxqEUltqvP9Og" />
+        <meta name="author" content="The Machine Learning Engineer Newsletter">
+        <meta name="description" content="Curated articles, tutorials and blog posts from experienced Machine Learning professionals. Obtain insights on best practices, tools and techniques in machine learning explainability, reproducibility, model evaluation, feature analysis and beyond.">
+        <link rel="canonical" href="https://ethical.institute">
+        <link rel="icon" href="images/logos/eml-logo-white.png">
+
+
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+
+        <!-- FACEBOOK -->
+        <meta property="og:url" content="https://ethical.institute">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="The Machine Learning Engineer Newsletter">
+        <meta property="og:description" content="Curated articles, tutorials and blog posts from experienced Machine Learning professionals. Obtain insights on best practices, tools and techniques in machine learning explainability, reproducibility, model evaluation, feature analysis and beyond.">
+        <meta property="og:image" content="https://ethical.institute/images/mle.jpg">
+
+
+
+        <!-- THE TWITTER -->
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="@EthicalML">
+        <meta name="twitter:creator" content="@EthicalML">
+        <meta name="twitter:title" content="The Machine Learning Engineer Newsletter">
+        <meta name="twitter:description" content="Curated articles, tutorials and blog posts from experienced Machine Learning professionals. Obtain insights on best practices, tools and techniques in machine learning explainability, reproducibility, model evaluation, feature analysis and beyond.">
+        <meta name="twitter:image:src" content="https://ethical.institute/images/mle.jpg">
+
+
+        <!-- G++ -->
+        <meta itemprop="name" content="The Machine Learning Engineer Newsletter">
+        <meta itemprop="description" content="Curated articles, tutorials and blog posts from experienced Machine Learning professionals. Obtain insights on best practices, tools and techniques in machine learning explainability, reproducibility, model evaluation, feature analysis and beyond.">
+        <meta itemprop="image" content="https://ethical.institute/images/mle.jpg">
+
+
+
+
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="/assets/css/main.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="/assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="/assets/css/ie8.css" /><![endif]-->
+
+        <script src="/assets/js/jquery.min.js"></script>
+        <script src="/assets/js/jquery.scrolly.min.js"></script>
+        <script src="/assets/js/jquery.dropotron.min.js"></script>
+        <script src="/assets/js/jquery.scrollex.min.js"></script>
+        <script src="/assets/js/skel.min.js"></script>
+        <script src="/assets/js/util.js"></script>
+        <script src="/assets/js/three.min.js"></script>
+        <!--[if lte IE 8]><script src="/assets/js/ie/respond.min.js"></script><![endif]-->
+        <script src="/assets/js/Projector.js"></script>
+        <script src="/assets/js/CanvasRenderer.js"></script>
+        <script src="/assets/js/stats.min.js"></script>
+        <script src="/assets/js/main.js"></script>
+
+	</head>
+
+	<body class="landing">
+		<div id="page-wrapper">
+
+			<!-- Header -->
+				<header id="header">
+                    <h1 id="logo"><a href="index.html"><img src="/images/logos/eml-logo-white.png" height="15px"> The Institute for Ethical AI & Machine Learning</a></h1>
+					<nav id="nav">
+						<ul style="font-weight: bold">
+							<li><a href="/index.html">Home</a></li>
+							<li>
+                            <a href="/principles.html">Principles</a>
+                            <ul>
+                                <li><a href="/principles.html#commitment-1">#1 Human Augmentation</a></li>
+                                <li><a href="/principles.html#commitment-2">#2 Bias Evaluation</a></li>
+                                <li><a href="/principles.html#commitment-3">#3 Explainability</a></li>
+                                <li><a href="/principles.html#commitment-4">#4 Reproducible Operations</a></li>
+                                <li><a href="/principles.html#commitment-5">#5 Displacement Strategy</a></li>
+                                <li><a href="/principles.html#commitment-6">#6 Practical Accuracy</a></li>
+                                <li><a href="/principles.html#commitment-7">#7 Trust by Privacy</a></li>
+                                <li><a href="/principles.html#commitment-8">#8 Security Risks</a></li>
+                            </ul>
+                            <li>
+                                <a href="/rfx.html">AI-RFX Framework</a>
+                            </li>
+                            <li>
+                                <a href="/mle.html">Machine Learning Newsletter</a>
+                            </li>
+	
+                            </li>
+							<li><a href="/index.html#contact" class="button special">Contact us or Join</a></li>
+						</ul>
+					</nav>
+				</header>
+
+			<!-- Main -->
+<style>
+table, tbody, tr, td {
+    padding: 0 0 0 0 !important;
+    background-color: transparent !important;
+    border-collapse: separate !important;
+    margin: 0 0 0 0 !important;
+    width: 80vw !important;
+    max-width: 590px !important;
+}
+table, div, table img, tbody, tr, td {
+    min-width: 0px !important;
+}
+table {
+    margin: auto auto !important;
+}
+table div, table img {
+    width: 80vw !important;
+    max-width: 590px !important;
+}
+a {
+    border-bottom: none;
+}
+</style>
+				<div id="main" class="wrapper style1">
+					<div class="container">
+						<!-- Text -->
+
+						<header class="major">
+							<h2>Subscribe to the Machine Learning Engineer Newsletter</h2>
+							<p>Receive curated articles, tutorials and blog posts from experienced Machine Learning professionals. </p>
+
+                                <iframe width="540" height="416" src="https://my.sendinblue.com/users/subscribe/js_id/3rb9p/id/2" frameborder="0" scrolling="auto" allowfullscreen style="display: block;margin-left: auto;margin-right: auto;max-width: 100%; margin-top: -40px; margin-bottom: -200px"></iframe>
+
+                                <br>
+
+                        <section>
+                            <table class="main-template" style="background-color: rgb(28, 29, 38);" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#1c1d26" align="center">
+
+    <tbody><tr style="display:none !important; font-size:1px; mso-hide: all;"><td></td><td></td></tr><tr>
+        <td valign="top" align="center">
+        <!--[if gte mso 9]>
+                        <table align="center" border="0" cellspacing="0" cellpadding="0" width="590" style="width:590px;">
+                        <tr>
+                        <td align="center" valign="top" width="590" style="width:590px;">
+                        <![endif]-->
+            <table class="templateContainer" style="max-width:590px!important; width: 590px;" width="100%" cellspacing="0" cellpadding="0" border="0">
+        <tbody><tr>
+
+        <td valign="top" align="center">
+
+            <table class="rnb-del-min-width" style="min-width:590px;" name="Layout_25" id="Layout_25" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" style="min-width:590px;" valign="top" align="center">
+                        <table width="100%" height="38" cellspacing="0" cellpadding="0" border="0">
+                            <tbody><tr>
+                                <td valign="top" height="38">
+                                    <img style="display:block; max-height:38px; max-width:20px;" alt="" src="http://img.mailinblue.com/new_images/rnb/rnb_space.gif" width="20" height="38">
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+            </td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: rgb(255, 255, 255);">
+                
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+                <table class="rnb-del-min-width" style="min-width:100%; -webkit-backface-visibility: hidden; line-height: 10px;" name="Layout_24" id="Layout_24" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" style="min-width: 590px;" valign="top" align="center">
+                        <table class="rnb-container" style="background-color: rgb(255, 255, 255);" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" align="center">
+                            <tbody><tr>
+                                <td valign="top" align="center">
+                                    <table cellspacing="0" cellpadding="0" border="0">
+                                        <tbody><tr>
+                                            <td>
+                                                <div style="display:block; border-radius:5px; width:590;;max-width:1202px !important;border-top:0px None #000;border-right:0px None #000;border-bottom:0px None #000;border-left:0px None #000;border-collapse: separate;border-radius: 0px;">
+                                                    <div><img ng-if="col.img.source != 'url'" class="rnb-header-img" alt="" style="display:block; float:left; border-radius: 5px; " src="http://img.mailinblue.com/2145551/images/rnb/original/5c10f8d3722aa38b484d8523.png" width="590" vspace="0" hspace="0" border="0"></div><div style="clear:both;"></div>
+                                                    </div></td>
+                                        </tr>
+                                    </tbody></table>
+
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr></tbody></table>
+            <!--[if mso]>
+                </td>
+                <![endif]-->
+                
+                <!--[if mso]>
+                </tr>
+                </table>
+                <![endif]-->
+            
+        </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <table class="rnb-del-min-width" style="min-width:590px;" name="Layout_4961" id="Layout_4961" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" style="min-width:590px;" valign="top" align="center">
+                        <table width="100%" height="38" cellspacing="0" cellpadding="0" border="0">
+                            <tbody><tr>
+                                <td valign="top" height="38">
+                                    <img style="display:block; max-height:38px; max-width:20px;" alt="" src="http://img.mailinblue.com/new_images/rnb/rnb_space.gif" width="20" height="38">
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+            </td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent; border-radius: 0px;">
+                
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+            
+                <table name="Layout_7" id="Layout_7" width="100%" cellspacing="0" cellpadding="0" border="0"><tbody><tr>
+                    <td valign="top" align="center"><table class="rnb-container" style="height: 0px; background-color: transparent; border-bottom: 5px solid rgb(16, 199, 155); border-radius: 0px; border-collapse: separate; padding-left: 20px; padding-right: 20px;" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent"><tbody><tr>
+                                <td class="rnb-container-padding" style="font-size: px;font-family: ; color: ;">
+
+                                    <table class="rnb-columns-container" style="margin:auto;" cellspacing="0" cellpadding="0" border="0" align="center">
+                                        <tbody><tr>
+
+                                            <td class="rnb-force-col" align="center">
+
+                                                <table class="rnb-col-1" cellspacing="0" cellpadding="0" border="0" align="center">
+
+                                                    <tbody><tr>
+                                                        <td height="10"></td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td class="content-spacing" style="font-family:'Roboto','Verdana',Geneva,sans-serif; color:#3c4858; text-align:center;">
+
+                                                            <span style="color:#3c4858;"><span style="font-size:28px;"><strong><span data-darkreader-inline-color="" style="color: rgb(16, 199, 155); --darkreader-inline-color:#5ef2cf;"><span style="font-size:36px;"><span style="font-size:48px;">THE ML</span></span> <span style="font-size:48px;">ENGINEER&nbsp;🤖 </span></span></strong></span>
+<div style="line-height:48px;"><span style="font-size:28px;"><strong><span style="font-size:48px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">Issue #45</span></span></strong></span></div>
+</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td height="10"></td>
+                                                    </tr>
+                                                    </tbody></table>
+                                                </td></tr>
+                                    </tbody></table></td>
+                            </tr>
+
+                        </tbody></table>
+
+                    </td>
+                </tr>
+
+            </tbody></table><!--[if mso]>
+                </td>
+                <![endif]-->
+                
+                <!--[if mso]>
+                </tr>
+                </table>
+                <![endif]-->
+            
+        </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <table class="rnb-del-min-width" style="min-width:590px;" name="Layout_7132" id="Layout_7132" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" style="min-width:590px;" valign="top" align="center">
+                        <table width="100%" height="38" cellspacing="0" cellpadding="0" border="0">
+                            <tbody><tr>
+                                <td valign="top" height="38">
+                                    <img style="display:block; max-height:38px; max-width:20px;" alt="" src="http://img.mailinblue.com/new_images/rnb/rnb_space.gif" width="20" height="38">
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+            </td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent; border-radius: 0px;">
+            
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+                <table class="rnb-del-min-width" style="min-width:100%;" name="Layout_9" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" valign="top" align="center">
+                        <table class="rnb-container" style="background-color: transparent; padding-left: 20px; padding-right: 20px; border-collapse: separate; border-radius: 0px; border-bottom: 5px solid rgb(16, 199, 155);" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="rnb-container-padding" valign="top" align="left">
+
+                                                <table class="rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="rnb-force-col" style="padding-right: 0px;" valign="top">
+
+                                                            <table valign="top" class="rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td class="content-spacing" style="font-size:14px; font-family:'Roboto','Verdana',Geneva,sans-serif, sans-serif; color:#3c4858; line-height: 21px;"><div>&nbsp;
+<div>
+<div style="line-height:24px;">
+<div><span style="font-size:36px;"><strong><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">This week in <a data-darkreader-inline-color="" href="https://ethical.institute/mle/45.html" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">Issue #45:</a></span></strong></span></div>
+
+<div>&nbsp;</div>
+
+<ul>
+	<li><strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">Deep fake <a href="http://deepfakedetectionchallenge.ai/" style="text-decoration: underline; color: rgb(16, 199, 155);">detection challenge</a></span></span></strong></li>
+	<li><strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">Human knowledge <a href="http://bair.berkeley.edu/blog/2019/10/21/coordination/" style="text-decoration: underline; color: rgb(16, 199, 155);">to Improve AI</a></span></span></strong></li>
+	<li><strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">Neural text search <a href="http://hanxiao.github.io/2019/10/18/GNES-Flow-a-Pythonic-Way-to-Build-Cloud-Native-Neural-Search-Pipelines/" style="text-decoration: underline; color: rgb(16, 199, 155);">data flow </a></span></span></strong></li>
+	<li><strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">The causal <a href="http://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/" style="text-decoration: underline; color: rgb(16, 199, 155);">inference book</a></span></span></strong></li>
+	<li><strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">Netflix open <a href="http://medium.com/netflix-techblog/open-sourcing-polynote-an-ide-inspired-polyglot-notebook-7f929d3f447" style="text-decoration: underline; color: rgb(16, 199, 155);">sources polynote</a></span></span></strong></li>
+	<li><strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">Featured OSS <a data-darkreader-inline-color="" href="http://github.com/ethicalml/awesome-production-machine-learning" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">Production ML Libraries</a></span></span></strong></li>
+	<li><strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">Awesome AI Guidelines <a href="https://github.com/ethicalml/awesome-artificial-intelligence-guidelines" style="text-decoration: underline; color: rgb(16, 199, 155);">to check out this week</a></span></span></strong></li>
+	<li><strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">AI <a data-darkreader-inline-color="" href="http://ethical.institute/mle/38.html#mlconfs" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">conferences<strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">&nbsp;</span></span></strong></a></span></span></strong></li>
+	<li><strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">+ more 🚀</span></span></strong></li>
+</ul>
+
+<div>&nbsp;</div>
+</div>
+
+<div style="line-height:24px;"><strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">Forward the email, or share <a data-darkreader-inline-color="" href="https://ethical.institute/mle/45.html" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">the online version</a> on 🐦 <a data-darkreader-inline-color="" href="https://twitter.com/intent/tweet?text=Great Newsletter on Machine Learning!%20 https://ethical.institute/mle.html" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">Twitter</a>,&nbsp; 💼 <a data-darkreader-inline-color="" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://ethical.institute/mle.html&amp;title=The Machine Learning Engineer Newsletter&amp;summary=Curated news about machine learning operations, reproducibility, explainability and beyond" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">Linkedin</a> and&nbsp; 📕 <a class="fbc-has-badge fbc-UID_2" data-darkreader-inline-color="" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fethical.institute%2Fmle.html" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">Facebook</a>!</span></span></strong></div>
+
+<div style="line-height:24px;">&nbsp;</div>
+
+<div style="line-height:24px;"><strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">If you would like to suggest articles, ideas, papers, libraries, jobs, events or provide feedback just hit reply or send us an email to <a data-darkreader-inline-color="" href="mailto:a@ethical.institute" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">a@ethical.institute</a>! We have received a lot of great suggestions in the past, thank you very much for everyone's support! </span></span></strong></div>
+
+<div style="line-height:24px;">&nbsp;</div>
+</div>
+</div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table><!--[if mso]>
+                </td>
+                <![endif]-->
+                
+                <!--[if mso]>
+                </tr>
+                </table>
+                <![endif]-->
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <table class="rnb-del-min-width" style="min-width:590px;" name="Layout_9012" id="Layout_9012" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" style="min-width:590px;" valign="top" align="center">
+                        <table width="100%" height="38" cellspacing="0" cellpadding="0" border="0">
+                            <tbody><tr>
+                                <td valign="top" height="38">
+                                    <img style="display:block; max-height:38px; max-width:20px;" alt="" src="http://img.mailinblue.com/new_images/rnb/rnb_space.gif" width="20" height="38">
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+            </td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent; border-radius: 0px;">
+            
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+                <table class="rnb-del-min-width" style="min-width:100%;" name="Layout_26" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" valign="top" align="center">
+                        <table class="rnb-container" style="background-color: transparent; padding-left: 20px; padding-right: 20px; border-collapse: separate; border-radius: 0px; border-bottom: 0px none rgb(16, 199, 155);" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="rnb-container-padding" valign="top" align="left">
+
+                                                <table class="rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="rnb-force-col" style="padding-right: 0px;" valign="top">
+
+                                                            <table valign="top" class="rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td class="content-spacing" style="font-size:14px; font-family:Arial,Helvetica,sans-serif, sans-serif; color:#3c4858; line-height: 21px;"><div style="line-height:48px;"><a data-darkreader-inline-color="" href="https://deepfakedetectionchallenge.ai/" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);"><span style="font-size:36px;">Deep fake detection challenge</span></a></div>
+
+<div style="line-height:24px;">
+<div>
+<div><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">Lately the topic of deep fakes has been raising more concerns due to an inceasing number of high profile stories. The use of deep fakes for malicious use-cases seems to have really huge potential to cause negative damage in society. A very interesting new initiative has been launched by the Partnership in AI, Microsoft, AWS and Facebook. This initiative invites researchers and practitioners to participate in a competition to detect deep fakes. The dataset is now released, and the competition starts in December. </span></span></div>
+</div>
+</div>
+
+<div style="line-height:24px;">&nbsp;</div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table><!--[if mso]>
+                </td>
+                <![endif]-->
+                
+                <!--[if mso]>
+                </tr>
+                </table>
+                <![endif]-->
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent; border-radius: 0px;">
+            
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+                <table class="rnb-del-min-width" style="min-width:100%;" name="Layout_35" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" valign="top" align="center">
+                        <table class="rnb-container" style="background-color: transparent; padding-left: 20px; padding-right: 20px; border-collapse: separate; border-radius: 0px; border-bottom: 0px none rgb(200, 200, 200);" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="rnb-container-padding" valign="top" align="left">
+
+                                                <table class="rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="rnb-force-col" style="padding-right: 0px;" valign="top">
+
+                                                            <table valign="top" class="rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td class="content-spacing" style="font-size:14px; font-family:Arial,Helvetica,sans-serif, sans-serif; color:#3c4858; line-height: 21px;"><div style="line-height:48px;"><a data-darkreader-inline-color="" href="https://bair.berkeley.edu/blog/2019/10/21/coordination/" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);"><span style="font-size:36px;">Human knowledge to improve AI</span></a></div>
+
+<div style="line-height:24px;"><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">In reinforcement learning, often agents can be trained efficiently by running them with other agents throughout a significant number of iterations. Although this may be quite efficielt, and may lead to hyper-optimised results, these may not be optimal when the agents have to interact with humans. This Berkeley project has set out to explore this topic in more detail by looking at how agents can be improved when trained with human interaction.</span></span></div>
+
+<div style="line-height:24px;">&nbsp;</div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table><!--[if mso]>
+                </td>
+                <![endif]-->
+                
+                <!--[if mso]>
+                </tr>
+                </table>
+                <![endif]-->
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent; border-radius: 0px;">
+            
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+                <table class="rnb-del-min-width" style="min-width:100%;" name="Layout_21" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" valign="top" align="center">
+                        <table class="rnb-container" style="background-color: transparent; padding-left: 20px; padding-right: 20px; border-collapse: separate; border-radius: 0px; border-bottom: 0px none rgb(200, 200, 200);" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="rnb-container-padding" valign="top" align="left">
+
+                                                <table class="rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="rnb-force-col" style="padding-right: 0px;" valign="top">
+
+                                                            <table valign="top" class="rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td class="content-spacing" style="font-size:14px; font-family:Arial,Helvetica,sans-serif, sans-serif; color:#3c4858; line-height: 21px;"><div style="line-height:48px;"><a data-darkreader-inline-color="" href="https://hanxiao.github.io/2019/10/18/GNES-Flow-a-Pythonic-Way-to-Build-Cloud-Native-Neural-Search-Pipelines/" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);"><span style="font-size:36px;">Neural text search data flow</span></a></div>
+
+<div style="line-height:24px;"><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">A very interesting project called GNES is tackling semantic search across image, text and beyond. As its popularity and use has been increasing there has been new challenges that the open source team have to dealth with. One of these key challenges has been data flow across complex jobs. This is why the GNES team released GNES flow, a framework that brings DAG-based data flow to GNES.</span></span></div>
+
+<div style="line-height:24px;">&nbsp;</div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table><!--[if mso]>
+                </td>
+                <![endif]-->
+                
+                <!--[if mso]>
+                </tr>
+                </table>
+                <![endif]-->
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent; border-radius: 0px;">
+            
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+                <table class="rnb-del-min-width" style="min-width:100%;" name="Layout_20" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" valign="top" align="center">
+                        <table class="rnb-container" style="background-color: transparent; padding-left: 20px; padding-right: 20px; border-collapse: separate; border-radius: 0px; border-bottom: 0px none rgb(200, 200, 200);" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="rnb-container-padding" valign="top" align="left">
+
+                                                <table class="rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="rnb-force-col" style="padding-right: 0px;" valign="top">
+
+                                                            <table valign="top" class="rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td class="content-spacing" style="font-size:14px; font-family:Arial,Helvetica,sans-serif, sans-serif; color:#3c4858; line-height: 21px;"><div style="line-height:48px;"><a data-darkreader-inline-color="" href="https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);"><span style="font-size:36px;">The Causal Inference Book</span></a></div>
+
+<div style="line-height:24px;"><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">An incredible resource on all things Causal inference, which aims to support researchers, practitioners from various backgrounds, including epidemiologists, statisticians, psychologists, economists, sociologists, political scientists, computer scientists and beyond. The book is divided in 3 parts of increasing difficulty: causal inference without models, causal inference with models, and causal inference from complex longitudinal data.</span></span></div>
+
+<div style="line-height:24px;">&nbsp;</div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table><!--[if mso]>
+                </td>
+                <![endif]-->
+                
+                <!--[if mso]>
+                </tr>
+                </table>
+                <![endif]-->
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent; border-radius: 0px;">
+            
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+                <table class="rnb-del-min-width" style="min-width:100%;" name="Layout_18" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" valign="top" align="center">
+                        <table class="rnb-container" style="background-color: transparent; padding-left: 20px; padding-right: 20px; border-collapse: separate; border-radius: 0px; border-bottom: 0px none rgb(200, 200, 200);" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="rnb-container-padding" valign="top" align="left">
+
+                                                <table class="rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="rnb-force-col" style="padding-right: 0px;" valign="top">
+
+                                                            <table valign="top" class="rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td class="content-spacing" style="font-size:14px; font-family:Arial,Helvetica,sans-serif, sans-serif; color:#3c4858; line-height: 21px;"><div style="line-height:48px;"><a data-darkreader-inline-color="" href="https://medium.com/netflix-techblog/open-sourcing-polynote-an-ide-inspired-polyglot-notebook-7f929d3f447" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);"><span style="font-size:36px;">Netflix Open Sources Polynote</span></a></div>
+
+<div style="line-height:24px;"><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">In previous editions of the MLE Newsletter we have covered how Netflix has built advanced infrastructure and introduced processes which has allowed for production experimentation at scale. It is great to see that Netflix is now open sourcing parts of their internal infastructure, starting with Polynote - an experimental polyglot notebook environment which supports Scala and Python (with or without Spark), SQL, and Vega. If you are interested in other open source data science notebooks we have an <a href="https://github.com/EthicalML/awesome-production-machine-learning#data-science-notebook-frameworks" style="text-decoration: underline; color: rgb(16, 199, 155);">entire section in our Production ML list</a> which would be worth for you to check out. </span></span></div>
+
+<div style="line-height:24px;">&nbsp;</div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table><!--[if mso]>
+                </td>
+                <![endif]-->
+                
+                <!--[if mso]>
+                </tr>
+                </table>
+                <![endif]-->
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent; border-radius: 0px;">
+            
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+                <table class="rnb-del-min-width" style="min-width:100%;" name="Layout_31" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" valign="top" align="center">
+                        <table class="rnb-container" style="background-color: transparent; padding-left: 20px; padding-right: 20px; border-collapse: separate; border-radius: 0px; border-bottom: 5px solid rgb(16, 199, 155);" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="rnb-container-padding" valign="top" align="left">
+
+                                                <table class="rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="rnb-force-col" style="padding-right: 0px;" valign="top">
+
+                                                            <table valign="top" class="rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td class="content-spacing" style="font-size:14px; font-family:Arial,Helvetica,sans-serif, sans-serif; color:#3c4858; line-height: 21px;"></td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table><!--[if mso]>
+                </td>
+                <![endif]-->
+                
+                <!--[if mso]>
+                </tr>
+                </table>
+                <![endif]-->
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <table class="rnb-del-min-width" style="min-width:590px;" name="Layout_28" id="Layout_28" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" style="min-width:590px;" valign="top" align="center">
+                        <table width="100%" height="38" cellspacing="0" cellpadding="0" border="0">
+                            <tbody><tr>
+                                <td valign="top" height="38">
+                                    <img style="display:block; max-height:38px; max-width:20px;" alt="" src="http://img.mailinblue.com/new_images/rnb/rnb_space.gif" width="20" height="38">
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+            </td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent; border-radius: 0px;">
+            
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+                <table class="rnb-del-min-width" style="min-width:100%;" name="Layout_23" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" valign="top" align="center">
+                        <table class="rnb-container" style="background-color: transparent; padding-left: 20px; padding-right: 20px; border-collapse: separate; border-radius: 0px; border-bottom: 5px solid rgb(16, 199, 155);" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="rnb-container-padding" valign="top" align="left">
+
+                                                <table class="rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="rnb-force-col" style="padding-right: 0px;" valign="top">
+
+                                                            <table valign="top" class="rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td class="content-spacing" style="font-size:14px; font-family:Arial,Helvetica,sans-serif, sans-serif; color:#3c4858; line-height: 21px;"><div>
+<div><span data-darkreader-inline-color="" style="color: rgb(255, 240, 245); --darkreader-inline-color:#fff0f5;"><strong><span style="font-size:36px;">OSS: <a data-darkreader-inline-color="" href="https://github.com/ethicalml/awesome-production-machine-learning" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">Data Science Notebooks</a></span></strong></span></div>
+
+<div>&nbsp;</div>
+
+<div>
+<div><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">The theme for this week's featured ML libraries is <a href="https://github.com/EthicalML/awesome-production-machine-learning#data-science-notebook-frameworks" style="text-decoration: underline; color: rgb(16, 199, 155);">Data Science Notebooks</a>, and we're happy to share brand new libraries into that section to showcase tools beyond the good old Jupyter Notebooks. The four featured libraries this week are:</span></span></div>
+
+<div>&nbsp;</div>
+
+<div>
+<ul>
+	<li><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;"><a href="https://github.com/ml-tooling/ml-workspace" style="text-decoration: underline; color: rgb(16, 199, 155);">ML Workspace</a> - All-in-one web IDE for machine learning and data science. Combines Jupyter, VS Code, Tensorflow, and many other tools/libraries into one Docker image.</span></span></li>
+	<li><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;"><a href="https://github.com/ml-tooling/ml-workspace" style="text-decoration: underline; color: rgb(16, 199, 155);">Polynote </a>-</span></span><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;"> Polynote is an experimental polyglot notebook environment. Currently, it supports Scala and Python (with or without Spark), SQL, and Vega.</span></span></li>
+	<li><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;"><a href="https://github.com/stencila/stencila" style="text-decoration: underline; color: rgb(16, 199, 155);">Stencila </a>- Stencila is a platform for creating, collaborating on, and sharing data driven content. Content that is transparent and reproducible.</span></span></li>
+	<li><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;"><a href="https://github.com/rstudio/rmarkdown" style="text-decoration: underline; color: rgb(16, 199, 155);">RMarkdown </a>- The rmarkdown package is a next generation implementation of R Markdown based on Pandoc.</span></span></li>
+</ul>
+
+<div>&nbsp;</div>
+
+<ul>
+</ul>
+</div>
+</div>
+
+<div id="mlops">
+<div style="line-height: 24px;"><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">If you know of any libraries that are not in the <a data-darkreader-inline-color="" href="https://github.com/EthicalML/awesome-machine-learning-operations" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">"Awesome MLOps"</a> list, please do give us a heads up or feel free to <a data-darkreader-inline-color="" href="https://github.com/EthicalML/awesome-machine-learning-operations" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">add a pull request</a>!&nbsp; </span></span></div>
+
+<div style="line-height: 24px;">&nbsp;</div>
+</div>
+</div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table><!--[if mso]>
+                </td>
+                <![endif]-->
+                
+                <!--[if mso]>
+                </tr>
+                </table>
+                <![endif]-->
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent; border-radius: 0px;">
+            
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+                <table class="rnb-del-min-width" style="min-width:100%;" name="Layout_37" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" valign="top" align="center">
+                        <table class="rnb-container" style="background-color: transparent; padding-left: 20px; padding-right: 20px; border-collapse: separate; border-radius: 0px; border-bottom: 5px solid rgb(16, 199, 155);" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="rnb-container-padding" valign="top" align="left">
+
+                                                <table class="rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="rnb-force-col" style="padding-right: 0px;" valign="top">
+
+                                                            <table valign="top" class="rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td class="content-spacing" style="font-size:14px; font-family:Arial,Helvetica,sans-serif, sans-serif; color:#3c4858; line-height: 21px;"><div>
+<div><span data-darkreader-inline-color="" style="color: rgb(255, 240, 245); --darkreader-inline-color:#fff0f5;"><strong><span style="font-size:36px;">OSS: <a href="https://github.com/ethicalml/awesome-artificial-intelligence-guidelines" style="text-decoration: underline; color: rgb(16, 199, 155);">Awesome AI Guidelines</a></span></strong></span></div>
+
+<div>&nbsp;</div>
+
+<div>
+<div>
+<div><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">As AI systems become more prevalent in society, we face bigger and tougher societal challenges. We have seen a large number of resources that aim to takle thiese challenges in the form of AI Guidelines, Principles, Ethics Frameworks, etc, however there are so many resources it is hard to navigate. Because of this we started an Open Source initiative that aims to map the ecosystem to make it simpler to navigate. We will be showcasing three resources from our list so we can check them out every week. This week's resources are:</span></span></div>
+
+<ul>
+	<li>&nbsp;</li>
+	<li><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;"><a href="https://arxiv.org/ftp/arxiv/papers/1903/1903.03425.pdf" style="text-decoration: underline; color: rgb(16, 199, 155);">An Evaluation of Guidelines</a> - The Ethics of Ethics - A research paper that analyses a large number of AI Guidelines</span></span></li>
+	<li><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;"><a href="http://aequitas.dssg.io/" style="text-decoration: underline; color: rgb(16, 199, 155);">Aequitas' Bias &amp; Fairness Audit Toolkit</a> - The Bias Report is powered by Aequitas, an open-source bias audit toolkit for machine learning developers, analysts, and policymakers to audit machine learning models for discrimination and bias, and make informed and equitable decisions around developing and deploying predictive risk-assessment tools.</span></span></li>
+	<li><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;"><a href="https://ethicsinaction.ieee.org/" style="text-decoration: underline; color: rgb(16, 199, 155);">IEEE Global Initiative for Ethical Considerations in Artificial Intelligence (AI) and Autonomous Systems (AS)</a> - IEEE Approved Standards Projects specifically focused on the Ethically Aligned Design principles, and includes 14 (P700X) standards which cover topics from data collection to privacy, to algorithmic bias and beyond.</span></span></li>
+</ul>
+
+<div>&nbsp;</div>
+
+<ul>
+</ul>
+</div>
+</div>
+
+<div id="mlops">
+<div style="line-height: 24px;"><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">If you know of any libraries that are not in the <a data-darkreader-inline-color="" href="https://github.com/EthicalML/awesome-machine-learning-operations" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">"Awesome MLOps"</a> list, please do give us a heads up or feel free to <a data-darkreader-inline-color="" href="https://github.com/EthicalML/awesome-machine-learning-operations" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">add a pull request</a>!&nbsp; </span></span></div>
+
+<div style="line-height: 24px;">&nbsp;</div>
+</div>
+</div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table><!--[if mso]>
+                </td>
+                <![endif]-->
+                
+                <!--[if mso]>
+                </tr>
+                </table>
+                <![endif]-->
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <table class="rnb-del-min-width" style="min-width:590px;" name="Layout_33" id="Layout_33" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" style="min-width:590px;" valign="top" align="center">
+                        <table width="100%" height="38" cellspacing="0" cellpadding="0" border="0">
+                            <tbody><tr>
+                                <td valign="top" height="38">
+                                    <img style="display:block; max-height:38px; max-width:20px;" alt="" src="http://img.mailinblue.com/new_images/rnb/rnb_space.gif" width="20" height="38">
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+            </td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent; border-radius: 0px;">
+            
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+                <table class="rnb-del-min-width" style="min-width:100%;" name="Layout_27" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" valign="top" align="center">
+                        <table class="rnb-container" style="background-color: transparent; padding-left: 20px; padding-right: 20px; border-collapse: separate; border-radius: 0px; border-bottom: 5px solid rgb(16, 199, 155);" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="rnb-container-padding" valign="top" align="left">
+
+                                                <table class="rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="rnb-force-col" style="padding-right: 0px;" valign="top">
+
+                                                            <table valign="top" class="rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td class="content-spacing" style="font-size:14px; font-family:Arial,Helvetica,sans-serif, sans-serif; color:#3c4858; line-height: 21px;"><div id="mlconfs" style="line-height:48px;"><u><strong><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;"><span style="font-size:36px;">MLConf = </span></span></strong><a data-darkreader-inline-color="" href="http://ethical.institute/mle/23.html#mlconfs" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);"><span data-darkreader-inline-color="" style="color: rgb(16, 199, 155); --darkreader-inline-color:#5ef2cf;"><span style="font-size:36px;">Conferences &amp; Events</span></span></a></u></div>
+
+<div style="line-height:24px;"><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">We feature conferences that have core&nbsp; ML tracks (primarily in Europe for now) to help our community stay up to date with great events coming up. </span></span></div>
+
+<div style="line-height:24px;">&nbsp;</div>
+
+<div>
+<div><strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">Technical &amp; Scientific Conferences</span></span></strong></div>
+&nbsp;
+
+<div style="line-height: 24px;">&nbsp;</div>
+
+<ul>
+	<li style="line-height: 24px;"><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;"><strong><a href="https://www.eurnlp.org/" style="text-decoration: underline; color: rgb(16, 199, 155);">EURNLP 2019 [11/10/2019] </a>- </strong>European NLP Research summit in <strong>London, UK.</strong></span></span></li>
+</ul>
+
+<div style="line-height: 24px;">&nbsp;</div>
+
+<ul>
+	<li style="line-height: 24px;"><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;"><strong><a data-darkreader-inline-color="" href="https://datanatives.io/" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">Data Natives</a> [21/11/2019] - </strong>Data conference in <strong>Berlin, Germany.</strong></span></span></li>
+</ul>
+
+<div style="line-height: 24px;">&nbsp;</div>
+
+<ul>
+	<li style="line-height: 24px;"><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;"><strong><a data-darkreader-inline-color="" href="https://odsc.com/london?utm_campaign=ODSC%20Europe&amp;utm_source=kd%20nuggets&amp;utm_medium=meetings%20listing" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">ODSC Europe</a> [19/11/2019] - </strong>The Open Data Science Conference in&nbsp;<strong> London, UK.</strong></span></span></li>
+</ul>
+
+<div style="line-height: 24px;">&nbsp;</div>
+
+<ul>
+	<li style="line-height: 24px;"><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;"><strong><a href="https://khipu.ai/" style="text-decoration: underline; color: rgb(16, 199, 155);">Khipu AI [11/11/2019]</a></strong> - Latin American Meeting in Artifical Intelligence in <strong>Montevideo, Uruguay</strong>. </span></span></li>
+</ul>
+
+<div style="line-height: 24px;">
+<div>&nbsp;</div>
+</div>
+
+<div style="line-height: 24px;">&nbsp;</div>
+
+<div style="line-height: 24px;"><strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">Business Conferences</span></span></strong></div>
+
+<div style="line-height: 24px;">&nbsp;</div>
+
+<ul>
+	<li style="line-height: 24px;"><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;"><strong><a data-darkreader-inline-color="" href="https://www.predictiveanalyticsworld.com/" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">Predictive Analytics World</a> [18/11/2019]</strong> - Conference for Business AI in Berlin, Germany.</span></span></li>
+</ul>
+
+<div style="line-height: 24px;">&nbsp;</div>
+
+<ul>
+	<li style="line-height: 24px;"><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;"><strong><a data-darkreader-inline-color="" href="https://bigdataldn.com/" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">Big Data LDN 2019</a> [13/11/2019]</strong> - Conference for strategy and tech on big data in <strong>London, UK</strong>.</span></span></li>
+</ul>
+
+<div style="line-height: 24px;">&nbsp;</div>
+</div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table><!--[if mso]>
+                </td>
+                <![endif]-->
+                
+                <!--[if mso]>
+                </tr>
+                </table>
+                <![endif]-->
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <table class="rnb-del-min-width" style="min-width:590px;" name="Layout_30" id="Layout_30" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" style="min-width:590px;" valign="top" align="center">
+                        <table width="100%" height="38" cellspacing="0" cellpadding="0" border="0">
+                            <tbody><tr>
+                                <td valign="top" height="38">
+                                    <img style="display:block; max-height:38px; max-width:20px;" alt="" src="http://img.mailinblue.com/new_images/rnb/rnb_space.gif" width="20" height="38">
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+            </td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <table class="rnb-del-min-width" style="min-width:590px;" name="Layout_8812" id="Layout_8812" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" style="min-width:590px;" valign="top" align="center">
+                        <table width="100%" height="38" cellspacing="0" cellpadding="0" border="0">
+                            <tbody><tr>
+                                <td valign="top" height="38">
+                                    <img style="display:block; max-height:38px; max-width:20px;" alt="" src="http://img.mailinblue.com/new_images/rnb/rnb_space.gif" width="20" height="38">
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+            </td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent; border-radius: 0px;">
+                
+                <!--[if mso 15]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso 15]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+                <table class="rnb-del-min-width" style="min-width:100%;" name="Layout_15" id="Layout_15" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" valign="top" align="center">
+                        <table class="rnb-container" style="max-width: 100%; min-width: 100%; table-layout: fixed; background-color: transparent; border-radius: 0px; border-collapse: separate; padding: 20px;" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+                            <tbody><tr>
+                                <td class="rnb-container-padding" valign="top" align="left">
+
+                                    <table class="rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                        <tbody><tr>
+
+                                            <td class="rnb-force-col img-block-center" style="padding-right: 20px;" width="180" valign="top">
+
+                                                <table valign="top" class="rnb-col-2-noborder-onright" width="180" cellspacing="0" cellpadding="0" border="0" align="left">
+
+
+                                                    <tbody><tr>
+                                                        <td style="line-height: 1px;" class="img-block-center" width="100%" valign="top" align="left">
+                                                            <div style="border-top:0px none #000;border-right:0px None #000;border-bottom:0px None #000;border-left:0px None #000;display:inline-block;"><div><img alt="" style="vertical-align:top; float: left; width:180px;max-width:666px !important; " class="rnb-col-2-img-side-xl" src="http://img.mailinblue.com/2145551/images/rnb/original/5c10f8fbd16c4c8b080ffbaa.png" width="180" vspace="0" hspace="0" border="0"></div><div style="clear:both;"></div></div></td>
+                                                    </tr>
+                                                    </tbody></table>
+                                                </td><td class="rnb-force-col" valign="top">
+
+                                                <table valign="top" class="rnb-last-col-2" width="350" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                    <tbody><tr>
+                                                        <td style="font-size:24px; font-family:Arial,Helvetica,sans-serif; color:#3c4858; text-align:left;">
+                                                            <span style="color:#3c4858; "><span style="font-size:36px;"><span style="color:#FFFFFF;"><strong>About us</strong></span></span></span></td>
+                                                    </tr><tr>
+                                                        <td style="font-size:1px; line-height:0px; mso-hide: all;" height="10">&nbsp;</td>
+                                                    </tr><tr>
+                                                        <td class="rnb-mbl-float-none" style="font-size:14px; font-family:Arial,Helvetica,sans-serif;color:#3c4858;float:right;width:350px; line-height: 21px;"><div><span style="font-size:18px;"><span style="color:#FFFFFF;">The Institute for Ethical AI &amp; Machine Learning is a UK-based research centre that carries out world-class research into responsible machine learning systems.</span></span></div>
+</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="font-size:1px; line-height:0px; mso-hide: all;" height="10">&nbsp;</td>
+                                                    </tr><tr>
+                                                        <td valign="top">
+                                                            <table class="rnb-btn-col-content" style="border-collapse: separate;" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td style="font-size:20px; font-family:Arial,Helvetica,sans-serif; text-align:center; color:#ffffff; font-weight:normal; padding-left:14px; padding-right:14px; background-color:#10c79b; border-radius:4px;border-top:0px None #000;border-right:0px None #000;border-bottom:0px None #000;border-left:0px None #000;border-collapse: separate;" width="auto" valign="middle" height="32" bgcolor="#10c79b" align="center">
+                                                                        <span style="color:#ffffff; font-weight:normal;">
+                                                                        <a style="text-decoration:none; color:#ffffff; font-weight:normal;" target="_blank" href="https://ethical.institute/">Check out our website</a>
+                                                                        
+                                                                       </span>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody></table>
+                                                        </td>
+
+                                                    </tr></tbody></table>
+                                                </td>
+
+                                            </tr></tbody></table></td>
+                            </tr>
+                        </tbody></table>
+
+                    </td>
+                </tr>
+            </tbody></table>
+            <!--[if mso 15]>
+                </td>
+                <![endif]-->
+
+                <!--[if mso 15]>
+                </tr>
+                </table>
+                <![endif]-->
+            
+        </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <table class="rnb-del-min-width" style="min-width:590px;" name="Layout_4988" id="Layout_4988" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" style="min-width:590px;" valign="top" align="center">
+                        <table width="100%" height="38" cellspacing="0" cellpadding="0" border="0">
+                            <tbody><tr>
+                                <td valign="top" height="38">
+                                    <img style="display:block; max-height:38px; max-width:20px;" alt="" src="http://img.mailinblue.com/new_images/rnb/rnb_space.gif" width="20" height="38">
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+            </td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: rgb(255, 255, 255);">
+                
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+                <table class="rnb-del-min-width" style="min-width:100%; -webkit-backface-visibility: hidden; line-height: 10px;" name="Layout_12" id="Layout_12" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" style="min-width: 590px;" valign="top" align="center">
+                        <table class="rnb-container" style="background-color: rgb(255, 255, 255);" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" align="center">
+                            <tbody><tr>
+                                <td valign="top" align="center">
+                                    <table cellspacing="0" cellpadding="0" border="0">
+                                        <tbody><tr>
+                                            <td>
+                                                <div style="display:block; border-radius:5px; width:590;;max-width:1202px !important;border-top:0px None #000;border-right:0px None #000;border-bottom:0px None #000;border-left:0px None #000;border-collapse: separate;border-radius: 0px;">
+                                                    <div><img ng-if="col.img.source != 'url'" class="rnb-header-img" alt="" style="display:block; float:left; border-radius: 5px; " src="http://img.mailinblue.com/2145551/images/rnb/original/5c10f8d3722aa38b484d8523.png" width="590" vspace="0" hspace="0" border="0"></div><div style="clear:both;"></div>
+                                                    </div></td>
+                                        </tr>
+                                    </tbody></table>
+
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr></tbody></table>
+            <!--[if mso]>
+                </td>
+                <![endif]-->
+                
+                <!--[if mso]>
+                </tr>
+                </table>
+                <![endif]-->
+            
+        </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent;">
+                
+                <table class="rnb-del-min-width rnb-tmpl-width" style="min-width:590px;" name="Layout_" id="Layout_" width="100%" cellspacing="0" cellpadding="0" border="0">
+                    <tbody><tr>
+                        <td class="rnb-del-min-width" style="min-width: 590px; background-color: transparent;" valign="top" bgcolor="transparent" align="center">
+                            <table class="rnb-container" width="590" cellspacing="0" cellpadding="0" border="0" align="center">
+                                <tbody><tr>
+                                    <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td class="rnb-container-padding" style="font-size: 14px; font-family: Arial,Helvetica,sans-serif; color: #888888;" valign="top" align="left">
+
+                                        <table class="rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                            <tbody><tr>
+                                                <td class="rnb-force-col" style="padding-right:20px; padding-left:20px; mso-padding-alt: 0 0 0 20px;" valign="top">
+
+                                                    <table valign="top" class="rnb-col-2 rnb-social-text-left" style="border-bottom:0;" width="264" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                        <tbody><tr>
+                                                            <td valign="top">
+                                                                <table class="rnb-btn-col-content" cellspacing="0" cellpadding="0" border="0" align="left">
+                                                                    <tbody><tr>
+                                                                        <td style="font-size:14px; font-family:Arial,Helvetica,sans-serif; color:#888888; line-height: 16px" class="rnb-text-center" valign="middle" align="left">
+                                                                            <div></div>
+                                                                        </td></tr>
+                                                                </tbody></table>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody></table>
+                                                    </td><td ng-if="item.text.align=='left'" class="rnb-force-col rnb-social-width" style="mso-padding-alt: 0 20px 0 0; padding-right: 15px;" valign="top">
+
+                                                    <table valign="top" class="rnb-last-col-2" width="246" cellspacing="0" cellpadding="0" border="0" align="right">
+
+                                                        <tbody><tr>
+                                                            <td valign="top">
+                                                                <table class="rnb-social-align" style="float: right;" cellspacing="0" cellpadding="0" border="0" align="right">
+                                                                    <tbody><tr>
+                                                                        <td class="rnb-text-center" ng-init="width=setSocialIconsBlockWidth(item)" width="125" valign="middle" align="right">
+                                                                            <div class="rnb-social-center">
+                                                                            <table style="float:left; display: inline-block" cellspacing="0" cellpadding="0" border="0" align="left">
+                                                                            <tbody><tr>
+                                                                                    <td style="padding:0px 5px 5px 0px; mso-padding-alt: 0px 2px 5px 0px;" align="left">
+                                                                            <span style="color:#ffffff; font-weight:normal;">
+                                                                                <a target="_blank" href="https://www.facebook.com/EthicalML/"><img alt="Facebook" style="vertical-align:top;" target="_blank" src="http://img.mailinblue.com/new_images/rnb/theme4/rnb_ico_fb.png" vspace="0" hspace="0" border="0"></a></span>
+                                                                            </td></tr></tbody></table>
+                                                                            </div><div class="rnb-social-center">
+                                                                            <table style="float:left; display: inline-block" cellspacing="0" cellpadding="0" border="0" align="left">
+                                                                            <tbody><tr>
+                                                                                    <td style="padding:0px 5px 5px 0px; mso-padding-alt: 0px 2px 5px 0px;" align="left">
+                                                                            <span style="color:#ffffff; font-weight:normal;">
+                                                                                <a target="_blank" href="https://www.twitter.com/EthicalML/"><img alt="Twitter" style="vertical-align:top;" target="_blank" src="http://img.mailinblue.com/new_images/rnb/theme4/rnb_ico_tw.png" vspace="0" hspace="0" border="0"></a></span>
+                                                                            </td></tr></tbody></table>
+                                                                            </div><div class="rnb-social-center">
+                                                                            <table style="float:left; display: inline-block" cellspacing="0" cellpadding="0" border="0" align="left">
+                                                                            <tbody><tr>
+                                                                                    <td style="padding:0px 5px 5px 0px; mso-padding-alt: 0px 2px 5px 0px;" align="left">
+                                                                            <span style="color:#ffffff; font-weight:normal;">
+                                                                                <a target="_blank" href="https://www.linkedin.com/company/the-institute-for-ethical-machine-learning/"><img alt="LinkedIn" style="vertical-align:top;" target="_blank" src="http://img.mailinblue.com/new_images/rnb/theme4/rnb_ico_in.png" vspace="0" hspace="0" border="0"></a></span>
+                                                                            </td></tr></tbody></table>
+                                                                            </div></td>
+                                                                    </tr>
+                                                                </tbody></table>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody></table>
+                                                    </td></tr>
+                                        </tbody></table></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                </tr>
+                            </tbody></table>
+
+                        </td>
+                    </tr></tbody></table>
+                
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent;">
+                
+                <table class="rnb-del-min-width rnb-tmpl-width" style="min-width:590px;" name="Layout_4" id="Layout_4" width="100%" cellspacing="0" cellpadding="0" border="0">
+                    <tbody><tr>
+                        <td class="rnb-del-min-width" style="min-width:590px;" valign="top" align="center">
+                            <table style="padding-right: 20px; padding-left: 20px; background-color: transparent;" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent" align="center">
+                                <tbody><tr>
+                                    <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-size:14px; color:#888888; font-weight:normal; text-align:center; font-family:'Roboto','Verdana',Geneva,sans-serif;">
+                                        <div>© 2018 The Institute for Ethical AI &amp; Machine Learning</div>
+                                    </td></tr>
+                                <tr>
+                                    <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                </tr>
+                            </tbody></table>
+                        </td>
+                    </tr>
+                </tbody></table>
+                
+            </div></td>
+    </tr></tbody></table>
+            <!--[if gte mso 9]>
+                        </td>
+                        </tr>
+                        </table>
+                        <![endif]-->
+                        </td>
+        </tr>
+        </tbody></table>
+                        </section>
+                    </div>
+                </div>
+
+		<!-- Scripts -->
+			<script src="/assets/js/jquery.min.js"></script>
+			<script src="/assets/js/jquery.scrolly.min.js"></script>
+			<script src="/assets/js/jquery.dropotron.min.js"></script>
+			<script src="/assets/js/jquery.scrollex.min.js"></script>
+			<script src="/assets/js/skel.min.js"></script>
+			<script src="/assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="/assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="/assets/js/main.js"></script>
+
+			<!-- Footer -->
+				<footer id="footer">
+					<ul class="icons">
+						<li><a href="https://twitter.com/EthicalML" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+                        <li><a href="https://facebook.com/EthicalML" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+						<li><a href="https://www.linkedin.com/company/the-institute-for-ethical-machine-learning/" class="icon fa-linkedin"><span class="label">LinkedIn</span></a></li>
+						<li><a href="https://github.com/EthicalML" class="icon fa-github"><span class="label">GitHub</span></a></li>
+                        <li><a href="mailto:a@ethical.institute" class="icon fa-envelope"><span class="label">Email</span></a></li>
+					</ul>
+					<ul class="copyright">
+						<li>&copy; The Institute for Ethical AI & ML. 
+                            All rights reserved.</li>
+					</ul>
+				</footer>
+
+
+		<!-- Scripts -->
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-89407852-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-89407852-2');
+    </script>
+
+
+	</body>
+</html>
