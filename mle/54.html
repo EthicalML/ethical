@@ -1,0 +1,1191 @@
+<!DOCTYPE HTML>
+<!--
+	Landed by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>The Machine Learning Engineer Newsletter</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="google-site-verification" content="9rfgBQEvfnZ7HS_kBzINrlrJ-_sJcyJxqEUltqvP9Og" />
+        <meta name="author" content="The Machine Learning Engineer Newsletter">
+        <meta name="description" content="Curated articles, tutorials and blog posts from experienced Machine Learning professionals. Obtain insights on best practices, tools and techniques in machine learning explainability, reproducibility, model evaluation, feature analysis and beyond.">
+        <link rel="canonical" href="https://ethical.institute">
+        <link rel="icon" href="images/logos/eml-logo-white.png">
+
+
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+
+        <!-- FACEBOOK -->
+        <meta property="og:url" content="https://ethical.institute">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="The Machine Learning Engineer Newsletter">
+        <meta property="og:description" content="Curated articles, tutorials and blog posts from experienced Machine Learning professionals. Obtain insights on best practices, tools and techniques in machine learning explainability, reproducibility, model evaluation, feature analysis and beyond.">
+        <meta property="og:image" content="https://ethical.institute/images/mle.jpg">
+
+
+
+        <!-- THE TWITTER -->
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="@EthicalML">
+        <meta name="twitter:creator" content="@EthicalML">
+        <meta name="twitter:title" content="The Machine Learning Engineer Newsletter">
+        <meta name="twitter:description" content="Curated articles, tutorials and blog posts from experienced Machine Learning professionals. Obtain insights on best practices, tools and techniques in machine learning explainability, reproducibility, model evaluation, feature analysis and beyond.">
+        <meta name="twitter:image:src" content="https://ethical.institute/images/mle.jpg">
+
+
+        <!-- G++ -->
+        <meta itemprop="name" content="The Machine Learning Engineer Newsletter">
+        <meta itemprop="description" content="Curated articles, tutorials and blog posts from experienced Machine Learning professionals. Obtain insights on best practices, tools and techniques in machine learning explainability, reproducibility, model evaluation, feature analysis and beyond.">
+        <meta itemprop="image" content="https://ethical.institute/images/mle.jpg">
+
+
+
+
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="/assets/css/main.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="/assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="/assets/css/ie8.css" /><![endif]-->
+
+        <script src="/assets/js/jquery.min.js"></script>
+        <script src="/assets/js/jquery.scrolly.min.js"></script>
+        <script src="/assets/js/jquery.dropotron.min.js"></script>
+        <script src="/assets/js/jquery.scrollex.min.js"></script>
+        <script src="/assets/js/skel.min.js"></script>
+        <script src="/assets/js/util.js"></script>
+        <script src="/assets/js/three.min.js"></script>
+        <!--[if lte IE 8]><script src="/assets/js/ie/respond.min.js"></script><![endif]-->
+        <script src="/assets/js/Projector.js"></script>
+        <script src="/assets/js/CanvasRenderer.js"></script>
+        <script src="/assets/js/stats.min.js"></script>
+        <script src="/assets/js/main.js"></script>
+
+	</head>
+
+	<body class="landing">
+		<div id="page-wrapper">
+
+			<!-- Header -->
+				<header id="header">
+                    <h1 id="logo"><a href="index.html"><img src="/images/logos/eml-logo-white.png" height="15px"> The Institute for Ethical AI & Machine Learning</a></h1>
+					<nav id="nav">
+						<ul style="font-weight: bold">
+							<li><a href="/index.html">Home</a></li>
+							<li>
+                            <a href="/principles.html">Principles</a>
+                            <ul>
+                                <li><a href="/principles.html#commitment-1">#1 Human Augmentation</a></li>
+                                <li><a href="/principles.html#commitment-2">#2 Bias Evaluation</a></li>
+                                <li><a href="/principles.html#commitment-3">#3 Explainability</a></li>
+                                <li><a href="/principles.html#commitment-4">#4 Reproducible Operations</a></li>
+                                <li><a href="/principles.html#commitment-5">#5 Displacement Strategy</a></li>
+                                <li><a href="/principles.html#commitment-6">#6 Practical Accuracy</a></li>
+                                <li><a href="/principles.html#commitment-7">#7 Trust by Privacy</a></li>
+                                <li><a href="/principles.html#commitment-8">#8 Security Risks</a></li>
+                            </ul>
+                            <li>
+                                <a href="/rfx.html">AI-RFX Framework</a>
+                            </li>
+                            <li>
+                                <a href="/mle.html">Machine Learning Newsletter</a>
+                            </li>
+	
+                            </li>
+							<li><a href="/index.html#contact" class="button special">Contact us or Join</a></li>
+						</ul>
+					</nav>
+				</header>
+
+			<!-- Main -->
+<style>
+table, tbody, tr, td {
+    padding: 0 0 0 0 !important;
+    background-color: transparent !important;
+    border-collapse: separate !important;
+    margin: 0 0 0 0 !important;
+    width: 80vw !important;
+    max-width: 590px !important;
+}
+table, div, table img, tbody, tr, td {
+    min-width: 0px !important;
+}
+table {
+    margin: auto auto !important;
+}
+table div, table img {
+    width: 80vw !important;
+    max-width: 590px !important;
+}
+a {
+    border-bottom: none;
+}
+</style>
+				<div id="main" class="wrapper style1">
+					<div class="container">
+						<!-- Text -->
+
+						<header class="major">
+							<h2>Subscribe to the Machine Learning Engineer Newsletter</h2>
+							<p>Receive curated articles, tutorials and blog posts from experienced Machine Learning professionals. </p>
+
+                                <iframe width="540" height="416" src="https://my.sendinblue.com/users/subscribe/js_id/3rb9p/id/2" frameborder="0" scrolling="auto" allowfullscreen style="display: block;margin-left: auto;margin-right: auto;max-width: 100%; margin-top: -40px; margin-bottom: -200px"></iframe>
+
+                                <br>
+
+                        <section>
+                            <table class="main-template" style="background-color: rgb(28, 29, 38); --darkreader-inline-bgcolor:#1c1d26;" data-darkreader-inline-bgcolor="" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#1c1d26" align="center">
+
+    <tbody><tr style="display:none !important; font-size:1px; mso-hide: all;"><td></td><td></td></tr><tr>
+        <td valign="top" align="center">
+        <!--[if gte mso 9]>
+                        <table align="center" border="0" cellspacing="0" cellpadding="0" width="590" style="width:590px;">
+                        <tr>
+                        <td align="center" valign="top" width="590" style="width:590px;">
+                        <![endif]-->
+            <table class="templateContainer" style="max-width:590px!important; width: 590px;" width="100%" cellspacing="0" cellpadding="0" border="0">
+        <tbody><tr>
+
+        <td valign="top" align="center">
+
+            <table class="rnb-del-min-width" style="min-width:590px;" name="Layout_25" id="Layout_25" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" style="min-width:590px;" valign="top" align="center">
+                        <table width="100%" height="38" cellspacing="0" cellpadding="0" border="0">
+                            <tbody><tr>
+                                <td valign="top" height="38">
+                                    <img style="display:block; max-height:38px; max-width:20px;" alt="" src="http://img.mailinblue.com/new_images/rnb/rnb_space.gif" width="20" height="38">
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+            </td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: rgb(255, 255, 255); --darkreader-inline-bgcolor:#181a1b;" data-darkreader-inline-bgcolor="">
+                
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+                <table class="rnb-del-min-width" style="min-width:100%; -webkit-backface-visibility: hidden; line-height: 10px;" name="Layout_24" id="Layout_24" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" style="min-width: 590px;" valign="top" align="center">
+                        <table class="rnb-container" style="background-color: rgb(255, 255, 255); --darkreader-inline-bgcolor:#181a1b;" data-darkreader-inline-bgcolor="" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" align="center">
+                            <tbody><tr>
+                                <td valign="top" align="center">
+                                    <table cellspacing="0" cellpadding="0" border="0">
+                                        <tbody><tr>
+                                            <td>
+                                                <div style="display: block; max-width: 1202px !important; border-color: rgb(0, 0, 0); border-style: none; border-width: 0px; border-collapse: separate; border-radius: 0px; --darkreader-inline-border-top:#666666; --darkreader-inline-border-right:#666666; --darkreader-inline-border-bottom:#666666; --darkreader-inline-border-left:#666666;" data-darkreader-inline-border-top="" data-darkreader-inline-border-right="" data-darkreader-inline-border-bottom="" data-darkreader-inline-border-left="">
+                                                    <div><img ng-if="col.img.source != 'url'" class="rnb-header-img" alt="" style="display:block; float:left; border-radius: 5px; " src="http://img.mailinblue.com/2145551/images/rnb/original/5c10f8d3722aa38b484d8523.png" width="590" vspace="0" hspace="0" border="0"></div><div style="clear:both;"></div>
+                                                    </div></td>
+                                        </tr>
+                                    </tbody></table>
+
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr></tbody></table>
+            <!--[if mso]>
+                </td>
+                <![endif]-->
+                
+                <!--[if mso]>
+                </tr>
+                </table>
+                <![endif]-->
+            
+        </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <table class="rnb-del-min-width" style="min-width:590px;" name="Layout_4961" id="Layout_4961" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" style="min-width:590px;" valign="top" align="center">
+                        <table width="100%" height="38" cellspacing="0" cellpadding="0" border="0">
+                            <tbody><tr>
+                                <td valign="top" height="38">
+                                    <img style="display:block; max-height:38px; max-width:20px;" alt="" src="http://img.mailinblue.com/new_images/rnb/rnb_space.gif" width="20" height="38">
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+            </td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent; border-radius: 0px; --darkreader-inline-bgcolor:transparent;" data-darkreader-inline-bgcolor="">
+                
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+            
+                <table name="Layout_7" id="Layout_7" width="100%" cellspacing="0" cellpadding="0" border="0"><tbody><tr>
+                    <td valign="top" align="center"><table class="rnb-container" style="height: 0px; background-color: transparent; border-bottom: 5px solid rgb(16, 199, 155); border-radius: 0px; border-collapse: separate; padding-left: 20px; padding-right: 20px; --darkreader-inline-bgcolor:transparent; --darkreader-inline-border-bottom:#0fbd93;" data-darkreader-inline-bgcolor="" data-darkreader-inline-border-bottom="" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent"><tbody><tr>
+                                <td class="rnb-container-padding" style="font-size: px;font-family: ; color: ;">
+
+                                    <table class="rnb-columns-container" style="margin:auto;" cellspacing="0" cellpadding="0" border="0" align="center">
+                                        <tbody><tr>
+
+                                            <td class="rnb-force-col" align="center">
+
+                                                <table class="rnb-col-1" cellspacing="0" cellpadding="0" border="0" align="center">
+
+                                                    <tbody><tr>
+                                                        <td height="10"></td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td class="content-spacing" style="font-family: &quot;Roboto&quot;, &quot;Verdana&quot;, Geneva, sans-serif; color: rgb(60, 72, 88); text-align: center; --darkreader-inline-color:#cbc7bf;" data-darkreader-inline-color="">
+
+                                                            <span style="color: rgb(60, 72, 88); --darkreader-inline-color:#cbc7bf;" data-darkreader-inline-color=""><span style="font-size:28px;"><strong><span data-darkreader-inline-color="" style="color: rgb(16, 199, 155); --darkreader-inline-color:#5ef2cf;"><span style="font-size:36px;"><span style="font-size:48px;">THE ML</span></span> <span style="font-size:48px;">ENGINEER&nbsp;🤖 </span></span></strong></span>
+<div style="line-height:48px;"><span style="font-size:28px;"><strong><span style="font-size:48px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">Issue #54</span></span></strong></span></div>
+</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td height="10"></td>
+                                                    </tr>
+                                                    </tbody></table>
+                                                </td></tr>
+                                    </tbody></table></td>
+                            </tr>
+
+                        </tbody></table>
+
+                    </td>
+                </tr>
+
+            </tbody></table><!--[if mso]>
+                </td>
+                <![endif]-->
+                
+                <!--[if mso]>
+                </tr>
+                </table>
+                <![endif]-->
+            
+        </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <table class="rnb-del-min-width" style="min-width:590px;" name="Layout_7132" id="Layout_7132" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" style="min-width:590px;" valign="top" align="center">
+                        <table width="100%" height="38" cellspacing="0" cellpadding="0" border="0">
+                            <tbody><tr>
+                                <td valign="top" height="38">
+                                    <img style="display:block; max-height:38px; max-width:20px;" alt="" src="http://img.mailinblue.com/new_images/rnb/rnb_space.gif" width="20" height="38">
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+            </td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent; border-radius: 0px; --darkreader-inline-bgcolor:transparent;" data-darkreader-inline-bgcolor="">
+            
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+                <table class="rnb-del-min-width" style="min-width:100%;" name="Layout_9" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" valign="top" align="center">
+                        <table class="rnb-container" style="background-color: transparent; padding-left: 20px; padding-right: 20px; border-collapse: separate; border-radius: 0px; border-bottom: 5px solid rgb(16, 199, 155); --darkreader-inline-bgcolor:transparent; --darkreader-inline-border-bottom:#0fbd93;" data-darkreader-inline-bgcolor="" data-darkreader-inline-border-bottom="" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="rnb-container-padding" valign="top" align="left">
+
+                                                <table class="rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="rnb-force-col" style="padding-right: 0px;" valign="top">
+
+                                                            <table valign="top" class="rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td class="content-spacing" style="font-size: 14px; font-family: &quot;Roboto&quot;, &quot;Verdana&quot;, Geneva, sans-serif, sans-serif; color: rgb(60, 72, 88); line-height: 21px; --darkreader-inline-color:#cbc7bf;" data-darkreader-inline-color=""><div>&nbsp;
+<div>
+<div style="line-height:24px;">
+<div><span style="font-size:36px;"><strong><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">This week in <a data-darkreader-inline-color="" href="https://ethical.institute/mle/53.html" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">Issue #54:</a></span></strong></span></div>
+
+<div>&nbsp;</div>
+
+<ul>
+	<li><strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">From system 1 to system 2 <a data-darkreader-inline-color="" href="http://slideslive.com/38921750/from-system-1-deep-learning-to-system-2-deep-learning" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">by Yoshua Bengio</a></span></span></strong></li>
+	<li><strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">The Artificial Intelligence <a data-darkreader-inline-color="" href="http://hai.stanford.edu/sites/g/files/sbiybj10986/f/ai_index_2019_report.pdf" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">Index 2019 Report</a></span></span></strong></li>
+	<li><strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">Microsoft's <a data-darkreader-inline-color="" href="http://github.com/microsoft/nlp-recipes/" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">NLP Best Practices</a></span></span></strong></li>
+	<li><strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">The day that changed <a data-darkreader-inline-color="" href="http://www.linkedin.com/pulse/date-changed-netflixs-attitude-towards-availability-jaspreet-bakshi/" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">Netflix tech</a></span></span></strong></li>
+	<li><strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">Attention and <a data-darkreader-inline-color="" href="http://distill.pub/2016/augmented-rnns/" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">Augmented RNNs</a></span></span></strong></li>
+	<li><strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">Featured OSS <a data-darkreader-inline-color="" href="http://github.com/ethicalml/awesome-production-machine-learning" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">Production ML Libraries</a></span></span></strong></li>
+	<li><strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">Awesome AI Guidelines <a data-darkreader-inline-color="" href="https://github.com/ethicalml/awesome-artificial-intelligence-guidelines" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">to check out this week</a></span></span></strong></li>
+	<li><strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">AI <a data-darkreader-inline-color="" href="http://ethical.institute/mle/38.html#mlconfs" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">conferences<strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">&nbsp;</span></span></strong></a></span></span></strong></li>
+	<li><strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">+ more 🚀</span></span></strong></li>
+</ul>
+
+<div>&nbsp;</div>
+</div>
+
+<div style="line-height:24px;"><strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">Forward the email, or share <a data-darkreader-inline-color="" href="https://ethical.institute/mle/52.html" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">the online version</a> on 🐦 <a data-darkreader-inline-color="" href="https://twitter.com/intent/tweet?text=Great Newsletter on Machine Learning!%20 https://ethical.institute/mle.html" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">Twitter</a>,&nbsp; 💼 <a data-darkreader-inline-color="" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://ethical.institute/mle.html&amp;title=The Machine Learning Engineer Newsletter&amp;summary=Curated news about machine learning operations, reproducibility, explainability and beyond" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">Linkedin</a> and&nbsp; 📕 <a class="fbc-has-badge fbc-UID_2" data-darkreader-inline-color="" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fethical.institute%2Fmle.html" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">Facebook</a>!</span></span></strong></div>
+
+<div style="line-height:24px;">&nbsp;</div>
+
+<div style="line-height:24px;"><strong><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">If you would like to suggest articles, ideas, papers, libraries, jobs, events or provide feedback just hit reply or send us an email to <a data-darkreader-inline-color="" href="mailto:a@ethical.institute" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">a@ethical.institute</a>! We have received a lot of great suggestions in the past, thank you very much for everyone's support! </span></span></strong></div>
+
+<div style="line-height:24px;">&nbsp;</div>
+</div>
+</div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table><!--[if mso]>
+                </td>
+                <![endif]-->
+                
+                <!--[if mso]>
+                </tr>
+                </table>
+                <![endif]-->
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <table class="rnb-del-min-width" style="min-width:590px;" name="Layout_9012" id="Layout_9012" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" style="min-width:590px;" valign="top" align="center">
+                        <table width="100%" height="38" cellspacing="0" cellpadding="0" border="0">
+                            <tbody><tr>
+                                <td valign="top" height="38">
+                                    <img style="display:block; max-height:38px; max-width:20px;" alt="" src="http://img.mailinblue.com/new_images/rnb/rnb_space.gif" width="20" height="38">
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+            </td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent; border-radius: 0px; --darkreader-inline-bgcolor:transparent;" data-darkreader-inline-bgcolor="">
+            
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+                <table class="rnb-del-min-width" style="min-width:100%;" name="Layout_20" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" valign="top" align="center">
+                        <table class="rnb-container" style="background-color: transparent; padding-left: 20px; padding-right: 20px; border-collapse: separate; border-radius: 0px; border-bottom: 0px none rgb(200, 200, 200); --darkreader-inline-bgcolor:transparent; --darkreader-inline-border-bottom:#3e3e3e;" data-darkreader-inline-bgcolor="" data-darkreader-inline-border-bottom="" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="rnb-container-padding" valign="top" align="left">
+
+                                                <table class="rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="rnb-force-col" style="padding-right: 0px;" valign="top">
+
+                                                            <table valign="top" class="rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td class="content-spacing" style="font-size: 14px; font-family: Arial, Helvetica, sans-serif, sans-serif; color: rgb(60, 72, 88); line-height: 21px; --darkreader-inline-color:#cbc7bf;" data-darkreader-inline-color=""><div style="line-height:48px;"><a data-darkreader-inline-color="" href="https://slideslive.com/38921750/from-system-1-deep-learning-to-system-2-deep-learning" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);"><span style="font-size:36px;">Yoshua Bengio; Towards system 2 </span></a></div>
+
+<div style="line-height:24px;"><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">Past progress in deep learning has concentrated mostly on learning from a static dataset, mostly for perception tasks and other System 1 tasks which are done intuitively and unconsciously by humans. However, in recent years, a shift in research direction and new tools such as soft-attention and progress in deep reinforcement learning are opening the door to the development of novel deep architectures and training frameworks for addressing System 2 tasks (which are done consciously), such as reasoning, planning, capturing causality and obtaining systematic generalization in natural language processing and other applications. Yoshua Bengio shared very interesting insights on this NeurIPS talk which covered the key concepts that will enable expansion from System 1 tasks to System 2 tasks.</span></span></div>
+
+<div style="line-height:24px;">&nbsp;</div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table><!--[if mso]>
+                </td>
+                <![endif]-->
+                
+                <!--[if mso]>
+                </tr>
+                </table>
+                <![endif]-->
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent; border-radius: 0px; --darkreader-inline-bgcolor:transparent;" data-darkreader-inline-bgcolor="">
+            
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+                <table class="rnb-del-min-width" style="min-width:100%;" name="Layout_26" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" valign="top" align="center">
+                        <table class="rnb-container" style="background-color: transparent; padding-left: 20px; padding-right: 20px; border-collapse: separate; border-radius: 0px; border-bottom: 0px none rgb(16, 199, 155); --darkreader-inline-bgcolor:transparent; --darkreader-inline-border-bottom:#0fbd93;" data-darkreader-inline-bgcolor="" data-darkreader-inline-border-bottom="" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="rnb-container-padding" valign="top" align="left">
+
+                                                <table class="rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="rnb-force-col" style="padding-right: 0px;" valign="top">
+
+                                                            <table valign="top" class="rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td class="content-spacing" style="font-size: 14px; font-family: Arial, Helvetica, sans-serif, sans-serif; color: rgb(60, 72, 88); line-height: 21px; --darkreader-inline-color:#cbc7bf;" data-darkreader-inline-color=""><div style="line-height:48px;"><a data-darkreader-inline-color="" href="https://hai.stanford.edu/sites/g/files/sbiybj10986/f/ai_index_2019_report.pdf" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);"><span style="font-size:36px;">AI Index 2019 Report</span></a></div>
+
+<div style="line-height:24px;">
+<div>
+<div>
+<div><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">The AI Index, a Stanford-backed initiative to assess the progress and impact of AI, has launched its 2019 report. The new report contains a vast amount of data relating to AI, covering areas ranging from bibliometrics, to technical progress, to analysis of diversity within the field of AI. Jack Clark from OpenAI, who is part of the steering committee outlined some key statistics that include: 300% growth in volume of peer-reviewed AI papers, 800% growth in NeurIPS attendance since 2012, $70b invested worldwide in AI, and more.</span></span></div>
+</div>
+</div>
+</div>
+
+<div style="line-height:24px;">&nbsp;</div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table><!--[if mso]>
+                </td>
+                <![endif]-->
+                
+                <!--[if mso]>
+                </tr>
+                </table>
+                <![endif]-->
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent; border-radius: 0px; --darkreader-inline-bgcolor:transparent;" data-darkreader-inline-bgcolor="">
+            
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+                <table class="rnb-del-min-width" style="min-width:100%;" name="Layout_35" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" valign="top" align="center">
+                        <table class="rnb-container" style="background-color: transparent; padding-left: 20px; padding-right: 20px; border-collapse: separate; border-radius: 0px; border-bottom: 0px none rgb(200, 200, 200); --darkreader-inline-bgcolor:transparent; --darkreader-inline-border-bottom:#3e3e3e;" data-darkreader-inline-bgcolor="" data-darkreader-inline-border-bottom="" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="rnb-container-padding" valign="top" align="left">
+
+                                                <table class="rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="rnb-force-col" style="padding-right: 0px;" valign="top">
+
+                                                            <table valign="top" class="rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td class="content-spacing" style="font-size: 14px; font-family: Arial, Helvetica, sans-serif, sans-serif; color: rgb(60, 72, 88); line-height: 21px; --darkreader-inline-color:#cbc7bf;" data-darkreader-inline-color=""><div style="line-height:48px;"><a data-darkreader-inline-color="" href="https://github.com/microsoft/nlp-recipes/" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);"><span style="font-size:36px;">Microsoft's NLP Best Practices</span></a></div>
+
+<div style="line-height:24px;">
+<div><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">In recent years, natural language processing (NLP) has seen quick growth in quality and usability, and this has helped to drive business adoption of artificial intelligence (AI) solutions. Microsoft has put together a great repository with examples and best practices for building NLP systems, provided as Jupyter notebooks and utility functions. The focus of the repository is on state-of-the-art methods and common scenarios that are popular among researchers and practitioners working on problems involving text and language.</span></span></div>
+</div>
+
+<div style="line-height:24px;">&nbsp;</div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table><!--[if mso]>
+                </td>
+                <![endif]-->
+                
+                <!--[if mso]>
+                </tr>
+                </table>
+                <![endif]-->
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent; border-radius: 0px; --darkreader-inline-bgcolor:transparent;" data-darkreader-inline-bgcolor="">
+            
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+                <table class="rnb-del-min-width" style="min-width:100%;" name="Layout_21" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" valign="top" align="center">
+                        <table class="rnb-container" style="background-color: transparent; padding-left: 20px; padding-right: 20px; border-collapse: separate; border-radius: 0px; border-bottom: 0px none rgb(200, 200, 200); --darkreader-inline-bgcolor:transparent; --darkreader-inline-border-bottom:#3e3e3e;" data-darkreader-inline-bgcolor="" data-darkreader-inline-border-bottom="" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="rnb-container-padding" valign="top" align="left">
+
+                                                <table class="rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="rnb-force-col" style="padding-right: 0px;" valign="top">
+
+                                                            <table valign="top" class="rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td class="content-spacing" style="font-size: 14px; font-family: Arial, Helvetica, sans-serif, sans-serif; color: rgb(60, 72, 88); line-height: 21px; --darkreader-inline-color:#cbc7bf;" data-darkreader-inline-color=""><div style="line-height:48px;"><a data-darkreader-inline-color="" href="https://www.linkedin.com/pulse/date-changed-netflixs-attitude-towards-availability-jaspreet-bakshi/" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);"><span style="font-size:36px;">The day that changed Netflix tech</span></a></div>
+
+<div style="line-height:24px;">
+<div><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">On Christmas Eve 2012, Netflix streaming service experienced an outage. This particular incident got a lot of media coverage for obvious reasons, and was caused due to an AWS region becoming fully unavailable. To mitigate region-based outages, Netflix invested heavily in Resiliency Engineering and Cloud Platform teams to create a discipline to break things on purpose. This post provides really interesting insight on some of the approaches taken to address these issues.</span></span></div>
+</div>
+
+<div style="line-height:24px;">&nbsp;</div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table><!--[if mso]>
+                </td>
+                <![endif]-->
+                
+                <!--[if mso]>
+                </tr>
+                </table>
+                <![endif]-->
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent; border-radius: 0px; --darkreader-inline-bgcolor:transparent;" data-darkreader-inline-bgcolor="">
+            
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+                <table class="rnb-del-min-width" style="min-width:100%;" name="Layout_18" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" valign="top" align="center">
+                        <table class="rnb-container" style="background-color: transparent; padding-left: 20px; padding-right: 20px; border-collapse: separate; border-radius: 0px; border-bottom: 0px none rgb(200, 200, 200); --darkreader-inline-bgcolor:transparent; --darkreader-inline-border-bottom:#3e3e3e;" data-darkreader-inline-bgcolor="" data-darkreader-inline-border-bottom="" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="rnb-container-padding" valign="top" align="left">
+
+                                                <table class="rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="rnb-force-col" style="padding-right: 0px;" valign="top">
+
+                                                            <table valign="top" class="rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td class="content-spacing" style="font-size: 14px; font-family: Arial, Helvetica, sans-serif, sans-serif; color: rgb(60, 72, 88); line-height: 21px; --darkreader-inline-color:#cbc7bf;" data-darkreader-inline-color=""><div style="line-height:48px;"><a data-darkreader-inline-color="" href="https://distill.pub/2016/augmented-rnns/" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);"><span style="font-size:36px;">Attention and Augmented RNNs</span></a></div>
+
+<div style="line-height:24px;">
+<div><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">Recurrent neural networks are one of the staples of deep learning, allowing neural networks to work with sequences of data like text, audio and video. Such models have been found to be very powerful, achieving remarkable results in many tasks including translation, voice recognition, and image captioning. As a result, recurrent neural networks have become very widespread in the last few years. This post provides a great overview on RNNs, together with intuition on some of the core concepts around these.</span></span></div>
+</div>
+
+<div style="line-height:24px;">&nbsp;</div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table><!--[if mso]>
+                </td>
+                <![endif]-->
+                
+                <!--[if mso]>
+                </tr>
+                </table>
+                <![endif]-->
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent; border-radius: 0px; --darkreader-inline-bgcolor:transparent;" data-darkreader-inline-bgcolor="">
+            
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+                <table class="rnb-del-min-width" style="min-width:100%;" name="Layout_31" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" valign="top" align="center">
+                        <table class="rnb-container" style="background-color: transparent; padding-left: 20px; padding-right: 20px; border-collapse: separate; border-radius: 0px; border-bottom: 5px solid rgb(16, 199, 155); --darkreader-inline-bgcolor:transparent; --darkreader-inline-border-bottom:#0fbd93;" data-darkreader-inline-bgcolor="" data-darkreader-inline-border-bottom="" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="rnb-container-padding" valign="top" align="left">
+
+                                                <table class="rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="rnb-force-col" style="padding-right: 0px;" valign="top">
+
+                                                            <table valign="top" class="rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td class="content-spacing" style="font-size: 14px; font-family: Arial, Helvetica, sans-serif, sans-serif; color: rgb(60, 72, 88); line-height: 21px; --darkreader-inline-color:#cbc7bf;" data-darkreader-inline-color=""></td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table><!--[if mso]>
+                </td>
+                <![endif]-->
+                
+                <!--[if mso]>
+                </tr>
+                </table>
+                <![endif]-->
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <table class="rnb-del-min-width" style="min-width:590px;" name="Layout_28" id="Layout_28" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" style="min-width:590px;" valign="top" align="center">
+                        <table width="100%" height="38" cellspacing="0" cellpadding="0" border="0">
+                            <tbody><tr>
+                                <td valign="top" height="38">
+                                    <img style="display:block; max-height:38px; max-width:20px;" alt="" src="http://img.mailinblue.com/new_images/rnb/rnb_space.gif" width="20" height="38">
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+            </td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent; border-radius: 0px; --darkreader-inline-bgcolor:transparent;" data-darkreader-inline-bgcolor="">
+            
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+                <table class="rnb-del-min-width" style="min-width:100%;" name="Layout_23" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" valign="top" align="center">
+                        <table class="rnb-container" style="background-color: transparent; padding-left: 20px; padding-right: 20px; border-collapse: separate; border-radius: 0px; border-bottom: 5px solid rgb(16, 199, 155); --darkreader-inline-bgcolor:transparent; --darkreader-inline-border-bottom:#0fbd93;" data-darkreader-inline-bgcolor="" data-darkreader-inline-border-bottom="" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="rnb-container-padding" valign="top" align="left">
+
+                                                <table class="rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="rnb-force-col" style="padding-right: 0px;" valign="top">
+
+                                                            <table valign="top" class="rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td class="content-spacing" style="font-size: 14px; font-family: Arial, Helvetica, sans-serif, sans-serif; color: rgb(60, 72, 88); line-height: 21px; --darkreader-inline-color:#cbc7bf;" data-darkreader-inline-color=""><div>
+<div><span data-darkreader-inline-color="" style="color: rgb(255, 240, 245); --darkreader-inline-color:#fff0f5;"><strong><span style="font-size:36px;">OSS: Data Stream Processing</span></strong></span></div>
+
+<div>&nbsp;</div>
+
+<div>
+<div><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">The theme for this week's featured ML libraries is <a data-darkreader-inline-color="" href="https://github.com/EthicalML/awesome-production-machine-learning/#data-science-notebook-frameworks" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">Data Stream Processing</a>. The four featured libraries this week are:</span></span></div>
+
+<div>&nbsp;</div>
+
+<div>
+<ul>
+	<li><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;"><a data-darkreader-inline-color="" href="https://github.com/apache/flink" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">Apache Flink</a> - Open source stream processing framework with powerful stream and batch processing capabilities.</span></span></li>
+	<li><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;"><a data-darkreader-inline-color="" href="https://github.com/robinhood/faust" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">Faust </a>- Streaming library built on top of Python's Asyncio library using the async kafka client inspired by the kafka streaming library.</span></span></li>
+</ul>
+
+<div>
+<ul>
+	<li><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;"><a data-darkreader-inline-color="" href="https://kafka.apache.org/documentation/streams/" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">Kafka Streams</a> - Kafka client library for buliding applications and microservices where the input and output are stored in kafka clusters</span></span></li>
+	<li><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;"><a data-darkreader-inline-color="" href="https://spark.apache.org/streaming/" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">Spark Streaming</a> - Micro-batch processing for streams using the apache spark framework as a backend supporting stateful exactly-once semantics</span></span></li>
+</ul>
+
+<div>&nbsp;</div>
+
+<ul>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="mlops">
+<div style="line-height: 24px;"><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">If you know of any libraries that are not in the <a data-darkreader-inline-color="" href="https://github.com/EthicalML/awesome-machine-learning-operations" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">"Awesome MLOps"</a> list, please do give us a heads up or feel free to <a data-darkreader-inline-color="" href="https://github.com/EthicalML/awesome-machine-learning-operations" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">add a pull request</a>!&nbsp; </span></span></div>
+
+<div style="line-height: 24px;">&nbsp;</div>
+</div>
+</div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table><!--[if mso]>
+                </td>
+                <![endif]-->
+                
+                <!--[if mso]>
+                </tr>
+                </table>
+                <![endif]-->
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent; border-radius: 0px; --darkreader-inline-bgcolor:transparent;" data-darkreader-inline-bgcolor="">
+            
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+                <table class="rnb-del-min-width" style="min-width:100%;" name="Layout_37" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" valign="top" align="center">
+                        <table class="rnb-container" style="background-color: transparent; padding-left: 20px; padding-right: 20px; border-collapse: separate; border-radius: 0px; border-bottom: 5px solid rgb(16, 199, 155); --darkreader-inline-bgcolor:transparent; --darkreader-inline-border-bottom:#0fbd93;" data-darkreader-inline-bgcolor="" data-darkreader-inline-border-bottom="" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+
+                                        <tbody><tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="rnb-container-padding" valign="top" align="left">
+
+                                                <table class="rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td class="rnb-force-col" style="padding-right: 0px;" valign="top">
+
+                                                            <table valign="top" class="rnb-col-1" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td class="content-spacing" style="font-size: 14px; font-family: Arial, Helvetica, sans-serif, sans-serif; color: rgb(60, 72, 88); line-height: 21px; --darkreader-inline-color:#cbc7bf;" data-darkreader-inline-color=""><div>
+<div><span data-darkreader-inline-color="" style="color: rgb(255, 240, 245); --darkreader-inline-color:#fff0f5;"><strong><span style="font-size:36px;">OSS: <a data-darkreader-inline-color="" href="https://github.com/ethicalml/awesome-artificial-intelligence-guidelines" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">Awesome AI Guidelines</a></span></strong></span></div>
+
+<div>&nbsp;</div>
+
+<div>
+<div>
+<div><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">As AI systems become more prevalent in society, we face bigger and tougher societal challenges. We have seen a large number of resources that aim to takle thiese challenges in the form of AI Guidelines, Principles, Ethics Frameworks, etc, however there are so many resources it is hard to navigate. Because of this we started an Open Source initiative that aims to map the ecosystem to make it simpler to navigate. We will be showcasing three resources from our list so we can check them out every week. This week's resources are:</span></span></div>
+
+<div>&nbsp;</div>
+
+<ul>
+	<li><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;"><a data-darkreader-inline-color="" href="https://www.gov.uk/government/publications/data-ethics-workbook/data-ethics-workbook" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">UK Government's Data Ethics Workbook</a> - A resource put together by the Department for Digital, Culture, Media and Sport (DCMS) which provides a set of questions that can be asked by practitioners in the public sector, which address each of the principles in their <a data-darkreader-inline-color="" href="https://www.gov.uk/government/publications/data-ethics-framework/data-ethics-framework" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">Data Ethics Framework Principles</a>.</span></span></li>
+	<li><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;"><a data-darkreader-inline-color="" href="https://www.weforum.org/press/2019/09/uk-government-first-to-pilot-ai-procurement-guidelines-co-designed-with-world-economic-forum/" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">World Economic Forum's Guidelines for Procurement</a> - The WEF has put together a set of guidelines for governments to be able to safely and reliably procure machine learning related systems, which has been trialled with the UK government.</span></span></li>
+	<li><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;"><a data-darkreader-inline-color="" href="https://ethicstoolkit.ai/" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">San Francisco City's Ethics &amp; Algorithms Toolkit</a> - A risk management framework for government leaders and staff who work with algorithms, providing a two part assessment process including an algorithmic assessment process, and a process to address the risks.</span></span></li>
+</ul>
+
+<div>&nbsp;</div>
+
+<ul>
+</ul>
+</div>
+</div>
+
+<div id="mlops">
+<div style="line-height: 24px;"><span style="font-size:18px;"><span data-darkreader-inline-color="" style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;">If you know of any libraries that are not in the <a data-darkreader-inline-color="" href="https://github.com/EthicalML/awesome-machine-learning-operations" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">"Awesome MLOps"</a> list, please do give us a heads up or feel free to <a data-darkreader-inline-color="" href="https://github.com/EthicalML/awesome-machine-learning-operations" style="--darkreader-inline-color:#5ef2cf; text-decoration: underline; color: rgb(16, 199, 155);">add a pull request</a>!&nbsp; </span></span></div>
+
+<div style="line-height: 24px;">&nbsp;</div>
+</div>
+</div>
+</td>
+                                                                </tr>
+                                                                </tbody></table>
+
+                                                            </td></tr>
+                                                </tbody></table></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                        </tr>
+                                    </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table><!--[if mso]>
+                </td>
+                <![endif]-->
+                
+                <!--[if mso]>
+                </tr>
+                </table>
+                <![endif]-->
+
+            </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <table class="rnb-del-min-width" style="min-width:590px;" name="Layout_33" id="Layout_33" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" style="min-width:590px;" valign="top" align="center">
+                        <table width="100%" height="38" cellspacing="0" cellpadding="0" border="0">
+                            <tbody><tr>
+                                <td valign="top" height="38">
+                                    <img style="display:block; max-height:38px; max-width:20px;" alt="" src="http://img.mailinblue.com/new_images/rnb/rnb_space.gif" width="20" height="38">
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+            </td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <table class="rnb-del-min-width" style="min-width:590px;" name="Layout_30" id="Layout_30" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" style="min-width:590px;" valign="top" align="center">
+                        <table width="100%" height="38" cellspacing="0" cellpadding="0" border="0">
+                            <tbody><tr>
+                                <td valign="top" height="38">
+                                    <img style="display:block; max-height:38px; max-width:20px;" alt="" src="http://img.mailinblue.com/new_images/rnb/rnb_space.gif" width="20" height="38">
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+            </td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <table class="rnb-del-min-width" style="min-width:590px;" name="Layout_8812" id="Layout_8812" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" style="min-width:590px;" valign="top" align="center">
+                        <table width="100%" height="38" cellspacing="0" cellpadding="0" border="0">
+                            <tbody><tr>
+                                <td valign="top" height="38">
+                                    <img style="display:block; max-height:38px; max-width:20px;" alt="" src="http://img.mailinblue.com/new_images/rnb/rnb_space.gif" width="20" height="38">
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr>
+            </tbody></table>
+            </td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent; border-radius: 0px; --darkreader-inline-bgcolor:transparent;" data-darkreader-inline-bgcolor="">
+                
+                <!--[if mso 15]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                <tr>
+                <![endif]-->
+                
+                <!--[if mso 15]>
+                <td valign="top" width="590" style="width:590px;">
+                <![endif]-->
+                <table class="rnb-del-min-width" style="min-width:100%;" name="Layout_15" id="Layout_15" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody><tr>
+                    <td class="rnb-del-min-width" valign="top" align="center">
+                        <table class="rnb-container" style="max-width: 100%; min-width: 100%; table-layout: fixed; background-color: transparent; border-radius: 0px; border-collapse: separate; padding: 20px; --darkreader-inline-bgcolor:transparent;" data-darkreader-inline-bgcolor="" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent">
+                            <tbody><tr>
+                                <td class="rnb-container-padding" valign="top" align="left">
+
+                                    <table class="rnb-columns-container" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                        <tbody><tr>
+
+                                            <td class="rnb-force-col img-block-center" style="padding-right: 20px;" width="180" valign="top">
+
+                                                <table valign="top" class="rnb-col-2-noborder-onright" width="180" cellspacing="0" cellpadding="0" border="0" align="left">
+
+
+                                                    <tbody><tr>
+                                                        <td style="line-height: 1px;" class="img-block-center" width="100%" valign="top" align="left">
+                                                            <div style="border-color: rgb(0, 0, 0); border-style: none; border-width: 0px; display: inline-block; --darkreader-inline-border-top:#666666; --darkreader-inline-border-right:#666666; --darkreader-inline-border-bottom:#666666; --darkreader-inline-border-left:#666666;" data-darkreader-inline-border-top="" data-darkreader-inline-border-right="" data-darkreader-inline-border-bottom="" data-darkreader-inline-border-left=""><div><img alt="" style="vertical-align:top; float: left; width:180px;max-width:666px !important; " class="rnb-col-2-img-side-xl" src="http://img.mailinblue.com/2145551/images/rnb/original/5c10f8fbd16c4c8b080ffbaa.png" width="180" vspace="0" hspace="0" border="0"></div><div style="clear:both;"></div></div></td>
+                                                    </tr>
+                                                    </tbody></table>
+                                                </td><td class="rnb-force-col" valign="top">
+
+                                                <table valign="top" class="rnb-last-col-2" width="350" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                    <tbody><tr>
+                                                        <td style="font-size: 24px; font-family: Arial, Helvetica, sans-serif; color: rgb(60, 72, 88); text-align: left; --darkreader-inline-color:#cbc7bf;" data-darkreader-inline-color="">
+                                                            <span style="color: rgb(60, 72, 88); --darkreader-inline-color:#cbc7bf;" data-darkreader-inline-color=""><span style="font-size:36px;"><span style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;" data-darkreader-inline-color=""><strong>About us</strong></span></span></span></td>
+                                                    </tr><tr>
+                                                        <td style="font-size:1px; line-height:0px; mso-hide: all;" height="10">&nbsp;</td>
+                                                    </tr><tr>
+                                                        <td class="rnb-mbl-float-none" style="font-size: 14px; font-family: Arial, Helvetica, sans-serif; color: rgb(60, 72, 88); float: right; width: 350px; line-height: 21px; --darkreader-inline-color:#cbc7bf;" data-darkreader-inline-color=""><div><span style="font-size:18px;"><span style="color: rgb(255, 255, 255); --darkreader-inline-color:#ffffff;" data-darkreader-inline-color="">The Institute for Ethical AI &amp; Machine Learning is a UK-based research centre that carries out world-class research into responsible machine learning systems.</span></span></div>
+</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="font-size:1px; line-height:0px; mso-hide: all;" height="10">&nbsp;</td>
+                                                    </tr><tr>
+                                                        <td valign="top">
+                                                            <table class="rnb-btn-col-content" style="border-collapse: separate;" cellspacing="0" cellpadding="0" border="0" align="left">
+
+                                                                <tbody><tr>
+                                                                    <td style="font-size: 20px; font-family: Arial, Helvetica, sans-serif; text-align: center; color: rgb(255, 255, 255); font-weight: normal; padding-left: 14px; padding-right: 14px; background-color: rgb(16, 199, 155); border-radius: 4px; border-color: rgb(0, 0, 0); border-style: none; border-width: 0px; border-collapse: separate; --darkreader-inline-bgcolor:#0eb28b; --darkreader-inline-color:#ffffff; --darkreader-inline-border-top:#666666; --darkreader-inline-border-right:#666666; --darkreader-inline-border-bottom:#666666; --darkreader-inline-border-left:#666666;" data-darkreader-inline-bgcolor="" data-darkreader-inline-color="" data-darkreader-inline-border-top="" data-darkreader-inline-border-right="" data-darkreader-inline-border-bottom="" data-darkreader-inline-border-left="" width="auto" valign="middle" height="32" bgcolor="#10c79b" align="center">
+                                                                        <span style="color: rgb(255, 255, 255); font-weight: normal; --darkreader-inline-color:#ffffff;" data-darkreader-inline-color="">
+                                                                        <a style="text-decoration: none; color: rgb(255, 255, 255); font-weight: normal; --darkreader-inline-color:#ffffff;" target="_blank" href="https://ethical.institute/" data-darkreader-inline-color="">Check out our website</a>
+                                                                        
+                                                                       </span>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody></table>
+                                                        </td>
+
+                                                    </tr></tbody></table>
+                                                </td>
+
+                                            </tr></tbody></table></td>
+                            </tr>
+                        </tbody></table>
+
+                    </td>
+                </tr>
+            </tbody></table>
+            <!--[if mso 15]>
+                </td>
+                <![endif]-->
+
+                <!--[if mso 15]>
+                </tr>
+                </table>
+                <![endif]-->
+            
+        </div></td>
+    </tr><tr>
+
+        <td valign="top" align="center">
+
+            <div style="background-color: transparent; --darkreader-inline-bgcolor:transparent;" data-darkreader-inline-bgcolor="">
+                
+                <table class="rnb-del-min-width rnb-tmpl-width" style="min-width:590px;" name="Layout_4" id="Layout_4" width="100%" cellspacing="0" cellpadding="0" border="0">
+                    <tbody><tr>
+                        <td class="rnb-del-min-width" style="min-width:590px;" valign="top" align="center">
+                            <table style="padding-right: 20px; padding-left: 20px; background-color: transparent; --darkreader-inline-bgcolor:transparent;" data-darkreader-inline-bgcolor="" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="transparent" align="center">
+                                <tbody><tr>
+                                    <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-size: 14px; color: rgb(136, 136, 136); font-weight: normal; text-align: center; font-family: &quot;Roboto&quot;, &quot;Verdana&quot;, Geneva, sans-serif; --darkreader-inline-color:#bab5ab;" data-darkreader-inline-color="">
+                                        <div>© 2018 The Institute for Ethical AI &amp; Machine Learning</div>
+                                    </td></tr>
+                                <tr>
+                                    <td style="font-size:1px; line-height:0px; mso-hide: all;" height="20">&nbsp;</td>
+                                </tr>
+                            </tbody></table>
+                        </td>
+                    </tr>
+                </tbody></table>
+                
+            </div></td>
+    </tr></tbody></table>
+            <!--[if gte mso 9]>
+                        </td>
+                        </tr>
+                        </table>
+                        <![endif]-->
+                        </td>
+        </tr>
+        </tbody></table>
+                        </section>
+                    </div>
+                </div>
+
+		<!-- Scripts -->
+			<script src="/assets/js/jquery.min.js"></script>
+			<script src="/assets/js/jquery.scrolly.min.js"></script>
+			<script src="/assets/js/jquery.dropotron.min.js"></script>
+			<script src="/assets/js/jquery.scrollex.min.js"></script>
+			<script src="/assets/js/skel.min.js"></script>
+			<script src="/assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="/assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="/assets/js/main.js"></script>
+
+			<!-- Footer -->
+				<footer id="footer">
+					<ul class="icons">
+						<li><a href="https://twitter.com/EthicalML" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+                        <li><a href="https://facebook.com/EthicalML" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+						<li><a href="https://www.linkedin.com/company/the-institute-for-ethical-machine-learning/" class="icon fa-linkedin"><span class="label">LinkedIn</span></a></li>
+						<li><a href="https://github.com/EthicalML" class="icon fa-github"><span class="label">GitHub</span></a></li>
+                        <li><a href="mailto:a@ethical.institute" class="icon fa-envelope"><span class="label">Email</span></a></li>
+					</ul>
+					<ul class="copyright">
+						<li>&copy; The Institute for Ethical AI & ML. 
+                            All rights reserved.</li>
+					</ul>
+				</footer>
+
+
+		<!-- Scripts -->
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-89407852-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-89407852-2');
+    </script>
+
+
+	</body>
+</html>
