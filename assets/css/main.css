@@ -3488,7 +3488,7 @@
 	@media screen and (max-width: 1280px)/* , screen and (max-height: 1000px) */  {
 
             header h1 a  {
-                display: none;
+                /* display: none;*/
             }
 
 		/* Basic */
