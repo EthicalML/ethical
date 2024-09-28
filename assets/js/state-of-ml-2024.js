@@ -5,7 +5,7 @@ const chartStyles = [
 	"bar", // libraries
 	"bar", // modality
 	"pie", // usecase
-	"radar", // timetoprod
+	"bar", // timetoprod
 	"doughnut", // cloud
 	"pie", // challenges
 	// 2)
@@ -57,15 +57,15 @@ dt = dt.select(...origColNames);
 //dt = dt.select(...colNames.slice(1));
 
 
-// Register chartjs plugins
-//Chart.register(ColorSchemesPlugin);
+// Register chartjs plugins (needs uncomment on the chartjs 3.9.x)
+Chart.register(ColorSchemesPlugin);
 Chart.register(ChartDataLabels);
 
 const themes = ["brewer.YlGnBu9", "brewer.GnBu9", "brewer.GnBu9", "brewer.PuBuGn9", "brewer.PuBu9", "brewer.BuPu9", "brewer.RdPu9", "brewer.PuRd9", "brewer.OrRd9", "brewer.YlOrRd9", "brewer.YlOrBr9"];
 const chartSections = [5, 14, 22];
 
 Chart.defaults.color = '#fff';
-Chart.defaults.borderColor = '#434659';
+Chart.defaults.borderColor = '#22242f';
 
 // Global charts object
 var charts = [];
@@ -73,7 +73,7 @@ var charts = [];
 for (let i = 0, j = 0; i < origColNames.length; i++) {
 	
 	const chartContainer = $("<div></div>");
-	chartContainer.append("<div style='color: rgb(68, 254, 227) !important; height: 80px; overflow: scroll' class='text-center d-flex align-items-center'>"+origColNames[i]+"</div>")
+	chartContainer.append("<div style='color: #44fee3 !important; height: 80px; overflow: scroll' class='text-center d-flex align-items-center'>"+origColNames[i]+"</div>")
 
 	// Choose the right section based on the distributions
 	if (i > chartSections[j]) {
@@ -84,19 +84,17 @@ for (let i = 0, j = 0; i < origColNames.length; i++) {
 	const chartTab = $("#chart-section-"+(j+1)+" .row");
     chartTab.append(chartContainer);
 
-	if (multiChoiceCols.includes(i)) {
-        chartContainer.append("<div id='inpChart"+i+"' class='form-check form-switch'></div>")
-	}
-	else {
-        chartContainer.append("<div id='slcChart"+i+"' class='form-check form-switch'></div>")
-	}
-
-	chartContainer.addClass("col-md-5");
-
 	const chartCanvas = $("<canvas style='height: 300em' id='chart-"+i+"'></canvas>");
 	chartContainer.append(chartCanvas)
 
-    //const chartType = multiChoiceCols.includes(i) ? "bar"  : "bar";
+	if (multiChoiceCols.includes(i)) {
+        chartContainer.append("<div id='inpChart"+i+"' class='form-check form-switch form-text-container'></div>")
+        chartContainer.addClass("col-md-5");
+	}
+	else {
+        chartContainer.append("<div id='slcChart"+i+"' class='form-check form-switch form-extend-on-hover'></div>")
+        chartContainer.addClass("col-md-5");
+	}
 
     const chart = new Chart($("#chart-"+i), {
       type: chartStyles[i],
@@ -125,8 +123,19 @@ function tableAddBootstrapClasses() {
     $("#table table").addClass("table table-striped-columns table-bordered table-sm table-hover align-middle");
 }
 
-function filtersAddBootstrapClasses() {
+function setupFilterBootstrapAndConfig() {
     $("input[type='checkbox']").addClass("form-check-input");
+    $("input[type='text']").prop("placeholder", "Filter on Multiple Option Question...")
+}
+
+function addClearFilterEvent() {
+    $('.charts-container .form-check ul li:first input:checkbox').change(
+		function() {
+			if ($(this).is(':checked')) {
+				$(this).prop("checked", false);
+			}
+		}
+    );
 }
 
 function loadTable() {
@@ -143,6 +152,8 @@ function loadTable() {
         loader: true,
         status: true,
         status_bar: true,
+
+        clear_filter_text: Array(origColNames.length).fill("<Clear Filter>"),
 
         col_widths: colWidths,
 
@@ -187,7 +198,8 @@ function loadTable() {
 
     tf.init();
 
-    filtersAddBootstrapClasses();
+    setupFilterBootstrapAndConfig();
+    addClearFilterEvent();
 
 }
 

@@ -29,13 +29,13 @@
     opacity: 50%;
     background-color: #22242f;
     z-index: 100;
-    transition: all 0.15s;
+    transition: height 0.15s, margin-top 0.15s, border-top 1s;
     position: relative;
 }
-.form-check:hover {
+.form-extend-on-hover:hover {
     height: 200px;
-    margin-bottom: -110px;
-    transition-delay:0.25s;
+    margin-top: -110px;
+    transition-delay: 0.25s;
     opacity: 100%;
 }
 .chart-content > .row {
@@ -47,14 +47,51 @@
   float: none;
 }
 .helpCont {
-display: none;
+	display: none;
 }
 input[type="checkbox"] {
 	opacity: 100% !important;
 }
-ul {
+.charts-container .form-check ul {
 	list-style-type: none;
 	list-style: none;
+    padding-left: 0;
+}
+.charts-container .form-check li {
+    height: 30px;
+    padding-left: 1em;
+}
+.charts-container .form-check li:hover {
+    background-color: #353646;
+}
+.charts-container .form-check li:has(input:checked) { 
+    background-color: #353646;
+}
+.charts-container .form-check:has(input:checked),
+        .charts-container .form-text-container:has(input:not(:placeholder-shown)){ 
+    border-top: 5px solid #44fee3;
+}
+ input[value]
+.charts-container .form-check {
+    padding-left: 0;
+}
+.charts-container .form-check-input {
+    margin-left: 0;
+}
+.charts-container .form-check ul li:first-child input {
+    display: none;
+}
+.charts-container .form-check ul li:first-child:hover {
+    background-color: #ff6384;
+    transition: all 1s;
+}
+#chart-section-0 .row {
+    margin: 0px;
+    padding: 0px;
+}
+#chart-section-0 .row > *{
+    margin: 0px;
+    padding: 0px;
 }
     </style>
 
@@ -165,8 +202,15 @@ ul {
 				</section>
 
                 <section id="one" class="spotlight style1 bottom">
+                    // TODO: Move all navs into partials
+					// TODO: Move style to respective file
+                    // TODO: Add col-xs-1 on left of charts to show you have to scroll to right
+					// TODO: Add button to clear global filter
+					// TODO: Addd indicator to show if filter is applied
+					// TODO: Make the local clear option a button instead of a checklist
 					// TODO: Update styling on area
 					// TODO: Add this page into 
+                    // TODO: Add toggle button instead of clear for each section and start with all selected
 					// TODO: Replace logo with another image related to survey
 					// TODO: update image to include image of survey results
                     <span class="image fit main"><img src="images/dots-vision.jpg" alt="" /></span>
@@ -187,7 +231,7 @@ ul {
 
 
 
-<section id="five" class="wrapper style1 special fade-up">
+<section id="five" class="wrapper style1 special fade-up charts-container">
 
 
 <main class="container">
@@ -195,23 +239,58 @@ ul {
   <p>Slice dice.</p>
 </main>
 
-<ul class="nav nav-tabs">
-    <li class="nav-item">
-        <a class="list-group-item list-group-item-action nav-link active" data-bs-toggle="list" href="#chart-section-1" role="tab">1) Your Team - ML & Scope</a>
-    </li>
-    <li class="nav-item">
-        <a class="list-group-item list-group-item-action nav-link" data-bs-toggle="list" href="#chart-section-2" role="tab">2) Your MLOps Stack - Platform & Components</a>
-    </li>
-    <li class="nav-item">
-        <a class="list-group-item list-group-item-action nav-link" data-bs-toggle="list" href="#chart-section-3" role="tab">3) Your Organisation - Ecosystem & Maturity</a>
-    </li>
-    <li class="nav-item">
-        <a class="list-group-item list-group-item-action nav-link" data-bs-toggle="list" href="#chart-section-4" role="tab">4) About You - Role & Demographics</a>
-    </li>
-</ul>
+<div class="navbar navbar-expand-lg">
+    <div class="container" style="display: block">
+        <div class="d-flex justify-content-center">
+            <ul class="nav navbar-nav nav-tabs justify-content-center">
+                <li class="nav-item">
+                    <a class="list-group-item list-group-item-action nav-link active" data-bs-toggle="list" href="#chart-section-0" role="tab">0) Overview</a>
+                </li>
+                <li class="nav-item">
+                    <a class="list-group-item list-group-item-action nav-link" data-bs-toggle="list" href="#chart-section-1" role="tab">1) ML & Scope</a>
+                </li>
+                <li class="nav-item">
+                    <a class="list-group-item list-group-item-action nav-link" data-bs-toggle="list" href="#chart-section-2" role="tab">2) Platform & Components</a>
+                </li>
+                <li class="nav-item">
+                    <a class="list-group-item list-group-item-action nav-link" data-bs-toggle="list" href="#chart-section-3" role="tab">3) Ecosystem & Maturity</a>
+                </li>
+                <li class="nav-item">
+                    <a class="list-group-item list-group-item-action nav-link" data-bs-toggle="list" href="#chart-section-4" role="tab">4) Demographics</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
 
 <div class="tab-content">
-	<div class="tab-pane active" role="tabpanel" id="chart-section-1">
+	<div class="tab-pane active" role="tabpanel" id="chart-section-0">
+		<div class="row content">
+            <div class="row col-lg-4 col-md-6">
+                <div class="col-sm-12" style="border-radius: 30px; height: 150px; background-color: #333"></div>
+                <div class="col-sm-6" style="border-radius: 30px; height: 150px; background-color: #333"></div>
+                <div class="col-sm-6" style="border-radius: 30px; height: 150px; background-color: #333"></div>
+            </div>
+            <div class="row col-lg-4 col-md-6">
+                <div class="col-xs-12" style="border-radius: 30px; height: 300px; background-color: #444"></div>
+            </div>
+            <div class="row col-lg-4 col-md-6">
+                <div class="col-sm-6">
+                    <div class="col-xs-12" style="border-radius: 30px; height: 300px; background-color: #888"></div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="col-xs-12" style="border-radius: 30px; height: 150px; background-color: #888"></div>
+                    <div class="col-xs-12" style="border-radius: 30px; height: 150px; background-color: #888"></div>
+                </div>
+            </div>
+            <div class="row col-lg-4 col-md-6">
+                <div class="col-sm-6" style="border-radius: 30px; height: 150px; background-color: #999"></div>
+                <div class="col-sm-6" style="border-radius: 30px; height: 150px; background-color: #999"></div>
+                <div class="col-sm-12" style="border-radius: 30px; height: 150px; background-color: #999"></div>
+            </div>
+        </div>
+	</div>
+	<div class="tab-pane" role="tabpanel" id="chart-section-1">
 		<div class="row flex-nowrap overflow-auto"></div>
 	</div>
 	<div class="tab-pane" role="tabpanel" id="chart-section-2">
@@ -276,9 +355,9 @@ ul {
 <!--<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>-->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
 <!--<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>-->
-<script src=" https://cdn.jsdelivr.net/npm/chartjs-chart-graph@4.3.1/build/index.umd.min.js "></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-graph@4.3.1/build/index.umd.min.js "></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
-<script src="./node_modules/chartjs-plugin-colorschemes-v3/dist/chartjs-plugin-colorschemes-v3.js"></script>
+<script src="assets/js/chartjs-plugin-colorschemes-v3.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/arquero@latest"></script>
 <script src="https://unpkg.com/tablefilter@0.7.2/dist/tablefilter/tablefilter.js"></script>
 
