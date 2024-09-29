@@ -3,9 +3,9 @@ import 'https://code.jquery.com/jquery-3.6.0.min.js'
 const chartStyles = [
 	// 1
 	"bar", // libraries
-	"bar", // modality
-	"pie", // usecase
-	"bar", // timetoprod
+	"pie", // modality
+	"bar", // usecase
+	"polarArea", // timetoprod
 	"doughnut", // cloud
 	"pie", // challenges
 	// 2)
@@ -44,10 +44,8 @@ const LONG_COL_WIDTH="40em";
 
 let colWidths = Array(origColNames.length).fill(COL_WIDTH);
 for (const i of multiChoiceCols) {
-    console.log(i);
     colWidths[i] = LONG_COL_WIDTH;
 }
-console.log(colWidths)
 
 // Drop first and last columns
 dt = dt.select(...origColNames);
@@ -66,6 +64,7 @@ const chartSections = [5, 14, 22];
 
 Chart.defaults.color = '#fff';
 Chart.defaults.borderColor = '#22242f';
+Chart.defaults.scales.radialLinear.ticks.backdropColor = '#000';
 
 // Global charts object
 var charts = [];
@@ -89,30 +88,82 @@ for (let i = 0, j = 0; i < origColNames.length; i++) {
 
 	if (multiChoiceCols.includes(i)) {
         chartContainer.append("<div id='inpChart"+i+"' class='form-check form-switch form-text-container'></div>")
-        chartContainer.addClass("col-md-5");
 	}
 	else {
         chartContainer.append("<div id='slcChart"+i+"' class='form-check form-switch form-extend-on-hover'></div>")
-        chartContainer.addClass("col-md-5");
 	}
+    chartContainer.addClass("col-lg-5 col-md-8 col-sm-10");
 
-    const chart = new Chart($("#chart-"+i), {
-      type: chartStyles[i],
-      options: {
-		indexAxis: 'y',
-		responsive: true,
-		maintainAspectRatio: true,
-		aspectRatio: 1.2,
-        plugins: {
-			colorschemes: {
-				scheme: themes[i % themes.length-1]
-			},
-            colors: {
-                forceOverride: true
+    let config = {
+        type: chartStyles[i],
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: true,
+            aspectRatio: 1.2,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            const dataset = tooltipItem.chart.data.datasets[tooltipItem.datasetIndex];
+                            //calculate the total of this data set
+                            const total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
+                              return previousValue + currentValue;
+                            });
+                            //get the current items value
+                            const currentValue = dataset.data[tooltipItem.dataIndex];
+                            //calculate the precentage based on the total and current item
+                            //also this does a rough rounding to give a whole number
+                            const percentage = Math.floor(((currentValue/total) * 100)+0.5);
+
+                            return percentage + "%";
+                        }
+                    }
+                },
+                colors: {
+                    forceOverride: false
+                },
+                legend: {
+                    display: true,
+                    position: 'right'
+                },
+                datalabels: {
+                    // Ensure all data is highlighted in %
+                    formatter: ((chartStyle) => { 
+                        return (value, ctx) => {
+                            let sum = 0;
+                            const dataArr = ctx.chart.data.datasets[0].data;
+                            dataArr.map(data => {
+                                sum += data;
+                            });
+                            const percentage = parseInt(value*100 / sum);
+                            let percentageStr = percentage+"%";
+
+                            //if (chartStyle == "pie" || chartStyle == "doughnut") {
+                            //    let label = ctx.chart.data.labels[ctx.dataIndex];
+                            //    label = label.slice(0, 15) + "..."
+                            //    percentageStr = label + ": " + percentageStr;
+                            //}
+
+                            // We don't add label if lower than 3% as too small area
+                            if (percentage < 3)	{
+                                percentageStr = "";
+                            }
+                            return percentageStr;
+                        }
+					})(chartStyles[i]),
+                    color: '#fff',
+                }
             }
         }
-      }
-    });
+    };
+
+    // Remove labels for bar charts as these are the dataset level
+    if (chartStyles[i] == "bar" || chartStyles[i] == "radar") {
+        config.options.plugins.legend.display = false;
+    }
+
+    const chart = new Chart($("#chart-"+i), config);
 
     charts.push(chart);
 }
@@ -185,7 +236,6 @@ function loadTable() {
         }
     }
     tfConfig["external_flt_ids"] = customFilterIds;
-    console.log(customFilterIds)
 
 
     var tf = new TableFilter('demo', tfConfig);
@@ -194,7 +244,7 @@ function loadTable() {
         'after-filtering',
         "after-clearing-filters",
         "initialized"
-        ], afterFilter(tf));
+        ], reComputeChartData(tf));
 
     tf.init();
 
@@ -203,7 +253,7 @@ function loadTable() {
 
 }
 
-function afterFilter(tf) {
+function reComputeChartData(tf) {
 	return function () {
 		const data = tf.getFilteredData();
         window.data = data;
@@ -219,7 +269,10 @@ function afterFilter(tf) {
                     let multiValues = row[j].split(",");
                     for (let k = 0; k < multiValues.length; k++) {
 						let multiValue = multiValues[k].trim()
-                        if (multiValue in chartData[j]) {
+                        if (multiValue == "null") {
+                            // skip if null
+                            continue;
+                        } else if (multiValue in chartData[j]) {
                             chartData[j][multiValue] += 1;
                         } else {
                             chartData[j][multiValue] = 1;
@@ -227,7 +280,10 @@ function afterFilter(tf) {
                     }
                 }
                 else {
-                    if (row[j] in chartData[j]) {
+                    if (row[j] == "null") {
+                        // skip if null
+                        continue;
+                    } else if (row[j] in chartData[j]) {
                         chartData[j][row[j]] += 1;
                     } else {
                         chartData[j][row[j]] = 1;
@@ -243,12 +299,34 @@ function afterFilter(tf) {
 
 }
 
+
+let CHART_COLORS = [
+    '#36a2eb', // light blue
+    '#ff6384', // light red
+    '#10c79b', // light green
+    '#ff6900', // Dark orange
+    '#585a60', // Dark grey
+
+    '#2E5EAA', // dark blue
+    "#9E0059", // dark intense red
+    "#4C6663", // pale green
+    "#FFB100", // intense yellow
+    "#39393A", // yet grey
+
+
+    "#390099", // duke blue
+    '#69353F', // pale dark red
+    "#1F271B" // dark green
+];
+
+
 function updateChart(chart, labels, data) {
     // TODO: Hide charts that don't have any data
     chart.data = {
         labels: labels,
         datasets: [{
-          data: data
+          data: data,
+          backgroundColor: CHART_COLORS
         }]
     }
     chart.update()
