@@ -131,17 +131,17 @@
 				</section>
 
                 <section id="one" class="spotlight style1 bottom">
-                    // TODO: Move all navs into partials
-					// TODO: Move style to respective file
-                    // TODO: Add col-xs-1 on left of charts to show you have to scroll to right
-					// TODO: Add button to clear global filter
-					// TODO: Addd indicator to show if filter is applied
-					// TODO: Make the local clear option a button instead of a checklist
-					// TODO: Update styling on area
-					// TODO: Add this page into 
-                    // TODO: Add toggle button instead of clear for each section and start with all selected
-					// TODO: Replace logo with another image related to survey
-					// TODO: update image to include image of survey results
+                    // TODO: [ ] Add arrows on the rigth and left side to continue to next section
+					// TODO: [ ] Add button to clear global filter
+                    // TODO: [ ] Add toggle button instead of clear for each section and start with all selected
+					// TODO: [ ] Replace logo with another image related to survey
+					// TODO: [ ] update image to include image of survey results
+                    // TODO: [ ] Move all navs into partials
+                    // TODO: [x] Add col-xs-1 on left of charts to show you have to scroll to right
+					// TODO: [x] Addd indicator to show if filter is applied
+					// TODO: [x] Make the local clear option a button instead of a checklist
+                    // TODO: [x] Fix bug on clear toggle which seems doesn't work on listener after changing tabs
+					// TODO: [x] Move style to respective file
                     <span class="image fit main"><img src="images/dots-vision.jpg" alt="" /></span>
 					<div class="content">
                         <header class="major">
@@ -193,8 +193,8 @@
 </div>
 
 <div class="tab-content">
-	<div class="tab-pane active" role="tabpanel" id="chart-section-0">
-		<div class="row content">
+	<div class="tab-pane active" role="tabpanel" id="chart-section-0" class="row">
+		<div class="row content col-sm-11">
             <div class="row col-lg-4 col-md-6">
                 <div class="col-sm-12" style="border-radius: 30px; height: 150px; background-color: #333"></div>
                 <div class="col-sm-6" style="border-radius: 30px; height: 150px; background-color: #333"></div>
@@ -218,6 +218,9 @@
                 <div class="col-sm-12" style="border-radius: 30px; height: 150px; background-color: #999"></div>
             </div>
         </div>
+        <div class="content col-sm-1 h-100">
+            <h1><a href="#">Next section</a></h1>
+        </div>
 	</div>
 	<div class="tab-pane" role="tabpanel" id="chart-section-1">
 		<div class="row flex-nowrap overflow-auto"></div>
@@ -237,11 +240,15 @@
 
 <hr/>
 
-<h1>The State of Prod ML - Data in Table View.</h1>
+<h1>The State of Prod ML</h1>
+
+<div>
+    You can view the full data below based on the filters enabled. You can access the full data <a href="">here</a>.
+</div>
 
 <hr/>
 
-<div class="container">
+<div class="container" style="height: 500px; overflow: scroll;">
 	<div id="table" class="table-responsive"></div>
 </div>
 

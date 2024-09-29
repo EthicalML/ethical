@@ -180,12 +180,12 @@ function setupFilterBootstrapAndConfig() {
 }
 
 function addClearFilterEvent() {
-    $('.charts-container .form-check ul li:first input:checkbox').change(
-		function() {
-			if ($(this).is(':checked')) {
-				$(this).prop("checked", false);
-			}
-		}
+    // The events have to be added when the tab content is loaded so uing "on"
+    $(".charts-container").on("change", ".form-check ul li:first input:checkbox", (obj) => {
+            if ($(obj.target).is(':checked')) {
+                $(obj.target).prop("checked", false);
+            }
+        }
     );
 }
 
