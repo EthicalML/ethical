@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto");
+
 .form-check {
     height: 90px;
     overflow: scroll;
@@ -60,6 +62,10 @@ input[type="checkbox"] {
     background-color: #ff6384;
     transition: all 1s;
 }
+
+/******************************/
+/* Content for Overview Cards */
+/******************************/
 #chart-section-0 .row {
     margin: 0px;
     padding: 0px;
@@ -68,6 +74,42 @@ input[type="checkbox"] {
     margin: 0px;
     padding: 0px;
 }
+.chart-overview-container {
+
+}
+.chart-overview-subsection {
+}
+.chart-overview-item, .chart-overview-item-tall {
+    height: 200px;
+    padding: 10px 10px 10px 10px !important;
+}
+.chart-overview-item-tall {
+    height: 400px !important;
+}
+.chart-overview-item-content {
+    border-radius: 30px;
+    height: 100%;
+    padding: 20px;
+    line-height: normal;
+}
+.chart-overview-item-content .chart-overview-headline {
+    color: black;
+    font-size: 40px;
+    font-family: "Orbitron";
+}
+.chart-overview-item-content .chart-overview-metric {
+    background-color: inherit;
+    mix-blend-mode: difference;
+}
+.chart-overview-item-content .chart-overview-description {
+    color: black;
+    font-size: 20px;
+    color: black;
+}
+
+/****************************/
+/* Chart Navigation Section */
+/****************************/
 .chart-navbar {
     background-color: #10c79b;
     border-radius: 30px;

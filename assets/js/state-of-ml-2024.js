@@ -114,7 +114,7 @@ for (let i = 0, j = 0; i < origColNames.length; i++) {
                             const currentValue = dataset.data[tooltipItem.dataIndex];
                             //calculate the precentage based on the total and current item
                             //also this does a rough rounding to give a whole number
-                            const percentage = Math.floor(((currentValue/total) * 100)+0.5);
+                            const percentage = parseInt(((currentValue/total) * 100));
 
                             return percentage + "%";
                         }
@@ -270,9 +270,10 @@ function reComputeChartData(tf) {
                     for (let k = 0; k < multiValues.length; k++) {
 						let multiValue = multiValues[k].trim()
                         if (multiValue == "null") {
-                            // skip if null
                             continue;
-                        } else if (multiValue in chartData[j]) {
+                        }
+
+                        if (multiValue in chartData[j]) {
                             chartData[j][multiValue] += 1;
                         } else {
                             chartData[j][multiValue] = 1;
@@ -280,13 +281,20 @@ function reComputeChartData(tf) {
                     }
                 }
                 else {
-                    if (row[j] == "null") {
-                        // skip if null
-                        continue;
-                    } else if (row[j] in chartData[j]) {
-                        chartData[j][row[j]] += 1;
+                    let rowVal = row[j];
+                    if (rowVal == "null") {
+                        // ensure only skip if not part of platform choice quesitons
+                        if (j > 5 && j < 15) {
+                            rowVal = "None";
+                        } else {
+                            continue;
+                        }
+                    }
+
+                    if (rowVal in chartData[j]) {
+                        chartData[j][rowVal] += 1;
                     } else {
-                        chartData[j][row[j]] = 1;
+                        chartData[j][rowVal] = 1;
                     }
                 }
             }

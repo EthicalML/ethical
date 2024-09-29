@@ -21,6 +21,7 @@
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
 		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Orbitron" />
 		<link rel="stylesheet" href="assets/css/state-of-ml-2024.css" />
 
 
@@ -131,17 +132,6 @@
 				</section>
 
                 <section id="one" class="spotlight style1 bottom">
-                    // TODO: [ ] Add arrows on the rigth and left side to continue to next section
-					// TODO: [ ] Add button to clear global filter
-                    // TODO: [ ] Add toggle button instead of clear for each section and start with all selected
-					// TODO: [ ] Replace logo with another image related to survey
-					// TODO: [ ] update image to include image of survey results
-                    // TODO: [ ] Move all navs into partials
-                    // TODO: [x] Add col-xs-1 on left of charts to show you have to scroll to right
-					// TODO: [x] Addd indicator to show if filter is applied
-					// TODO: [x] Make the local clear option a button instead of a checklist
-                    // TODO: [x] Fix bug on clear toggle which seems doesn't work on listener after changing tabs
-					// TODO: [x] Move style to respective file
                     <span class="image fit main"><img src="images/dots-vision.jpg" alt="" /></span>
 					<div class="content">
                         <header class="major">
@@ -194,28 +184,72 @@
 
 <div class="tab-content">
 	<div class="tab-pane active" role="tabpanel" id="chart-section-0" class="row">
-		<div class="row content col-sm-11">
-            <div class="row col-lg-4 col-md-6">
-                <div class="col-sm-12" style="border-radius: 30px; height: 150px; background-color: #333"></div>
-                <div class="col-sm-6" style="border-radius: 30px; height: 150px; background-color: #333"></div>
-                <div class="col-sm-6" style="border-radius: 30px; height: 150px; background-color: #333"></div>
+        <!--
+    '#36a2eb', // light blue
+    '#ff6384', // light red
+    '#10c79b', // light green
+    '#ff6900', // Dark orange
+    '#585a60', // Dark grey
+    '#999' // TODO: Lifht gray
+        -->
+		<div class="row content col-sm-11 chart-overview-container">
+            <div class="row col-xl-4 col-md-6 chart-overview-subsection">
+                <div class="col-sm-12 chart-overview-item" style="">
+                    <div class="chart-overview-item-content" style="background-color: #ece9e9">
+                        <div class="chart-overview-headline">
+                            <span class="chart-overview-metric">22</span> Countries
+                        </div>
+                        <div class="chart-overview-description">Responses from across the machine learning community with broad diversity across the world.</div>
+                    </div>
+                </div>
+                <div class="col-sm-6 chart-overview-item" style="">
+                    <div class="chart-overview-item-content" style="background-color: #36a2eb">
+                        <div class="headline-metric">50%</div>
+                    </div>
+                </div>
+                <div class="col-sm-6 chart-overview-item" style="">
+                    <div class="chart-overview-item-content" style="background-color: #ff6384">
+                        <div class="headline-metric">50%</div>
+                    </div>
+                </div>
             </div>
-            <div class="row col-lg-4 col-md-6">
-                <div class="col-xs-12" style="border-radius: 30px; height: 300px; background-color: #444"></div>
+            <div class="row col-xl-4 col-md-6 chart-overview-subsection">
+                <div class="col-xs-12 chart-overview-item-tall" style="">
+                    <div class="chart-overview-item-content" style="height: 400; background-color: #262732">
+                    </div>
+                </div>
             </div>
-            <div class="row col-lg-4 col-md-6">
+            <div class="row col-xl-4 col-md-6 chart-overview-subsection">
+                <div class="col-sm-6 chart-overview-item" style="">
+                    <div class="chart-overview-item-content" style="background-color: #ece9e9">
+                    </div>
+                </div>
+                <div class="col-sm-6 chart-overview-item" style="">
+                    <div class="chart-overview-item-content" style="background-color: #ece9e9">
+                    </div>
+                </div>
+                <div class="col-sm-12 chart-overview-item" style="">
+                    <div class="chart-overview-item-content" style="background-color: #10c79b">
+                    </div>
+                </div>
+            </div>
+            <div class="row col-lg-4 col-md-6 chart-overview-subsection">
                 <div class="col-sm-6">
-                    <div class="col-xs-12" style="border-radius: 30px; height: 300px; background-color: #888"></div>
+                    <div class="chart-overview-item-tall" style="">
+                        <div class="chart-overview-item-content" style="height: 400; background-color: #ff6900">
+                        </div>
+                    </div>
                 </div>
                 <div class="col-sm-6">
-                    <div class="col-xs-12" style="border-radius: 30px; height: 150px; background-color: #888"></div>
-                    <div class="col-xs-12" style="border-radius: 30px; height: 150px; background-color: #888"></div>
+                    <div class="chart-overview-item" style="">
+                        <div class="chart-overview-item-content" style="background-color: #888">
+                        </div>
+                    </div>
+                    <div class="chart-overview-item" style="">
+                        <div class="chart-overview-item-content" style="background-color: #888">
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="row col-lg-4 col-md-6">
-                <div class="col-sm-6" style="border-radius: 30px; height: 150px; background-color: #999"></div>
-                <div class="col-sm-6" style="border-radius: 30px; height: 150px; background-color: #999"></div>
-                <div class="col-sm-12" style="border-radius: 30px; height: 150px; background-color: #999"></div>
             </div>
         </div>
         <div class="content col-sm-1 h-100">
