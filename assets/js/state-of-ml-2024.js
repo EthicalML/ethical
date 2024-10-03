@@ -58,6 +58,17 @@ dt = dt.select(...origColNames);
 // Register chartjs plugins (needs uncomment on the chartjs 3.9.x)
 Chart.register(ColorSchemesPlugin);
 Chart.register(ChartDataLabels);
+//Chart.register({
+//    id: "sort",
+//    beforeUpdate: (chart) => {
+//        console.log(chart);
+//        console.log(chart.data.datasets)
+//        if (chart.data.datasets.length) {
+//            console.log(chart.data.datasets[0])
+//            chart.data.datasets[0].reverse()
+//        }
+//    }
+//})
 
 const themes = ["brewer.YlGnBu9", "brewer.GnBu9", "brewer.GnBu9", "brewer.PuBuGn9", "brewer.PuBu9", "brewer.BuPu9", "brewer.RdPu9", "brewer.PuRd9", "brewer.OrRd9", "brewer.YlOrRd9", "brewer.YlOrBr9"];
 const chartSections = [5, 14, 22];
@@ -327,8 +338,31 @@ let CHART_COLORS = [
     "#1F271B" // dark green
 ];
 
+function sortLabelsData(arrayLabel, arrayData) {
+    let arrayOfObj = arrayLabel.map(function(d, i) {
+      return {
+        label: d,
+        data: arrayData[i] || 0
+      };
+    });
+
+    let sortedArrayOfObj = arrayOfObj.sort(function(a, b) {
+      return b.data>a.data;
+    });
+
+    let newArrayLabel = [];
+    let newArrayData = [];
+    sortedArrayOfObj.forEach(function(d){
+      newArrayLabel.push(d.label);
+      newArrayData.push(d.data);
+    });
+    return [newArrayLabel, newArrayData];
+}
 
 function updateChart(chart, labels, data) {
+    console.log(labels, data);
+    [labels, data] = sortLabelsData(labels, data);
+    console.log(labels, data);
     // TODO: Hide charts that don't have any data
     chart.data = {
         labels: labels,
