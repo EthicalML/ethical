@@ -21,7 +21,7 @@ const chartStyles = [
 	// 3)
 	"bar", // industry
 	"radar", // orgsize
-	"pie", // company
+//	"pie", // company REMOVED 
 	"radar", // modelsnow
 	"radar", // modelsfuture
 	"polarArea", // orgsetup
@@ -37,8 +37,8 @@ const chartStyles = [
 
 let dt = await aq.loadCSV('data.csv'); 
 
-const origColNames = dt.columnNames().slice(1, -2);
-const multiChoiceCols = [1, 2, 5, 20, 22];
+const origColNames = dt.columnNames().slice(1, -3); // Cutting timestamp, company, score, etc
+const multiChoiceCols = [1, 2, 5, 19, 21];
 const COL_WIDTH="20em";
 const LONG_COL_WIDTH="40em";
 
@@ -338,11 +338,11 @@ let CHART_COLORS = [
     "#1F271B" // dark green
 ];
 
-function sortLabelsData(arrayLabel, arrayData) {
-    let arrayOfObj = arrayLabel.map(function(d, i) {
+function sortLabelsData(labels, data) {
+    let arrayOfObj = labels.map(function(d, i) {
       return {
         label: d,
-        data: arrayData[i] || 0
+        data: data[i] || 0
       };
     });
 
