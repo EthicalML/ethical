@@ -7,13 +7,13 @@ multiple_cmd() {
     perl -i -0777 -pe 's/<title>(.*|\n)*itemprop="image.*>/{% include header.html %}/g' $1
 
     # Replace navbar for partial
-    perl -0777 -pe 's/<!-- Header(.*|\n)*<\/nav>\s*<\/header>/{% include navbar.html %}/g' $1
+    perl -i -0777 -pe 's/<!-- Header(.*|\n)*<\/nav>\s*<\/header>/{% include navbar.html %}/g' $1
 
     # Remove scripts from header
     perl -i -0777 -pe 's/<script(.*|\n)*main.js"><\/script>//g' $1
 
     # Replace footer with partial
-    perl -0777 -pe 's/<!-- Footer(.*|\n)*<\/script>/{% include footer.html %}/g' $1
+    perl -i -0777 -pe 's/<!-- Footer(.*|\n)*<\/script>/{% include footer.html %}/g' $1
 }
 export -f multiple_cmd
 
