@@ -7,7 +7,7 @@ multiple_cmd() {
     perl -i -0777 -pe 's/<title>(.*|\n)*itemprop="image.*>/{% include header.html %}/g' $1
 
     # Replace navbar for partial
-    perl -0777 -pe 's/<!-- Header(.*|\n)*<\/nav>\s*<\/header>/{% include navbar.html %}/g' $1
+    perl -i -0777 -pe 's/<!-- Header(.*|\n)*<\/nav>\s*<\/header>/{% include navbar.html %}/g' $1
 
     # Remove scripts repeated in all newsletter pages twice
     perl -i -0777 -pe 's/<!-- Scripts(.*|\n)*main.js"><\/script>//g' $1
