@@ -1,5 +1,8 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto");
 
+/******************************/
+/*          Filters           */
+/******************************/
 .form-check {
     height: 90px;
     overflow: scroll;
@@ -14,17 +17,6 @@
     margin-top: -110px;
     transition-delay: 0.25s;
     opacity: 100%;
-}
-.chart-content > .row {
-  overflow-x: auto;
-  white-space: nowrap;
-}
-.chart-content > .row > .col-md-6 {
-  display: inline-block;
-  float: none;
-}
-.helpCont {
-	display: none;
 }
 input[type="checkbox"] {
 	opacity: 100% !important;
@@ -64,18 +56,42 @@ input[type="checkbox"] {
 }
 
 /******************************/
-/* Content for Overview Cards */
+/*           Table            */
 /******************************/
-#chart-section-0 .row {
-    margin: 0px;
-    padding: 0px;
+.chart-content > .row {
+  overflow-x: auto;
+  white-space: nowrap;
 }
-#chart-section-0 .row > *{
-    margin: 0px;
-    padding: 0px;
+.chart-content > .row > .col-md-6 {
+  display: inline-block;
+  float: none;
 }
-.chart-overview-container {
+.helpCont {
+	display: none;
+}
+#table {
+    display: none;
+}
 
+/******************************/
+/*      Overview Cards        */
+/******************************/
+#survey-charts .row {
+    margin: 0;
+    padding: 0 1.5em 0 1.5em;
+}
+.chart-question-title {
+    color: #44fee3 !important; 
+    font-size: calc(15px + 1.0vw); 
+    line-height: normal; 
+    font-family: Roboto; 
+    overflow: scroll; 
+    margin-bottom: 30px
+}
+.chart-canvas {
+    height: 300em;
+    max-height: 50vh !important;
+    margin-bottom: 30px;
 }
 .chart-overview-subsection {
 }

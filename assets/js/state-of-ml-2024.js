@@ -35,6 +35,10 @@ const chartStyles = [
 	"bar", // identify
 ];
 
+// Using arquero as initial implementation was performing filtering directly
+// However now we use TableFilter to do all of this for us, and arquero is 
+// only used to populate the initial table
+// TODO: Remove dependency and instead load initial data/table directly
 let dt = await aq.loadCSV('data.csv'); 
 
 const origColNames = dt.columnNames().slice(1, -3); // Cutting timestamp, company, score, etc
@@ -49,26 +53,10 @@ for (const i of multiChoiceCols) {
 
 // Drop first and last columns
 dt = dt.select(...origColNames);
-//// Rename columns
-//dt = dt.select(aq.names(...colNames));
-//// Drop columns
-//dt = dt.select(...colNames.slice(1));
-
 
 // Register chartjs plugins (needs uncomment on the chartjs 3.9.x)
 Chart.register(ColorSchemesPlugin);
 Chart.register(ChartDataLabels);
-//Chart.register({
-//    id: "sort",
-//    beforeUpdate: (chart) => {
-//        console.log(chart);
-//        console.log(chart.data.datasets)
-//        if (chart.data.datasets.length) {
-//            console.log(chart.data.datasets[0])
-//            chart.data.datasets[0].reverse()
-//        }
-//    }
-//})
 
 const themes = ["brewer.YlGnBu9", "brewer.GnBu9", "brewer.GnBu9", "brewer.PuBuGn9", "brewer.PuBu9", "brewer.BuPu9", "brewer.RdPu9", "brewer.PuRd9", "brewer.OrRd9", "brewer.YlOrRd9", "brewer.YlOrBr9"];
 const chartSections = [5, 14, 22];
@@ -82,8 +70,9 @@ var charts = [];
 
 for (let i = 0, j = 0; i < origColNames.length; i++) {
 	
-	const chartContainer = $("<div></div>");
-	chartContainer.append("<div style='color: #44fee3 !important; height: 80px; overflow: scroll' class='text-center d-flex align-items-center'>"+origColNames[i]+"</div>")
+    // TODO: Move these to single row for titles, charts and filters for correct sizes
+	const chartContainer = $("<div class='chart-container'></div>");
+    chartContainer.append("<div class='text-center chart-question-title'>"+origColNames[i]+"</div>")
 
 	// Choose the right section based on the distributions
 	if (i > chartSections[j]) {
@@ -94,7 +83,7 @@ for (let i = 0, j = 0; i < origColNames.length; i++) {
 	const chartTab = $("#chart-section-"+(j+1)+" .row");
     chartTab.append(chartContainer);
 
-	const chartCanvas = $("<canvas style='height: 300em' id='chart-"+i+"'></canvas>");
+	const chartCanvas = $("<canvas class='chart-canvas' id='chart-"+i+"'></canvas>");
 	chartContainer.append(chartCanvas)
 
 	if (multiChoiceCols.includes(i)) {
@@ -103,14 +92,14 @@ for (let i = 0, j = 0; i < origColNames.length; i++) {
 	else {
         chartContainer.append("<div id='slcChart"+i+"' class='form-check form-switch form-extend-on-hover'></div>")
 	}
-    chartContainer.addClass("col-lg-5 col-md-8 col-sm-10");
+    chartContainer.addClass("col-lg-8 col-10");
 
     let config = {
         type: chartStyles[i],
         options: {
             indexAxis: 'y',
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
             aspectRatio: 1.2,
             plugins: {
                 tooltip: {

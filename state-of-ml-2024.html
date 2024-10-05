@@ -21,7 +21,7 @@ description: The Institute for Ethical AI & Machine Learning is a Europe-based r
 						<header>
                             <h2 style="font-size: 4em; color: #01C3A7; font-weight: bold; text-align: center; line-height: 1.3em; margin-bottom: 20px">The State of Production ML in 2024</h2>
                             <p style="font-weight: bold; max-width: 850px; font-size: 1.25em">
-                                The <a href="#five">State of Prod ML Survey</a> has collected insights from practitioners across the production machine learning ecosystem, and aims to collect a comprehensive overview of common practices, tooling preferences, and challenges faced when deploying models to production.
+                                The <a href="#survey-charts">State of Prod ML Survey</a> has collected insights from practitioners across the production machine learning ecosystem, and aims to collect a comprehensive overview of common practices, tooling preferences, and challenges faced when deploying models to production.
                             </p>
                                 <br>
                             <p style="font-weight: bold; max-width: 850px; font-size: 1.25em">
@@ -31,12 +31,14 @@ description: The Institute for Ethical AI & Machine Learning is a Europe-based r
                     <br>
 					</div>
 
-					<a href="#one" class="goto-next scrolly">Next</a>
+					<a href="#survey-charts" class="goto-next scrolly">Next</a>
 				</section>
 
                 <section id="one" class="spotlight style1 bottom">
+                    <!-- TODO: Update image to something releavnt to mlops survey -->
                     <span class="image fit main"><img src="images/dots-vision.jpg" alt="" /></span>
-					<div class="content">
+
+					<div class="content" class="container">
                         <header class="major">
                             <h2>
                               You can also use the filters to slice and dice the data to derive insightful observations for the community.
@@ -50,10 +52,9 @@ description: The Institute for Ethical AI & Machine Learning is a Europe-based r
 
 
 
-<section id="five" class="wrapper style1 special fade-up charts-container">
+<section id="survey-charts" class="wrapper style1 special fade-up charts-container">
 
-
-<main class="container">
+<main class="container" id="survey-charts">
 </main>
 
 <div class="navbar navbar-expand-md">
@@ -77,6 +78,8 @@ description: The Institute for Ethical AI & Machine Learning is a Europe-based r
     </div>
 </div>
 
+<hr style="margin: 1.5em 0 1.5em 0" />
+
 <div class="tab-content">
 	<div class="tab-pane active" role="tabpanel" id="chart-section-1">
 		<div class="row flex-nowrap overflow-auto"></div>
@@ -94,63 +97,11 @@ description: The Institute for Ethical AI & Machine Learning is a Europe-based r
 
 <div id="charts" class="row"></div>
 
-<hr/>
-
-<h1>Table results</h1>
-
-<div>
-    You can view the full data below based on the filters enabled. 
-</div>
-
-<hr/>
-
-<div class="container" style="height: 500px; overflow: scroll;">
-	<div id="table" class="table-responsive"></div>
-</div>
+<div id="table" class="table-responsive"></div>
 
 </section>
 
-
-			<!-- Footer -->
-				<footer id="footer">
-					<ul class="icons">
-						<li><a href="https://twitter.com/EthicalML" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
-                        <li><a href="https://facebook.com/EthicalML" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
-						<li><a href="https://www.linkedin.com/company/the-institute-for-ethical-machine-learning/" class="icon fa-linkedin"><span class="label">LinkedIn</span></a></li>
-						<li><a href="https://github.com/EthicalML" class="icon fa-github"><span class="label">GitHub</span></a></li>
-                        <li><a href="mailto:a@ethical.institute" class="icon fa-envelope"><span class="label">Email</span></a></li>
-					</ul>
-					<ul class="copyright">
-						<li>&copy; The Institute for Ethical AI & ML. 
-                            All rights reserved.</li>
-					</ul>
-				</footer>
-
-		</div>
-
-		<!-- Scripts -->
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-89407852-2"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'UA-89407852-2');
-    </script>
-
-	<script src="assets/js/jquery.min.js"></script>
-	<script src="assets/js/jquery.scrolly.min.js"></script>
-	<script src="assets/js/jquery.dropotron.min.js"></script>
-	<script src="assets/js/jquery.scrollex.min.js"></script>
-	<script src="assets/js/skel.min.js"></script>
-	<script src="assets/js/util.js"></script>
-	<script src="assets/js/three.min.js"></script>
-	<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
-	<script src="assets/js/Projector.js"></script>
-	<script src="assets/js/CanvasRenderer.js"></script>
-	<script src="assets/js/stats.min.js"></script>
-	<script src="assets/js/main.js"></script>
+{% include footer.html %}
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"></script>
@@ -163,6 +114,7 @@ description: The Institute for Ethical AI & Machine Learning is a Europe-based r
 <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-graph@4.3.1/build/index.umd.min.js "></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 <script src="assets/js/chartjs-plugin-colorschemes-v3.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/arquero@latest"></script>
 <script src="https://unpkg.com/tablefilter@0.7.2/dist/tablefilter/tablefilter.js"></script>
 
