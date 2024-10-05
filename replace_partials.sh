@@ -19,7 +19,7 @@ multiple_cmd() {
     perl -i -0777 -pe 's/<!-- Footer(.*|\n)*<\/script>/{% include footer.html %}/g' $1
 
     # Remove all dos newlines to linux
-    perl -i -pe 'tr/(\r|\n)+/\n/' $1
+    perl -i -pe 's/\r\n/\n/g' $1
 }
 export -f multiple_cmd
 
