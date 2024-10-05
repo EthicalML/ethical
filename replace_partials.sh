@@ -23,6 +23,6 @@ multiple_cmd() {
 }
 export -f multiple_cmd
 
-find . -path "./_*" -prune -o -name "*.html" -exec bash -c 'multiple_cmd "$0"' {} \;
+find . -path "./_*" -prune -o -name "mle/301.html" -exec bash -c 'multiple_cmd "$0"' {} \;
 
 
