@@ -1,5 +1,8 @@
 
 multiple_cmd() { 
+    # Repalce all dos newlines to linux
+    perl -i -pe 'tr/\r/\n/' $1
+
     # Add title description
     perl -i -0777 -pe 's/<!DOCTYPE(.*|\n)*<html>/---\ntitle: The Institute for Ethical AI & Machine Learning\ndescription: The Institute for Ethical AI & Machine Learning is a Europe-based research centre that brings togethers technologists, academics and policy-makers to develop industry frameworks that support the responsible development, design and operation of machine learning systems.\n---\n<html>/g' $1
 
