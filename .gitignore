@@ -83,3 +83,7 @@ tags.*
 .tags 
 .tags.*
 
+# Github pages
+Gemfile.lock
+_site/
+
