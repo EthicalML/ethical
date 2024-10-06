@@ -92,7 +92,7 @@ for (let i = 0, j = 0; i < origColNames.length; i++) {
 	else {
         chartContainer.append("<div id='slcChart"+i+"' class='form-check form-switch form-extend-on-hover'></div>")
 	}
-    chartContainer.addClass("col-lg-8 col-10");
+    chartContainer.addClass("col-lg-8 col-11 p-0 px-md-5");
 
     let config = {
         type: chartStyles[i],
