@@ -20,9 +20,14 @@ multiple_cmd() {
 
     # Remove all dos newlines to linux
     perl -i -pe 's/\r\n/\n/g' $1
+
 }
 export -f multiple_cmd
 
 find . -path "./_*" -prune -o -name "mle/301.html" -exec bash -c 'multiple_cmd "$0"' {} \;
 
+
+# add image banner to all newsletters
+find mle/ -name "*.html" -exec sed -i'' -e '4i\'$'\n''image-banner: https://ethical.institute/images/mle.jpg'$'\n' {} \;
+rm mle/*-e
 
