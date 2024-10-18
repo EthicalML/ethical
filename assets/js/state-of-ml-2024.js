@@ -209,7 +209,7 @@ function loadTable() {
         col_widths: colWidths,
 
         /* sorting feature */
-        extensions: [{ name: 'sort' }],
+        extensions: [],
 
         /** Bootstrap integration */
 
@@ -328,6 +328,7 @@ let CHART_COLORS = [
 ];
 
 function sortLabelsData(labels, data) {
+    console.log("here");
     let arrayOfObj = labels.map(function(d, i) {
       return {
         label: d,
@@ -336,22 +337,24 @@ function sortLabelsData(labels, data) {
     });
 
     let sortedArrayOfObj = arrayOfObj.sort(function(a, b) {
-      return b.data>a.data;
+        return b.data - a.data;
     });
+    console.log(sortedArrayOfObj);
 
     let newArrayLabel = [];
     let newArrayData = [];
+
     sortedArrayOfObj.forEach(function(d){
       newArrayLabel.push(d.label);
       newArrayData.push(d.data);
     });
+
     return [newArrayLabel, newArrayData];
 }
 
 function updateChart(chart, labels, data) {
-    console.log(labels, data);
     [labels, data] = sortLabelsData(labels, data);
-    console.log(labels, data);
+
     // TODO: Hide charts that don't have any data
     chart.data = {
         labels: labels,
