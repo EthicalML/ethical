@@ -85,7 +85,6 @@ input[type="checkbox"] {
     font-size: calc(15px + 1.0vw); 
     line-height: normal; 
     font-family: Roboto; 
-    overflow: scroll; 
     margin-bottom: 30px
 }
 .chart-canvas {
