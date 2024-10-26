@@ -139,7 +139,7 @@ for (let i = 0, j = 0; i < origColNames.length; i++) {
                             const percentage = parseInt(value*100 / sum);
                             let percentageStr = percentage+"%";
 
-                            if (chartStyle == "pie") {
+                            if (chartStyle == "pie" && window.innerWidth > 735 && window.innerHeight > 600) {
                                 let label = ctx.chart.data.labels[ctx.dataIndex];
                                 switch (label) {
                                     case "Amazon Web Services": label = "AWS"; break;
