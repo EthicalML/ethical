@@ -4,10 +4,10 @@ const chartStyles = [
 	// 1
 	"bar", // libraries
 	"bar", // modality
-	"bar", // usecase
+	"pie", // usecase
 	"polarArea", // timetoprod
-	"doughnut", // cloud
-	"pie", // challenges
+	"pie", // cloud
+	"doughnut", // challenges
 	// 2)
 	"bar", // registry
 	"bar", // feature store
@@ -139,11 +139,21 @@ for (let i = 0, j = 0; i < origColNames.length; i++) {
                             const percentage = parseInt(value*100 / sum);
                             let percentageStr = percentage+"%";
 
-                            //if (chartStyle == "pie" || chartStyle == "doughnut") {
-                            //    let label = ctx.chart.data.labels[ctx.dataIndex];
-                            //    label = label.slice(0, 15) + "..."
-                            //    percentageStr = label + ": " + percentageStr;
-                            //}
+                            if (chartStyle == "pie") {
+                                let label = ctx.chart.data.labels[ctx.dataIndex];
+                                switch (label) {
+                                    case "Amazon Web Services": label = "AWS"; break;
+                                    case "Google Cloud Platform": label = "GCP"; break;
+                                    case "Recommender systems": label = "RecSys"; break;
+                                    case "Demand Forecasting": label = "Demand FC"; break;
+                                    case "United Kingdom": label = "UK"; break;
+                                }
+                                console.log(label);
+                                if (label.length >= 15) {
+                                    label = label.slice(0, 15) + "..."
+                                }
+                                percentageStr = label + ": " + percentageStr;
+                            }
 
                             // We don't add label if lower than 3% as too small area
                             if (percentage < 3)	{
@@ -328,7 +338,6 @@ let CHART_COLORS = [
 ];
 
 function sortLabelsData(labels, data) {
-    console.log("here");
     let arrayOfObj = labels.map(function(d, i) {
       return {
         label: d,
@@ -339,7 +348,6 @@ function sortLabelsData(labels, data) {
     let sortedArrayOfObj = arrayOfObj.sort(function(a, b) {
         return b.data - a.data;
     });
-    console.log(sortedArrayOfObj);
 
     let newArrayLabel = [];
     let newArrayData = [];
