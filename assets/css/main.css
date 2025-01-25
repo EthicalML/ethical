@@ -1653,12 +1653,19 @@
 	hr {
 		border: 0;
 		border-bottom: solid 1px rgba(255, 255, 255, 0.3);
-		margin: 3em 0;
+        background: #01C3A7;
+        content: '';
+        display: inline-block;
+        height: 0.2em;
+        max-width: 20em;
+        width: 75%;
+        opacity: 1;
 	}
 
 		hr.major {
 			margin: 4em 0;
 		}
+
 
 	blockquote {
 		border-left: solid 4px rgba(255, 255, 255, 0.3);
@@ -4015,4 +4022,27 @@
         .stylelong {
             min-height: 1200px !important;
         }
+
+
+.issues-container{
+    height: 105px; 
+    width: 100%;
+    max-width: 400px;
+    overflow-y: scroll;
+    border: 5px solid rgba(16,199,155, 1.0);
+    margin-left: auto;
+    scrollbar-width: none;
+    margin-right: auto;
+}
+.issue-container{
+    padding: 5px 5px 5px 5px;
+    color: inherit; /* blue colors for links too */
+    text-decoration: inherit;
+    width: 100%;
+    border-bottom: none;
+    display: block;
+}
+.issue-container:hover {
+    background-color: rgb(16,199,155);
+}
 
