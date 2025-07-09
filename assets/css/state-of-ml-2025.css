@@ -1,0 +1,146 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto");
+
+/******************************/
+/*          Filters           */
+/******************************/
+.form-check {
+    height: 90px;
+    overflow: scroll;
+    opacity: 50%;
+    background-color: #22242f;
+    z-index: 100;
+    transition: height 0.15s, margin-top 0.15s, border-top 1s;
+    position: relative;
+}
+.form-extend-on-hover:hover {
+    height: 200px;
+    margin-top: -110px;
+    transition-delay: 0.25s;
+    opacity: 100%;
+}
+input[type="checkbox"] {
+	opacity: 100% !important;
+}
+.charts-container .form-check ul {
+	list-style-type: none;
+	list-style: none;
+    padding-left: 0;
+}
+.charts-container .form-check li {
+    height: 30px;
+    padding-left: 1em;
+}
+.charts-container .form-check li:hover {
+    background-color: #353646;
+}
+.charts-container .form-check li:has(input:checked) { 
+    background-color: #353646;
+}
+.charts-container .form-check:has(input:checked),
+        .charts-container .form-text-container:has(input:not(:placeholder-shown)){ 
+    border-top: 5px solid #44fee3;
+}
+ input[value]
+.charts-container .form-check {
+    padding-left: 0;
+}
+.charts-container .form-check-input {
+    margin-left: 0;
+}
+.charts-container .form-check ul li:first-child input {
+    display: none;
+}
+.charts-container .form-check ul li:first-child:hover {
+    background-color: #ff6384;
+    transition: all 1s;
+}
+
+/******************************/
+/*           Table            */
+/******************************/
+.chart-content > .row {
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.chart-content > .row > .col-md-6 {
+  display: inline-block;
+  float: none;
+}
+.helpCont {
+	display: none;
+}
+#table {
+    display: none;
+}
+
+/******************************/
+/*      Overview Cards        */
+/******************************/
+#survey-charts .row {
+    margin: 0;
+    padding: 0 1.5em 0 1.5em;
+}
+.chart-question-title {
+    color: #44fee3 !important; 
+    font-size: calc(15px + 1.0vw); 
+    line-height: normal; 
+    font-family: Roboto; 
+    margin-bottom: 30px
+}
+.chart-canvas {
+    height: 300em;
+    max-height: 50vh !important;
+    margin-bottom: 30px;
+}
+.chart-overview-subsection {
+}
+.chart-overview-item, .chart-overview-item-tall {
+    height: 200px;
+    padding: 10px 10px 10px 10px !important;
+}
+.chart-overview-item-tall {
+    height: 400px !important;
+}
+.chart-overview-item-content {
+    border-radius: 30px;
+    height: 100%;
+    padding: 20px;
+    line-height: normal;
+}
+.chart-overview-item-content .chart-overview-headline,
+.chart-overview-item-content .chart-overview-headline-small {
+    color: black;
+    font-size: 2em;
+    font-family: "Orbitron";
+}
+.chart-overview-item-content .chart-overview-headline-small {
+    font-size: 3.3em;
+}
+.chart-overview-item-content .chart-overview-metric {
+
+}
+.chart-overview-item-content .chart-overview-description {
+    color: black;
+    font-size: 17px;
+    color: black;
+}
+
+/****************************/
+/* Chart Navigation Section */
+/****************************/
+.chart-navbar {
+    background-color: #10c79b;
+    border-radius: 30px;
+    padding: 5px 5px 5px 0;
+    color: #000 !important;
+}
+.chart-navbar a {
+    color: #000 !important;
+    padding: 5px;
+    border-radius: 30px !important;
+}
+.chart-navbar a.active {
+    color: #01c3a7 !important;
+    background-color: #1c1d26 !important;
+    border-radius: 30px;
+}

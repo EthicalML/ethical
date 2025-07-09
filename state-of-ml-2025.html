@@ -1,0 +1,124 @@
+---
+title: The Institute for Ethical AI & Machine Learning
+description: The Institute for Ethical AI & Machine Learning is a Europe-based research centre that brings togethers technologists, academics and policy-makers to develop industry frameworks that support the responsible development, design and operation of machine learning systems.
+image-banner: https://ethical.institute/images/prod-ml-survey-banner.jpg
+---
+<html data-bs-theme="dark">
+	<head>
+		{% include header.html %}
+
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Orbitron" />
+		<link rel="stylesheet" href="assets/css/state-of-ml-2025.css" />
+	</head>
+	<body>
+		<div id="page-wrapper">
+
+            {% include navbar.html %}
+
+				<section id="banner" style="font-size: 11pt">
+					<div class="content" style="text-align: center">
+						<img class="logo-image" src="images/logos/eml-logo-white.png" alt="" style="max-width: 440px; width: 80%; margin-top: 30px" />
+						<header>
+                            <h2 style="font-size: 4em; color: #01C3A7; font-weight: bold; text-align: center; line-height: 1.3em; margin-bottom: 20px">The State of Production ML in 2025</h2>
+                            <p style="font-weight: bold; max-width: 850px; font-size: 1.25em">
+                                The <a href="#survey-charts">State of Prod ML Survey</a> has collected insights from practitioners across the production machine learning ecosystem, and aims to collect a comprehensive overview of common practices, tooling preferences, and challenges faced when deploying models to production.
+                            </p>
+                                <br>
+                            <p style="font-weight: bold; max-width: 850px; font-size: 1.25em">
+                                Contribute by sharing your thoughts! It only takes 2 minutes:<br> <a href="https://bit.ly/state-of-ml-2025">https://bit.ly/state-of-ml-</a>5202.
+                            </p>
+						</header>
+                    <br>
+					</div>
+
+					<a href="#survey-charts" class="goto-next scrolly">Next</a>
+				</section>
+
+                <section id="one" class="spotlight style1 bottom">
+                    <!-- TODO: Update image to something releavnt to mlops survey -->
+                    <span class="image fit main"><img src="images/dots-vision.jpg" alt="" /></span>
+
+					<div class="content" class="container">
+                        <header class="major">
+                            <h2 id="chart-banner-title">
+                              Check out the results in the charts below!
+                            </h2>
+                            <h3>
+                                And if you haven't, please share your thoughts!</br> It only takes 2 minutes:<br><br> <a href="https://bit.ly/state-of-ml-2025">https://bit.ly/state-of-ml-2025</a>.
+                            </h3>
+                        </header>
+					</div>
+				</section>
+
+
+
+<section id="survey-charts" class="wrapper style1 special fade-up charts-container p-0 px-md-5">
+
+<main class="container" id="survey-charts">
+</main>
+
+<div class="navbar navbar-expand-md">
+    <div class="container-lg navbar-expand-md" style="display: block">
+        <div class="d-flex justify-content-center">
+            <ul class="chart-navbar nav navbar-nav nav-tabs justify-content-center">
+                <li class="nav-item">
+                    <a class="list-group-item list-group-item-action nav-link active" data-bs-toggle="list" href="#chart-section-1" role="tab">1) ML & Scope</a>
+                </li>
+                <li class="nav-item">
+                    <a class="list-group-item list-group-item-action nav-link" data-bs-toggle="list" href="#chart-section-2" role="tab">2) Platform & Components</a>
+                </li>
+                <li class="nav-item">
+                    <a class="list-group-item list-group-item-action nav-link" data-bs-toggle="list" href="#chart-section-3" role="tab">3) Ecosystem & Maturity</a>
+                </li>
+                <li class="nav-item">
+                    <a class="list-group-item list-group-item-action nav-link" data-bs-toggle="list" href="#chart-section-4" role="tab">4) Demographics</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<hr style="margin: 1.5em 0 1.5em 0" />
+
+<div class="tab-content">
+	<div class="tab-pane active" role="tabpanel" id="chart-section-1">
+		<div class="row p-0 flex-nowrap overflow-auto"></div>
+	</div>
+	<div class="tab-pane" role="tabpanel" id="chart-section-2">
+		<div class="row p-0 flex-nowrap overflow-auto"></div>
+	</div>
+	<div class="tab-pane" role="tabpanel" id="chart-section-3">
+		<div class="row p-0 flex-nowrap overflow-auto"></div>
+	</div>
+	<div class="tab-pane" role="tabpanel" id="chart-section-4">
+		<div class="row p-0 flex-nowrap overflow-auto"></div>
+	</div>
+</div>
+
+<div id="charts" class="row"></div>
+
+<div id="table" class="table-responsive"></div>
+
+</section>
+
+{% include footer.html %}
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+
+<!--<script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>-->
+<!--<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>-->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+<!--<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>-->
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-graph@4.3.1/build/index.umd.min.js "></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+<script src="assets/js/chartjs-plugin-colorschemes-v3.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/arquero@latest"></script>
+<script src="https://unpkg.com/tablefilter@0.7.2/dist/tablefilter/tablefilter.js"></script>
+
+<script type="module" src="assets/js/state-of-ml-2025.js" defer="defer"></script>
+
+	</body>
+</html>
