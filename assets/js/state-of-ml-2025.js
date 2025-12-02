@@ -44,7 +44,7 @@ const chartStyles = [
 let currentYear = '2025';
 let dt = await aq.loadCSV('data-2025.csv'); 
 
-const origColNames = dt.columnNames().slice(1, -3); // Cutting timestamp, company, score, etc
+let origColNames = dt.columnNames().slice(1, -3); // Cutting timestamp, company, score, etc
 const multiChoiceCols = [1, 2, 5, 19, 21];
 const COL_WIDTH="20em";
 const LONG_COL_WIDTH="40em";
@@ -250,15 +250,15 @@ function loadTable() {
     tfConfig["external_flt_ids"] = customFilterIds;
 
 
-    var tf = new TableFilter('demo', tfConfig);
+    window.tf = new TableFilter('demo', tfConfig);
 
-    tf.emitter.on([
+    window.tf.emitter.on([
         'after-filtering',
         "after-clearing-filters",
         "initialized"
-        ], reComputeChartData(tf));
+        ], reComputeChartData(window.tf));
 
-    tf.init();
+    window.tf.init();
 
     setupFilterBootstrapAndConfig();
     addClearFilterEvent();
@@ -388,25 +388,31 @@ async function switchYear(year) {
         const csvFile = year === '2024' ? 'data.csv' : 'data-2025.csv';
         dt = await aq.loadCSV(csvFile);
 
+        // CRITICAL FIX: Recalculate origColNames from new dataset
+        origColNames = dt.columnNames().slice(1, -3);
+
+        // CRITICAL FIX: Apply column selection like in original code
+        dt = dt.select(...origColNames);
+
         // Update page title
         const titleElement = document.querySelector('#chart-banner-title');
         if (titleElement) {
             titleElement.textContent = `Check out the ${year} results in the charts below!`;
         }
 
-        // Rebuild table with new data
+        // Destroy existing TableFilter first (before replacing table HTML)
+        if (window.tf) {
+            try {
+                window.tf.destroy();
+                window.tf = null;
+            } catch (e) {
+                console.warn('Error destroying TableFilter:', e);
+            }
+        }
+
+        // Then reload table data without recreating charts
         $('#table').html(dt.toHTML({limit: 1000})).children().attr('id', 'demo').ready(function() {
-            // Clear existing charts
-            charts.forEach(chart => chart.destroy());
-            charts = [];
-
-            // Clear chart containers
-            $('.chart-container').remove();
-
-            // Recreate charts with new data
-            initializeCharts();
-
-            // Reload table with new TableFilter
+            // Reload table with new data (reuse existing loadTable function)
             loadTable();
         });
 
@@ -415,107 +421,6 @@ async function switchYear(year) {
     }
 }
 
-// Initialize charts (extracted from existing code)
-function initializeCharts() {
-    for (let i = 0, j = 0; i < origColNames.length; i++) {
-        const chartContainer = $("<div class='chart-container'></div>");
-        chartContainer.append("<div class='text-center chart-question-title'>"+origColNames[i]+"</div>")
-
-        // Choose the right section based on the distributions
-        if (i > chartSections[j]) {
-            j++;
-        }
-
-        // Select the row object inside the respective section ID
-        const chartTab = $("#chart-section-"+(j+1)+" .row");
-        chartTab.append(chartContainer);
-
-        const chartCanvas = $("<canvas class='chart-canvas' id='chart-"+i+"'></canvas>");
-        chartContainer.append(chartCanvas)
-
-        if (multiChoiceCols.includes(i)) {
-            chartContainer.append("<div id='inpChart"+i+"' class='form-check form-switch form-text-container'></div>")
-        }
-        else {
-            chartContainer.append("<div id='slcChart"+i+"' class='form-check form-switch form-extend-on-hover'></div>")
-        }
-        chartContainer.addClass("col-lg-8 col-11 p-0 px-md-5");
-
-        let config = {
-            type: chartStyles[i],
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                aspectRatio: 1.2,
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function(tooltipItem) {
-                                const dataset = tooltipItem.chart.data.datasets[tooltipItem.datasetIndex];
-                                const total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
-                                  return previousValue + currentValue;
-                                });
-                                const currentValue = dataset.data[tooltipItem.dataIndex];
-                                const percentage = parseInt(((currentValue/total) * 100));
-                                return percentage + "%";
-                            }
-                        }
-                    },
-                    colors: {
-                        forceOverride: false
-                    },
-                    legend: {
-                        display: true,
-                        position: 'right'
-                    },
-                    datalabels: {
-                        formatter: ((chartStyle) => {
-                            return (value, ctx) => {
-                                let sum = 0;
-                                const dataArr = ctx.chart.data.datasets[0].data;
-                                dataArr.map(data => {
-                                    sum += data;
-                                });
-                                const percentage = parseInt(value*100 / sum);
-                                let percentageStr = percentage+"%";
-
-                                if (chartStyle == "pie" && window.innerWidth > 735 && window.innerHeight > 600) {
-                                    let label = ctx.chart.data.labels[ctx.dataIndex];
-                                    switch (label) {
-                                        case "Amazon Web Services": label = "AWS"; break;
-                                        case "Google Cloud Platform": label = "GCP"; break;
-                                        case "Recommender systems": label = "RecSys"; break;
-                                        case "Demand Forecasting": label = "Demand FC"; break;
-                                        case "United Kingdom": label = "UK"; break;
-                                    }
-                                    if (label.length >= 15) {
-                                        label = label.slice(0, 15) + "..."
-                                    }
-                                    percentageStr = label + ": " + percentageStr;
-                                }
-
-                                if (percentage < 3)	{
-                                    percentageStr = "";
-                                }
-                                return percentageStr;
-                            }
-                        })(chartStyles[i]),
-                        color: '#fff',
-                    }
-                }
-            }
-        };
-
-        // Remove labels for bar charts
-        if (chartStyles[i] == "bar" || chartStyles[i] == "radar") {
-            config.options.plugins.legend.display = false;
-        }
-
-        const chart = new Chart($("#chart-"+i), config);
-        charts.push(chart);
-    }
-}
 
 // Export for global access
 window.switchYear = switchYear;
