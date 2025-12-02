@@ -380,7 +380,7 @@ function updateChart(chart, labels, data) {
 async function switchYear(year) {
     if (currentYear === year) return;
 
-    console.log(`🔄 Switching to ${year} data...`);
+    console.log(`Switching to ${year} data...`);
     currentYear = year;
 
     try {
@@ -410,9 +410,8 @@ async function switchYear(year) {
             loadTable();
         });
 
-        console.log(`✅ Successfully switched to ${year} data`);
     } catch (error) {
-        console.error(`❌ Error switching to ${year}:`, error);
+        console.error(`Error switching to ${year}:`, error);
     }
 }
 
