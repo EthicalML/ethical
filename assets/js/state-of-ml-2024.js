@@ -148,7 +148,6 @@ for (let i = 0, j = 0; i < origColNames.length; i++) {
                                     case "Demand Forecasting": label = "Demand FC"; break;
                                     case "United Kingdom": label = "UK"; break;
                                 }
-                                console.log(label);
                                 if (label.length >= 15) {
                                     label = label.slice(0, 15) + "..."
                                 }
@@ -178,7 +177,7 @@ for (let i = 0, j = 0; i < origColNames.length; i++) {
     charts.push(chart);
 }
 
-$('#table').html(dt.toHTML()).children().attr('id', 'demo').ready(function() { loadTable() });
+$('#table').html(dt.toHTML({ limit: 1000 })).children().attr('id', 'demo').ready(function() { loadTable() });
 
 function tableAddBootstrapClasses() {
     $("#table table").addClass("table table-striped-columns table-bordered table-sm table-hover align-middle");
