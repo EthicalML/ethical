@@ -9,11 +9,64 @@ image-banner: https://ethical.institute/images/prod-ml-survey-banner.jpg
 
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Orbitron" />
 		<link rel="stylesheet" href="assets/css/state-of-ml-2025.css" />
+
+		<style>
+			/* Simple year switcher styles */
+			.year-switcher {
+				position: fixed;
+				top: 80px;
+				right: 20px;
+				z-index: 1000;
+				background: rgba(0, 0, 0, 0.8);
+				padding: 12px;
+				border-radius: 8px;
+				backdrop-filter: blur(10px);
+				border: 1px solid rgba(1, 195, 167, 0.3);
+			}
+
+			.year-switcher button {
+				background: #01C3A7;
+				color: white;
+				border: none;
+				padding: 10px 18px;
+				margin: 0 4px;
+				border-radius: 5px;
+				cursor: pointer;
+				font-size: 14px;
+				font-weight: 500;
+				transition: all 0.3s ease;
+			}
+
+			.year-switcher button.active {
+				background: #00a085;
+				box-shadow: 0 2px 8px rgba(1, 195, 167, 0.4);
+			}
+
+			.year-switcher button:hover {
+				opacity: 0.8;
+				transform: translateY(-1px);
+			}
+
+			.year-label {
+				color: #01C3A7;
+				font-size: 12px;
+				text-align: center;
+				margin-bottom: 8px;
+				font-weight: 500;
+			}
+		</style>
 	</head>
 	<body>
 		<div id="page-wrapper">
 
             {% include navbar.html %}
+
+            <!-- Simple Year Switcher -->
+            <div class="year-switcher">
+                <div class="year-label">Survey Year</div>
+                <button onclick="switchToYear('2024')" id="btn-2024">2024</button>
+                <button onclick="switchToYear('2025')" id="btn-2025" class="active">2025</button>
+            </div>
 
 				<section id="banner" style="font-size: 11pt">
 					<div class="content" style="text-align: center">
@@ -92,6 +145,7 @@ image-banner: https://ethical.institute/images/prod-ml-survey-banner.jpg
 
 <div id="table" class="table-responsive"></div>
 
+
 </section>
 
 {% include footer.html %}
@@ -112,6 +166,29 @@ image-banner: https://ethical.institute/images/prod-ml-survey-banner.jpg
 <script src="https://unpkg.com/tablefilter@0.7.2/dist/tablefilter/tablefilter.js"></script>
 
 <script type="module" src="assets/js/state-of-ml-2025.js" defer="defer"></script>
+
+<script>
+    // Simple button handler for year switching
+    async function switchToYear(year) {
+        console.log(`🔄 Switching to ${year}...`);
+
+        // Update button states
+        document.getElementById('btn-2024').classList.toggle('active', year === '2024');
+        document.getElementById('btn-2025').classList.toggle('active', year === '2025');
+
+        // Call the module function (will be available after module loads)
+        if (window.switchYear && typeof window.switchYear === 'function') {
+            await window.switchYear(year);
+        } else {
+            console.warn('switchYear function not yet available, retrying...');
+            // Retry after a short delay
+            setTimeout(() => switchToYear(year), 500);
+        }
+    }
+
+    // Make available globally
+    window.switchToYear = switchToYear;
+</script>
 
 	</body>
 </html>

@@ -144,3 +144,117 @@ input[type="checkbox"] {
     background-color: #1c1d26 !important;
     border-radius: 30px;
 }
+
+/****************************/
+/* Year Comparison Controls */
+/****************************/
+.floating-control-panel {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: rgba(34, 36, 47, 0.95);
+    border: 1px solid #44fee3;
+    border-radius: 10px;
+    padding: 15px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    min-width: 280px;
+}
+
+.control-header {
+    color: #44fee3 !important;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.floating-control-panel .btn-group {
+    width: 100%;
+}
+
+.floating-control-panel .btn {
+    font-size: 0.85em;
+    padding: 8px 12px;
+    border-color: #44fee3;
+    color: #44fee3;
+    background: transparent;
+    flex: 1;
+}
+
+.floating-control-panel .btn:hover {
+    background-color: rgba(68, 254, 227, 0.1);
+    border-color: #44fee3;
+    color: #44fee3;
+}
+
+.floating-control-panel .btn-check:checked + .btn {
+    background-color: #44fee3;
+    color: #1c1d26;
+    border-color: #44fee3;
+}
+
+/****************************/
+/* Comparison Mode Styling */
+/****************************/
+.chart-container-comparison {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: stretch;
+}
+
+.comparison-chart-half {
+    flex: 1;
+    min-width: 0;
+}
+
+.comparison-chart-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.year-label {
+    background: linear-gradient(45deg, #36a2eb, #ff6384);
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 0.8em;
+    color: white;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.year-label.year-2024 {
+    background: #36a2eb;
+}
+
+.year-label.year-2025 {
+    background: #ff6384;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .floating-control-panel {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        position: fixed;
+        min-width: unset;
+    }
+
+    .chart-container-comparison {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .floating-control-panel .btn {
+        font-size: 0.8em;
+        padding: 6px 8px;
+    }
+}
