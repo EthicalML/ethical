@@ -87,3 +87,5 @@ tags.*
 Gemfile.lock
 _site/
 
+.claude
+CLAUDE.md
