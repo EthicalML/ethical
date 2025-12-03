@@ -4,7 +4,7 @@
 /*          Filters           */
 /******************************/
 .form-check {
-    height: 90px;
+    height: 30px !important;
     overflow: scroll;
     opacity: 50%;
     background-color: #22242f;
@@ -13,7 +13,7 @@
     position: relative;
 }
 .form-extend-on-hover:hover {
-    height: 200px;
+    height: 200px !important;
     margin-top: -110px;
     transition-delay: 0.25s;
     opacity: 100%;
@@ -73,58 +73,6 @@ input[type="checkbox"] {
     display: none;
 }
 
-/******************************/
-/*      Overview Cards        */
-/******************************/
-#survey-charts .row {
-    margin: 0;
-    padding: 0 1.5em 0 1.5em;
-}
-.chart-question-title {
-    color: #44fee3 !important; 
-    font-size: calc(15px + 1.0vw); 
-    line-height: normal; 
-    font-family: Roboto; 
-    margin-bottom: 30px
-}
-.chart-canvas {
-    height: 300em;
-    max-height: 50vh !important;
-    margin-bottom: 30px;
-}
-.chart-overview-subsection {
-}
-.chart-overview-item, .chart-overview-item-tall {
-    height: 200px;
-    padding: 10px 10px 10px 10px !important;
-}
-.chart-overview-item-tall {
-    height: 400px !important;
-}
-.chart-overview-item-content {
-    border-radius: 30px;
-    height: 100%;
-    padding: 20px;
-    line-height: normal;
-}
-.chart-overview-item-content .chart-overview-headline,
-.chart-overview-item-content .chart-overview-headline-small {
-    color: black;
-    font-size: 2em;
-    font-family: "Orbitron";
-}
-.chart-overview-item-content .chart-overview-headline-small {
-    font-size: 3.3em;
-}
-.chart-overview-item-content .chart-overview-metric {
-
-}
-.chart-overview-item-content .chart-overview-description {
-    color: black;
-    font-size: 17px;
-    color: black;
-}
-
 /****************************/
 /* Chart Navigation Section */
 /****************************/
@@ -148,113 +96,47 @@ input[type="checkbox"] {
 /****************************/
 /* Year Comparison Controls */
 /****************************/
-.floating-control-panel {
+.year-switcher {
     position: fixed;
-    top: 20px;
+    top: 80px;
     right: 20px;
     z-index: 1000;
-    background: rgba(34, 36, 47, 0.95);
-    border: 1px solid #44fee3;
-    border-radius: 10px;
-    padding: 15px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 12px;
+    border-radius: 8px;
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    min-width: 280px;
+    border: 1px solid rgba(1, 195, 167, 0.3);
 }
 
-.control-header {
-    color: #44fee3 !important;
-    font-weight: bold;
-    margin-bottom: 10px;
-    text-align: center;
-    font-size: 0.9em;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+.year-switcher button {
+    background: #01C3A7;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    margin: 0 4px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
 }
 
-.floating-control-panel .btn-group {
-    width: 100%;
+.year-switcher button.active {
+    background: #00a085;
+    box-shadow: 0 2px 8px rgba(1, 195, 167, 0.4);
 }
 
-.floating-control-panel .btn {
-    font-size: 0.85em;
-    padding: 8px 12px;
-    border-color: #44fee3;
-    color: #44fee3;
-    background: transparent;
-    flex: 1;
-}
-
-.floating-control-panel .btn:hover {
-    background-color: rgba(68, 254, 227, 0.1);
-    border-color: #44fee3;
-    color: #44fee3;
-}
-
-.floating-control-panel .btn-check:checked + .btn {
-    background-color: #44fee3;
-    color: #1c1d26;
-    border-color: #44fee3;
-}
-
-/****************************/
-/* Comparison Mode Styling */
-/****************************/
-.chart-container-comparison {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    align-items: stretch;
-}
-
-.comparison-chart-half {
-    flex: 1;
-    min-width: 0;
-}
-
-.comparison-chart-title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
+.year-switcher button:hover {
+    opacity: 0.8;
+    transform: translateY(-1px);
 }
 
 .year-label {
-    background: linear-gradient(45deg, #36a2eb, #ff6384);
-    padding: 4px 8px;
-    border-radius: 5px;
-    font-size: 0.8em;
-    color: white;
-    font-weight: bold;
-    letter-spacing: 0.5px;
+    color: #01C3A7;
+    font-size: 12px;
+    text-align: center;
+    margin-bottom: 8px;
+    font-weight: 500;
 }
 
-.year-label.year-2024 {
-    background: #36a2eb;
-}
 
-.year-label.year-2025 {
-    background: #ff6384;
-}
-
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-    .floating-control-panel {
-        top: 10px;
-        right: 10px;
-        left: 10px;
-        position: fixed;
-        min-width: unset;
-    }
-
-    .chart-container-comparison {
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .floating-control-panel .btn {
-        font-size: 0.8em;
-        padding: 6px 8px;
-    }
-}

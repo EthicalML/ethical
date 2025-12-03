@@ -90,7 +90,7 @@ for (let i = 0, j = 0; i < origColNames.length; i++) {
 	chartContainer.append(chartCanvas)
 
 	if (multiChoiceCols.includes(i)) {
-        chartContainer.append("<div id='inpChart"+i+"' class='form-check form-switch form-text-container'></div>")
+        chartContainer.append("<div id='inpChart"+i+"' class='form-check form-switch form-text-container form-extend-on-hover'></div>")
 	}
 	else {
         chartContainer.append("<div id='slcChart"+i+"' class='form-check form-switch form-extend-on-hover'></div>")
@@ -103,7 +103,7 @@ for (let i = 0, j = 0; i < origColNames.length; i++) {
             indexAxis: 'y',
             responsive: true,
             maintainAspectRatio: false,
-            aspectRatio: 1.2,
+            aspectRatio: 2,
             plugins: {
                 tooltip: {
                     callbacks: {
@@ -420,6 +420,27 @@ async function switchYear(year) {
         console.error(`Error switching to ${year}:`, error);
     }
 }
+
+// Simple button handler for year switching
+async function switchToYear(year) {
+    console.log(`🔄 Switching to ${year}...`);
+
+    // Update button states
+    document.getElementById('btn-2024').classList.toggle('active', year === '2024');
+    document.getElementById('btn-2025').classList.toggle('active', year === '2025');
+
+    // Call the module function (will be available after module loads)
+    if (window.switchYear && typeof window.switchYear === 'function') {
+        await window.switchYear(year);
+    } else {
+        console.warn('switchYear function not yet available, retrying...');
+        // Retry after a short delay
+        setTimeout(() => switchToYear(year), 500);
+    }
+}
+
+// Make available globally
+window.switchToYear = switchToYear;
 
 
 // Export for global access
