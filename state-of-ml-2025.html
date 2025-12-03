@@ -16,13 +16,6 @@ image-banner: https://ethical.institute/images/prod-ml-survey-banner.jpg
 
             {% include navbar.html %}
 
-            <!-- Simple Year Switcher -->
-            <div class="year-switcher">
-                <div class="year-label">Survey Year</div>
-                <button onclick="switchToYear('2024')" id="btn-2024">2024</button>
-                <button onclick="switchToYear('2025')" id="btn-2025" class="active">2025</button>
-            </div>
-
 				<section id="banner" style="font-size: 11pt">
 					<div class="content" style="text-align: center">
 						<img class="logo-image" src="images/logos/eml-logo-white.png" alt="" style="max-width: 440px; width: 80%; margin-top: 30px" />
@@ -62,7 +55,14 @@ image-banner: https://ethical.institute/images/prod-ml-survey-banner.jpg
 <!-- Editor Window Container -->
 <div class="editor-window">
     <div class="editor-header">
-        <div class="editor-title">survey-data.csv</div>
+        <div class="editor-title">
+            <div class="year-switcher">
+                <span class="year-label">Survey Data:</span >
+                <button onclick="switchToYear('2024')" id="btn-2024">2024</button>
+                <button onclick="switchToYear('2025')" id="btn-2025" class="active">2025</button>
+            </div>
+
+        </div>
         <div class="window-controls">
             <div class="window-control control-close"></div>
             <div class="window-control control-minimize"></div>
@@ -73,7 +73,7 @@ image-banner: https://ethical.institute/images/prod-ml-survey-banner.jpg
 
     <div class="editor-content">
 
-        <div class="navbar navbar-expand-md">
+        <div class="navbar-expand-md">
             <div class="container-lg navbar-expand-md" style="display: block">
                 <div class="d-flex justify-content-center">
                     <ul class="chart-navbar nav navbar-nav nav-tabs justify-content-center">
@@ -136,6 +136,29 @@ image-banner: https://ethical.institute/images/prod-ml-survey-banner.jpg
 <script src="https://unpkg.com/tablefilter@0.7.2/dist/tablefilter/tablefilter.js"></script>
 
 <script type="module" src="assets/js/state-of-ml-2025.js" defer="defer"></script>
+
+<script>
+    // Simple button handler for year switching
+    async function switchToYear(year) {
+        console.log(`🔄 Switching to ${year}...`);
+
+        // Update button states
+        document.getElementById('btn-2024').classList.toggle('active', year === '2024');
+        document.getElementById('btn-2025').classList.toggle('active', year === '2025');
+
+        // Call the module function (will be available after module loads)
+        if (window.switchYear && typeof window.switchYear === 'function') {
+            await window.switchYear(year);
+        } else {
+            console.warn('switchYear function not yet available, retrying...');
+            // Retry after a short delay
+            setTimeout(() => switchToYear(year), 500);
+        }
+    }
+
+    // Make available globally
+    window.switchToYear = switchToYear;
+</script>
 
 	</body>
 </html>

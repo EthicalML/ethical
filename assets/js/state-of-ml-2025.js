@@ -103,7 +103,7 @@ for (let i = 0, j = 0; i < origColNames.length; i++) {
             indexAxis: 'y',
             responsive: true,
             maintainAspectRatio: false,
-            aspectRatio: 2,
+            aspectRatio: 3,
             plugins: {
                 tooltip: {
                     callbacks: {
