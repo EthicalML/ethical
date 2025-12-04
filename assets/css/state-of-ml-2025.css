@@ -31,7 +31,7 @@ input[type="checkbox"] {
 /******************************/
 #survey-charts .row {
     margin: 0;
-    padding: 0 1.5em 0 1.5em;
+    padding: 0 0 0 10vw !important;
 }
 .chart-question-title {
     color: #44fee3 !important; 
@@ -48,7 +48,7 @@ input[type="checkbox"] {
     background: #252525 !important;
     border: 1px solid #404040 !important;
     border-radius: 6px !important;
-    margin: 0px 0 !important;
+    margin: 10px 20px !important;
     padding: 15px !important;
 }
 
@@ -100,6 +100,9 @@ input[type="checkbox"] {
   overflow-x: auto;
   white-space: nowrap;
 }
+.tab-content .row {
+  padding-left: 200px;
+}
 .chart-content > .row > .col-md-6 {
   display: inline-block;
   float: none;
@@ -115,26 +118,21 @@ input[type="checkbox"] {
 /*      Year Switcher         */
 /******************************/
 .year-switcher {
-    position: fixed;
-    top: 80px;
-    right: 20px;
-    z-index: 1000;
-    background: rgba(0, 0, 0, 0.8);
-    padding: 12px;
-    border-radius: 8px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(1, 195, 167, 0.3);
+    float: right;
+    top: 0px;
+    right: 0px;
+    width: 200px;
+    margin: 10px 0 10px 0;
 }
 
 .year-switcher button {
     background: #01C3A7;
     color: white;
     border: none;
-    padding: 10px 18px;
     margin: 0 4px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 500;
     transition: all 0.3s ease;
 }
@@ -162,18 +160,17 @@ input[type="checkbox"] {
 /* Chart Navigation Section */
 /****************************/
 .chart-navbar {
-    background-color: #333 !important;
     border-radius: 6px !important;
-    padding: 8px !important;
-    margin-bottom: 20px !important;
+    padding: 0px !important;
+    margin-bottom: 0px !important;
 }
 .chart-navbar a {
     color: #ccc !important;
     background: #2d2d2d !important;
     border: 1px solid #404040 !important;
-    margin: 2px !important;
+    margin: 0px !important;
     border-radius: 4px !important;
-    padding: 8px 16px !important;
+    padding: 0px 8px !important;
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
     font-size: 12px !important;
     transition: all 0.2s !important;
@@ -188,6 +185,11 @@ input[type="checkbox"] {
     border-color: #61dafb !important;
 }
 
+/* Remove Bootstrap nav-tabs bottom border */
+.chart-navbar.nav-tabs {
+    border-bottom: none !important;
+}
+
 /****************************/
 /* Code editor style        */
 /****************************/
@@ -199,7 +201,6 @@ input[type="checkbox"] {
         0 20px 25px -5px rgba(0, 0, 0, 0.3),
         0 10px 10px -5px rgba(0, 0, 0, 0.2);
     margin: 30px auto;
-    max-width: 1400px;
     overflow: hidden;
     border: 1px solid #333;
     transition: all 0.3s ease;
@@ -222,13 +223,6 @@ input[type="checkbox"] {
     user-select: none;
 }
 
-.editor-title {
-    color: #e6e6e6;
-    font-size: 13px;
-    font-weight: 500;
-    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-    opacity: 0.9;
-}
 
 .window-controls {
     display: flex;
@@ -296,7 +290,6 @@ input[type="checkbox"] {
 
 .editor-content {
     background: linear-gradient(180deg, #1e1e1e 0%, #1a1a1a 100%);
-    padding: 25px;
-    min-height: 500px;
+    padding: 0px;
 }
 

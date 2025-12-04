@@ -53,46 +53,38 @@ image-banner: https://ethical.institute/images/prod-ml-survey-banner.jpg
 
 
 <!-- Editor Window Container -->
-<div class="editor-window">
+<div class="editor-window col-lg-10 col-md-12">
     <div class="editor-header">
-        <div class="editor-title">
-            <div class="year-switcher">
-                <span class="year-label">Survey Data:</span >
-                <button onclick="switchToYear('2024')" id="btn-2024">2024</button>
-                <button onclick="switchToYear('2025')" id="btn-2025" class="active">2025</button>
-            </div>
-
-        </div>
         <div class="window-controls">
             <div class="window-control control-close"></div>
             <div class="window-control control-minimize"></div>
             <div class="window-control control-expand"></div>
         </div>
 
-    </div>
-
-    <div class="editor-content">
-
-        <div class="navbar-expand-md">
-            <div class="container-lg navbar-expand-md" style="display: block">
+        <div class="col-lg-12 navbar-expand">
+            <div class="container-lg navbar-expand" style="display: block">
                 <div class="d-flex justify-content-center">
                     <ul class="chart-navbar nav navbar-nav nav-tabs justify-content-center">
                         <li class="nav-item">
-                            <a class="list-group-item list-group-item-action nav-link active" data-bs-toggle="list" href="#chart-section-1" role="tab">1) ML & Scope</a>
+                            <a class="list-group-item list-group-item-action nav-link active" data-bs-toggle="list" href="#chart-section-1" role="tab">1) Context</a>
                         </li>
                         <li class="nav-item">
-                            <a class="list-group-item list-group-item-action nav-link" data-bs-toggle="list" href="#chart-section-2" role="tab">2) Platform & Components</a>
+                            <a class="list-group-item list-group-item-action nav-link" data-bs-toggle="list" href="#chart-section-2" role="tab">2) Tools</a>
                         </li>
                         <li class="nav-item">
-                            <a class="list-group-item list-group-item-action nav-link" data-bs-toggle="list" href="#chart-section-3" role="tab">3) Ecosystem & Maturity</a>
+                            <a class="list-group-item list-group-item-action nav-link" data-bs-toggle="list" href="#chart-section-3" role="tab">3) Scope</a>
                         </li>
                         <li class="nav-item">
-                            <a class="list-group-item list-group-item-action nav-link" data-bs-toggle="list" href="#chart-section-4" role="tab">4) Demographics</a>
+                            <a class="list-group-item list-group-item-action nav-link" data-bs-toggle="list" href="#chart-section-4" role="tab">4) Stats</a>
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
+
+    </div>
+
+    <div class="editor-content">
 
         <div class="tab-content">
             <div class="tab-pane active" role="tabpanel" id="chart-section-1">
@@ -109,9 +101,13 @@ image-banner: https://ethical.institute/images/prod-ml-survey-banner.jpg
             </div>
         </div>
     </div>
-</div>
 
-<div id="charts" class="row"></div>
+        <div class="year-switcher">
+            <span class="year-label">Survey Data:</span >
+            <button onclick="switchToYear('2024')" id="btn-2024">2024</button>
+            <button onclick="switchToYear('2025')" id="btn-2025" class="active">2025</button>
+        </div>
+</div>
 
 <div id="table" class="table-responsive"></div>
 
