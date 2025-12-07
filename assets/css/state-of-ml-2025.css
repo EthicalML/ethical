@@ -31,7 +31,7 @@ input[type="checkbox"] {
 /******************************/
 #survey-charts .row {
     margin: 0;
-    padding: 0 0 0 10vw !important;
+    padding: 0 0 0 100px !important;
 }
 .chart-question-title {
     color: #44fee3 !important; 
@@ -49,7 +49,7 @@ input[type="checkbox"] {
     border: 1px solid #404040 !important;
     border-radius: 6px !important;
     margin: 10px 20px !important;
-    padding: 15px !important;
+    padding: 35px !important;
 }
 
 .chart-question-title {
