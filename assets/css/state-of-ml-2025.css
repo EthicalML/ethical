@@ -33,13 +33,6 @@ input[type="checkbox"] {
     margin: 0;
     padding: 0 0 0 100px !important;
 }
-.chart-question-title {
-    color: #44fee3 !important; 
-    font-size: calc(15px + 1.0vw); 
-    line-height: normal; 
-    font-family: Roboto; 
-    margin-bottom: 30px
-}
 .chart-canvas {
     max-height: 50vh !important;
     margin-bottom: 30px;
@@ -48,16 +41,17 @@ input[type="checkbox"] {
     background: #252525 !important;
     border: 1px solid #404040 !important;
     border-radius: 6px !important;
-    margin: 10px 20px !important;
-    padding: 35px !important;
+    margin: 10px 70px !important;
+    padding: 15px !important;
 }
 
 .chart-question-title {
     color: #61dafb !important;
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
-    font-size: 13px !important;
     margin-bottom: 10px !important;
     font-weight: 400 !important;
+    font-size: calc(10px + 0.5vw) !important; 
+    padding: 10px 50px;
 }
 .charts-container .form-check ul {
 	list-style-type: none;

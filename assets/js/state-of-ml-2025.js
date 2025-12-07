@@ -75,7 +75,8 @@ for (let i = 0, j = 0; i < origColNames.length; i++) {
 	
     // TODO: Move these to single row for titles, charts and filters for correct sizes
 	const chartContainer = $("<div class='chart-container'></div>");
-    chartContainer.append("<div class='text-center chart-question-title'>"+origColNames[i]+"</div>")
+    const textToRemove = "Skip this question if you don't use any."
+    chartContainer.append("<div class='text-center chart-question-title'>"+origColNames[i].replace(textToRemove, "")+"</div>")
 
 	// Choose the right section based on the distributions
 	if (i > chartSections[j]) {
