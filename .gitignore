@@ -87,5 +87,8 @@ tags.*
 Gemfile.lock
 _site/
 
+# Working / scratch files
+tmp/
+
 .claude
 CLAUDE.md
