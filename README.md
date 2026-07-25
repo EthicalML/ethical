@@ -1,9 +1,9 @@
-# Website for The Institute for Ethical AI & Machine Learning 
+# Website for The Institute for Ethical AI Alignment & Safety
 
-This repository contains the live website for The Institute for Ethical AI & Machine Learning, which includes:
+This repository contains the live website for The Institute for Ethical AI Alignment & Safety, which includes:
 * Information about the institute
-* The Ethical ML Network
-* The 8 Machine Learning Principles
+* The Ethical AI Network
+* The 9 Responsible AI Principles
 
 ## Open Source
 
