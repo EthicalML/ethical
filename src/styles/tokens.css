@@ -386,6 +386,7 @@ h3 {
   font-family: var(--font-mono);
   font-size: var(--mono-10-5);
   letter-spacing: .14em;
+  margin: 0;
   text-transform: uppercase;
 }
 .strategy {
@@ -713,7 +714,7 @@ th {
   font-weight: 300;
 }
 .network-stats span {
-  color: var(--text-3);
+  color: rgba(244,242,238,.44);
   font-family: var(--font-mono);
   display: block;
   font-size: 10px;
@@ -732,13 +733,16 @@ form {
 }
 form label {
   color: rgba(244,242,238,.45);
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: var(--space-8);
   font: 10px var(--font-mono);
   letter-spacing: .1em;
+  min-width: 0;
+  text-transform: uppercase;
 }
-form header span { color: var(--text-3); font: 10px var(--font-mono); letter-spacing: .1em; }
-form header h3 { font-size: 24px; margin: 8px 0 0; }
+form header span { color: rgba(244,242,238,.5); font: 10px var(--font-mono); letter-spacing: .1em; }
+form header h3 { font: 500 24px/normal var(--font-body); margin: 8px 0 0; }
 input {
   background: rgba(255, 255, 255, .04);
   border: 1px solid rgba(255, 255, 255, .16);
@@ -746,6 +750,11 @@ input {
   color: var(--text-1);
   padding: 12px 14px;
   width: 100%;
+}
+form label > input:not([type="checkbox"]) {
+  font: 14px var(--font-body);
+  letter-spacing: 0;
+  min-width: 0;
 }
 fieldset {
   border: 0;
@@ -759,8 +768,11 @@ fieldset label {
   color: rgba(244,242,238,.82);
   cursor: pointer;
   display: flex;
-  font: 14px var(--font-sans);
+  flex-direction: row;
+  font: 14px var(--font-body);
+  gap: 10px;
   letter-spacing: 0;
+  text-transform: none;
 }
 fieldset input { accent-color: var(--accent); height: 15px; width: 15px; }
 form button {
@@ -772,11 +784,11 @@ form button {
   font-weight: 500;
   padding: 13px 22px;
 }
-form small { color: var(--text-3); font-size: 12px; }
+form small { color: rgba(244,242,238,.42); font-size: 12px; }
 
 .site-footer {
   border-top: 1px solid var(--hairline);
-  color: var(--text-3);
+  color: var(--text-4);
   display: flex;
   font-family: var(--font-mono);
   font-size: var(--mono-10);
@@ -1028,9 +1040,10 @@ form small { color: var(--text-3); font-size: 12px; }
 .survey-focus p { color: var(--text-2); flex: 1; font-size: 13.5px; line-height: 1.55; margin: 0; min-width: 260px; }
 .network-lists { display: grid; gap: 26px; grid-template-columns: 1fr 1fr; margin-top: 24px; }
 .network-lists > div { display: flex; flex-direction: column; gap: 8px; }
+.network-lists .eyebrow { color: rgba(244,242,238,.4); font-size: var(--mono-10); letter-spacing: .1em; margin-bottom: 4px; }
 .network-lists span,.network-lists a { display: flex; font-size: 13.5px; gap: 10px; }
 .network-lists i { color: rgba(244,242,238,.8); font-style: normal; }
-.network-lists b { color: var(--text-3); font: 400 11px/1.4 var(--font-mono); margin-left: auto; }
+.network-lists b { color: rgba(244,242,238,.42); font: 400 11px/normal var(--font-mono); margin-left: auto; }
 .network-lists a b { color: var(--accent); margin-left: 0; }
 
 @media (max-width: 900px) {
@@ -1244,17 +1257,18 @@ form small { color: var(--text-3); font-size: 12px; }
 .talk-grid img { aspect-ratio: 5/3; display: block; object-fit: cover; width: 100%; }
 .talk-grid .eyebrow { margin-top: 18px; }.talk-grid h2 { font:300 30px/1.1 var(--font-display); margin:12px 0; }.talk-grid article > span { color:var(--text-3); font-size:13px; }
 .footnote-band { align-items:start; border-top: 1px solid var(--hairline); display:grid; gap:44px; grid-template-columns:1.15fr .85fr 250px; padding:44px 48px 34px; }
-.footnote-band div { display:flex; flex-direction:column; gap:10px; }
 .footnote-band p { color:rgba(244,242,238,.62); font-size:14px; line-height:1.62; margin:0; max-width:520px; }
-.footnote-band .eyebrow { color:rgba(244,242,238,.4); font-size:9.5px; }
-.footnote-band .standards { color:rgba(244,242,238,.42); font:9.5px/2 var(--font-mono); letter-spacing:.08em; margin-top:4px; }
+.footnote-band .eyebrow { color:rgba(244,242,238,.4); font:9.5px/normal var(--font-mono); letter-spacing:.14em; }
+.footnote-about > p:not(.eyebrow) { margin-top:12px; }
+.footnote-band .standards { color:rgba(244,242,238,.42); display:flex; flex-wrap:wrap; font:9.5px/normal var(--font-mono); gap:6px 18px; letter-spacing:.08em; margin-top:14px; }
 .footnote-band a { color:rgba(244,242,238,.7); font-size:13px; }
-.footnote-talks { gap:0 !important; }
+.footnote-talks { display:flex; flex-direction:column; }
 .footnote-talks > .eyebrow { margin-bottom:10px; }
 .footnote-talks a { align-items:baseline; border-bottom:1px solid rgba(255,255,255,.06); display:flex; gap:12px; padding:7px 0; }
 .footnote-talks small { color:rgba(244,242,238,.35); flex:none; font:9.5px var(--font-mono); letter-spacing:.1em; width:34px; }
 .footnote-talks a span { color:rgba(244,242,238,.74); }
 .footnote-talks b { color:var(--accent); font-weight:400; margin-left:auto; }
+.footnote-links { display:flex; flex-direction:column; gap:7px; margin-top:12px; }
 @media (max-width: 950px) {
   .primary-nav { display: none; }
   .nav-right .nav-trigger { display: none; }
