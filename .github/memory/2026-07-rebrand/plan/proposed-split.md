@@ -8,14 +8,15 @@ Basis: the decided platform (ADR-001), the validated seed at research-repo `impl
 
 - **PR 1 — the rebuilt site** (this branch, kept open long-running): everything through Milestone D. Owner reviews on the open PR + local serves; optionally a temporary preview deploy on a fork's Pages.
 - **PR 2 — cutover**: the small, separately reviewable switch (Pages source → Actions workflow, redirects live, CNAME) so going-live is its own explicit approval.
+- The two PRs are **stacked** (PR 2 branches from PR 1's branch), registered with GitHub's stacked-PRs via `gh stack link <pr1> <pr2>` (bottom-up). Note the known limitation: stack-tracked PRs merge via the web UI; `gh stack unstack` restores CLI merging if needed.
 
 ## Milestone A — Seed import + design lock-down
-1. Import the round-8 Astro tree onto the branch (site source at repo root), applying the conventions review deltas during import (session-era file renames, `rehypeSectionize` → `src/plugins/`, drop evaluation artefacts). Build green + routes verified.
+1. Import the round-8 Astro tree onto the branch (site source at repo root), applying the conventions review deltas during import (session-era file renames, `rehypeSectionize` → `src/plugins/`, drop evaluation artefacts). Port the verification harness into `scripts/verify/` (ADR-008). Build green + routes verified via the harness.
 2. **Homepage design lock-down (first implementation step, per ADR-006):** serve the prototype, run the measured comparison harness, and close the KNOWN remaining inconsistencies on the home page until the owner signs off the homepage as design-locked. New surfaces wait until this gate passes.
 3. GH Actions workflow added but inert for production (branch builds/dry-runs only; `master`'s Pages deployment untouched).
 
 ## Milestone B — Chrome completion
-Mobile navigation drawer; self-hosted fonts; per-page SEO front matter (title/description); favicon/OG; 404; Initiatives-rail interactivity; the `redirects` map for every legacy URL + canonicals + sitemap (SEO task). **Continuity requirements:** preserve `CNAME` (ethical.institute) into the built output, and keep the legacy `mle/*` newsletter archive plus any linked static artefacts (PDFs, state-of-ml data) served at their existing URLs — passthrough-copy them; never migrate or rewrite them.
+Mobile navigation drawer; self-hosted fonts; per-page SEO front matter (title/description); favicon/OG; 404; Initiatives-rail interactivity; the `redirects` map for every legacy URL + canonicals + sitemap (SEO task); **forms wired per ADR-007** (designed form → Google Form backend, acceptance-tested against the live Sheet — forms are decorative until this lands); **Google Analytics tag and the `google-site-verification` meta carried from the live site's header into `BaseLayout.astro`** (ADR-008 continuity assertions). **Continuity requirements:** preserve `CNAME` (ethical.institute) into the built output, and keep the legacy `mle/*` newsletter archive plus any linked static artefacts (PDFs, state-of-ml data) served at their existing URLs — passthrough-copy them; never migrate or rewrite them.
 
 ## Milestone C — Prose curation (parallel workstream; gates D per cluster)
 Per `research/content-prose.md`: copy sheets per cluster carrying the REBRAND REPHRASING (legacy prose is input, not output — see the fundamental-frame section there), owner approves sheets, Codex applies verbatim. Design questions arising here go to **Claude Design** (ADR-006), not ad-hoc invention.

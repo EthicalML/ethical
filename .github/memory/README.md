@@ -13,6 +13,8 @@ Curated context for the Astro rebuild of ethical.institute. Load the relevant fi
 | `adr-004-widgets.md` | Canvas widgets (vanilla, `data-widget` mounts) vs stateful islands (Preact) — the boundary and contracts |
 | `adr-005-content-model.md` | Collections, data files, canonical values, placeholder policy |
 | `adr-006-design-source-of-truth.md` | The hosted prototype HTML as design ground truth; Claude Design for new design work |
+| `adr-007-forms.md` | Serverless forms: designed form → Google Form backend, ranked fallbacks |
+| `adr-008-verification.md` | Measured verification harness in scripts/verify/ + continuity assertions (GA, site-verification, CNAME, mle/*) |
 
 ### `research/`
 | File | What it carries |

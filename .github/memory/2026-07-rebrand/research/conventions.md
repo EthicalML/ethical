@@ -45,6 +45,8 @@ No catch-all routes. No collections for non-iterated content.
 
 ## Verification gates (definition of done for every change)
 
+The authoritative spec is `../adrs/adr-008-verification.md`; the harness lives in `scripts/verify/` once imported (Milestone A). Forms: components are decorative until wired per `../adrs/adr-007-forms.md` — the endpoint + field mapping get documented here when chosen.
+
 - `npm run build` green (schemas + types are the loud-failure layer — never bypass).
 - DOM gate on affected routes: zero page errors; reveals fire under scripted scroll; every canvas pixel-sampled non-blank; page height sane (<20k px).
 - Visual: full-page screenshot diff against the previous build for affected routes (canvas regions masked); against the design prototype when implementing new sections.
