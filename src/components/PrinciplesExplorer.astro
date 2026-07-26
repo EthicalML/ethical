@@ -27,7 +27,10 @@ const { eyebrow, heading, intro } = Astro.props;
             <div><h4>FAILURE MODES</h4><ul>{data.failure_modes?.map((item) => <li>{item}</li>)}</ul></div>
             <div><h4>PRACTICAL CONTROLS</h4><ul>{data.controls?.map((item) => <li>{item}</li>)}</ul></div>
           </div>
-          <a class="button small" href={`/principles/${data.number}/`}>Read principle →</a>
+          <div class="principle-links">
+            {data.related_links.map(({ label, href }) => <a href={href}>{label}</a>)}
+            <a href={`/principles/${data.number}/`}>Read principle →</a>
+          </div>
         </article>
       ))}
     </div>

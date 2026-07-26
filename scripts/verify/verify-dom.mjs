@@ -49,6 +49,10 @@ for (const route of routes) {
         principleStickyPosition: getComputedStyle(detail).position,
         principleStickyTop: getComputedStyle(detail).top,
         principleViewportTops: [firstTop, secondTop],
+        principleLinks: [...document.querySelectorAll('.principle-detail')].map((card) => ({
+          count: card.querySelectorAll('.principle-links a').length,
+          readHref: card.querySelector('.principle-links a:last-child')?.getAttribute('href'),
+        })),
       };
     });
   }
@@ -124,6 +128,9 @@ for (const route of routes) {
       || checks.homepage.principleStickyTop !== '96px'
       || checks.homepage.principleViewportTops.some((top) => Math.abs(top - 96) > 1)
     ) failures.push('homepage principle detail does not remain sticky at 96px');
+    if (checks.homepage.principleLinks.some(({ count, readHref }, index) => (
+      count < 2 || readHref !== `/principles/${String(index + 1).padStart(2, '0')}/`
+    ))) failures.push('homepage principle pills or Read principle targets are incomplete');
   }
 
   results.push({

@@ -10,6 +10,10 @@ const principles = defineCollection({
     commitment: z.string(),
     failure_modes: z.array(z.string()).length(3).optional(),
     controls: z.array(z.string()).length(3).optional(),
+    related_links: z.array(z.object({
+      label: z.string(),
+      href: z.string(),
+    })),
   }),
 });
 
