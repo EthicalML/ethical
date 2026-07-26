@@ -53,6 +53,7 @@ for (const route of routes) {
           count: card.querySelectorAll('.principle-links a').length,
           readHref: card.querySelector('.principle-links a:last-child')?.getAttribute('href'),
         })),
+        formWash: getComputedStyle(document.querySelector('#join form')).backgroundImage,
       };
     });
     const xaiPreview = page.locator('.xai-preview');
@@ -137,6 +138,9 @@ for (const route of routes) {
       count < 2 || readHref !== `/principles/${String(index + 1).padStart(2, '0')}/`
     ))) failures.push('homepage principle pills or Read principle targets are incomplete');
     if (!checks.homepage.xaiFramesChanged) failures.push('homepage XAI scan pixels do not change over time');
+    if (checks.homepage.formWash !== 'radial-gradient(70% 90% at 70% 0%, rgba(94, 230, 160, 0.14), rgb(15, 16, 15) 72%)') {
+      failures.push('homepage form wash differs from the prototype');
+    }
   }
 
   results.push({

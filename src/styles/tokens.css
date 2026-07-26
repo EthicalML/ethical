@@ -11,6 +11,7 @@
   --accent-on: #0c1410;
   --accent-wash-07: rgba(94, 230, 160, 0.07);
   --accent-wash-09: rgba(94, 230, 160, 0.09);
+  --form-wash-14: rgba(94, 230, 160, 0.14);
   --accent-wash-16: rgba(94, 230, 160, 0.16);
   --warn: #e8b45c;
   --glitch-red: #ff5a6e;
@@ -722,7 +723,7 @@ th {
   margin-top: 6px;
 }
 form {
-  background: radial-gradient(70% 90% at 70% 0%, rgba(94,230,160,.14), var(--bg-inset) 72%);
+  background: radial-gradient(70% 90% at 70% 0%, var(--form-wash-14), var(--bg-inset) 72%);
   border: 1px solid rgba(255,255,255,.09);
   border-radius: 14px;
   display: flex;
