@@ -61,6 +61,33 @@ for (const route of routes) {
     await page.waitForTimeout(350);
     const secondXaiFrame = await xaiPreview.screenshot();
     homepageInteractions.xaiFramesChanged = !firstXaiFrame.equals(secondXaiFrame);
+
+    await page.evaluate(() => scrollTo(0, 0));
+    await page.waitForTimeout(300);
+    await page.locator('[data-menu-trigger="oss"]').hover();
+    await page.waitForTimeout(400);
+    homepageInteractions.ossPreviewStates = [];
+    for (const row of await page.locator('[data-oss-index]').all()) {
+      await row.hover();
+      await page.waitForTimeout(100);
+      homepageInteractions.ossPreviewStates.push(await page.locator('.oss-menu-preview').evaluate((preview) => {
+        const canvases = [...preview.querySelectorAll('canvas')];
+        const canvas = canvases[0];
+        const context = canvas.getContext('2d');
+        const startY = Math.floor(canvas.height * .78);
+        const pixels = context.getImageData(0, startY, canvas.width, canvas.height - startY).data;
+        let bottomOpaquePixels = 0;
+        for (let index = 3; index < pixels.length; index += 4) {
+          if (pixels[index] > 0) bottomOpaquePixels += 1;
+        }
+        return {
+          canvasCount: canvases.length,
+          mode: canvas.dataset.previewMode,
+          bottomOpaquePixels,
+        };
+      }));
+    }
+    await page.keyboard.press('Escape');
   }
 
   const height = await page.evaluate(() => document.documentElement.scrollHeight);
@@ -141,6 +168,12 @@ for (const route of routes) {
     if (checks.homepage.formWash !== 'radial-gradient(70% 90% at 70% 0%, rgba(94, 230, 160, 0.14), rgb(15, 16, 15) 72%)') {
       failures.push('homepage form wash differs from the prototype');
     }
+    if (
+      checks.homepage.ossPreviewStates.some(({ canvasCount }) => canvasCount !== 1)
+      || checks.homepage.ossPreviewStates
+        .filter(({ mode }) => mode === 'xai' || mode === 'list')
+        .some(({ bottomOpaquePixels }) => bottomOpaquePixels !== 0)
+    ) failures.push('homepage open-source dropdown composites multiple previews');
   }
 
   results.push({

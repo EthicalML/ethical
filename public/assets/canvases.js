@@ -146,6 +146,7 @@
     const cube=cubeDrawer();
     engine(canvas,(ctx,w,h,t,pointer)=>{
       const mode=canvas.dataset.previewMode;
+      ctx.clearRect(0,0,w,h);
       if(mode==='kompute')cube(ctx,w,h,t,pointer);
       else if(mode==='xai')drawXai(ctx,w,h*.72,t,pointer);
       else if(mode==='list')drawEco(ctx,w,h*.72,t,pointer);
