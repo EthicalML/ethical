@@ -22,6 +22,9 @@ const initialProject = menus.oss.items[0];
         {menus.about.label}<span class="caret" aria-hidden="true">▾</span>
       </button>
       <a class="join-pill" href={site.join.href}>{site.join.label}</a>
+      <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" data-mobile-menu-open>
+        <span>Menu</span><i aria-hidden="true"></i>
+      </button>
     </div>
   </div>
   <div class="menu-wrap">
@@ -80,5 +83,46 @@ const initialProject = menus.oss.items[0];
         </div>
       ))}
     </div>
+  </div>
+  <div class="mobile-drawer" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Site navigation" aria-hidden="true" data-mobile-menu>
+    <div class="mobile-drawer-header">
+      <a class="wordmark" href="/">
+        <span>{site.wordmark.primary}</span>
+        <span>{site.wordmark.secondary}</span>
+      </a>
+      <a class="join-pill" href={site.join.href}>{site.join.label}</a>
+      <button class="mobile-menu-close" type="button" aria-label="Close menu" data-mobile-menu-close>
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+    <nav class="mobile-nav" aria-label="Mobile navigation">
+      {Object.entries(menus).map(([id, menu], menuIndex) => (
+        <section class="mobile-menu-section" style={`--menu-index:${menuIndex}`}>
+          <button type="button" aria-expanded="false" aria-controls={`mobile-submenu-${id}`} data-mobile-accordion>
+            <span>{String(menuIndex + 1).padStart(2, '0')}</span>
+            <strong>{menu.label}</strong>
+            <i aria-hidden="true">+</i>
+          </button>
+          <div class="mobile-submenu" id={`mobile-submenu-${id}`} hidden>
+            {menu.columns ? menu.columns.map((column) => (
+              <div class="mobile-link-group">
+                <p>{column.heading}</p>
+                {column.items.map((item) => <a href={item.href}><strong>{item.title}</strong><span>{item.description}</span></a>)}
+              </div>
+            )) : menu.groups ? menu.groups.map((group) => (
+              <div class="mobile-link-group">
+                <p>{group.title}</p>
+                {group.items.map((item) => <a href={item.href}><strong>{item.label}</strong><span>{item.description}</span></a>)}
+              </div>
+            )) : (
+              <div class="mobile-link-group">
+                {menu.items.map((item) => <a href={item.href}><strong>{item.title}</strong>{item.description && <span>{item.description}</span>}</a>)}
+                {menu.footerLinks?.map((item) => <a href={item.href}><strong>{item.label}</strong></a>)}
+              </div>
+            )}
+          </div>
+        </section>
+      ))}
+    </nav>
   </div>
 </header>

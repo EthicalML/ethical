@@ -137,6 +137,75 @@
     }
   }
 
+  function setupMobileMenu() {
+    const drawer = document.querySelector('[data-mobile-menu]');
+    const openButton = document.querySelector('[data-mobile-menu-open]');
+    const closeButton = drawer?.querySelector('[data-mobile-menu-close]');
+    if (!drawer || !openButton || !closeButton) return;
+
+    const accordions = [...drawer.querySelectorAll('[data-mobile-accordion]')];
+    let lastFocus = null;
+    let lockedScroll = 0;
+
+    const focusable = () => [...drawer.querySelectorAll('a[href], button:not([disabled])')]
+      .filter((element) => !element.closest('[hidden]'));
+
+    const close = () => {
+      if (drawer.getAttribute('aria-hidden') === 'true') return;
+      drawer.setAttribute('aria-hidden', 'true');
+      openButton.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('mobile-nav-open');
+      document.body.style.top = '';
+      scrollTo(0, lockedScroll);
+      lastFocus?.focus();
+    };
+
+    const open = () => {
+      lastFocus = document.activeElement;
+      lockedScroll = scrollY;
+      document.body.style.top = `-${lockedScroll}px`;
+      document.body.classList.add('mobile-nav-open');
+      drawer.setAttribute('aria-hidden', 'false');
+      openButton.setAttribute('aria-expanded', 'true');
+      closeButton.focus();
+    };
+
+    openButton.addEventListener('click', open);
+    closeButton.addEventListener('click', close);
+    drawer.querySelectorAll('a').forEach((link) => link.addEventListener('click', close));
+    accordions.forEach((button) => {
+      button.addEventListener('click', () => {
+        const expanded = button.getAttribute('aria-expanded') === 'true';
+        const panel = document.getElementById(button.getAttribute('aria-controls'));
+        button.setAttribute('aria-expanded', String(!expanded));
+        if (panel) panel.hidden = expanded;
+      });
+    });
+    document.addEventListener('keydown', (event) => {
+      if (drawer.getAttribute('aria-hidden') === 'true') return;
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        close();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const items = focusable();
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
+    matchMedia('(min-width: 951px)').addEventListener('change', (event) => {
+      if (event.matches) close();
+    });
+  }
+
   setupMenu();
+  setupMobileMenu();
   setupReveal();
 })();
