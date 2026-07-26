@@ -5,3 +5,14 @@
   line-height: 1.03;
   margin: 16px 0 0;
 }
+
+@media (max-width: 950px) {
+  .prose-page.has-outer-header > .prose-header { display: none; }
+  .prose-header { padding: 72px 24px 28px; }
+  .prose-header h1 { font-size: clamp(48px, 8vw, 60px); }
+}
+
+@media (max-width: 600px) {
+  .prose-header { padding: 64px 18px 26px; }
+  .prose-header h1 { font-size: clamp(43px, 12vw, 52px); }
+}
