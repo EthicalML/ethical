@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleHero from '../components/ArticleHero.astro';
+import CenteredCTA from '../components/CenteredCTA.astro';
+
+const frontmatter = {
+  title: 'Page not found',
+  description: 'The requested page could not be found. Return to the Institute homepage or explore the current work.',
+};
+---
+
+<BaseLayout frontmatter={frontmatter}>
+  <!-- PLACEHOLDER -->
+  <ArticleHero eyebrow="404 / NOT FOUND" title="That route does not exist" intro="The page may have moved as the Institute's work has evolved." />
+  <CenteredCTA eyebrow="CONTINUE" heading="Return to the current work." href="/" label="Go to the homepage →" />
+</BaseLayout>
