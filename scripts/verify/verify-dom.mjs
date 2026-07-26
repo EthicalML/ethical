@@ -149,7 +149,8 @@ for (const route of routes) {
   await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
   await page.waitForTimeout(500);
 
-  const checks = await page.evaluate(() => {
+  const checks = await page.evaluate(async () => {
+    await document.fonts.ready;
     const sampleCanvas = (canvas) => {
       if (canvas.width < 2 || canvas.height < 2) return false;
       const context = canvas.getContext('2d');
@@ -172,6 +173,13 @@ for (const route of routes) {
       pageHeight: document.documentElement.scrollHeight,
       pageWidth: document.documentElement.scrollWidth,
       unrevealed,
+      fonts: {
+        newsreader: document.fonts.check('16px "Newsreader"'),
+        geist: document.fonts.check('16px "Geist"'),
+        geistMono: document.fonts.check('16px "Geist Mono"'),
+        googleRequests: performance.getEntriesByType('resource')
+          .filter((entry) => entry.name.includes('fonts.googleapis.com')),
+      },
       canvases: canvases.map((canvas) => ({
         widget: canvas.dataset.widget ?? canvas.closest('[data-widget]')?.dataset.widget ?? 'unlabelled',
         size: `${canvas.clientWidth}x${canvas.clientHeight}/${canvas.width}x${canvas.height}`,
@@ -199,6 +207,9 @@ for (const route of routes) {
   if (checks.unrevealed.length > 0) failures.push(`${checks.unrevealed.length} reveal target(s) did not fire`);
   if (checks.pageHeight >= 20000) failures.push(`page height ${checks.pageHeight}px exceeds 20000px`);
   if (checks.pageWidth > 1440) failures.push(`page width ${checks.pageWidth}px exceeds the 1440px viewport`);
+  if (!checks.fonts.newsreader || !checks.fonts.geist || !checks.fonts.geistMono || checks.fonts.googleRequests.length > 0) {
+    failures.push('self-hosted fonts are missing or Google Fonts was requested');
+  }
   if (checks.canvases.some((canvas) => !canvas.nonBlank)) failures.push('one or more canvases are blank');
   if (checks.kaosMounts.some((height) => height < 220 || height > 500)) failures.push('KAOS mount height is outside 220–500px');
   if (formChecks && (
