@@ -1,5 +1,6 @@
 {
-  "name": "ethical-astro-spike",
+  "name": "ethical-institute-site",
+  "description": "Website for The Institute for Ethical AI Alignment & Safety",
   "private": true,
   "type": "module",
   "scripts": {

@@ -1,7 +1,7 @@
 ---
 import '../styles/tokens.css';
-import '../styles/astro.css';
-import '../styles/round4.css';
+import '../styles/prose.css';
+import '../styles/layout.css';
 import SiteHeader from '../components/SiteHeader.astro';
 import FootnoteBand from '../components/FootnoteBand.astro';
 import site from '../data/site.json';
@@ -37,8 +37,8 @@ const title = frontmatter.title ?? 'The Institute for Ethical AI Alignment & Saf
       <span>{site.footer.identity}</span>
       <span>{site.footer.legal}</span>
     </footer>
-    <script is:inline src="/assets/round4.js"></script>
-    <script is:inline src="/assets/prototype-canvases.js"></script>
+    <script is:inline src="/assets/site.js"></script>
+    <script is:inline src="/assets/canvases.js"></script>
     <script is:inline src="/assets/widget-kaos.js"></script>
   </body>
 </html>
