@@ -1,0 +1,9 @@
+---
+const { eyebrow, title, intro, canvas = false } = Astro.props;
+---
+<header class:list={['article-hero', canvas && 'canvas-variant']} data-reveal>
+  {canvas && <canvas class="hero-canvas" data-widget="hero-cycle" aria-hidden="true"></canvas>}
+  <p class="eyebrow">{eyebrow}</p>
+  <h1>{title}</h1>
+  {intro && <p>{intro}</p>}
+</header>

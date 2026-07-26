@@ -1,0 +1,17 @@
+---
+import sectors from '../data/network-sectors.json';
+const { sectorEyebrow, sectorHeading, memberEyebrow, memberHeading, members } = Astro.props;
+---
+
+<section class="network-directory" data-reveal>
+  <div>
+    <p class="eyebrow">{sectorEyebrow}</p>
+    <h2>{sectorHeading}</h2>
+    {sectors.map(({ name, value }) => <p><span>{name}</span><strong>{value}</strong></p>)}
+  </div>
+  <div>
+    <p class="eyebrow">{memberEyebrow}</p>
+    <h2>{memberHeading}</h2>
+    <div class="member-wordmarks">{members.map((name) => <span>{name}</span>)}</div>
+  </div>
+</section>

@@ -1,0 +1,37 @@
+---
+import SurveyExplorer from './SurveyExplorer.tsx';
+import reports from '../data/home-reports.json';
+---
+
+<section id="reports" class="reports-section" data-reveal>
+  <header>
+    <div>
+      <p class="eyebrow">{reports.eyebrow}</p>
+      <h2>{reports.title}</h2>
+      <p>{reports.intro}</p>
+    </div>
+    <nav>{reports.actions.map(({ label, href, kind }) => <a class:list={['button', kind]} href={href}>{label}</a>)}</nav>
+  </header>
+  <div class="home-survey-card"><SurveyExplorer client:visible /></div>
+  <div class="initiative-pair">
+    <article>
+      <div class="initiative-preview">
+        <header><span>{reports.maturity.eyebrow}</span><strong>{reports.maturity.score}<small>{reports.maturity.total}</small></strong></header>
+        <h4>{reports.maturity.title}</h4>
+        {reports.maturity.criteria.map(({ item, reference }, index) => <p><span>{String(index + 1).padStart(2, '0')}</span>{item}<i>{reference}</i></p>)}
+      </div>
+      <h3>{reports.maturity.cardTitle}</h3>
+      <p>{reports.maturity.cardText}</p>
+      <a href={reports.maturity.linkHref}>{reports.maturity.linkLabel}</a>
+    </article>
+    <article>
+      <div class="initiative-preview mlsecops-preview">
+        <header><span>{reports.mlsecops.leftHeading}</span><span>{reports.mlsecops.rightHeading}</span></header>
+        {reports.mlsecops.rows.map(({ owasp, mlsecops }) => <p><span>{owasp}</span><strong>{mlsecops}</strong></p>)}
+      </div>
+      <h3>{reports.mlsecops.cardTitle}</h3>
+      <p>{reports.mlsecops.cardText}</p>
+      <a href={reports.mlsecops.linkHref}>{reports.mlsecops.linkLabel}</a>
+    </article>
+  </div>
+</section>

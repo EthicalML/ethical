@@ -1,0 +1,10 @@
+---
+import footer from '../data/footer.json';
+import talks from '../data/talks.json';
+const standards = footer.about.standards;
+---
+<aside class="footnote-band" data-reveal>
+  <div><p class="eyebrow">{footer.about.eyebrow}</p><p>{footer.about.text}</p><span class="standards">{standards.slice(0, 3).join('　 ')}<br />{standards.slice(3).join('　 ')}</span></div>
+  <div class="footnote-talks"><p class="eyebrow">{footer.talksEyebrow}</p>{talks.map((talk) => <a href="/talks/"><small>{talk.kind}</small><span>{talk.title}</span><b>↗</b></a>)}</div>
+  <div><p class="eyebrow">{footer.elsewhere.eyebrow}</p>{footer.elsewhere.links.map(({ label, href }) => <a href={href}>{label}</a>)}</div>
+</aside>

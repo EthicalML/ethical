@@ -1,0 +1,14 @@
+---
+import { Image } from 'astro:assets';
+import talks from '../data/talks.json';
+import alignment from '../assets/talks/alignment-field.svg';
+import systems from '../assets/talks/responsible-systems.svg';
+import agents from '../assets/talks/agent-safety.svg';
+import standards from '../assets/talks/standards.svg';
+
+const images = { alignment, systems, agents, standards };
+---
+
+<section class="talk-grid" data-reveal>
+  {talks.map((talk) => <article><Image src={images[talk.image]} alt="" width={800} height={480} /><p class="eyebrow">{talk.label}</p><h2>{talk.title}</h2><span>{talk.place}</span></article>)}
+</section>

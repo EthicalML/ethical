@@ -1,0 +1,14 @@
+{
+  "eyebrow": "MEMBERSHIPS, ADVISORY ROLES & STANDARDS COLLABORATIONS",
+  "items": [
+    {"name": "UNITED NATIONS", "role": "AI EXPERT"},
+    {"name": "UN CSTD", "role": "CHAIR, COMMITTEE"},
+    {"name": "EUROPEAN COMMISSION", "role": "APPOINTED EXPERT"},
+    {"name": "ACM", "role": "GOVERNING BOARD"},
+    {"name": "LINUX FOUNDATION", "role": "ASSOCIATE MEMBER"},
+    {"name": "OWASP", "role": "MLSECOPS COLLABORATION"},
+    {"name": "IEEE", "role": "AI STANDARDS GROUP"},
+    {"name": "ISO / IEC", "role": "AI STANDARDS GROUP"},
+    {"name": "NUMFOCUS", "role": "CONTRIBUTION"}
+  ]
+}

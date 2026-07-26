@@ -1,0 +1,20 @@
+---
+title: Machine Learning Maturity Model
+composed: true
+layout: ../../layouts/ProseLayout.astro
+---
+
+import { ArticleHero, MaturityModelContent } from '../../components/prose/components.js';
+
+<ArticleHero eyebrow="FRAMEWORK / MATURITY MODEL" title="Make responsible ML repeatable" intro="A practical path from isolated good intentions to adaptive organisational capability." />
+
+<MaturityModelContent
+  phaseEyebrow="01 — THE FOUR-PHASE RESPONSIBLE AI STRATEGY"
+  phaseHeading="From individual practice to national regulation."
+  checklistEyebrow="02 — DELIVERY CHECKLIST"
+  checklistHeading="Evidence at every stage"
+  capabilityEyebrow="03 — CAPABILITIES"
+  capabilityHeading="The system around the model"
+  metrics={['4 levels', '5 domains', '20 signals']}
+  cta={{ href: '/contact/', label: 'Assess your organisation →', text: 'Use the model as a conversation and evidence tool, not a certification shortcut.' }}
+/>

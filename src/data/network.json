@@ -1,0 +1,24 @@
+{
+  "homeEyebrow": "05 — NETWORK & NEWSLETTER",
+  "contactEyebrow": "ONE FORM / MANY WAYS IN",
+  "homeIntro": "Responsible technology takes more than technical changes to models. One membership covers both the Ethical AI Network and the Machine Learning Engineer newsletter.",
+  "contactIntro": "Tell us what you are working on, where you need help, or how you would like to contribute.",
+  "sectorEyebrow": "WHO IS HERE",
+  "issuesEyebrow": "RECENT ISSUES",
+  "form": {
+    "eyebrow": "ONE FORM",
+    "title": "Join, subscribe or get in touch",
+    "fields": [
+      {"label": "Name", "name": "name", "type": "text", "placeholder": "Alex Moreau", "autocomplete": "name"},
+      {"label": "Email", "name": "email", "type": "email", "placeholder": "you@organisation.org", "autocomplete": "email"},
+      {"label": "Organisation & role", "name": "organisation", "type": "text", "placeholder": "Institution — role", "autocomplete": "organization-title"}
+    ],
+    "interests": [
+      {"value": "network", "label": "Join the Ethical AI Network", "checked": true},
+      {"value": "newsletter", "label": "Subscribe to the ML Engineer newsletter", "checked": true},
+      {"value": "frameworks", "label": "Request the AI-RFX materials or a collaboration", "checked": false}
+    ],
+    "button": "Send",
+    "disclaimer": "We only use your details to reply and to send what you asked for. Unsubscribe any time."
+  }
+}

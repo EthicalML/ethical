@@ -1,0 +1,67 @@
+---
+import { getCollection } from 'astro:content';
+const principles = (await getCollection('principles')).sort((a, b) => a.data.number.localeCompare(b.data.number));
+const { eyebrow, heading, intro } = Astro.props;
+---
+<section id="principles" class="principles-explorer" data-principles data-reveal>
+  <p class="eyebrow">{eyebrow}</p>
+  <div class="principles-explorer-grid">
+    <div>
+      <h2>{heading}</h2>
+      <p class="section-intro">{intro}</p>
+      <div class="principle-rows">
+        {principles.map(({ data }, index) => (
+          <button type="button" class:list={{ active: index === 0 }} data-principle-row={index}>
+            <span>{data.number}</span><strong>{data.title}</strong><i>{index === 0 ? '●' : '→'}</i>
+          </button>
+        ))}
+      </div>
+    </div>
+    <div class="principle-detail-wrap">
+      {principles.map(({ data }, index) => (
+        <article class:list={['principle-detail', index === 0 && 'active']} data-principle-detail={index}>
+          <p class="eyebrow">PRINCIPLE {data.number} — COMMITMENT</p>
+          <h3>{data.title}</h3>
+          <p class="commitment">{data.commitment}</p>
+          <div class="detail-split">
+            <div><h4>FAILURE MODES</h4><ul>{data.failure_modes?.map((item) => <li>{item}</li>)}</ul></div>
+            <div><h4>PRACTICAL CONTROLS</h4><ul>{data.controls?.map((item) => <li>{item}</li>)}</ul></div>
+          </div>
+          <a class="button small" href={`/principles/${data.number}/`}>Read principle →</a>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+<script>
+  document.querySelectorAll('[data-principles]').forEach((root) => {
+    const rows = [...root.querySelectorAll('[data-principle-row]')];
+    const details = [...root.querySelectorAll('[data-principle-detail]')];
+    let active = 0;
+    let stopped = false;
+    let paused = false;
+    const select = (index) => {
+      active = index;
+      rows.forEach((row, i) => {
+        row.classList.toggle('active', i === index);
+        row.querySelector('i').textContent = i === index ? '●' : '→';
+      });
+      details.forEach((detail, i) => {
+        detail.classList.toggle('active', i === index);
+        if (i === index) {
+          detail.style.animation = 'none';
+          requestAnimationFrame(() => { detail.style.animation = 'principle-in .45s ease'; });
+        }
+      });
+    };
+    rows.forEach((row, index) => {
+      row.addEventListener('mouseenter', () => select(index));
+      row.addEventListener('click', () => { stopped = true; select(index); });
+    });
+    root.addEventListener('mouseenter', () => { paused = true; });
+    root.addEventListener('mouseleave', () => { paused = false; });
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setInterval(() => { if (!stopped && !paused) select((active + 1) % rows.length); }, 2600);
+    }
+  });
+</script>

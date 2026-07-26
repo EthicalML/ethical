@@ -1,0 +1,37 @@
+---
+const { cards, eyebrow, heading } = Astro.props;
+---
+
+<section id="strategy" class="strategy" aria-labelledby="phases-heading" data-reveal>
+  <p class="eyebrow">{eyebrow}</p>
+  <h2 id="phases-heading">{heading}</h2>
+  <div class="phase-grid">
+    {cards.map((card, index) => (
+      <article class:list={['phase-card', index === 0 && 'active']}>
+        <p class="phase-label">{card.label}</p>
+        <h3>{card.title}</h3>
+        <div class="phase-details">
+          {card.details.map((detail) => <span>{detail}</span>)}
+        </div>
+        <div class="phase-rule" style={`--rule-opacity:${[0.35, 0.55, 0.75, 1][index]}`}></div>
+      </article>
+    ))}
+  </div>
+</section>
+<script>
+  document.querySelectorAll('.phase-grid').forEach((grid) => {
+    const cards = [...grid.querySelectorAll('.phase-card')];
+    let active = 0;
+    let held = false;
+    const select = (index) => {
+      active = index;
+      cards.forEach((card, i) => card.classList.toggle('active', i === index));
+    };
+    cards.forEach((card, index) => card.addEventListener('mouseenter', () => select(index)));
+    grid.addEventListener('mouseenter', () => { held = true; });
+    grid.addEventListener('mouseleave', () => { held = false; });
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setInterval(() => { if (!held) select((active + 1) % cards.length); }, 2600);
+    }
+  });
+</script>

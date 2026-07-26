@@ -1,0 +1,77 @@
+---
+layout: ../layouts/BaseLayout.astro
+title: The Institute for Ethical AI Alignment & Safety
+hero:
+  status: NINTH PRINCIPLE ADDED — ALIGNMENT WITH INTENT
+  title:
+    - The Institute
+    - for Ethical AI
+    - Alignment & Safety
+  subtitle: "Advocating for the safe and aligned development of AI. A research centre carrying out highly technical, practical and cross-functional work across the nine Responsible AI Principles — with industry, academia and governments."
+  primary_button:
+    label: Join the network
+    href: "#join"
+  secondary_button:
+    label: Contact us
+    href: "#contact"
+phases:
+  - label: 01 / EMPOWERING INDIVIDUALS
+    title: By Principle
+    details:
+      - Best practices
+      - Applied principles
+      - Personal and professional commitments
+  - label: 02 / EMPOWERING ORGANISATIONS
+    title: By Process
+    details:
+      - Practical industry frameworks
+      - Applied guides
+      - Principles translated into implementation
+  - label: 03 / EMPOWERING INDUSTRIES
+    title: By Standards
+    details:
+      - Technical and industry standards
+      - Standards bodies engagement
+      - Cross-industry initiatives
+  - label: 04 / EMPOWERING NATIONS
+    title: By Regulation
+    details:
+      - Policy and regulatory work
+      - Public frameworks and requirements
+      - International governance
+network_form:
+  variant: network-split
+  title: A network of aligned humans
+  stats:
+    - value: "1,034"
+      label: NETWORK MEMBERS
+    - value: "70,412"
+      label: NEWSLETTER SUBSCRIBERS
+    - value: "393"
+      label: ISSUES PUBLISHED
+---
+
+import Hero from '../components/Hero.astro';
+import StatBand from '../components/StatBand.astro';
+import AffiliationMarquee from '../components/AffiliationMarquee.astro';
+import PhaseCardGrid from '../components/PhaseCardGrid.astro';
+import PrinciplesExplorer from '../components/PrinciplesExplorer.astro';
+import OpenSourceShowcase from '../components/OpenSourceShowcase.astro';
+import FormSection from '../components/FormSection.astro';
+import ReportsSection from '../components/ReportsSection.astro';
+
+<Hero {...frontmatter.hero} />
+
+<StatBand />
+
+<AffiliationMarquee />
+
+<PhaseCardGrid cards={frontmatter.phases} eyebrow="01 — THE FOUR-PHASE RESPONSIBLE AI STRATEGY" heading="From individual practice to national regulation." />
+
+<PrinciplesExplorer eyebrow="02 — THE NINE RESPONSIBLE AI PRINCIPLES" heading="A practical framework, developed by domain experts." intro="Each principle carries a commitment, the failure modes it guards against, and the controls that implement it." />
+
+<OpenSourceShowcase />
+
+<ReportsSection />
+
+<FormSection {...frontmatter.network_form} />

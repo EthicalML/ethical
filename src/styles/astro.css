@@ -1,0 +1,7 @@
+/* Astro's collection-rendered prose shell. */
+.prose-header { padding: 96px 48px 32px; }
+.prose-header h1 {
+  font-size: var(--display-72);
+  line-height: 1.03;
+  margin: 16px 0 0;
+}

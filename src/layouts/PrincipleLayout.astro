@@ -1,0 +1,29 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import SplitList from '../components/SplitList.astro';
+import KaosGraph from '../components/KaosGraph.astro';
+
+const { data, Content } = Astro.props;
+const frontmatter = {
+  title: `${data.number}. ${data.title}`,
+  eyebrow: `PRINCIPLE ${data.number} — COMMITMENT`,
+};
+---
+
+<BaseLayout frontmatter={frontmatter}>
+  <article class="principle-prose" data-reveal>
+    {data.failure_modes && <p class="commitment">{data.commitment}</p>}
+    <Content />
+  </article>
+  {data.failure_modes && data.controls && (
+    <SplitList
+      left={{ title: 'FAILURE MODES', items: data.failure_modes }}
+      right={{ title: 'PRACTICAL CONTROLS', items: data.controls }}
+    />
+  )}
+  {data.number === '09' && <KaosGraph />}
+  <nav class="principle-pagination" aria-label="Adjacent principles">
+    <a href={`/principles/${String(Math.max(1, Number(data.number) - 1)).padStart(2, '0')}/`}>← Previous principle</a>
+    <a href={Number(data.number) === 9 ? '/principles/' : `/principles/${String(Number(data.number) + 1).padStart(2, '0')}/`}>{Number(data.number) === 9 ? 'All principles' : 'Next principle →'}</a>
+  </nav>
+</BaseLayout>

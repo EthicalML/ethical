@@ -1,0 +1,30 @@
+[
+  {
+    "kind": "TALK",
+    "title": "NeurIPS 2023 Workshop keynote",
+    "image": "alignment",
+    "label": "TALK / 2023",
+    "place": "NeurIPS Workshop"
+  },
+  {
+    "kind": "TALK",
+    "title": "NeurIPS 2022 — machine learning security",
+    "image": "systems",
+    "label": "TALK / 2022",
+    "place": "NeurIPS"
+  },
+  {
+    "kind": "TALK",
+    "title": "KubeCon Europe — ML evaluation at scale",
+    "image": "agents",
+    "label": "TALK",
+    "place": "KubeCon Europe"
+  },
+  {
+    "kind": "TALK",
+    "title": "PyCon keynote — monitoring, drift and explainability",
+    "image": "standards",
+    "label": "KEYNOTE",
+    "place": "PyCon"
+  }
+]

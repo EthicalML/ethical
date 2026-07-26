@@ -1,0 +1,13 @@
+---
+title: State of Production ML — survey explorer
+composed: true
+layout: ../../layouts/ProseLayout.astro
+---
+
+import { ArticleHero, SurveyExplorer } from '../../components/prose/components.js';
+
+<ArticleHero eyebrow="REPORTS & DATA / INTERACTIVE" title="How production ML is changing" intro="Compare practices across two survey years. Focus, sort and explore without leaving the page." />
+
+<section className="survey-shell" data-reveal>
+  <SurveyExplorer client:visible />
+</section>

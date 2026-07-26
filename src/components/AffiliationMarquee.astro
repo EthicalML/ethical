@@ -1,0 +1,10 @@
+---
+import affiliations from '../data/affiliations.json';
+const track = [...affiliations.items, ...affiliations.items];
+---
+<section class="affiliations" data-reveal>
+  <p class="eyebrow">{affiliations.eyebrow}</p>
+  <div class="marquee-mask"><div class="marquee-track">
+    {track.map(({ name, role }) => <div><strong>{name}</strong><span>{role}</span></div>)}
+  </div></div>
+</section>

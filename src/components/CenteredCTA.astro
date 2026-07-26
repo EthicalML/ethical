@@ -1,0 +1,9 @@
+---
+const { eyebrow, heading, href, label } = Astro.props;
+---
+
+<section class="center-cta" data-reveal>
+  <p class="eyebrow">{eyebrow}</p>
+  <h2>{heading}</h2>
+  <a class="button primary" href={href}>{label}</a>
+</section>

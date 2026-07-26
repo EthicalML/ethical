@@ -1,0 +1,118 @@
+{
+  "overview": {
+    "label": "Overview",
+    "width": 380,
+    "primary": true,
+    "eyebrow": "ON THIS PAGE",
+    "items": [
+      {"number": "01", "title": "Four-phase strategy", "href": "/#strategy"},
+      {"number": "02", "title": "Nine principles", "href": "/#principles"},
+      {"number": "03", "title": "Open source & tools", "href": "/#open-source"},
+      {"number": "04", "title": "Reports & data", "href": "/#reports"},
+      {"number": "05", "title": "Network & newsletter", "href": "/#join"},
+      {"number": "06", "title": "Talks & keynotes", "href": "/talks/"},
+      {"number": "07", "title": "Contact the Institute", "href": "/contact/"}
+    ]
+  },
+  "oss": {
+    "label": "Open source",
+    "width": 860,
+    "primary": true,
+    "items": [
+      {"key": "kaos", "eyebrow": "AGENT INFRASTRUCTURE", "title": "K8s Agent OS (KAOS)", "description": "Control plane for autonomous agents: scoped credentials, budgets, approval gates, audit trail.", "href": "/open-source/kaos/"},
+      {"key": "kompute", "eyebrow": "GPU ACCELERATION", "title": "Kompute", "description": "Cross-vendor GPU compute, portable across hardware, in Linux Foundation AI & Data.", "href": "/open-source/"},
+      {"key": "xai", "eyebrow": "EXPLAINABILITY", "title": "XAI Framework", "description": "Data analysis, model evaluation and production monitoring for bias and explainability.", "href": "/open-source/"},
+      {"key": "list", "eyebrow": "ECOSYSTEM", "title": "Production ML list", "description": "Community catalogue of production ML and MLOps tooling, curated weekly.", "href": "/open-source/"}
+    ],
+    "footerLinks": [
+      {"label": "ALL REPOSITORIES ↗", "href": "/open-source/"},
+      {"label": "CONTRIBUTE", "href": "/contact/"}
+    ]
+  },
+  "initiatives": {
+    "label": "Initiatives",
+    "width": 880,
+    "primary": true,
+    "eyebrow": "PRINCIPLES, FRAMEWORKS & DATA",
+    "groups": [
+      {
+        "title": "Research",
+        "note": "PROGRAMMES",
+        "items": [
+          {"label": "Alignment science", "description": "Goal misgeneralisation, deception, intent specification", "href": "/#principles"},
+          {"label": "Agentic safety & oversight", "description": "Long-horizon agents and human control", "href": "/#opensource"},
+          {"label": "Technical assurance", "description": "Evaluations, reproducibility, monitoring", "href": "/#reports"},
+          {"label": "ML security", "description": "MLSecOps research and vulnerability work", "href": "/#reports"}
+        ]
+      },
+      {
+        "title": "Principles & frameworks",
+        "note": "APPLIED FRAMEWORKS",
+        "items": [
+          {"label": "The nine principles", "description": "Commitments, failure modes, controls", "href": "/principles/"},
+          {"label": "AI-RFX Procurement", "description": "Open RFP and tender templates", "href": "/#reports"},
+          {"label": "ML Maturity Model", "description": "Eight supplier assessment criteria", "href": "/frameworks/maturity-model/"},
+          {"label": "MLSecOps Top 10", "description": "Lifecycle vulnerability taxonomy", "href": "/frameworks/mlsecops/"}
+        ]
+      },
+      {
+        "title": "Reports & data",
+        "note": "PUBLISHED EVIDENCE",
+        "items": [
+          {"label": "State of Production ML 2025", "description": "Practitioner survey, tools and statistics", "href": "/#reports"},
+          {"label": "2024 edition", "description": "Previous annual survey", "href": "/#reports"},
+          {"label": "Survey explorer", "description": "Compare answers across years", "href": "/data/survey-explorer/"},
+          {"label": "Methodology & dataset", "description": "How the survey is run, raw data", "href": "/#reports"}
+        ]
+      },
+      {
+        "title": "Standards & policy",
+        "note": "INSTITUTIONAL WORK",
+        "items": [
+          {"label": "ISO/IEC AI standards", "description": "Contributions to international standards", "href": "/#about"},
+          {"label": "IEEE AI standards group", "description": "Working group participation", "href": "/#about"},
+          {"label": "Linux Foundation AI & Data", "description": "Associate member, Trusted AI", "href": "/#about"},
+          {"label": "UN, UN CSTD & the EC", "description": "Advisory roles and consultations", "href": "/#about"}
+        ]
+      }
+    ]
+  },
+  "network": {
+    "label": "Network",
+    "width": 640,
+    "primary": true,
+    "columns": [
+      {
+        "heading": "JOIN",
+        "items": [
+          {"title": "Ethical AI Network", "description": "1,034 members across 318 organisations", "href": "/network/"},
+          {"title": "ML Engineer newsletter", "description": "393 issues, 70,000+ practitioners", "href": "/network/"},
+          {"title": "Membership & sectors", "description": "Who takes part and how", "href": "/network/"}
+        ]
+      },
+      {
+        "heading": "PROGRAMME",
+        "items": [
+          {"title": "Talks & keynotes", "description": "NeurIPS, KubeCon, PyCon and more", "href": "/talks/"},
+          {"title": "Events & workshops", "description": "Sessions run with partners", "href": "/network/"},
+          {"title": "Fellowships", "description": "Research and engineering fellows", "href": "/network/"},
+          {"title": "Partner with us", "description": "Institutional collaboration", "href": "/contact/"}
+        ]
+      }
+    ]
+  },
+  "about": {
+    "label": "About",
+    "width": 340,
+    "primary": false,
+    "eyebrow": "THE INSTITUTE",
+    "items": [
+      {"number": "01", "title": "Our mission", "href": "/about/"},
+      {"number": "02", "title": "Team & fellows", "href": "/about/"},
+      {"number": "03", "title": "Advisory roles", "href": "/about/"},
+      {"number": "04", "title": "Annual review", "href": "/about/"},
+      {"number": "05", "title": "Press kit", "href": "/about/"},
+      {"number": "06", "title": "Contact", "href": "/contact/"}
+    ]
+  }
+}

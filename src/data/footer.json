@@ -1,0 +1,24 @@
+{
+  "about": {
+    "eyebrow": "ABOUT THE INSTITUTE",
+    "text": "A Europe-based research centre bringing together technology leaders, policymakers and academics to develop industry standards and practical frameworks for the safe, secure and aligned development of AI.",
+    "standards": [
+      "ISO/IEC AI standards",
+      "IEEE AI standards",
+      "ACM technology policy",
+      "Linux Foundation AI & Data",
+      "European Commission",
+      "United Nations"
+    ]
+  },
+  "talksEyebrow": "TALKS & KEYNOTES",
+  "elsewhere": {
+    "eyebrow": "ELSEWHERE",
+    "links": [
+      {"label": "GitHub ↗", "href": "/open-source/"},
+      {"label": "LinkedIn ↗", "href": "/network/"},
+      {"label": "YouTube ↗", "href": "/talks/"},
+      {"label": "Contact the Institute ↗", "href": "/contact/"}
+    ]
+  }
+}

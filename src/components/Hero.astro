@@ -1,0 +1,25 @@
+---
+const { status, title, subtitle, primary_button, secondary_button } = Astro.props;
+---
+
+<header class="hero" data-reveal>
+  <canvas class="hero-canvas" data-widget="hero-cycle" aria-hidden="true"></canvas>
+  <div class="hero-copy">
+    <p class="status-pill"><span aria-hidden="true"></span>{status}</p>
+    <h1>
+      {title.map((line, index) => index === 2
+        ? <em class="glitch" data-text={line}>{line}</em>
+        : <span>{line}</span>)}
+    </h1>
+    <p class="hero-subtitle">{subtitle}</p>
+    <nav class="actions" aria-label="Primary actions">
+      <a class="button primary" href={primary_button.href}>{primary_button.label}</a>
+      <a class="button" href={secondary_button.href}>{secondary_button.label}</a>
+    </nav>
+    <div class="graph-switcher" aria-label="Hero visual">
+      <button class="active" type="button" data-hero-mode="planes" title="Layered planes"></button>
+      <button type="button" data-hero-mode="sphere" title="Alignment sphere"></button>
+      <button type="button" data-hero-mode="contour" title="Contour field"></button>
+    </div>
+  </div>
+</header>

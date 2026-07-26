@@ -1,0 +1,18 @@
+---
+import BaseLayout from './BaseLayout.astro';
+const { frontmatter } = Astro.props;
+---
+
+<BaseLayout frontmatter={frontmatter}>
+  {frontmatter.composed ? <slot /> : (
+    <article class="prose-page">
+      <header class="prose-header" data-reveal>
+        <p class="eyebrow">{frontmatter.eyebrow ?? 'THE INSTITUTE'}</p>
+        <h1>{frontmatter.title}</h1>
+      </header>
+      <div class="prose-content">
+        <slot />
+      </div>
+    </article>
+  )}
+</BaseLayout>

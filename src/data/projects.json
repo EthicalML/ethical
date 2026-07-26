@@ -1,0 +1,45 @@
+{
+  "section": {
+    "eyebrow": "03 — OPEN SOURCE & TOOLS",
+    "title": "Infrastructure the principles can actually run on."
+  },
+  "kompute": {
+    "figure": "FIG 01",
+    "affiliation": "LINUX FOUNDATION AI & DATA",
+    "title": "Cross-vendor GPU computing",
+    "text": "Kompute and the cross-vendor acceleration work: portable GPU compute that is not locked to a single hardware vendor, maintained in the open alongside Linux Foundation AI & Data and NumFOCUS.",
+    "metrics": [{"value": "2.1k", "label": "GITHUB STARS"}, {"value": "38", "label": "CONTRIBUTORS"}, {"value": "160+", "label": "RELEASES"}, {"value": "Apache-2.0", "label": "LICENCE"}],
+    "tags": ["Kompute", "ML OSS ecosystem", "Linux Foundation AI & Data", "NumFOCUS", "Awesome AI Guidelines"]
+  },
+  "xai": {
+    "figure": "FIG 02 — XAI PIPELINE",
+    "badge": "ALPHA",
+    "stages": [{"title": "Data analysis", "detail": "DISTRIBUTIONS · PROXIES"}, {"title": "Model evaluation", "detail": "ATTRIBUTION · SUBGROUPS"}, {"title": "Production monitoring", "detail": "DRIFT · OUTLIERS"}],
+    "title": "XAI Explainability Framework",
+    "text": "Explainability and bias mitigation across three stages, combining technical tools with the organisational processes around them.",
+    "stats": ["1.4k STARS", "21 CONTRIBUTORS", "ALPHA — ACTIVE"],
+    "linkLabel": "Open the framework →",
+    "linkHref": "/open-source/"
+  },
+  "ecosystem": {
+    "leftHeading": "CATEGORY",
+    "rightHeading": "TOOLING TRACKED",
+    "rows": [{"title": "Serving & inference", "count": "48"}, {"title": "Orchestration & pipelines", "count": "37"}, {"title": "Monitoring & observability", "count": "31"}, {"title": "Feature & vector stores", "count": "24"}, {"title": "Explainability & fairness", "count": "22"}, {"title": "ML security", "count": "17"}, {"title": "GPU & acceleration", "count": "15"}],
+    "title": "Production ML open-source list",
+    "text": "The community-maintained catalogue of production ML and MLOps tooling, curated weekly.",
+    "stats": ["10.2k STARS", "230+ CONTRIBUTORS", "260 TOOLS TRACKED"],
+    "linkLabel": "Browse the ecosystem →",
+    "linkHref": "/open-source/"
+  },
+  "kaos": {
+    "figure": "FIG 04",
+    "badge": "NEW",
+    "title": "K8s Agent OS (KAOS)",
+    "text": "An open-source control plane for running autonomous agents under real operational constraints: scoped credentials, sandboxed execution, budget and time-horizon limits, human approval gates and a replayable audit trail — the infrastructure Principle 09 needs to be enforceable rather than aspirational.",
+    "capabilities": [{"name": "Scoped credentials", "detail": "Per-agent service accounts, short-lived tokens"}, {"name": "Sandboxed execution", "detail": "Namespaced pods, egress allow-lists"}, {"name": "Budget limits", "detail": "Token, compute and wall-clock ceilings"}, {"name": "Time horizon", "detail": "Max unattended task length per agent class"}, {"name": "Human approval", "detail": "Gates on irreversible or high-impact actions"}, {"name": "Audit trail", "detail": "Replayable traces, lineage, evaluation hooks"}],
+    "stats": ["EARLY ACCESS", "9 CONTRIBUTORS", "APACHE-2.0", "K8S 1.29+"],
+    "actions": [{"label": "Read the design", "href": "/open-source/kaos/", "kind": "primary"}, {"label": "View on GitHub", "href": "/open-source/kaos/", "kind": ""}],
+    "panelEyebrow": "AGENT RUN — LIVE ORCHESTRATION",
+    "panelStatus": "RUNNING"
+  }
+}

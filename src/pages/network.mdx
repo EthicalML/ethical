@@ -1,0 +1,13 @@
+---
+title: Ethical AI Network
+composed: true
+layout: ../layouts/ProseLayout.astro
+---
+
+import { ArticleHero, FormSection, NetworkDirectory } from '../components/prose/components.js';
+
+<ArticleHero eyebrow="ETHICAL AI NETWORK" title="A network of aligned humans" intro="Practitioners, researchers and institutions sharing the difficult work of responsible AI." />
+
+<NetworkDirectory sectorEyebrow="WHO IS HERE" sectorHeading="Across disciplines" memberEyebrow="MEMBER NETWORK" memberHeading="Built through contribution" members={['ACM','OWASP','Linux Foundation','NumFocus','IEEE','UN CSTD']} />
+
+<FormSection variant="network-split" title="Join the working network" stats={[{value:'1,034',label:'NETWORK MEMBERS'},{value:'70,412',label:'NEWSLETTER SUBSCRIBERS'},{value:'393',label:'ISSUES PUBLISHED'}]} />

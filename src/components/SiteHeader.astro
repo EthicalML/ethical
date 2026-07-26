@@ -1,0 +1,84 @@
+---
+import menus from '../data/nav.json';
+import site from '../data/site.json';
+const initialProject = menus.oss.items[0];
+---
+
+<header class="site-header" data-site-header>
+  <div class="header-row">
+    <a class="wordmark" href="/">
+      <span>{site.wordmark.primary}</span>
+      <span>{site.wordmark.secondary}</span>
+    </a>
+    <nav class="primary-nav" aria-label="Primary navigation">
+      {Object.entries(menus).filter(([, menu]) => menu.primary).map(([id, menu]) => (
+        <button class="nav-trigger" type="button" aria-expanded="false" data-menu-trigger={id}>
+          {menu.label}<span class="caret" aria-hidden="true">▾</span>
+        </button>
+      ))}
+    </nav>
+    <div class="nav-right">
+      <button class="nav-trigger" type="button" aria-expanded="false" data-menu-trigger="about">
+        {menus.about.label}<span class="caret" aria-hidden="true">▾</span>
+      </button>
+      <a class="join-pill" href={site.join.href}>{site.join.label}</a>
+    </div>
+  </div>
+  <div class="menu-wrap">
+    <div class="mega-panel" data-menu-panel aria-hidden="true">
+      {Object.entries(menus).map(([id, menu]) => (
+        <div class:list={['mega-panel-body', id === 'overview' && 'is-active']} data-menu-body={id}>
+          {menu.eyebrow && <p class="menu-eyebrow">{menu.eyebrow}</p>}
+          {menu.columns ? (
+            <div class="network-menu">
+              {menu.columns.map(({ heading, items }) => <div>
+                <p>{heading}</p>
+                <div>{items.map(({ title, description, href }) => <a href={href}><strong>{title}</strong><span>{description}</span></a>)}</div>
+              </div>)}
+            </div>
+          ) : menu.groups ? (
+            <div class="initiative-menu">
+              <div class="group-rail">
+                {menu.groups.map(({ title, note }, index) => (
+                  <button type="button" class:list={{ active: index === 0 }} data-initiative-index={index}>
+                    <strong>{title}</strong><span>{note}</span><i>→</i>
+                  </button>
+                ))}
+              </div>
+              <div class="initiative-panes">
+                {menu.groups.map(({ note, items }, index) => <div class:list={['initiative-pane', index === 0 && 'active']} data-initiative-pane={index}>
+                  <p>{note}</p>
+                  <div>{items.map(({ label, description, href }) => <a href={href}><strong>{label}</strong><span>{description}</span></a>)}</div>
+                </div>)}
+              </div>
+            </div>
+          ) : id === 'oss' ? (
+            <div class="oss-menu">
+              <div class="oss-menu-list">
+                {menu.items.map(({ key, eyebrow, title, description, href }, index) => (
+                  <a href={href} class:list={{ active: index === 0 }} data-oss-index={index} data-oss-key={key} data-oss-eyebrow={eyebrow} data-oss-title={title} data-oss-description={description}>
+                    <span>{eyebrow}</span><strong>{title}</strong><small>{description}</small>
+                  </a>
+                ))}
+                <footer>{menu.footerLinks.map(({ label, href }) => <a href={href}>{label}</a>)}</footer>
+              </div>
+              <div class="oss-menu-preview">
+                <canvas data-widget="nav-preview" data-preview-mode={initialProject.key} aria-hidden="true"></canvas>
+                <p><span data-oss-preview-eyebrow>{initialProject.eyebrow}</span><strong data-oss-preview-title>{initialProject.title}</strong><i data-oss-preview-description>{initialProject.description}</i></p>
+              </div>
+            </div>
+          ) : (
+            <div class:list={['menu-link-list', id === 'network' && 'two-columns']}>
+              {menu.items.map((item, index) => (
+                <a href={item.href} style={`--row-index:${index}`}>
+                  {(id === 'overview' || id === 'about') && <span>{item.number}</span>}
+                  <strong>{item.title}</strong><span aria-hidden="true">→</span>
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+</header>

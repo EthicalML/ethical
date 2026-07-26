@@ -1,0 +1,35 @@
+---
+import copy from '../data/network.json';
+import sectors from '../data/network-sectors.json';
+import issues from '../data/newsletter-issues.json';
+const { variant, title, stats = [] } = Astro.props;
+---
+
+{(variant === 'network-split' || variant === 'contact-full') && (
+  <section id="join" class:list={['join-section', variant === 'contact-full' && 'contact-full']} aria-labelledby="network-heading" data-reveal>
+    {variant !== 'contact-full' && <p class="eyebrow">{copy.homeEyebrow}</p>}
+    <div class="network-split">
+      <div>
+      {variant === 'contact-full' && <p class="eyebrow">{copy.contactEyebrow}</p>}
+      <h2 id="network-heading">{title}</h2>
+      {variant === 'contact-full'
+        ? <p>{copy.contactIntro}</p>
+        : <><p>{copy.homeIntro}</p><div class="network-stats">{stats.map((stat) => (
+          <div>
+            <strong>{stat.value}</strong>
+            <span>{stat.label}</span>
+          </div>
+        ))}</div><div class="network-lists"><div><p class="eyebrow">{copy.sectorEyebrow}</p>{sectors.map(({ name, value })=><span><i>{name}</i><b>{value}</b></span>)}</div><div><p class="eyebrow">{copy.issuesEyebrow}</p>{issues.map(({ number, title })=><a href="/network/"><b>{number}</b><i>{title}</i></a>)}</div></div></>}
+      </div>
+      <form id="contact">
+      <header><span>{copy.form.eyebrow}</span><h3>{copy.form.title}</h3></header>
+      {copy.form.fields.map(({ label, name, type, placeholder, autocomplete }) => <label>{label} <input name={name} type={type} autocomplete={autocomplete} placeholder={placeholder} /></label>)}
+      <fieldset>
+        {copy.form.interests.map(({ value, label, checked }) => <label><input type="checkbox" name="interests" value={value} checked={checked} /> {label}</label>)}
+      </fieldset>
+      <button type="button">{copy.form.button}</button>
+      <small>{copy.form.disclaimer}</small>
+      </form>
+    </div>
+  </section>
+)}

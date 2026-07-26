@@ -1,0 +1,12 @@
+---
+import stats from '../data/stats.json';
+---
+
+<section class="stat-band" aria-label="Institute statistics" data-reveal>
+  {stats.map((stat) => (
+    <div class="stat">
+      <strong>{stat.value}</strong>
+      <span>{stat.label}</span>
+    </div>
+  ))}
+</section>

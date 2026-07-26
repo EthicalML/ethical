@@ -1,0 +1,9 @@
+/* Prototype-fidelity geometry shared by the Round 4+ implementation. */
+@media (min-width: 951px) {
+  .principles-explorer { height: 862.03125px; }
+  .open-source-prototype { height: 2034.859375px; }
+  .home-survey-card { height: 530px; }
+  .initiative-pair { height: 585.96875px; }
+  .join-section > .network-split { height: 630px; }
+  .footnote-band { height: 234px; }
+}

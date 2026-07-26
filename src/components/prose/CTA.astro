@@ -1,0 +1,8 @@
+---
+const { href, label } = Astro.props;
+---
+
+<aside class="cta-block prose-block" data-reveal>
+  <div class="block-body"><slot /></div>
+  <a href={href}>{label}</a>
+</aside>

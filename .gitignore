@@ -77,6 +77,10 @@ build/Release
 # Dependency directories
 node_modules/
 
+# Astro build output and generated metadata
+dist/
+.astro/
+
 # Tags
 tags
 tags.*

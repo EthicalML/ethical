@@ -1,0 +1,24 @@
+---
+import PhaseCardGrid from './PhaseCardGrid.astro';
+import ComparisonTable from './ComparisonTable.astro';
+import CapabilityTable from './prose/CapabilityTable.astro';
+import Metrics from './prose/Metrics.astro';
+import CTA from './prose/CTA.astro';
+import maturity from '../data/maturity.json';
+
+const { phaseEyebrow, phaseHeading, checklistEyebrow, checklistHeading, capabilityEyebrow, capabilityHeading, metrics, cta } = Astro.props;
+---
+
+<PhaseCardGrid cards={maturity.phases} eyebrow={phaseEyebrow} heading={phaseHeading} />
+<section data-reveal>
+  <p class="eyebrow">{checklistEyebrow}</p>
+  <h2>{checklistHeading}</h2>
+  <ComparisonTable rows={maturity.checklist} columns={maturity.checklistColumns} />
+</section>
+<section data-reveal>
+  <p class="eyebrow">{capabilityEyebrow}</p>
+  <h2>{capabilityHeading}</h2>
+  <CapabilityTable items={maturity.capabilities} />
+</section>
+<Metrics stars={metrics[0]} contributors={metrics[1]} releases={metrics[2]} />
+<CTA href={cta.href} label={cta.label}>{cta.text}</CTA>

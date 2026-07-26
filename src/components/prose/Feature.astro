@@ -1,0 +1,14 @@
+---
+import KaosGraph from '../KaosGraph.astro';
+
+const { title, eyebrow = 'FEATURE', widget } = Astro.props;
+---
+
+<aside class="prose-block feature-block" data-reveal>
+  <div>
+    <p class="eyebrow">{eyebrow}</p>
+    <h2>{title}</h2>
+    <div class="block-body"><slot /></div>
+  </div>
+  {widget === 'kaos-graph' && <KaosGraph embedded />}
+</aside>

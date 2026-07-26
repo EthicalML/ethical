@@ -1,0 +1,59 @@
+---
+import projects from '../data/projects.json';
+const { compact = false } = Astro.props;
+---
+<section id="opensource" class:list={['open-source-prototype', compact && 'compact']} data-reveal>
+  <p class="eyebrow">{projects.section.eyebrow}</p>
+  <h2>{projects.section.title}</h2>
+
+  <article class="kompute-feature">
+    <div class="oss-copy">
+      <p class="figure-label"><span>{projects.kompute.figure}</span><span>{projects.kompute.affiliation}</span></p>
+      <h3>{projects.kompute.title}</h3>
+      <p>{projects.kompute.text}</p>
+      <div class="oss-metrics">
+        {projects.kompute.metrics.map(({ value, label }) => <div><strong>{value}</strong><span>{label}</span></div>)}
+      </div>
+      <div class="oss-tags">{projects.kompute.tags.map((tag)=><span>{tag}</span>)}</div>
+    </div>
+    <div class="fixed-canvas cube-mount"><canvas data-widget="kompute-cube" aria-label="Animated 27-cubie Rubik's cube"></canvas></div>
+  </article>
+
+  <div class="oss-pair">
+    <article class="oss-half">
+      <div class="oss-preview xai-preview">
+        <p class="figure-label"><span>{projects.xai.figure}</span><span class="warn">{projects.xai.badge}</span></p>
+        <div class="xai-stages">{projects.xai.stages.map(({ title, detail }) => <div><p><span>{title}</span><small>{detail}</small></p><i><b></b></i></div>)}</div>
+      </div>
+      <h3>{projects.xai.title}</h3>
+      <p>{projects.xai.text}</p>
+      <div class="oss-statline">{projects.xai.stats.map((stat) => <span>{stat}</span>)}</div>
+      <a href={projects.xai.linkHref}>{projects.xai.linkLabel}</a>
+    </article>
+    <article class="oss-half">
+      <div class="oss-preview ecosystem-preview">
+        <p class="figure-label"><span>{projects.ecosystem.leftHeading}</span><span>{projects.ecosystem.rightHeading}</span></p>
+        <div>{projects.ecosystem.rows.map(({ title, count }) => <p><span>{title}</span><small>{count}</small></p>)}</div>
+      </div>
+      <h3>{projects.ecosystem.title}</h3>
+      <p>{projects.ecosystem.text}</p>
+      <div class="oss-statline">{projects.ecosystem.stats.map((stat) => <span>{stat}</span>)}</div>
+      <a href={projects.ecosystem.linkHref}>{projects.ecosystem.linkLabel}</a>
+    </article>
+  </div>
+
+  <article class="kaos-feature">
+    <div>
+      <p class="figure-label"><span>{projects.kaos.figure}</span><span class="new-pill">{projects.kaos.badge}</span></p>
+      <h3>{projects.kaos.title}</h3>
+      <p>{projects.kaos.text}</p>
+      <div class="kaos-capabilities">{projects.kaos.capabilities.map(({ name, detail })=><div><span>{name}</span><strong>{detail}</strong></div>)}</div>
+      <div class="oss-statline">{projects.kaos.stats.map((stat) => <span>{stat}</span>)}</div>
+      <div class="actions">{projects.kaos.actions.map(({ label, href, kind }) => <a class:list={['button', kind]} href={href}>{label}</a>)}</div>
+    </div>
+    <div class="kaos-panel">
+      <p class="figure-label"><span>{projects.kaos.panelEyebrow}</span><span data-kaos-status>{projects.kaos.panelStatus}</span></p>
+      <div class="kaos-canvas-mount" data-widget="kaos-graph"></div>
+    </div>
+  </article>
+</section>

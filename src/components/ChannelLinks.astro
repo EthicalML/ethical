@@ -1,0 +1,9 @@
+---
+const { eyebrow, heading, items } = Astro.props;
+---
+
+<section class="channel-links" data-reveal>
+  <p class="eyebrow">{eyebrow}</p>
+  <h2>{heading}</h2>
+  {items.map(([title, detail, href]) => <a href={href}><strong>{title}</strong><span>{detail}</span></a>)}
+</section>

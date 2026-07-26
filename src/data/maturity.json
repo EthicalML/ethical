@@ -1,0 +1,25 @@
+{
+  "checklistColumns": [
+    {"key":"stage","label":"Stage"},
+    {"key":"evidence","label":"Minimum evidence"}
+  ],
+  "phases": [
+    {"label":"01 / ESTABLISH","title":"Foundations","details":["Name owners","Inventory systems","Define controls"]},
+    {"label":"02 / REPEAT","title":"Managed","details":["Standardise reviews","Automate evidence","Track exceptions"]},
+    {"label":"03 / MEASURE","title":"Measured","details":["Set indicators","Compare cohorts","Exercise response"]},
+    {"label":"04 / ADAPT","title":"Adaptive","details":["Learn continuously","Forecast drift","Raise the baseline"]}
+  ],
+  "checklist": [
+    {"stage":"Discover","evidence":"System inventory and accountable owner"},
+    {"stage":"Assess","evidence":"Impact, threat and data assessment"},
+    {"stage":"Release","evidence":"Evaluation record and approved exceptions"},
+    {"stage":"Operate","evidence":"Monitoring, incident and recourse paths"}
+  ],
+  "capabilities": [
+    {"capability":"Governance","detail":"Named ownership and decision records"},
+    {"capability":"Data","detail":"Provenance, quality and access controls"},
+    {"capability":"Models","detail":"Evaluation, versioning and monitoring"},
+    {"capability":"Operations","detail":"Release gates, telemetry and response"},
+    {"capability":"People","detail":"Skills, challenge and accessible recourse"}
+  ]
+}

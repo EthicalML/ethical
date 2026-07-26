@@ -1,0 +1,44 @@
+---
+import '../styles/tokens.css';
+import '../styles/astro.css';
+import '../styles/round4.css';
+import SiteHeader from '../components/SiteHeader.astro';
+import FootnoteBand from '../components/FootnoteBand.astro';
+import site from '../data/site.json';
+
+const { frontmatter = {} } = Astro.props;
+const title = frontmatter.title ?? 'The Institute for Ethical AI Alignment & Safety';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={site.metaDescription} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300&family=Geist:wght@300..700&family=Geist+Mono:wght@300..500&display=swap" rel="stylesheet" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <SiteHeader />
+    <main>
+      {frontmatter.eyebrow && (
+        <header class="prose-header" data-reveal>
+          <p class="eyebrow">{frontmatter.eyebrow}</p>
+          <h1>{frontmatter.title}</h1>
+        </header>
+      )}
+      <slot />
+    </main>
+    <FootnoteBand />
+    <footer class="site-footer">
+      <span>{site.footer.identity}</span>
+      <span>{site.footer.legal}</span>
+    </footer>
+    <script is:inline src="/assets/round4.js"></script>
+    <script is:inline src="/assets/prototype-canvases.js"></script>
+    <script is:inline src="/assets/widget-kaos.js"></script>
+  </body>
+</html>
