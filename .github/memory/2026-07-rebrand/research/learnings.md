@@ -8,7 +8,7 @@ Hard-won facts. Read before touching the codebase; each one cost a debugging cyc
 - **Screenshot artifacts lie:** full-page captures paint sticky headers over the hero and catch 450ms swap animations mid-fade — verify suspicious visuals live before "fixing" them.
 - **Agents drift toward hardcoding under fidelity pressure** (the recurring disease of rounds 4-6: copy invented in templates, content buried in components, JSX blobs in MDX). The countermeasure is the parity audit posture: content-free templates as an explicit review criterion on every PR.
 - **Divergent duplicate values are a refactor trap**: the same stat existing in two files with different numbers breaks any "no visual change" guarantee. Reconcile to one canonical source BEFORE moving data.
-- **Codex sessions echo briefs into logs** — completion monitors must grep for runtime signals (`tokens used|codex exec failed|stream error`), never for done-markers written in the brief; and `pkill -f` patterns must not match your own monitor's command line.
+- **Codex sessions echo briefs AND files-they-read into logs** — log-grep completion signals are unreliable in both directions: a done-marker from the brief matches instantly, and (observed live) an agent reading THIS FILE echoed the documented signal string and fired a false completion. Use out-of-band signals: process liveness / exit codes, never log content. Also: `pkill -f` patterns must not match your own monitor's command line.
 
 ## Astro-specific caveats
 
