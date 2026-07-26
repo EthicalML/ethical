@@ -50,7 +50,8 @@ for (const route of routes) {
       }
       return false;
     };
-    const canvases = [...document.querySelectorAll('canvas')];
+    const canvases = [...document.querySelectorAll('canvas')]
+      .filter((canvas) => canvas.clientWidth >= 2 && canvas.clientHeight >= 2);
     const unrevealed = [...document.querySelectorAll('[data-reveal]')]
       .filter((node) => node.dataset.revealed !== '1')
       .map((node) => `${node.tagName.toLowerCase()}#${node.id}.${node.className}`);
@@ -69,7 +70,7 @@ for (const route of routes) {
         surveyCard: Boolean(document.querySelector('#reports [data-survey-card]')),
         surveyBars: document.querySelectorAll('#reports .survey-bars button').length,
         principleListWithinHalfViewport:
-          (document.querySelector('.principles-explorer')?.firstElementChild?.getBoundingClientRect().width ?? 9999)
+          (document.querySelector('.principles-explorer-grid')?.firstElementChild?.getBoundingClientRect().width ?? 9999)
           <= innerWidth * 0.5,
         kaosMountHeight:
           document.querySelector('.kaos-feature .kaos-canvas-mount')?.getBoundingClientRect().height ?? 0,

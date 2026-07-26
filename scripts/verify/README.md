@@ -14,7 +14,7 @@ Set `VERIFY_BASE_URL` only when deliberately verifying another local origin. `ro
 - HTTP status: asserts every requested route resolves successfully so a visually plausible error page cannot pass.
 - Page and console errors: catches runtime failures that static build success cannot expose.
 - Scripted reveal sweep: scrolls slowly through the full document and asserts every `[data-reveal]` reaches `data-revealed="1"` because observer-only reveal logic previously failed under fast scrolling.
-- Canvas pixel sampling: asserts every rendered canvas has dimensions and at least one non-transparent sampled pixel because blank widgets survived visual review during evaluation.
+- Canvas pixel sampling: asserts every visible canvas has dimensions and at least one non-transparent sampled pixel because blank widgets survived visual review during evaluation; the header's deliberately hidden 1×1 preview mount is excluded until a menu opens it.
 - Page height ceiling: asserts the document remains below 20,000px to catch canvas ResizeObserver feedback loops.
 - Page width ceiling: asserts desktop pages do not create document-level horizontal scrolling; wide content must scroll inside its container.
 - Homepage structure: asserts the three hero modes, bounded principle column, survey card/bars, and 400px KAOS feature mount remain wired after refactors.
