@@ -1166,8 +1166,8 @@ form small { color: rgba(244,242,238,.42); font-size: 12px; }
 .principle-rows span { color: var(--text-4); font: var(--mono-9)/1 var(--font-mono); }
 .principle-rows strong { font-size: 17px; font-weight: 400; }
 .principle-rows i { color: var(--accent); font-style: normal; }
-.principle-detail-wrap { position: relative; }
-.principle-detail { background: rgba(255,255,255,.02); border: 1px solid var(--hairline-card); border-radius: 16px; display: none; padding: 34px; position: sticky; top: 96px; }
+.principle-detail-wrap { position: sticky; top: 96px; }
+.principle-detail { background: rgba(255,255,255,.02); border: 1px solid var(--hairline-card); border-radius: 16px; display: none; padding: 34px; }
 .principle-detail.active { display: block; }
 .principle-detail h3 { font: 300 34px/1.15 var(--font-display); margin: 20px 0; }
 .principle-detail .commitment { color: var(--text-2); font-size: 16px; line-height: 1.6; }
@@ -1274,7 +1274,7 @@ form small { color: rgba(244,242,238,.42); font-size: 12px; }
   .nav-right .nav-trigger { display: none; }
   .mega-panel { display: none; }
   .principles-explorer-grid, .project-card, .network-directory { grid-template-columns: 1fr; }
-  .principle-detail { position: static; }
+  .principle-detail-wrap { position: static; }
   .project-card.wide { grid-column: auto; }
 }
 @media (max-width: 800px) {

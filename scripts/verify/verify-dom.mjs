@@ -29,6 +29,30 @@ for (const route of routes) {
     document.documentElement.style.scrollBehavior = 'auto';
   });
 
+  let homepageInteractions = null;
+  if (route === '/') {
+    homepageInteractions = await page.evaluate(async () => {
+      const section = document.querySelector('#principles');
+      const detail = document.querySelector('.principle-detail-wrap');
+      section.style.transition = 'none';
+      section.style.transform = 'none';
+      detail.querySelectorAll('.principle-detail').forEach((card) => { card.style.animation = 'none'; });
+      const sectionTop = section.getBoundingClientRect().top + scrollY;
+      scrollTo(0, sectionTop + 80);
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      const firstTop = detail.getBoundingClientRect().top;
+      scrollTo(0, sectionTop + 160);
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      const secondTop = detail.getBoundingClientRect().top;
+      scrollTo(0, 0);
+      return {
+        principleStickyPosition: getComputedStyle(detail).position,
+        principleStickyTop: getComputedStyle(detail).top,
+        principleViewportTops: [firstTop, secondTop],
+      };
+    });
+  }
+
   const height = await page.evaluate(() => document.documentElement.scrollHeight);
   for (let top = 0; top < height; top += 500) {
     await page.evaluate((nextTop) => scrollTo(0, nextTop), top);
@@ -79,6 +103,7 @@ for (const route of routes) {
         .map((host) => host.getBoundingClientRect().height),
     };
   });
+  if (checks.homepage) Object.assign(checks.homepage, homepageInteractions);
 
   const failures = [];
   if (!response || !response.ok()) failures.push(`HTTP ${response?.status() ?? 'no response'}`);
@@ -94,6 +119,11 @@ for (const route of routes) {
     if (!checks.homepage.principleListWithinHalfViewport) failures.push('homepage principle list exceeds half the viewport');
     if (!checks.homepage.surveyCard || checks.homepage.surveyBars < 5) failures.push('homepage survey explorer is incomplete');
     if (checks.homepage.kaosMountHeight !== 400) failures.push('homepage KAOS mount is not 400px high');
+    if (
+      checks.homepage.principleStickyPosition !== 'sticky'
+      || checks.homepage.principleStickyTop !== '96px'
+      || checks.homepage.principleViewportTops.some((top) => Math.abs(top - 96) > 1)
+    ) failures.push('homepage principle detail does not remain sticky at 96px');
   }
 
   results.push({
