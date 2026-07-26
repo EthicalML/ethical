@@ -986,8 +986,8 @@ form small { color: rgba(244,242,238,.42); font-size: 12px; }
 .new-pill { border: 1px solid rgba(94,230,160,.4); border-radius: 999px; color: var(--accent); padding: 5px 10px; }
 .kaos-capabilities { display: flex; flex-direction: column; gap: 8px; margin-top: 22px; }
 .kaos-capabilities div { border-bottom: 1px solid var(--hairline); display: grid; font-size: 13.5px; gap: 14px; grid-template-columns: 150px 1fr; padding-bottom: 8px; }
-.kaos-capabilities span { color: var(--text-3); font: var(--mono-10-5)/1.4 var(--font-mono); }
-.kaos-capabilities strong { font-weight: 400; }
+.kaos-capabilities span { color: var(--text-3); font: var(--mono-10-5)/normal var(--font-mono); padding-top: 2px; }
+.kaos-capabilities strong { color: rgba(244,242,238,.85); font-weight: 400; }
 .kaos-panel { background: var(--bg-inset); border: 1px solid rgba(255,255,255,.09); border-radius: 14px; padding: 18px; }
 .kaos-panel [data-kaos-status] { color: var(--accent); }
 .kaos-canvas-mount { height: 400px; margin-top: 12px; min-height: 220px; overflow: hidden; position: relative; width: 100%; }
