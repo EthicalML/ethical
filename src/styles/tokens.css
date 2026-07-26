@@ -817,7 +817,23 @@ form button {
   font-weight: 500;
   padding: 13px 22px;
 }
+form button:disabled { cursor: wait; opacity: .6; }
 form small { color: rgba(244,242,238,.42); font-size: 12px; }
+.form-honeypot {
+  height: 1px;
+  left: -10000px;
+  overflow: hidden;
+  position: absolute;
+  width: 1px;
+}
+.form-confirmation {
+  color: var(--text-1);
+  font: 300 var(--display-26)/1.35 var(--font-display);
+  margin: 0;
+}
+form[data-state="success"] > :not(.form-confirmation) { display: none; }
+form[data-state="success"] .form-confirmation { margin: auto 0; }
+form[data-state="error"] .form-confirmation { color: var(--warn); font: var(--body-14)/1.5 var(--font-body); }
 
 .site-footer {
   border-top: 1px solid var(--hairline);

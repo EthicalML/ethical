@@ -29,6 +29,32 @@ for (const route of routes) {
     document.documentElement.style.scrollBehavior = 'auto';
   });
 
+  let formChecks = null;
+  const instituteForm = page.locator('[data-institute-form]');
+  if (await instituteForm.count()) {
+    await instituteForm.locator('[name="name"]').fill('Chrome Gate');
+    await instituteForm.locator('[name="email"]').fill('chrome-gate@example.com');
+    await instituteForm.locator('[type="submit"]').click();
+    await instituteForm.locator('[data-form-confirmation]').waitFor({ state: 'visible' });
+    formChecks = await instituteForm.evaluate((form) => {
+      const honeypot = form.querySelector('.form-honeypot');
+      const honeypotStyle = getComputedStyle(honeypot);
+      return {
+        endpoint: form.dataset.endpoint,
+        variant: form.dataset.variant,
+        state: form.dataset.state,
+        confirmation: form.querySelector('[data-form-confirmation]').textContent,
+        startedAt: form.querySelector('[name="startedAt"]').value,
+        honeypot: {
+          height: honeypotStyle.height,
+          left: honeypotStyle.left,
+          position: honeypotStyle.position,
+          width: honeypotStyle.width,
+        },
+      };
+    });
+  }
+
   let homepageInteractions = null;
   if (route === '/') {
     homepageInteractions = await page.evaluate(async () => {
@@ -175,6 +201,16 @@ for (const route of routes) {
   if (checks.pageWidth > 1440) failures.push(`page width ${checks.pageWidth}px exceeds the 1440px viewport`);
   if (checks.canvases.some((canvas) => !canvas.nonBlank)) failures.push('one or more canvases are blank');
   if (checks.kaosMounts.some((height) => height < 220 || height > 500)) failures.push('KAOS mount height is outside 220–500px');
+  if (formChecks && (
+    formChecks.endpoint !== ''
+    || formChecks.state !== 'success'
+    || !formChecks.confirmation.startsWith('Demo mode:')
+    || !/^\d{13}$/.test(formChecks.startedAt)
+    || formChecks.honeypot.height !== '1px'
+    || formChecks.honeypot.left !== '-10000px'
+    || formChecks.honeypot.position !== 'absolute'
+    || formChecks.honeypot.width !== '1px'
+  )) failures.push('form demo confirmation, timing token, or honeypot is incomplete');
 
   if (checks.homepage) {
     if (checks.homepage.heroSwitchers !== 3) failures.push('homepage does not expose three hero modes');
@@ -216,6 +252,7 @@ for (const route of routes) {
     passed: failures.length === 0,
     failures,
     errors,
+    form: formChecks,
     ...checks,
   });
 
