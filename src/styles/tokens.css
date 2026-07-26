@@ -1716,3 +1716,103 @@ form small { color: rgba(244,242,238,.42); font-size: 12px; }
   .marquee-track { animation: none; transform: none; }
   .xai-stages b { animation: none; left: 33%; }
 }
+
+@media (max-width: 950px) {
+  html,
+  body { max-width: 100%; overflow-x: clip; }
+  .article-hero {
+    min-height: 420px;
+    padding: 80px 24px 56px;
+  }
+  .article-hero h1 { font-size: clamp(48px, 8vw, 64px); }
+  .prose-section { padding: 68px 24px 72px; }
+  .prose-content > p { padding: 0 24px 64px; }
+  .feature-block {
+    grid-template-columns: 1fr;
+    margin: 0 24px 72px;
+  }
+  .embedded-widget.kaos-canvas-mount { height: 300px; }
+  .table-wrap {
+    max-width: 100%;
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  .table-wrap table { min-width: 640px; }
+  .talk-grid {
+    grid-template-columns: 1fr;
+    padding-inline: 24px;
+  }
+  .button,
+  .cta-block a,
+  .principle-pagination a {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    min-height: 44px;
+  }
+  input { min-height: 44px; }
+  .principle-pagination {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 28px 24px 72px;
+  }
+  .channel-links a {
+    align-items: center;
+    gap: 20px;
+    min-height: 56px;
+  }
+  .footnote-band { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+  .article-hero {
+    min-height: 360px;
+    padding: 64px 18px 44px;
+  }
+  .article-hero h1 { font-size: clamp(42px, 11.5vw, 50px); }
+  .article-hero > p:last-child { font-size: 16px; }
+  .prose-content > p {
+    font-size: 16px;
+    padding: 0 18px 54px;
+  }
+  .prose-section { padding: 56px 18px 60px; }
+  .prose-section-title { font-size: 36px; }
+  .prose-section > p,
+  .prose-section > ul { font-size: 15.5px; }
+  .feature-block {
+    gap: 28px;
+    margin: 0 18px 60px;
+    padding: 24px 20px;
+  }
+  .feature-block h2 { font-size: 34px; }
+  .principle-prose {
+    font-size: 16px;
+    padding-inline: 18px;
+  }
+  .split-list { padding-inline: 18px; }
+  .split-list > div { padding: 24px 20px; }
+  .metrics-block { margin-inline: 18px; }
+  .cta-block {
+    margin-inline: 18px;
+    padding: 22px 20px;
+  }
+  .cta-block a { width: 100%; }
+  .principle-pagination {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 24px 18px 60px;
+  }
+  .member-wordmarks { grid-template-columns: 1fr; }
+  .network-directory,
+  .channel-links,
+  .talk-grid,
+  .survey-shell { padding-inline: 18px; }
+  .channel-links a {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .talk-grid h2 { font-size: 28px; }
+  .footnote-band { padding: 40px 18px; }
+  .site-footer { padding-inline: 18px; }
+}
