@@ -7,6 +7,7 @@ const principles = defineCollection({
   schema: z.object({
     number: z.string(),
     title: z.string(),
+    description: z.string(),
     commitment: z.string(),
     failure_modes: z.array(z.string()).length(3).optional(),
     controls: z.array(z.string()).length(3).optional(),

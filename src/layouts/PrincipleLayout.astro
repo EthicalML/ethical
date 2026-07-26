@@ -6,6 +6,7 @@ import KaosGraph from '../components/KaosGraph.astro';
 const { data, Content } = Astro.props;
 const frontmatter = {
   title: `${data.number}. ${data.title}`,
+  description: data.description,
   eyebrow: `PRINCIPLE ${data.number} — COMMITMENT`,
 };
 ---

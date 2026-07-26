@@ -8,6 +8,9 @@ import site from '../data/site.json';
 
 const { frontmatter = {} } = Astro.props;
 const title = frontmatter.title ?? 'The Institute for Ethical AI Alignment & Safety';
+const description = frontmatter.description ?? site.metaDescription;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const socialImage = new URL(frontmatter.image ?? site.ogImage, Astro.site);
 ---
 
 <!doctype html>
@@ -15,7 +18,20 @@ const title = frontmatter.title ?? 'The Institute for Ethical AI Alignment & Saf
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <meta name="description" content={site.metaDescription} />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="The Institute for Ethical AI Alignment & Safety" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImage} />
     <title>{title}</title>
   </head>
   <body>
