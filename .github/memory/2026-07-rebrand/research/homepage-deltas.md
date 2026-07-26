@@ -19,3 +19,14 @@ The explicit owner input required by Milestone A.2 (plan) / ADR-006. Owner revie
 
 ## NEW SCOPE surfaced by this review: mobile-friendliness
 Not previously captured anywhere: the site must be properly mobile-friendly — the page layouts, the navbar (needs a real mobile pattern), and EVERY component. This needs deliberate design thought (not just CSS squeezing): the prototype is desktop-only, so mobile treatments are a design question (Claude Design per ADR-006 where non-obvious). Tracked as a first-class milestone in the plan.
+
+## Round 2 — OWNER deltas against the ASTRO build directly (2026-07-26)
+
+| # | Area | Delta | Disposition |
+|---|---|---|---|
+| A1 | §02 principles | Right-hand detail card must be STICKY on scroll (prototype: sticky, top 96px) — currently scrolls away | Fix |
+| A2 | §02/principles cards | Missing the pills at the bottom of the detail card; "Read principle" button present but BROKEN (link/behaviour) | Fix |
+| A3 | §03 XAI card | Pipeline scanning animation not running | Fix |
+| A4 | §05 form | Newsletter-signup green wash slightly too light — match the original's exact (less-light) hue | Fix |
+| A5 | Open-source dropdown | Hovering XAI or Production ML leaves a transparent bottom region in the preview pane where the KAOS/GPU canvas shows through — preview swap/z-order bug | Fix |
+| A6 | Initiatives dropdown | Paddings wrong throughout — content bleeds to the border and overflows the panel | Fix |
