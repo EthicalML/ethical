@@ -28,7 +28,7 @@ const initialProject = menus.oss.items[0];
     <div class="mega-panel" data-menu-panel aria-hidden="true">
       {Object.entries(menus).map(([id, menu]) => (
         <div class:list={['mega-panel-body', id === 'overview' && 'is-active']} data-menu-body={id}>
-          {menu.eyebrow && <p class="menu-eyebrow">{menu.eyebrow}</p>}
+          {menu.eyebrow && !menu.groups && <p class="menu-eyebrow">{menu.eyebrow}</p>}
           {menu.columns ? (
             <div class="network-menu">
               {menu.columns.map(({ heading, items }) => <div>

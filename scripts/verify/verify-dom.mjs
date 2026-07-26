@@ -88,6 +88,31 @@ for (const route of routes) {
       }));
     }
     await page.keyboard.press('Escape');
+
+    await page.locator('[data-menu-trigger="initiatives"]').hover();
+    await page.waitForTimeout(400);
+    homepageInteractions.initiativesGeometry = await page.locator('[data-menu-body="initiatives"]').evaluate((body) => {
+      const menu = body.querySelector('.initiative-menu');
+      const rail = body.querySelector('.group-rail');
+      const panes = body.querySelector('.initiative-panes');
+      const metrics = (element) => {
+        const box = element.getBoundingClientRect();
+        const style = getComputedStyle(element);
+        return {
+          box: [box.left, box.right, box.width, box.height],
+          client: [element.clientWidth, element.clientHeight],
+          scroll: [element.scrollWidth, element.scrollHeight],
+          padding: [style.paddingTop, style.paddingRight, style.paddingBottom, style.paddingLeft],
+        };
+      };
+      return {
+        body: metrics(body),
+        menu: metrics(menu),
+        rail: metrics(rail),
+        panes: metrics(panes),
+      };
+    });
+    await page.keyboard.press('Escape');
   }
 
   const height = await page.evaluate(() => document.documentElement.scrollHeight);
@@ -174,6 +199,16 @@ for (const route of routes) {
         .filter(({ mode }) => mode === 'xai' || mode === 'list')
         .some(({ bottomOpaquePixels }) => bottomOpaquePixels !== 0)
     ) failures.push('homepage open-source dropdown composites multiple previews');
+    const initiatives = checks.homepage.initiativesGeometry;
+    if (
+      initiatives.rail.box[2] !== 230
+      || initiatives.rail.padding.join() !== ['24px', '18px', '24px', '18px'].join()
+      || initiatives.panes.padding.join() !== ['26px', '30px', '26px', '30px'].join()
+      || [initiatives.body, initiatives.menu, initiatives.rail, initiatives.panes]
+        .some(({ client, scroll }) => scroll[0] > client[0] || scroll[1] > client[1])
+      || initiatives.menu.box[0] < initiatives.body.box[0]
+      || initiatives.menu.box[1] > initiatives.body.box[1]
+    ) failures.push('homepage initiatives menu padding or overflow differs from the prototype');
   }
 
   results.push({

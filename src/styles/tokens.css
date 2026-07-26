@@ -1130,7 +1130,7 @@ form small { color: rgba(244,242,238,.42); font-size: 12px; }
 .mega-panel-body[data-menu-body="about"] { height: 323px; }
 .initiative-menu { display: grid; grid-template-columns: 230px 1fr; height: 293px; margin: 0; }
 .group-rail { border-right: 1px solid var(--hairline); display:flex; flex-direction:column; gap:2px; padding:24px 18px; }
-.group-rail button { align-items:center; background: none; border: 0; border-radius:9px; color: inherit; display: grid; gap:10px; grid-template-columns: 1fr auto; padding: 11px 13px; text-align: left; width: 100%; }
+.group-rail button { align-items:center; background: none; border: 0; border-radius:9px; color: inherit; column-gap:10px; display: grid; grid-template-columns: 1fr auto; padding: 11px 13px; row-gap:2px; text-align: left; width: 100%; }
 .group-rail button.active { background: var(--accent-wash-09); }
 .group-rail strong { font-size: 14.5px; font-weight: 400; }
 .group-rail span { color: var(--text-4); font: 8.5px/1.4 var(--font-mono); grid-column: 1; letter-spacing:.14em; }
