@@ -25,3 +25,4 @@ Rebuild ethical.institute on **Astro** (v7 line, pinned via lockfile + `.tool-ve
 - A stray `<` or `{` in MDX prose is a build error — accepted cost, covered by conventions and loud builds.
 - Exit cost is the highest of the candidates (`.astro`/MDX translate manually); accepted knowingly.
 - Legacy URL migration (`/network.html` → `/network/`) via Astro `redirects` config + canonical tags — see plan and SEO task.
+- `@astrojs/sitemap` is the one Milestone B dependency addition, used to generate the public sitemap from Astro's configured production site URL.
