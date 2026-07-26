@@ -55,6 +55,11 @@ for (const route of routes) {
         })),
       };
     });
+    const xaiPreview = page.locator('.xai-preview');
+    const firstXaiFrame = await xaiPreview.screenshot();
+    await page.waitForTimeout(350);
+    const secondXaiFrame = await xaiPreview.screenshot();
+    homepageInteractions.xaiFramesChanged = !firstXaiFrame.equals(secondXaiFrame);
   }
 
   const height = await page.evaluate(() => document.documentElement.scrollHeight);
@@ -131,6 +136,7 @@ for (const route of routes) {
     if (checks.homepage.principleLinks.some(({ count, readHref }, index) => (
       count < 2 || readHref !== `/principles/${String(index + 1).padStart(2, '0')}/`
     ))) failures.push('homepage principle pills or Read principle targets are incomplete');
+    if (!checks.homepage.xaiFramesChanged) failures.push('homepage XAI scan pixels do not change over time');
   }
 
   results.push({

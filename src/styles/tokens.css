@@ -969,9 +969,10 @@ form small { color: rgba(244,242,238,.42); font-size: 12px; }
 .xai-stages p { display: flex; font-size: 14px; justify-content: space-between; margin: 0; }
 .xai-stages small { color: rgba(244,242,238,.42); font: 10.5px var(--font-mono); }
 .xai-stages i { background: rgba(255,255,255,.07); border-radius: 4px; display: block; height: 8px; margin-top: 9px; overflow: hidden; position: relative; }
-.xai-stages b { background: linear-gradient(90deg,transparent,var(--accent),transparent); display: block; height: 100%; width: 38%; }
-.xai-stages > div:nth-child(2) b { margin-left: 22%; }
-.xai-stages > div:nth-child(3) b { margin-left: 48%; }
+.xai-stages b { animation: xai-scan 3.2s linear infinite; background: linear-gradient(90deg,transparent,var(--accent),transparent); display: block; height: 100%; left: 0; position: absolute; top: 0; width: 34%; }
+.xai-stages > div:nth-child(2) b { animation-delay: .45s; animation-duration: 3.7s; }
+.xai-stages > div:nth-child(3) b { animation-delay: .9s; animation-duration: 4.2s; }
+@keyframes xai-scan { from { transform: translateX(-100%); } to { transform: translateX(320%); } }
 .ecosystem-preview > .figure-label { border-bottom: 1px solid rgba(255,255,255,.08); padding-bottom: 10px; }
 .ecosystem-preview > div { display: flex; flex-direction: column; }
 .ecosystem-preview > div p { border-bottom: 1px solid rgba(255,255,255,.05); display: grid; font-size: 13px; gap: 14px; grid-template-columns: minmax(0,1fr) 64px; margin: 0; padding: 9px 0; }
