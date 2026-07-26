@@ -3,7 +3,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 
 const { chromium } = playwright;
 const routes = process.argv.slice(2);
-const baseUrl = process.env.VERIFY_BASE_URL ?? 'http://127.0.0.1:4126';
+const baseUrl = process.env.VERIFY_BASE_URL ?? 'http://127.0.0.1:4127';
 const outputDir = new URL('./out/', import.meta.url);
 
 if (routes.length === 0) {
