@@ -18,6 +18,7 @@ const socialImage = new URL(frontmatter.image ?? site.ogImage, Astro.site);
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
+    <meta name="google-site-verification" content="9rfgBQEvfnZ7HS_kBzINrlrJ-_sJcyJxqEUltqvP9Og" />
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -32,6 +33,13 @@ const socialImage = new URL(frontmatter.image ?? site.ogImage, Astro.site);
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={socialImage} />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-89407852-2"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-89407852-2');
+    </script>
     <title>{title}</title>
   </head>
   <body>
