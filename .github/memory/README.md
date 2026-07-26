@@ -12,6 +12,7 @@ Curated context for the Astro rebuild of ethical.institute. Load the relevant fi
 | `adr-003-design-tokens.md` | Design system: tokens as CSS variables, stylesheet organisation, fonts, motion |
 | `adr-004-widgets.md` | Canvas widgets (vanilla, `data-widget` mounts) vs stateful islands (Preact) — the boundary and contracts |
 | `adr-005-content-model.md` | Collections, data files, canonical values, placeholder policy |
+| `adr-006-design-source-of-truth.md` | The hosted prototype HTML as design ground truth; Claude Design for new design work |
 
 ### `research/`
 | File | What it carries |
@@ -25,4 +26,4 @@ Curated context for the Astro rebuild of ethical.institute. Load the relevant fi
 |---|---|
 | `proposed-split.md` | The phased build plan for this repository (Phase 0 seed import → chrome → copy-gated cluster fan-out → cutover) |
 
-Design authority: the Claude Design handoff in the research repo (`design/design_handoff_institute_homepage/` — README spec + prototype HTML). The prototype is ground truth for visuals; content marked placeholder there is not final.
+Design authority: ADR-006 — the Claude Design handoff prototype in the research repo (`design/design_handoff_institute_homepage/`), which must be SERVED over HTTP to render fully. Content marked placeholder there is not final.
