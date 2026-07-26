@@ -11,10 +11,8 @@ Basis: the decided platform (ADR-001), the validated seed at research-repo `impl
 - The two PRs are **stacked** (PR 2 branches from PR 1's branch), registered with GitHub's stacked-PRs via `gh stack link <pr1> <pr2>` (bottom-up). Note the known limitation: stack-tracked PRs merge via the web UI; `gh stack unstack` restores CLI merging if needed.
 
 ## Milestone A — Seed import + design lock-down
-1. Import the round-8 Astro tree onto the branch (site source at repo root), applying the conventions review deltas during import (session-era file renames, `rehypeSectionize` → `src/plugins/`, drop evaluation artefacts). Port the verification harness into `scripts/verify/` (ADR-008). Build green + routes verified via the harness.
-2. **Homepage design lock-down (first implementation step, per ADR-006):** serve the prototype, run the measured comparison harness, and close the KNOWN remaining inconsistencies on the home page until the owner signs off the homepage as design-locked. New surfaces wait until this gate passes.
-3. GH Actions workflow added but inert for production (branch builds/dry-runs only; `master`'s Pages deployment untouched).
-
+1. Import the round-8 Astro tree onto the branch (site source at repo root), applying the conventions review deltas during import (session-era file renames, `rehypeSectionize` → `src/plugins/`, drop evaluation artefacts). **Review-and-port the verification harness** into `scripts/verify/` (ADR-008): each check is read, justified and adapted to the imported tree — no blind copying from the research repo. Build green + routes verified via the reviewed harness.
+2. **Homepage design lock-down (first implementation step, per ADR-006):** GATED ON EXPLICIT OWNER INPUT — the owner provides the concrete delta list (what differs from the prototype, per section); deltas are never assumed or self-diagnosed as the basis for this step. With the owner's list in hand: serve the prototype, reproduce each reported delta with the comparison harness, fix, and iterate until the owner signs off the homepage as design-locked. New surfaces wait until this gate passes.
 ## Milestone B — Chrome completion
 Mobile navigation drawer; self-hosted fonts; per-page SEO front matter (title/description); favicon/OG; 404; Initiatives-rail interactivity; the `redirects` map for every legacy URL + canonicals + sitemap (SEO task); **forms wired per ADR-007** (designed form → Google Form backend, acceptance-tested against the live Sheet — forms are decorative until this lands); **Google Analytics tag and the `google-site-verification` meta carried from the live site's header into `BaseLayout.astro`** (ADR-008 continuity assertions). **Continuity requirements:** preserve `CNAME` (ethical.institute) into the built output, and keep the legacy `mle/*` newsletter archive plus any linked static artefacts (PDFs, state-of-ml data) served at their existing URLs — passthrough-copy them; never migrate or rewrite them.
 
@@ -30,9 +28,10 @@ Per `research/content-prose.md`: copy sheets per cluster carrying the REBRAND RE
 Gate per commit-batch: conventions checklist, DOM + screenshot gates on new routes, placeholder greps.
 
 ## Cutover (PR 2)
-Placeholder grep = zero unapproved hits; full-site link check + Playwright sweep (all routes, 3 viewports); redirects verified; CNAME + `mle/*` continuity verified on the built artefact; switch Pages to the workflow; Search Console sitemap nudge. Rollback = flip Pages source back to `master`.
+GH Actions workflow added HERE (deliberately deferred from Milestone A — not a development priority): build + deploy-pages, plus consolidating the by-then-stable verification steps into the automated rig. Then: placeholder grep = zero unapproved hits; full-site link check + Playwright sweep (all routes, 3 viewports); redirects verified; CNAME + `mle/*` continuity verified on the built artefact; switch Pages to the workflow; Search Console sitemap nudge. Rollback = flip Pages source back to `master`.
 
 ## Standing rules
+- **Verification is agent-orchestrated during development**: the orchestrator runs/adapts the ADR-008 gates per change as explicit steps, with judgment. Only once the site stabilises (cutover phase) do the steps get frozen into the automated rig — no premature delegation of quality to CI.
 - Every conventions/decision change updates `.github/memory/` in the same commit-batch — drift is a review blocker.
 - No new dependencies without an ADR note (pinned toolchain: astro + @astrojs/mdx + preact + sharp).
 - The hosted prototype remains the visual authority (ADR-006); deliberate deviations get named in the commit message.
