@@ -81,6 +81,9 @@ node_modules/
 dist/
 .astro/
 
+# Local verification captures
+scripts/verify/out/
+
 # Tags
 tags
 tags.*
