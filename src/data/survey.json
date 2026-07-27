@@ -6,7 +6,7 @@
       {"label": "PyTorch", "y2024": 58, "y2025": 71, "note": "Now the default training stack for the majority of respondents, including teams that previously reported TensorFlow."},
       {"label": "scikit-learn", "y2024": 61, "y2025": 58, "note": "Still the most common library for tabular production workloads despite the shift toward deep learning."},
       {"label": "TensorFlow", "y2024": 44, "y2025": 34, "note": "Continued decline, largely in teams migrating existing serving pipelines rather than new projects."},
-      {"label": "XGBoost / LightGBM", "y2024": 33, "y2025": 31, "note": "Stable: gradient boosting remains dominant for risk, fraud and forecasting use cases."},
+      {"label": "XGBoost / LightGBM", "y2024": 33, "y2025": 31, "note": "Reported use remained stable. Gradient boosting remains dominant for risk, fraud and forecasting use cases."},
       {"label": "ONNX runtime", "y2024": 13, "y2025": 18, "note": "Growing with edge and cross-vendor deployment, aligned to the cross-vendor GPU computing work."},
       {"label": "JAX", "y2024": 8, "y2025": 12, "note": "Concentrated in research-heavy organisations and frontier-model teams."}
     ]
@@ -16,10 +16,10 @@
     "meta": "Q: TOP CHALLENGES TAKING MODELS TO PRODUCTION",
     "rows": [
       {"label": "Monitoring & drift", "y2024": 38, "y2025": 44, "note": "Maps to Principle 04 — reproducible operations — and the observability failures in the MLSecOps Top 10."},
-      {"label": "Data quality", "y2024": 43, "y2025": 41, "note": "Persistently the first-order problem; feeds directly into bias evaluation under Principle 02."},
+      {"label": "Data quality", "y2024": 43, "y2025": 41, "note": "Data quality remained the most frequently reported challenge and is addressed by bias evaluation under Principle 02."},
       {"label": "Deployment complexity", "y2024": 40, "y2025": 37, "note": "Easing slightly as orchestration tooling matures, but still a top-three blocker."},
-      {"label": "Security & data risk", "y2024": 21, "y2025": 29, "note": "The fastest-rising challenge, and the reason the MLSecOps Top 10 exists."},
-      {"label": "Reproducibility", "y2024": 28, "y2025": 26, "note": "Improving where experiment tracking and lineage are adopted as infrastructure, not convention."},
+      {"label": "Security & data risk", "y2024": 21, "y2025": 29, "note": "Security and data risk had the largest reported increase. The MLSecOps Top 10 addresses this category."},
+      {"label": "Reproducibility", "y2024": 28, "y2025": 26, "note": "Reproducibility improved where teams adopted experiment tracking and lineage as infrastructure."},
       {"label": "Explainability", "y2024": 19, "y2025": 21, "note": "Rising with regulatory pressure; addressed by the XAI Framework’s three-stage model."}
     ]
   },
@@ -61,7 +61,7 @@
     "meta": "Q: WHICH RESPONSIBLE-AI PRACTICES ARE FORMALISED?",
     "rows": [
       {"label": "Documented model review", "y2024": 24, "y2025": 33, "note": "The most common first step, usually a sign-off gate before production release."},
-      {"label": "Bias evaluation process", "y2024": 18, "y2025": 26, "note": "Principle 02 in practice — still absent in three-quarters of organisations."},
+      {"label": "Bias evaluation process", "y2024": 18, "y2025": 26, "note": "Bias evaluation, addressed by Principle 02, remained absent in approximately three-quarters of organisations."},
       {"label": "Human-in-the-loop policy", "y2024": 21, "y2025": 25, "note": "Principle 01: mandatory review where the consequence of an incorrect prediction is high."},
       {"label": "ML security programme", "y2024": 12, "y2025": 22, "note": "Nearly doubled year on year, tracking the rise of agentic deployments."},
       {"label": "Procurement assessment", "y2024": 9, "y2025": 15, "note": "Where AI-RFX and the Machine Learning Maturity Model are applied directly."}

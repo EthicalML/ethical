@@ -22,7 +22,7 @@
       {"item": "Security-risk mitigations", "reference": "P08"}
     ],
     "cardTitle": "AI-RFX Procurement Framework",
-    "cardText": "Open-source RFP and tender templates for organisations procuring, building or deploying AI — raising the bar on safety, quality and technical maturity beyond the model itself.",
+    "cardText": "Open-source RFP and tender templates for organisations procuring, building or deploying AI. The templates define safety, quality and technical-maturity criteria for the model and its surrounding system.",
     "linkLabel": "Request the templates →",
     "linkHref": "/frameworks/maturity-model/"
   },
