@@ -36,9 +36,12 @@ const results = [];
 
 for (const route of routes) {
   const errors = [];
+  const isNotFoundRoute = route === '/404.html';
   const onPageError = (error) => errors.push(`page: ${error.message}`);
   const onConsole = (message) => {
-    if (message.type() === 'error') errors.push(`console: ${message.text()}`);
+    const expectedNotFoundLog = isNotFoundRoute
+      && message.text() === 'Failed to load resource: the server responded with a status of 404 (Not Found)';
+    if (message.type() === 'error' && !expectedNotFoundLog) errors.push(`console: ${message.text()}`);
   };
   page.on('pageerror', onPageError);
   page.on('console', onConsole);
@@ -281,7 +284,8 @@ for (const route of routes) {
   if (checks.homepage) Object.assign(checks.homepage, homepageInteractions);
 
   const failures = [];
-  if (!response || !response.ok()) failures.push(`HTTP ${response?.status() ?? 'no response'}`);
+  const expectedStatus = isNotFoundRoute ? 404 : 200;
+  if (!response || response.status() !== expectedStatus) failures.push(`HTTP ${response?.status() ?? 'no response'}`);
   if (errors.length > 0) failures.push(`${errors.length} page/console error(s)`);
   if (checks.unrevealed.length > 0) failures.push(`${checks.unrevealed.length} reveal target(s) did not fire`);
   if (checks.pageHeight >= 20000) failures.push(`page height ${checks.pageHeight}px exceeds 20000px`);

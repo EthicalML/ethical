@@ -36,16 +36,6 @@
     "eyebrow": "PRINCIPLES, FRAMEWORKS & DATA",
     "groups": [
       {
-        "title": "Research",
-        "note": "PROGRAMMES",
-        "items": [
-          {"label": "Alignment science", "description": "Goal misgeneralisation, deception, intent specification", "href": "/#principles"},
-          {"label": "Agentic safety & oversight", "description": "Long-horizon agents and human control", "href": "/#opensource"},
-          {"label": "Technical assurance", "description": "Evaluations, reproducibility, monitoring", "href": "/#reports"},
-          {"label": "ML security", "description": "MLSecOps research and vulnerability work", "href": "/#reports"}
-        ]
-      },
-      {
         "title": "Principles & frameworks",
         "note": "APPLIED FRAMEWORKS",
         "items": [
@@ -66,13 +56,13 @@
         ]
       },
       {
-        "title": "Standards & policy",
+        "title": "Institutional work",
         "note": "INSTITUTIONAL WORK",
         "items": [
-          {"label": "ISO/IEC AI standards", "description": "Contributions to international standards", "href": "/#about"},
-          {"label": "IEEE AI standards group", "description": "Working group participation", "href": "/#about"},
-          {"label": "Linux Foundation AI & Data", "description": "Associate member, Trusted AI", "href": "/#about"},
-          {"label": "UN, UN CSTD & the EC", "description": "Advisory roles and consultations", "href": "/#about"}
+          {"label": "Initiatives", "description": "Standards, policy and open collaboration", "href": "/initiatives/"},
+          {"label": "Partners", "description": "Institutional relationships and roles", "href": "/partners/"},
+          {"label": "Open-source work", "description": "Practical tools and shared infrastructure", "href": "/open-source/"},
+          {"label": "Contact the Institute", "description": "Start an institutional collaboration", "href": "/contact/"}
         ]
       }
     ]
@@ -91,12 +81,10 @@
         ]
       },
       {
-        "heading": "PROGRAMME",
+        "heading": "CONNECT",
         "items": [
           {"title": "Talks & keynotes", "description": "NeurIPS, KubeCon, PyCon and more", "href": "/talks/"},
-          {"title": "Events & workshops", "description": "Sessions run with partners", "href": "/network/"},
-          {"title": "Fellowships", "description": "Research and engineering fellows", "href": "/network/"},
-          {"title": "Partner with us", "description": "Institutional collaboration", "href": "/contact/"}
+          {"title": "Partner with us", "description": "Institutional collaboration", "href": "/partners/"}
         ]
       }
     ]
@@ -107,12 +95,9 @@
     "primary": false,
     "eyebrow": "THE INSTITUTE",
     "items": [
-      {"number": "01", "title": "Our mission", "href": "/about/"},
-      {"number": "02", "title": "Team & fellows", "href": "/about/"},
-      {"number": "03", "title": "Advisory roles", "href": "/about/"},
-      {"number": "04", "title": "Annual review", "href": "/about/"},
-      {"number": "05", "title": "Press kit", "href": "/about/"},
-      {"number": "06", "title": "Contact", "href": "/contact/"}
+      {"number": "01", "title": "Our story", "href": "/about/"},
+      {"number": "02", "title": "Partners", "href": "/partners/"},
+      {"number": "03", "title": "Contact", "href": "/contact/"}
     ]
   }
 }

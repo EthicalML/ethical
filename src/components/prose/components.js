@@ -3,6 +3,7 @@ export { default as CapabilityTable } from './CapabilityTable.astro';
 export { default as Metrics } from './Metrics.astro';
 export { default as CTA } from './CTA.astro';
 export { default as ComparisonTable } from '../ComparisonTable.astro';
+export { default as AffiliationMarquee } from '../AffiliationMarquee.astro';
 export { default as ArticleHero } from '../ArticleHero.astro';
 export { default as ChannelLinks } from '../ChannelLinks.astro';
 export { default as CenteredCTA } from '../CenteredCTA.astro';
