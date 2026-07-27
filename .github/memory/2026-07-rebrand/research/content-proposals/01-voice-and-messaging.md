@@ -1,5 +1,7 @@
 PROPOSAL — for owner review
 
+> OWNER NOTE (2026-07-27): this framework was drafted partly from the design prototype's copy, which is DIRECTION not approved content — only the live site (master) is final. Review this voice deliberately rather than as a codification of an already-accepted tone.
+
 # Voice & messaging framework — Institute for Ethical AI Alignment & Safety
 
 This is the reference every later copy sheet must follow. It extends `content-prose.md` (voice & style) — where the two disagree, `content-prose.md`'s canonical-source order wins. Nothing here invents facts; it governs how existing substance is phrased for the new positioning.

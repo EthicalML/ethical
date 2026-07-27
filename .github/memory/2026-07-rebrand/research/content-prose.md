@@ -2,6 +2,9 @@
 
 Across the evaluation, engineering fidelity was driven hard but COPY was repeatedly invented by agents under placeholder license. Round 5 restored the homepage to the prototype's verbatim text, but the prototype itself marks content as placeholder, and every non-homepage page carries agent-drafted prose the owner has never signed off. This file scopes the curation work (plan Phase 1).
 
+## Content status: ONLY the live site (master) is approved content
+Everything currently rendered on the new-site homepage — including text carried verbatim from the design prototype — is PROPOSAL-status until the owner approves it via the copy sheets. The prototype's voice influenced the drafted voice framework; the owner's review of `content-proposals/01-voice-and-messaging.md` is therefore the calibration point for the site's actual voice, not the prototype.
+
 ## The fundamental frame: this is a REBRAND, not a re-skin
 
 The organisation is being repositioned from **"The Institute for Ethical AI & Machine Learning"** to **"The Institute for Ethical AI Alignment & Safety"**. A 1:1 name-replace PR already landed on the live site, but that was the mechanical step — the redesign carries the larger move: existing prose is a *starting input to be rephrased into the new positioning* (safety, alignment, frontier/agentic framing), NOT content to migrate verbatim. Expect every carried-over passage to be reworked for the new identity; carrying legacy responsible-ML phrasing unmodified is a review finding, not a convenience.
@@ -9,7 +12,7 @@ The organisation is being repositioned from **"The Institute for Ethical AI & Ma
 ## Canonical sources, in order of authority
 1. **Owner decisions** (this workstream's output) — final.
 2. **The current institute website as it stands** (rebranded master of this repo) — the source of truth for existing substance: the 9 principles' commitments (incl. #9 "Alignment with intent"), MLSecOps/AI-RFX/MLMM framework content, NeurIPS keynote entries, network member organisations, newsletter facts — plus prose from the project pages, blog posts and related published material. All of it subject to the rebrand rephrasing above; the research-repo `institute-crawled-content.md` inventory maps what exists.
-3. **The design prototype's copy** (handoff README + prototype HTML) — canonical for homepage structure/tone; its numbers are explicitly illustrative.
+3. **The design prototype's copy** (handoff README + prototype HTML) — DIRECTION ONLY, not final content (owner clarification 2026-07-27: the design sets the visual/structural direction; its text is a draft like any other and carries NO approved status — the earlier treatment of homepage copy as near-final was wrong). Prototype copy goes through the same sheet review as everything else; its numbers remain illustrative.
 4. Agent-drafted spike prose — treat as DRAFT everywhere; never promote silently.
 
 ## Known placeholder inventory (must be resolved before each cluster ships)
