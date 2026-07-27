@@ -1,25 +1,25 @@
 ---
 title: K8s Agent OS (KAOS)
-description: KAOS is a control plane for autonomous agents that need to use tools, credentials, budgets, and time without escaping accountable human boundaries.
+description: KAOS provides a control plane for autonomous agents, with controls for tools, credentials, budgets, time, approval steps and audit records.
 eyebrow: OPEN SOURCE
 layout: ../../layouts/ProseLayout.astro
 ---
 
 import { CapabilityTable, CTA, Feature, Metrics } from '../../components/prose/components.js';
 
-KAOS is a control plane for autonomous agents that need to use tools, credentials, budgets, and time without escaping accountable human boundaries.
+KAOS provides a control plane for autonomous agents, with controls for tools, credentials, budgets, time, approval steps and audit records.
 
 <Feature title="Bounded agency by design" widget="kaos-graph">
 
 Each agent receives only the authority required for its task. Planning, execution, policy checks, verification, and audit remain visible as work moves through the system.
 
-The graph is not a decorative workflow: it represents explicit control points where teams can constrain or interrupt autonomous behaviour.
+The graph represents explicit control points where teams can constrain or interrupt autonomous behaviour.
 
 </Feature>
 
 ## Capabilities
 
-KAOS treats safety controls as runtime infrastructure rather than guidance attached after deployment. The capability model stays in a shared data file because it is genuinely tabular and reused by the designed table.
+KAOS implements safety controls as runtime infrastructure. Its tabular capability model is reused across the site.
 
 <CapabilityTable />
 
@@ -27,10 +27,10 @@ KAOS treats safety controls as runtime infrastructure rather than guidance attac
 
 ## Build with bounded autonomy
 
-Agent systems should become more useful without becoming less governable. KAOS gives engineering teams a small set of enforceable primitives for building that boundary into the platform.
+Agent systems should remain governable as their capabilities increase. KAOS gives engineering teams a small set of enforceable controls for defining operational boundaries.
 
 <CTA href="https://github.com/axsaucedo/kaos" label="Explore the project →">
 
-Start with the architecture, adapt the controls to your environment, and contribute what you learn back to the open-source community.
+Start with the architecture and adapt the controls to your environment. Contributions based on implementation experience are welcome.
 
 </CTA>

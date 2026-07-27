@@ -1,13 +1,13 @@
 {
   "section": {
     "eyebrow": "03 — OPEN SOURCE & TOOLS",
-    "title": "Infrastructure the principles can actually run on."
+    "title": "Open-source infrastructure for implementing the principles."
   },
   "kompute": {
     "figure": "FIG 01",
     "affiliation": "LINUX FOUNDATION AI & DATA",
     "title": "Cross-vendor GPU computing",
-    "text": "Kompute and the cross-vendor acceleration work: portable GPU compute that is not locked to a single hardware vendor, maintained in the open alongside Linux Foundation AI & Data and NumFOCUS.",
+    "text": "Kompute provides portable GPU compute across hardware vendors. The project is maintained in the open alongside Linux Foundation AI & Data and NumFOCUS.",
     "metrics": [
       {
         "value": "2.1k",
@@ -113,7 +113,7 @@
     "figure": "FIG 04",
     "badge": "NEW",
     "title": "K8s Agent OS (KAOS)",
-    "text": "An open-source control plane for running autonomous agents under real operational constraints: scoped credentials, sandboxed execution, budget and time-horizon limits, human approval gates and a replayable audit trail — the infrastructure Principle 09 needs to be enforceable rather than aspirational.",
+    "text": "An open-source control plane for running autonomous agents under operational constraints. It provides scoped credentials, sandboxed execution, budget and time-horizon limits, human approval gates and a replayable audit trail. These controls implement Principle 09 in the infrastructure.",
     "capabilities": [
       {
         "name": "Scoped credentials",
