@@ -1,3 +1,16 @@
+
+# BINDING STYLE RULES (OWNER, 2026-07-27) — supersede all tone guidance below
+
+Do not use wording that sounds like LLMs. Avoid sentences like "this is another strong signal that […] moving from […] into […]", words like "pivotal", constructions like "is quietly […]", "delving into", "at its core", "It's not X. It's Y", "the real X is", "is less X, and more Y" — and generally avoid sentences that add no information and serve only to emphasise a current or previous point. Keep sentences additive in knowledge.
+
+Write in neutral academic English. Tone: clear, concise, factual; avoid rhetorical flourish. Register: similar to published articles.
+
+Do NOT use the following over-emphatic or formulaic words (unless quoting a source): testament, underscore, propel, unwavering, heartfelt, embrace, foster, ignite, empower, amplify, catalyst, leverage, epitome, cornerstone, harness, noteworthy, unprecedented, profound, pivotal, journey.
+
+Preferred style: plain alternatives (shows, indicates, supports, argues, develops, publishes, maintains).
+
+These rules apply to ALL site copy and ALL sheets; a compliance pass over existing proposals and drafted pages is tracked as a task.
+
 # OWNER-RATIFIED (2026-07-27): the mission line
 
 > **We are an independent research institute with a mission to ensure that frontier AI is safe, aligned and accountable to people and society.**
