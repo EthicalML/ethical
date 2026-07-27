@@ -15,6 +15,7 @@ const { compact = false } = Astro.props;
         {projects.kompute.metrics.map(({ value, label }) => <div><strong>{value}</strong><span>{label}</span></div>)}
       </div>
       <div class="oss-tags">{projects.kompute.tags.map((tag)=><span>{tag}</span>)}</div>
+      <a href={projects.kompute.linkHref} rel="noopener">{projects.kompute.linkLabel}</a>
     </div>
     <div class="fixed-canvas cube-mount"><canvas data-widget="kompute-cube" aria-label="Animated 27-cubie Rubik's cube"></canvas></div>
   </article>
@@ -38,7 +39,9 @@ const { compact = false } = Astro.props;
       <h3>{projects.ecosystem.title}</h3>
       <p>{projects.ecosystem.text}</p>
       <div class="oss-statline">{projects.ecosystem.stats.map((stat) => <span>{stat}</span>)}</div>
-      <a href={projects.ecosystem.linkHref}>{projects.ecosystem.linkLabel}</a>
+      <a href={projects.ecosystem.linkHref} rel="noopener">{projects.ecosystem.linkLabel}</a>
+      {' · '}
+      <a href={projects.ecosystem.guidelinesHref} rel="noopener">{projects.ecosystem.guidelinesLabel}</a>
     </article>
   </div>
 
@@ -49,7 +52,7 @@ const { compact = false } = Astro.props;
       <p>{projects.kaos.text}</p>
       <div class="kaos-capabilities">{projects.kaos.capabilities.map(({ name, detail })=><div><span>{name}</span><strong>{detail}</strong></div>)}</div>
       <div class="oss-statline">{projects.kaos.stats.map((stat) => <span>{stat}</span>)}</div>
-      <div class="actions">{projects.kaos.actions.map(({ label, href, kind }) => <a class:list={['button', kind]} href={href}>{label}</a>)}</div>
+      <div class="actions">{projects.kaos.actions.map(({ label, href, kind }) => <a class:list={['button', kind]} href={href} rel={href.startsWith('http') ? 'noopener' : undefined}>{label}</a>)}</div>
     </div>
     <div class="kaos-panel">
       <p class="figure-label"><span>{projects.kaos.panelEyebrow}</span><span data-kaos-status>{projects.kaos.panelStatus}</span></p>

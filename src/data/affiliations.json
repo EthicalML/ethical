@@ -9,6 +9,7 @@
     {"name": "OWASP", "role": "MLSECOPS COLLABORATION"},
     {"name": "IEEE", "role": "AI STANDARDS GROUP"},
     {"name": "ISO / IEC", "role": "AI STANDARDS GROUP"},
-    {"name": "NUMFOCUS", "role": "CONTRIBUTION"}
+    {"name": "NUMFOCUS", "role": "CONTRIBUTION"},
+    {"name": "TUM / TUM IEAI", "role": "SPEAKER SERIES"}
   ]
 }

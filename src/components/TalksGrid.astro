@@ -10,5 +10,5 @@ const images = { alignment, systems, agents, standards };
 ---
 
 <section class="talk-grid" data-reveal>
-  {talks.map((talk) => <article><Image src={images[talk.image]} alt="" width={800} height={480} /><p class="eyebrow">{talk.label}</p><h2>{talk.title}</h2><span>{talk.place}</span></article>)}
+  {talks.map((talk) => <article><Image src={images[talk.image]} alt="" width={800} height={480} /><p class="eyebrow">{talk.label}</p><h2>{talk.href ? <a href={talk.href} rel="noopener">{talk.title}</a> : talk.title}</h2><span>{talk.place}</span></article>)}
 </section>

@@ -4,14 +4,16 @@
     "title": "NeurIPS 2023 Workshop keynote",
     "image": "alignment",
     "label": "TALK / 2023",
-    "place": "NeurIPS Workshop"
+    "place": "NeurIPS Workshop",
+    "href": "https://www.youtube.com/watch?v=7XSy5aw8oU8"
   },
   {
     "kind": "TALK",
     "title": "NeurIPS 2022 — machine learning security",
     "image": "systems",
     "label": "TALK / 2022",
-    "place": "NeurIPS"
+    "place": "NeurIPS",
+    "href": "https://www.youtube.com/watch?v=57YpXjcj0Ho"
   },
   {
     "kind": "TALK",

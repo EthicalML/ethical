@@ -4,5 +4,5 @@ const { href, label } = Astro.props;
 
 <aside class="cta-block prose-block" data-reveal>
   <div class="block-body"><slot /></div>
-  <a href={href}>{label}</a>
+  <a href={href} rel={href.startsWith('http') ? 'noopener' : undefined}>{label}</a>
 </aside>
