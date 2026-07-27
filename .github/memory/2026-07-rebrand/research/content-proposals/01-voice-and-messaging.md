@@ -36,13 +36,15 @@ Approved verbatim by the owner (2026-07-27); rendered on the homepage as the typ
 
 One-line form (nav, meta): to be derived from the ratified line during the style compliance pass — the earlier draft one-liner is likewise superseded.
 
-## 2. Key messages (3–5)
+## 2. Key messages — RATIFIED (Set 1, owner-approved 2026-07-27)
 
-1. **Alignment and safety, made concrete.** We turn principles into things you can test, procure against and audit — not statements of intent. (Anchors: 9 principles, AI-RFX, MLSecOps, KAOS.)
-2. **Frontier-aware, production-grounded.** The remit now spans agentic and frontier systems *and* the production ML that organisations already run. Safety work that ignores deployed systems is incomplete; agent oversight that ignores real operational constraints is theatre.
-3. **From individual practice to national regulation.** The four-phase strategy — Principle → Process → Standards → Regulation — is how a single practitioner's commitment scales to institutional and public frameworks.
-4. **Open by default.** The Institute's most tangible output is working software and open frameworks — KAOS, Kompute, the XAI framework, the production-ML list, AI-RFX, MLSecOps Top 10 — built in public and reusable.
-5. **A network of aligned humans.** Responsible technology takes more than changes to models; it takes a network of accountable people across engineering, research, policy and standards.
+1. The Institute develops methods for testing whether AI systems meet safety and alignment requirements. These include the nine Responsible AI Principles, procurement criteria (AI-RFX), and security guidance mapped to established taxonomies (MLSecOps Top 10).
+2. The work covers production machine-learning systems and frontier systems, including autonomous agents. The software addresses constraints that arise in deployment: credential scope, budgets, approval steps, and audit records.
+3. The Institute publishes its software and frameworks under open licences. Current projects include KAOS, Kompute, the XAI framework, and maintained reference lists for production machine learning.
+4. The Institute works with industry, academia, standards bodies, and governments. A four-phase model describes how practices spread from individual engineers to organisational processes, industry standards, and regulation.
+5. The Institute maintains a practitioner network and publishes The ML Engineer newsletter.
+
+The earlier drafted messages (rejected under the binding style rules) are retained only in git history.
 
 ## 3. Tone rules (extends content-prose.md §Voice & style)
 
