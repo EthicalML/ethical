@@ -7,6 +7,7 @@ node scripts/verify/verify-dom.mjs / /principles/ /principles/09/
 node scripts/verify/verify-dom.mjs --viewport 420x900 / /principles/
 VERIFY_VIEWPORT=768x900 node scripts/verify/verify-dom.mjs / /principles/
 node scripts/verify/verify-shots.mjs / /principles/ /principles/09/
+node scripts/verify/verify-typewriter.mjs
 ```
 
 Set `VERIFY_BASE_URL` only when deliberately verifying another local origin. `--viewport WIDTH` or `--viewport WIDTHxHEIGHT` changes the DOM-gate viewport; `VERIFY_VIEWPORT` is the environment equivalent. `routes.json` lists every generated site route. Screenshot files and their manifest go to the git-ignored `scripts/verify/out/`.
@@ -23,3 +24,4 @@ Set `VERIFY_BASE_URL` only when deliberately verifying another local origin. `--
 - Homepage structure: asserts the three hero modes, principle layout, survey card/bars, and viewport-appropriate KAOS feature mount remain wired after refactors.
 - KAOS mount bounds: asserts route and preview graph hosts stay between 220px and 500px, covering both the compact threshold and the prior infinite-height bug class.
 - Deterministic full-page screenshots: disables animation and transition timing, scrolls once to activate lazy content, returns to the top, and masks canvases so refactor comparisons measure stable layout rather than animation frames.
+- Hero typewriter: asserts two lede-region frames differ while the beneficiary rotates, the reserved subtitle box stays fixed, and reduced motion keeps the ratified sentence static without a cursor.

@@ -1,5 +1,13 @@
 ---
-const { status, title, subtitle, primary_button, secondary_button } = Astro.props;
+const { status, title, subtitle, beneficiaries = [], primary_button, secondary_button } = Astro.props;
+const initialBeneficiary = beneficiaries[0];
+const longestBeneficiary = beneficiaries.reduce(
+  (longest, beneficiary) => beneficiary.length > longest.length ? beneficiary : longest,
+  initialBeneficiary ?? '',
+);
+const reservedSubtitle = initialBeneficiary
+  ? subtitle.replace(initialBeneficiary, longestBeneficiary)
+  : subtitle;
 ---
 
 <header class="hero" data-reveal>
@@ -11,7 +19,16 @@ const { status, title, subtitle, primary_button, secondary_button } = Astro.prop
         ? <em class="glitch" data-text={line}>{line}</em>
         : <span>{line}</span>)}
     </h1>
-    <p class="hero-subtitle">{subtitle}</p>
+    <p
+      class="hero-subtitle"
+      data-widget="hero-typewriter"
+      data-text={subtitle}
+      data-beneficiaries={JSON.stringify(beneficiaries)}
+      aria-label={subtitle}
+    >
+      <span class="hero-subtitle-sizer" aria-hidden="true">{reservedSubtitle}<span class="typewriter-cursor-space">▍</span></span>
+      <span class="hero-typewriter-text" aria-hidden="true">{subtitle}</span>
+    </p>
     <nav class="actions" aria-label="Primary actions">
       <a class="button primary" href={primary_button.href}>{primary_button.label}</a>
       <a class="button" href={secondary_button.href}>{secondary_button.label}</a>

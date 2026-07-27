@@ -102,6 +102,11 @@
   --duration-42: .42s;
   --duration-8: .8s;
   --cycle: 9s;
+  --typewriter-cursor: #fff;
+  --typewriter-type-delay: 45ms;
+  --typewriter-delete-delay: 25ms;
+  --typewriter-dwell: 2600ms;
+  --typewriter-cursor-blink: 700ms;
 }
 
 * { box-sizing: border-box; }
@@ -351,8 +356,30 @@ h3 {
   line-height: 1.55;
   margin: 22px 0 0;
   max-width: 560px;
+  position: relative;
   text-wrap: pretty;
 }
+.hero-subtitle-sizer {
+  display: block;
+  visibility: hidden;
+}
+.hero-typewriter-text {
+  inset: 0;
+  position: absolute;
+}
+.hero-typewriter-text::after {
+  color: var(--typewriter-cursor);
+  content: "▍";
+  font-family: var(--font-body);
+  opacity: 1;
+}
+.hero-subtitle[data-typewriter-phase="dwell"] .hero-typewriter-text::after {
+  animation: typewriter-cursor-blink var(--typewriter-cursor-blink) steps(1, end) infinite;
+}
+.hero-subtitle[data-typewriter-phase="static"] .hero-typewriter-text::after {
+  content: none;
+}
+.typewriter-cursor-space { color: transparent; }
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -885,6 +912,10 @@ form[data-state="error"] .form-confirmation { color: var(--warn); font: var(--bo
   74.4% { opacity: .94; text-shadow: 0 0 24px rgba(94, 230, 160, .45); }
   76.4% { opacity: 1; text-shadow: 0 0 8px rgba(94, 230, 160, .3); }
 }
+@keyframes typewriter-cursor-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -894,6 +925,7 @@ form[data-state="error"] .form-confirmation { color: var(--warn); font: var(--bo
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
   }
+  .hero-typewriter-text::after { content: none; }
 }
 
 @media (max-width: 800px) {
