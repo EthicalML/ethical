@@ -14,10 +14,10 @@ The standards/policy roles (UN AI expert, UN CSTD committee chair, EC appointed 
 | `/research/*` (4 pages) | **DROPPED.** No research programme — the institute's output is practical. The practical work already has homes (open-source, frameworks, reports); nav's "Research" group is removed/re-pointed in the Initiatives menu. |
 | `/about` | **Reshape as the story page**: general about telling the institute's story from its 2017 founding; owner is founder/coordinator; network members join and contribute temporarily — no active team-building programme. |
 | `/about/team` | **DROPPED** (no active team programme; the story lives in /about). |
-| `/about/advisory` | Pending owner read of the explanation (likely dropped — same rationale as team). |
+| `/about/advisory` | **DROPPED for now** (worth revisiting later); institutional advisory reality lives in /partners + /initiatives. |
 | `/about/annual-review` | **DROPPED** (does not exist). |
 | `/press` | **PARKED** — prepare eventually, not urgent, assess later. |
-| `/fellowships` | Pending owner read of the explanation. |
+| `/fellowships` | **DROPPED** (no programme; network contributions cover the light version). |
 | `/events` | Owner inclination: repurpose as a curated list of relevant events in the space through the year (institute doesn't run events). Orchestrator recommendation delivered separately; decision pending. |
 | `/network`, `/newsletter`, `/talks`, `/contact` | Unchanged from plan. |
 
