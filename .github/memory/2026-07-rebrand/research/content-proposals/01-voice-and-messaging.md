@@ -28,13 +28,13 @@ PROPOSAL — for owner review
 
 This is the reference every later copy sheet must follow. It extends `content-prose.md` (voice & style) — where the two disagree, `content-prose.md`'s canonical-source order wins. Nothing here invents facts; it governs how existing substance is phrased for the new positioning.
 
-## 1. Positioning statement
+## 1. Positioning statement — RATIFIED
 
-> The Institute for Ethical AI Alignment & Safety is an independent research centre turning broad commitments about responsible AI into methods that can be tested, governed and improved — across frontier and agentic systems, and the production systems already in use. We work through nine Responsible AI Principles, open-source software, practical frameworks and standards, with industry, academia and governments.
+> We are an independent research institute with a mission to ensure that frontier AI is safe, aligned and accountable to people and society.
 
-One-line form (nav, meta, hero subtitle): *Advocating for the safe and aligned development of AI — practical, technical, cross-functional work across the nine Responsible AI Principles.*
+Approved verbatim by the owner (2026-07-27); rendered on the homepage as the typewriter treatment specified in the header of this document. The earlier drafted statement (rejected as LLM-sounding: inventory clause, scope pile-up, triadic cadence) is retained only in git history.
 
-Note the deliberate widening from the legacy line: it retains "practical/technical/cross-functional" and the nine principles (real IP), drops "Europe-based think tank" and "data governance and machine learning" as the sole frame, and adds the alignment/safety/frontier register.
+One-line form (nav, meta): to be derived from the ratified line during the style compliance pass — the earlier draft one-liner is likewise superseded.
 
 ## 2. Key messages (3–5)
 
