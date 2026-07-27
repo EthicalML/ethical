@@ -18,7 +18,7 @@ The standards/policy roles (UN AI expert, UN CSTD committee chair, EC appointed 
 | `/about/annual-review` | **DROPPED** (does not exist). |
 | `/press` | **PARKED** — prepare eventually, not urgent, assess later. |
 | `/fellowships` | **DROPPED** (no programme; network contributions cover the light version). |
-| `/events` | Owner inclination: repurpose as a curated list of relevant events in the space through the year (institute doesn't run events). Orchestrator recommendation delivered separately; decision pending. |
+| `/events` | **DROPPED for now** (freshness-liability rationale accepted; may return as a small annual-majors section on /network or /initiatives). |
 | `/network`, `/newsletter`, `/talks`, `/contact` | Unchanged from plan. |
 
 ## Nav impact
