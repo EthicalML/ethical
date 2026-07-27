@@ -1,3 +1,12 @@
+# OWNER-RATIFIED (2026-07-27): the mission line
+
+> **We are an independent research institute with a mission to ensure that frontier AI is safe, aligned and accountable to people and society.**
+
+- APPROVED VERBATIM as the site's positioning statement (hero lede). This supersedes every drafted positioning statement below.
+- **Region-free by decision**: "European" was considered and deliberately dropped from the mission line (regional modifier shrinks a global mission); the European identity lives in the /about story ("founded 2017, headquartered in Europe, working globally") and is evidenced on /partners (EC, UN CSTD, TUM, ISO/IEC).
+- **Interactive treatment approved**: typewriter animation with a white block cursor; the final segment "people and society" types, dwells, backspaces and rotates through beneficiaries (axis 1). Working rotation list (owner may tune): people and society · the people who use it · the teams who deploy it · the public · future generations · everyone it touches. Reduced motion: static full sentence with "people and society".
+- Style note learned in ratification: avoid inventory clauses, scope pile-ups and triadic LLM cadence in mission-level copy; one idea per sentence (see the real-institute references: Ada Lovelace, METR, Apollo).
+
 PROPOSAL — for owner review
 
 > OWNER NOTE (2026-07-27): this framework was drafted partly from the design prototype's copy, which is DIRECTION not approved content — only the live site (master) is final. Review this voice deliberately rather than as a codification of an already-accepted tone.

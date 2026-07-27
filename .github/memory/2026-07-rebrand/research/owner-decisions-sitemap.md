@@ -23,3 +23,6 @@ The standards/policy roles (UN AI expert, UN CSTD committee chair, EC appointed 
 
 ## Nav impact
 The Initiatives dropdown loses the Research group and the granular standards/policy items; gains /initiatives + /partners placement (exact menu layout to be reworked when the pages exist). The About menu shrinks accordingly.
+
+## Mission line (RATIFIED 2026-07-27)
+"We are an independent research institute with a mission to ensure that frontier AI is safe, aligned and accountable to people and society." — approved verbatim; region-free (European identity in /about story + /partners evidence, NOT the mission line); rendered as a typewriter animation rotating the final beneficiary segment (white block cursor; reduced-motion static). See content-proposals/01-voice-and-messaging.md header for full spec.
