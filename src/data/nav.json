@@ -19,7 +19,7 @@
     "width": 860,
     "primary": true,
     "items": [
-      {"key": "kaos", "eyebrow": "AGENT INFRASTRUCTURE", "title": "K8s Agent OS (KAOS)", "description": "Control plane for autonomous agents: scoped credentials, budgets, approval gates, audit trail.", "href": "/open-source/kaos/"},
+      {"key": "kaos", "eyebrow": "AGENT INFRASTRUCTURE", "title": "K8s Agent OS (KAOS)", "description": "Control plane for autonomous agents with scoped credentials, budgets, approval gates and an audit trail.", "href": "/open-source/kaos/"},
       {"key": "kompute", "eyebrow": "GPU ACCELERATION", "title": "Kompute", "description": "Cross-vendor GPU compute, portable across hardware, in Linux Foundation AI & Data.", "href": "/open-source/"},
       {"key": "xai", "eyebrow": "EXPLAINABILITY", "title": "XAI Framework", "description": "Data analysis, model evaluation and production monitoring for bias and explainability.", "href": "/open-source/"},
       {"key": "list", "eyebrow": "ECOSYSTEM", "title": "Production ML list", "description": "Community catalogue of production ML and MLOps tooling, curated weekly.", "href": "/open-source/"}
