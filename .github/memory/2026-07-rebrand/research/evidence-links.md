@@ -14,8 +14,8 @@ Canonical link register for /partners and /initiatives. Status: CONFIRMED = owne
 | IEEE — P7000-series contribution | one PDF exists naming owner | FIND |
 | ISO/IEC — participated in the first AI standard | no doc with name known | OPEN — use participation framing without doc link |
 | NeurIPS 2022/2023 keynotes | links exist in the institute repo (master) | FIND (extract from master) |
-| Kompute | github.com/EthicalML/… — owner confirms repo correct | FIND exact URL from current data |
-| KAOS | site kaos.cc; repo findable; articles on HackerNoon/Medium/LinkedIn | FIND (site+repo+2-3 best articles) |
+| Kompute | repo github.com/KomputeProject/kompute + site https://kompute.cc (owner-corrected: kompute.cc, NOT kaos.cc) | CONFIRMED |
+| KAOS | repo github.com/axsaucedo/kaos + docs https://axsaucedo.github.io/kaos (kaos.tools owned but not hooked up yet — do not link); HackerNoon observability article wired | CONFIRMED |
 | AI-RFX / MLSecOps / Awesome-AI-Guidelines | all under the institute GitHub | FIND exact repo URLs |
 | Network members | hardcoded in institute repo (master network.html) | CONFIRMED source; streamlining idea tracked separately |
 
