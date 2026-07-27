@@ -1,7 +1,7 @@
 {
   "homeEyebrow": "05 — NETWORK & NEWSLETTER",
   "contactEyebrow": "ONE FORM / MANY WAYS IN",
-  "homeIntro": "Responsible technology takes more than technical changes to models. One membership covers both the Ethical AI Network and the Machine Learning Engineer newsletter.",
+  "homeIntro": "Responsible technology requires changes to models and to the systems around them. Membership includes the Ethical AI Network and the Machine Learning Engineer newsletter.",
   "contactIntro": "Tell us what you are working on, where you need help, or how you would like to contribute.",
   "sectorEyebrow": "WHO IS HERE",
   "issuesEyebrow": "RECENT ISSUES",
@@ -21,7 +21,7 @@
     "button": "Send",
     "disclaimer": "We only use your details to reply and to send what you asked for. Unsubscribe any time.",
     "confirmation": "Thank you. Your details have been sent to the Institute.",
-    "demoConfirmation": "Demo mode: the form is working, but no endpoint is configured and nothing was sent.",
+    "demoConfirmation": "The form is in demo mode. No endpoint is configured and nothing was sent.",
     "error": "We could not send your details. Please try again or email hello@ethical.institute."
   }
 }
