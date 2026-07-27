@@ -7,6 +7,10 @@ import rehypeSectionize from './src/plugins/rehype-sectionize.mjs';
 
 export default defineConfig({
   site: 'https://ethical.institute',
+  vite: {
+    server: { allowedHosts: ['*'] },
+    preview: { allowedHosts: ['*'] },
+  },
   redirects: {
     '/principles.html': '/principles/',
     '/security.html': '/frameworks/mlsecops/',
