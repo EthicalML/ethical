@@ -1366,6 +1366,7 @@ form[data-state="error"] .form-confirmation { color: var(--warn); font: var(--bo
 }
 .marquee-role { color: var(--text-4); font: 9px/1 var(--font-mono); letter-spacing: .12em; transition: color .3s ease; white-space: nowrap; }
 .marquee-item:hover .marquee-role { color: var(--accent); }
+.marquee-item:hover .marquee-logo { background: var(--accent); }
 @keyframes om-marquee { to { transform: translateX(-50%); } }
 
 .open-source-showcase h2, .reports-section h2, .center-cta h2, .network-directory h2, .channel-links h2 { font: 300 44px/1.1 var(--font-display); margin: 18px 0 38px; }
