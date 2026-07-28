@@ -1,6 +1,17 @@
 ---
 // EXHIBIT — fully self-contained hero: markup + complete typewriter implementation
 // in one file, bound via a custom element. Dormant: no page imports this.
+interface HeroButton { href: string; label: string }
+interface Props {
+  status: string;
+  status_href?: string;
+  title: string[];
+  subtitle: string;
+  beneficiaries?: string[];
+  typewriter_underline?: boolean;
+  primary_button: HeroButton;
+  secondary_button: HeroButton;
+}
 const {
   status,
   status_href,
@@ -10,7 +21,7 @@ const {
   typewriter_underline = false,
   primary_button,
   secondary_button,
-} = Astro.props;
+} = Astro.props as Props;
 const initialBeneficiary = beneficiaries[0];
 const missionLine1 = 'We are an independent research institute with a mission to';
 const missionLine2 = 'ensure that frontier AI is safe, aligned and accountable to';
