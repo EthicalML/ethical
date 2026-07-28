@@ -3,7 +3,7 @@
 
   function mount(element) {
     const output = element.querySelector('.hero-typewriter-text');
-    const sentence = element.dataset.text ?? '';
+    const glitch = element.querySelector('.hero-typewriter-glitch');
     let beneficiaries;
 
     try {
@@ -13,11 +13,8 @@
     }
 
     const initialBeneficiary = beneficiaries[0];
-    const beneficiaryStart = initialBeneficiary ? sentence.lastIndexOf(initialBeneficiary) : -1;
-    if (!output || beneficiaryStart < 0) return { destroy() {} };
+    if (!output || !glitch || !initialBeneficiary) return { destroy() {} };
 
-    const prefix = sentence.slice(0, beneficiaryStart);
-    const suffix = sentence.slice(beneficiaryStart + initialBeneficiary.length);
     const styles = getComputedStyle(element);
     const duration = (name, fallback) => {
       const value = Number.parseFloat(styles.getPropertyValue(name));
@@ -25,7 +22,6 @@
     };
     const typeDelay = duration('--typewriter-type-delay', 45);
     const deleteDelay = duration('--typewriter-delete-delay', 25);
-    const dwell = duration('--typewriter-dwell', 2600);
     let timer;
     let destroyed = false;
 
@@ -34,12 +30,16 @@
     });
     const jitter = () => typeDelay + (Math.random() - .5) * 12;
     const setPhase = (phase) => { element.dataset.typewriterPhase = phase; };
+    const setText = (text) => {
+      output.textContent = text;
+      glitch.dataset.text = text;
+    };
 
     const type = async (text, phase = 'typing') => {
       setPhase(phase);
       for (const character of text) {
         if (destroyed) return;
-        output.textContent += character;
+        setText(output.textContent + character);
         await wait(jitter());
       }
     };
@@ -48,29 +48,40 @@
       setPhase('deleting');
       for (let index = 0; index < count; index += 1) {
         if (destroyed) return;
-        output.textContent = output.textContent.slice(0, -1);
+        setText(output.textContent.slice(0, -1));
         await wait(deleteDelay);
       }
     };
 
+    const waitForGlitchEnd = async () => {
+      const headlineAnimation = document.querySelector('.glitch')
+        ?.getAnimations()
+        .find((animation) => animation.animationName === 'om-flicker');
+      const cycle = Number(headlineAnimation?.effect.getTiming().duration) || 9000;
+      const current = Number(headlineAnimation?.currentTime) || 0;
+      const phase = current % cycle;
+      const burstEnd = cycle * .767;
+      const delay = burstEnd > phase ? burstEnd - phase : cycle - phase + burstEnd;
+      await wait(delay);
+    };
+
     const run = async () => {
       if (motionQuery.matches) {
-        output.textContent = sentence;
+        setText(initialBeneficiary);
         setPhase('static');
         return;
       }
 
-      output.textContent = '';
-      await type(sentence, 'initial');
+      setText('');
+      await type(initialBeneficiary, 'initial');
       let beneficiaryIndex = 0;
 
       while (!destroyed) {
         setPhase('dwell');
-        await wait(dwell);
-        await remove(beneficiaries[beneficiaryIndex].length + suffix.length);
+        await waitForGlitchEnd();
+        await remove(beneficiaries[beneficiaryIndex].length);
         beneficiaryIndex = (beneficiaryIndex + 1) % beneficiaries.length;
-        output.textContent = prefix;
-        await type(`${beneficiaries[beneficiaryIndex]}${suffix}`);
+        await type(beneficiaries[beneficiaryIndex]);
       }
     };
 
@@ -79,7 +90,7 @@
       destroy() {
         destroyed = true;
         clearTimeout(timer);
-        output.textContent = sentence;
+        setText(initialBeneficiary);
         setPhase('static');
       },
     };

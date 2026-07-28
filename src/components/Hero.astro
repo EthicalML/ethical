@@ -1,13 +1,16 @@
 ---
-const { status, title, subtitle, beneficiaries = [], primary_button, secondary_button } = Astro.props;
+const {
+  status,
+  title,
+  subtitle,
+  beneficiaries = [],
+  typewriter_underline = false,
+  primary_button,
+  secondary_button,
+} = Astro.props;
 const initialBeneficiary = beneficiaries[0];
-const longestBeneficiary = beneficiaries.reduce(
-  (longest, beneficiary) => beneficiary.length > longest.length ? beneficiary : longest,
-  initialBeneficiary ?? '',
-);
-const reservedSubtitle = initialBeneficiary
-  ? subtitle.replace(initialBeneficiary, longestBeneficiary)
-  : subtitle;
+const missionLine1 = 'We are an independent research institute with a mission to';
+const missionLine2 = 'ensure that frontier AI is safe, aligned and accountable to';
 ---
 
 <header class="hero" data-reveal>
@@ -24,10 +27,16 @@ const reservedSubtitle = initialBeneficiary
       data-widget="hero-typewriter"
       data-text={subtitle}
       data-beneficiaries={JSON.stringify(beneficiaries)}
+      data-underline={typewriter_underline ? 'true' : 'false'}
       aria-label={subtitle}
     >
-      <span class="hero-subtitle-sizer" aria-hidden="true">{reservedSubtitle}<span class="typewriter-cursor-space">▍</span></span>
-      <span class="hero-typewriter-text" aria-hidden="true">{subtitle}</span>
+      <span class="hero-typewriter-line">{missionLine1}</span>
+      <span class="hero-typewriter-line">{missionLine2}</span>
+      <span class="hero-typewriter-line hero-typewriter-dynamic">
+        <span class="hero-typewriter-glitch" data-text={initialBeneficiary}>
+          <span class="hero-typewriter-text">{initialBeneficiary}</span><span class="hero-typewriter-cursor" aria-hidden="true">▍</span>
+        </span>
+      </span>
     </p>
     <nav class="actions" aria-label="Primary actions">
       <a class="button primary" href={primary_button.href}>{primary_button.label}</a>

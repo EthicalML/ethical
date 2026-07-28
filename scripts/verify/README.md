@@ -24,4 +24,4 @@ Set `VERIFY_BASE_URL` only when deliberately verifying another local origin. `--
 - Homepage structure: asserts the three hero modes, principle layout, survey card/bars, and viewport-appropriate KAOS feature mount remain wired after refactors.
 - KAOS mount bounds: asserts route and preview graph hosts stay between 220px and 500px, covering both the compact threshold and the prior infinite-height bug class.
 - Deterministic full-page screenshots: disables animation and transition timing, scrolls once to activate lazy content, returns to the top, and masks canvases so refactor comparisons measure stable layout rather than animation frames.
-- Hero typewriter: asserts two lede-region frames differ while the beneficiary rotates, the reserved subtitle box stays fixed, and reduced motion keeps the ratified sentence static without a cursor.
+- Hero typewriter: asserts fixed line breaks, pill-matched type, accent colour, 9-second headline phase lock, stable geometry, changing rotation frames, the underline comparison crops, mobile containment, and a static reduced-motion state without a cursor.

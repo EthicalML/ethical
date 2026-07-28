@@ -300,7 +300,7 @@ for (const route of routes) {
   if (formChecks && (
     formChecks.endpoint !== ''
     || formChecks.state !== 'success'
-    || !formChecks.confirmation.startsWith('Demo mode:')
+    || !formChecks.confirmation.startsWith('The form is in demo mode.')
     || !/^\d{13}$/.test(formChecks.startedAt)
     || formChecks.honeypot.height !== '1px'
     || formChecks.honeypot.left !== '-10000px'

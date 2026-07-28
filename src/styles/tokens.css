@@ -105,8 +105,7 @@
   --typewriter-cursor: #fff;
   --typewriter-type-delay: 45ms;
   --typewriter-delete-delay: 25ms;
-  --typewriter-dwell: 2600ms;
-  --typewriter-cursor-blink: 700ms;
+  --typewriter-cursor-blink: 1s;
 }
 
 * { box-sizing: border-box; }
@@ -352,34 +351,58 @@ h3 {
 }
 .hero-subtitle {
   color: var(--text-2);
-  font-size: var(--body-18);
-  line-height: 1.55;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 1.4px;
+  line-height: 2.1;
   margin: 22px 0 0;
-  max-width: 560px;
-  position: relative;
-  text-wrap: pretty;
+  text-transform: uppercase;
+  width: min(620px, 100%);
 }
-.hero-subtitle-sizer {
+.hero-typewriter-line {
   display: block;
-  visibility: hidden;
+  white-space: nowrap;
 }
-.hero-typewriter-text {
-  inset: 0;
+.hero-typewriter-dynamic {
+  color: var(--accent);
+  min-height: 2.1em;
+}
+.hero-typewriter-glitch {
+  animation: typewriter-flicker var(--cycle) steps(1, end) infinite;
+  display: inline-block;
+  position: relative;
+}
+.hero-typewriter-glitch::before,
+.hero-typewriter-glitch::after {
+  content: attr(data-text) "▍";
+  inset: 0 auto auto 0;
+  mix-blend-mode: screen;
+  pointer-events: none;
   position: absolute;
+  white-space: nowrap;
+  will-change: clip-path, transform;
 }
-.hero-typewriter-text::after {
+.hero-typewriter-glitch::before {
+  animation: typewriter-tear-a var(--cycle) steps(1, end) infinite;
+  color: var(--glitch-red);
+}
+.hero-typewriter-glitch::after {
+  animation: typewriter-tear-b var(--cycle) steps(1, end) infinite;
+  color: var(--glitch-blue);
+}
+.hero-typewriter-cursor {
   color: var(--typewriter-cursor);
-  content: "▍";
-  font-family: var(--font-body);
-  opacity: 1;
 }
-.hero-subtitle[data-typewriter-phase="dwell"] .hero-typewriter-text::after {
+.hero-subtitle[data-typewriter-phase="dwell"] .hero-typewriter-cursor {
   animation: typewriter-cursor-blink var(--typewriter-cursor-blink) steps(1, end) infinite;
 }
-.hero-subtitle[data-typewriter-phase="static"] .hero-typewriter-text::after {
-  content: none;
+.hero-subtitle[data-underline="true"] .hero-typewriter-text {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: .3em;
 }
-.typewriter-cursor-space { color: transparent; }
+.hero-subtitle[data-typewriter-phase="static"] .hero-typewriter-cursor { display: none; }
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -878,7 +901,7 @@ form[data-state="error"] .form-confirmation { color: var(--warn); font: var(--bo
   to { opacity: 1; transform: none; }
 }
 @keyframes om-tear-a {
-  0%, 65.4%, 76.9%, 100% { clip-path: inset(100% 0 0 0); opacity: 0; transform: none; }
+  0%, 65.6%, 76.7%, 100% { clip-path: inset(100% 0 0 0); opacity: 0; transform: none; }
   66.3% { clip-path: inset(8% 0 74% 0); opacity: .9; transform: translate(-6px, -1px); }
   67.6% { clip-path: inset(42% 0 38% 0); opacity: .85; transform: translate(7px, 1px); }
   68.6% { clip-path: inset(66% 0 12% 0); opacity: .9; transform: translate(-9px, 0); }
@@ -891,7 +914,7 @@ form[data-state="error"] .form-confirmation { color: var(--warn); font: var(--bo
   75.7% { clip-path: inset(12% 0 70% 0); opacity: .6; transform: translate(4px, 1px); }
 }
 @keyframes om-tear-b {
-  0%, 65.4%, 76.9%, 100% { clip-path: inset(100% 0 0 0); opacity: 0; transform: none; }
+  0%, 65.6%, 76.7%, 100% { clip-path: inset(100% 0 0 0); opacity: 0; transform: none; }
   66.6% { clip-path: inset(48% 0 34% 0); opacity: .85; transform: translate(8px, 1px); }
   67.6% { clip-path: inset(14% 0 68% 0); opacity: .9; transform: translate(-8px, -1px); }
   68.6% { clip-path: inset(72% 0 8% 0); opacity: .8; transform: translate(6px, 2px); }
@@ -904,13 +927,48 @@ form[data-state="error"] .form-confirmation { color: var(--warn); font: var(--bo
   76% { clip-path: inset(18% 0 64% 0); opacity: .5; transform: translate(-3px, 1px); }
 }
 @keyframes om-flicker {
-  0%, 65.4%, 77.7%, 100% { opacity: 1; text-shadow: none; }
+  0%, 65.6%, 76.7%, 100% { opacity: 1; text-shadow: none; }
   66.6% { opacity: .92; text-shadow: 0 0 22px rgba(94, 230, 160, .55); }
   68.3% { opacity: 1; text-shadow: 0 0 6px rgba(94, 230, 160, .35); }
   70.3% { opacity: .86; text-shadow: 0 0 30px rgba(94, 230, 160, .6); }
   72.3% { opacity: 1; text-shadow: 0 0 10px rgba(122, 162, 255, .4); }
   74.4% { opacity: .94; text-shadow: 0 0 24px rgba(94, 230, 160, .45); }
   76.4% { opacity: 1; text-shadow: 0 0 8px rgba(94, 230, 160, .3); }
+}
+@keyframes typewriter-tear-a {
+  0%, 65.6%, 76.7%, 100% { clip-path: inset(100% 0 0 0); opacity: 0; transform: none; }
+  66.3% { clip-path: inset(8% 0 74% 0); opacity: .9; transform: translate(-2px, 0); }
+  67.6% { clip-path: inset(42% 0 38% 0); opacity: .85; transform: translate(3px, 0); }
+  68.6% { clip-path: inset(66% 0 12% 0); opacity: .9; transform: translate(-3px, 0); }
+  69.6% { clip-path: inset(20% 0 62% 0); opacity: .8; transform: translate(2px, -1px); }
+  70.6% { clip-path: inset(54% 0 26% 0); opacity: .9; transform: translate(-2px, 1px); }
+  71.7% { clip-path: inset(4% 0 82% 0); opacity: .75; transform: translate(3px, 0); }
+  72.7% { clip-path: inset(74% 0 6% 0); opacity: .85; transform: translate(-3px, 0); }
+  73.7% { clip-path: inset(34% 0 48% 0); opacity: .8; transform: translate(2px, 0); }
+  74.7% { clip-path: inset(58% 0 22% 0); opacity: .7; transform: translate(-2px, 0); }
+  75.7% { clip-path: inset(12% 0 70% 0); opacity: .6; transform: translate(2px, 0); }
+}
+@keyframes typewriter-tear-b {
+  0%, 65.6%, 76.7%, 100% { clip-path: inset(100% 0 0 0); opacity: 0; transform: none; }
+  66.6% { clip-path: inset(48% 0 34% 0); opacity: .85; transform: translate(3px, 0); }
+  67.6% { clip-path: inset(14% 0 68% 0); opacity: .9; transform: translate(-3px, 0); }
+  68.6% { clip-path: inset(72% 0 8% 0); opacity: .8; transform: translate(2px, 1px); }
+  70% { clip-path: inset(30% 0 54% 0); opacity: .9; transform: translate(-3px, 0); }
+  71% { clip-path: inset(62% 0 18% 0); opacity: .85; transform: translate(3px, -1px); }
+  72% { clip-path: inset(6% 0 78% 0); opacity: .8; transform: translate(-2px, 0); }
+  73% { clip-path: inset(80% 0 4% 0); opacity: .75; transform: translate(3px, 0); }
+  74% { clip-path: inset(24% 0 58% 0); opacity: .8; transform: translate(-2px, 1px); }
+  75.1% { clip-path: inset(52% 0 30% 0); opacity: .65; transform: translate(2px, 0); }
+  76% { clip-path: inset(18% 0 64% 0); opacity: .5; transform: translate(-2px, 0); }
+}
+@keyframes typewriter-flicker {
+  0%, 65.6%, 76.7%, 100% { opacity: 1; text-shadow: none; }
+  66.6% { opacity: .92; text-shadow: 0 0 8px rgba(94, 230, 160, .55); }
+  68.3% { opacity: 1; text-shadow: 0 0 3px rgba(94, 230, 160, .35); }
+  70.3% { opacity: .86; text-shadow: 0 0 10px rgba(94, 230, 160, .6); }
+  72.3% { opacity: 1; text-shadow: 0 0 4px rgba(122, 162, 255, .4); }
+  74.4% { opacity: .94; text-shadow: 0 0 8px rgba(94, 230, 160, .45); }
+  76.4% { opacity: 1; text-shadow: 0 0 3px rgba(94, 230, 160, .3); }
 }
 @keyframes typewriter-cursor-blink {
   0%, 49% { opacity: 1; }
@@ -925,7 +983,9 @@ form[data-state="error"] .form-confirmation { color: var(--warn); font: var(--bo
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
   }
-  .hero-typewriter-text::after { content: none; }
+  .hero-typewriter-glitch::before,
+  .hero-typewriter-glitch::after,
+  .hero-typewriter-cursor { display: none; }
 }
 
 @media (max-width: 800px) {
@@ -1707,7 +1767,7 @@ form[data-state="error"] .form-confirmation { color: var(--warn); font: var(--bo
   }
   .hero-copy { padding: 54px 0 230px; }
   .hero h1 { font-size: clamp(43px, 11.5vw, 50px); }
-  .hero-subtitle { font-size: 16px; }
+  .hero-subtitle { font-size: clamp(7px, calc(1.6vw + .5px), 10px); }
   .hero .actions {
     align-items: stretch;
     flex-direction: column;
