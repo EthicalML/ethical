@@ -1,6 +1,7 @@
 ---
 const {
   status,
+  status_href,
   title,
   subtitle,
   beneficiaries = [],
@@ -16,7 +17,7 @@ const missionLine2 = 'ensure that frontier AI is safe, aligned and accountable t
 <header class="hero" data-reveal>
   <canvas class="hero-canvas" data-widget="hero-cycle" aria-hidden="true"></canvas>
   <div class="hero-copy">
-    <p class="status-pill"><span aria-hidden="true"></span>{status}</p>
+    {status_href ? <a class="status-pill" href={status_href}><span aria-hidden="true"></span>{status}</a> : <p class="status-pill"><span aria-hidden="true"></span>{status}</p>}
     <h1>
       {title.map((line, index) => index === 2
         ? <em class="glitch" data-text={line}>{line}</em>

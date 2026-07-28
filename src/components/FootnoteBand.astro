@@ -4,7 +4,7 @@ import talks from '../data/talks.json';
 const standards = footer.about.standards;
 ---
 <aside class="footnote-band" data-reveal>
-  <div class="footnote-about"><p class="eyebrow">{footer.about.eyebrow}</p><p>{footer.about.text}</p><div class="standards">{standards.map((standard) => <span>{standard}</span>)}</div></div>
+  <div class="footnote-about"><p class="eyebrow">{footer.about.eyebrow}</p><p>{footer.about.text}</p><div class="standards">{standards.map((standard) => <a href={standard.href}>{standard.label}</a>)}</div></div>
   <div class="footnote-talks"><p class="eyebrow">{footer.talksEyebrow}</p>{talks.map((talk) => <a href="/talks/"><small>{talk.kind}</small><span>{talk.title}</span><b>↗</b></a>)}</div>
   <div class="footnote-elsewhere"><p class="eyebrow">{footer.elsewhere.eyebrow}</p><div class="footnote-links">{footer.elsewhere.links.map(({ label, href }) => <a href={href}>{label}</a>)}</div></div>
 </aside>
