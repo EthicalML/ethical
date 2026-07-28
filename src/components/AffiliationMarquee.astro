@@ -5,7 +5,7 @@ import partners from '../data/partners.json';
 const logos = import.meta.glob('../assets/logos/*', { eager: true, import: 'default' });
 const items = partners.map((partner) => ({
   ...partner,
-  logo: logos[`../assets/logos/${partner.slug === 'iso-iec' ? 'iso-logo-mark.svg' : partner.logo}`],
+  logo: logos[`../assets/logos/${partner.logo}`],
 }));
 ---
 

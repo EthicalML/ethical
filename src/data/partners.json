@@ -24,14 +24,15 @@
     "name": "ACM",
     "slug": "acm",
     "role": "GOVERNING BOARD",
-    "logo": "acm-logo.png",
+    "logo": "acm-logo-mark.svg",
     "detail": "ACM's Code of Ethics and Professional Conduct and its technology-policy work set expectations for computing professionals broadly. The nine Responsible AI Principles provide ML-specific commitments that practitioners and organisations can apply alongside ACM's professional-conduct baseline.",
     "links": [
       {
         "label": "Role evidence",
         "url": "https://www.acm.org/volunteers/volunteer/saucedo_9722274"
       }
-    ]
+    ],
+    "logo_color": "acm-logo.png"
   },
   {
     "name": "Linux Foundation",
@@ -63,7 +64,7 @@
     "name": "IEEE",
     "slug": "ieee",
     "role": "AI STANDARDS GROUP",
-    "logo": "IEEE_logo.svg",
+    "logo": "ieee-logo.png",
     "detail": "The Institute participates in IEEE AI standards work.",
     "links": []
   },
@@ -71,9 +72,10 @@
     "name": "ISO/IEC",
     "slug": "iso-iec",
     "role": "AI STANDARDS GROUP",
-    "logo": "iso-logo.svg",
+    "logo": "iso-logo-mark.svg",
     "detail": "The Institute participates in ISO/IEC AI standards work, which sets the formal, cross-industry baseline for how AI systems are assessed and governed. AI-RFX and the ML Maturity Model are compatible with that baseline.",
-    "links": []
+    "links": [],
+    "logo_color": "iso-logo.svg"
   },
   {
     "name": "NumFOCUS",
@@ -85,19 +87,6 @@
       {
         "label": "Contribution record",
         "url": "https://numfocus.org/case-studies/ethics-in-ai-ml"
-      }
-    ]
-  },
-  {
-    "name": "PyData",
-    "slug": "pydata",
-    "role": "",
-    "logo": "pydata-logo.png",
-    "detail": "The relationship connects the Institute's open-source work with the PyData community.",
-    "links": [
-      {
-        "label": "PyData",
-        "url": "https://pydata.org"
       }
     ]
   },
