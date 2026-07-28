@@ -13,7 +13,7 @@ function doPost(e) {
   cache.put(clientKey, String(clientCount), 3600);
   cache.put(hourKey, String(volumeCount), 3600);
 
-  const fields = [data.name, data.email, data.organisation, (data.interests || []).join(', ')];
+  const fields = [data.name, data.email, data.organisation, data.furtherInformation, (data.interests || []).join(', ')];
   const elapsedMs = Date.now() - Number(data.startedAt);
   const suspect = !Number.isFinite(elapsedMs) || elapsedMs < 3000 || clientCount > 5 || volumeCount > 100 ||
     fields.some(value => String(value || '').length > 500);

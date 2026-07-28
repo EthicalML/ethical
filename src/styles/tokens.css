@@ -830,6 +830,8 @@ form label {
 }
 form header span { color: rgba(244,242,238,.5); font: 10px var(--font-mono); letter-spacing: .1em; }
 form header h3 { font: 500 24px/normal var(--font-body); margin: 8px 0 0; }
+.form-fields { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.form-fields .wide { grid-column: 1 / -1; }
 input {
   background: rgba(255, 255, 255, .04);
   border: 1px solid rgba(255, 255, 255, .16);
@@ -873,6 +875,7 @@ form button {
 }
 form button:disabled { cursor: wait; opacity: .6; }
 form small { color: rgba(244,242,238,.42); font-size: 12px; }
+.application-helper { color: var(--text-2); margin-top: -6px; }
 .form-honeypot {
   height: 1px;
   left: -10000px;

@@ -4,7 +4,16 @@
     var startedAtInput = form.querySelector('[name="startedAt"]');
     var message = form.querySelector('[data-form-confirmation]');
     var button = form.querySelector('[type="submit"]');
+    var applicationInterest = form.querySelector('[data-application-interest]');
+    var applicationHelper = form.querySelector('[data-application-helper]');
     startedAtInput.value = String(startedAt);
+    if (applicationInterest && applicationHelper) {
+      var updateApplicationHelper = function () {
+        applicationHelper.hidden = !applicationInterest.checked;
+      };
+      applicationInterest.addEventListener('change', updateApplicationHelper);
+      updateApplicationHelper();
+    }
 
     form.addEventListener('submit', async function (event) {
       event.preventDefault();
@@ -18,6 +27,7 @@
         name: data.get('name'),
         email: data.get('email'),
         organisation: data.get('organisation'),
+        furtherInformation: data.get('furtherInformation'),
         interests: data.getAll('interests'),
         website: data.get('website'),
         startedAt: Number(data.get('startedAt')),

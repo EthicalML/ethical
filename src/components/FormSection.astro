@@ -33,10 +33,13 @@ const { variant, title, stats = [] } = Astro.props;
         data-error={copy.form.error}
       >
       <header><span>{copy.form.eyebrow}</span><h3>{copy.form.title}</h3></header>
-      {copy.form.fields.map(({ label, name, type, placeholder, autocomplete }) => <label>{label} <input name={name} type={type} autocomplete={autocomplete} placeholder={placeholder} required={name === 'name' || name === 'email'} /></label>)}
+      <div class="form-fields">
+        {copy.form.fields.map(({ label, name, type, placeholder, autocomplete, wide }) => <label class:list={[wide && 'wide']}>{label} <input name={name} type={type} autocomplete={autocomplete} placeholder={placeholder} required={name === 'name' || name === 'email'} /></label>)}
+      </div>
       <fieldset>
-        {copy.form.interests.map(({ value, label, checked }) => <label><input type="checkbox" name="interests" value={value} checked={checked} /> {label}</label>)}
+        {copy.form.interests.map(({ value, label, checked }) => <label><input type="checkbox" name="interests" value={value} checked={checked} data-application-interest={value === 'network' ? '' : undefined} /> {label}</label>)}
       </fieldset>
+      <small class="application-helper" data-application-helper hidden>Please provide enough information to consider your application.</small>
       <label class="form-honeypot" aria-hidden="true">Website <input name="website" type="text" autocomplete="off" tabindex="-1" /></label>
       <input name="startedAt" type="hidden" value="" />
       <button type="submit">{copy.form.button}</button>
