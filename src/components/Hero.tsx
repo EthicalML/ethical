@@ -1,4 +1,4 @@
-// A Preact island is static unless given client:*.
+// A Preact component is rendered statically by Astro unless given a client:* directive.
 import { useEffect, useRef } from 'preact/hooks';
 import { mountTypewriter } from '../scripts/typewriter';
 
@@ -35,47 +35,21 @@ export default function Hero({
   const initialBeneficiary = beneficiaries[0];
 
   useEffect(() => {
-    const typewriter = typewriterRef.current;
-
-    if (!typewriter) {
-      return;
-    }
-
-    return mountTypewriter(typewriter);
+    if (!typewriterRef.current) return;
+    return mountTypewriter(typewriterRef.current);
   }, []);
 
   return (
     <header class="hero" data-reveal>
-      <canvas
-        class="hero-canvas"
-        data-widget="hero-cycle"
-        aria-hidden="true"
-      >
-      </canvas>
+      <canvas class="hero-canvas" data-widget="hero-cycle" aria-hidden="true"></canvas>
       <div class="hero-copy">
-        {status_href ? (
-          <a class="status-pill" href={status_href}>
-            <span aria-hidden="true"></span>
-            {status}
-          </a>
-        ) : (
-          <p class="status-pill">
-            <span aria-hidden="true"></span>
-            {status}
-          </p>
-        )}
+        {status_href
+          ? <a class="status-pill" href={status_href}><span aria-hidden="true"></span>{status}</a>
+          : <p class="status-pill"><span aria-hidden="true"></span>{status}</p>}
         <h1>
-          {title.map((line, index) => (
-            index === 2 ? (
-              <em class="glitch" data-text={line}>
-                {line}
-              </em>
-            ) : (
-              <span>
-                {line}
-              </span>
-            )
-          ))}
+          {title.map((line, index) => index === 2
+            ? <em class="glitch" data-text={line}>{line}</em>
+            : <span>{line}</span>)}
         </h1>
         <p
           ref={typewriterRef}
@@ -87,59 +61,25 @@ export default function Hero({
           aria-label={subtitle}
         >
           <span class="hero-typewriter-line">
-            <span class="hero-typewriter-text">
-              {missionLine1}
-            </span>
+            <span class="hero-typewriter-text">{missionLine1}</span>
           </span>
           <span class="hero-typewriter-line">
-            <span class="hero-typewriter-text">
-              {missionLine2}
-            </span>
+            <span class="hero-typewriter-text">{missionLine2}</span>
           </span>
           <span class="hero-typewriter-line hero-typewriter-dynamic">
-            <span
-              class="hero-typewriter-glitch"
-              data-text={initialBeneficiary}
-            >
-              <span class="hero-typewriter-text">
-                {initialBeneficiary}
-              </span>
-              <span
-                class="hero-typewriter-cursor"
-                aria-hidden="true"
-              >
-              </span>
+            <span class="hero-typewriter-glitch" data-text={initialBeneficiary}>
+              <span class="hero-typewriter-text">{initialBeneficiary}</span><span class="hero-typewriter-cursor" aria-hidden="true"></span>
             </span>
           </span>
         </p>
         <nav class="actions" aria-label="Primary actions">
-          <a class="button primary" href={primary_button.href}>
-            {primary_button.label}
-          </a>
-          <a class="button" href={secondary_button.href}>
-            {secondary_button.label}
-          </a>
+          <a class="button primary" href={primary_button.href}>{primary_button.label}</a>
+          <a class="button" href={secondary_button.href}>{secondary_button.label}</a>
         </nav>
         <div class="graph-switcher" aria-label="Hero visual">
-          <button
-            class="active"
-            type="button"
-            data-hero-mode="planes"
-            title="Layered planes"
-          >
-          </button>
-          <button
-            type="button"
-            data-hero-mode="sphere"
-            title="Alignment sphere"
-          >
-          </button>
-          <button
-            type="button"
-            data-hero-mode="contour"
-            title="Contour field"
-          >
-          </button>
+          <button class="active" type="button" data-hero-mode="planes" title="Layered planes"></button>
+          <button type="button" data-hero-mode="sphere" title="Alignment sphere"></button>
+          <button type="button" data-hero-mode="contour" title="Contour field"></button>
         </div>
       </div>
     </header>
