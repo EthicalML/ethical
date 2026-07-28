@@ -38,8 +38,8 @@ One-line form (nav, meta): to be derived from the ratified line during the style
 
 ## 2. Key messages — RATIFIED (Set 1, owner-approved 2026-07-27)
 
-1. The Institute develops methods for testing whether AI systems meet safety and alignment requirements. These include the nine Responsible AI Principles, procurement criteria (AI-RFX), and security guidance mapped to established taxonomies (MLSecOps Top 10).
-2. The work covers production machine-learning systems and frontier systems, including autonomous agents. The software addresses constraints that arise in deployment: credential scope, budgets, approval steps, and audit records.
+1. The Institute develops frameworks for ensuring AI systems meet safety and alignment requirements. These include the nine Responsible AI Principles, procurement criteria (AI-RFX), and security guidance mapped to established taxonomies (MLSecOps Top 10).
+2. The work covers production machine-learning systems and frontier systems, including autonomous agents, ML security, AI explainability, data governance, etc.
 3. The Institute publishes its software and frameworks under open licences. Current projects include KAOS, Kompute, the XAI framework, and maintained reference lists for production machine learning.
 4. The Institute works with industry, academia, standards bodies, and governments. A four-phase model describes how practices spread from individual engineers to organisational processes, industry standards, and regulation.
 5. The Institute maintains a practitioner network and publishes The ML Engineer newsletter.
