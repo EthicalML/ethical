@@ -5,7 +5,7 @@ const baseUrl = process.env.VERIFY_BASE_URL ?? 'http://127.0.0.1:4126';
 const expectedLines = [
   'We are an independent research institute with a mission to',
   'ensure that frontier AI is safe, aligned and accountable to',
-  'people and society',
+  'people and society.',
 ];
 const browser = await chromium.launch({ headless: true });
 const errors = [];
@@ -100,6 +100,8 @@ await normal.page.waitForFunction(() => (
 ), null, { timeout: 8000 });
 const initialComplete = await lede.evaluate((element) => {
   const cursor = element.querySelector('.hero-typewriter-cursor');
+  const cursorStyle = getComputedStyle(cursor);
+  const cursorBox = cursor.getBoundingClientRect();
   const headlineAnimation = document.querySelector('.glitch')
     .getAnimations()
     .find((item) => item.animationName === 'om-flicker');
@@ -108,7 +110,14 @@ const initialComplete = await lede.evaluate((element) => {
     lines: [...element.querySelectorAll('.hero-typewriter-text')].map((output) => output.textContent),
     cursorLine: [...element.querySelectorAll('.hero-typewriter-line')]
       .indexOf(cursor.closest('.hero-typewriter-line')),
-    cursorBlinkDuration: getComputedStyle(cursor).animationDuration,
+    cursorBlinkDuration: cursorStyle.animationDuration,
+    cursor: {
+      backgroundColor: cursorStyle.backgroundColor,
+      height: cursorBox.height,
+      text: cursor.textContent,
+      verticalAlign: cursorStyle.verticalAlign,
+      width: cursorBox.width,
+    },
     headlineCurrentTime: Number(headlineAnimation.currentTime),
     headlineCycle: cycle,
     headlinePhase: (Number(headlineAnimation.currentTime) % cycle) / cycle,
@@ -170,7 +179,7 @@ const secondFrame = await lede.screenshot();
 await normal.page.waitForFunction(() => {
   const element = document.querySelector('[data-widget="hero-typewriter"]');
   return element?.dataset.typewriterPhase === 'dwell'
-    && element.querySelector('.hero-typewriter-dynamic .hero-typewriter-text')?.textContent === 'the people who use it';
+    && element.querySelector('.hero-typewriter-dynamic .hero-typewriter-text')?.textContent === 'the people who use it.';
 }, null, { timeout: 5000 });
 const rotatedBox = await lede.boundingBox();
 
@@ -187,8 +196,8 @@ await normal.page.evaluate(() => {
   const element = document.querySelector('[data-widget="hero-typewriter"]');
   const output = element.querySelector('.hero-typewriter-dynamic .hero-typewriter-text');
   const glitch = element.querySelector('.hero-typewriter-glitch');
-  output.textContent = 'people and society';
-  glitch.dataset.text = 'people and society';
+  output.textContent = 'people and society.';
+  glitch.dataset.text = 'people and society.';
 });
 await normal.page.evaluate(() => {
   document.querySelector('[data-widget="hero-typewriter"]').dataset.underline = 'false';
@@ -201,6 +210,14 @@ await lede.screenshot({ path: 'tmp2/typewriter-underline-on.png' });
 await normal.page.evaluate(() => {
   document.querySelector('[data-widget="hero-typewriter"]').dataset.underline = 'false';
 });
+await normal.page.addStyleTag({
+  content: `
+    .hero-typewriter-glitch::before,
+    .hero-typewriter-glitch::after { display: none !important; }
+    .hero-typewriter-cursor { animation: none !important; opacity: 1 !important; }
+  `,
+});
+await lede.locator('.hero-typewriter-dynamic').screenshot({ path: 'tmp2/typewriter-cursor.png' });
 
 const reduced = await openPage({ width: 1440, height: 1000 }, 'reduce');
 const reducedResult = await reduced.page.locator('[data-widget="hero-typewriter"]').evaluate((element) => ({
@@ -249,6 +266,13 @@ const result = {
     && thirdLineSample[2].length > 0
     && JSON.stringify(initialComplete.lines) === JSON.stringify(expectedLines)
     && initialComplete.cursorLine === 2
+    && initialComplete.cursor.backgroundColor === 'rgb(255, 255, 255)'
+    && initialComplete.cursor.height >= 9
+    && initialComplete.cursor.height <= 11
+    && initialComplete.cursor.text === ''
+    && initialComplete.cursor.verticalAlign === 'baseline'
+    && initialComplete.cursor.width >= 4
+    && initialComplete.cursor.width <= 5
     && lineMetrics.noWrap
     && lineMetrics.componentOverflow <= 0
     && lineMetrics.lineOverflow.every((overflow) => overflow <= 0)
@@ -260,7 +284,7 @@ const result = {
     && phaseDifference < .005
     && burstSample.headlineGhostOpacity !== '0'
     && burstSample.segmentGhostOpacity !== '0'
-    && burstSample.segmentGhostContent.includes('▍')
+    && burstSample.segmentGhostContent.includes('▋')
     && burstSample.segmentGhostClip !== 'inset(100% 0px 0px)'
     && deleteSample.phase >= .767
     && deleteSample.phase < .82

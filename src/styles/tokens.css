@@ -375,7 +375,7 @@ h3 {
 }
 .hero-typewriter-glitch::before,
 .hero-typewriter-glitch::after {
-  content: attr(data-text) "▍";
+  content: attr(data-text) "▋";
   inset: 0 auto auto 0;
   mix-blend-mode: screen;
   pointer-events: none;
@@ -392,7 +392,11 @@ h3 {
   color: var(--glitch-blue);
 }
 .hero-typewriter-cursor {
-  color: var(--typewriter-cursor);
+  background: var(--typewriter-cursor);
+  display: inline-block;
+  height: .78em;
+  vertical-align: baseline;
+  width: .58ch;
 }
 .hero-subtitle[data-typewriter-phase="dwell"] .hero-typewriter-cursor {
   animation: typewriter-cursor-blink var(--typewriter-cursor-blink) steps(1, end) infinite;
