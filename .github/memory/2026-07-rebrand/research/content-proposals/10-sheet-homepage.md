@@ -1,68 +1,55 @@
-PROPOSAL — for owner review
+PROPOSAL — for owner review (regenerated 2026-07-28 against current homepage)
 
 # Homepage copy sheet
 
-Per section: **CURRENT** (what the new site renders today) · **SOURCE** (origin / placeholder status) · **PROPOSED** (rephrased final per `01-voice-and-messaging.md`). ⚠ = invented/unverified number — do not ship without owner confirmation. Structure is fixed by the prototype; only wording is proposed.
+Regenerated in full against the current render of `src/pages/index.mdx` and the data files it consumes (`stats.json`, `projects.json`, `home-reports.json`, `network.json`, `network-sectors.json`, `newsletter-issues.json`, `footer.json`, `site.json`, `affiliations.json`, `talks.json`). The previous version of this sheet described a subtitle ("Advocating for the safe and aligned development of AI…") that no longer exists on the page — it has been replaced by the owner-ratified mission line and typewriter treatment. Per section: **CURRENT** (quoted as rendered today) · **STATUS** (ratified / style-swept draft / placeholder-flagged) · **PROPOSED** (a genuine improvement under the binding style rules, or "no change proposed"). ⚠ = unverified number — do not ship without owner confirmation.
 
-## Hero
-| | |
-| --- | --- |
-| CURRENT | Status pill: "NINTH PRINCIPLE ADDED — ALIGNMENT WITH INTENT". Title: "The Institute for Ethical AI Alignment & Safety". Subtitle: "Advocating for the safe and aligned development of AI. A research centre carrying out highly technical, practical and cross-functional work across the nine Responsible AI Principles — with industry, academia and governments." Buttons: Join the network / Contact us. |
-| SOURCE | Prototype (canonical for structure/tone). Subtitle rephrases master homepage line. Status pill = design device. |
-| PROPOSED | Keep as-is. This is on-position and clean. Optional tighten of subtitle: "Advocating for the safe and aligned development of AI. An independent research centre doing technical, practical, cross-functional work across the nine Responsible AI Principles — with industry, academia and governments." (drops "highly", adds "independent".) Status pill retained. |
+## Hero — status pill, headline, mission typewriter, buttons
+| CURRENT | STATUS | PROPOSED |
+| --- | --- | --- |
+| Status pill: "NINTH PRINCIPLE ADDED — ALIGNMENT WITH INTENT". Headline: "The Institute" / "for Ethical AI" / "Alignment & Safety" (third line rendered as glitch/em accent). Mission typewriter, two static lines + rotating third line: "We are an independent research institute with a mission to / ensure that frontier AI is safe, aligned and accountable to" + rotating beneficiary (initial: "people and society."). Rotation list: people and society · the people who use it · the teams who deploy it · the public · future generations · everyone it touches. Buttons: "Join the network" (`#join`) / "Contact us" (`#contact`). | Mission line + beneficiary rotation: **ratified** (owner, 2026-07-27), verbatim and matching the approved interactive spec exactly, including region-free wording. Status pill, headline, buttons: style-swept draft, not separately ratified but compliant with the binding rules — factual, no banned vocabulary, no invented claims. | No change proposed. The mission line and rotation must not be touched — they are the ratified text. The status pill is a factual, dated claim ("ninth principle added") rather than a marketing device; confirm it stays accurate as the principle set evolves, but no rewording is needed now. Headline and button labels are plain and additive; no rework meets the bar. |
 
 ## Evidence stat band
-| | |
-| --- | --- |
-| CURRENT | `09 RESPONSIBLE AI PRINCIPLES` · `393 NEWSLETTER ISSUES PUBLISHED` ⚠ · `70k+ ML PRACTITIONERS REACHED` ⚠ · `10k+ GITHUB STARS, OSS ECOSYSTEM` ⚠ · `2 STATE OF PRODUCTION ML REPORTS`. |
-| SOURCE | `stats.json`. "09" and "2" are structural facts. Others carried from prototype as illustrative. |
-| PROPOSED | Keep the five tiles and labels. **Verify before ship:** issue count (393 vs. real 395/396 per repo commits — use the real current number), 70k+ subscribers, 10k+ stars. If any can't be confirmed, drop that tile rather than assert. Wording of labels is fine. |
+| CURRENT | STATUS | PROPOSED |
+| --- | --- | --- |
+| Five tiles: `09 RESPONSIBLE AI PRINCIPLES` · `393 NEWSLETTER ISSUES PUBLISHED` ⚠ · `70k+ ML PRACTITIONERS REACHED` ⚠ · `10k+ GITHUB STARS, OSS ECOSYSTEM` ⚠ · `2 STATE OF PRODUCTION ML REPORTS`. | Style-swept draft. Labels are plain and factual (no banned vocabulary). "09" and "2" are structural counts the site itself defines; the other three are illustrative figures carried from the prototype, still unverified. | No change proposed to wording or structure. **Unverified, must be confirmed or removed before ship:** issue count (393 — cross-check against the real current newsletter issue number, not the prototype figure), "70k+" subscriber/reach figure, "10k+" GitHub-stars figure. If any cannot be confirmed by ship, drop that tile rather than assert a number. |
 
-## Affiliation marquee
-| | |
-| --- | --- |
-| CURRENT | Eyebrow "MEMBERSHIPS, ADVISORY ROLES & STANDARDS COLLABORATIONS". Items: UNITED NATIONS (AI EXPERT), UN CSTD (CHAIR, COMMITTEE), EUROPEAN COMMISSION (APPOINTED EXPERT), ACM (GOVERNING BOARD), LINUX FOUNDATION (ASSOCIATE MEMBER), OWASP (MLSECOPS COLLABORATION), IEEE (AI STANDARDS GROUP), ISO/IEC (AI STANDARDS GROUP), NUMFOCUS (CONTRIBUTION). |
-| SOURCE | `affiliations.json`. Roles ⚠ — inventory flags UN/CSTD/EC/ACM titles as "verify current"; several may be historical. Logo licensing also open. |
-| PROPOSED | Keep structure and eyebrow. **Every role line requires owner verification of current-ness.** Where a title is past, reword to non-endorsing form (e.g. "STANDARDS COLLABORATION", "PRIOR ADVISORY") rather than a specific active office. State collaboration, not endorsement. Do not add logos until licensing cleared. |
+## Affiliations marquee
+| CURRENT | STATUS | PROPOSED |
+| --- | --- | --- |
+| Eyebrow "MEMBERSHIPS, ADVISORY ROLES & STANDARDS COLLABORATIONS". Items (name — role): UNITED NATIONS — AI EXPERT; UN CSTD — CHAIR, COMMITTEE; EUROPEAN COMMISSION — APPOINTED EXPERT; ACM — GOVERNING BOARD; LINUX FOUNDATION — ASSOCIATE MEMBER; OWASP — MLSECOPS COLLABORATION; IEEE — AI STANDARDS GROUP; ISO/IEC — AI STANDARDS GROUP; NUMFOCUS — CONTRIBUTION; TUM/TUM IEAI — SPEAKER SERIES. | Style-swept draft. Eyebrow and format are neutral and factual. Every specific role/title is flagged in `01-voice-and-messaging.md` §5 as requiring owner verification of current-ness (many read as present-tense offices that may be historical). | No change proposed to structure or eyebrow. **Every role line is unverified and must be confirmed as current before ship.** Where a title has lapsed, reword to a non-office, collaboration-only form (e.g. "STANDARDS COLLABORATION" instead of a specific chair/board title) per the "no affiliation inflation" rule — state collaboration, not endorsement. Do not add member logos until licensing is cleared (separate open item, not a copy question). |
 
 ## Four-phase strategy
-| | |
-| --- | --- |
-| CURRENT | Eyebrow "01 — THE FOUR-PHASE RESPONSIBLE AI STRATEGY". Heading "From individual practice to national regulation." Cards: 01 EMPOWERING INDIVIDUALS / By Principle · 02 EMPOWERING ORGANISATIONS / By Process · 03 EMPOWERING INDUSTRIES / By Standards · 04 EMPOWERING NATIONS / By Regulation, each with 3 detail lines. |
-| SOURCE | `index.mdx` frontmatter, verbatim from master homepage four-phase model. Core IP. |
-| PROPOSED | Keep verbatim — this is the strongest existing asset and reads correctly. "Empowering" is retained here as established label IP (the one sanctioned exception in the voice framework). No change. |
+| CURRENT | STATUS | PROPOSED |
+| --- | --- | --- |
+| Eyebrow "01 — THE FOUR-PHASE RESPONSIBLE AI STRATEGY". Heading "From individual practice to national regulation." Cards: 01/EMPOWERING INDIVIDUALS — By Principle (Best practices; Applied principles; Personal and professional commitments); 02/EMPOWERING ORGANISATIONS — By Process (Practical industry frameworks; Applied guides; Principles translated into implementation); 03/EMPOWERING INDUSTRIES — By Standards (Technical and industry standards; Standards bodies engagement; Cross-industry initiatives); 04/EMPOWERING NATIONS — By Regulation (Policy and regulatory work; Public frameworks and requirements; International governance). | Ratified-equivalent: carried verbatim from the master homepage's four-phase model, which `01-voice-and-messaging.md` §3 treats as established IP. "Empowering" is the one word on the banned-adjacent list explicitly grandfathered in these four labels. | No change proposed. This is the strongest existing asset on the page — factual, additive, no banned constructions outside the sanctioned "Empowering" exception. |
 
-## Principles intro (explorer header)
-| | |
-| --- | --- |
-| CURRENT | Eyebrow "02 — THE NINE RESPONSIBLE AI PRINCIPLES". Heading "A practical framework, developed by domain experts." Intro "Each principle carries a commitment, the failure modes it guards against, and the controls that implement it." |
-| SOURCE | `index.mdx`. Heading rephrases master ("practical framework put together by domain experts"). Intro = design device describing the explorer card model. |
-| PROPOSED | Keep. Accurate and on-voice. (Explorer card bodies themselves are governed by `11-sheet-principles.md`.) |
+## Principles section (explorer intro labels)
+| CURRENT | STATUS | PROPOSED |
+| --- | --- | --- |
+| Eyebrow "02 — THE NINE RESPONSIBLE AI PRINCIPLES". Heading "A framework for evaluating AI systems." Intro "Each principle specifies a commitment, the failure modes it addresses and the controls that implement it." | Style-swept draft. Compliant: neutral register, no banned vocabulary, describes the explorer's actual card model (commitment / failure modes / controls) accurately. | No change proposed. Heading and intro are already additive and precise; individual principle card bodies (commitment/failure-modes/controls text) are governed separately by `11-sheet-principles.md`, not this sheet. |
 
-## Open-source showcase (OSS cards)
-| | |
-| --- | --- |
-| CURRENT | Section: "03 — OPEN SOURCE & TOOLS" / "Infrastructure the principles can actually run on." Cards — **Kompute** (2.1k stars ⚠, 38 contrib ⚠, 160+ releases ⚠, Apache-2.0), **XAI** (ALPHA; 1.4k stars ⚠, 21 contrib ⚠; 3-stage pipeline), **Production ML list** (10.2k stars ⚠, 230+ contrib ⚠, 260 tools ⚠), **KAOS** (NEW/early access; 9 contrib ⚠; 6 capability rows). |
-| SOURCE | `projects.json`. Project existence + descriptions real (master/READMEs). All per-project metrics carried from prototype — unverified. |
-| PROPOSED | Keep card structure, titles, descriptions and the P09→KAOS linkage (strong). Descriptions are on-voice; light-edit XAI/ecosystem text only if READMEs contradict. **Replace every star/contributor/release/tool count with the real current figure from each GitHub repo, or remove the metric row.** Keep status badges only where literally true (XAI ALPHA ✓, KAOS early access ✓). |
+## Open-source cards (section 03)
+| CURRENT | STATUS | PROPOSED |
+| --- | --- | --- |
+| Section: "03 — OPEN SOURCE & TOOLS" / "Open-source infrastructure for implementing the principles." **Kompute** — "Cross-vendor GPU computing"; "Kompute provides portable GPU compute across hardware vendors. The project is maintained in the open alongside Linux Foundation AI & Data and NumFOCUS."; metrics 2.1k stars ⚠ / 38 contributors ⚠ / 160+ releases ⚠ / Apache-2.0. **XAI** (badge ALPHA) — "XAI Explainability Framework"; "Explainability and bias mitigation across three stages, combining technical tools with the organisational processes around them."; 3-stage pipeline (Data analysis, Model evaluation, Production monitoring); stats 1.4k stars ⚠ / 21 contributors ⚠ / "ALPHA — ACTIVE". **Production ML list** — "Production ML open-source list"; "The community-maintained catalogue of production ML and MLOps tooling, curated weekly."; stats 10.2k stars ⚠ / 230+ contributors ⚠ / 260 tools tracked ⚠. **KAOS** (badge NEW) — "K8s Agent OS (KAOS)"; "An open-source control plane for running autonomous agents under operational constraints. It provides scoped credentials, sandboxed execution, budget and time-horizon limits, human approval gates and a replayable audit trail. These controls implement Principle 09 in the infrastructure."; 6 capability rows; stats EARLY ACCESS / 9 contributors ⚠ / Apache-2.0 / K8s 1.29+. | Style-swept draft. Section heading and all four card descriptions are compliant — plain, additive, verb-of-assurance register ("provides", "implements"), and the KAOS→Principle-09 link is a real, useful cross-reference. Every per-project count (stars, contributors, releases, tools tracked) is carried from the prototype as illustrative and remains unverified. Status badges (ALPHA, EARLY ACCESS, NEW) read as literal ship-status claims. | No change proposed to section heading, card titles, descriptions or the Principle-09 cross-reference — they meet the bar as written. **Replace every star/contributor/release/tool-tracked count with the real current figure pulled from each repo, or remove that metric row entirely rather than ship a guessed number.** Confirm ALPHA (XAI) and EARLY ACCESS (KAOS) are still literally true ship states before ship; "NEW" on KAOS should be time-boxed or dropped once the project is no longer new. |
 
-## Reports & data
-| | |
-| --- | --- |
-| CURRENT | Eyebrow "04 — REPORTS, DATA & INITIATIVES". Title "The State of Production ML". Intro references 2024 vs 2025 comparison + per-answer principle mapping. Side panels: **AI-RFX / ML Maturity Model** (8/8 criteria list) and **MLSecOps Top 10** (7 OWASP↔ML rows shown). |
-| SOURCE | `home-reports.json`. Survey, MMM criteria and MLSecOps taxonomy all real (master rfx/mlmm/security). Intro describes real 2024/2025 datasets. |
-| PROPOSED | Keep. Substance is real and well-mapped. Two notes: (1) MLSecOps panel shows 7 of 10 rows — fine as a homepage teaser, but the framework page must carry all 10; (2) ensure the explorer links resolve to real 2024/2025 data, not the illustrative dataset. Copy itself needs no rework. |
+## Reports & data (section 04)
+| CURRENT | STATUS | PROPOSED |
+| --- | --- | --- |
+| Eyebrow "04 — REPORTS, DATA & INITIATIVES". Title "The State of Production ML". Intro "Two annual practitioner surveys — context, tools, scope and statistics. Choose a question, compare 2024 with 2025, and select any answer to read what it means for the principles." Buttons: "Read the 2025 report" / "2024 edition" (both → `/data/survey-explorer/`). Side card A — "AI-RFX Procurement Framework": "Open-source RFP and tender templates for organisations procuring, building or deploying AI. The templates define safety, quality and technical-maturity criteria for the model and its surrounding system." (8/8 maturity-model criteria list, mapped to principles P01–P08). Side card B — "MLSecOps Top 10": "A vulnerability taxonomy for the machine-learning lifecycle, with flawed-ML case studies and mitigations — developed alongside Linux Foundation Trusted AI work." (7 of 10 OWASP↔MLSecOps rows shown). | Style-swept draft. All copy is neutral, factual and additive; no banned vocabulary. Substance (survey existence, MMM criteria, MLSecOps taxonomy) is real, not invented. One structural note, not a wording issue: "2024 edition" and "Read the 2025 report" both point to the same `/data/survey-explorer/` href — worth confirming that's intentional (explorer handles both years internally) rather than a broken link. | No change proposed to any prose. Two non-copy items to flag for the owner/engineering, not this sheet: (1) confirm the shared href above is intentional; (2) the MLSecOps card shows 7 of 10 rows as a homepage teaser — acceptable here, but the full framework page must carry all 10 rows, and this sheet does not cover that page. |
 
-## Network / form
-| | |
-| --- | --- |
-| CURRENT | Eyebrow "05 — NETWORK & NEWSLETTER". Heading "A network of aligned humans". Intro "Responsible technology takes more than technical changes to models. One membership covers both the Ethical AI Network and the Machine Learning Engineer newsletter." Stats: 1,034 MEMBERS ⚠ · 70,412 SUBSCRIBERS ⚠ · 393 ISSUES ⚠. One-form (name/email/org + 3 interest checkboxes), disclaimer. |
-| SOURCE | `network.json` + `index.mdx`. Framing from master ("network of responsible and aligned humans"). All three stats unverified. |
-| PROPOSED | Keep heading, intro, form and disclaimer — all on-voice. **Confirm or replace all three stats** (members, subscribers, issues); the issue count must match the real current number, not 393. Form fields/checkboxes fine as-is. |
+## Network + form (section 05)
+| CURRENT | STATUS | PROPOSED |
+| --- | --- | --- |
+| Eyebrow "05 — NETWORK & NEWSLETTER". Heading "A practitioner network for ethical AI". Intro "Responsible technology requires changes to models and to the systems around them. Membership includes the Ethical AI Network and the Machine Learning Engineer newsletter." Stats: 1,034 NETWORK MEMBERS ⚠ · 70,412 NEWSLETTER SUBSCRIBERS ⚠ · 393 ISSUES PUBLISHED ⚠. Sector breakdown (WHO IS HERE): Universities & research 24%, Technology companies 22%, Financial services 17%, Government & public bodies 14%, Startups & scale-ups 13% ⚠ (rows do not sum to 100%). Recent issues list: #393–#390 with titles ⚠. Form: eyebrow "ONE FORM", title "Join, subscribe or get in touch", fields (Name, Email, Organisation & role), interest checkboxes (Join the Ethical AI Network; Subscribe to the ML Engineer newsletter; Request the AI-RFX materials or a collaboration), button "Send", disclaimer "We only use your details to reply and to send what you asked for. Unsubscribe any time." | Style-swept draft. Heading, intro, form copy and disclaimer are compliant — plain, additive, no banned vocabulary, no overreach ("requires changes to models and to the systems around them" is a scoped, defensible claim, not a solved-problem claim). All numeric content (member/subscriber/issue counts, sector percentages, individual issue numbers and titles) is carried from the prototype as illustrative and unverified. | No change proposed to heading, intro, form fields, checkboxes, button or disclaimer. **Unverified, must be confirmed or removed before ship:** network members (1,034), newsletter subscribers (70,412), issues published (393 — must match the real current issue count, not the prototype figure), all five sector percentages (note they sum to 90%, not 100% — check whether a category is missing or the set is intentionally partial), and the four listed issue numbers/titles (#393–#390). |
 
-## Footnote / footer
-| | |
-| --- | --- |
-| CURRENT | Wordmark "THE INSTITUTE FOR ETHICAL AI / ALIGNMENT + SAFETY". Footer identity "ETHICAL.INSTITUTE — THE INSTITUTE FOR ETHICAL AI ALIGNMENT & SAFETY". Legal "© 2026 — OPEN SOURCE, CC BY-SA WHERE APPLICABLE". Meta "Practical frameworks for the safe and aligned development of AI systems." |
-| SOURCE | `site.json`. Fully rebranded, no legacy identity. |
-| PROPOSED | Keep verbatim. Clean and on-position. Confirm CC BY-SA licence claim is accurate for the site content before ship. |
+## Footnote band
+| CURRENT | STATUS | PROPOSED |
+| --- | --- | --- |
+| About column — eyebrow "ABOUT THE INSTITUTE", text "An independent research institute working to ensure that frontier AI is safe, aligned and accountable to people and society.", standards chips: ISO/IEC AI standards, IEEE AI standards, ACM technology policy, Linux Foundation AI & Data, European Commission, United Nations. Talks column — eyebrow "TALKS & KEYNOTES", four entries (NeurIPS 2023 Workshop keynote; NeurIPS 2022 — machine learning security; KubeCon Europe — ML evaluation at scale; PyCon keynote — monitoring, drift and explainability). Elsewhere column — eyebrow "ELSEWHERE", links: GitHub, LinkedIn, YouTube, Contact the Institute. | About text: **ratified-equivalent** — a direct, faithful restatement of the ratified mission line, same substance, no drift. Standards chips and Elsewhere links: style-swept draft, compliant (plain labels, no claims of active office). Talks list: style-swept draft; entries are event/title claims, unverified as to whether all four are still the right/current representative set. | No change proposed to the about text, standards-chip labels, or Elsewhere links. **Talks list is placeholder-flagged for currency, not wording**: confirm each of the four talks is real, correctly dated and still the set the Institute wants to lead with (a 2022/2023 keynote list may need refreshing with more recent talks by ship time) — no rewording needed once the entries are confirmed. |
+
+## Footer
+| CURRENT | STATUS | PROPOSED |
+| --- | --- | --- |
+| Identity: "ETHICAL.INSTITUTE — THE INSTITUTE FOR ETHICAL AI ALIGNMENT & SAFETY". Legal: "© 2026 — OPEN SOURCE, CC BY-SA WHERE APPLICABLE". (Meta description, used site-wide including this page: "An independent research institute working to ensure that frontier AI is safe, aligned and accountable to people and society.") | Ratified-equivalent: identity/legal lines are plain factual statements; meta description is the ratified mission line verbatim, no legacy-identity leakage (no "& Machine Learning", no "(BETA)", no "Ethical ML"/"IEML"). | No change proposed. One non-wording item to flag: confirm the "CC BY-SA where applicable" licence claim is accurate for the site's actual content before ship — this is a factual/legal check, not a copy question. |
