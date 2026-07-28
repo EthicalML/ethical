@@ -1,70 +1,254 @@
 {
   "frameworks": {
-    "label": "Frameworks",
-    "meta": "Q: WHICH ML FRAMEWORKS ARE IN PRODUCTION USE?",
+    "label": "Primary ML library",
+    "meta": "Q: WHICH MACHINE LIBRARY DO YOU USE THE MOST?",
+    "n2024": 170,
+    "n2025": 132,
     "rows": [
-      {"label": "PyTorch", "y2024": 58, "y2025": 71, "note": "Now the default training stack for the majority of respondents, including teams that previously reported TensorFlow."},
-      {"label": "scikit-learn", "y2024": 61, "y2025": 58, "note": "Still the most common library for tabular production workloads despite the shift toward deep learning."},
-      {"label": "TensorFlow", "y2024": 44, "y2025": 34, "note": "Continued decline, largely in teams migrating existing serving pipelines rather than new projects."},
-      {"label": "XGBoost / LightGBM", "y2024": 33, "y2025": 31, "note": "Reported use remained stable. Gradient boosting remains dominant for risk, fraud and forecasting use cases."},
-      {"label": "ONNX runtime", "y2024": 13, "y2025": 18, "note": "Growing with edge and cross-vendor deployment, aligned to the cross-vendor GPU computing work."},
-      {"label": "JAX", "y2024": 8, "y2025": 12, "note": "Concentrated in research-heavy organisations and frontier-model teams."}
+      {
+        "label": "PyTorch / Lightning / Fast.ai",
+        "y2024": 36,
+        "y2025": 35,
+        "note": ""
+      },
+      {
+        "label": "scikit-learn",
+        "y2024": 31,
+        "y2025": 33,
+        "note": ""
+      },
+      {
+        "label": "XGBoost",
+        "y2024": 10,
+        "y2025": 12,
+        "note": ""
+      },
+      {
+        "label": "TensorFlow",
+        "y2024": 8,
+        "y2025": 6,
+        "note": ""
+      },
+      {
+        "label": "CatBoost",
+        "y2024": 5,
+        "y2025": 4,
+        "note": ""
+      },
+      {
+        "label": "LightGBM",
+        "y2024": 4,
+        "y2025": 4,
+        "note": ""
+      }
+    ]
+  },
+  "modalities": {
+    "label": "Modalities",
+    "meta": "Q: WHICH AREAS OR MODALITY OF MACHINE LEARNING / SCIENCE DOES YOUR TEAM WORK ON?",
+    "n2024": 170,
+    "n2025": 135,
+    "rows": [
+      {
+        "label": "LLMs",
+        "y2024": 46,
+        "y2025": 59,
+        "note": ""
+      },
+      {
+        "label": "Time series / forecasting",
+        "y2024": 42,
+        "y2025": 58,
+        "note": ""
+      },
+      {
+        "label": "Tabular",
+        "y2024": 39,
+        "y2025": 44,
+        "note": ""
+      },
+      {
+        "label": "Text / NLP (non-LLM)",
+        "y2024": 38,
+        "y2025": 32,
+        "note": ""
+      },
+      {
+        "label": "Recommender systems",
+        "y2024": 32,
+        "y2025": 36,
+        "note": ""
+      },
+      {
+        "label": "Image / computer vision",
+        "y2024": 25,
+        "y2025": 30,
+        "note": ""
+      }
+    ]
+  },
+  "cloud": {
+    "label": "Cloud platform",
+    "meta": "Q: WHICH CLOUD PLATFORM DO YOU USE THE MOST?",
+    "n2024": 168,
+    "n2025": 133,
+    "rows": [
+      {
+        "label": "Amazon Web Services",
+        "y2024": 54,
+        "y2025": 32,
+        "note": ""
+      },
+      {
+        "label": "Microsoft Azure",
+        "y2024": 21,
+        "y2025": 32,
+        "note": ""
+      },
+      {
+        "label": "Google Cloud Platform",
+        "y2024": 16,
+        "y2025": 26,
+        "note": ""
+      },
+      {
+        "label": "On-premise / self-hosted",
+        "y2024": 4,
+        "y2025": 3,
+        "note": ""
+      },
+      {
+        "label": "Databricks",
+        "y2024": 1,
+        "y2025": 2,
+        "note": ""
+      }
     ]
   },
   "challenges": {
     "label": "Production challenges",
-    "meta": "Q: TOP CHALLENGES TAKING MODELS TO PRODUCTION",
+    "meta": "Q: SELECT THE TOP 3 BIGGEST CHALLENGES THAT YOU FACE WHEN PRODUCTIONISING YOUR MACHINE LEARNING MODELS",
+    "n2024": 168,
+    "n2025": 131,
     "rows": [
-      {"label": "Monitoring & drift", "y2024": 38, "y2025": 44, "note": "Maps to Principle 04 — reproducible operations — and the observability failures in the MLSecOps Top 10."},
-      {"label": "Data quality", "y2024": 43, "y2025": 41, "note": "Data quality remained the most frequently reported challenge and is addressed by bias evaluation under Principle 02."},
-      {"label": "Deployment complexity", "y2024": 40, "y2025": 37, "note": "Easing slightly as orchestration tooling matures, but still a top-three blocker."},
-      {"label": "Security & data risk", "y2024": 21, "y2025": 29, "note": "Security and data risk had the largest reported increase. The MLSecOps Top 10 addresses this category."},
-      {"label": "Reproducibility", "y2024": 28, "y2025": 26, "note": "Reproducibility improved where teams adopted experiment tracking and lineage as infrastructure."},
-      {"label": "Explainability", "y2024": 19, "y2025": 21, "note": "Rising with regulatory pressure; addressed by the XAI Framework’s three-stage model."}
-    ]
-  },
-  "cloud": {
-    "label": "Platforms",
-    "meta": "Q: WHERE ARE PRODUCTION WORKLOADS RUNNING?",
-    "rows": [
-      {"label": "AWS", "y2024": 49, "y2025": 52, "note": "Remains the plurality choice for production ML infrastructure."},
-      {"label": "Microsoft Azure", "y2024": 27, "y2025": 31, "note": "Growth concentrated in regulated industries and enterprises with existing Microsoft estates."},
-      {"label": "Google Cloud", "y2024": 29, "y2025": 27, "note": "Stable share, with strength in data-platform-led organisations."},
-      {"label": "On-premise / private", "y2024": 15, "y2025": 19, "note": "Rising with data-residency requirements and GPU cost control."},
-      {"label": "Hybrid across vendors", "y2024": 11, "y2025": 16, "note": "The case for cross-vendor GPU computing and portable runtimes such as Kompute."}
+      {
+        "label": "Monitoring & observability",
+        "y2024": 45,
+        "y2025": 42,
+        "note": ""
+      },
+      {
+        "label": "Access to training data",
+        "y2024": 32,
+        "y2025": 37,
+        "note": ""
+      },
+      {
+        "label": "Production-grade pipelines",
+        "y2024": 32,
+        "y2025": 34,
+        "note": ""
+      },
+      {
+        "label": "Inconsistent environments",
+        "y2024": 31,
+        "y2025": 34,
+        "note": ""
+      },
+      {
+        "label": "Tooling gaps",
+        "y2024": 33,
+        "y2025": 22,
+        "note": ""
+      },
+      {
+        "label": "Business impact",
+        "y2024": 29,
+        "y2025": 22,
+        "note": ""
+      }
     ]
   },
   "tracking": {
     "label": "Experiment tracking",
-    "meta": "Q: HOW IS EXPERIMENTATION TRACKED?",
+    "meta": "Q: FOR MODEL REGISTRY AND/OR EXPERIMENT TRACKING, WHAT TOOL DO YOU USE THE MOST? SKIP THIS QUESTION IF YOU DON'T USE ANY.",
+    "n2024": 155,
+    "n2025": 119,
     "rows": [
-      {"label": "MLflow", "y2024": 36, "y2025": 39, "note": "Still the open-source default, frequently self-hosted alongside internal tooling."},
-      {"label": "Weights & Biases", "y2024": 24, "y2025": 27, "note": "Strongest in deep-learning and research-adjacent teams."},
-      {"label": "Internal tooling", "y2024": 26, "y2025": 22, "note": "Declining as managed and open-source options mature."},
-      {"label": "No formal tracking", "y2024": 24, "y2025": 19, "note": "Falling, but one in five teams still cannot reproduce a production model’s training run."},
-      {"label": "Neptune / Comet / other", "y2024": 9, "y2025": 8, "note": "A long tail of specialist tools, often chosen for compliance reporting."}
+      {
+        "label": "MLflow",
+        "y2024": 48,
+        "y2025": 66,
+        "note": ""
+      },
+      {
+        "label": "Custom in-house tool",
+        "y2024": 16,
+        "y2025": 9,
+        "note": ""
+      },
+      {
+        "label": "Weights & Biases",
+        "y2024": 12,
+        "y2025": 12,
+        "note": ""
+      },
+      {
+        "label": "Spreadsheets",
+        "y2024": 8,
+        "y2025": 3,
+        "note": ""
+      },
+      {
+        "label": "DVC",
+        "y2024": 3,
+        "y2025": 5,
+        "note": ""
+      },
+      {
+        "label": "ClearML",
+        "y2024": 4,
+        "y2025": 0,
+        "note": ""
+      }
     ]
   },
-  "genai": {
-    "label": "Generative AI",
-    "meta": "Q: WHICH GENERATIVE-AI PROVIDERS ARE IN USE?",
+  "deployment": {
+    "label": "Deployment methods",
+    "meta": "Q: WHEN PRODUCTIONISING A MACHINE LEARNING MODEL, DOES YOUR INFRASTRUCTURE ENABLE ANY OF THE FOLLOWING DEPLOYMENT METHODS?",
+    "n2024": 140,
+    "n2025": 113,
     "rows": [
-      {"label": "OpenAI", "y2024": 51, "y2025": 58, "note": "Most widely integrated provider, typically through hosted APIs rather than fine-tuning."},
-      {"label": "Anthropic", "y2024": 19, "y2025": 34, "note": "The largest year-on-year increase in the survey."},
-      {"label": "Open-weight models", "y2024": 22, "y2025": 31, "note": "Driven by data-residency, cost control and the ability to evaluate models directly."},
-      {"label": "Azure OpenAI", "y2024": 20, "y2025": 24, "note": "Preferred where enterprise procurement and compliance sit with Microsoft."},
-      {"label": "Google", "y2024": 14, "y2025": 18, "note": "Concentrated in organisations already standardised on Google Cloud."}
-    ]
-  },
-  "governance": {
-    "label": "Governance",
-    "meta": "Q: WHICH RESPONSIBLE-AI PRACTICES ARE FORMALISED?",
-    "rows": [
-      {"label": "Documented model review", "y2024": 24, "y2025": 33, "note": "The most common first step, usually a sign-off gate before production release."},
-      {"label": "Bias evaluation process", "y2024": 18, "y2025": 26, "note": "Bias evaluation, addressed by Principle 02, remained absent in approximately three-quarters of organisations."},
-      {"label": "Human-in-the-loop policy", "y2024": 21, "y2025": 25, "note": "Principle 01: mandatory review where the consequence of an incorrect prediction is high."},
-      {"label": "ML security programme", "y2024": 12, "y2025": 22, "note": "Nearly doubled year on year, tracking the rise of agentic deployments."},
-      {"label": "Procurement assessment", "y2024": 9, "y2025": 15, "note": "Where AI-RFX and the Machine Learning Maturity Model are applied directly."}
+      {
+        "label": "CI/CD",
+        "y2024": 69,
+        "y2025": 84,
+        "note": ""
+      },
+      {
+        "label": "Development / staging / production",
+        "y2024": 58,
+        "y2025": 66,
+        "note": ""
+      },
+      {
+        "label": "A/B tests",
+        "y2024": 42,
+        "y2025": 49,
+        "note": ""
+      },
+      {
+        "label": "Canary deployments",
+        "y2024": 26,
+        "y2025": 31,
+        "note": ""
+      },
+      {
+        "label": "Progressive rollouts",
+        "y2024": 30,
+        "y2025": 27,
+        "note": ""
+      }
     ]
   }
 }
