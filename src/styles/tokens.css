@@ -1356,6 +1356,7 @@ form[data-state="error"] .form-confirmation { color: var(--warn); font: var(--bo
 }
 .marquee-logo {
   background: #fff;
+  transition: background .3s ease;
   height: 100%;
   mask-image: var(--logo-mask);
   mask-mode: alpha;
