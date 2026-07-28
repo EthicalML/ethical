@@ -2,8 +2,9 @@
   const motionQuery = matchMedia('(prefers-reduced-motion: reduce)');
 
   function mount(element) {
-    const output = element.querySelector('.hero-typewriter-text');
+    const outputs = [...element.querySelectorAll('.hero-typewriter-text')];
     const glitch = element.querySelector('.hero-typewriter-glitch');
+    const cursor = element.querySelector('.hero-typewriter-cursor');
     let beneficiaries;
 
     try {
@@ -13,7 +14,12 @@
     }
 
     const initialBeneficiary = beneficiaries[0];
-    if (!output || !glitch || !initialBeneficiary) return { destroy() {} };
+    const initialLines = [
+      outputs[0]?.textContent ?? '',
+      outputs[1]?.textContent ?? '',
+      initialBeneficiary,
+    ];
+    if (outputs.length !== 3 || !glitch || !cursor || !initialBeneficiary) return { destroy() {} };
 
     const styles = getComputedStyle(element);
     const duration = (name, fallback) => {
@@ -30,58 +36,65 @@
     });
     const jitter = () => typeDelay + (Math.random() - .5) * 12;
     const setPhase = (phase) => { element.dataset.typewriterPhase = phase; };
-    const setText = (text) => {
+    const setText = (output, text) => {
       output.textContent = text;
-      glitch.dataset.text = text;
+      if (output === outputs[2]) glitch.dataset.text = text;
     };
 
-    const type = async (text, phase = 'typing') => {
+    const type = async (output, text, phase = 'typing') => {
       setPhase(phase);
+      (output === outputs[2] ? glitch : output.parentElement).append(cursor);
       for (const character of text) {
         if (destroyed) return;
-        setText(output.textContent + character);
+        setText(output, output.textContent + character);
         await wait(jitter());
       }
     };
 
-    const remove = async (count) => {
+    const remove = async (output, count) => {
       setPhase('deleting');
       for (let index = 0; index < count; index += 1) {
         if (destroyed) return;
-        setText(output.textContent.slice(0, -1));
+        setText(output, output.textContent.slice(0, -1));
         await wait(deleteDelay);
       }
     };
 
-    const waitForGlitchEnd = async () => {
+    const waitForGlitchEnd = async (skipActiveBurst = false) => {
       const headlineAnimation = document.querySelector('.glitch')
         ?.getAnimations()
         .find((animation) => animation.animationName === 'om-flicker');
       const cycle = Number(headlineAnimation?.effect.getTiming().duration) || 9000;
       const current = Number(headlineAnimation?.currentTime) || 0;
       const phase = current % cycle;
+      const burstStart = cycle * .656;
       const burstEnd = cycle * .767;
-      const delay = burstEnd > phase ? burstEnd - phase : cycle - phase + burstEnd;
+      const canUseCurrentBurst = phase < burstEnd && (!skipActiveBurst || phase < burstStart);
+      const delay = canUseCurrentBurst ? burstEnd - phase : cycle - phase + burstEnd;
       await wait(delay);
     };
 
     const run = async () => {
       if (motionQuery.matches) {
-        setText(initialBeneficiary);
+        initialLines.forEach((line, index) => setText(outputs[index], line));
         setPhase('static');
         return;
       }
 
-      setText('');
-      await type(initialBeneficiary, 'initial');
+      outputs.forEach((output) => setText(output, ''));
+      for (let index = 0; index < initialLines.length; index += 1) {
+        await type(outputs[index], initialLines[index], 'initial');
+      }
       let beneficiaryIndex = 0;
+      let firstRotation = true;
 
       while (!destroyed) {
         setPhase('dwell');
-        await waitForGlitchEnd();
-        await remove(beneficiaries[beneficiaryIndex].length);
+        await waitForGlitchEnd(firstRotation);
+        firstRotation = false;
+        await remove(outputs[2], beneficiaries[beneficiaryIndex].length);
         beneficiaryIndex = (beneficiaryIndex + 1) % beneficiaries.length;
-        await type(beneficiaries[beneficiaryIndex]);
+        await type(outputs[2], beneficiaries[beneficiaryIndex]);
       }
     };
 
@@ -90,7 +103,7 @@
       destroy() {
         destroyed = true;
         clearTimeout(timer);
-        setText(initialBeneficiary);
+        initialLines.forEach((line, index) => setText(outputs[index], line));
         setPhase('static');
       },
     };

@@ -30,8 +30,8 @@ const lineMetrics = await lede.evaluate((element) => {
   const lines = [...element.querySelectorAll('.hero-typewriter-line')];
   return {
     lineCount: lines.length,
-    lines: lines.map((line) => line.innerText),
     noWrap: lines.every((line) => getComputedStyle(line).whiteSpace === 'nowrap'),
+    reservedLines: lines.every((line) => line.getBoundingClientRect().height > 0),
     lineOverflow: lines.map((line) => line.scrollWidth - line.clientWidth),
     componentOverflow: element.scrollWidth - element.clientWidth,
     underline: element.dataset.underline,
@@ -49,16 +49,71 @@ const lineMetrics = await lede.evaluate((element) => {
     },
     dynamic: {
       color: getComputedStyle(element.querySelector('.hero-typewriter-dynamic')).color,
-      cursorBlinkDuration: getComputedStyle(element.querySelector('.hero-typewriter-cursor')).animationDuration,
     },
   };
 });
 
-await normal.page.waitForFunction(() => (
-  document.querySelector('[data-widget="hero-typewriter"]')?.dataset.typewriterPhase === 'dwell'
-), null, { timeout: 5000 });
+await normal.page.waitForFunction(() => {
+  const element = document.querySelector('[data-widget="hero-typewriter"]');
+  const outputs = [...element?.querySelectorAll('.hero-typewriter-text') ?? []];
+  return element?.dataset.typewriterPhase === 'initial'
+    && outputs[0]?.textContent.length > 0
+    && outputs[1]?.textContent === ''
+    && outputs[2]?.textContent === '';
+}, null, { timeout: 2000 });
 const initialBox = await lede.boundingBox();
 const initialActionsTop = await normal.page.locator('.hero .actions').evaluate((element) => element.getBoundingClientRect().top);
+const initialFirstFrame = await lede.screenshot();
+await normal.page.waitForTimeout(120);
+const initialSecondFrame = await lede.screenshot();
+
+await normal.page.waitForFunction((line) => {
+  const element = document.querySelector('[data-widget="hero-typewriter"]');
+  const outputs = [...element?.querySelectorAll('.hero-typewriter-text') ?? []];
+  const cursorLine = element?.querySelector('.hero-typewriter-cursor')?.closest('.hero-typewriter-line');
+  return outputs[0]?.textContent === line
+    && outputs[1]?.textContent.length > 0
+    && outputs[1]?.textContent !== 'ensure that frontier AI is safe, aligned and accountable to'
+    && outputs[2]?.textContent === ''
+    && cursorLine === element.querySelectorAll('.hero-typewriter-line')[1];
+}, expectedLines[0], { timeout: 5000 });
+const secondLineSample = await lede.evaluate((element) => (
+  [...element.querySelectorAll('.hero-typewriter-text')].map((output) => output.textContent)
+));
+
+await normal.page.waitForFunction((lines) => {
+  const element = document.querySelector('[data-widget="hero-typewriter"]');
+  const outputs = [...element?.querySelectorAll('.hero-typewriter-text') ?? []];
+  const cursorLine = element?.querySelector('.hero-typewriter-cursor')?.closest('.hero-typewriter-line');
+  return outputs[0]?.textContent === lines[0]
+    && outputs[1]?.textContent === lines[1]
+    && outputs[2]?.textContent.length > 0
+    && outputs[2]?.textContent !== lines[2]
+    && cursorLine === element.querySelectorAll('.hero-typewriter-line')[2];
+}, expectedLines, { timeout: 5000 });
+const thirdLineSample = await lede.evaluate((element) => (
+  [...element.querySelectorAll('.hero-typewriter-text')].map((output) => output.textContent)
+));
+
+await normal.page.waitForFunction(() => (
+  document.querySelector('[data-widget="hero-typewriter"]')?.dataset.typewriterPhase === 'dwell'
+), null, { timeout: 8000 });
+const initialComplete = await lede.evaluate((element) => {
+  const cursor = element.querySelector('.hero-typewriter-cursor');
+  const headlineAnimation = document.querySelector('.glitch')
+    .getAnimations()
+    .find((item) => item.animationName === 'om-flicker');
+  const cycle = Number(headlineAnimation.effect.getTiming().duration);
+  return {
+    lines: [...element.querySelectorAll('.hero-typewriter-text')].map((output) => output.textContent),
+    cursorLine: [...element.querySelectorAll('.hero-typewriter-line')]
+      .indexOf(cursor.closest('.hero-typewriter-line')),
+    cursorBlinkDuration: getComputedStyle(cursor).animationDuration,
+    headlineCurrentTime: Number(headlineAnimation.currentTime),
+    headlineCycle: cycle,
+    headlinePhase: (Number(headlineAnimation.currentTime) % cycle) / cycle,
+  };
+});
 
 await normal.page.waitForFunction(() => {
   const animation = document.querySelector('.glitch')
@@ -94,7 +149,7 @@ const burstSample = await normal.page.evaluate(() => {
 
 await normal.page.waitForFunction(() => (
   document.querySelector('[data-widget="hero-typewriter"]')?.dataset.typewriterPhase === 'deleting'
-), null, { timeout: 3000, polling: 5 });
+), null, { timeout: 12000, polling: 5 });
 const firstDeleteAt = await normal.page.evaluate(() => performance.now());
 const deleteSample = await lede.evaluate((element) => {
   const headlineAnimation = document.querySelector('.glitch')
@@ -103,7 +158,8 @@ const deleteSample = await lede.evaluate((element) => {
   const cycle = Number(headlineAnimation.effect.getTiming().duration);
   return {
     actionsTop: document.querySelector('.hero .actions').getBoundingClientRect().top,
-    beneficiary: element.querySelector('.hero-typewriter-text').textContent,
+    beneficiary: element.querySelector('.hero-typewriter-dynamic .hero-typewriter-text').textContent,
+    headlineCurrentTime: Number(headlineAnimation.currentTime),
     phase: (Number(headlineAnimation.currentTime) % cycle) / cycle,
   };
 });
@@ -114,7 +170,7 @@ const secondFrame = await lede.screenshot();
 await normal.page.waitForFunction(() => {
   const element = document.querySelector('[data-widget="hero-typewriter"]');
   return element?.dataset.typewriterPhase === 'dwell'
-    && element.querySelector('.hero-typewriter-text')?.textContent === 'the people who use it';
+    && element.querySelector('.hero-typewriter-dynamic .hero-typewriter-text')?.textContent === 'the people who use it';
 }, null, { timeout: 5000 });
 const rotatedBox = await lede.boundingBox();
 
@@ -129,7 +185,7 @@ await normal.page.waitForFunction(() => (
 ), null, { timeout: 5000 });
 await normal.page.evaluate(() => {
   const element = document.querySelector('[data-widget="hero-typewriter"]');
-  const output = element.querySelector('.hero-typewriter-text');
+  const output = element.querySelector('.hero-typewriter-dynamic .hero-typewriter-text');
   const glitch = element.querySelector('.hero-typewriter-glitch');
   output.textContent = 'people and society';
   glitch.dataset.text = 'people and society';
@@ -175,12 +231,24 @@ const matchingFont = lineMetrics.pill.fontFamily === lineMetrics.lede.fontFamily
   && lineMetrics.pill.fontWeight === lineMetrics.lede.fontWeight
   && lineMetrics.pill.letterSpacing === lineMetrics.lede.letterSpacing;
 const phaseDifference = Math.abs(burstSample.headline.phase - burstSample.segment.phase);
+const initialBurstWasActive = initialComplete.headlinePhase >= .656
+  && initialComplete.headlinePhase < .767;
+const skippedActiveBoundary = !initialBurstWasActive
+  || Math.floor(deleteSample.headlineCurrentTime / initialComplete.headlineCycle)
+    > Math.floor(initialComplete.headlineCurrentTime / initialComplete.headlineCycle);
 const result = {
   passed: errors.length === 0
     && matchingFont
     && lineMetrics.lineCount === 3
-    && JSON.stringify(lineMetrics.lines.slice(0, 2)) === JSON.stringify(expectedLines.slice(0, 2).map((line) => line.toUpperCase()))
-    && lineMetrics.lines[2] === `${expectedLines[2].toUpperCase()}▍`
+    && lineMetrics.reservedLines
+    && !initialFirstFrame.equals(initialSecondFrame)
+    && JSON.stringify(secondLineSample.slice(0, 1)) === JSON.stringify(expectedLines.slice(0, 1))
+    && secondLineSample[1].length > 0
+    && secondLineSample[2] === ''
+    && JSON.stringify(thirdLineSample.slice(0, 2)) === JSON.stringify(expectedLines.slice(0, 2))
+    && thirdLineSample[2].length > 0
+    && JSON.stringify(initialComplete.lines) === JSON.stringify(expectedLines)
+    && initialComplete.cursorLine === 2
     && lineMetrics.noWrap
     && lineMetrics.componentOverflow <= 0
     && lineMetrics.lineOverflow.every((overflow) => overflow <= 0)
@@ -188,7 +256,7 @@ const result = {
     && lineMetrics.lede.textTransform === 'uppercase'
     && lineMetrics.lede.color === 'rgba(244, 242, 238, 0.66)'
     && lineMetrics.dynamic.color === 'rgb(94, 230, 160)'
-    && lineMetrics.dynamic.cursorBlinkDuration === '1s'
+    && initialComplete.cursorBlinkDuration === '1s'
     && phaseDifference < .005
     && burstSample.headlineGhostOpacity !== '0'
     && burstSample.segmentGhostOpacity !== '0'
@@ -196,6 +264,7 @@ const result = {
     && burstSample.segmentGhostClip !== 'inset(100% 0px 0px)'
     && deleteSample.phase >= .767
     && deleteSample.phase < .82
+    && skippedActiveBoundary
     && deleteSample.actionsTop === initialActionsTop
     && !firstFrame.equals(secondFrame)
     && sameBox
@@ -217,9 +286,15 @@ const result = {
     phaseDifference,
     burstSample,
     deletePhase: deleteSample.phase,
+    initialBurstWasActive,
+    skippedActiveBoundary,
     rotationInterval,
   },
   animation: {
+    initialFramesChanged: !initialFirstFrame.equals(initialSecondFrame),
+    secondLineSample,
+    thirdLineSample,
+    initialComplete,
     framesChanged: !firstFrame.equals(secondFrame),
     initialBox,
     rotatedBox,

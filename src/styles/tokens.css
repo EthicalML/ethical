@@ -362,11 +362,11 @@ h3 {
 }
 .hero-typewriter-line {
   display: block;
+  min-height: 2.1em;
   white-space: nowrap;
 }
 .hero-typewriter-dynamic {
   color: var(--accent);
-  min-height: 2.1em;
 }
 .hero-typewriter-glitch {
   animation: typewriter-flicker var(--cycle) steps(1, end) infinite;

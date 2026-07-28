@@ -30,8 +30,12 @@ const missionLine2 = 'ensure that frontier AI is safe, aligned and accountable t
       data-underline={typewriter_underline ? 'true' : 'false'}
       aria-label={subtitle}
     >
-      <span class="hero-typewriter-line">{missionLine1}</span>
-      <span class="hero-typewriter-line">{missionLine2}</span>
+      <span class="hero-typewriter-line">
+        <span class="hero-typewriter-text">{missionLine1}</span>
+      </span>
+      <span class="hero-typewriter-line">
+        <span class="hero-typewriter-text">{missionLine2}</span>
+      </span>
       <span class="hero-typewriter-line hero-typewriter-dynamic">
         <span class="hero-typewriter-glitch" data-text={initialBeneficiary}>
           <span class="hero-typewriter-text">{initialBeneficiary}</span><span class="hero-typewriter-cursor" aria-hidden="true">▍</span>
