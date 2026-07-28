@@ -24,7 +24,7 @@
     "name": "ACM",
     "slug": "acm",
     "role": "GOVERNING BOARD",
-    "logo": "acm-logo-mark.svg",
+    "logo": "acm-logo-mark.png",
     "detail": "ACM's Code of Ethics and Professional Conduct and its technology-policy work set expectations for computing professionals broadly. The nine Responsible AI Principles provide ML-specific commitments that practitioners and organisations can apply alongside ACM's professional-conduct baseline.",
     "links": [
       {
@@ -72,7 +72,7 @@
     "name": "ISO/IEC",
     "slug": "iso-iec",
     "role": "AI STANDARDS GROUP",
-    "logo": "iso-logo-mark.svg",
+    "logo": "iso-logo-lockup.svg",
     "detail": "The Institute participates in ISO/IEC AI standards work, which sets the formal, cross-industry baseline for how AI systems are assessed and governed. AI-RFX and the ML Maturity Model are compatible with that baseline.",
     "links": [],
     "logo_color": "iso-logo.svg"
