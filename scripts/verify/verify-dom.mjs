@@ -54,11 +54,23 @@ for (const route of routes) {
   let formChecks = null;
   const instituteForm = page.locator('[data-institute-form]');
   if (await instituteForm.count()) {
+    const applicationInterest = instituteForm.locator('[data-application-interest]');
+    let applicationHelper = null;
+    if (await applicationInterest.count()) {
+      const helper = instituteForm.locator('[data-application-helper]');
+      const initiallyHidden = await helper.evaluate((element) => element.hidden);
+      await applicationInterest.check();
+      applicationHelper = {
+        initiallyHidden,
+        visibleAfterCheck: await helper.isVisible(),
+        text: await helper.textContent(),
+      };
+    }
     await instituteForm.locator('[name="name"]').fill('Chrome Gate');
     await instituteForm.locator('[name="email"]').fill('chrome-gate@example.com');
     await instituteForm.locator('[type="submit"]').click();
     await instituteForm.locator('[data-form-confirmation]').waitFor({ state: 'visible' });
-    formChecks = await instituteForm.evaluate((form) => {
+    formChecks = await instituteForm.evaluate((form, applicationHelper) => {
       const honeypot = form.querySelector('.form-honeypot');
       const honeypotStyle = getComputedStyle(honeypot);
       return {
@@ -67,6 +79,7 @@ for (const route of routes) {
         state: form.dataset.state,
         confirmation: form.querySelector('[data-form-confirmation]').textContent,
         startedAt: form.querySelector('[name="startedAt"]').value,
+        applicationHelper,
         honeypot: {
           height: honeypotStyle.height,
           left: honeypotStyle.left,
@@ -74,7 +87,7 @@ for (const route of routes) {
           width: honeypotStyle.width,
         },
       };
-    });
+    }, applicationHelper);
   }
 
   let homepageInteractions = null;
@@ -302,6 +315,9 @@ for (const route of routes) {
     || formChecks.state !== 'success'
     || !formChecks.confirmation.startsWith('The form is in demo mode.')
     || !/^\d{13}$/.test(formChecks.startedAt)
+    || !formChecks.applicationHelper?.initiallyHidden
+    || !formChecks.applicationHelper?.visibleAfterCheck
+    || formChecks.applicationHelper?.text !== 'Please provide enough information to consider your application.'
     || formChecks.honeypot.height !== '1px'
     || formChecks.honeypot.left !== '-10000px'
     || formChecks.honeypot.position !== 'absolute'
