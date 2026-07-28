@@ -2,7 +2,7 @@
   {
     "name": "United Nations",
     "slug": "united-nations",
-    "role": "AI EXPERT · CSTD COMMITTEE CHAIR",
+    "role": "AI Expert · Chair",
     "logo": "united-nations-logo.svg",
     "detail": "The Institute participates in United Nations AI and data-governance work at the “By Regulation” stage of its four-phase strategy. At this stage, principle-level commitments are translated into public, national-scale frameworks.",
     "links": [
@@ -78,7 +78,7 @@
   {
     "name": "NumFOCUS",
     "slug": "numfocus",
-    "role": "CONTRIBUTION",
+    "role": "OSS Collaboration",
     "logo": "numfocus-logo.png",
     "detail": "Kompute is cross-vendor GPU acceleration work maintained alongside Linux Foundation AI & Data and NumFOCUS.",
     "links": [
@@ -91,7 +91,7 @@
   {
     "name": "PyData",
     "slug": "pydata",
-    "role": "OPEN-SOURCE COMMUNITY",
+    "role": "",
     "logo": "pydata-logo.png",
     "detail": "The relationship connects the Institute's open-source work with the PyData community.",
     "links": [
@@ -104,7 +104,7 @@
   {
     "name": "TUM / TUM IEAI",
     "slug": "tum",
-    "role": "SPEAKER SERIES · PARTNER",
+    "role": "Visiting Lectures",
     "logo": "tum-logo.svg",
     "detail": "The TUM Institute for Ethics in Artificial Intelligence's speaker series covers research and practice in responsible AI.",
     "links": [

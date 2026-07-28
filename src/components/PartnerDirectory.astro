@@ -18,7 +18,7 @@ const entries = partners.map((partner) => ({
         style={`--logo-mask: url("${partner.logo.src}"); --logo-ratio: ${partner.logo.width / partner.logo.height}`}
       ></span>
       <h2>{partner.name}</h2>
-      <p class="partner-role"><strong>Role:</strong> {partner.role}</p>
+      {partner.role && <p class="partner-role"><strong>Role:</strong> {partner.role}</p>}
       <p>{partner.detail}</p>
       {partner.links.length > 0 && (
         <p class="partner-links">

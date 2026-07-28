@@ -1330,29 +1330,14 @@ form[data-state="error"] .form-confirmation { color: var(--warn); font: var(--bo
 .affiliations { border-bottom: 1px solid var(--hairline); padding: 26px 0 18.5px; overflow: hidden; }
 .affiliations > .eyebrow { color: rgba(244,242,238,.3); font-size: 9.5px; padding: 0 48px 18px; }
 .marquee-mask {
-  --mx: -200px;
-  --my: -200px;
-  isolation: isolate;
   mask-image: linear-gradient(90deg, transparent, #000 120px, #000 calc(100% - 120px), transparent);
   overflow: hidden;
-  position: relative;
 }
-.marquee-mask::after {
-  background: radial-gradient(circle 120px at var(--mx) var(--my), rgba(244,242,238,.1), rgba(244,242,238,.035) 55%, transparent 100%);
-  content: "";
-  inset: 0;
-  opacity: 0;
-  pointer-events: none;
-  position: absolute;
-  transition: opacity .2s ease;
-  z-index: 0;
-}
-.marquee-mask[data-lantern-active="true"]::after { opacity: 1; }
-.marquee-track { animation: om-marquee 38s linear infinite; display: flex; position: relative; width: max-content; z-index: 1; }
+.marquee-track { animation: om-marquee 38s linear infinite; display: flex; width: max-content; }
 .marquee-mask:hover .marquee-track { animation-play-state: paused; }
 .marquee-set { display: flex; }
 .marquee-item {
-  align-items: flex-start;
+  align-items: center;
   border-left: 1px solid var(--hairline);
   display: flex;
   flex-direction: column;
@@ -1362,35 +1347,25 @@ form[data-state="error"] .form-confirmation { color: var(--warn); font: var(--bo
   padding: 0 42px;
 }
 .marquee-logo-frame {
-  display: block;
+  align-items: center;
+  display: flex;
   flex: 0 0 auto;
   height: 34px;
-  position: relative;
-  width: clamp(58px, calc(var(--logo-ratio) * 34px), 154px);
+  justify-content: center;
+  width: 154px;
 }
-.marquee-logo-silhouette,
-.marquee-logo-color {
-  height: 100%;
-  inset: 0;
-  position: absolute;
-  width: 100%;
-}
-.marquee-logo-silhouette {
+.marquee-logo {
   background: #fff;
+  height: 100%;
   mask-image: var(--logo-mask);
   mask-mode: alpha;
   mask-position: center;
   mask-repeat: no-repeat;
   mask-size: contain;
+  width: clamp(58px, calc(var(--logo-ratio) * 34px), 154px);
 }
-.marquee-logo-color {
-  mask-image: radial-gradient(circle 120px at var(--lx, -200px) var(--ly, -200px), #000 0, #000 42%, transparent 100%);
-  object-fit: contain;
-  opacity: 0;
-  transition: opacity .15s ease;
-}
-.marquee-mask[data-lantern-active="true"] .marquee-logo-color { opacity: 1; }
-.marquee-role { color: var(--text-4); font: 9px/1 var(--font-mono); letter-spacing: .12em; white-space: nowrap; }
+.marquee-role { color: var(--text-4); font: 9px/1 var(--font-mono); letter-spacing: .12em; transition: color .3s ease; white-space: nowrap; }
+.marquee-item:hover .marquee-role { color: var(--accent); }
 @keyframes om-marquee { to { transform: translateX(-50%); } }
 
 .open-source-showcase h2, .reports-section h2, .center-cta h2, .network-directory h2, .channel-links h2 { font: 300 44px/1.1 var(--font-display); margin: 18px 0 38px; }
