@@ -7,23 +7,21 @@
     "figure": "FIG 01",
     "affiliation": "LINUX FOUNDATION AI & DATA",
     "title": "Cross-vendor GPU computing",
-    "text": "Kompute provides portable GPU compute across hardware vendors. The project is maintained in the open alongside Linux Foundation AI & Data and NumFOCUS.",
+    "text": "A general-purpose GPU compute framework built on Vulkan for cross-vendor graphics cards. It supports asynchronous, mobile-enabled GPU processing.",
+    "donationText": "The Institute donated Kompute to the Linux Foundation in 2021.",
+    "donationHref": "https://lfaidata.foundation/blog/2021/08/26/kompute-joins-lf-ai-data-as-new-sandbox-project/",
     "metrics": [
       {
-        "value": "2.1k",
+        "value": "2.5k",
         "label": "GITHUB STARS"
       },
       {
-        "value": "38",
+        "value": "42",
         "label": "CONTRIBUTORS"
       },
       {
-        "value": "160+",
-        "label": "RELEASES"
-      },
-      {
-        "value": "Apache-2.0",
-        "label": "LICENCE"
+        "value": "197",
+        "label": "FORKS"
       }
     ],
     "tags": [
@@ -33,13 +31,21 @@
       "NumFOCUS",
       "Awesome AI Guidelines"
     ],
-    "linkLabel": "View Kompute on GitHub →",
-    "linkHref": "https://github.com/KomputeProject/kompute",
-    "siteHref": "https://kompute.cc"
+    "actions": [
+      {
+        "label": "View on GitHub",
+        "href": "https://github.com/KomputeProject/kompute",
+        "kind": "primary"
+      },
+      {
+        "label": "kompute.cc",
+        "href": "https://kompute.cc",
+        "kind": ""
+      }
+    ]
   },
   "xai": {
     "figure": "FIG 02 — XAI PIPELINE",
-    "badge": "ALPHA",
     "stages": [
       {
         "title": "Data analysis",
@@ -57,52 +63,43 @@
     "title": "XAI Explainability Framework",
     "text": "Explainability and bias mitigation across three stages, combining technical tools with the organisational processes around them.",
     "stats": [
-      "1.4k STARS",
-      "21 CONTRIBUTORS",
-      "ALPHA — ACTIVE"
+      "1.3k STARS",
+      "3 CONTRIBUTORS"
     ],
     "linkLabel": "Open the framework →",
     "linkHref": "/open-source/"
   },
   "ecosystem": {
     "leftHeading": "CATEGORY",
-    "rightHeading": "TOOLING TRACKED",
+    "rightHeading": "CATEGORIES",
     "rows": [
       {
-        "title": "Serving & inference",
-        "count": "48"
+        "title": "Serving & inference"
       },
       {
-        "title": "Orchestration & pipelines",
-        "count": "37"
+        "title": "Orchestration & pipelines"
       },
       {
-        "title": "Monitoring & observability",
-        "count": "31"
+        "title": "Monitoring & observability"
       },
       {
-        "title": "Feature & vector stores",
-        "count": "24"
+        "title": "Feature & vector stores"
       },
       {
-        "title": "Explainability & fairness",
-        "count": "22"
+        "title": "Explainability & fairness"
       },
       {
-        "title": "ML security",
-        "count": "17"
+        "title": "ML security"
       },
       {
-        "title": "GPU & acceleration",
-        "count": "15"
+        "title": "GPU & acceleration"
       }
     ],
     "title": "Production ML open-source list",
     "text": "The community-maintained catalogue of production ML and MLOps tooling, curated weekly.",
     "stats": [
-      "10.2k STARS",
-      "230+ CONTRIBUTORS",
-      "260 TOOLS TRACKED"
+      "20.8k STARS",
+      "210 CONTRIBUTORS"
     ],
     "linkLabel": "Browse the ecosystem on GitHub →",
     "linkHref": "https://github.com/EthicalML/awesome-production-machine-learning",
@@ -111,7 +108,6 @@
   },
   "kaos": {
     "figure": "FIG 04",
-    "badge": "NEW",
     "title": "K8s Agent OS (KAOS)",
     "text": "An open-source control plane for running autonomous agents under operational constraints. It provides scoped credentials, sandboxed execution, budget and time-horizon limits, human approval gates and a replayable audit trail. These controls implement Principle 09 in the infrastructure.",
     "capabilities": [
@@ -141,10 +137,10 @@
       }
     ],
     "stats": [
-      "EARLY ACCESS",
-      "9 CONTRIBUTORS",
+      "268 STARS",
+      "5 CONTRIBUTORS",
       "APACHE-2.0",
-      "K8S 1.29+"
+      "K8S ≥1.28"
     ],
     "actions": [
       {

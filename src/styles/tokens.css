@@ -1104,6 +1104,7 @@ form[data-state="error"] .form-confirmation { color: var(--warn); font: var(--bo
 .oss-metrics span, .oss-statline { color: var(--text-3); font: var(--mono-10)/1.4 var(--font-mono); letter-spacing: .08em; }
 .oss-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
 .oss-tags span { border: 1px solid rgba(255,255,255,.14); border-radius: 999px; color: var(--text-2); font: var(--mono-10-5)/1 var(--font-mono); padding: 8px 12px; }
+.oss-copy > .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
 .fixed-canvas { height: 440px; min-height: 220px; position: relative; }
 .fixed-canvas canvas, .kaos-canvas-mount canvas { height: 100%; inset: 0; position: absolute; width: 100%; }
 .oss-pair { display: grid; gap: 26px; grid-template-columns: 1fr 1fr; margin-top: 26px; }

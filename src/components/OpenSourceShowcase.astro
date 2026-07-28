@@ -11,12 +11,12 @@ const { compact = false } = Astro.props;
       <p class="figure-label"><span>{projects.kompute.figure}</span><span>{projects.kompute.affiliation}</span></p>
       <h3>{projects.kompute.title}</h3>
       <p>{projects.kompute.text}</p>
+      <p><a href={projects.kompute.donationHref} rel="noopener">{projects.kompute.donationText}</a></p>
       <div class="oss-metrics">
         {projects.kompute.metrics.map(({ value, label }) => <div><strong>{value}</strong><span>{label}</span></div>)}
       </div>
       <div class="oss-tags">{projects.kompute.tags.map((tag)=><span>{tag}</span>)}</div>
-      <a href={projects.kompute.linkHref} rel="noopener">{projects.kompute.linkLabel}</a>
-      {projects.kompute.siteHref && <a href={projects.kompute.siteHref} rel="noopener">kompute.cc ↗</a>}
+      <div class="actions">{projects.kompute.actions.map(({ label, href, kind }) => <a class:list={['button', kind]} href={href} rel="noopener">{label}</a>)}</div>
     </div>
     <div class="fixed-canvas cube-mount"><canvas data-widget="kompute-cube" aria-label="Animated 27-cubie Rubik's cube"></canvas></div>
   </article>
@@ -24,7 +24,7 @@ const { compact = false } = Astro.props;
   <div class="oss-pair">
     <article class="oss-half">
       <div class="oss-preview xai-preview">
-        <p class="figure-label"><span>{projects.xai.figure}</span><span class="warn">{projects.xai.badge}</span></p>
+        <p class="figure-label"><span>{projects.xai.figure}</span></p>
         <div class="xai-stages">{projects.xai.stages.map(({ title, detail }) => <div><p><span>{title}</span><small>{detail}</small></p><i><b></b></i></div>)}</div>
       </div>
       <h3>{projects.xai.title}</h3>
@@ -35,7 +35,7 @@ const { compact = false } = Astro.props;
     <article class="oss-half">
       <div class="oss-preview ecosystem-preview">
         <p class="figure-label"><span>{projects.ecosystem.leftHeading}</span><span>{projects.ecosystem.rightHeading}</span></p>
-        <div>{projects.ecosystem.rows.map(({ title, count }) => <p><span>{title}</span><small>{count}</small></p>)}</div>
+        <div>{projects.ecosystem.rows.map(({ title }) => <p><span>{title}</span></p>)}</div>
       </div>
       <h3>{projects.ecosystem.title}</h3>
       <p>{projects.ecosystem.text}</p>
@@ -48,7 +48,7 @@ const { compact = false } = Astro.props;
 
   <article class="kaos-feature">
     <div>
-      <p class="figure-label"><span>{projects.kaos.figure}</span><span class="new-pill">{projects.kaos.badge}</span></p>
+      <p class="figure-label"><span>{projects.kaos.figure}</span></p>
       <h3>{projects.kaos.title}</h3>
       <p>{projects.kaos.text}</p>
       <div class="kaos-capabilities">{projects.kaos.capabilities.map(({ name, detail })=><div><span>{name}</span><strong>{detail}</strong></div>)}</div>
