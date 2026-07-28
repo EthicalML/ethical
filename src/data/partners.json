@@ -50,7 +50,7 @@
   {
     "name": "OWASP",
     "slug": "owasp",
-    "role": "MLSECOPS COLLABORATION",
+    "role": "Agent Security Review",
     "logo": "owasp-logo.svg",
     "detail": "The MLSecOps Top 10 maps ten vulnerability classes from OWASP categories onto the ML lifecycle, from unrestricted model endpoints to supply-chain risk in ML code.",
     "links": [
@@ -80,7 +80,7 @@
   {
     "name": "NumFOCUS",
     "slug": "numfocus",
-    "role": "OSS Collaboration",
+    "role": "Case Study",
     "logo": "numfocus-logo.png",
     "detail": "Kompute is cross-vendor GPU acceleration work maintained alongside Linux Foundation AI & Data and NumFOCUS.",
     "links": [
