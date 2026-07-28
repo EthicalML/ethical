@@ -1152,6 +1152,7 @@ form[data-state="error"] .form-confirmation { color: var(--warn); font: var(--bo
 .initiative-pair > article { background: linear-gradient(180deg,rgba(255,255,255,.035),transparent); border: 1px solid var(--hairline-card); border-radius: 18px; padding: 26px; }
 .initiative-pair > article > h3 { font-size: 21px; font-weight: 500; margin: 24px 0 0; }
 .initiative-pair > article > p { color: var(--text-2); font-size: 14.5px; line-height: 1.62; }
+.initiative-pair > article > p a { color: var(--accent); }
 .initiative-pair > article > a { color: var(--accent); font-size: 14px; }
 .initiative-preview { background: radial-gradient(70% 100% at 70% 0%,var(--accent-wash-16),var(--bg-inset) 70%); border: 1px solid rgba(255,255,255,.09); border-radius: 14px; padding: 22px; }
 .initiative-preview header { align-items: center; display: flex; justify-content: space-between; }

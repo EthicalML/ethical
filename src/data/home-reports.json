@@ -1,5 +1,5 @@
 {
-  "eyebrow": "04 — REPORTS, DATA & INITIATIVES",
+  "eyebrow": "04 — REPORTS & INITIATIVES",
   "title": "The State of Production ML",
   "intro": "Two annual practitioner surveys — context, tools, scope and statistics. Choose a question, compare 2024 with 2025, and select any answer to read what it means for the principles.",
   "actions": [
@@ -39,7 +39,9 @@
       {"owasp": "Logging & monitoring failures", "mlsecops": "Observability and lineage failures"}
     ],
     "cardTitle": "MLSecOps Top 10",
-    "cardText": "A vulnerability taxonomy for the machine-learning lifecycle, with flawed-ML case studies and mitigations — developed alongside Linux Foundation Trusted AI work.",
+    "committeeHref": "https://lfaidata.foundation/groups/security-compliance-work-group/",
+    "articleHref": "https://lfaidata.foundation/blog/2023/06/15/machine-learning-system-security-risks-best-practices/",
+    "owaspHref": "https://genai.owasp.org/2025/12/09/owasp-top-10-for-agentic-applications-the-benchmark-for-agentic-security-in-the-age-of-autonomous-ai/",
     "linkLabel": "Read the top 10 →",
     "linkHref": "/frameworks/mlsecops/"
   }

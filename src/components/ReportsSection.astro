@@ -30,7 +30,9 @@ import reports from '../data/home-reports.json';
         {reports.mlsecops.rows.map(({ owasp, mlsecops }) => <p><span>{owasp}</span><strong>{mlsecops}</strong></p>)}
       </div>
       <h3>{reports.mlsecops.cardTitle}</h3>
-      <p>{reports.mlsecops.cardText}</p>
+      <p>
+        The Institute established the <a href={reports.mlsecops.committeeHref} rel="noopener">ML Security Committee at LF AI & Data</a> and published <a href={reports.mlsecops.articleHref} rel="noopener">machine-learning system security best practices</a> in 2023. Its security work includes joint work with OpenSSF and LF AI & Data. The Institute is also an active reviewer of <a href={reports.mlsecops.owaspHref} rel="noopener">OWASP's agentic-security work</a>.
+      </p>
       <a href={reports.mlsecops.linkHref}>{reports.mlsecops.linkLabel}</a>
     </article>
   </div>
