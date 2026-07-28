@@ -394,9 +394,9 @@ h3 {
 .hero-typewriter-cursor {
   background: var(--typewriter-cursor);
   display: inline-block;
-  height: .78em;
-  vertical-align: baseline;
-  width: .58ch;
+  height: 1.15em;
+  vertical-align: -.14em;
+  width: .72ch;
 }
 .hero-subtitle[data-typewriter-phase="dwell"] .hero-typewriter-cursor {
   animation: typewriter-cursor-blink var(--typewriter-cursor-blink) steps(1, end) infinite;
