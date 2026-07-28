@@ -3,11 +3,11 @@ import copy from '../data/network.json';
 import sectors from '../data/network-sectors.json';
 import issues from '../data/newsletter-issues.json';
 import site from '../data/site.json';
-const { variant, title, stats = [] } = Astro.props;
+const { variant, title, stats = [], homepage = false } = Astro.props;
 ---
 
 {(variant === 'network-split' || variant === 'contact-full') && (
-  <section id="join" class:list={['join-section', variant === 'contact-full' && 'contact-full']} aria-labelledby="network-heading" data-reveal>
+  <section id="join" class:list={['join-section', variant === 'contact-full' && 'contact-full', homepage && 'home-section']} aria-labelledby="network-heading" data-reveal>
     {variant !== 'contact-full' && <p class="eyebrow">{copy.homeEyebrow}</p>}
     <div class="network-split">
       <div>
@@ -32,7 +32,7 @@ const { variant, title, stats = [] } = Astro.props;
         data-demo-confirmation={copy.form.demoConfirmation}
         data-error={copy.form.error}
       >
-      <header><span>{copy.form.eyebrow}</span><h3>{copy.form.title}</h3></header>
+      <header><h3>{copy.form.title}</h3></header>
       <div class="form-fields">
         {copy.form.fields.map(({ label, name, type, placeholder, autocomplete, wide }) => <label class:list={[wide && 'wide']}>{label} <input name={name} type={type} autocomplete={autocomplete} placeholder={placeholder} required={name === 'name' || name === 'email'} /></label>)}
       </div>

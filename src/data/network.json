@@ -6,8 +6,7 @@
   "sectorEyebrow": "WHO IS HERE",
   "issuesEyebrow": "RECENT ISSUES",
   "form": {
-    "eyebrow": "ONE FORM",
-    "title": "Contact, subscribe or apply",
+    "title": "Contact form",
     "fields": [
       {"label": "Name", "name": "name", "type": "text", "placeholder": "Alex Moreau", "autocomplete": "name"},
       {"label": "Email", "name": "email", "type": "email", "placeholder": "you@organisation.org", "autocomplete": "email"},

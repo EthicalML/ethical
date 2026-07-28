@@ -3,7 +3,7 @@ import SurveyExplorer from './SurveyExplorer.tsx';
 import reports from '../data/home-reports.json';
 ---
 
-<section id="reports" class="reports-section" data-reveal>
+<section id="reports" class="reports-section home-section" data-reveal>
   <header>
     <div>
       <p class="eyebrow">{reports.eyebrow}</p>
@@ -15,25 +15,29 @@ import reports from '../data/home-reports.json';
   <div class="home-survey-card"><SurveyExplorer client:visible /></div>
   <div class="initiative-pair">
     <article>
-      <div class="initiative-preview">
-        <header><span>{reports.maturity.eyebrow}</span><strong>{reports.maturity.score}<small>{reports.maturity.total}</small></strong></header>
-        <h4>{reports.maturity.title}</h4>
-        {reports.maturity.criteria.map(({ item, reference }, index) => <p><span>{String(index + 1).padStart(2, '0')}</span>{item}<i>{reference}</i></p>)}
+      <div class="initiative-preview governance-preview">
+        <header><span>{reports.governance.previewEyebrow}</span><span>{reports.governance.previewLabel}</span></header>
+        <h4>{reports.governance.previewTitle}</h4>
+        {reports.governance.steps.map(({ label, detail }, index) => <p><span>{String(index + 1).padStart(2, '0')}</span>{label}<i>{detail}</i></p>)}
       </div>
-      <h3>{reports.maturity.cardTitle}</h3>
-      <p>{reports.maturity.cardText}</p>
-      <a href={reports.maturity.linkHref}>{reports.maturity.linkLabel}</a>
+      <p class="eyebrow">{reports.governance.eyebrow}</p>
+      <h3>{reports.governance.title}</h3>
+      <p>{reports.governance.text}</p>
+      <div class="initiative-actions">
+        {reports.governance.actions.map(({ label, href, kind }) => <a class:list={['button', kind]} href={href} rel={href.startsWith('http') ? 'noopener' : undefined}>{label}</a>)}
+      </div>
     </article>
     <article>
       <div class="initiative-preview mlsecops-preview">
-        <header><span>{reports.mlsecops.leftHeading}</span><span>{reports.mlsecops.rightHeading}</span></header>
-        {reports.mlsecops.rows.map(({ owasp, mlsecops }) => <p><span>{owasp}</span><strong>{mlsecops}</strong></p>)}
+        <header><span>{reports.security.leftHeading}</span><span>{reports.security.rightHeading}</span></header>
+        {reports.security.rows.map(({ owasp, mlsecops }) => <p><span>{owasp}</span><strong>{mlsecops}</strong></p>)}
       </div>
-      <h3>{reports.mlsecops.cardTitle}</h3>
-      <p>
-        The Institute established the <a href={reports.mlsecops.committeeHref} rel="noopener">ML Security Committee at LF AI & Data</a> and published <a href={reports.mlsecops.articleHref} rel="noopener">machine-learning system security best practices</a> in 2023. Its security work includes joint work with OpenSSF and LF AI & Data. The Institute is also an active reviewer of <a href={reports.mlsecops.owaspHref} rel="noopener">OWASP's agentic-security work</a>.
-      </p>
-      <a href={reports.mlsecops.linkHref}>{reports.mlsecops.linkLabel}</a>
+      <p class="eyebrow">{reports.security.eyebrow}</p>
+      <h3>{reports.security.title}</h3>
+      <p>{reports.security.text}</p>
+      <div class="initiative-actions">
+        {reports.security.actions.map(({ label, href, kind }) => <a class:list={['button', kind]} href={href} rel={href.startsWith('http') ? 'noopener' : undefined}>{label}</a>)}
+      </div>
     </article>
   </div>
 </section>

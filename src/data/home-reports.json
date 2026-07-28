@@ -6,27 +6,27 @@
     {"label": "Read the 2025 report", "href": "/data/survey-explorer/", "kind": "primary"},
     {"label": "2024 edition", "href": "/data/survey-explorer/", "kind": ""}
   ],
-  "maturity": {
-    "eyebrow": "SUPPLIER ASSESSMENT",
-    "score": "8",
-    "total": "/8",
-    "title": "Machine Learning Maturity Model ⌄",
-    "criteria": [
-      {"item": "Practical benchmarks", "reference": "P06"},
-      {"item": "Explainability by justification", "reference": "P03"},
-      {"item": "Infrastructure for reproducible operations", "reference": "P04"},
-      {"item": "Data and model assessment processes", "reference": "P02"},
-      {"item": "Privacy-enforcing infrastructure", "reference": "P07"},
-      {"item": "Operational process design", "reference": "P01"},
-      {"item": "Change-management capabilities", "reference": "P05"},
-      {"item": "Security-risk mitigations", "reference": "P08"}
+  "governance": {
+    "eyebrow": "Governance",
+    "previewEyebrow": "AI-RFX",
+    "previewLabel": "PROCUREMENT FRAMEWORK",
+    "previewTitle": "From requirements to supplier evidence",
+    "steps": [
+      {"label": "Define governance requirements", "detail": "RFP"},
+      {"label": "Set evaluation criteria", "detail": "SCORE"},
+      {"label": "Request supplier evidence", "detail": "EVIDENCE"},
+      {"label": "Compare and document responses", "detail": "REVIEW"},
+      {"label": "Carry obligations into delivery", "detail": "CONTROL"}
     ],
-    "cardTitle": "AI-RFX Procurement Framework",
-    "cardText": "Open-source RFP and tender templates for organisations procuring, building or deploying AI. The templates define safety, quality and technical-maturity criteria for the model and its surrounding system.",
-    "linkLabel": "Request the templates →",
-    "linkHref": "/frameworks/maturity-model/"
+    "title": "AI governance & procurement",
+    "text": "AI-RFX provides open-source RFP and tender templates for organisations procuring AI. It turns governance requirements into supplier questions, evaluation criteria and evidence requests across the procurement lifecycle.",
+    "actions": [
+      {"label": "Open AI-RFX templates ↗", "href": "https://github.com/EthicalML/ai-rfx-procurement-framework", "kind": "primary"},
+      {"label": "ML Maturity Model →", "href": "/frameworks/maturity-model/", "kind": ""}
+    ]
   },
-  "mlsecops": {
+  "security": {
+    "eyebrow": "Security",
     "leftHeading": "OWASP CATEGORY",
     "rightHeading": "MLSECOPS EQUIVALENT",
     "rows": [
@@ -38,11 +38,13 @@
       {"owasp": "Vulnerable components", "mlsecops": "Supply-chain vulnerabilities in ML code"},
       {"owasp": "Logging & monitoring failures", "mlsecops": "Observability and lineage failures"}
     ],
-    "cardTitle": "MLSecOps Top 10",
-    "committeeHref": "https://lfaidata.foundation/groups/security-compliance-work-group/",
-    "articleHref": "https://lfaidata.foundation/blog/2023/06/15/machine-learning-system-security-risks-best-practices/",
-    "owaspHref": "https://genai.owasp.org/2025/12/09/owasp-top-10-for-agentic-applications-the-benchmark-for-agentic-security-in-the-age-of-autonomous-ai/",
-    "linkLabel": "Read the top 10 →",
-    "linkHref": "/frameworks/mlsecops/"
+    "title": "ML & agent security",
+    "text": "The Institute's security programme spans the MLSecOps Top 10, the ML Security Committee at LF AI & Data, partnership work with OpenSSF, and active review of OWASP guidance for agentic systems.",
+    "actions": [
+      {"label": "MLSecOps Top 10 →", "href": "/frameworks/mlsecops/", "kind": "primary"},
+      {"label": "LF ML Security Committee ↗", "href": "https://lfaidata.foundation/groups/security-compliance-work-group/", "kind": ""},
+      {"label": "Security best practices ↗", "href": "https://lfaidata.foundation/blog/2023/06/15/machine-learning-system-security-risks-best-practices/", "kind": ""},
+      {"label": "OWASP agentic reviews ↗", "href": "https://genai.owasp.org/2025/12/09/owasp-top-10-for-agentic-applications-the-benchmark-for-agentic-security-in-the-age-of-autonomous-ai/", "kind": ""}
+    ]
   }
 }
