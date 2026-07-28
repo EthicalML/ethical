@@ -3,24 +3,114 @@ import copy from '../data/network.json';
 import sectors from '../data/network-sectors.json';
 import issues from '../data/newsletter-issues.json';
 import site from '../data/site.json';
-const { variant, title, stats = [], homepage = false } = Astro.props;
+
+interface Stat {
+  value: string;
+  label: string;
+}
+
+interface Props {
+  variant: string;
+  title: string;
+  stats?: Stat[];
+  homepage?: boolean;
+}
+
+const {
+  variant,
+  title,
+  stats = [],
+  homepage = false,
+} = Astro.props;
+
+const isSupportedVariant = variant === 'network-split' || variant === 'contact-full';
+const isContactPage = variant === 'contact-full';
+const shouldShowHomeEyebrow = !isContactPage;
+const sectionClasses = [
+  'join-section',
+  isContactPage && 'contact-full',
+  homepage && 'home-section',
+];
 ---
 
-{(variant === 'network-split' || variant === 'contact-full') && (
-  <section id="join" class:list={['join-section', variant === 'contact-full' && 'contact-full', homepage && 'home-section']} aria-labelledby="network-heading" data-reveal>
-    {variant !== 'contact-full' && <p class="eyebrow">{copy.homeEyebrow}</p>}
+{isSupportedVariant && (
+  <section
+    id="join"
+    class:list={sectionClasses}
+    aria-labelledby="network-heading"
+    data-reveal
+  >
+    {shouldShowHomeEyebrow && (
+      <p class="eyebrow">
+        {copy.homeEyebrow}
+      </p>
+    )}
     <div class="network-split">
       <div>
-      {variant === 'contact-full' && <p class="eyebrow">{copy.contactEyebrow}</p>}
-      <h2 id="network-heading">{title}</h2>
-      {variant === 'contact-full'
-        ? <p>{copy.contactIntro}</p>
-        : <><p>{copy.homeIntro}</p><div class="network-stats">{stats.map((stat) => (
-          <div>
-            <strong>{stat.value}</strong>
-            <span>{stat.label}</span>
-          </div>
-        ))}</div><div class="network-lists"><div><p class="eyebrow">{copy.sectorEyebrow}</p>{sectors.map(({ name, value })=><span><i>{name}</i><b>{value}</b></span>)}</div><div><p class="eyebrow">{copy.issuesEyebrow}</p>{issues.map(({ number, title })=><a href="/network/"><b>{number}</b><i>{title}</i></a>)}</div></div></>}
+        {isContactPage && (
+          <p class="eyebrow">
+            {copy.contactEyebrow}
+          </p>
+        )}
+        <h2 id="network-heading">
+          {title}
+        </h2>
+        {isContactPage && (
+          <p>
+            {copy.contactIntro}
+          </p>
+        )}
+        {!isContactPage && (
+          <>
+            <p>
+              {copy.homeIntro}
+            </p>
+            <div class="network-stats">
+              {stats.map((stat) => (
+                <div>
+                  <strong>
+                    {stat.value}
+                  </strong>
+                  <span>
+                    {stat.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div class="network-lists">
+              <div>
+                <p class="eyebrow">
+                  {copy.sectorEyebrow}
+                </p>
+                {sectors.map(({ name, value }) => (
+                  <span>
+                    <i>
+                      {name}
+                    </i>
+                    <b>
+                      {value}
+                    </b>
+                  </span>
+                ))}
+              </div>
+              <div>
+                <p class="eyebrow">
+                  {copy.issuesEyebrow}
+                </p>
+                {issues.map(({ number, title: issueTitle }) => (
+                  <a href="/network/">
+                    <b>
+                      {number}
+                    </b>
+                    <i>
+                      {issueTitle}
+                    </i>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
       </div>
       <form
         id="contact"
@@ -32,19 +122,74 @@ const { variant, title, stats = [], homepage = false } = Astro.props;
         data-demo-confirmation={copy.form.demoConfirmation}
         data-error={copy.form.error}
       >
-      <header><h3>{copy.form.title}</h3></header>
-      <div class="form-fields">
-        {copy.form.fields.map(({ label, name, type, placeholder, autocomplete, wide }) => <label class:list={[wide && 'wide']}>{label} <input name={name} type={type} autocomplete={autocomplete} placeholder={placeholder} required={name === 'name' || name === 'email'} /></label>)}
-      </div>
-      <fieldset>
-        {copy.form.interests.map(({ value, label, checked }) => <label><input type="checkbox" name="interests" value={value} checked={checked} data-application-interest={value === 'network' ? '' : undefined} /> {label}</label>)}
-      </fieldset>
-      <small class="application-helper" data-application-helper hidden>Please provide enough information to consider your application.</small>
-      <label class="form-honeypot" aria-hidden="true">Website <input name="website" type="text" autocomplete="off" tabindex="-1" /></label>
-      <input name="startedAt" type="hidden" value="" />
-      <button type="submit">{copy.form.button}</button>
-      <small>{copy.form.disclaimer}</small>
-      <p class="form-confirmation" data-form-confirmation role="status" hidden></p>
+        <header>
+          <h3>
+            {copy.form.title}
+          </h3>
+        </header>
+        <div class="form-fields">
+          {copy.form.fields.map((field) => (
+            <label class:list={[field.wide && 'wide']}>
+              {field.label}
+              {' '}
+              <input
+                name={field.name}
+                type={field.type as 'text' | 'email'}
+                autocomplete={field.autocomplete}
+                placeholder={field.placeholder}
+                required={field.name === 'name' || field.name === 'email'}
+              />
+            </label>
+          ))}
+        </div>
+        <fieldset>
+          {copy.form.interests.map((interest) => (
+            <label>
+              <input
+                type="checkbox"
+                name="interests"
+                value={interest.value}
+                checked={interest.checked}
+                data-application-interest={
+                  interest.value === 'network' ? '' : undefined
+                }
+              />
+              {' '}
+              {interest.label}
+            </label>
+          ))}
+        </fieldset>
+        <small
+          class="application-helper"
+          data-application-helper
+          hidden
+        >
+          Please provide enough information to consider your application.
+        </small>
+        <label class="form-honeypot" aria-hidden="true">
+          Website
+          {' '}
+          <input
+            name="website"
+            type="text"
+            autocomplete="off"
+            tabindex="-1"
+          />
+        </label>
+        <input name="startedAt" type="hidden" value="" />
+        <button type="submit">
+          {copy.form.button}
+        </button>
+        <small>
+          {copy.form.disclaimer}
+        </small>
+        <p
+          class="form-confirmation"
+          data-form-confirmation
+          role="status"
+          hidden
+        >
+        </p>
       </form>
     </div>
   </section>
