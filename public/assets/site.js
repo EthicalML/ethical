@@ -205,7 +205,49 @@
     });
   }
 
+  function setupMarqueeLanterns() {
+    if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+    document.querySelectorAll('[data-marquee-lantern]').forEach((marquee) => {
+      const logoFrames = [...marquee.querySelectorAll('.marquee-logo-frame')];
+      let pointer = null;
+      let frame = 0;
+
+      const paint = () => {
+        frame = 0;
+        if (!pointer) return;
+
+        const marqueeBox = marquee.getBoundingClientRect();
+        const boxes = logoFrames.map((logo) => logo.getBoundingClientRect());
+        marquee.style.setProperty('--mx', `${pointer.x - marqueeBox.left}px`);
+        marquee.style.setProperty('--my', `${pointer.y - marqueeBox.top}px`);
+        logoFrames.forEach((logo, index) => {
+          logo.style.setProperty('--lx', `${pointer.x - boxes[index].left}px`);
+          logo.style.setProperty('--ly', `${pointer.y - boxes[index].top}px`);
+        });
+      };
+
+      const queuePaint = (event) => {
+        pointer = { x: event.clientX, y: event.clientY };
+        if (!frame) frame = requestAnimationFrame(paint);
+      };
+
+      marquee.addEventListener('pointerenter', (event) => {
+        marquee.dataset.lanternActive = 'true';
+        queuePaint(event);
+      });
+      marquee.addEventListener('pointermove', queuePaint, { passive: true });
+      marquee.addEventListener('pointerleave', () => {
+        pointer = null;
+        marquee.dataset.lanternActive = 'false';
+        if (frame) cancelAnimationFrame(frame);
+        frame = 0;
+      });
+    });
+  }
+
   setupMenu();
   setupMobileMenu();
+  setupMarqueeLanterns();
   setupReveal();
 })();
