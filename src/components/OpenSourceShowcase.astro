@@ -1,8 +1,8 @@
 ---
 import projects from '../data/projects.json';
-const { compact = false } = Astro.props;
+const { compact = false, homepage = false } = Astro.props;
 ---
-<section id="opensource" class:list={['open-source-prototype', compact && 'compact']} data-reveal>
+<section id="opensource" class:list={['open-source-prototype', compact && 'compact', homepage && 'home-section']} data-reveal>
   <p class="eyebrow">{projects.section.eyebrow}</p>
   <h2>{projects.section.title}</h2>
 

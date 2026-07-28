@@ -1,9 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
 const principles = (await getCollection('principles')).sort((a, b) => a.data.number.localeCompare(b.data.number));
-const { eyebrow, heading, intro } = Astro.props;
+const { eyebrow, heading, intro, homepage = false } = Astro.props;
 ---
-<section id="principles" class="principles-explorer" data-principles data-reveal>
+<section id="principles" class:list={['principles-explorer', homepage && 'home-section']} data-principles data-reveal>
   <p class="eyebrow">{eyebrow}</p>
   <div class="principles-explorer-grid">
     <div>

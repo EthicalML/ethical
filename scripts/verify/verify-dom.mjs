@@ -52,8 +52,28 @@ for (const route of routes) {
   });
 
   let formChecks = null;
+  let formContainment = null;
   const instituteForm = page.locator('[data-institute-form]');
   if (await instituteForm.count()) {
+    formContainment = await instituteForm.evaluate((form) => {
+      const card = form.closest('.network-split');
+      const formBox = form.getBoundingClientRect();
+      const cardBox = card.getBoundingClientRect();
+      const within = (outer, inner) => (
+        inner.left >= outer.left - .5
+        && inner.right <= outer.right + .5
+        && inner.top >= outer.top - .5
+        && inner.bottom <= outer.bottom + .5
+      );
+      const visibleChildren = [...form.querySelectorAll('.form-fields, .form-fields input, fieldset, button, form > small')]
+        .filter((element) => element.getClientRects().length && !element.closest('.form-honeypot'));
+      return {
+        formWithinCard: within(cardBox, formBox),
+        childrenWithinForm: visibleChildren.every((element) => within(formBox, element.getBoundingClientRect())),
+        formWidth: formBox.width,
+        cardWidth: cardBox.width,
+      };
+    });
     const applicationInterest = instituteForm.locator('[data-application-interest]');
     let applicationHelper = null;
     if (await applicationInterest.count()) {
@@ -88,6 +108,7 @@ for (const route of routes) {
         },
       };
     }, applicationHelper);
+    formChecks.containment = formContainment;
   }
 
   let homepageInteractions = null;
@@ -289,6 +310,31 @@ for (const route of routes) {
           flexWrap: getComputedStyle(document.querySelector('.survey-tabs')).flexWrap,
           overflowX: getComputedStyle(document.querySelector('.survey-tabs')).overflowX,
         },
+        homeSections: [...document.querySelectorAll('main > .home-section')].map((section) => {
+          const style = getComputedStyle(section);
+          return {
+            id: section.id,
+            borderTopWidth: style.borderTopWidth,
+            paddingTop: style.paddingTop,
+          };
+        }),
+        surveyPaddingBottom: getComputedStyle(document.querySelector('.home-survey-card')).paddingBottom,
+        footnoteStandards: [...document.querySelectorAll('.footnote-band .standards a')].map((link) => {
+          const style = getComputedStyle(link);
+          return {
+            color: style.color,
+            fontFamily: style.fontFamily,
+            fontSize: style.fontSize,
+          };
+        }),
+        initiativeCards: [...document.querySelectorAll('.initiative-pair > article')].map((card) => ({
+          eyebrow: card.querySelector(':scope > .eyebrow')?.textContent,
+          heading: card.querySelector(':scope > h3')?.textContent,
+          buttons: [...card.querySelectorAll('.initiative-actions .button')].map((button) => ({
+            label: button.textContent,
+            primary: button.classList.contains('primary'),
+          })),
+        })),
       } : null,
       kaosMounts: [...document.querySelectorAll('main [data-widget="kaos-graph"]')]
         .map((host) => host.getBoundingClientRect().height),
@@ -322,7 +368,9 @@ for (const route of routes) {
     || formChecks.honeypot.left !== '-10000px'
     || formChecks.honeypot.position !== 'absolute'
     || formChecks.honeypot.width !== '1px'
-  )) failures.push('form demo confirmation, timing token, or honeypot is incomplete');
+    || !formChecks.containment?.formWithinCard
+    || !formChecks.containment?.childrenWithinForm
+  )) failures.push('form demo state, anti-spam fields, or card containment is incomplete');
   if (isMobile && checks.minTouchTargetHeight < 43.5) {
     failures.push(`touch target is ${checks.minTouchTargetHeight}px high; expected at least 44px`);
   }
@@ -339,6 +387,30 @@ for (const route of routes) {
       count < 2 || readHref !== `/principles/${String(index + 1).padStart(2, '0')}/`
     ))) failures.push('homepage principle pills or Read principle targets are incomplete');
     if (!checks.homepage.xaiFramesChanged) failures.push('homepage XAI scan pixels do not change over time');
+    const expectedHomePadding = isMobile ? '96px' : '120px';
+    if (
+      checks.homepage.homeSections.length !== 5
+      || checks.homepage.homeSections.some(({ borderTopWidth, paddingTop }) => (
+        borderTopWidth !== '1px' || paddingTop !== expectedHomePadding
+      ))
+    ) failures.push('homepage major-section divider or spacing rhythm is inconsistent');
+    if (checks.homepage.surveyPaddingBottom !== (viewport.width <= 600 ? '28px' : isMobile ? '34px' : '40px')) {
+      failures.push('homepage survey card bottom padding is incorrect');
+    }
+    if (checks.homepage.footnoteStandards.some(({ color, fontFamily, fontSize }) => (
+      color !== 'rgba(244, 242, 238, 0.42)'
+      || !fontFamily.includes('Geist Mono')
+      || fontSize !== '9.5px'
+    ))) failures.push('homepage footnote standards type tier has regressed');
+    if (
+      checks.homepage.initiativeCards[0]?.eyebrow !== 'Governance'
+      || checks.homepage.initiativeCards[0]?.heading !== 'AI governance & procurement'
+      || checks.homepage.initiativeCards[0]?.buttons.filter(({ label }) => label === 'ML Maturity Model →').length !== 1
+      || !checks.homepage.initiativeCards[0]?.buttons[0]?.primary
+      || checks.homepage.initiativeCards[1]?.eyebrow !== 'Security'
+      || checks.homepage.initiativeCards[1]?.heading !== 'ML & agent security'
+      || !checks.homepage.initiativeCards[1]?.buttons[0]?.primary
+    ) failures.push('homepage governance/security card structure is incomplete');
     if (checks.homepage.formWash !== 'radial-gradient(70% 90% at 70% 0%, rgba(94, 230, 160, 0.14), rgb(15, 16, 15) 72%)') {
       failures.push('homepage form wash differs from the prototype');
     }
