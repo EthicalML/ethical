@@ -1332,6 +1332,7 @@ main > .home-section:last-child { padding-bottom: 120px; }
 .article-hero.canvas-variant { min-height: 650px; overflow: hidden; }
 .article-hero.canvas-variant > *:not(canvas) { position: relative; z-index: 2; }
 .article-hero.canvas-variant .hero-canvas { opacity: .85; }
+.article-hero.canvas-variant > .kaos-canvas-mount { height: 100%; inset: 0; margin: 0; opacity: .72; position: absolute; z-index: 0; }
 .section-intro { color: var(--text-2); line-height: 1.6; max-width: 560px; }
 
 .principles-explorer { display: block; }

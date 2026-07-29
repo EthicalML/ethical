@@ -51,7 +51,7 @@ const { reports } = Astro.props;
   <header>
     <div>
       <p class="eyebrow">{reports.eyebrow}</p>
-      <h2>{reports.title}</h2>
+      <h2 transition:name="survey-title">{reports.title}</h2>
       <p>{reports.intro}</p>
     </div>
     <nav>
@@ -81,7 +81,7 @@ const { reports } = Astro.props;
         }
       </div>
       <p class="eyebrow">{reports.governance.eyebrow}</p>
-      <h3>{reports.governance.title}</h3>
+      <h3 transition:name="initiative-governance-title">{reports.governance.title}</h3>
       <p>{reports.governance.text}</p>
       <div class="initiative-actions">
         {
@@ -108,7 +108,7 @@ const { reports } = Astro.props;
         }
       </div>
       <p class="eyebrow">{reports.security.eyebrow}</p>
-      <h3>{reports.security.title}</h3>
+      <h3 transition:name="initiative-security-title">{reports.security.title}</h3>
       <p>{reports.security.text}</p>
       <p>
         {reports.security.relatedIntro}{' '}

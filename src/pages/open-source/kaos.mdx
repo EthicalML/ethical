@@ -1,7 +1,7 @@
 ---
 title: K8s Agent OS (KAOS)
 description: KAOS provides a control plane for autonomous agents, with controls for tools, credentials, budgets, time, approval steps and audit records.
-eyebrow: OPEN SOURCE
+composed: true
 layout: ../../layouts/ProseLayout.astro
 capabilities:
   - capability: Scoped credentials
@@ -18,9 +18,9 @@ capabilities:
     detail: Record plans, tool calls, policy decisions, and outcomes.
 ---
 
-import { CapabilityTable, CTA, Feature, Metrics } from '../../components/prose/components.js';
+import { ArticleHero, CapabilityTable, CTA, Feature, Metrics } from '../../components/prose/components.js';
 
-KAOS provides a control plane for autonomous agents, with controls for tools, credentials, budgets, time, approval steps and audit records.
+<ArticleHero eyebrow="OPEN SOURCE" title={frontmatter.title} intro={frontmatter.description} canvas="kaos" />
 
 <Feature title="Bounded agency by design" widget="kaos-graph">
 

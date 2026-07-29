@@ -1,12 +1,13 @@
 ---
 import ArticleHeroCanvas from './ArticleHeroCanvas.astro';
+import KaosGraph from './KaosGraph.astro';
 
-const { eyebrow, title, intro, canvas = false } = Astro.props;
+const { eyebrow, title, intro, canvas = false, transitionName } = Astro.props;
 ---
 
 <header class:list={['article-hero', canvas && 'canvas-variant']} data-reveal>
-  {canvas && <ArticleHeroCanvas />}
+  {canvas === 'kaos' ? <KaosGraph embedded transitionName="kaos-canvas" /> : canvas && <ArticleHeroCanvas />}
   <p class="eyebrow">{eyebrow}</p>
-  <h1>{title}</h1>
+  <h1 transition:name={transitionName} style={transitionName ? `view-transition-name: ${transitionName}` : undefined}>{title}</h1>
   {intro && <p>{intro}</p>}
 </header>

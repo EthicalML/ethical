@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import KaosGraph from './KaosGraph.astro';
 
 interface Action {
   label: string;
@@ -188,12 +189,11 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     </div>
     <div class="kaos-panel">
       <p class="figure-label"><span>{projects.kaos.panelEyebrow}</span><span data-kaos-status>{projects.kaos.panelStatus}</span></p>
-      <kaos-graph class="kaos-canvas-mount"></kaos-graph>
+      <KaosGraph panel transitionName="kaos-canvas" />
     </div>
   </article>
 </section>
 
 <script>
-  import '../shared/canvas/KaosGraph';
   import '../shared/canvas/KomputeCube';
 </script>

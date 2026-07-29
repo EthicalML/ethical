@@ -22,7 +22,8 @@ const entries = partners.map(({ data: partner }) => ({
           class="partner-logo"
           role="img"
           aria-label={`${partner.name} logo`}
-          style={`--logo-mask: url("${partner.logo.src}"); --logo-ratio: ${partner.logo.width / partner.logo.height}`}
+          transition:name={`partner-logo-${partner.slug}`}
+          style={`--logo-mask: url("${partner.logo.src}"); --logo-ratio: ${partner.logo.width / partner.logo.height}; view-transition-name: partner-logo-${partner.slug}`}
         />
         <h2>{partner.name}</h2>
         {partner.role && (

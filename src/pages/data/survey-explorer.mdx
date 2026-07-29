@@ -7,7 +7,12 @@ layout: ../../layouts/ProseLayout.astro
 
 import { ArticleHero, SurveyExplorer } from '../../components/prose/components.js';
 
-<ArticleHero eyebrow="REPORTS & DATA / INTERACTIVE" title="Production ML survey comparison" intro="Compare practices reported in the 2024 and 2025 surveys." />
+<ArticleHero
+  eyebrow="REPORTS & DATA / INTERACTIVE"
+  title="Production ML survey comparison"
+  intro="Compare practices reported in the 2024 and 2025 surveys."
+  transitionName="survey-title"
+/>
 
 <section className="survey-shell" data-reveal>
   <SurveyExplorer />
