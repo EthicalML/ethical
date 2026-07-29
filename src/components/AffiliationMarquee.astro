@@ -26,7 +26,7 @@ const items = partners.map(({ data: partner }) => ({
               {items.map((item) => (
                 <a
                   class="marquee-item"
-                  href="/partners/"
+                  href={`/partners/#${item.slug}`}
                   tabindex={duplicate ? -1 : undefined}
                   data-marquee-item={duplicate ? undefined : ''}
                   data-partner-logo={item.slug}
