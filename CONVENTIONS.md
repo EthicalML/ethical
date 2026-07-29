@@ -47,8 +47,12 @@ All first-party client behaviour is TypeScript. Do not add first-party runtime J
 ## Motion
 
 - Long-lived-page behaviour uses custom elements or explicit `astro:before-swap`/`astro:after-swap` hooks.
-- Computed `transition:name` values always include the matching inline `view-transition-name`.
+- Morph sources set `view-transition-name` inline on pointerdown/click; singular destination names stay static, with inline companions for computed names.
+- Principle and phase cards are user-controlled only; they never rotate automatically.
 - Verify morphs against the production build; dev mode can hide missing computed names.
+- Stateful containers restore the state that makes a morph endpoint visible synchronously at mount.
+- Elements that must stay above a morphing group need their own named group and explicit `::view-transition-group` z-order.
+- Text morphs require identical strings at both endpoints.
 
 | Motion                      | Endpoints                                                     | Owners                                                |
 | --------------------------- | ------------------------------------------------------------- | ----------------------------------------------------- |
@@ -59,7 +63,6 @@ All first-party client behaviour is TypeScript. Do not add first-party runtime J
 | Initiative title morphs     | Homepage governance/security cards → maturity/MLSecOps heroes | `ReportsSection`, `ArticleHero`, `BaseLayout`         |
 | KAOS canvas morph           | Homepage KAOS card → KAOS hero canvas                         | `OpenSourceShowcase`, `KaosGraph`, `ArticleHero`      |
 | Partner logo morph          | Clicked marquee instance → matching directory logo            | `AffiliationMarquee`, `PartnerDirectory`              |
-| Glitch burst                | Navigation into a page with a glitch h1                       | `Motion`, `Hero`                                      |
 | Principle directional slide | `/principles/NN/` prev/next → adjacent principle              | `PrincipleLayout`, `Motion`, `tokens.css`             |
 
 ## MDX components
