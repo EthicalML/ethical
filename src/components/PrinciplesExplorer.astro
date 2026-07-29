@@ -22,7 +22,13 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
         <div class="principle-rows">
           {
             principles.map(({ data }, index) => (
-              <button type="button" class:list={{ active: index === 0 }} data-principle-row={index} data-principle-href={`/principles/${data.number}/`}>
+              <button
+                type="button"
+                class:list={{ active: index === 0 }}
+                data-principle-row={index}
+                data-principle-number={data.number}
+                data-principle-href={`/principles/${data.number}/`}
+              >
                 <>
                   <span>{data.number}</span>
                   <strong>{data.title}</strong>
@@ -109,6 +115,11 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
           }
         });
       };
+      const lastPrinciple = sessionStorage.getItem('lastPrinciple');
+      sessionStorage.removeItem('lastPrinciple');
+      const restoredIndex = rows.findIndex((row) => row.dataset.principleNumber === lastPrinciple);
+      if (restoredIndex >= 0) select(restoredIndex);
+
       rows.forEach((row, index) => {
         row.addEventListener(
           'mouseenter',

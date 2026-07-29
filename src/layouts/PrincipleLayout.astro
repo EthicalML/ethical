@@ -16,6 +16,7 @@ const next = number < 9 ? String(number + 1).padStart(2, '0') : undefined;
 ---
 
 <BaseLayout frontmatter={frontmatter}>
+  <principle-page-state data-principle-number={data.number}></principle-page-state>
   <article class="principle-prose" data-reveal transition:name="principle-page">
     {data.failure_modes && <p class="commitment">{data.commitment}</p>}
     <Content />
@@ -43,3 +44,16 @@ const next = number < 9 ? String(number + 1).padStart(2, '0') : undefined;
     }
   </nav>
 </BaseLayout>
+
+<script>
+  class PrinciplePageState extends HTMLElement {
+    connectedCallback() {
+      const number = this.dataset.principleNumber;
+      if (number) sessionStorage.setItem('lastPrinciple', number);
+    }
+  }
+
+  if (!customElements.get('principle-page-state')) {
+    customElements.define('principle-page-state', PrinciplePageState);
+  }
+</script>
