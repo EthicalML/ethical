@@ -131,7 +131,9 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
       <h3>{projects.xai.title}</h3>
       <p>{projects.xai.text}</p>
       <div class="oss-statline">{statline('xai').map((stat) => <span>{stat}</span>)}</div>
-      <a href={projects.xai.linkHref}>{projects.xai.linkLabel}</a>
+      <div class="actions">
+        <a class="button primary" href={projects.xai.linkHref}>{projects.xai.linkLabel}</a>
+      </div>
     </article>
     <article class="oss-half">
       <div class="oss-preview ecosystem-preview">
@@ -149,9 +151,10 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
       <h3>{projects.ecosystem.title}</h3>
       <p>{projects.ecosystem.text}</p>
       <div class="oss-statline">{statline('ecosystem').map((stat) => <span>{stat}</span>)}</div>
-      <a href={projects.ecosystem.linkHref} rel="noopener">{projects.ecosystem.linkLabel}</a>
-      {' · '}
-      <a href={projects.ecosystem.guidelinesHref} rel="noopener">{projects.ecosystem.guidelinesLabel}</a>
+      <div class="actions">
+        <a class="button primary" href={projects.ecosystem.linkHref} rel="noopener">{projects.ecosystem.linkLabel}</a>
+        <a class="button" href={projects.ecosystem.guidelinesHref} rel="noopener">{projects.ecosystem.guidelinesLabel}</a>
+      </div>
     </article>
   </div>
 
