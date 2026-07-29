@@ -3,7 +3,7 @@ import { file, glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
 const principles = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/principles' }),
+  loader: glob({ pattern: '0[1-9].md', base: './src/content/principles' }),
   schema: z.object({
     number: z.string(),
     title: z.string(),
