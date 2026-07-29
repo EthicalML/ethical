@@ -12,6 +12,7 @@ Per principle: **CURRENT** (commitment / failure_modes / controls / body as draf
 
 ---
 
+LGTM, but make sure DO NOT USE EMDASHES.
 ## P01 — Human augmentation
 - **Commitment (current):** "We commit to assess the consequences of incorrect predictions and, when reasonable, design systems with human-in-the-loop review processes." → **KEEP** (faithful to master).
 - **Failure modes (current):** Full automation in justice/healthcare/transport · No escalation path · Review in name only → **KEEP** (well-grounded in master's critical-domain examples).
