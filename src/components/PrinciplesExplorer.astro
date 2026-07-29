@@ -137,7 +137,12 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
         row.addEventListener(
           'click',
           () => {
-            select(index);
+            // Do not replay the `principle-in` entrance fade here: this click triggers the
+            // outgoing navigation, and the view-transition snapshot of the morph source (the
+            // detail title) is captured while that fade still holds the detail near opacity 0,
+            // which erases the forward morph. Select without animating so the source is fully
+            // opaque when snapshotted.
+            select(index, false);
             const href = row.dataset.principleHref;
             if (href) void navigate(href);
           },
