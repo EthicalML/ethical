@@ -33,6 +33,7 @@ const items = partners.map(({ data: partner }) => ({
                   data-morph-source={`partner-${item.slug}-${duplicate ? 'duplicate' : 'primary'}`}
                   data-morph-name={`partner-logo-${item.slug}`}
                   data-morph-pair={`partner-${item.slug}-${duplicate ? 'duplicate' : 'primary'}`}
+                  data-morph-one-way
                   aria-label={duplicate ? undefined : item.role ? `${item.name}: ${item.role}` : item.name}
                 >
                   <span class="marquee-logo-frame" style={`--logo-mask: url("${item.logo.src}"); --logo-ratio: ${item.logo.width / item.logo.height}`}>

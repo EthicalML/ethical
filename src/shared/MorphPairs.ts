@@ -3,6 +3,7 @@ const STORAGE_KEY = 'ethical:morph-pair';
 interface StoredMorphPair {
   destinationPath: string;
   name: string;
+  oneWay?: boolean;
   sourceId: string;
   sourcePath: string;
 }
@@ -43,6 +44,10 @@ export const bindMorphPairs = (root: ParentNode, signal: AbortSignal) => {
 
     const name = source.dataset.morphName ?? sourceId;
     const destinationPath = new URL(destination, location.href).pathname;
+    // One-way sources morph forward only; their position on return is not stable (e.g. a
+    // marquee that restarts from zero), so restoring the name would fling the reverse morph
+    // across the viewport. These settle back plainly instead.
+    const oneWay = source.dataset.morphOneWay !== undefined;
     const activate = () => {
       activeSource?.style.removeProperty('view-transition-name');
       activeSource = source;
@@ -52,6 +57,7 @@ export const bindMorphPairs = (root: ParentNode, signal: AbortSignal) => {
         JSON.stringify({
           destinationPath,
           name,
+          oneWay,
           sourceId,
           sourcePath: location.pathname,
         } satisfies StoredMorphPair),
@@ -77,6 +83,11 @@ document.addEventListener('astro:before-preparation', (event) => {
 document.addEventListener('astro:before-swap', (event) => {
   const pair = readPair();
   if (!pair || event.direction !== 'back' || event.to.pathname !== pair.sourcePath) return;
+
+  if (pair.oneWay) {
+    sessionStorage.removeItem(STORAGE_KEY);
+    return;
+  }
 
   const source = event.newDocument.querySelector<HTMLElement>(
     `[data-morph-source="${CSS.escape(pair.sourceId)}"]`,
