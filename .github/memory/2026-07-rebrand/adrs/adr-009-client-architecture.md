@@ -102,6 +102,8 @@ Owner review invalidated the "chrome data files" category, and revision 3 restor
 
 **Principle: content lives with its owner; a separate file must be earned by ≥2 unrelated consumers or by being a validated set.**
 
+**Clarification (owner-settled 2026-07-29, see `../research/mdx-composition-decision.md`):** substantial single-page structured copy in front matter is INTENTIONAL, even when it dominates the file (the homepage) — it is not a smell to refactor toward body composition. Sanctioned escape hatches when earned: prose-bearing items (fields that could carry links/emphasis) may use component children in the MDX body; multiple render-only item components may share one `.tsx` file. MDX element mapping is not adopted; rehype plugins remain the element-treatment mechanism.
+
 | Today | Target | Why |
 |---|---|---|
 | `projects.json` | `index.mdx` front matter (copy) + `content/repos-metrics.yaml` (repo facts) | single consumer = page content; facts are shared + script-refreshed |
