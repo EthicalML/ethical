@@ -1,39 +1,52 @@
 # Astro authoring conventions
 
-The decisions in `.github/memory/2026-07-rebrand/` are authoritative. This file is the day-to-day guide to the imported tree; update it alongside the memory whenever a convention changes.
+The ratified decisions in `.github/memory/2026-07-rebrand/` are authoritative. ADR-009 defines the client architecture and data-placement rules summarised here.
 
-## How a URL becomes a page
+## Pages and content
 
-The routing rule is **collection iff iterated**:
+- A leaf page is a direct MDX file under `src/pages/`; its path is its URL.
+- Use a content collection when the site validates and iterates a set. Principles, partners, survey questions, and repository metrics are collections defined in `src/content.config.ts`.
+- Page-owned prose, headings, links, lists, and configuration belong in that page's MDX front matter or body.
+- Components arrange supplied content. They do not hide owner-editable page copy.
+- `composed: true` means the MDX owns its full-width composition. Otherwise `ProseLayout.astro` supplies the standard article shell.
 
-1. Leaf pages are direct MDX files in `src/pages/`; their file path is their URL. Each names its layout in front matter. Example: `/frameworks/maturity-model/` → `src/pages/frameworks/maturity-model.mdx` → `layout: ../../layouts/ProseLayout.astro` → `BaseLayout.astro`.
-2. `/` is `src/pages/index.mdx`, with `layout: ../layouts/BaseLayout.astro`.
-3. Principle detail pages are the exception because the site iterates them as a set. Entries live in `src/content/principles/`, are validated by the `principles` collection schema, and are rendered by `src/pages/principles/[number].astro` through `PrincipleLayout.astro`.
+The placement rule is: content lives with its owner; a separate file must be earned by two unrelated consumers, a validated set, or a genuinely large dataset.
 
-Do not create a collection for content that is not queried, sorted, or iterated. Do not add a catch-all route for ordinary pages. Direct nested MDX paths can coexist with the iterated `/principles/[number]/` route; `/principles/index.mdx` owns only the section landing page.
+## Data placement
 
-## Content, data, and rendering
+- `src/data/` contains real source data only. It currently holds the 2024 and 2025 survey CSVs.
+- Validated sets live under `src/content/` and have schemas in `src/content.config.ts`.
+- Page-local structured values live in page front matter.
+- Header, footer, and other chrome constants live in their owning component fences.
+- Build configuration comes from `astro:env`; `FORM_ENDPOINT` configures form delivery.
+- Derived facts are generated from their source. Recent newsletter issue numbers come from `public/mle/*.html` filenames; do not maintain a parallel issue list or parse the archive HTML.
+- Rows use named keys. Avoid positional tuples except where a component API is naturally tuple-shaped and typed.
 
-- Owner prose, headings, labels, links, and page-level component composition belong in `src/pages/**/*.mdx`.
-- Shared or tabular values belong in `src/data/*.json`. Rows use named-key objects, never positional tuples, so each value is self-describing at the edit site.
-- Components in `src/components/` arrange supplied content or shared data. They must not introduce owner-editable copy.
-- Site-wide wordmark, metadata, join, and legal strings live in `src/data/site.json`; footer-band content is in `footer.json` and `talks.json`.
-- Layouts own document chrome and stable structure. `BaseLayout.astro` arranges the header, footer, and runtime assets; `ProseLayout.astro` provides either the standard article shell or the unwrapped `composed: true` shell.
-- `composed: true` means the page owns its complete full-width composition. Without it, `ProseLayout.astro` supplies the standard prose article shell.
-- Styles are split by role in `src/styles/`: `tokens.css` for tokens/base/components, `prose.css` for the prose shell, and `layout.css` for prototype-fidelity geometry.
-- Runtime assets are split by role in `public/assets/`: `site.js` for page/menu behaviour, `canvases.js` for prototype canvas engines, and `widget-kaos.js` for the shared KAOS mount.
+## Components and client behaviour
 
-## Value placement
+Use the platform in this order:
 
-- Use props for short strings, identifiers, and hrefs.
-- Use slots when a field carries rich content such as markdown, emphasis, or links. Slot names are stringly typed, so verify them carefully; a typo can render empty without a build error.
-- Use front matter for list-shaped, page-local structured data.
-- Use `export const` in MDX only when keeping data next to its usage is clearer than YAML; keep this rare.
-- Use `src/data/` for shared or genuinely tabular data.
+1. Static markup and CSS.
+2. A colocated TypeScript `<script>` in the owning `.astro` component.
+3. A shared TypeScript module only when two or more components consume the behaviour.
+4. A Preact island only when state changes rendered structure, such as the survey tabs and sorting.
 
-## MDX component registry
+Component behaviour is implemented as a custom element. The element queries only inside itself, starts and tears down work in `connectedCallback` and `disconnectedCallback`, and owns any window/document listeners through an abort signal. Data attributes may remain as configuration or test hooks; they are not a global wiring mechanism.
 
-`src/components/prose/components.js` is the single named export surface for designed MDX blocks. A direct MDX page imports only the components it uses from that registry:
+Shared canvas elements live in `src/shared/canvas/`. Files and exported classes use matching PascalCase names; browser element tags use kebab-case. The importing component is the wiring. Canvas elements preserve the mount contract:
+
+- gate below-fold animation with `IntersectionObserver`;
+- render a static frame for reduced motion;
+- resize the backing store without resizing the container;
+- release observers, listeners, animation frames, and timers when disconnected.
+
+Page-wide behaviour is layout-owned. `BaseLayout.astro` explicitly imports the reveal module because reveal spans every page.
+
+All first-party client behaviour is TypeScript. Do not add first-party runtime JavaScript under `public/`, a layout script-loader list, whole-document marker scans, or a generic `src/scripts/` holding area.
+
+## MDX components
+
+`src/components/prose/components.js` is the named export surface for designed MDX blocks. Import only the blocks a page uses:
 
 ```mdx
 ---
@@ -44,63 +57,56 @@ composed: true
 
 import { ArticleHero, TalksGrid } from '../components/prose/components.js';
 
-<ArticleHero ... />
-<TalksGrid />
+<ArticleHero eyebrow="TALKS" title="Selected talks" />
+<TalksGrid talks={frontmatter.talks} />
 ```
 
-Add a reusable MDX block to the registry, then import it by name in each page that uses it. Ordinary Markdown needs no component import.
+Use props for typed strings, identifiers, hrefs, and structured values. Use slots for rich Markdown or markup. Slot names are stringly typed, so verify them carefully.
 
-## MDX cautions
-
-- MDX prose is parsed with JSX rules. Escape a bare `<` as `&lt;`, escape `{` as `\{`, or put the text in backticks.
-- Component tags must be imported. A misspelled named import fails the build, but a misspelled slot name can silently render empty.
-- Keep content-shaped files out of route-like directories unless they really own those routes.
+MDX prose follows JSX parsing rules. Escape a bare `<` as `&lt;`, escape `{` as `\{`, or put the text in backticks.
 
 ## Automatic numbered sections
 
-`astro.config.mjs` registers `src/plugins/rehype-sectionize.mjs` for Markdown and MDX. Every authored `## Heading` starts a `.prose-section`, receives a generated `01 — HEADING` eyebrow, and gathers following content until the next `h2`. The number is based on document order.
+`src/plugins/rehype-sectionize.mjs` turns every authored `## Heading` into a numbered `.prose-section`. Use `##` only when that treatment is intended. Use a composed MDX component for bespoke sections, and do not hand-author the generated eyebrow or wrapper.
 
-Use `##` only when that designed numbered section is intended. Use a composed MDX component for a bespoke section that must not be transformed. Do not hand-author the generated eyebrow or wrapper. Headings at `###` and below pass through untouched.
+## Source formatting
 
-## Widgets and islands
+- TypeScript and scripts use an approximate 100-column print width.
+- Astro and MDX templates use an approximate 160-column print width.
+- Keep ordinary elements compact. Do not golf logic, and do not force one attribute per line.
+- Run Prettier and ESLint rather than hand-formatting around their output.
 
-- Stateless animation without user-driven UI state is a vanilla widget mounted from `public/assets/` through a `data-widget` attribute.
-- A `.tsx` Preact island is permitted only when state genuinely drives DOM structure, such as tabs, sorting, comparison, or other user state. Mount it with `client:visible`.
-- `.astro` components do not hold client state. Do not introduce a third widget category.
-- Public scripts are served verbatim and must be referenced with `is:inline`.
+## Images and passthrough files
 
-## Images
-
-- Put images that Astro should optimise in `src/assets/` and render them through Astro's `<Image>` pipeline.
-- Put files that must retain an exact URL or pass through unchanged in `public/`.
+- Put images Astro should optimise under `src/assets/` and render them through Astro's image pipeline.
+- Put files that require exact public URLs under `public/`.
 - Do not duplicate an image between the two pipelines.
-
-## Adding a page
-
-1. Add `src/pages/<path>.mdx`; its path is the URL.
-2. Add `title`, `description`, and an explicit relative `layout:` path in front matter. Use `ProseLayout.astro` for leaves. Set `composed: true` only when the MDX provides the complete page composition.
-3. For designed blocks, import named components from `components/prose/components.js`. Add a small data-driven component only when the current vocabulary cannot express the design.
-4. Put reusable rows and statistics in `src/data/` as named-key objects. Mark invented values as placeholders according to ADR-005.
-5. Add a redirect or alias when replacing a legacy URL.
-6. Run `npm run build`, the DOM gate on affected routes, and the screenshot gate for visual changes.
-
-For a new principle, add `src/content/principles/NN.md` with the collection schema fields; the parameterised route is generated automatically.
 
 ## Homepage source map
 
-| Section                               | Authoring source                                                              |
-| ------------------------------------- | ----------------------------------------------------------------------------- |
-| Hero, phases, network title/stats     | `src/pages/index.mdx` front matter and composition                            |
-| Evidence band                         | `src/data/stats.json`                                                         |
-| Affiliations                          | `src/data/affiliations.json`                                                  |
-| Principle content                     | `src/content/principles/*.md`; section labels are props in `index.mdx`        |
-| Open-source showcase                  | `src/data/projects.json`                                                      |
-| Reports, maturity preview, OWASP rows | `src/data/home-reports.json` via `ReportsSection.astro`                       |
-| Survey categories and rows            | `src/data/survey.json` via the Preact `SurveyExplorer.tsx` island             |
-| Network sectors/issues/form chrome    | `src/data/network-sectors.json`, `newsletter-issues.json`, and `network.json` |
-| Footnote/about/talks/links            | `src/data/footer.json` and `talks.json`                                       |
-| Site chrome and header panels         | `src/data/site.json` and `nav.json`                                           |
+| Concern                                                         | Authoring source                                                       |
+| --------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Hero, evidence, phases, project copy, reports, and network copy | `src/pages/index.mdx`                                                  |
+| Principle content                                               | `src/content/principles/*.md`                                          |
+| Repository facts                                                | `src/content/metrics/repos.yaml`                                       |
+| Partner directory and affiliation logos                         | `src/content/partners/partners.yaml`                                   |
+| Survey source rows                                              | `src/data/survey-2024.csv`, `src/data/survey-2025.csv`                 |
+| Derived survey questions                                        | `src/content/survey/questions.yaml`                                    |
+| Recent newsletter issue numbers                                 | `public/mle/*.html` filenames via `src/utils/RecentIssues.ts`          |
+| Header navigation and wordmark                                  | `src/components/SiteHeader.astro`                                      |
+| Footer and footnote chrome                                      | `src/components/SiteFooter.astro`, `src/components/FootnoteBand.astro` |
+| Form delivery endpoint                                          | `FORM_ENDPOINT` through `astro:env`                                    |
 
-## Verification
+## Definition of done
 
-The reviewed harness lives in `scripts/verify/`; ADR-008 is its authoritative specification. Every change runs the build and DOM checks on affected routes. Visual changes also receive full-page screenshot comparison, with canvas regions masked when testing for zero visual change.
+Every change must satisfy:
+
+1. Copy is placed with its owner or in an earned validated/shared source.
+2. Client behaviour is explicitly owned and imported; there are no document-scanning loaders.
+3. `npm run lint` and `npm run format:check` pass.
+4. `npm run check:ratchet` reports zero errors, warnings, and hints.
+5. `npm run build` passes under the Node version pinned in `.tool-versions`.
+6. The DOM gate passes for all affected routes at desktop and mobile widths.
+7. Zero-change work has masked full-page screenshot parity; intentional visual changes have documented before/after evidence.
+
+For a new route, add the MDX page, title, description, and explicit layout; add required component imports; add redirects for replaced legacy URLs; then run the full definition of done. For a new principle or validated data entry, satisfy the relevant collection schema.

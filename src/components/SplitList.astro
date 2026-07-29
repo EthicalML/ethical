@@ -1,4 +1,14 @@
 ---
+interface Column {
+  title: string;
+  items: string[];
+}
+
+interface Props {
+  left: Column;
+  right: Column;
+}
+
 const { left, right } = Astro.props;
 ---
 

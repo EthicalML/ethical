@@ -1,4 +1,11 @@
 ---
+interface Props {
+  items: Array<{
+    capability: string;
+    detail: string;
+  }>;
+}
+
 const { items } = Astro.props;
 ---
 

@@ -1,6 +1,6 @@
 {
-  "errors": 74,
+  "errors": 0,
   "warnings": 0,
-  "hints": 2,
-  "recordedAfter": "ADR-009 step 2 scope exclusions"
+  "hints": 0,
+  "recordedAfter": "ADR-009 step 6 debt burn-down"
 }

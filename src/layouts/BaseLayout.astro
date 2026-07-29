@@ -35,7 +35,7 @@ const socialImage = new URL(frontmatter.image ?? ogImage, Astro.site);
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={socialImage} />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-89407852-2"></script>
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=UA-89407852-2"></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
       function gtag() {

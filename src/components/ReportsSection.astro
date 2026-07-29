@@ -1,6 +1,42 @@
 ---
 import SurveyExplorerIsland from './SurveyExplorerIsland.astro';
 
+interface Action {
+  label: string;
+  href: string;
+  kind: string;
+}
+
+interface Reports {
+  eyebrow: string;
+  title: string;
+  intro: string;
+  actions: Action[];
+  governance: {
+    eyebrow: string;
+    previewEyebrow: string;
+    previewLabel: string;
+    previewTitle: string;
+    steps: Array<{ label: string; detail: string }>;
+    title: string;
+    text: string;
+    actions: Action[];
+  };
+  security: {
+    eyebrow: string;
+    leftHeading: string;
+    rightHeading: string;
+    rows: Array<{ owasp: string; mlsecops: string }>;
+    title: string;
+    text: string;
+    actions: Action[];
+  };
+}
+
+interface Props {
+  reports: Reports;
+}
+
 const { reports } = Astro.props;
 ---
 

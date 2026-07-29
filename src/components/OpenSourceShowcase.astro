@@ -1,6 +1,63 @@
 ---
 import { getCollection } from 'astro:content';
 
+interface Action {
+  label: string;
+  href: string;
+  kind: string;
+}
+
+interface Projects {
+  section: {
+    eyebrow: string;
+    title: string;
+  };
+  kompute: {
+    figure: string;
+    affiliation: string;
+    title: string;
+    text: string;
+    donationText: string;
+    donationHref: string;
+    tags: string[];
+    actions: Action[];
+  };
+  xai: {
+    figure: string;
+    stages: Array<{ title: string; detail: string }>;
+    title: string;
+    text: string;
+    linkLabel: string;
+    linkHref: string;
+  };
+  ecosystem: {
+    leftHeading: string;
+    rightHeading: string;
+    rows: Array<{ title: string }>;
+    title: string;
+    text: string;
+    linkLabel: string;
+    linkHref: string;
+    guidelinesLabel: string;
+    guidelinesHref: string;
+  };
+  kaos: {
+    figure: string;
+    title: string;
+    text: string;
+    capabilities: Array<{ name: string; detail: string }>;
+    actions: Action[];
+    panelEyebrow: string;
+    panelStatus: string;
+  };
+}
+
+interface Props {
+  projects: Projects;
+  compact?: boolean;
+  homepage?: boolean;
+}
+
 const { projects, compact = false, homepage = false } = Astro.props;
 const repoEntries = await getCollection('metrics');
 const repoMetrics = Object.fromEntries(repoEntries.map(({ id, data }) => [id, data.values]));

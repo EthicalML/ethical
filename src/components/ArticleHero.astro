@@ -1,20 +1,12 @@
 ---
+import ArticleHeroCanvas from './ArticleHeroCanvas.astro';
+
 const { eyebrow, title, intro, canvas = false } = Astro.props;
 ---
 
 <header class:list={['article-hero', canvas && 'canvas-variant']} data-reveal>
-  {
-    canvas && (
-      <hero-cycle>
-        <canvas class="hero-canvas" aria-hidden="true" />
-      </hero-cycle>
-    )
-  }
+  {canvas && <ArticleHeroCanvas />}
   <p class="eyebrow">{eyebrow}</p>
   <h1>{title}</h1>
   {intro && <p>{intro}</p>}
 </header>
-
-<script>
-  import '../shared/canvas/HeroCycle';
-</script>

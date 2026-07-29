@@ -1,110 +1,153 @@
 ---
 import { getCollection } from 'astro:content';
+
+interface Props {
+  eyebrow: string;
+  heading: string;
+  intro: string;
+  homepage?: boolean;
+}
+
 const principles = (await getCollection('principles')).sort((a, b) => a.data.number.localeCompare(b.data.number));
 const { eyebrow, heading, intro, homepage = false } = Astro.props;
 ---
 
 <section id="principles" class:list={['principles-explorer', homepage && 'home-section']} data-principles data-reveal>
   <p class="eyebrow">{eyebrow}</p>
-  <div class="principles-explorer-grid">
-    <div>
-      <h2>{heading}</h2>
-      <p class="section-intro">{intro}</p>
-      <div class="principle-rows">
+  <principles-explorer>
+    <div class="principles-explorer-grid">
+      <div>
+        <h2>{heading}</h2>
+        <p class="section-intro">{intro}</p>
+        <div class="principle-rows">
+          {
+            principles.map(({ data }, index) => (
+              <button type="button" class:list={{ active: index === 0 }} data-principle-row={index}>
+                <>
+                  <span>{data.number}</span>
+                  <strong>{data.title}</strong>
+                  <i>{index === 0 ? '●' : '→'}</i>
+                </>
+              </button>
+            ))
+          }
+        </div>
+      </div>
+      <div class="principle-detail-wrap">
         {
           principles.map(({ data }, index) => (
-            <button type="button" class:list={{ active: index === 0 }} data-principle-row={index}>
-              <>
-                <span>{data.number}</span>
-                <strong>{data.title}</strong>
-                <i>{index === 0 ? '●' : '→'}</i>
-              </>
-            </button>
+            <article class:list={['principle-detail', index === 0 && 'active']} data-principle-detail={index}>
+              <p class="eyebrow">PRINCIPLE {data.number} — COMMITMENT</p>
+              <h3>{data.title}</h3>
+              <p class="commitment">{data.commitment}</p>
+              <div class="detail-split">
+                <div>
+                  <>
+                    <h4>FAILURE MODES</h4>
+                    <ul>
+                      {data.failure_modes?.map((item) => (
+                        <li>{item}</li>
+                      ))}
+                    </ul>
+                  </>
+                </div>
+                <div>
+                  <>
+                    <h4>PRACTICAL CONTROLS</h4>
+                    <ul>
+                      {data.controls?.map((item) => (
+                        <li>{item}</li>
+                      ))}
+                    </ul>
+                  </>
+                </div>
+              </div>
+              <div class="principle-links">
+                {data.related_links.map(({ label, href }) => (
+                  <a href={href}>{label}</a>
+                ))}
+                <a href={`/principles/${data.number}/`}>Read principle →</a>
+              </div>
+            </article>
           ))
         }
       </div>
     </div>
-    <div class="principle-detail-wrap">
-      {
-        principles.map(({ data }, index) => (
-          <article class:list={['principle-detail', index === 0 && 'active']} data-principle-detail={index}>
-            <p class="eyebrow">PRINCIPLE {data.number} — COMMITMENT</p>
-            <h3>{data.title}</h3>
-            <p class="commitment">{data.commitment}</p>
-            <div class="detail-split">
-              <div>
-                <>
-                  <h4>FAILURE MODES</h4>
-                  <ul>
-                    {data.failure_modes?.map((item) => (
-                      <li>{item}</li>
-                    ))}
-                  </ul>
-                </>
-              </div>
-              <div>
-                <>
-                  <h4>PRACTICAL CONTROLS</h4>
-                  <ul>
-                    {data.controls?.map((item) => (
-                      <li>{item}</li>
-                    ))}
-                  </ul>
-                </>
-              </div>
-            </div>
-            <div class="principle-links">
-              {data.related_links.map(({ label, href }) => (
-                <a href={href}>{label}</a>
-              ))}
-              <a href={`/principles/${data.number}/`}>Read principle →</a>
-            </div>
-          </article>
-        ))
-      }
-    </div>
-  </div>
+  </principles-explorer>
 </section>
 <script>
-  document.querySelectorAll('[data-principles]').forEach((root) => {
-    const rows = [...root.querySelectorAll('[data-principle-row]')];
-    const details = [...root.querySelectorAll('[data-principle-detail]')];
-    let active = 0;
-    let stopped = false;
-    let paused = false;
-    const select = (index) => {
-      active = index;
-      rows.forEach((row, i) => {
-        row.classList.toggle('active', i === index);
-        row.querySelector('i').textContent = i === index ? '●' : '→';
+  class PrinciplesExplorer extends HTMLElement {
+    private controller = new AbortController();
+    private timer?: number;
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const rows = Array.from(this.querySelectorAll<HTMLElement>('[data-principle-row]'));
+      const details = Array.from(this.querySelectorAll<HTMLElement>('[data-principle-detail]'));
+      if (!rows.length || !details.length) return;
+
+      let active = 0;
+      let stopped = false;
+      let paused = false;
+      const select = (index: number) => {
+        active = index;
+        rows.forEach((row, rowIndex) => {
+          row.classList.toggle('active', rowIndex === index);
+          const marker = row.querySelector<HTMLElement>('i');
+          if (marker) marker.textContent = rowIndex === index ? '●' : '→';
+        });
+        details.forEach((detail, detailIndex) => {
+          detail.classList.toggle('active', detailIndex === index);
+          if (detailIndex === index) {
+            detail.style.animation = 'none';
+            requestAnimationFrame(() => {
+              detail.style.animation = 'principle-in .45s ease';
+            });
+          }
+        });
+      };
+      rows.forEach((row, index) => {
+        row.addEventListener('mouseenter', () => select(index), {
+          signal: this.controller.signal,
+        });
+        row.addEventListener(
+          'click',
+          () => {
+            stopped = true;
+            select(index);
+          },
+          { signal: this.controller.signal },
+        );
       });
-      details.forEach((detail, i) => {
-        detail.classList.toggle('active', i === index);
-        if (i === index) {
-          detail.style.animation = 'none';
-          requestAnimationFrame(() => {
-            detail.style.animation = 'principle-in .45s ease';
-          });
-        }
-      });
-    };
-    rows.forEach((row, index) => {
-      row.addEventListener('mouseenter', () => select(index));
-      row.addEventListener('click', () => {
-        stopped = true;
-        select(index);
-      });
-    });
-    root.addEventListener('mouseenter', () => {
-      paused = true;
-    });
-    root.addEventListener('mouseleave', () => {
-      paused = false;
-    });
-    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setInterval(() => {
-        if (!stopped && !paused) select((active + 1) % rows.length);
-      }, 2600);
+      const grid = this.querySelector<HTMLElement>('.principles-explorer-grid');
+      grid?.addEventListener(
+        'mouseenter',
+        () => {
+          paused = true;
+        },
+        { signal: this.controller.signal },
+      );
+      grid?.addEventListener(
+        'mouseleave',
+        () => {
+          paused = false;
+        },
+        { signal: this.controller.signal },
+      );
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        this.timer = window.setInterval(() => {
+          if (!stopped && !paused) select((active + 1) % rows.length);
+        }, 2600);
+      }
     }
-  });
+
+    disconnectedCallback() {
+      this.controller.abort();
+      if (this.timer !== undefined) window.clearInterval(this.timer);
+    }
+  }
+
+  if (!customElements.get('principles-explorer')) {
+    customElements.define('principles-explorer', PrinciplesExplorer);
+  }
 </script>

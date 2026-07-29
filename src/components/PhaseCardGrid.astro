@@ -1,47 +1,91 @@
 ---
+interface Props {
+  cards: Array<{
+    label: string;
+    title: string;
+    details: string[];
+  }>;
+  eyebrow: string;
+  heading: string;
+}
+
 const { cards, eyebrow, heading } = Astro.props;
 ---
 
 <section id="strategy" class="strategy home-section" aria-labelledby="phases-heading" data-reveal>
   <p class="eyebrow">{eyebrow}</p>
   <h2 id="phases-heading">{heading}</h2>
-  <div class="phase-grid">
-    {
-      cards.map((card, index) => (
-        <article class:list={['phase-card', index === 0 && 'active']}>
-          <p class="phase-label">{card.label}</p>
-          <h3>{card.title}</h3>
-          <div class="phase-details">
-            {card.details.map((detail) => (
-              <span>{detail}</span>
-            ))}
-          </div>
-          <div class="phase-rule" style={`--rule-opacity:${[0.35, 0.55, 0.75, 1][index]}`} />
-        </article>
-      ))
-    }
-  </div>
+  <phase-card-grid>
+    <div class="phase-grid">
+      {
+        cards.map((card, index) => (
+          <article class:list={['phase-card', index === 0 && 'active']}>
+            <p class="phase-label">{card.label}</p>
+            <h3>{card.title}</h3>
+            <div class="phase-details">
+              {card.details.map((detail) => (
+                <span>{detail}</span>
+              ))}
+            </div>
+            <div class="phase-rule" style={`--rule-opacity:${[0.35, 0.55, 0.75, 1][index]}`} />
+          </article>
+        ))
+      }
+    </div>
+  </phase-card-grid>
 </section>
 <script>
-  document.querySelectorAll('.phase-grid').forEach((grid) => {
-    const cards = [...grid.querySelectorAll('.phase-card')];
-    let active = 0;
-    let held = false;
-    const select = (index) => {
-      active = index;
-      cards.forEach((card, i) => card.classList.toggle('active', i === index));
-    };
-    cards.forEach((card, index) => card.addEventListener('mouseenter', () => select(index)));
-    grid.addEventListener('mouseenter', () => {
-      held = true;
-    });
-    grid.addEventListener('mouseleave', () => {
-      held = false;
-    });
-    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setInterval(() => {
-        if (!held) select((active + 1) % cards.length);
-      }, 2600);
+  class PhaseCardGrid extends HTMLElement {
+    private controller = new AbortController();
+    private timer?: number;
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const grid = this.querySelector<HTMLElement>('.phase-grid');
+      const cards = Array.from(this.querySelectorAll<HTMLElement>('.phase-card'));
+      if (!grid || !cards.length) return;
+
+      let active = 0;
+      let held = false;
+      const select = (index: number) => {
+        active = index;
+        cards.forEach((card, cardIndex) => {
+          card.classList.toggle('active', cardIndex === index);
+        });
+      };
+      cards.forEach((card, index) => {
+        card.addEventListener('mouseenter', () => select(index), {
+          signal: this.controller.signal,
+        });
+      });
+      grid.addEventListener(
+        'mouseenter',
+        () => {
+          held = true;
+        },
+        { signal: this.controller.signal },
+      );
+      grid.addEventListener(
+        'mouseleave',
+        () => {
+          held = false;
+        },
+        { signal: this.controller.signal },
+      );
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        this.timer = window.setInterval(() => {
+          if (!held) select((active + 1) % cards.length);
+        }, 2600);
+      }
     }
-  });
+
+    disconnectedCallback() {
+      this.controller.abort();
+      if (this.timer !== undefined) window.clearInterval(this.timer);
+    }
+  }
+
+  if (!customElements.get('phase-card-grid')) {
+    customElements.define('phase-card-grid', PhaseCardGrid);
+  }
 </script>

@@ -1,4 +1,17 @@
 ---
+interface Card {
+  variant: string;
+  title: string;
+  sub_items: Array<{ label: string; detail: string }>;
+  body: string;
+  tags: string[];
+  action: string;
+}
+
+interface Props {
+  cards: Card[];
+}
+
 const { cards } = Astro.props;
 ---
 

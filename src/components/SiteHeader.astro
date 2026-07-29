@@ -166,7 +166,7 @@ const join = {
   label: 'JOIN / CONTACT',
   href: '/#join',
 };
-const initialProject = menus.oss.items[0];
+const initialProject = menus.oss.items![0]!;
 ---
 
 <site-header>
@@ -252,7 +252,7 @@ const initialProject = menus.oss.items[0];
               ) : id === 'oss' ? (
                 <div class="oss-menu">
                   <div class="oss-menu-list">
-                    {menu.items.map(({ key, eyebrow, title, description, href }, index) => (
+                    {menu.items!.map(({ key, eyebrow, title, description, href }, index) => (
                       <a
                         href={href}
                         class:list={{ active: index === 0 }}
@@ -268,7 +268,7 @@ const initialProject = menus.oss.items[0];
                       </a>
                     ))}
                     <footer>
-                      {menu.footerLinks.map(({ label, href }) => (
+                      {menu.footerLinks!.map(({ label, href }) => (
                         <a href={href}>{label}</a>
                       ))}
                     </footer>
@@ -286,7 +286,7 @@ const initialProject = menus.oss.items[0];
                 </div>
               ) : (
                 <div class:list={['menu-link-list', id === 'network' && 'two-columns']}>
-                  {menu.items.map((item, index) => (
+                  {menu.items!.map((item, index) => (
                     <a href={item.href} style={`--row-index:${index}`}>
                       {(id === 'overview' || id === 'about') && <span>{item.number}</span>}
                       <strong>{item.title}</strong>
@@ -347,7 +347,7 @@ const initialProject = menus.oss.items[0];
                   ))
                 ) : (
                   <div class="mobile-link-group">
-                    {menu.items.map((item) => (
+                    {menu.items!.map((item) => (
                       <a href={item.href}>
                         <strong>{item.title}</strong>
                         {item.description && <span>{item.description}</span>}
@@ -585,7 +585,7 @@ const initialProject = menus.oss.items[0];
           () => {
             const expanded = button.getAttribute('aria-expanded') === 'true';
             const controls = button.getAttribute('aria-controls');
-            const submenu = controls ? document.getElementById(controls) : null;
+            const submenu = controls ? drawer.querySelector<HTMLElement>(`#${controls}`) : null;
             button.setAttribute('aria-expanded', String(!expanded));
             if (submenu) submenu.hidden = expanded;
           },

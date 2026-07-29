@@ -5,6 +5,18 @@ import systems from '../assets/talks/responsible-systems.svg';
 import agents from '../assets/talks/agent-safety.svg';
 import standards from '../assets/talks/standards.svg';
 
+interface Talk {
+  title: string;
+  image: keyof typeof images;
+  label: string;
+  place: string;
+  href?: string;
+}
+
+interface Props {
+  talks: Talk[];
+}
+
 const images = { alignment, systems, agents, standards };
 const { talks } = Astro.props;
 ---

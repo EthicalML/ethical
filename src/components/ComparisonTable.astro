@@ -1,4 +1,14 @@
 ---
+interface Column {
+  key: string;
+  label: string;
+}
+
+interface Props {
+  rows: Array<Record<string, string>>;
+  columns?: Column[];
+}
+
 const {
   rows,
   columns = [
