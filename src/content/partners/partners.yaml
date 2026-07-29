@@ -1,0 +1,112 @@
+[
+  {
+    'name': 'United Nations',
+    'slug': 'united-nations',
+    'role': 'AI Expert · Chair',
+    'logo': 'united-nations-logo.svg',
+    'detail': 'The Institute participates in United Nations AI and data-governance work at the “By Regulation” stage of its four-phase strategy. At this stage, principle-level commitments are translated into public, national-scale frameworks.',
+    'links':
+      [
+        {
+          'label': 'CSTD working group',
+          'url': 'https://unctad.org/topic/commission-on-science-and-technology-for-development/working-group-on-data-governance',
+        },
+      ],
+  },
+  {
+    'name': 'European Commission',
+    'slug': 'european-commission',
+    'role': 'APPOINTED EXPERT',
+    'logo': 'european-commission-logo.svg',
+    'detail': 'European Commission AI policy work spans the AI Act, Data Act, Digital Services Act and Cyber Resilience Act.',
+    'links': [],
+  },
+  {
+    'name': 'ACM',
+    'slug': 'acm',
+    'role': 'GOVERNING BOARD',
+    'logo': 'acm-logo-lockup.png',
+    'detail': "ACM's Code of Ethics and Professional Conduct and its technology-policy work set expectations for computing professionals broadly. The nine Responsible AI Principles provide ML-specific commitments that practitioners and organisations can apply alongside ACM's professional-conduct baseline.",
+    'links':
+      [
+        {
+          'label': 'Role evidence',
+          'url': 'https://www.acm.org/volunteers/volunteer/saucedo_9722274',
+        },
+      ],
+    'logo_color': 'acm-logo.png',
+  },
+  {
+    'name': 'Linux Foundation',
+    'slug': 'linux-foundation',
+    'role': 'ASSOCIATE MEMBER',
+    'logo': 'linux-foundation-logo.svg',
+    'detail': "The Institute's collaboration with Linux Foundation AI & Data includes two open-source projects. Kompute is cross-vendor GPU acceleration work maintained alongside LF AI & Data and NumFOCUS. The MLSecOps Top 10 was connected to LF's Trusted AI work and an ML-security committee.",
+    'links':
+      [
+        {
+          'label': 'Membership record',
+          'url': 'https://lfaidata.foundation/blog/2019/10/09/the-institute-for-ethical-ai-and-machine-learning-joins-lf-ai/',
+        },
+      ],
+  },
+  {
+    'name': 'OWASP',
+    'slug': 'owasp',
+    'role': 'Agent Security Review',
+    'logo': 'owasp-logo.svg',
+    'detail': 'The MLSecOps Top 10 maps ten vulnerability classes from OWASP categories onto the ML lifecycle, from unrestricted model endpoints to supply-chain risk in ML code.',
+    'links':
+      [
+        {
+          'label': 'Collaboration evidence',
+          'url': 'https://genai.owasp.org/2025/12/09/owasp-top-10-for-agentic-applications-the-benchmark-for-agentic-security-in-the-age-of-autonomous-ai/',
+        },
+      ],
+  },
+  {
+    'name': 'IEEE',
+    'slug': 'ieee',
+    'role': 'AI STANDARDS GROUP',
+    'logo': 'ieee-logo.png',
+    'detail': 'The Institute participates in IEEE AI standards work.',
+    'links': [],
+  },
+  {
+    'name': 'ISO/IEC',
+    'slug': 'iso-iec',
+    'role': 'AI STANDARDS GROUP',
+    'logo': 'iso-logo-lockup.svg',
+    'detail': 'The Institute participates in ISO/IEC AI standards work, which sets the formal, cross-industry baseline for how AI systems are assessed and governed. AI-RFX and the ML Maturity Model are compatible with that baseline.',
+    'links': [],
+    'logo_color': 'iso-logo.svg',
+  },
+  {
+    'name': 'NumFOCUS',
+    'slug': 'numfocus',
+    'role': 'Case Study',
+    'logo': 'numfocus-logo.png',
+    'detail': 'Kompute is cross-vendor GPU acceleration work maintained alongside Linux Foundation AI & Data and NumFOCUS.',
+    'links':
+      [
+        {
+          'label': 'Contribution record',
+          'url': 'https://numfocus.org/case-studies/ethics-in-ai-ml',
+        },
+      ],
+  },
+  {
+    'name': 'TUM / TUM IEAI',
+    'slug': 'tum',
+    'role': 'Visiting Lectures',
+    'logo': 'tum-logo.svg',
+    'detail': "The TUM Institute for Ethics in Artificial Intelligence's speaker series covers research and practice in responsible AI.",
+    'links':
+      [
+        {
+          'label': 'Speaker series on the state of responsible AI',
+          'url': 'https://www.ieai.sot.tum.de/event/speaker-series-on-the-state-of-responsible-ai/',
+        },
+      ],
+  },
+]

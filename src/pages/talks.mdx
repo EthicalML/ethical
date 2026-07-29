@@ -3,6 +3,29 @@ title: Talks & keynotes
 description: Selected talks on alignment, responsible systems, agent safety and standards.
 composed: true
 layout: ../layouts/ProseLayout.astro
+talks:
+  - kind: TALK
+    title: NeurIPS 2023 Workshop keynote
+    image: alignment
+    label: TALK / 2023
+    place: NeurIPS Workshop
+    href: https://www.youtube.com/watch?v=7XSy5aw8oU8
+  - kind: TALK
+    title: NeurIPS 2022 — machine learning security
+    image: systems
+    label: TALK / 2022
+    place: NeurIPS
+    href: https://www.youtube.com/watch?v=57YpXjcj0Ho
+  - kind: TALK
+    title: KubeCon Europe — ML evaluation at scale
+    image: agents
+    label: TALK
+    place: KubeCon Europe
+  - kind: TALK
+    title: PyCon keynote — monitoring, drift and explainability
+    image: standards
+    label: KEYNOTE
+    place: PyCon
 ---
 
 import { ArticleHero, TalksGrid } from '../components/prose/components.js';
@@ -13,4 +36,4 @@ import { ArticleHero, TalksGrid } from '../components/prose/components.js';
   intro="Selected talks on alignment, responsible systems, agent safety and standards."
 />
 
-<TalksGrid />
+<TalksGrid talks={frontmatter.talks} />

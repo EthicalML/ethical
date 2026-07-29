@@ -3,6 +3,19 @@ title: K8s Agent OS (KAOS)
 description: KAOS provides a control plane for autonomous agents, with controls for tools, credentials, budgets, time, approval steps and audit records.
 eyebrow: OPEN SOURCE
 layout: ../../layouts/ProseLayout.astro
+capabilities:
+  - capability: Scoped credentials
+    detail: Issue task-specific access and remove it when the work ends.
+  - capability: Sandboxed execution
+    detail: Isolate tools and untrusted inputs from sensitive systems.
+  - capability: Budget limits
+    detail: Bound compute, tokens, requests, and external spend.
+  - capability: Time horizon
+    detail: Limit how long an agent can act without renewed approval.
+  - capability: Human approval
+    detail: Gate consequential actions behind accountable decisions.
+  - capability: Audit trail
+    detail: Record plans, tool calls, policy decisions, and outcomes.
 ---
 
 import { CapabilityTable, CTA, Feature, Metrics } from '../../components/prose/components.js';
@@ -21,7 +34,7 @@ The graph represents explicit control points where teams can constrain or interr
 
 KAOS implements safety controls as runtime infrastructure. Its tabular capability model is reused across the site.
 
-<CapabilityTable />
+<CapabilityTable items={frontmatter.capabilities} />
 
 <Metrics stars="1.8k" contributors="42" releases="160+" />
 

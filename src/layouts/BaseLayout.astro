@@ -4,13 +4,15 @@ import '../styles/prose.css';
 import '../styles/layout.css';
 import SiteHeader from '../components/SiteHeader.astro';
 import FootnoteBand from '../components/FootnoteBand.astro';
-import site from '../data/site.json';
+import SiteFooter from '../components/SiteFooter.astro';
 
+const metaDescription = 'An independent research institute working to ensure that frontier AI is safe, aligned and accountable to people and society.';
+const ogImage = '/images/banner.jpg';
 const { frontmatter = {} } = Astro.props;
 const title = frontmatter.title ?? 'The Institute for Ethical AI Alignment & Safety';
-const description = frontmatter.description ?? site.metaDescription;
+const description = frontmatter.description ?? metaDescription;
 const canonical = new URL(Astro.url.pathname, Astro.site);
-const socialImage = new URL(frontmatter.image ?? site.ogImage, Astro.site);
+const socialImage = new URL(frontmatter.image ?? ogImage, Astro.site);
 ---
 
 <!doctype html>
@@ -59,10 +61,7 @@ const socialImage = new URL(frontmatter.image ?? site.ogImage, Astro.site);
       <slot />
     </main>
     <FootnoteBand />
-    <footer class="site-footer">
-      <span>{site.footer.identity}</span>
-      <span>{site.footer.legal}</span>
-    </footer>
+    <SiteFooter />
     <script>
       import '../shared/Reveal';
     </script>

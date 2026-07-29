@@ -3,6 +3,21 @@ title: MLSecOps Top 10
 description: MLSecOps connects common machine-learning security failures to controls that teams can apply across data, model, deployment, and monitoring workflows.
 eyebrow: FRAMEWORK
 layout: ../../layouts/ProseLayout.astro
+risks:
+  - owasp: Broken access control
+    mlsecops: Unrestricted model endpoints
+  - owasp: Cryptographic failures
+    mlsecops: Access to model artifacts
+  - owasp: Injection
+    mlsecops: Artifact exploit injection
+  - owasp: Insecure design
+    mlsecops: Insecure ML pipeline design
+  - owasp: Security misconfiguration
+    mlsecops: ML infrastructure misconfiguration
+  - owasp: Vulnerable components
+    mlsecops: Supply-chain vulnerabilities in ML code
+  - owasp: Logging & monitoring failures
+    mlsecops: Observability and lineage failures
 ---
 
 import { ComparisonTable, CTA } from '../../components/prose/components.js';
@@ -13,7 +28,7 @@ MLSecOps connects common machine-learning security failures to controls that tea
 
 The framework gives security and ML teams a shared vocabulary for prioritising risks. Each category links an OWASP-style failure mode to concrete practices applied throughout the lifecycle.
 
-<ComparisonTable />
+<ComparisonTable rows={frontmatter.risks} />
 
 ## From taxonomy to practice
 

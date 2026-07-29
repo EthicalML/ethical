@@ -1,6 +1,7 @@
 ---
-import SurveyExplorer from './SurveyExplorer.tsx';
-import reports from '../data/home-reports.json';
+import SurveyExplorerIsland from './SurveyExplorerIsland.astro';
+
+const { reports } = Astro.props;
 ---
 
 <section id="reports" class="reports-section home-section" data-reveal>
@@ -20,7 +21,7 @@ import reports from '../data/home-reports.json';
       }
     </nav>
   </header>
-  <div class="home-survey-card"><SurveyExplorer client:visible /></div>
+  <div class="home-survey-card"><SurveyExplorerIsland /></div>
   <div class="initiative-pair">
     <article>
       <div class="initiative-preview governance-preview">

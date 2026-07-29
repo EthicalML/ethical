@@ -26,6 +26,17 @@ hero:
   secondary_button:
     label: Contact us
     href: '#contact'
+evidence:
+  - value: '09'
+    label: RESPONSIBLE AI PRINCIPLES
+  - value: '393'
+    label: NEWSLETTER ISSUES PUBLISHED
+  - value: 70k+
+    label: ML PRACTITIONERS REACHED
+  - value: 20k+
+    label: GITHUB STARS, OSS ECOSYSTEM
+  - value: EST.
+    label: 2017 — FOUNDED
 phases:
   - label: 01 / EMPOWERING INDIVIDUALS
     title: By Principle.
@@ -51,9 +62,217 @@ phases:
       - Policy and regulatory work.
       - Public frameworks and requirements.
       - International governance.
+reports:
+  eyebrow: 04 — REPORTS & INITIATIVES
+  title: The State of Production ML
+  intro: Two annual practitioner surveys — context, tools, scope and statistics. Choose a question, compare 2024 with 2025, and select any answer to read what it means for the principles.
+  actions:
+    - label: Read the 2025 report
+      href: /data/survey-explorer/
+      kind: primary
+    - label: 2024 edition
+      href: /data/survey-explorer/
+      kind: ''
+  governance:
+    eyebrow: Governance
+    previewEyebrow: AI-RFX
+    previewLabel: PROCUREMENT FRAMEWORK
+    previewTitle: From requirements to supplier evidence
+    steps:
+      - label: Define governance requirements
+        detail: RFP
+      - label: Set evaluation criteria
+        detail: SCORE
+      - label: Request supplier evidence
+        detail: EVIDENCE
+      - label: Compare and document responses
+        detail: REVIEW
+      - label: Carry obligations into delivery
+        detail: CONTROL
+    title: AI governance & procurement
+    text: AI-RFX provides open-source RFP and tender templates for organisations procuring AI. It turns governance requirements into supplier questions, evaluation criteria and evidence requests across the procurement lifecycle.
+    actions:
+      - label: Open AI-RFX templates ↗
+        href: https://github.com/EthicalML/ai-rfx-procurement-framework
+        kind: primary
+      - label: ML Maturity Model →
+        href: /frameworks/maturity-model/
+        kind: ''
+  security:
+    eyebrow: Security
+    leftHeading: OWASP CATEGORY
+    rightHeading: MLSECOPS EQUIVALENT
+    rows:
+      - owasp: Broken access control
+        mlsecops: Unrestricted model endpoints
+      - owasp: Cryptographic failures
+        mlsecops: Access to model artifacts
+      - owasp: Injection
+        mlsecops: Artifact exploit injection
+      - owasp: Insecure design
+        mlsecops: Insecure ML pipeline design
+      - owasp: Security misconfiguration
+        mlsecops: ML infrastructure misconfiguration
+      - owasp: Vulnerable components
+        mlsecops: Supply-chain vulnerabilities in ML code
+      - owasp: Logging & monitoring failures
+        mlsecops: Observability and lineage failures
+    title: ML & agent security
+    text: The Institute's security programme spans the MLSecOps Top 10, the ML Security Committee at LF AI & Data, partnership work with OpenSSF, and active review of OWASP guidance for agentic systems.
+    actions:
+      - label: MLSecOps Top 10 →
+        href: /frameworks/mlsecops/
+        kind: primary
+      - label: LF ML Security Committee ↗
+        href: https://lfaidata.foundation/groups/security-compliance-work-group/
+        kind: ''
+      - label: Security best practices ↗
+        href: https://lfaidata.foundation/blog/2023/06/15/machine-learning-system-security-risks-best-practices/
+        kind: ''
+      - label: OWASP agentic reviews ↗
+        href: https://genai.owasp.org/2025/12/09/owasp-top-10-for-agentic-applications-the-benchmark-for-agentic-security-in-the-age-of-autonomous-ai/
+        kind: ''
+projects:
+  section:
+    eyebrow: 03 — OPEN SOURCE & TOOLS
+    title: Open-Source Foundation to Support North-Star Principles.
+  kompute:
+    figure: FIG 01
+    affiliation: LINUX FOUNDATION AI & DATA
+    title: Cross-vendor GPU computing
+    text: A general-purpose GPU compute framework built on Vulkan for cross-vendor graphics cards. It supports asynchronous, mobile-enabled GPU processing.
+    donationText: The Institute donated Kompute to the Linux Foundation in 2021.
+    donationHref: https://lfaidata.foundation/blog/2021/08/26/kompute-joins-lf-ai-data-as-new-sandbox-project/
+    tags:
+      - Kompute
+      - ML OSS ecosystem
+      - Linux Foundation AI & Data
+      - NumFOCUS
+      - Awesome AI Guidelines
+    actions:
+      - label: View on GitHub
+        href: https://github.com/KomputeProject/kompute
+        kind: primary
+      - label: kompute.cc
+        href: https://kompute.cc
+        kind: ''
+  xai:
+    figure: FIG 02 — XAI PIPELINE
+    stages:
+      - title: Data analysis
+        detail: DISTRIBUTIONS · PROXIES
+      - title: Model evaluation
+        detail: ATTRIBUTION · SUBGROUPS
+      - title: Production monitoring
+        detail: DRIFT · OUTLIERS
+    title: XAI Explainability Framework
+    text: Explainability and bias mitigation across three stages, combining technical tools with the organisational processes around them.
+    linkLabel: Open the framework →
+    linkHref: /open-source/
+  ecosystem:
+    leftHeading: CATEGORY
+    rightHeading: CATEGORIES
+    rows:
+      - title: Serving & inference
+      - title: Orchestration & pipelines
+      - title: Monitoring & observability
+      - title: Feature & vector stores
+      - title: Explainability & fairness
+      - title: ML security
+      - title: GPU & acceleration
+    title: Production ML open-source list
+    text: The community-maintained catalogue of production ML and MLOps tooling, curated weekly.
+    linkLabel: Browse the ecosystem on GitHub →
+    linkHref: https://github.com/EthicalML/awesome-production-machine-learning
+    guidelinesLabel: Browse AI guidelines →
+    guidelinesHref: https://github.com/EthicalML/awesome-artificial-intelligence-regulation
+  kaos:
+    figure: FIG 04
+    title: K8s Agent OS (KAOS)
+    text: An open-source control plane for running autonomous agents under operational constraints. It provides scoped credentials, sandboxed execution, budget and time-horizon limits, human approval gates and a replayable audit trail. These controls implement Principle 09 in the infrastructure.
+    capabilities:
+      - name: Scoped credentials
+        detail: Per-agent service accounts, short-lived tokens
+      - name: Sandboxed execution
+        detail: Namespaced pods, egress allow-lists
+      - name: Budget limits
+        detail: Token, compute and wall-clock ceilings
+      - name: Time horizon
+        detail: Max unattended task length per agent class
+      - name: Human approval
+        detail: Gates on irreversible or high-impact actions
+      - name: Audit trail
+        detail: Replayable traces, lineage, evaluation hooks
+    actions:
+      - label: Read the design
+        href: /open-source/kaos/
+        kind: primary
+      - label: View on GitHub
+        href: https://github.com/axsaucedo/kaos
+        kind: ''
+    panelEyebrow: AGENT RUN — LIVE ORCHESTRATION
+    panelStatus: RUNNING
 network_form:
   variant: network-split
   title: Contact us, Subscribe or Apply.
+  copy:
+    homeEyebrow: 05 — NETWORK & NEWSLETTER
+    contactEyebrow: ONE FORM / MANY WAYS IN
+    homeIntro: Responsible technology requires changes to models and to the systems around them. Membership includes the Ethical AI Network and the Machine Learning Engineer newsletter.
+    contactIntro: Tell us what you are working on, where you need help, or how you would like to contribute.
+    sectorEyebrow: WHO IS HERE
+    issuesEyebrow: RECENT ISSUES
+    form:
+      title: Contact form
+      fields:
+        - label: Name
+          name: name
+          type: text
+          placeholder: Alex Moreau
+          autocomplete: name
+        - label: Email
+          name: email
+          type: email
+          placeholder: you@organisation.org
+          autocomplete: email
+        - label: Organisation & role
+          name: organisation
+          type: text
+          placeholder: Institution — role
+          autocomplete: organization-title
+          wide: true
+        - label: Further information
+          name: furtherInformation
+          type: text
+          placeholder: Context, motivation or relevant links
+          autocomplete: off
+          wide: true
+      interests:
+        - value: network
+          label: Apply to join the Ethical AI Network
+          checked: false
+        - value: newsletter
+          label: Subscribe to the ML Engineer newsletter
+          checked: true
+        - value: frameworks
+          label: Request the AI-RFX materials or a collaboration
+          checked: false
+      button: Send
+      disclaimer: We only use your details to reply and to send what you asked for. Unsubscribe any time.
+      confirmation: Thank you. Your details have been sent to the Institute.
+      demoConfirmation: The form is in demo mode. No endpoint is configured and nothing was sent.
+      error: We could not send your details. Please try again or email hello@ethical.institute.
+  sectors:
+    - name: Universities & research
+      value: 24%
+    - name: Technology companies
+      value: 22%
+    - name: Financial services
+      value: 17%
+    - name: Government & public bodies
+      value: 14%
+    - name: Startups & scale-ups
+      value: 13%
   stats:
     - value: '1,034'
       label: NETWORK MEMBERS
@@ -74,7 +293,7 @@ import ReportsSection from '../components/ReportsSection.astro';
 
 <Hero {...frontmatter.hero} />
 
-<StatBand />
+<StatBand stats={frontmatter.evidence} />
 
 <AffiliationMarquee />
 
@@ -87,8 +306,8 @@ import ReportsSection from '../components/ReportsSection.astro';
   intro="Each principle specifies a commitment, the failure modes it addresses and the controls that implement it. We invite both individuals and organisations to pledge towards these principles."
 />
 
-<OpenSourceShowcase homepage />
+<OpenSourceShowcase projects={frontmatter.projects} homepage />
 
-<ReportsSection />
+<ReportsSection reports={frontmatter.reports} />
 
 <FormSection {...frontmatter.network_form} homepage />

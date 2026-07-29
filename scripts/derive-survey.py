@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Derive the homepage survey summary from the two public survey CSV files."""
+"""Derive the validated survey collection from its two source CSV files."""
 
 import csv
 import json
@@ -9,10 +9,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = {
-    "y2024": ROOT / "public/data.csv",
-    "y2025": ROOT / "public/data-2025.csv",
+    "y2024": ROOT / "src/data/survey-2024.csv",
+    "y2025": ROOT / "src/data/survey-2025.csv",
 }
-OUTPUT = ROOT / "src/data/survey.json"
+OUTPUT = ROOT / "src/content/survey/questions.yaml"
 
 QUESTIONS = {
     "frameworks": {

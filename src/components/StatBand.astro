@@ -1,5 +1,14 @@
 ---
-import stats from '../data/stats.json';
+interface Stat {
+  value: string;
+  label: string;
+}
+
+interface Props {
+  stats: Stat[];
+}
+
+const { stats } = Astro.props;
 ---
 
 <section class="stat-band" aria-label="Institute statistics" data-reveal>

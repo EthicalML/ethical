@@ -1,4 +1,4 @@
-import { defineConfig } from 'astro/config';
+import { defineConfig, envField } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { unified } from '@astrojs/markdown-remark';
@@ -7,6 +7,16 @@ import rehypeSectionize from './src/plugins/rehype-sectionize.mjs';
 
 export default defineConfig({
   site: 'https://ethical.institute',
+  env: {
+    schema: {
+      FORM_ENDPOINT: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+        default: '',
+      }),
+    },
+  },
   vite: {
     server: { allowedHosts: ['*'] },
     preview: { allowedHosts: ['*'] },

@@ -6,6 +6,7 @@ layout: ../../layouts/ProseLayout.astro
 ---
 
 import { ArticleHero, CenteredCTA, OpenSourceShowcase } from '../../components/prose/components.js';
+import { frontmatter as home } from '../index.mdx';
 
 <ArticleHero
   canvas
@@ -14,6 +15,6 @@ import { ArticleHero, CenteredCTA, OpenSourceShowcase } from '../../components/p
   intro="Openly licensed software for explainability, safe agents, GPU compute and production ML."
 />
 
-<OpenSourceShowcase compact />
+<OpenSourceShowcase projects={home.projects} compact />
 
 <CenteredCTA eyebrow="CONTRIBUTE" heading="Contribute to the open-source projects." href="/contact/" label="Start a conversation →" />

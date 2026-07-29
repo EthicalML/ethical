@@ -1,6 +1,10 @@
 ---
-import projects from '../data/projects.json';
-const { compact = false, homepage = false } = Astro.props;
+import { getCollection } from 'astro:content';
+
+const { projects, compact = false, homepage = false } = Astro.props;
+const repoEntries = await getCollection('metrics');
+const repoMetrics = Object.fromEntries(repoEntries.map(({ id, data }) => [id, data.values]));
+const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value: string; label: string }) => (label ? `${value} ${label}` : value));
 ---
 
 <section id="opensource" class:list={['open-source-prototype', compact && 'compact', homepage && 'home-section']} data-reveal>
@@ -15,7 +19,7 @@ const { compact = false, homepage = false } = Astro.props;
       <p><a href={projects.kompute.donationHref} rel="noopener">{projects.kompute.donationText}</a></p>
       <div class="oss-metrics">
         {
-          projects.kompute.metrics.map(({ value, label }) => (
+          repoMetrics.kompute.map(({ value, label }: { value: string; label: string }) => (
             <div>
               <>
                 <strong>{value}</strong>
@@ -65,7 +69,7 @@ const { compact = false, homepage = false } = Astro.props;
       </div>
       <h3>{projects.xai.title}</h3>
       <p>{projects.xai.text}</p>
-      <div class="oss-statline">{projects.xai.stats.map((stat) => <span>{stat}</span>)}</div>
+      <div class="oss-statline">{statline('xai').map((stat) => <span>{stat}</span>)}</div>
       <a href={projects.xai.linkHref}>{projects.xai.linkLabel}</a>
     </article>
     <article class="oss-half">
@@ -83,7 +87,7 @@ const { compact = false, homepage = false } = Astro.props;
       </div>
       <h3>{projects.ecosystem.title}</h3>
       <p>{projects.ecosystem.text}</p>
-      <div class="oss-statline">{projects.ecosystem.stats.map((stat) => <span>{stat}</span>)}</div>
+      <div class="oss-statline">{statline('ecosystem').map((stat) => <span>{stat}</span>)}</div>
       <a href={projects.ecosystem.linkHref} rel="noopener">{projects.ecosystem.linkLabel}</a>
       {' · '}
       <a href={projects.ecosystem.guidelinesHref} rel="noopener">{projects.ecosystem.guidelinesLabel}</a>
@@ -107,7 +111,7 @@ const { compact = false, homepage = false } = Astro.props;
           ))
         }
       </div>
-      <div class="oss-statline">{projects.kaos.stats.map((stat) => <span>{stat}</span>)}</div>
+      <div class="oss-statline">{statline('kaos').map((stat) => <span>{stat}</span>)}</div>
       <div class="actions">
         {
           projects.kaos.actions.map(({ label, href, kind }) => (

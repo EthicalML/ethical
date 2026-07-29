@@ -1,7 +1,21 @@
 import { useMemo, useState } from 'preact/hooks';
-import DATA from '../data/survey.json';
 
-type Category = keyof typeof DATA;
+interface SurveyQuestion {
+  label: string;
+  meta: string;
+  n2024: number;
+  n2025: number;
+  rows: Array<{
+    label: string;
+    y2024: number;
+    y2025: number;
+    note: string;
+  }>;
+}
+
+export type SurveyData = Record<string, SurveyQuestion>;
+
+type Category = string;
 type SurveyYear = 'year2024' | 'year2025' | 'both';
 type SortMode = 'value' | 'delta';
 
@@ -16,12 +30,13 @@ interface SurveyRow {
 }
 
 interface TabsProps {
+  data: SurveyData;
   category: Category;
   onSelect: (category: Category) => void;
 }
 
-function Tabs({ category, onSelect }: TabsProps) {
-  const categories = Object.keys(DATA) as Category[];
+function Tabs({ data, category, onSelect }: TabsProps) {
+  const categories = Object.keys(data);
 
   return (
     <div class="survey-tabs" role="tablist" aria-label="Survey question">
@@ -31,7 +46,7 @@ function Tabs({ category, onSelect }: TabsProps) {
           aria-selected={category === categoryKey}
           onClick={() => onSelect(categoryKey)}
         >
-          {DATA[categoryKey].label}
+          {data[categoryKey].label}
         </button>
       ))}
     </div>
@@ -138,13 +153,17 @@ function FocusPanel({ selectedRow }: FocusPanelProps) {
   );
 }
 
-export default function SurveyExplorer() {
+interface Props {
+  data: SurveyData;
+}
+
+export default function SurveyExplorer({ data }: Props) {
   const [category, setCategory] = useState<Category>('challenges');
   const [year, setYear] = useState<SurveyYear>('year2025');
   const [sortMode, setSortMode] = useState<SortMode>('value');
   const [focusedIndex, setFocusedIndex] = useState(0);
 
-  const selectedSurvey = DATA[category];
+  const selectedSurvey = data[category];
   const currentYear = year === 'both' ? 'year2025' : year;
 
   let responseCount: number | string = selectedSurvey.n2025;
@@ -196,7 +215,7 @@ export default function SurveyExplorer() {
 
   return (
     <div class="survey-island" data-survey-card>
-      <Tabs category={category} onSelect={selectCategory} />
+      <Tabs data={data} category={category} onSelect={selectCategory} />
       <Toolbar
         year={year}
         sortMode={sortMode}

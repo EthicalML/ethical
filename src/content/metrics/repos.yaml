@@ -1,0 +1,30 @@
+kompute:
+  values:
+    - value: 2.5k
+      label: GITHUB STARS
+    - value: '42'
+      label: CONTRIBUTORS
+    - value: '197'
+      label: FORKS
+xai:
+  values:
+    - value: 1.3k
+      label: STARS
+    - value: '3'
+      label: CONTRIBUTORS
+ecosystem:
+  values:
+    - value: 20.8k
+      label: STARS
+    - value: '210'
+      label: CONTRIBUTORS
+kaos:
+  values:
+    - value: '268'
+      label: STARS
+    - value: '5'
+      label: CONTRIBUTORS
+    - value: APACHE-2.0
+      label: ''
+    - value: K8S ≥1.28
+      label: ''

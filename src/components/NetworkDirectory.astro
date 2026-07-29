@@ -1,6 +1,19 @@
 ---
-import sectors from '../data/network-sectors.json';
-const { sectorEyebrow, sectorHeading, memberEyebrow, memberHeading, members } = Astro.props;
+interface Sector {
+  name: string;
+  value: string;
+}
+
+interface Props {
+  sectorEyebrow: string;
+  sectorHeading: string;
+  memberEyebrow: string;
+  memberHeading: string;
+  members: string[];
+  sectors: Sector[];
+}
+
+const { sectorEyebrow, sectorHeading, memberEyebrow, memberHeading, members, sectors } = Astro.props;
 ---
 
 <section class="network-directory" data-reveal>

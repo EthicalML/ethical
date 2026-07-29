@@ -1,27 +1,68 @@
 ---
-import copy from '../data/network.json';
-import sectors from '../data/network-sectors.json';
-import issues from '../data/newsletter-issues.json';
-import site from '../data/site.json';
+import { FORM_ENDPOINT } from 'astro:env/server';
+import { getRecentIssueNumbers } from '../utils/RecentIssues';
 
 interface Stat {
   value: string;
   label: string;
 }
 
+interface Sector {
+  name: string;
+  value: string;
+}
+
+interface FormField {
+  label: string;
+  name: string;
+  type: 'text' | 'email';
+  placeholder: string;
+  autocomplete: string;
+  wide?: boolean;
+}
+
+interface FormCopy {
+  title: string;
+  fields: FormField[];
+  interests: Array<{
+    value: string;
+    label: string;
+    checked: boolean;
+  }>;
+  button: string;
+  disclaimer: string;
+  confirmation: string;
+  demoConfirmation: string;
+  error: string;
+}
+
+interface Copy {
+  homeEyebrow: string;
+  contactEyebrow: string;
+  homeIntro: string;
+  contactIntro: string;
+  sectorEyebrow: string;
+  issuesEyebrow: string;
+  form: FormCopy;
+}
+
 interface Props {
   variant: string;
   title: string;
+  copy: Copy;
+  sectors?: Sector[];
   stats?: Stat[];
   homepage?: boolean;
 }
 
-const { variant, title, stats = [], homepage = false } = Astro.props;
+const { variant, title, copy, sectors = [], stats = [], homepage = false } = Astro.props;
 
 const isSupportedVariant = variant === 'network-split' || variant === 'contact-full';
 const isContactPage = variant === 'contact-full';
 const shouldShowHomeEyebrow = !isContactPage;
 const sectionClasses = ['join-section', isContactPage && 'contact-full', homepage && 'home-section'];
+const issues = await getRecentIssueNumbers();
+const minimumSubmissionMs = 3000;
 ---
 
 {
@@ -56,10 +97,9 @@ const sectionClasses = ['join-section', isContactPage && 'contact-full', homepag
                 </div>
                 <div>
                   <p class="eyebrow">{copy.issuesEyebrow}</p>
-                  {issues.map(({ number, title: issueTitle }) => (
+                  {issues.map((number) => (
                     <a href="/network/">
-                      <b>{number}</b>
-                      <i>{issueTitle}</i>
+                      <b>#{number}</b>
                     </a>
                   ))}
                 </div>
@@ -72,8 +112,8 @@ const sectionClasses = ['join-section', isContactPage && 'contact-full', homepag
             id="contact"
             data-institute-form
             data-variant={variant}
-            data-endpoint={site.forms.endpoint}
-            data-minimum-submission-ms={site.forms.minimumSubmissionMs}
+            data-endpoint={FORM_ENDPOINT}
+            data-minimum-submission-ms={minimumSubmissionMs}
             data-confirmation={copy.form.confirmation}
             data-demo-confirmation={copy.form.demoConfirmation}
             data-error={copy.form.error}

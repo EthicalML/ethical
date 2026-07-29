@@ -1,12 +1,12 @@
 ---
 import { Image } from 'astro:assets';
-import talks from '../data/talks.json';
 import alignment from '../assets/talks/alignment-field.svg';
 import systems from '../assets/talks/responsible-systems.svg';
 import agents from '../assets/talks/agent-safety.svg';
 import standards from '../assets/talks/standards.svg';
 
 const images = { alignment, systems, agents, standards };
+const { talks } = Astro.props;
 ---
 
 <section class="talk-grid" data-reveal>
