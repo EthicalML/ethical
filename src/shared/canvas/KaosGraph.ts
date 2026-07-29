@@ -37,6 +37,9 @@ const EDGES: [number, number][] = [
   [5, 0],
 ];
 
+const graphs = new Set<KaosGraph>();
+let transitionPaused = false;
+
 export class KaosGraph extends HTMLElement {
   private active = true;
   private animationFrame = 0;
@@ -53,6 +56,7 @@ export class KaosGraph extends HTMLElement {
   private width = 0;
 
   connectedCallback() {
+    graphs.add(this);
     this.controller = new AbortController();
     this.classList.add('kaos-canvas-mount');
     this.canvas = this.querySelector('canvas') ?? document.createElement('canvas');
@@ -78,6 +82,7 @@ export class KaosGraph extends HTMLElement {
   }
 
   disconnectedCallback() {
+    graphs.delete(this);
     cancelAnimationFrame(this.animationFrame);
     this.controller.abort();
     this.intersectionObserver?.disconnect();
@@ -231,7 +236,7 @@ export class KaosGraph extends HTMLElement {
 
   private handleIntersection = ([entry]: IntersectionObserverEntry[]) => {
     const nextActive = entry.isIntersecting;
-    if (nextActive && !this.active) {
+    if (nextActive && !this.active && !transitionPaused) {
       this.active = true;
       this.animationFrame = requestAnimationFrame(this.draw);
     }
@@ -256,7 +261,18 @@ export class KaosGraph extends HTMLElement {
   };
 
   private requestNextFrame() {
-    if (this.active && !this.reducedMotion) {
+    if (this.active && !this.reducedMotion && !transitionPaused) {
+      this.animationFrame = requestAnimationFrame(this.draw);
+    }
+  }
+
+  pauseForTransition() {
+    cancelAnimationFrame(this.animationFrame);
+    this.animationFrame = 0;
+  }
+
+  resumeAfterTransition() {
+    if (this.isConnected && this.active && !this.reducedMotion && !this.animationFrame) {
       this.animationFrame = requestAnimationFrame(this.draw);
     }
   }
@@ -265,3 +281,16 @@ export class KaosGraph extends HTMLElement {
 if (!customElements.get('kaos-graph')) {
   customElements.define('kaos-graph', KaosGraph);
 }
+
+document.addEventListener('astro:before-preparation', () => {
+  transitionPaused = true;
+  graphs.forEach((graph) => graph.pauseForTransition());
+});
+
+document.addEventListener('astro:before-swap', (event) => {
+  const resume = () => {
+    transitionPaused = false;
+    graphs.forEach((graph) => graph.resumeAfterTransition());
+  };
+  void event.viewTransition.finished.then(resume, resume);
+});
