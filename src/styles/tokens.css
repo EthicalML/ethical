@@ -337,9 +337,6 @@ h3 {
 .glitch {
   animation: om-flicker var(--cycle) steps(1, end) infinite;
 }
-.glitch.glitch-burst {
-  animation: om-flicker 1.2s steps(1, end) -.78s 1;
-}
 .glitch::before,
 .glitch::after {
   content: attr(data-text);
