@@ -51,10 +51,13 @@ export class HeroCycle extends HTMLElement {
   private buttons: HTMLButtonElement[] = [];
   private canvas?: HTMLCanvasElement;
   private context?: CanvasRenderingContext2D;
+  private controller = new AbortController();
   private graph?: { nodes: GraphNode[]; edges: GraphEdge[] };
   private height = 0;
   private host?: HTMLElement;
+  private lastPointer?: { x: number; y: number };
   private pointer = { x: 0.5, y: 0.5 };
+  private pointerTarget = { x: 0.5, y: 0.5 };
   private reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   private resizeObserver?: ResizeObserver;
   private sphere?: { vertices: [number, number, number][]; edges: [number, number][] };
@@ -73,6 +76,7 @@ export class HeroCycle extends HTMLElement {
   private width = 0;
 
   connectedCallback() {
+    this.controller = new AbortController();
     this.canvas = this.querySelector('canvas') ?? undefined;
     this.host =
       this.canvas?.closest<HTMLElement>('.hero, .canvas-variant') ??
@@ -82,9 +86,18 @@ export class HeroCycle extends HTMLElement {
     if (!this.canvas || !this.context || !this.host) return;
 
     this.buttons = Array.from(this.host.querySelectorAll<HTMLButtonElement>('[data-hero-mode]'));
-    this.buttons.forEach((button) => button.addEventListener('click', this.handleModeClick));
-    this.host.addEventListener('pointermove', this.handlePointerMove);
-    document.addEventListener('visibilitychange', this.handleVisibilityChange);
+    this.buttons.forEach((button) =>
+      button.addEventListener('click', this.handleModeClick, { signal: this.controller.signal }),
+    );
+    this.host.addEventListener('pointerenter', this.handlePointerEnter, {
+      signal: this.controller.signal,
+    });
+    this.host.addEventListener('pointermove', this.handlePointerMove, {
+      signal: this.controller.signal,
+    });
+    document.addEventListener('visibilitychange', this.handleVisibilityChange, {
+      signal: this.controller.signal,
+    });
     this.resizeObserver = new ResizeObserver(this.handleResize);
 
     this.fit();
@@ -95,9 +108,7 @@ export class HeroCycle extends HTMLElement {
 
   disconnectedCallback() {
     cancelAnimationFrame(this.animationFrame);
-    this.buttons.forEach((button) => button.removeEventListener('click', this.handleModeClick));
-    this.host?.removeEventListener('pointermove', this.handlePointerMove);
-    document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+    this.controller.abort();
     this.resizeObserver?.disconnect();
   }
 
@@ -105,6 +116,9 @@ export class HeroCycle extends HTMLElement {
     const context = this.context!;
     const delta = Math.max(0, Math.min(0.05, elapsed - this.state.last));
     this.state.last = elapsed;
+    const pointerFollow = 1 - Math.exp(-delta * 8);
+    this.pointer.x += (this.pointerTarget.x - this.pointer.x) * pointerFollow;
+    this.pointer.y += (this.pointerTarget.y - this.pointer.y) * pointerFollow;
     const modes: HeroMode[] = ['planes', 'sphere', 'contour'];
     const phase = elapsed % 9;
     const inTear = phase >= 6.4 && phase < 7.4;
@@ -429,10 +443,21 @@ export class HeroCycle extends HTMLElement {
     this.buttons.forEach((item) => item.classList.toggle('active', item === button));
   };
 
+  private handlePointerEnter = (event: PointerEvent) => {
+    this.lastPointer = { x: event.clientX, y: event.clientY };
+  };
+
   private handlePointerMove = (event: PointerEvent) => {
+    if (!this.lastPointer) {
+      this.handlePointerEnter(event);
+      return;
+    }
     const bounds = this.host!.getBoundingClientRect();
-    this.pointer.x = (event.clientX - bounds.left) / bounds.width;
-    this.pointer.y = (event.clientY - bounds.top) / bounds.height;
+    const deltaX = (event.clientX - this.lastPointer.x) / bounds.width;
+    const deltaY = (event.clientY - this.lastPointer.y) / bounds.height;
+    this.pointerTarget.x = Math.max(0, Math.min(1, this.pointerTarget.x + deltaX));
+    this.pointerTarget.y = Math.max(0, Math.min(1, this.pointerTarget.y + deltaY));
+    this.lastPointer = { x: event.clientX, y: event.clientY };
   };
 
   private handleResize = () => {

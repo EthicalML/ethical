@@ -14,10 +14,13 @@ export type CanvasDraw = (
 export class CanvasEngine {
   private active = true;
   private animationFrame = 0;
+  private controller = new AbortController();
   private context: CanvasRenderingContext2D;
   private height = 0;
   private intersectionObserver: IntersectionObserver;
+  private lastPointer?: CanvasPointer;
   private pointer: CanvasPointer = { x: 0.5, y: 0.5 };
+  private pointerTarget: CanvasPointer = { x: 0.5, y: 0.5 };
   private reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   private resizeObserver: ResizeObserver;
   private startedAt = performance.now();
@@ -33,7 +36,12 @@ export class CanvasEngine {
 
     this.resizeObserver = new ResizeObserver(this.handleResize);
     this.intersectionObserver = new IntersectionObserver(this.handleIntersection);
-    this.canvas.addEventListener('pointermove', this.handlePointerMove);
+    this.canvas.addEventListener('pointerenter', this.handlePointerEnter, {
+      signal: this.controller.signal,
+    });
+    this.canvas.addEventListener('pointermove', this.handlePointerMove, {
+      signal: this.controller.signal,
+    });
     this.fit();
     this.drawFrame(this.context, this.width, this.height, 0, this.pointer);
     this.resizeObserver.observe(this.canvas);
@@ -43,7 +51,7 @@ export class CanvasEngine {
 
   destroy() {
     cancelAnimationFrame(this.animationFrame);
-    this.canvas.removeEventListener('pointermove', this.handlePointerMove);
+    this.controller.abort();
     this.intersectionObserver.disconnect();
     this.resizeObserver.disconnect();
   }
@@ -69,6 +77,8 @@ export class CanvasEngine {
   }
 
   private frame = (now: number) => {
+    this.pointer.x += (this.pointerTarget.x - this.pointer.x) * 0.12;
+    this.pointer.y += (this.pointerTarget.y - this.pointer.y) * 0.12;
     this.drawFrame(
       this.context,
       this.width,
@@ -92,10 +102,21 @@ export class CanvasEngine {
     if (!nextActive) cancelAnimationFrame(this.animationFrame);
   };
 
+  private handlePointerEnter = (event: PointerEvent) => {
+    this.lastPointer = { x: event.clientX, y: event.clientY };
+  };
+
   private handlePointerMove = (event: PointerEvent) => {
+    if (!this.lastPointer) {
+      this.handlePointerEnter(event);
+      return;
+    }
     const bounds = this.canvas.getBoundingClientRect();
-    this.pointer.x = (event.clientX - bounds.left) / bounds.width;
-    this.pointer.y = (event.clientY - bounds.top) / bounds.height;
+    const deltaX = (event.clientX - this.lastPointer.x) / bounds.width;
+    const deltaY = (event.clientY - this.lastPointer.y) / bounds.height;
+    this.pointerTarget.x = Math.max(0, Math.min(1, this.pointerTarget.x + deltaX));
+    this.pointerTarget.y = Math.max(0, Math.min(1, this.pointerTarget.y + deltaY));
+    this.lastPointer = { x: event.clientX, y: event.clientY };
   };
 
   private handleResize = () => {

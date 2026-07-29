@@ -42,6 +42,7 @@ export class KaosGraph extends HTMLElement {
   private animationFrame = 0;
   private canvas?: HTMLCanvasElement;
   private context?: CanvasRenderingContext2D;
+  private controller = new AbortController();
   private elapsed = 0;
   private height = 0;
   private intersectionObserver?: IntersectionObserver;
@@ -52,6 +53,7 @@ export class KaosGraph extends HTMLElement {
   private width = 0;
 
   connectedCallback() {
+    this.controller = new AbortController();
     this.classList.add('kaos-canvas-mount');
     this.canvas = this.querySelector('canvas') ?? document.createElement('canvas');
     this.canvas.setAttribute('aria-hidden', 'true');
@@ -60,8 +62,12 @@ export class KaosGraph extends HTMLElement {
     if (!this.context) return;
 
     this.status = this.closest('.kaos-panel')?.querySelector<HTMLElement>('[data-kaos-status]');
-    this.addEventListener('pointermove', this.handlePointerMove);
-    this.addEventListener('pointerleave', this.handlePointerLeave);
+    this.addEventListener('pointermove', this.handlePointerMove, {
+      signal: this.controller.signal,
+    });
+    this.addEventListener('pointerleave', this.handlePointerLeave, {
+      signal: this.controller.signal,
+    });
     this.resizeObserver = new ResizeObserver(this.handleResize);
     this.intersectionObserver = new IntersectionObserver(this.handleIntersection);
 
@@ -73,8 +79,7 @@ export class KaosGraph extends HTMLElement {
 
   disconnectedCallback() {
     cancelAnimationFrame(this.animationFrame);
-    this.removeEventListener('pointermove', this.handlePointerMove);
-    this.removeEventListener('pointerleave', this.handlePointerLeave);
+    this.controller.abort();
     this.intersectionObserver?.disconnect();
     this.resizeObserver?.disconnect();
   }
