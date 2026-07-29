@@ -20,7 +20,8 @@ src/
   content/             # COLLECTIONS: schema-validated sets defined in src/content.config.ts
     principles/          01.md … 09.md   (entries WITH prose bodies → page-generating)
     metrics/             repos.yaml      (entries that are pure values → data-only)
-  canvas/              # shared canvas engines (see §3 for what "shared" means)
+  data/                # REAL data only: raw/extensive datasets (survey CSVs); never chrome or config
+  canvas/              # shared canvas engines — exact contents specified in the migration plan
   styles/              # central sheets (unchanged; out of scope here)
   assets/              # images processed via <Image>
 public/                # true passthrough: fonts/, favicon, CNAME
@@ -92,9 +93,9 @@ The import is the entire wiring — jump-to-definition lands on the implementati
 
 All first-party behaviour is TypeScript — colocated `<script>` blocks, shared modules, islands. No first-party `.js` in the target picture (legacy passthrough under `public/` is scheduled debt). This is inseparable from §3: TS is what the colocated/import model gives for free and the `public/` model could not.
 
-## 5. Data and content placement (revised — src/data/ is dissolved)
+## 5. Data and content placement (revision 3: src/data/ survives for REAL data only)
 
-Owner review invalidated the "chrome data files" category. The revised placement, item by item, with the principle first:
+Owner review invalidated the "chrome data files" category, and revision 3 restores src/data/ with a strict charter: **REAL data only** — raw or extensive datasets (the survey response CSVs; any future large dataset), and at most programmatically-generated fact files (repo metrics) if collections prove awkward for them. Never chrome, config, nav, or page copy. The placement, item by item:
 
 **Principle: content lives with its owner; a separate file must be earned by ≥2 unrelated consumers or by being a validated set.**
 
@@ -111,12 +112,12 @@ Owner review invalidated the "chrome data files" category. The revised placement
 | `survey.json` | `content/survey/…yaml` with schema (already derivation-scripted) | validated set, script-generated |
 | `home-reports.json`, `network-sectors.json`, `talks.json` | fold into their single-consumer pages' front matter, except talks if/when a talks collection with entries is warranted | consumer-count rule |
 
-End state: **`src/data/` does not exist.** Content is in pages, chrome constants in their components, validated sets in collections, generated facts in script-refreshed collection files.
+End state: **`src/data/` = real data only** (survey CSVs as source of truth once the legacy pages are modernised; today the CSVs also remain under public/ for the legacy URLs). Content is in pages, chrome constants in their components, validated sets in collections, generated facts in script-refreshed collection files (metrics MAY fall back to src/data/ if the collection shape fights the refresh script — decide at implementation, note the choice).
 
 ## 6. Quality gates
 
 1. Scope fix first: tsconfig excludes `tmp/`, `tmp2/`, `dist/`, `public/`.
-2. Prettier + ESLint (astro + typescript plugins). **Fit-for-purpose line rules:** TypeScript/scripts target ~100-120 columns; `.astro`/`.mdx` TEMPLATES have no hard max-len and no one-attribute-per-line forcing — markup stays HTML-shaped, judged by readability, not column count (the survey-golf AND the over-formatted exhibit were both failures; the standard is the moderate density of the current Hero files).
+2. Prettier + ESLint (astro + typescript plugins). **Fit-for-purpose line rules:** TypeScript/scripts printWidth 100; `.astro`/`.mdx` templates printWidth 160 (roughly double — long enough that ordinary elements stay on one line, no one-attribute-per-line forcing; an element splits only past 160 or when it has many children). The standard to match is the moderate density of the current Hero files; both the survey-golf and the over-formatted exhibit were failures.
 3. `astro check` zero-new-errors ratchet against a recorded baseline; existing-debt burn-down is a migration task.
 4. CONVENTIONS definition-of-done adds: lint clean, no new check errors, copy rule respected (§2), explicit wiring only (§3).
 
