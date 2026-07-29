@@ -1,5 +1,23 @@
 document.addEventListener('astro:before-swap', (event) => {
-  if (event.navigationType !== 'traverse') return;
+  if (event.navigationType !== 'traverse') {
+    const targetId = decodeURIComponent(event.to.hash.slice(1));
+    if (!targetId) return;
+    document.addEventListener(
+      'astro:after-swap',
+      () => {
+        const target = document.getElementById(targetId);
+        if (!target) return;
+        const scrollToTarget = () => {
+          target.scrollIntoView({ behavior: 'instant', block: 'center' });
+        };
+        scrollToTarget();
+        requestAnimationFrame(scrollToTarget);
+        void event.viewTransition.finished.then(scrollToTarget);
+      },
+      { once: true },
+    );
+    return;
+  }
 
   const swap = event.swap;
   const { scrollX = 0, scrollY = 0 } = history.state ?? {};
