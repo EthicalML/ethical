@@ -78,7 +78,7 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
                     {label}
                   </a>
                 ))}
-                <a class="button primary" href={`/principles/${data.number}/`}>
+                <a class="button primary" href={`/principles/${data.number}/`} data-morph-pair={`principle-${data.number}`}>
                   Read principle →
                 </a>
               </div>
