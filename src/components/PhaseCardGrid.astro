@@ -37,18 +37,13 @@ const { cards, eyebrow, heading } = Astro.props;
 <script>
   class PhaseCardGrid extends HTMLElement {
     private controller = new AbortController();
-    private timer?: number;
 
     connectedCallback() {
       this.controller = new AbortController();
-      const grid = this.querySelector<HTMLElement>('.phase-grid');
       const cards = Array.from(this.querySelectorAll<HTMLElement>('.phase-card'));
-      if (!grid || !cards.length) return;
+      if (!cards.length) return;
 
-      let active = 0;
-      let held = false;
       const select = (index: number) => {
-        active = index;
         cards.forEach((card, cardIndex) => {
           card.classList.toggle('active', cardIndex === index);
         });
@@ -58,30 +53,10 @@ const { cards, eyebrow, heading } = Astro.props;
           signal: this.controller.signal,
         });
       });
-      grid.addEventListener(
-        'mouseenter',
-        () => {
-          held = true;
-        },
-        { signal: this.controller.signal },
-      );
-      grid.addEventListener(
-        'mouseleave',
-        () => {
-          held = false;
-        },
-        { signal: this.controller.signal },
-      );
-      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        this.timer = window.setInterval(() => {
-          if (!held) select((active + 1) % cards.length);
-        }, 2600);
-      }
     }
 
     disconnectedCallback() {
       this.controller.abort();
-      if (this.timer !== undefined) window.clearInterval(this.timer);
     }
   }
 
