@@ -22,7 +22,7 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
         <div class="principle-rows">
           {
             principles.map(({ data }, index) => (
-              <button type="button" class:list={{ active: index === 0 }} data-principle-row={index}>
+              <button type="button" class:list={{ active: index === 0 }} data-principle-row={index} data-principle-href={`/principles/${data.number}/`}>
                 <>
                   <span>{data.number}</span>
                   <strong>{data.title}</strong>
@@ -66,9 +66,13 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
               </div>
               <div class="principle-links">
                 {data.related_links.map(({ label, href }) => (
-                  <a href={href}>{label}</a>
+                  <a class="button" href={href}>
+                    {label}
+                  </a>
                 ))}
-                <a href={`/principles/${data.number}/`}>Read principle →</a>
+                <a class="button primary" href={`/principles/${data.number}/`}>
+                  Read principle →
+                </a>
               </div>
             </article>
           ))
@@ -78,6 +82,8 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
   </principles-explorer>
 </section>
 <script>
+  import { navigate } from 'astro:transitions/client';
+
   class PrinciplesExplorer extends HTMLElement {
     private controller = new AbortController();
     private timer?: number;
@@ -89,8 +95,11 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
       if (!rows.length || !details.length) return;
 
       let active = 0;
-      let stopped = false;
       let paused = false;
+      let lastInteraction = Number.NEGATIVE_INFINITY;
+      const recordInteraction = () => {
+        lastInteraction = Date.now();
+      };
       const select = (index: number) => {
         active = index;
         rows.forEach((row, rowIndex) => {
@@ -109,14 +118,21 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
         });
       };
       rows.forEach((row, index) => {
-        row.addEventListener('mouseenter', () => select(index), {
-          signal: this.controller.signal,
-        });
+        row.addEventListener(
+          'mouseenter',
+          () => {
+            recordInteraction();
+            select(index);
+          },
+          { signal: this.controller.signal },
+        );
         row.addEventListener(
           'click',
           () => {
-            stopped = true;
+            recordInteraction();
             select(index);
+            const href = row.dataset.principleHref;
+            if (href) void navigate(href);
           },
           { signal: this.controller.signal },
         );
@@ -126,6 +142,7 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
         'mouseenter',
         () => {
           paused = true;
+          recordInteraction();
         },
         { signal: this.controller.signal },
       );
@@ -133,12 +150,19 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
         'mouseleave',
         () => {
           paused = false;
+          recordInteraction();
         },
         { signal: this.controller.signal },
       );
+      this.addEventListener('focusin', recordInteraction, { signal: this.controller.signal });
+      this.addEventListener('pointerdown', recordInteraction, {
+        signal: this.controller.signal,
+      });
       if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
         this.timer = window.setInterval(() => {
-          if (!stopped && !paused) select((active + 1) % rows.length);
+          if (!paused && Date.now() - lastInteraction >= 60_000) {
+            select((active + 1) % rows.length);
+          }
         }, 2600);
       }
     }
