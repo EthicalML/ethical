@@ -18,8 +18,10 @@ src/
   layouts/             # .astro shells; BaseLayout imports page-wide behaviour (reveal)
   components/          # ALL components: .astro (default) AND .tsx islands side by side
   content/             # COLLECTIONS: schema-validated sets defined in src/content.config.ts
-    principles/          01.md … 09.md   (entries WITH prose bodies → page-generating)
-    metrics/             repos.yaml      (entries that are pure values → data-only)
+    principles/          01.md … 09.md   (multi-entry collection → a folder is earned)
+    partners.yaml        single-file collections stay FLAT in content/ (owner amendment
+    repos-metrics.yaml   2026-07-29): a per-collection folder is over-structure until a
+    survey-questions.yaml  collection actually has multiple entry files
   data/                # REAL data only: raw/extensive datasets (survey CSVs); never chrome or config
   shared/              # shared behaviour modules, grouped by domain; extensible
     canvas/            #   the canvas engines — exact contents specified in the migration plan
@@ -102,15 +104,15 @@ Owner review invalidated the "chrome data files" category, and revision 3 restor
 
 | Today | Target | Why |
 |---|---|---|
-| `projects.json` | `index.mdx` front matter (copy) + `content/metrics/repos.yaml` (repo facts) | single consumer = page content; facts are shared + script-refreshed |
+| `projects.json` | `index.mdx` front matter (copy) + `content/repos-metrics.yaml` (repo facts) | single consumer = page content; facts are shared + script-refreshed |
 | `nav.json` | typed constant in `SiteHeader.astro`'s fence | the header (incl. mobile drawer) is one owner; editing nav = editing the nav component; no indirection |
 | `site.json` (wordmark, legal, endpoint) | wordmark/legal → constants in `SiteHeader`/`SiteFooter` fences; form endpoint → `astro:env` | chrome belongs to chrome components; secrets-ish config belongs in env |
 | `footer.json` | constants in `FootnoteBand`/`SiteFooter` fences (partner chips import the partners collection) | one owner each |
 | `stats.json` (evidence band) | `index.mdx` front matter | single consumer, homepage content |
 | `network.json` (form titles, stats, checkboxes) | `FormSection` props from the embedding pages' front matter | it is page copy for the two pages that render the form; the component stays copy-free |
 | `newsletter-issues.json` | **derived at build from `public/mle/*.html`** via a small loader/script into `content/issues/` (or a small build util) — static output, dynamic source | the archive already IS the data; hand-maintaining a copy guarantees drift. OPEN QUESTION for owner: derive latest-N automatically vs curate manually |
-| `partners.json` | stays — becomes `content/partners/partners.yaml` with schema | genuinely multi-consumer (marquee + /partners page), a validated set |
-| `survey.json` | `content/survey/…yaml` with schema (already derivation-scripted) | validated set, script-generated |
+| `partners.json` | stays — becomes `content/partners.yaml` with schema | genuinely multi-consumer (marquee + /partners page), a validated set |
+| `survey.json` | `content/survey-questions.yaml` with schema (already derivation-scripted) | validated set, script-generated |
 | `home-reports.json`, `network-sectors.json`, `talks.json` | fold into their single-consumer pages' front matter, except talks if/when a talks collection with entries is warranted | consumer-count rule |
 
 End state: **`src/data/` = real data only** (survey CSVs as source of truth once the legacy pages are modernised; today the CSVs also remain under public/ for the legacy URLs). Content is in pages, chrome constants in their components, validated sets in collections, generated facts in script-refreshed collection files (metrics MAY fall back to src/data/ if the collection shape fights the refresh script — decide at implementation, note the choice).
