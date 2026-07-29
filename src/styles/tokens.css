@@ -360,6 +360,9 @@ h3 {
   text-transform: uppercase;
   width: min(620px, 100%);
 }
+hero-cycle,
+kompute-cube,
+nav-preview,
 type-writer {
   display: contents;
 }
@@ -1147,6 +1150,7 @@ form[data-state="error"] .form-confirmation { color: var(--warn); font: var(--bo
 .kaos-panel { background: var(--bg-inset); border: 1px solid rgba(255,255,255,.09); border-radius: 14px; padding: 18px; }
 .kaos-panel [data-kaos-status] { color: var(--accent); }
 .kaos-canvas-mount { height: 400px; margin-top: 12px; min-height: 220px; overflow: hidden; position: relative; width: 100%; }
+kaos-graph { display: block; }
 .oss-menu-preview .kaos-canvas-mount { height: 180px; min-height: 180px; }
 .embedded-widget.kaos-canvas-mount { height: 360px; }
 
@@ -1398,7 +1402,7 @@ main > .home-section:last-child { padding-bottom: 120px; }
 .project-meta { border-top: 1px solid var(--hairline); color: var(--accent); font: var(--mono-9)/1 var(--font-mono); letter-spacing: .1em; margin-top: auto; padding-top: 18px; }
 .widget-stage { align-items: center; background: var(--bg-inset); display: flex; justify-content: center; opacity: .3; overflow: hidden; position: relative; transition: opacity .5s; }
 .widget-stage.mounted { opacity: 1; }
-.widget-stage [data-widget="kaos-graph"], .widget-stage canvas { height: 100%; width: 100%; }
+.widget-stage kaos-graph, .widget-stage canvas { height: 100%; width: 100%; }
 .css-cube { height: 138px; position: relative; transform: rotate(30deg) skew(-8deg); width: 138px; }
 .css-cube i { background: rgba(94,230,160,.22); border: 1px solid var(--accent); inset: 0; position: absolute; }
 .css-cube i:nth-child(2) { transform: translate(30px,-30px); opacity: .7; }

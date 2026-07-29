@@ -36,7 +36,7 @@ const { compact = false, homepage = false } = Astro.props;
         }
       </div>
     </div>
-    <div class="fixed-canvas cube-mount"><canvas data-widget="kompute-cube" aria-label="Animated 27-cubie Rubik's cube"></canvas></div>
+    <div class="fixed-canvas cube-mount"><kompute-cube><canvas aria-label="Animated 27-cubie Rubik's cube"></canvas></kompute-cube></div>
   </article>
 
   <div class="oss-pair">
@@ -120,7 +120,12 @@ const { compact = false, homepage = false } = Astro.props;
     </div>
     <div class="kaos-panel">
       <p class="figure-label"><span>{projects.kaos.panelEyebrow}</span><span data-kaos-status>{projects.kaos.panelStatus}</span></p>
-      <div class="kaos-canvas-mount" data-widget="kaos-graph"></div>
+      <kaos-graph class="kaos-canvas-mount"></kaos-graph>
     </div>
   </article>
 </section>
+
+<script>
+  import '../shared/canvas/KaosGraph';
+  import '../shared/canvas/KomputeCube';
+</script>

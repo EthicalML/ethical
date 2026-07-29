@@ -108,7 +108,9 @@ const initialProject = menus.oss.items[0];
                   </footer>
                 </div>
                 <div class="oss-menu-preview">
-                  <canvas data-widget="nav-preview" data-preview-mode={initialProject.key} aria-hidden="true" />
+                  <nav-preview mode={initialProject.key}>
+                    <canvas aria-hidden="true" />
+                  </nav-preview>
                   <p>
                     <span data-oss-preview-eyebrow>{initialProject.eyebrow}</span>
                     <strong data-oss-preview-title>{initialProject.title}</strong>
@@ -199,3 +201,7 @@ const initialProject = menus.oss.items[0];
     </nav>
   </div>
 </header>
+
+<script>
+  import '../shared/canvas/NavPreview';
+</script>

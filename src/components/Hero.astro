@@ -22,7 +22,7 @@ const ariaSentence = [...subtitle_lines, initialBeneficiary].filter(Boolean).joi
 ---
 
 <header class="hero" data-reveal>
-  <canvas class="hero-canvas" data-widget="hero-cycle" aria-hidden="true"></canvas>
+  <hero-cycle><canvas class="hero-canvas" aria-hidden="true"></canvas></hero-cycle>
   <div class="hero-copy">
     {
       status_href ? (
@@ -78,6 +78,8 @@ const ariaSentence = [...subtitle_lines, initialBeneficiary].filter(Boolean).joi
 </header>
 
 <script>
+  import '../shared/canvas/HeroCycle';
+
   type TypewriterPhase = 'initial' | 'typing' | 'deleting' | 'dwell' | 'static';
 
   class TypeWriter extends HTMLElement {

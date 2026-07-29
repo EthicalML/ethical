@@ -216,7 +216,7 @@ for (const route of routes) {
             }
             return {
               canvasCount: canvases.length,
-              mode: canvas.dataset.previewMode,
+              mode: canvas.closest('nav-preview')?.getAttribute('mode'),
               bottomOpaquePixels,
             };
           }),
@@ -317,7 +317,8 @@ for (const route of routes) {
       },
       canvases: canvases.map((canvas) => ({
         widget:
-          canvas.dataset.widget ?? canvas.closest('[data-widget]')?.dataset.widget ?? 'unlabelled',
+          canvas.closest('hero-cycle, kompute-cube, nav-preview, kaos-graph')?.localName ??
+          'unlabelled',
         size: `${canvas.clientWidth}x${canvas.clientHeight}/${canvas.width}x${canvas.height}`,
         nonBlank: sampleCanvas(canvas),
       })),
@@ -393,7 +394,7 @@ for (const route of routes) {
               ),
             }
           : null,
-      kaosMounts: [...document.querySelectorAll('main [data-widget="kaos-graph"]')].map(
+      kaosMounts: [...document.querySelectorAll('main kaos-graph')].map(
         (host) => host.getBoundingClientRect().height,
       ),
     };

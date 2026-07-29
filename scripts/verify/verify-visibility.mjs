@@ -24,7 +24,7 @@ await page.evaluate(() => document.fonts.ready);
 
 const capture = async (screenshotName) => {
   const metrics = await page.evaluate(() => {
-    const canvas = document.querySelector('[data-widget="hero-cycle"]');
+    const canvas = document.querySelector('.hero-canvas');
     const typewriter = document.querySelector('type-writer .hero-subtitle');
     const glitch = document.querySelector('.glitch');
     const canvasRect = canvas.getBoundingClientRect();
@@ -59,7 +59,7 @@ const capture = async (screenshotName) => {
       glitch: elementMetrics(glitch),
     };
   });
-  const screenshot = await page.locator('[data-widget="hero-cycle"]').screenshot({
+  const screenshot = await page.locator('.hero-canvas').screenshot({
     path: new URL(screenshotName, outputDirectory).pathname,
   });
   return { metrics, screenshot };

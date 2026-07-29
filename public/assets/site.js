@@ -56,14 +56,14 @@
     header.addEventListener('mouseenter', () => clearTimeout(closeTimer));
     header.addEventListener('mouseleave', delayedClose);
     panel.querySelectorAll('a').forEach((link) => link.addEventListener('click', close));
-    const previewCanvas = panel.querySelector('[data-widget="nav-preview"]');
+    const previewCanvas = panel.querySelector('nav-preview');
     const previewEyebrow = panel.querySelector('[data-oss-preview-eyebrow]');
     const previewTitle = panel.querySelector('[data-oss-preview-title]');
     const previewDescription = panel.querySelector('[data-oss-preview-description]');
     panel.querySelectorAll('[data-oss-index]').forEach((row) => {
       const select = () => {
         panel.querySelectorAll('[data-oss-index]').forEach((item) => item.classList.toggle('active', item === row));
-        if (previewCanvas) previewCanvas.dataset.previewMode = row.dataset.ossKey;
+        if (previewCanvas) previewCanvas.setAttribute('mode', row.dataset.ossKey);
         if (previewEyebrow) previewEyebrow.textContent = row.dataset.ossEyebrow;
         if (previewTitle) previewTitle.textContent = row.dataset.ossTitle;
         if (previewDescription) previewDescription.textContent = row.dataset.ossDescription;
