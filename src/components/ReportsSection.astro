@@ -47,17 +47,17 @@ interface Props {
 const { reports } = Astro.props;
 ---
 
-<section id="reports" class="reports-section home-section" data-reveal>
+<reports-section id="reports" class="reports-section home-section" data-reveal>
   <header>
     <div>
       <p class="eyebrow">{reports.eyebrow}</p>
-      <h2 transition:name="survey-title">{reports.title}</h2>
+      <h2 data-morph-source="survey-title">{reports.title}</h2>
       <p>{reports.intro}</p>
     </div>
     <nav>
       {
         reports.actions.map(({ label, href, kind }) => (
-          <a class:list={['button', kind]} href={href}>
+          <a class:list={['button', kind]} href={href} data-morph-target={href === '/data/survey-explorer/' ? 'survey-title' : undefined}>
             {label}
           </a>
         ))
@@ -81,12 +81,17 @@ const { reports } = Astro.props;
         }
       </div>
       <p class="eyebrow">{reports.governance.eyebrow}</p>
-      <h3 transition:name="initiative-governance-title">{reports.governance.title}</h3>
+      <h3 data-morph-source="initiative-governance-title">{reports.governance.title}</h3>
       <p>{reports.governance.text}</p>
       <div class="initiative-actions">
         {
           reports.governance.actions.map(({ label, href, kind }) => (
-            <a class:list={['button', kind]} href={href} rel={href.startsWith('http') ? 'noopener' : undefined}>
+            <a
+              class:list={['button', kind]}
+              href={href}
+              rel={href.startsWith('http') ? 'noopener' : undefined}
+              data-morph-target={href === '/frameworks/maturity-model/' ? 'initiative-governance-title' : undefined}
+            >
               {label}
             </a>
           ))
@@ -108,7 +113,7 @@ const { reports } = Astro.props;
         }
       </div>
       <p class="eyebrow">{reports.security.eyebrow}</p>
-      <h3 transition:name="initiative-security-title">{reports.security.title}</h3>
+      <h3 data-morph-source="initiative-security-title">{reports.security.title}</h3>
       <p>{reports.security.text}</p>
       <p>
         {reports.security.relatedIntro}{' '}
@@ -126,7 +131,12 @@ const { reports } = Astro.props;
       <div class="initiative-actions">
         {
           reports.security.actions.map(({ label, href, kind }) => (
-            <a class:list={['button', kind]} href={href} rel={href.startsWith('http') ? 'noopener' : undefined}>
+            <a
+              class:list={['button', kind]}
+              href={href}
+              rel={href.startsWith('http') ? 'noopener' : undefined}
+              data-morph-target={href === '/frameworks/mlsecops/' ? 'initiative-security-title' : undefined}
+            >
               {label}
             </a>
           ))
@@ -134,4 +144,44 @@ const { reports } = Astro.props;
       </div>
     </article>
   </div>
-</section>
+</reports-section>
+
+<style>
+  reports-section {
+    display: block;
+  }
+</style>
+
+<script>
+  class ReportsSection extends HTMLElement {
+    private controller = new AbortController();
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const sources = Array.from(this.querySelectorAll<HTMLElement>('[data-morph-source]'));
+      const nameSource = (event: Event) => {
+        const name = (event.currentTarget as HTMLElement).dataset.morphTarget;
+        sources.forEach((source) => {
+          if (source.dataset.morphSource === name) {
+            source.style.viewTransitionName = name ?? '';
+          } else {
+            source.style.removeProperty('view-transition-name');
+          }
+        });
+      };
+
+      this.querySelectorAll<HTMLElement>('[data-morph-target]').forEach((link) => {
+        link.addEventListener('pointerdown', nameSource, { signal: this.controller.signal });
+        link.addEventListener('click', nameSource, { signal: this.controller.signal });
+      });
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+    }
+  }
+
+  if (!customElements.get('reports-section')) {
+    customElements.define('reports-section', ReportsSection);
+  }
+</script>

@@ -44,9 +44,7 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
           principles.map(({ data }, index) => (
             <article class:list={['principle-detail', index === 0 && 'active']} data-principle-detail={index}>
               <p class="eyebrow">PRINCIPLE {data.number} — COMMITMENT</p>
-              <h3 transition:name={`principle-title-${data.number}`} style={`view-transition-name: principle-title-${data.number}`}>
-                {data.title}
-              </h3>
+              <h3 data-principle-title={data.number}>{data.title}</h3>
               <p class="commitment">{data.commitment}</p>
               <div class="detail-split">
                 <div>
@@ -97,8 +95,18 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
       this.controller = new AbortController();
       const rows = Array.from(this.querySelectorAll<HTMLElement>('[data-principle-row]'));
       const details = Array.from(this.querySelectorAll<HTMLElement>('[data-principle-detail]'));
+      const titles = Array.from(this.querySelectorAll<HTMLElement>('[data-principle-title]'));
       if (!rows.length || !details.length) return;
 
+      const nameTitle = (index: number) => {
+        titles.forEach((title, titleIndex) => {
+          if (titleIndex === index) {
+            title.style.viewTransitionName = `principle-title-${title.dataset.principleTitle}`;
+          } else {
+            title.style.removeProperty('view-transition-name');
+          }
+        });
+      };
       const select = (index: number) => {
         rows.forEach((row, rowIndex) => {
           row.classList.toggle('active', rowIndex === index);
@@ -118,7 +126,10 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
       const lastPrinciple = sessionStorage.getItem('lastPrinciple');
       sessionStorage.removeItem('lastPrinciple');
       const restoredIndex = rows.findIndex((row) => row.dataset.principleNumber === lastPrinciple);
-      if (restoredIndex >= 0) select(restoredIndex);
+      if (restoredIndex >= 0) {
+        select(restoredIndex);
+        nameTitle(restoredIndex);
+      }
 
       rows.forEach((row, index) => {
         row.addEventListener(
@@ -128,10 +139,14 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
           },
           { signal: this.controller.signal },
         );
+        row.addEventListener('pointerdown', () => nameTitle(index), {
+          signal: this.controller.signal,
+        });
         row.addEventListener(
           'click',
           () => {
             select(index);
+            nameTitle(index);
             const href = row.dataset.principleHref;
             if (href) void navigate(href);
           },

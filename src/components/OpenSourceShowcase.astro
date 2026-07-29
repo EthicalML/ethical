@@ -66,7 +66,7 @@ const repoMetrics = Object.fromEntries(repoEntries.map(({ id, data }) => [id, da
 const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value: string; label: string }) => (label ? `${value} ${label}` : value));
 ---
 
-<section id="opensource" class:list={['open-source-prototype', compact && 'compact', homepage && 'home-section']} data-reveal>
+<open-source-showcase id="opensource" class:list={['open-source-prototype', compact && 'compact', homepage && 'home-section']} data-reveal>
   <p class="eyebrow">{projects.section.eyebrow}</p>
   <h2>{projects.section.title}</h2>
 
@@ -180,7 +180,12 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
       <div class="actions">
         {
           projects.kaos.actions.map(({ label, href, kind }) => (
-            <a class:list={['button', kind]} href={href} rel={href.startsWith('http') ? 'noopener' : undefined}>
+            <a
+              class:list={['button', kind]}
+              href={href}
+              rel={href.startsWith('http') ? 'noopener' : undefined}
+              data-kaos-morph={href === '/open-source/kaos/' ? '' : undefined}
+            >
               {label}
             </a>
           ))
@@ -189,11 +194,42 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     </div>
     <div class="kaos-panel">
       <p class="figure-label"><span>{projects.kaos.panelEyebrow}</span><span data-kaos-status>{projects.kaos.panelStatus}</span></p>
-      <KaosGraph panel transitionName="kaos-canvas" />
+      <KaosGraph panel />
     </div>
   </article>
-</section>
+</open-source-showcase>
+
+<style>
+  open-source-showcase {
+    display: block;
+  }
+</style>
 
 <script>
   import '../shared/canvas/KomputeCube';
+
+  class OpenSourceShowcase extends HTMLElement {
+    private controller = new AbortController();
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const canvas = this.querySelector<HTMLElement>('.kaos-panel .kaos-canvas-mount');
+      const link = this.querySelector<HTMLElement>('[data-kaos-morph]');
+      if (!canvas || !link) return;
+
+      const nameCanvas = () => {
+        canvas.style.viewTransitionName = 'kaos-canvas';
+      };
+      link.addEventListener('pointerdown', nameCanvas, { signal: this.controller.signal });
+      link.addEventListener('click', nameCanvas, { signal: this.controller.signal });
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+    }
+  }
+
+  if (!customElements.get('open-source-showcase')) {
+    customElements.define('open-source-showcase', OpenSourceShowcase);
+  }
 </script>
