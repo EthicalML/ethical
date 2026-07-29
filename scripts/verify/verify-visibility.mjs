@@ -85,9 +85,10 @@ for (let index = 0; index < 5; index += 1) {
 const after = await capture('visibility-after.png');
 
 const result = {
-  passed: errors.length === 0
-    && JSON.stringify(before.metrics) === JSON.stringify(after.metrics)
-    && before.screenshot.equals(after.screenshot),
+  passed:
+    errors.length === 0 &&
+    JSON.stringify(before.metrics) === JSON.stringify(after.metrics) &&
+    before.screenshot.equals(after.screenshot),
   baseUrl,
   toggles: 5,
   tabVisibilityStates,

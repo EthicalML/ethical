@@ -31,10 +31,12 @@ export default function rehypeSectionize() {
               type: 'element',
               tagName: 'p',
               properties: { className: ['eyebrow', 'prose-section-eyebrow'] },
-              children: [{
-                type: 'text',
-                value: `${String(number).padStart(2, '0')} — ${title.toUpperCase()}`,
-              }],
+              children: [
+                {
+                  type: 'text',
+                  value: `${String(number).padStart(2, '0')} — ${title.toUpperCase()}`,
+                },
+              ],
             },
             node,
           ],

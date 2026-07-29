@@ -13,16 +13,27 @@ function doPost(e) {
   cache.put(clientKey, String(clientCount), 3600);
   cache.put(hourKey, String(volumeCount), 3600);
 
-  const fields = [data.name, data.email, data.organisation, data.furtherInformation, (data.interests || []).join(', ')];
+  const fields = [
+    data.name,
+    data.email,
+    data.organisation,
+    data.furtherInformation,
+    (data.interests || []).join(', '),
+  ];
   const elapsedMs = Date.now() - Number(data.startedAt);
-  const suspect = !Number.isFinite(elapsedMs) || elapsedMs < 3000 || clientCount > 5 || volumeCount > 100 ||
-    fields.some(value => String(value || '').length > 500);
+  const suspect =
+    !Number.isFinite(elapsedMs) ||
+    elapsedMs < 3000 ||
+    clientCount > 5 ||
+    volumeCount > 100 ||
+    fields.some((value) => String(value || '').length > 500);
   const sheet = SpreadsheetApp.getActive().getSheetByName(suspect ? QUARANTINE_TAB : RESPONSE_TAB);
   sheet.appendRow([new Date(), ...fields, data.page || '', data.variant || '', elapsedMs]);
   return reply({ ok: true, quarantined: suspect });
 }
 
 function reply(value) {
-  return ContentService.createTextOutput(JSON.stringify(value))
-    .setMimeType(ContentService.MimeType.JSON);
+  return ContentService.createTextOutput(JSON.stringify(value)).setMimeType(
+    ContentService.MimeType.JSON,
+  );
 }

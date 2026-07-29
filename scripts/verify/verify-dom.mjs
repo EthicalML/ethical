@@ -1,4 +1,5 @@
 import playwright from '/Users/asaucedo/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/index.js';
+import { readFile } from 'node:fs/promises';
 
 const { chromium } = playwright;
 const args = process.argv.slice(2);
@@ -21,10 +22,10 @@ if (!Number.isFinite(viewportWidth) || !Number.isFinite(viewportHeight)) {
 }
 const viewport = { width: viewportWidth, height: viewportHeight };
 const isMobile = viewport.width <= 950;
-const baseUrl = process.env.VERIFY_BASE_URL ?? 'http://127.0.0.1:4127';
+const baseUrl = process.env.VERIFY_BASE_URL ?? 'http://127.0.0.1:4126';
 
 if (routes.length === 0) {
-  throw new Error('Usage: node scripts/verify/verify-dom.mjs [--viewport 420x900] <route...>');
+  routes.push(...JSON.parse(await readFile(new URL('./routes.json', import.meta.url), 'utf8')));
 }
 
 const browser = await chromium.launch({ headless: true });
@@ -39,9 +40,12 @@ for (const route of routes) {
   const isNotFoundRoute = route === '/404.html';
   const onPageError = (error) => errors.push(`page: ${error.message}`);
   const onConsole = (message) => {
-    const expectedNotFoundLog = isNotFoundRoute
-      && message.text() === 'Failed to load resource: the server responded with a status of 404 (Not Found)';
-    if (message.type() === 'error' && !expectedNotFoundLog) errors.push(`console: ${message.text()}`);
+    const expectedNotFoundLog =
+      isNotFoundRoute &&
+      message.text() ===
+        'Failed to load resource: the server responded with a status of 404 (Not Found)';
+    if (message.type() === 'error' && !expectedNotFoundLog)
+      errors.push(`console: ${message.text()}`);
   };
   page.on('pageerror', onPageError);
   page.on('console', onConsole);
@@ -52,24 +56,28 @@ for (const route of routes) {
   });
 
   let formChecks = null;
-  let formContainment = null;
+  let formContainment;
   const instituteForm = page.locator('[data-institute-form]');
   if (await instituteForm.count()) {
     formContainment = await instituteForm.evaluate((form) => {
       const card = form.closest('.network-split');
       const formBox = form.getBoundingClientRect();
       const cardBox = card.getBoundingClientRect();
-      const within = (outer, inner) => (
-        inner.left >= outer.left - .5
-        && inner.right <= outer.right + .5
-        && inner.top >= outer.top - .5
-        && inner.bottom <= outer.bottom + .5
-      );
-      const visibleChildren = [...form.querySelectorAll('.form-fields, .form-fields input, fieldset, button, form > small')]
-        .filter((element) => element.getClientRects().length && !element.closest('.form-honeypot'));
+      const within = (outer, inner) =>
+        inner.left >= outer.left - 0.5 &&
+        inner.right <= outer.right + 0.5 &&
+        inner.top >= outer.top - 0.5 &&
+        inner.bottom <= outer.bottom + 0.5;
+      const visibleChildren = [
+        ...form.querySelectorAll(
+          '.form-fields, .form-fields input, fieldset, button, form > small',
+        ),
+      ].filter((element) => element.getClientRects().length && !element.closest('.form-honeypot'));
       return {
         formWithinCard: within(cardBox, formBox),
-        childrenWithinForm: visibleChildren.every((element) => within(formBox, element.getBoundingClientRect())),
+        childrenWithinForm: visibleChildren.every((element) =>
+          within(formBox, element.getBoundingClientRect()),
+        ),
         formWidth: formBox.width,
         cardWidth: cardBox.width,
       };
@@ -118,7 +126,9 @@ for (const route of routes) {
       const detail = document.querySelector('.principle-detail-wrap');
       section.style.transition = 'none';
       section.style.transform = 'none';
-      detail.querySelectorAll('.principle-detail').forEach((card) => { card.style.animation = 'none'; });
+      detail.querySelectorAll('.principle-detail').forEach((card) => {
+        card.style.animation = 'none';
+      });
       const sectionTop = section.getBoundingClientRect().top + scrollY;
       scrollTo(0, sectionTop + 80);
       await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
@@ -154,23 +164,33 @@ for (const route of routes) {
         const drawer = document.querySelector('[data-mobile-menu]');
         const targets = [...drawer.querySelectorAll('a, button')].filter((element) => {
           const style = getComputedStyle(element);
-          return element.getClientRects().length && style.display !== 'none' && style.visibility !== 'hidden';
+          return (
+            element.getClientRects().length &&
+            style.display !== 'none' &&
+            style.visibility !== 'hidden'
+          );
         });
         return {
           accordionCount: drawer.querySelectorAll('[data-mobile-accordion]').length,
           drawerOpen: drawer.getAttribute('aria-hidden') === 'false',
           firstPanelOpen: !drawer.querySelector('.mobile-submenu').hidden,
           joinVisible: drawer.querySelector('.join-pill').getBoundingClientRect().height >= 44,
-          minTargetHeight: Math.min(...targets.map((element) => element.getBoundingClientRect().height)),
+          minTargetHeight: Math.min(
+            ...targets.map((element) => element.getBoundingClientRect().height),
+          ),
           scrollLocked: document.body.classList.contains('mobile-nav-open'),
         };
       });
       await page.keyboard.press('Escape');
-      Object.assign(homepageInteractions.mobileNav, await page.evaluate(() => ({
-        drawerClosed: document.querySelector('[data-mobile-menu]').getAttribute('aria-hidden') === 'true',
-        focusReturned: document.activeElement.matches('[data-mobile-menu-open]'),
-        scrollUnlocked: !document.body.classList.contains('mobile-nav-open'),
-      })));
+      Object.assign(
+        homepageInteractions.mobileNav,
+        await page.evaluate(() => ({
+          drawerClosed:
+            document.querySelector('[data-mobile-menu]').getAttribute('aria-hidden') === 'true',
+          focusReturned: document.activeElement.matches('[data-mobile-menu-open]'),
+          scrollUnlocked: !document.body.classList.contains('mobile-nav-open'),
+        })),
+      );
     } else {
       await page.locator('[data-menu-trigger="oss"]').hover();
       await page.waitForTimeout(400);
@@ -178,48 +198,62 @@ for (const route of routes) {
       for (const row of await page.locator('[data-oss-index]').all()) {
         await row.hover();
         await page.waitForTimeout(100);
-        homepageInteractions.ossPreviewStates.push(await page.locator('.oss-menu-preview').evaluate((preview) => {
-          const canvases = [...preview.querySelectorAll('canvas')];
-          const canvas = canvases[0];
-          const context = canvas.getContext('2d');
-          const startY = Math.floor(canvas.height * .78);
-          const pixels = context.getImageData(0, startY, canvas.width, canvas.height - startY).data;
-          let bottomOpaquePixels = 0;
-          for (let index = 3; index < pixels.length; index += 4) {
-            if (pixels[index] > 0) bottomOpaquePixels += 1;
-          }
-          return {
-            canvasCount: canvases.length,
-            mode: canvas.dataset.previewMode,
-            bottomOpaquePixels,
-          };
-        }));
+        homepageInteractions.ossPreviewStates.push(
+          await page.locator('.oss-menu-preview').evaluate((preview) => {
+            const canvases = [...preview.querySelectorAll('canvas')];
+            const canvas = canvases[0];
+            const context = canvas.getContext('2d');
+            const startY = Math.floor(canvas.height * 0.78);
+            const pixels = context.getImageData(
+              0,
+              startY,
+              canvas.width,
+              canvas.height - startY,
+            ).data;
+            let bottomOpaquePixels = 0;
+            for (let index = 3; index < pixels.length; index += 4) {
+              if (pixels[index] > 0) bottomOpaquePixels += 1;
+            }
+            return {
+              canvasCount: canvases.length,
+              mode: canvas.dataset.previewMode,
+              bottomOpaquePixels,
+            };
+          }),
+        );
       }
       await page.keyboard.press('Escape');
 
       await page.locator('[data-menu-trigger="initiatives"]').hover();
       await page.waitForTimeout(400);
-      homepageInteractions.initiativesGeometry = await page.locator('[data-menu-body="initiatives"]').evaluate((body) => {
-        const menu = body.querySelector('.initiative-menu');
-        const rail = body.querySelector('.group-rail');
-        const panes = body.querySelector('.initiative-panes');
-        const metrics = (element) => {
-          const box = element.getBoundingClientRect();
-          const style = getComputedStyle(element);
-          return {
-            box: [box.left, box.right, box.width, box.height],
-            client: [element.clientWidth, element.clientHeight],
-            scroll: [element.scrollWidth, element.scrollHeight],
-            padding: [style.paddingTop, style.paddingRight, style.paddingBottom, style.paddingLeft],
+      homepageInteractions.initiativesGeometry = await page
+        .locator('[data-menu-body="initiatives"]')
+        .evaluate((body) => {
+          const menu = body.querySelector('.initiative-menu');
+          const rail = body.querySelector('.group-rail');
+          const panes = body.querySelector('.initiative-panes');
+          const metrics = (element) => {
+            const box = element.getBoundingClientRect();
+            const style = getComputedStyle(element);
+            return {
+              box: [box.left, box.right, box.width, box.height],
+              client: [element.clientWidth, element.clientHeight],
+              scroll: [element.scrollWidth, element.scrollHeight],
+              padding: [
+                style.paddingTop,
+                style.paddingRight,
+                style.paddingBottom,
+                style.paddingLeft,
+              ],
+            };
           };
-        };
-        return {
-          body: metrics(body),
-          menu: metrics(menu),
-          rail: metrics(rail),
-          panes: metrics(panes),
-        };
-      });
+          return {
+            body: metrics(body),
+            menu: metrics(menu),
+            rail: metrics(rail),
+            panes: metrics(panes),
+          };
+        });
       await page.keyboard.press('Escape');
     }
   }
@@ -247,16 +281,21 @@ for (const route of routes) {
       }
       return false;
     };
-    const canvases = [...document.querySelectorAll('canvas')]
-      .filter((canvas) => canvas.clientWidth >= 2 && canvas.clientHeight >= 2);
+    const canvases = [...document.querySelectorAll('canvas')].filter(
+      (canvas) => canvas.clientWidth >= 2 && canvas.clientHeight >= 2,
+    );
     const unrevealed = [...document.querySelectorAll('[data-reveal]')]
       .filter((node) => node.dataset.revealed !== '1')
       .map((node) => `${node.tagName.toLowerCase()}#${node.id}.${node.className}`);
-    const touchTargets = [...document.querySelectorAll(
-      '.header-row > .wordmark, [data-mobile-menu-open], .header-row .join-pill, main button, main .button, .cta-block a, .principle-pagination a, form button',
-    )].filter((element) => {
+    const touchTargets = [
+      ...document.querySelectorAll(
+        '.header-row > .wordmark, [data-mobile-menu-open], .header-row .join-pill, main button, main .button, .cta-block a, .principle-pagination a, form button',
+      ),
+    ].filter((element) => {
       const style = getComputedStyle(element);
-      return element.getClientRects().length && style.display !== 'none' && style.visibility !== 'hidden';
+      return (
+        element.getClientRects().length && style.display !== 'none' && style.visibility !== 'hidden'
+      );
     });
     const columns = (selector) => {
       const element = document.querySelector(selector);
@@ -272,11 +311,13 @@ for (const route of routes) {
         newsreader: document.fonts.check('16px "Newsreader"'),
         geist: document.fonts.check('16px "Geist"'),
         geistMono: document.fonts.check('16px "Geist Mono"'),
-        googleRequests: performance.getEntriesByType('resource')
+        googleRequests: performance
+          .getEntriesByType('resource')
           .filter((entry) => entry.name.includes('fonts.googleapis.com')),
       },
       canvases: canvases.map((canvas) => ({
-        widget: canvas.dataset.widget ?? canvas.closest('[data-widget]')?.dataset.widget ?? 'unlabelled',
+        widget:
+          canvas.dataset.widget ?? canvas.closest('[data-widget]')?.dataset.widget ?? 'unlabelled',
         size: `${canvas.clientWidth}x${canvas.clientHeight}/${canvas.width}x${canvas.height}`,
         nonBlank: sampleCanvas(canvas),
       })),
@@ -292,126 +333,184 @@ for (const route of routes) {
       minTouchTargetHeight: touchTargets.length
         ? Math.min(...touchTargets.map((element) => element.getBoundingClientRect().height))
         : null,
-      homepage: location.pathname === '/' ? {
-        heroSwitchers: document.querySelectorAll('[data-hero-mode]').length,
-        surveyCard: Boolean(document.querySelector('#reports [data-survey-card]')),
-        surveyBars: document.querySelectorAll('#reports .survey-bars button').length,
-        principleListWithinHalfViewport:
-          (document.querySelector('.principles-explorer-grid')?.firstElementChild?.getBoundingClientRect().width ?? 9999)
-          <= innerWidth * 0.5,
-        kaosMountHeight:
-          document.querySelector('.kaos-feature .kaos-canvas-mount')?.getBoundingClientRect().height ?? 0,
-        heroCanvasHeight: document.querySelector('.hero .hero-canvas')?.getBoundingClientRect().height ?? 0,
-        statColumns: columns('.stat-band'),
-        phaseColumns: columns('.phase-grid'),
-        formColumns: columns('.network-split'),
-        footnoteColumns: columns('.footnote-band'),
-        surveyTabs: {
-          flexWrap: getComputedStyle(document.querySelector('.survey-tabs')).flexWrap,
-          overflowX: getComputedStyle(document.querySelector('.survey-tabs')).overflowX,
-        },
-        homeSections: [...document.querySelectorAll('main > .home-section')].map((section) => {
-          const style = getComputedStyle(section);
-          return {
-            id: section.id,
-            borderTopWidth: style.borderTopWidth,
-            paddingTop: style.paddingTop,
-          };
-        }),
-        surveyPaddingBottom: getComputedStyle(document.querySelector('.home-survey-card')).paddingBottom,
-        footnoteStandards: [...document.querySelectorAll('.footnote-band .standards a')].map((link) => {
-          const style = getComputedStyle(link);
-          return {
-            color: style.color,
-            fontFamily: style.fontFamily,
-            fontSize: style.fontSize,
-          };
-        }),
-        initiativeCards: [...document.querySelectorAll('.initiative-pair > article')].map((card) => ({
-          eyebrow: card.querySelector(':scope > .eyebrow')?.textContent,
-          heading: card.querySelector(':scope > h3')?.textContent,
-          buttons: [...card.querySelectorAll('.initiative-actions .button')].map((button) => ({
-            label: button.textContent,
-            primary: button.classList.contains('primary'),
-          })),
-        })),
-      } : null,
-      kaosMounts: [...document.querySelectorAll('main [data-widget="kaos-graph"]')]
-        .map((host) => host.getBoundingClientRect().height),
+      homepage:
+        location.pathname === '/'
+          ? {
+              heroSwitchers: document.querySelectorAll('[data-hero-mode]').length,
+              surveyCard: Boolean(document.querySelector('#reports [data-survey-card]')),
+              surveyBars: document.querySelectorAll('#reports .survey-bars button').length,
+              principleListWithinHalfViewport:
+                (document
+                  .querySelector('.principles-explorer-grid')
+                  ?.firstElementChild?.getBoundingClientRect().width ?? 9999) <=
+                innerWidth * 0.5,
+              kaosMountHeight:
+                document.querySelector('.kaos-feature .kaos-canvas-mount')?.getBoundingClientRect()
+                  .height ?? 0,
+              heroCanvasHeight:
+                document.querySelector('.hero .hero-canvas')?.getBoundingClientRect().height ?? 0,
+              statColumns: columns('.stat-band'),
+              phaseColumns: columns('.phase-grid'),
+              formColumns: columns('.network-split'),
+              footnoteColumns: columns('.footnote-band'),
+              surveyTabs: {
+                flexWrap: getComputedStyle(document.querySelector('.survey-tabs')).flexWrap,
+                overflowX: getComputedStyle(document.querySelector('.survey-tabs')).overflowX,
+              },
+              homeSections: [...document.querySelectorAll('main > .home-section')].map(
+                (section) => {
+                  const style = getComputedStyle(section);
+                  return {
+                    id: section.id,
+                    borderTopWidth: style.borderTopWidth,
+                    paddingTop: style.paddingTop,
+                  };
+                },
+              ),
+              surveyPaddingBottom: getComputedStyle(document.querySelector('.home-survey-card'))
+                .paddingBottom,
+              footnoteStandards: [...document.querySelectorAll('.footnote-band .standards a')].map(
+                (link) => {
+                  const style = getComputedStyle(link);
+                  return {
+                    color: style.color,
+                    fontFamily: style.fontFamily,
+                    fontSize: style.fontSize,
+                  };
+                },
+              ),
+              initiativeCards: [...document.querySelectorAll('.initiative-pair > article')].map(
+                (card) => ({
+                  eyebrow: card.querySelector(':scope > .eyebrow')?.textContent,
+                  heading: card.querySelector(':scope > h3')?.textContent,
+                  buttons: [...card.querySelectorAll('.initiative-actions .button')].map(
+                    (button) => ({
+                      label: button.textContent,
+                      primary: button.classList.contains('primary'),
+                    }),
+                  ),
+                }),
+              ),
+            }
+          : null,
+      kaosMounts: [...document.querySelectorAll('main [data-widget="kaos-graph"]')].map(
+        (host) => host.getBoundingClientRect().height,
+      ),
     };
   });
   if (checks.homepage) Object.assign(checks.homepage, homepageInteractions);
 
   const failures = [];
   const expectedStatus = isNotFoundRoute ? 404 : 200;
-  if (!response || response.status() !== expectedStatus) failures.push(`HTTP ${response?.status() ?? 'no response'}`);
+  if (!response || response.status() !== expectedStatus)
+    failures.push(`HTTP ${response?.status() ?? 'no response'}`);
   if (errors.length > 0) failures.push(`${errors.length} page/console error(s)`);
-  if (checks.unrevealed.length > 0) failures.push(`${checks.unrevealed.length} reveal target(s) did not fire`);
-  if (checks.pageHeight >= 20000) failures.push(`page height ${checks.pageHeight}px exceeds 20000px`);
+  if (checks.unrevealed.length > 0)
+    failures.push(`${checks.unrevealed.length} reveal target(s) did not fire`);
+  if (checks.pageHeight >= 20000)
+    failures.push(`page height ${checks.pageHeight}px exceeds 20000px`);
   if (checks.pageWidth > checks.viewportWidth) {
-    failures.push(`page width ${checks.pageWidth}px exceeds the ${checks.viewportWidth}px viewport`);
+    failures.push(
+      `page width ${checks.pageWidth}px exceeds the ${checks.viewportWidth}px viewport`,
+    );
   }
-  if (!checks.fonts.newsreader || !checks.fonts.geist || !checks.fonts.geistMono || checks.fonts.googleRequests.length > 0) {
+  if (
+    !checks.fonts.newsreader ||
+    !checks.fonts.geist ||
+    !checks.fonts.geistMono ||
+    checks.fonts.googleRequests.length > 0
+  ) {
     failures.push('self-hosted fonts are missing or Google Fonts was requested');
   }
-  if (checks.canvases.some((canvas) => !canvas.nonBlank)) failures.push('one or more canvases are blank');
-  if (checks.kaosMounts.some((height) => height < 220 || height > 500)) failures.push('KAOS mount height is outside 220–500px');
-  if (formChecks && (
-    formChecks.endpoint !== ''
-    || formChecks.state !== 'success'
-    || !formChecks.confirmation.startsWith('The form is in demo mode.')
-    || !/^\d{13}$/.test(formChecks.startedAt)
-    || !formChecks.applicationHelper?.initiallyHidden
-    || !formChecks.applicationHelper?.visibleAfterCheck
-    || formChecks.applicationHelper?.text !== 'Please provide enough information to consider your application.'
-    || formChecks.honeypot.height !== '1px'
-    || formChecks.honeypot.left !== '-10000px'
-    || formChecks.honeypot.position !== 'absolute'
-    || formChecks.honeypot.width !== '1px'
-    || !formChecks.containment?.formWithinCard
-    || !formChecks.containment?.childrenWithinForm
-  )) failures.push('form demo state, anti-spam fields, or card containment is incomplete');
+  if (checks.canvases.some((canvas) => !canvas.nonBlank))
+    failures.push('one or more canvases are blank');
+  if (checks.kaosMounts.some((height) => height < 220 || height > 500))
+    failures.push('KAOS mount height is outside 220–500px');
+  if (
+    formChecks &&
+    (formChecks.endpoint !== '' ||
+      formChecks.state !== 'success' ||
+      !formChecks.confirmation.startsWith('The form is in demo mode.') ||
+      !/^\d{13}$/.test(formChecks.startedAt) ||
+      !formChecks.applicationHelper?.initiallyHidden ||
+      !formChecks.applicationHelper?.visibleAfterCheck ||
+      formChecks.applicationHelper?.text !==
+        'Please provide enough information to consider your application.' ||
+      formChecks.honeypot.height !== '1px' ||
+      formChecks.honeypot.left !== '-10000px' ||
+      formChecks.honeypot.position !== 'absolute' ||
+      formChecks.honeypot.width !== '1px' ||
+      !formChecks.containment?.formWithinCard ||
+      !formChecks.containment?.childrenWithinForm)
+  )
+    failures.push('form demo state, anti-spam fields, or card containment is incomplete');
   if (isMobile && checks.minTouchTargetHeight < 43.5) {
     failures.push(`touch target is ${checks.minTouchTargetHeight}px high; expected at least 44px`);
   }
-  if (checks.tableContainers.some(({ bounds, overflowX }) => (
-    bounds[0] < -0.5
-    || bounds[1] > checks.viewportWidth + 0.5
-    || !['auto', 'scroll'].includes(overflowX)
-  ))) failures.push('one or more tables do not scroll inside their container');
+  if (
+    checks.tableContainers.some(
+      ({ bounds, overflowX }) =>
+        bounds[0] < -0.5 ||
+        bounds[1] > checks.viewportWidth + 0.5 ||
+        !['auto', 'scroll'].includes(overflowX),
+    )
+  )
+    failures.push('one or more tables do not scroll inside their container');
 
   if (checks.homepage) {
-    if (checks.homepage.heroSwitchers !== 3) failures.push('homepage does not expose three hero modes');
-    if (!checks.homepage.surveyCard || checks.homepage.surveyBars < 5) failures.push('homepage survey explorer is incomplete');
-    if (checks.homepage.principleLinks.some(({ count, readHref }, index) => (
-      count < 2 || readHref !== `/principles/${String(index + 1).padStart(2, '0')}/`
-    ))) failures.push('homepage principle pills or Read principle targets are incomplete');
-    if (!checks.homepage.xaiFramesChanged) failures.push('homepage XAI scan pixels do not change over time');
+    if (checks.homepage.heroSwitchers !== 3)
+      failures.push('homepage does not expose three hero modes');
+    if (!checks.homepage.surveyCard || checks.homepage.surveyBars < 5)
+      failures.push('homepage survey explorer is incomplete');
+    if (
+      checks.homepage.principleLinks.some(
+        ({ count, readHref }, index) =>
+          count < 2 || readHref !== `/principles/${String(index + 1).padStart(2, '0')}/`,
+      )
+    )
+      failures.push('homepage principle pills or Read principle targets are incomplete');
+    if (!checks.homepage.xaiFramesChanged)
+      failures.push('homepage XAI scan pixels do not change over time');
     const expectedHomePadding = isMobile ? '96px' : '120px';
     if (
-      checks.homepage.homeSections.length !== 5
-      || checks.homepage.homeSections.some(({ borderTopWidth, paddingTop }) => (
-        borderTopWidth !== '1px' || paddingTop !== expectedHomePadding
-      ))
-    ) failures.push('homepage major-section divider or spacing rhythm is inconsistent');
-    if (checks.homepage.surveyPaddingBottom !== (viewport.width <= 600 ? '28px' : isMobile ? '34px' : '40px')) {
+      checks.homepage.homeSections.length !== 5 ||
+      checks.homepage.homeSections.some(
+        ({ borderTopWidth, paddingTop }) =>
+          borderTopWidth !== '1px' || paddingTop !== expectedHomePadding,
+      )
+    )
+      failures.push('homepage major-section divider or spacing rhythm is inconsistent');
+    if (
+      checks.homepage.surveyPaddingBottom !==
+      (viewport.width <= 600 ? '28px' : isMobile ? '34px' : '40px')
+    ) {
       failures.push('homepage survey card bottom padding is incorrect');
     }
-    if (checks.homepage.footnoteStandards.some(({ color, fontFamily, fontSize }) => (
-      color !== 'rgba(244, 242, 238, 0.42)'
-      || !fontFamily.includes('Geist Mono')
-      || fontSize !== '9.5px'
-    ))) failures.push('homepage footnote standards type tier has regressed');
     if (
-      checks.homepage.initiativeCards[0]?.eyebrow !== 'Governance'
-      || checks.homepage.initiativeCards[0]?.heading !== 'AI governance & procurement'
-      || checks.homepage.initiativeCards[0]?.buttons.filter(({ label }) => label === 'ML Maturity Model →').length !== 1
-      || !checks.homepage.initiativeCards[0]?.buttons[0]?.primary
-      || checks.homepage.initiativeCards[1]?.eyebrow !== 'Security'
-      || checks.homepage.initiativeCards[1]?.heading !== 'ML & agent security'
-      || !checks.homepage.initiativeCards[1]?.buttons[0]?.primary
-    ) failures.push('homepage governance/security card structure is incomplete');
-    if (checks.homepage.formWash !== 'radial-gradient(70% 90% at 70% 0%, rgba(94, 230, 160, 0.14), rgb(15, 16, 15) 72%)') {
+      checks.homepage.footnoteStandards.some(
+        ({ color, fontFamily, fontSize }) =>
+          color !== 'rgba(244, 242, 238, 0.42)' ||
+          !fontFamily.includes('Geist Mono') ||
+          fontSize !== '9.5px',
+      )
+    )
+      failures.push('homepage footnote standards type tier has regressed');
+    if (
+      checks.homepage.initiativeCards[0]?.eyebrow !== 'Governance' ||
+      checks.homepage.initiativeCards[0]?.heading !== 'AI governance & procurement' ||
+      checks.homepage.initiativeCards[0]?.buttons.filter(
+        ({ label }) => label === 'ML Maturity Model →',
+      ).length !== 1 ||
+      !checks.homepage.initiativeCards[0]?.buttons[0]?.primary ||
+      checks.homepage.initiativeCards[1]?.eyebrow !== 'Security' ||
+      checks.homepage.initiativeCards[1]?.heading !== 'ML & agent security' ||
+      !checks.homepage.initiativeCards[1]?.buttons[0]?.primary
+    )
+      failures.push('homepage governance/security card structure is incomplete');
+    if (
+      checks.homepage.formWash !==
+      'radial-gradient(70% 90% at 70% 0%, rgba(94, 230, 160, 0.14), rgb(15, 16, 15) 72%)'
+    ) {
       failures.push('homepage form wash differs from the prototype');
     }
     if (isMobile) {
@@ -419,52 +518,64 @@ for (const route of routes) {
       const expectedPhaseColumns = viewport.width <= 600 ? 1 : 2;
       const nav = checks.homepage.mobileNav;
       if (
-        !nav
-        || nav.accordionCount !== 5
-        || !nav.drawerOpen
-        || !nav.firstPanelOpen
-        || !nav.joinVisible
-        || nav.minTargetHeight < 43.5
-        || !nav.scrollLocked
-        || !nav.drawerClosed
-        || !nav.focusReturned
-        || !nav.scrollUnlocked
-      ) failures.push('mobile navigation interaction or focus handling failed');
-      if (checks.homepage.principleStickyPosition !== 'static') failures.push('mobile principle detail remains sticky');
-      if (checks.homepage.heroCanvasHeight > 340) failures.push('mobile hero canvas exceeds its 340px cap');
-      if (checks.homepage.statColumns !== expectedStatColumns) failures.push('mobile evidence strip has the wrong column count');
-      if (checks.homepage.phaseColumns !== expectedPhaseColumns) failures.push('mobile phase grid has the wrong column count');
+        !nav ||
+        nav.accordionCount !== 5 ||
+        !nav.drawerOpen ||
+        !nav.firstPanelOpen ||
+        !nav.joinVisible ||
+        nav.minTargetHeight < 43.5 ||
+        !nav.scrollLocked ||
+        !nav.drawerClosed ||
+        !nav.focusReturned ||
+        !nav.scrollUnlocked
+      )
+        failures.push('mobile navigation interaction or focus handling failed');
+      if (checks.homepage.principleStickyPosition !== 'static')
+        failures.push('mobile principle detail remains sticky');
+      if (checks.homepage.heroCanvasHeight > 340)
+        failures.push('mobile hero canvas exceeds its 340px cap');
+      if (checks.homepage.statColumns !== expectedStatColumns)
+        failures.push('mobile evidence strip has the wrong column count');
+      if (checks.homepage.phaseColumns !== expectedPhaseColumns)
+        failures.push('mobile phase grid has the wrong column count');
       if (checks.homepage.formColumns !== 1 || checks.homepage.footnoteColumns !== 1) {
         failures.push('mobile form or footnote band does not stack');
       }
       if (
-        checks.homepage.surveyTabs.flexWrap !== 'nowrap'
-        || !['auto', 'scroll'].includes(checks.homepage.surveyTabs.overflowX)
-      ) failures.push('mobile survey tabs are not horizontally contained');
+        checks.homepage.surveyTabs.flexWrap !== 'nowrap' ||
+        !['auto', 'scroll'].includes(checks.homepage.surveyTabs.overflowX)
+      )
+        failures.push('mobile survey tabs are not horizontally contained');
     } else {
-      if (!checks.homepage.principleListWithinHalfViewport) failures.push('homepage principle list exceeds half the viewport');
-      if (checks.homepage.kaosMountHeight !== 400) failures.push('homepage KAOS mount is not 400px high');
+      if (!checks.homepage.principleListWithinHalfViewport)
+        failures.push('homepage principle list exceeds half the viewport');
+      if (checks.homepage.kaosMountHeight !== 400)
+        failures.push('homepage KAOS mount is not 400px high');
       if (
-        checks.homepage.principleStickyPosition !== 'sticky'
-        || checks.homepage.principleStickyTop !== '96px'
-        || checks.homepage.principleViewportTops.some((top) => Math.abs(top - 96) > 1)
-      ) failures.push('homepage principle detail does not remain sticky at 96px');
+        checks.homepage.principleStickyPosition !== 'sticky' ||
+        checks.homepage.principleStickyTop !== '96px' ||
+        checks.homepage.principleViewportTops.some((top) => Math.abs(top - 96) > 1)
+      )
+        failures.push('homepage principle detail does not remain sticky at 96px');
       if (
-        checks.homepage.ossPreviewStates.some(({ canvasCount }) => canvasCount !== 1)
-        || checks.homepage.ossPreviewStates
+        checks.homepage.ossPreviewStates.some(({ canvasCount }) => canvasCount !== 1) ||
+        checks.homepage.ossPreviewStates
           .filter(({ mode }) => mode === 'xai' || mode === 'list')
           .some(({ bottomOpaquePixels }) => bottomOpaquePixels !== 0)
-      ) failures.push('homepage open-source dropdown composites multiple previews');
+      )
+        failures.push('homepage open-source dropdown composites multiple previews');
       const initiatives = checks.homepage.initiativesGeometry;
       if (
-        initiatives.rail.box[2] !== 230
-        || initiatives.rail.padding.join() !== ['24px', '18px', '24px', '18px'].join()
-        || initiatives.panes.padding.join() !== ['26px', '30px', '26px', '30px'].join()
-        || [initiatives.body, initiatives.menu, initiatives.rail, initiatives.panes]
-          .some(({ client, scroll }) => scroll[0] > client[0] || scroll[1] > client[1])
-        || initiatives.menu.box[0] < initiatives.body.box[0]
-        || initiatives.menu.box[1] > initiatives.body.box[1]
-      ) failures.push('homepage initiatives menu padding or overflow differs from the prototype');
+        initiatives.rail.box[2] !== 230 ||
+        initiatives.rail.padding.join() !== ['24px', '18px', '24px', '18px'].join() ||
+        initiatives.panes.padding.join() !== ['26px', '30px', '26px', '30px'].join() ||
+        [initiatives.body, initiatives.menu, initiatives.rail, initiatives.panes].some(
+          ({ client, scroll }) => scroll[0] > client[0] || scroll[1] > client[1],
+        ) ||
+        initiatives.menu.box[0] < initiatives.body.box[0] ||
+        initiatives.menu.box[1] > initiatives.body.box[1]
+      )
+        failures.push('homepage initiatives menu padding or overflow differs from the prototype');
     }
   }
 

@@ -1,9 +1,9 @@
 [
-  {"owasp": "Broken access control", "mlsecops": "Unrestricted model endpoints"},
-  {"owasp": "Cryptographic failures", "mlsecops": "Access to model artifacts"},
-  {"owasp": "Injection", "mlsecops": "Artifact exploit injection"},
-  {"owasp": "Insecure design", "mlsecops": "Insecure ML pipeline design"},
-  {"owasp": "Security misconfiguration", "mlsecops": "ML infrastructure misconfiguration"},
-  {"owasp": "Vulnerable components", "mlsecops": "Supply-chain vulnerabilities in ML code"},
-  {"owasp": "Logging & monitoring failures", "mlsecops": "Observability and lineage failures"}
+  { "owasp": "Broken access control", "mlsecops": "Unrestricted model endpoints" },
+  { "owasp": "Cryptographic failures", "mlsecops": "Access to model artifacts" },
+  { "owasp": "Injection", "mlsecops": "Artifact exploit injection" },
+  { "owasp": "Insecure design", "mlsecops": "Insecure ML pipeline design" },
+  { "owasp": "Security misconfiguration", "mlsecops": "ML infrastructure misconfiguration" },
+  { "owasp": "Vulnerable components", "mlsecops": "Supply-chain vulnerabilities in ML code" },
+  { "owasp": "Logging & monitoring failures", "mlsecops": "Observability and lineage failures" }
 ]

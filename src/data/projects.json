@@ -62,10 +62,7 @@
     ],
     "title": "XAI Explainability Framework",
     "text": "Explainability and bias mitigation across three stages, combining technical tools with the organisational processes around them.",
-    "stats": [
-      "1.3k STARS",
-      "3 CONTRIBUTORS"
-    ],
+    "stats": ["1.3k STARS", "3 CONTRIBUTORS"],
     "linkLabel": "Open the framework →",
     "linkHref": "/open-source/"
   },
@@ -97,10 +94,7 @@
     ],
     "title": "Production ML open-source list",
     "text": "The community-maintained catalogue of production ML and MLOps tooling, curated weekly.",
-    "stats": [
-      "20.8k STARS",
-      "210 CONTRIBUTORS"
-    ],
+    "stats": ["20.8k STARS", "210 CONTRIBUTORS"],
     "linkLabel": "Browse the ecosystem on GitHub →",
     "linkHref": "https://github.com/EthicalML/awesome-production-machine-learning",
     "guidelinesLabel": "Browse AI guidelines →",
@@ -136,12 +130,7 @@
         "detail": "Replayable traces, lineage, evaluation hooks"
       }
     ],
-    "stats": [
-      "268 STARS",
-      "5 CONTRIBUTORS",
-      "APACHE-2.0",
-      "K8S ≥1.28"
-    ],
+    "stats": ["268 STARS", "5 CONTRIBUTORS", "APACHE-2.0", "K8S ≥1.28"],
     "actions": [
       {
         "label": "Read the design",

@@ -55,35 +55,22 @@ function Toolbar({
   onYearChange,
   onSortChange,
 }: ToolbarProps) {
-  const sortLabel = sortMode === 'value'
-    ? 'Sorted by share ↓'
-    : 'Sorted by change ↓';
+  const sortLabel = sortMode === 'value' ? 'Sorted by share ↓' : 'Sorted by change ↓';
 
   return (
     <div class="survey-toolbar">
       <div class="year-toggle">
-        <button
-          aria-pressed={year === 'year2024'}
-          onClick={() => onYearChange('year2024')}
-        >
+        <button aria-pressed={year === 'year2024'} onClick={() => onYearChange('year2024')}>
           2024
         </button>
-        <button
-          aria-pressed={year === 'year2025'}
-          onClick={() => onYearChange('year2025')}
-        >
+        <button aria-pressed={year === 'year2025'} onClick={() => onYearChange('year2025')}>
           2025
         </button>
-        <button
-          aria-pressed={year === 'both'}
-          onClick={() => onYearChange('both')}
-        >
+        <button aria-pressed={year === 'both'} onClick={() => onYearChange('both')}>
           Compare
         </button>
       </div>
-      <button onClick={onSortChange}>
-        {sortLabel}
-      </button>
+      <button onClick={onSortChange}>{sortLabel}</button>
       <span>
         {metadata} · N={responseCount}
       </span>
@@ -99,15 +86,9 @@ interface BarRowProps {
   onFocus: (index: number) => void;
 }
 
-function BarRow({
-  row,
-  focusedIndex,
-  year,
-  maximumValue,
-  onFocus,
-}: BarRowProps) {
-  const valueWidth = `${Math.round(row.value / maximumValue * 100)}%`;
-  const comparisonWidth = `${Math.round(row.year2024 / maximumValue * 100)}%`;
+function BarRow({ row, focusedIndex, year, maximumValue, onFocus }: BarRowProps) {
+  const valueWidth = `${Math.round((row.value / maximumValue) * 100)}%`;
+  const comparisonWidth = `${Math.round((row.year2024 / maximumValue) * 100)}%`;
 
   return (
     <button
@@ -116,20 +97,15 @@ function BarRow({
       onFocus={() => onFocus(row.originalIndex)}
       onClick={() => onFocus(row.originalIndex)}
     >
-      <span>
-        {row.label}
-      </span>
+      <span>{row.label}</span>
       <i>
         <b style={{ width: valueWidth }}></b>
-        {year === 'both' && (
-          <em style={{ width: comparisonWidth }}></em>
-        )}
+        {year === 'both' && <em style={{ width: comparisonWidth }}></em>}
       </i>
-      <strong>
-        {row.value}%
-      </strong>
+      <strong>{row.value}%</strong>
       <small class={row.delta < 0 ? 'negative' : ''}>
-        {row.delta > 0 ? '+' : ''}{row.delta} pts
+        {row.delta > 0 ? '+' : ''}
+        {row.delta} pts
       </small>
     </button>
   );
@@ -143,34 +119,21 @@ function FocusPanel({ selectedRow }: FocusPanelProps) {
   return (
     <div class="survey-focus">
       <div>
-        <span>
-          SELECTED
-        </span>
-        <strong>
-          {selectedRow.label}
-        </strong>
+        <span>SELECTED</span>
+        <strong>{selectedRow.label}</strong>
       </div>
       <div>
-        <span>
-          SHARE OF RESPONDENTS
-        </span>
-        <strong>
-          {selectedRow.value}% of respondents
-        </strong>
+        <span>SHARE OF RESPONDENTS</span>
+        <strong>{selectedRow.value}% of respondents</strong>
       </div>
       <div>
-        <span>
-          YEAR ON YEAR
-        </span>
+        <span>YEAR ON YEAR</span>
         <strong>
-          {selectedRow.delta > 0 ? '+' : ''}{selectedRow.delta} pts vs 2024
+          {selectedRow.delta > 0 ? '+' : ''}
+          {selectedRow.delta} pts vs 2024
         </strong>
       </div>
-      {selectedRow.note && (
-        <p>
-          {selectedRow.note}
-        </p>
-      )}
+      {selectedRow.note && <p>{selectedRow.note}</p>}
     </div>
   );
 }
@@ -219,9 +182,7 @@ export default function SurveyExplorer() {
     });
   }, [selectedSurvey, currentYear, sortMode]);
 
-  const maximumValue = Math.max(
-    ...rows.map((row) => Math.max(row.year2024, row.year2025)),
-  );
+  const maximumValue = Math.max(...rows.map((row) => Math.max(row.year2024, row.year2025)));
   const selectedRow = rows.find((row) => row.originalIndex === focusedIndex) ?? rows[0];
 
   const selectCategory = (nextCategory: Category) => {
@@ -235,10 +196,7 @@ export default function SurveyExplorer() {
 
   return (
     <div class="survey-island" data-survey-card>
-      <Tabs
-        category={category}
-        onSelect={selectCategory}
-      />
+      <Tabs category={category} onSelect={selectCategory} />
       <Toolbar
         year={year}
         sortMode={sortMode}

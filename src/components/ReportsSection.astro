@@ -10,7 +10,15 @@ import reports from '../data/home-reports.json';
       <h2>{reports.title}</h2>
       <p>{reports.intro}</p>
     </div>
-    <nav>{reports.actions.map(({ label, href, kind }) => <a class:list={['button', kind]} href={href}>{label}</a>)}</nav>
+    <nav>
+      {
+        reports.actions.map(({ label, href, kind }) => (
+          <a class:list={['button', kind]} href={href}>
+            {label}
+          </a>
+        ))
+      }
+    </nav>
   </header>
   <div class="home-survey-card"><SurveyExplorer client:visible /></div>
   <div class="initiative-pair">
@@ -18,25 +26,54 @@ import reports from '../data/home-reports.json';
       <div class="initiative-preview governance-preview">
         <header><span>{reports.governance.previewEyebrow}</span><span>{reports.governance.previewLabel}</span></header>
         <h4>{reports.governance.previewTitle}</h4>
-        {reports.governance.steps.map(({ label, detail }, index) => <p><span>{String(index + 1).padStart(2, '0')}</span>{label}<i>{detail}</i></p>)}
+        {
+          reports.governance.steps.map(({ label, detail }, index) => (
+            <p>
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              {label}
+              <i>{detail}</i>
+            </p>
+          ))
+        }
       </div>
       <p class="eyebrow">{reports.governance.eyebrow}</p>
       <h3>{reports.governance.title}</h3>
       <p>{reports.governance.text}</p>
       <div class="initiative-actions">
-        {reports.governance.actions.map(({ label, href, kind }) => <a class:list={['button', kind]} href={href} rel={href.startsWith('http') ? 'noopener' : undefined}>{label}</a>)}
+        {
+          reports.governance.actions.map(({ label, href, kind }) => (
+            <a class:list={['button', kind]} href={href} rel={href.startsWith('http') ? 'noopener' : undefined}>
+              {label}
+            </a>
+          ))
+        }
       </div>
     </article>
     <article>
       <div class="initiative-preview mlsecops-preview">
         <header><span>{reports.security.leftHeading}</span><span>{reports.security.rightHeading}</span></header>
-        {reports.security.rows.map(({ owasp, mlsecops }) => <p><span>{owasp}</span><strong>{mlsecops}</strong></p>)}
+        {
+          reports.security.rows.map(({ owasp, mlsecops }) => (
+            <p>
+              <>
+                <span>{owasp}</span>
+                <strong>{mlsecops}</strong>
+              </>
+            </p>
+          ))
+        }
       </div>
       <p class="eyebrow">{reports.security.eyebrow}</p>
       <h3>{reports.security.title}</h3>
       <p>{reports.security.text}</p>
       <div class="initiative-actions">
-        {reports.security.actions.map(({ label, href, kind }) => <a class:list={['button', kind]} href={href} rel={href.startsWith('http') ? 'noopener' : undefined}>{label}</a>)}
+        {
+          reports.security.actions.map(({ label, href, kind }) => (
+            <a class:list={['button', kind]} href={href} rel={href.startsWith('http') ? 'noopener' : undefined}>
+              {label}
+            </a>
+          ))
+        }
       </div>
     </article>
   </div>

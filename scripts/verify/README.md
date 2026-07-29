@@ -1,16 +1,14 @@
 # Verification harness
 
-These scripts are the reviewed development harness required by ADR-008. Start a built site on port 4127, then pass the affected routes explicitly:
+These scripts are the reviewed development harness required by ADR-008. Start a built site on port 4126. With no route arguments, the DOM and screenshot gates read every route from `routes.json`:
 
 ```sh
-node scripts/verify/verify-dom.mjs / /principles/ /principles/09/
-node scripts/verify/verify-dom.mjs --viewport 420x900 / /principles/
-VERIFY_VIEWPORT=768x900 node scripts/verify/verify-dom.mjs / /principles/
-node scripts/verify/verify-shots.mjs / /principles/ /principles/09/
-node scripts/verify/verify-typewriter.mjs
+npm run verify:dom:all
+npm run verify:shots:all
+npm run verify:typewriter
 ```
 
-Set `VERIFY_BASE_URL` only when deliberately verifying another local origin. `--viewport WIDTH` or `--viewport WIDTHxHEIGHT` changes the DOM-gate viewport; `VERIFY_VIEWPORT` is the environment equivalent. `routes.json` lists every generated site route. Screenshot files and their manifest go to the git-ignored `scripts/verify/out/`.
+Pass routes after `--` to check a safe subset. Set `VERIFY_BASE_URL` only when deliberately verifying another local origin. `--viewport WIDTH` or `--viewport WIDTHxHEIGHT` changes either responsive gate; `VERIFY_VIEWPORT` is the environment equivalent. Screenshot files and their manifest go to viewport-specific folders under the git-ignored `scripts/verify/out/`.
 
 ## Reviewed checks
 

@@ -3,12 +3,16 @@ const { left, right } = Astro.props;
 ---
 
 <section class="split-list" aria-label={`${left.title} and ${right.title}`} data-reveal>
-  {[left, right].map((column) => (
-    <div>
-      <h2 class="eyebrow">{column.title}</h2>
-      <ul>
-        {column.items.map((item) => <li>{item}</li>)}
-      </ul>
-    </div>
-  ))}
+  {
+    [left, right].map((column) => (
+      <div>
+        <h2 class="eyebrow">{column.title}</h2>
+        <ul>
+          {column.items.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </div>
+    ))
+  }
 </section>

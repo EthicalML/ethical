@@ -7,7 +7,16 @@ const { sectorEyebrow, sectorHeading, memberEyebrow, memberHeading, members } = 
   <div>
     <p class="eyebrow">{sectorEyebrow}</p>
     <h2>{sectorHeading}</h2>
-    {sectors.map(({ name, value }) => <p><span>{name}</span><strong>{value}</strong></p>)}
+    {
+      sectors.map(({ name, value }) => (
+        <p>
+          <>
+            <span>{name}</span>
+            <strong>{value}</strong>
+          </>
+        </p>
+      ))
+    }
   </div>
   <div>
     <p class="eyebrow">{memberEyebrow}</p>

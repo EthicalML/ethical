@@ -36,7 +36,10 @@ const socialImage = new URL(frontmatter.image ?? site.ogImage, Astro.site);
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-89407852-2"></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
+      function gtag() {
+        // eslint-disable-next-line prefer-rest-params
+        dataLayer.push(arguments);
+      }
       gtag('js', new Date());
       gtag('config', 'UA-89407852-2');
     </script>
@@ -45,12 +48,14 @@ const socialImage = new URL(frontmatter.image ?? site.ogImage, Astro.site);
   <body>
     <SiteHeader />
     <main>
-      {frontmatter.eyebrow && (
-        <header class="prose-header" data-reveal>
-          <p class="eyebrow">{frontmatter.eyebrow}</p>
-          <h1>{frontmatter.title}</h1>
-        </header>
-      )}
+      {
+        frontmatter.eyebrow && (
+          <header class="prose-header" data-reveal>
+            <p class="eyebrow">{frontmatter.eyebrow}</p>
+            <h1>{frontmatter.title}</h1>
+          </header>
+        )
+      }
       <slot />
     </main>
     <FootnoteBand />

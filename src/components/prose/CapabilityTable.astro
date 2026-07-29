@@ -4,10 +4,12 @@ const { items = defaultCapabilities } = Astro.props;
 ---
 
 <div class="capability-table prose-block" data-reveal>
-  {items.map((item) => (
-    <div>
-      <strong>{item.capability}</strong>
-      <span>{item.detail}</span>
-    </div>
-  ))}
+  {
+    items.map((item) => (
+      <div>
+        <strong>{item.capability}</strong>
+        <span>{item.detail}</span>
+      </div>
+    ))
+  }
 </div>

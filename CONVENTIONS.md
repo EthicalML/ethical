@@ -88,18 +88,18 @@ For a new principle, add `src/content/principles/NN.md` with the collection sche
 
 ## Homepage source map
 
-| Section | Authoring source |
-|---|---|
-| Hero, phases, network title/stats | `src/pages/index.mdx` front matter and composition |
-| Evidence band | `src/data/stats.json` |
-| Affiliations | `src/data/affiliations.json` |
-| Principle content | `src/content/principles/*.md`; section labels are props in `index.mdx` |
-| Open-source showcase | `src/data/projects.json` |
-| Reports, maturity preview, OWASP rows | `src/data/home-reports.json` via `ReportsSection.astro` |
-| Survey categories and rows | `src/data/survey.json` via the Preact `SurveyExplorer.tsx` island |
-| Network sectors/issues/form chrome | `src/data/network-sectors.json`, `newsletter-issues.json`, and `network.json` |
-| Footnote/about/talks/links | `src/data/footer.json` and `talks.json` |
-| Site chrome and header panels | `src/data/site.json` and `nav.json` |
+| Section                               | Authoring source                                                              |
+| ------------------------------------- | ----------------------------------------------------------------------------- |
+| Hero, phases, network title/stats     | `src/pages/index.mdx` front matter and composition                            |
+| Evidence band                         | `src/data/stats.json`                                                         |
+| Affiliations                          | `src/data/affiliations.json`                                                  |
+| Principle content                     | `src/content/principles/*.md`; section labels are props in `index.mdx`        |
+| Open-source showcase                  | `src/data/projects.json`                                                      |
+| Reports, maturity preview, OWASP rows | `src/data/home-reports.json` via `ReportsSection.astro`                       |
+| Survey categories and rows            | `src/data/survey.json` via the Preact `SurveyExplorer.tsx` island             |
+| Network sectors/issues/form chrome    | `src/data/network-sectors.json`, `newsletter-issues.json`, and `network.json` |
+| Footnote/about/talks/links            | `src/data/footer.json` and `talks.json`                                       |
+| Site chrome and header panels         | `src/data/site.json` and `nav.json`                                           |
 
 ## Verification
 

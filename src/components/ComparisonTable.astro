@@ -18,11 +18,15 @@ const {
         </tr>
       </thead>
       <tbody>
-        {rows.map((row) => (
-          <tr>
-            {columns.map((column) => <td>{row[column.key]}</td>)}
-          </tr>
-        ))}
+        {
+          rows.map((row) => (
+            <tr>
+              {columns.map((column) => (
+                <td>{row[column.key]}</td>
+              ))}
+            </tr>
+          ))
+        }
       </tbody>
     </table>
   </div>

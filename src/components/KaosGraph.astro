@@ -2,12 +2,14 @@
 const { embedded = false } = Astro.props;
 ---
 
-{embedded ? (
-  <div class="widget embedded-widget kaos-canvas-mount" data-widget="kaos-graph" aria-label="KAOS agent graph"></div>
-) : (
-  <section id="opensource" aria-labelledby="kaos-heading" data-reveal>
-    <p class="eyebrow">CUSTOM WIDGET</p>
-    <h2 id="kaos-heading">KAOS agent graph</h2>
-    <div class="widget kaos-canvas-mount" data-widget="kaos-graph"></div>
-  </section>
-)}
+{
+  embedded ? (
+    <div class="widget embedded-widget kaos-canvas-mount" data-widget="kaos-graph" aria-label="KAOS agent graph" />
+  ) : (
+    <section id="opensource" aria-labelledby="kaos-heading" data-reveal>
+      <p class="eyebrow">CUSTOM WIDGET</p>
+      <h2 id="kaos-heading">KAOS agent graph</h2>
+      <div class="widget kaos-canvas-mount" data-widget="kaos-graph" />
+    </section>
+  )
+}

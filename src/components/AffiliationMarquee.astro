@@ -13,25 +13,24 @@ const items = partners.map((partner) => ({
   <p class="eyebrow">{affiliations.eyebrow}</p>
   <div class="marquee-mask">
     <div class="marquee-track">
-      {[false, true].map((duplicate) => (
-        <div class="marquee-set" aria-hidden={duplicate ? 'true' : undefined}>
-          {items.map((item) => (
-            <div
-              class="marquee-item"
-              data-marquee-item={duplicate ? undefined : ''}
-              aria-label={duplicate ? undefined : item.role ? `${item.name}: ${item.role}` : item.name}
-            >
-              <span
-                class="marquee-logo-frame"
-                style={`--logo-mask: url("${item.logo.src}"); --logo-ratio: ${item.logo.width / item.logo.height}`}
+      {
+        [false, true].map((duplicate) => (
+          <div class="marquee-set" aria-hidden={duplicate ? 'true' : undefined}>
+            {items.map((item) => (
+              <div
+                class="marquee-item"
+                data-marquee-item={duplicate ? undefined : ''}
+                aria-label={duplicate ? undefined : item.role ? `${item.name}: ${item.role}` : item.name}
               >
-                <span class="marquee-logo"></span>
-              </span>
-              {item.role && <span class="marquee-role">{item.role}</span>}
-            </div>
-          ))}
-        </div>
-      ))}
+                <span class="marquee-logo-frame" style={`--logo-mask: url("${item.logo.src}"); --logo-ratio: ${item.logo.width / item.logo.height}`}>
+                  <span class="marquee-logo" />
+                </span>
+                {item.role && <span class="marquee-role">{item.role}</span>}
+              </div>
+            ))}
+          </div>
+        ))
+      }
     </div>
   </div>
 </section>

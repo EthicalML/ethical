@@ -7,7 +7,11 @@ layout: ../../layouts/ProseLayout.astro
 
 import { ArticleHero, MaturityModelContent } from '../../components/prose/components.js';
 
-<ArticleHero eyebrow="FRAMEWORK / MATURITY MODEL" title="Machine-learning capability across four levels" intro="A four-level model for developing adaptive organisational capability." />
+<ArticleHero
+  eyebrow="FRAMEWORK / MATURITY MODEL"
+  title="Machine-learning capability across four levels"
+  intro="A four-level model for developing adaptive organisational capability."
+/>
 
 <MaturityModelContent
   phaseEyebrow="01 — THE FOUR-PHASE RESPONSIBLE AI STRATEGY"
@@ -17,5 +21,9 @@ import { ArticleHero, MaturityModelContent } from '../../components/prose/compon
   capabilityEyebrow="03 — CAPABILITIES"
   capabilityHeading="The system around the model"
   metrics={['4 levels', '5 domains', '20 signals']}
-  cta={{ href: '/contact/', label: 'Assess your organisation →', text: 'Use the model as a conversation and evidence tool. It does not provide certification.' }}
+  cta={{
+    href: '/contact/',
+    label: 'Assess your organisation →',
+    text: 'Use the model as a conversation and evidence tool. It does not provide certification.',
+  }}
 />

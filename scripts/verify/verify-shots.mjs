@@ -1,19 +1,36 @@
 import playwright from '/Users/asaucedo/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/index.js';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 
 const { chromium } = playwright;
-const routes = process.argv.slice(2);
-const baseUrl = process.env.VERIFY_BASE_URL ?? 'http://127.0.0.1:4127';
-const outputDir = new URL('./out/', import.meta.url);
+const args = process.argv.slice(2);
+const routes = [];
+let viewportValue = process.env.VERIFY_VIEWPORT ?? '1440x1000';
+for (let index = 0; index < args.length; index += 1) {
+  if (args[index] === '--viewport') {
+    viewportValue = args[index + 1];
+    index += 1;
+  } else if (args[index].startsWith('--viewport=')) {
+    viewportValue = args[index].slice('--viewport='.length);
+  } else {
+    routes.push(args[index]);
+  }
+}
+const [viewportWidth, requestedHeight] = viewportValue.toLowerCase().split('x').map(Number);
+const viewportHeight = requestedHeight || (viewportWidth <= 950 ? 900 : 1000);
+const baseUrl = process.env.VERIFY_BASE_URL ?? 'http://127.0.0.1:4126';
+const outputDir = new URL(`./out/${viewportWidth}/`, import.meta.url);
 
+if (!Number.isFinite(viewportWidth) || !Number.isFinite(viewportHeight)) {
+  throw new Error(`Invalid viewport "${viewportValue}"; use WIDTH or WIDTHxHEIGHT`);
+}
 if (routes.length === 0) {
-  throw new Error('Usage: node scripts/verify/verify-shots.mjs <route...>');
+  routes.push(...JSON.parse(await readFile(new URL('./routes.json', import.meta.url), 'utf8')));
 }
 
 await mkdir(outputDir, { recursive: true });
 const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({
-  viewport: { width: 1440, height: 1000 },
+  viewport: { width: viewportWidth, height: viewportHeight },
   deviceScaleFactor: 1,
   reducedMotion: 'reduce',
 });

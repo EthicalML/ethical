@@ -6,16 +6,20 @@ const { cards, eyebrow, heading } = Astro.props;
   <p class="eyebrow">{eyebrow}</p>
   <h2 id="phases-heading">{heading}</h2>
   <div class="phase-grid">
-    {cards.map((card, index) => (
-      <article class:list={['phase-card', index === 0 && 'active']}>
-        <p class="phase-label">{card.label}</p>
-        <h3>{card.title}</h3>
-        <div class="phase-details">
-          {card.details.map((detail) => <span>{detail}</span>)}
-        </div>
-        <div class="phase-rule" style={`--rule-opacity:${[0.35, 0.55, 0.75, 1][index]}`}></div>
-      </article>
-    ))}
+    {
+      cards.map((card, index) => (
+        <article class:list={['phase-card', index === 0 && 'active']}>
+          <p class="phase-label">{card.label}</p>
+          <h3>{card.title}</h3>
+          <div class="phase-details">
+            {card.details.map((detail) => (
+              <span>{detail}</span>
+            ))}
+          </div>
+          <div class="phase-rule" style={`--rule-opacity:${[0.35, 0.55, 0.75, 1][index]}`} />
+        </article>
+      ))
+    }
   </div>
 </section>
 <script>
@@ -28,10 +32,16 @@ const { cards, eyebrow, heading } = Astro.props;
       cards.forEach((card, i) => card.classList.toggle('active', i === index));
     };
     cards.forEach((card, index) => card.addEventListener('mouseenter', () => select(index)));
-    grid.addEventListener('mouseenter', () => { held = true; });
-    grid.addEventListener('mouseleave', () => { held = false; });
+    grid.addEventListener('mouseenter', () => {
+      held = true;
+    });
+    grid.addEventListener('mouseleave', () => {
+      held = false;
+    });
     if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setInterval(() => { if (!held) select((active + 1) % cards.length); }, 2600);
+      setInterval(() => {
+        if (!held) select((active + 1) % cards.length);
+      }, 2600);
     }
   });
 </script>

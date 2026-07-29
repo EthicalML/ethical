@@ -15,16 +15,7 @@ interface Props {
   secondary_button: HeroButton;
 }
 
-const {
-  status,
-  status_href,
-  title,
-  subtitle_lines,
-  beneficiaries = [],
-  typewriter_underline = false,
-  primary_button,
-  secondary_button,
-}: Props = Astro.props;
+const { status, status_href, title, subtitle_lines, beneficiaries = [], typewriter_underline = false, primary_button, secondary_button }: Props = Astro.props;
 const initialBeneficiary = beneficiaries[0];
 const [missionLine1, missionLine2] = subtitle_lines;
 const ariaSentence = [...subtitle_lines, initialBeneficiary].filter(Boolean).join(' ');
@@ -33,11 +24,31 @@ const ariaSentence = [...subtitle_lines, initialBeneficiary].filter(Boolean).joi
 <header class="hero" data-reveal>
   <canvas class="hero-canvas" data-widget="hero-cycle" aria-hidden="true"></canvas>
   <div class="hero-copy">
-    {status_href ? <a class="status-pill" href={status_href}><span aria-hidden="true"></span>{status}</a> : <p class="status-pill"><span aria-hidden="true"></span>{status}</p>}
+    {
+      status_href ? (
+        <a class="status-pill" href={status_href}>
+          <span aria-hidden="true" />
+          {status}
+        </a>
+      ) : (
+        <p class="status-pill">
+          <span aria-hidden="true" />
+          {status}
+        </p>
+      )
+    }
     <h1>
-      {title.map((line, index) => index === 2
-        ? <em class="glitch" data-text={line}>{line}</em>
-        : <span>{line}</span>)}
+      {
+        title.map((line, index) =>
+          index === 2 ? (
+            <em class="glitch" data-text={line}>
+              {line}
+            </em>
+          ) : (
+            <span>{line}</span>
+          ),
+        )
+      }
     </h1>
     <type-writer data-beneficiaries={JSON.stringify(beneficiaries)}>
       <p class="hero-subtitle" data-underline={typewriter_underline ? 'true' : 'false'} aria-label={ariaSentence}>
@@ -72,7 +83,7 @@ const ariaSentence = [...subtitle_lines, initialBeneficiary].filter(Boolean).joi
   class TypeWriter extends HTMLElement {
     private destroyed = false;
     private observer?: IntersectionObserver;
-    private timer?: ReturnType<typeof window.setTimeout>;
+    private timer?: number;
 
     connectedCallback() {
       this.destroyed = false;
@@ -92,11 +103,7 @@ const ariaSentence = [...subtitle_lines, initialBeneficiary].filter(Boolean).joi
       const initialBeneficiary = beneficiaries[0];
       if (!subtitle || outputs.length !== 3 || !glitch || !cursor || !initialBeneficiary) return;
 
-      const initialLines = [
-        outputs[0].textContent ?? '',
-        outputs[1].textContent ?? '',
-        initialBeneficiary,
-      ];
+      const initialLines = [outputs[0].textContent ?? '', outputs[1].textContent ?? '', initialBeneficiary];
       const styles = getComputedStyle(subtitle);
       const duration = (name: string, fallback: number) => {
         const value = Number.parseFloat(styles.getPropertyValue(name));
@@ -104,9 +111,10 @@ const ariaSentence = [...subtitle_lines, initialBeneficiary].filter(Boolean).joi
       };
       const typeDelay = duration('--typewriter-type-delay', 45);
       const deleteDelay = duration('--typewriter-delete-delay', 25);
-      const wait = (milliseconds: number) => new Promise<void>((resolve) => {
-        this.timer = window.setTimeout(resolve, milliseconds);
-      });
+      const wait = (milliseconds: number) =>
+        new Promise<void>((resolve) => {
+          this.timer = window.setTimeout(resolve, milliseconds);
+        });
       const jitter = () => typeDelay + (Math.random() - 0.5) * 12;
       const setPhase = (phase: TypewriterPhase) => {
         subtitle.dataset.typewriterPhase = phase;
@@ -115,11 +123,7 @@ const ariaSentence = [...subtitle_lines, initialBeneficiary].filter(Boolean).joi
         output.textContent = text;
         if (output === outputs[2]) glitch.dataset.text = text;
       };
-      const type = async (
-        output: HTMLElement,
-        text: string,
-        phase: TypewriterPhase = 'typing',
-      ) => {
+      const type = async (output: HTMLElement, text: string, phase: TypewriterPhase = 'typing') => {
         setPhase(phase);
         (output === outputs[2] ? glitch : output.parentElement)?.append(cursor);
         for (const character of text) {
@@ -137,19 +141,16 @@ const ariaSentence = [...subtitle_lines, initialBeneficiary].filter(Boolean).joi
         }
       };
       const waitForGlitchEnd = async (skipActiveBurst = false) => {
-        const headlineAnimation = document.querySelector<HTMLElement>('.glitch')
+        const headlineAnimation = document
+          .querySelector<HTMLElement>('.glitch')
           ?.getAnimations()
-          .find((animation) => (
-            'animationName' in animation
-            && animation.animationName === 'om-flicker'
-          ));
+          .find((animation) => 'animationName' in animation && animation.animationName === 'om-flicker');
         const cycle = Number(headlineAnimation?.effect?.getTiming().duration) || 9000;
         const current = Number(headlineAnimation?.currentTime) || 0;
         const phase = current % cycle;
         const burstStart = cycle * 0.656;
         const burstEnd = cycle * 0.767;
-        const canUseCurrentBurst = phase < burstEnd
-          && (!skipActiveBurst || phase < burstStart);
+        const canUseCurrentBurst = phase < burstEnd && (!skipActiveBurst || phase < burstStart);
         await wait(canUseCurrentBurst ? burstEnd - phase : cycle - phase + burstEnd);
       };
       const run = async () => {
@@ -196,5 +197,7 @@ const ariaSentence = [...subtitle_lines, initialBeneficiary].filter(Boolean).joi
     }
   }
 
-  customElements.get('type-writer') ?? customElements.define('type-writer', TypeWriter);
+  if (!customElements.get('type-writer')) {
+    customElements.define('type-writer', TypeWriter);
+  }
 </script>

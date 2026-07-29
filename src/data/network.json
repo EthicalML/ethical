@@ -8,15 +8,49 @@
   "form": {
     "title": "Contact form",
     "fields": [
-      {"label": "Name", "name": "name", "type": "text", "placeholder": "Alex Moreau", "autocomplete": "name"},
-      {"label": "Email", "name": "email", "type": "email", "placeholder": "you@organisation.org", "autocomplete": "email"},
-      {"label": "Organisation & role", "name": "organisation", "type": "text", "placeholder": "Institution — role", "autocomplete": "organization-title", "wide": true},
-      {"label": "Further information", "name": "furtherInformation", "type": "text", "placeholder": "Context, motivation or relevant links", "autocomplete": "off", "wide": true}
+      {
+        "label": "Name",
+        "name": "name",
+        "type": "text",
+        "placeholder": "Alex Moreau",
+        "autocomplete": "name"
+      },
+      {
+        "label": "Email",
+        "name": "email",
+        "type": "email",
+        "placeholder": "you@organisation.org",
+        "autocomplete": "email"
+      },
+      {
+        "label": "Organisation & role",
+        "name": "organisation",
+        "type": "text",
+        "placeholder": "Institution — role",
+        "autocomplete": "organization-title",
+        "wide": true
+      },
+      {
+        "label": "Further information",
+        "name": "furtherInformation",
+        "type": "text",
+        "placeholder": "Context, motivation or relevant links",
+        "autocomplete": "off",
+        "wide": true
+      }
     ],
     "interests": [
-      {"value": "network", "label": "Apply to join the Ethical AI Network", "checked": false},
-      {"value": "newsletter", "label": "Subscribe to the ML Engineer newsletter", "checked": true},
-      {"value": "frameworks", "label": "Request the AI-RFX materials or a collaboration", "checked": false}
+      { "value": "network", "label": "Apply to join the Ethical AI Network", "checked": false },
+      {
+        "value": "newsletter",
+        "label": "Subscribe to the ML Engineer newsletter",
+        "checked": true
+      },
+      {
+        "value": "frameworks",
+        "label": "Request the AI-RFX materials or a collaboration",
+        "checked": false
+      }
     ],
     "button": "Send",
     "disclaimer": "We only use your details to reply and to send what you asked for. Unsubscribe any time.",

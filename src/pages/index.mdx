@@ -4,7 +4,7 @@ title: The Institute for Ethical AI Alignment & Safety
 description: An independent research institute working to ensure that frontier AI is safe, aligned and accountable to people and society.
 hero:
   status: REACH OUT · SUBSCRIBE · APPLY TO JOIN →
-  status_href: "#join"
+  status_href: '#join'
   title:
     - The Institute
     - for Ethical AI
@@ -22,10 +22,10 @@ hero:
   typewriter_underline: false
   primary_button:
     label: Join the network
-    href: "#join"
+    href: '#join'
   secondary_button:
     label: Contact us
-    href: "#contact"
+    href: '#contact'
 phases:
   - label: 01 / EMPOWERING INDIVIDUALS
     title: By Principle.
@@ -55,11 +55,11 @@ network_form:
   variant: network-split
   title: Contact us, Subscribe or Apply.
   stats:
-    - value: "1,034"
+    - value: '1,034'
       label: NETWORK MEMBERS
-    - value: "70,412"
+    - value: '70,412'
       label: NEWSLETTER SUBSCRIBERS
-    - value: "393"
+    - value: '393'
       label: ISSUES PUBLISHED
 ---
 
@@ -80,7 +80,12 @@ import ReportsSection from '../components/ReportsSection.astro';
 
 <PhaseCardGrid cards={frontmatter.phases} eyebrow="01 — THE FOUR-PHASE RESPONSIBLE AI STRATEGY" heading="From individual practice to national regulation." />
 
-<PrinciplesExplorer homepage eyebrow="02 — PRINCIPLES FOR ALIGNED & SAFE AI" heading="Nine Principles for AI Alignment and Safety." intro="Each principle specifies a commitment, the failure modes it addresses and the controls that implement it. We invite both individuals and organisations to pledge towards these principles." />
+<PrinciplesExplorer
+  homepage
+  eyebrow="02 — PRINCIPLES FOR ALIGNED & SAFE AI"
+  heading="Nine Principles for AI Alignment and Safety."
+  intro="Each principle specifies a commitment, the failure modes it addresses and the controls that implement it. We invite both individuals and organisations to pledge towards these principles."
+/>
 
 <OpenSourceShowcase homepage />
 
