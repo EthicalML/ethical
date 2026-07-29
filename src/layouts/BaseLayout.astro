@@ -2,6 +2,7 @@
 import '../styles/tokens.css';
 import '../styles/prose.css';
 import '../styles/layout.css';
+import { ClientRouter } from 'astro:transitions';
 import SiteHeader from '../components/SiteHeader.astro';
 import FootnoteBand from '../components/FootnoteBand.astro';
 import SiteFooter from '../components/SiteFooter.astro';
@@ -35,6 +36,7 @@ const socialImage = new URL(frontmatter.image ?? ogImage, Astro.site);
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={socialImage} />
+    <ClientRouter />
     <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=UA-89407852-2"></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
@@ -44,6 +46,17 @@ const socialImage = new URL(frontmatter.image ?? ogImage, Astro.site);
       }
       gtag('js', new Date());
       gtag('config', 'UA-89407852-2');
+      let initialPageLoad = true;
+      document.addEventListener('astro:page-load', () => {
+        if (initialPageLoad) {
+          initialPageLoad = false;
+          return;
+        }
+        gtag('config', 'UA-89407852-2', {
+          page_path: location.pathname + location.search,
+          page_title: document.title,
+        });
+      });
     </script>
     <title>{title}</title>
   </head>
@@ -54,7 +67,12 @@ const socialImage = new URL(frontmatter.image ?? ogImage, Astro.site);
         frontmatter.eyebrow && (
           <header class="prose-header" data-reveal>
             <p class="eyebrow">{frontmatter.eyebrow}</p>
-            <h1>{frontmatter.title}</h1>
+            <h1
+              transition:name={frontmatter.transitionName}
+              style={frontmatter.transitionName ? `view-transition-name: ${frontmatter.transitionName}` : undefined}
+            >
+              {frontmatter.title}
+            </h1>
           </header>
         )
       }

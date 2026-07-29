@@ -38,7 +38,9 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
           principles.map(({ data }, index) => (
             <article class:list={['principle-detail', index === 0 && 'active']} data-principle-detail={index}>
               <p class="eyebrow">PRINCIPLE {data.number} — COMMITMENT</p>
-              <h3>{data.title}</h3>
+              <h3 transition:name={`principle-title-${data.number}`} style={`view-transition-name: principle-title-${data.number}`}>
+                {data.title}
+              </h3>
               <p class="commitment">{data.commitment}</p>
               <div class="detail-split">
                 <div>

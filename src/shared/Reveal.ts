@@ -70,4 +70,12 @@ export class Reveal {
   };
 }
 
-new Reveal();
+let reveal = new Reveal();
+
+document.addEventListener('astro:before-swap', () => {
+  reveal.destroy();
+});
+
+document.addEventListener('astro:after-swap', () => {
+  reveal = new Reveal();
+});

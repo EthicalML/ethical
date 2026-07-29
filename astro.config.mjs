@@ -7,6 +7,7 @@ import rehypeSectionize from './src/plugins/rehype-sectionize.mjs';
 
 export default defineConfig({
   site: 'https://ethical.institute',
+  prefetch: true,
   env: {
     schema: {
       FORM_ENDPOINT: envField.string({
