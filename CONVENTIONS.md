@@ -44,6 +44,24 @@ Page-wide behaviour is layout-owned. `BaseLayout.astro` explicitly imports the r
 
 All first-party client behaviour is TypeScript. Do not add first-party runtime JavaScript under `public/`, a layout script-loader list, whole-document marker scans, or a generic `src/scripts/` holding area.
 
+## Motion
+
+- Long-lived-page behaviour uses custom elements or explicit `astro:before-swap`/`astro:after-swap` hooks.
+- Computed `transition:name` values always include the matching inline `view-transition-name`.
+- Verify morphs against the production build; dev mode can hide missing computed names.
+
+| Motion                      | Endpoints                                                     | Owners                                                |
+| --------------------------- | ------------------------------------------------------------- | ----------------------------------------------------- |
+| Content settle              | Every route → every route                                     | `BaseLayout`, `tokens.css`                            |
+| Header persistence          | Every route ↔ every route                                     | `SiteHeader`, `BaseLayout`                            |
+| Principle title morph       | Explorer detail → `/principles/NN/` h1                        | `PrinciplesExplorer`, `PrincipleLayout`, `BaseLayout` |
+| Survey title morph          | Homepage report heading → survey explorer hero                | `ReportsSection`, `ArticleHero`                       |
+| Initiative title morphs     | Homepage governance/security cards → maturity/MLSecOps heroes | `ReportsSection`, `ArticleHero`, `BaseLayout`         |
+| KAOS canvas morph           | Homepage KAOS card → KAOS hero canvas                         | `OpenSourceShowcase`, `KaosGraph`, `ArticleHero`      |
+| Partner logo morph          | Clicked marquee instance → matching directory logo            | `AffiliationMarquee`, `PartnerDirectory`              |
+| Glitch burst                | Navigation into a page with a glitch h1                       | `Motion`, `Hero`                                      |
+| Principle directional slide | `/principles/NN/` prev/next → adjacent principle              | `PrincipleLayout`, `Motion`, `tokens.css`             |
+
 ## MDX components
 
 `src/components/prose/components.js` is the named export surface for designed MDX blocks. Import only the blocks a page uses:
@@ -108,5 +126,6 @@ Every change must satisfy:
 5. `npm run build` passes under the Node version pinned in `.tool-versions`.
 6. The DOM gate passes for all affected routes at desktop and mobile widths.
 7. Zero-change work has masked full-page screenshot parity; intentional visual changes have documented before/after evidence.
+8. Any added or changed animation updates the Motion table in the same change.
 
 For a new route, add the MDX page, title, description, and explicit layout; add required component imports; add redirects for replaced legacy URLs; then run the full definition of done. For a new principle or validated data entry, satisfy the relevant collection schema.
