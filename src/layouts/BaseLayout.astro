@@ -37,6 +37,26 @@ const socialImage = new URL(frontmatter.image ?? ogImage, Astro.site);
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={socialImage} />
     <ClientRouter />
+    <style is:inline>
+      @media (prefers-reduced-motion: reduce) {
+        ::view-transition-group(*),
+        ::view-transition-image-pair(*) {
+          animation: revert !important;
+        }
+        ::view-transition-old(*) {
+          animation: content-fade-out 0.22s ease both !important;
+        }
+        ::view-transition-new(*) {
+          animation: content-fade-in 0.22s ease both !important;
+        }
+        ::view-transition-old(root) {
+          animation: content-fade-out 0.22s ease both !important;
+        }
+        ::view-transition-new(root) {
+          animation: content-settle 0.22s ease both !important;
+        }
+      }
+    </style>
     <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=UA-89407852-2"></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
@@ -81,6 +101,7 @@ const socialImage = new URL(frontmatter.image ?? ogImage, Astro.site);
     <FootnoteBand />
     <SiteFooter />
     <script>
+      import '../shared/Motion';
       import '../shared/Reveal';
       import '../shared/ScrollRestoration';
     </script>

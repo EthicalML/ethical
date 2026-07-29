@@ -337,6 +337,9 @@ h3 {
 .glitch {
   animation: om-flicker var(--cycle) steps(1, end) infinite;
 }
+.glitch.glitch-burst {
+  animation: om-flicker 1.2s steps(1, end) -.78s 1;
+}
 .glitch::before,
 .glitch::after {
   content: attr(data-text);
@@ -959,6 +962,45 @@ form[data-state="error"] .form-confirmation { color: var(--warn); font: var(--bo
   72.3% { opacity: 1; text-shadow: 0 0 10px rgba(122, 162, 255, .4); }
   74.4% { opacity: .94; text-shadow: 0 0 24px rgba(94, 230, 160, .45); }
   76.4% { opacity: 1; text-shadow: 0 0 8px rgba(94, 230, 160, .3); }
+}
+@keyframes content-settle {
+  from { opacity: 0; transform: translateY(10px); }
+}
+@keyframes content-fade-in {
+  from { opacity: 0; }
+}
+@keyframes content-fade-out {
+  to { opacity: 0; }
+}
+@keyframes principle-slide-out-left {
+  to { opacity: 0; transform: translateX(-32px); }
+}
+@keyframes principle-slide-in-right {
+  from { opacity: 0; transform: translateX(32px); }
+}
+@keyframes principle-slide-out-right {
+  to { opacity: 0; transform: translateX(32px); }
+}
+@keyframes principle-slide-in-left {
+  from { opacity: 0; transform: translateX(-32px); }
+}
+::view-transition-old(root) {
+  animation: content-fade-out .22s ease both !important;
+}
+::view-transition-new(root) {
+  animation: content-settle .22s ease both !important;
+}
+html[data-astro-transition="forward"]::view-transition-old(principle-page) {
+  animation: principle-slide-out-left .22s ease both !important;
+}
+html[data-astro-transition="forward"]::view-transition-new(principle-page) {
+  animation: principle-slide-in-right .22s ease both !important;
+}
+html[data-astro-transition="back"]::view-transition-old(principle-page) {
+  animation: principle-slide-out-right .22s ease both !important;
+}
+html[data-astro-transition="back"]::view-transition-new(principle-page) {
+  animation: principle-slide-in-left .22s ease both !important;
 }
 @keyframes typewriter-tear-a {
   0%, 65.6%, 76.7%, 100% { clip-path: inset(100% 0 0 0); opacity: 0; transform: none; }
