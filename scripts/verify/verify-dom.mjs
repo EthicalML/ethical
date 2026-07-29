@@ -390,6 +390,13 @@ for (const route of routes) {
                       primary: button.classList.contains('primary'),
                     }),
                   ),
+                  inlineLinks: [...card.querySelectorAll(':scope > p .text-link')].map((link) => {
+                    const style = getComputedStyle(link);
+                    return {
+                      color: style.color,
+                      decoration: style.textDecorationLine,
+                    };
+                  }),
                 }),
               ),
             }
@@ -498,14 +505,20 @@ for (const route of routes) {
       failures.push('homepage footnote standards type tier has regressed');
     if (
       checks.homepage.initiativeCards[0]?.eyebrow !== 'Governance' ||
-      checks.homepage.initiativeCards[0]?.heading !== 'AI governance & procurement' ||
+      checks.homepage.initiativeCards[0]?.heading !== 'AI Governance & Procurement' ||
+      checks.homepage.initiativeCards[0]?.buttons.length !== 2 ||
       checks.homepage.initiativeCards[0]?.buttons.filter(
         ({ label }) => label === 'ML Maturity Model →',
       ).length !== 1 ||
       !checks.homepage.initiativeCards[0]?.buttons[0]?.primary ||
       checks.homepage.initiativeCards[1]?.eyebrow !== 'Security' ||
-      checks.homepage.initiativeCards[1]?.heading !== 'ML & agent security' ||
-      !checks.homepage.initiativeCards[1]?.buttons[0]?.primary
+      checks.homepage.initiativeCards[1]?.heading !== 'ML & Agent Security' ||
+      checks.homepage.initiativeCards[1]?.buttons.length !== 1 ||
+      !checks.homepage.initiativeCards[1]?.buttons[0]?.primary ||
+      checks.homepage.initiativeCards[1]?.inlineLinks.length !== 3 ||
+      checks.homepage.initiativeCards[1]?.inlineLinks.some(
+        ({ color, decoration }) => color !== 'rgb(94, 230, 160)' || decoration !== 'underline',
+      )
     )
       failures.push('homepage governance/security card structure is incomplete');
     if (
