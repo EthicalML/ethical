@@ -25,8 +25,6 @@ interface Reports {
     steps: Array<{ label: string; detail: string }>;
     title: string;
     text: string;
-    relatedIntro: string;
-    relatedLinks: TextLink[];
     actions: Action[];
   };
   security: {
@@ -36,6 +34,8 @@ interface Reports {
     rows: Array<{ owasp: string; mlsecops: string }>;
     title: string;
     text: string;
+    relatedIntro: string;
+    relatedLinks: TextLink[];
     actions: Action[];
   };
 }
