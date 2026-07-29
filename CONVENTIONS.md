@@ -47,23 +47,24 @@ All first-party client behaviour is TypeScript. Do not add first-party runtime J
 ## Motion
 
 - Long-lived-page behaviour uses custom elements or explicit `astro:before-swap`/`astro:after-swap` hooks.
-- Morph sources set `view-transition-name` inline on pointerdown/click; singular destination names stay static, with inline companions for computed names.
+- Morph sources use `MorphPairs` to set and record their inline name on pointerdown/click, then restore it for exactly one back-navigation; widget-local copies are not sanctioned.
+- Singular destination names stay static, with inline companions for computed names; an unpaired destination settles with the same 220ms rise and fade as the root.
 - Principle and phase cards are user-controlled only; they never rotate automatically.
 - Verify morphs against the production build; dev mode can hide missing computed names.
 - Stateful containers restore the state that makes a morph endpoint visible synchronously at mount.
 - Elements that must stay above a morphing group need their own named group and explicit `::view-transition-group` z-order.
 - Text morphs require identical strings at both endpoints.
 
-| Motion                      | Endpoints                                                     | Owners                                                |
-| --------------------------- | ------------------------------------------------------------- | ----------------------------------------------------- |
-| Content settle              | Every route → every route                                     | `BaseLayout`, `tokens.css`                            |
-| Header persistence          | Every route ↔ every route                                     | `SiteHeader`, `BaseLayout`                            |
-| Principle title morph       | Explorer detail → `/principles/NN/` h1                        | `PrinciplesExplorer`, `PrincipleLayout`, `BaseLayout` |
-| Survey title morph          | Homepage report heading → survey explorer hero                | `ReportsSection`, `ArticleHero`                       |
-| Initiative title morphs     | Homepage governance/security cards → maturity/MLSecOps heroes | `ReportsSection`, `ArticleHero`, `BaseLayout`         |
-| KAOS canvas morph           | Homepage KAOS card → KAOS hero canvas                         | `OpenSourceShowcase`, `KaosGraph`, `ArticleHero`      |
-| Partner logo morph          | Clicked marquee instance → matching directory logo            | `AffiliationMarquee`, `PartnerDirectory`              |
-| Principle directional slide | `/principles/NN/` prev/next → adjacent principle              | `PrincipleLayout`, `Motion`, `tokens.css`             |
+| Motion                      | Endpoints                                                                      | Owners                                                              |
+| --------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| Content settle              | Every route → every route                                                      | `BaseLayout`, `tokens.css`                                          |
+| Header persistence          | Every route ↔ every route                                                      | `SiteHeader`, `BaseLayout`                                          |
+| Principle title morph       | Explorer detail → `/principles/NN/` h1                                         | `MorphPairs`, `PrinciplesExplorer`, `PrincipleLayout`, `BaseLayout` |
+| Survey title morph          | Homepage report heading → survey explorer hero                                 | `MorphPairs`, `ReportsSection`, `ArticleHero`                       |
+| Initiative title morphs     | Homepage maturity title / `MLSecOps Top 10` button → matching framework heroes | `MorphPairs`, `ReportsSection`, `ArticleHero`, `BaseLayout`         |
+| KAOS canvas morph           | Homepage KAOS card → KAOS hero canvas                                          | `MorphPairs`, `OpenSourceShowcase`, `KaosGraph`, `ArticleHero`      |
+| Partner logo morph          | Clicked marquee instance → matching directory logo                             | `MorphPairs`, `AffiliationMarquee`, `PartnerDirectory`              |
+| Principle directional slide | `/principles/NN/` prev/next → adjacent principle                               | `PrincipleLayout`, `Motion`, `tokens.css`                           |
 
 ## MDX components
 
