@@ -113,7 +113,7 @@ const { reports } = Astro.props;
         }
       </div>
       <p class="eyebrow">{reports.security.eyebrow}</p>
-      <h3>{reports.security.title}</h3>
+      <h3 data-morph-source="initiative-security-title">{reports.security.title}</h3>
       <p>{reports.security.text}</p>
       <p>
         {reports.security.relatedIntro}{' '}
@@ -135,9 +135,7 @@ const { reports } = Astro.props;
               class:list={['button', kind]}
               href={href}
               rel={href.startsWith('http') ? 'noopener' : undefined}
-              data-morph-source={href === '/frameworks/mlsecops/' ? 'mlsecops-button' : undefined}
-              data-morph-name={href === '/frameworks/mlsecops/' ? 'initiative-security-title' : undefined}
-              data-morph-pair={href === '/frameworks/mlsecops/' ? 'mlsecops-button' : undefined}
+              data-morph-pair={href === '/frameworks/mlsecops/' ? 'initiative-security-title' : undefined}
             >
               {label}
             </a>

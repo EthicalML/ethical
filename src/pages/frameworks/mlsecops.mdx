@@ -1,8 +1,7 @@
 ---
-title: MLSecOps Top 10
+title: ML & Agent Security
 description: MLSecOps connects common machine-learning security failures to controls that teams can apply across data, model, deployment, and monitoring workflows.
-eyebrow: FRAMEWORK
-transitionName: initiative-security-title
+composed: true
 layout: ../../layouts/ProseLayout.astro
 risks:
   - owasp: Broken access control
@@ -21,9 +20,9 @@ risks:
     mlsecops: Observability and lineage failures
 ---
 
-import { ComparisonTable, CTA } from '../../components/prose/components.js';
+import { ArticleHero, ComparisonTable, CTA } from '../../components/prose/components.js';
 
-MLSecOps connects common machine-learning security failures to controls that teams can apply across data, model, deployment, and monitoring workflows.
+<ArticleHero eyebrow="FRAMEWORK" title="ML & Agent Security" intro={frontmatter.description} transitionName="initiative-security-title" />
 
 ## The Top 10
 
