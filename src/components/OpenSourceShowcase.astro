@@ -184,7 +184,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
               class:list={['button', kind]}
               href={href}
               rel={href.startsWith('http') ? 'noopener' : undefined}
-              data-kaos-morph={href === '/open-source/kaos/' ? '' : undefined}
+              data-morph-pair={href === '/open-source/kaos/' ? 'kaos-canvas' : undefined}
             >
               {label}
             </a>
@@ -194,7 +194,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     </div>
     <div class="kaos-panel">
       <p class="figure-label"><span>{projects.kaos.panelEyebrow}</span><span data-kaos-status>{projects.kaos.panelStatus}</span></p>
-      <KaosGraph panel />
+      <KaosGraph panel morphSource="kaos-canvas" />
     </div>
   </article>
 </open-source-showcase>
@@ -206,6 +206,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
 </style>
 
 <script>
+  import { bindMorphPairs } from '../shared/MorphPairs';
   import '../shared/canvas/KomputeCube';
 
   class OpenSourceShowcase extends HTMLElement {
@@ -213,15 +214,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
 
     connectedCallback() {
       this.controller = new AbortController();
-      const canvas = this.querySelector<HTMLElement>('.kaos-panel .kaos-canvas-mount');
-      const link = this.querySelector<HTMLElement>('[data-kaos-morph]');
-      if (!canvas || !link) return;
-
-      const nameCanvas = () => {
-        canvas.style.viewTransitionName = 'kaos-canvas';
-      };
-      link.addEventListener('pointerdown', nameCanvas, { signal: this.controller.signal });
-      link.addEventListener('click', nameCanvas, { signal: this.controller.signal });
+      bindMorphPairs(this, this.controller.signal);
     }
 
     disconnectedCallback() {

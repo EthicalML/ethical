@@ -28,6 +28,8 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
                 data-principle-row={index}
                 data-principle-number={data.number}
                 data-principle-href={`/principles/${data.number}/`}
+                data-morph-pair={`principle-${data.number}`}
+                data-morph-href={`/principles/${data.number}/`}
               >
                 <>
                   <span>{data.number}</span>
@@ -44,7 +46,9 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
           principles.map(({ data }, index) => (
             <article class:list={['principle-detail', index === 0 && 'active']} data-principle-detail={index}>
               <p class="eyebrow">PRINCIPLE {data.number} — COMMITMENT</p>
-              <h3 data-principle-title={data.number}>{data.title}</h3>
+              <h3 data-principle-title={data.number} data-morph-source={`principle-${data.number}`} data-morph-name={`principle-title-${data.number}`}>
+                {data.title}
+              </h3>
               <p class="commitment">{data.commitment}</p>
               <div class="detail-split">
                 <div>
@@ -87,6 +91,7 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
 </section>
 <script>
   import { navigate } from 'astro:transitions/client';
+  import { bindMorphPairs } from '../shared/MorphPairs';
 
   class PrinciplesExplorer extends HTMLElement {
     private controller = new AbortController();
@@ -98,16 +103,7 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
       const titles = Array.from(this.querySelectorAll<HTMLElement>('[data-principle-title]'));
       if (!rows.length || !details.length) return;
 
-      const nameTitle = (index: number) => {
-        titles.forEach((title, titleIndex) => {
-          if (titleIndex === index) {
-            title.style.viewTransitionName = `principle-title-${title.dataset.principleTitle}`;
-          } else {
-            title.style.removeProperty('view-transition-name');
-          }
-        });
-      };
-      const select = (index: number) => {
+      const select = (index: number, animate = true) => {
         rows.forEach((row, rowIndex) => {
           row.classList.toggle('active', rowIndex === index);
           const marker = row.querySelector<HTMLElement>('i');
@@ -117,19 +113,18 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
           detail.classList.toggle('active', detailIndex === index);
           if (detailIndex === index) {
             detail.style.animation = 'none';
-            requestAnimationFrame(() => {
-              detail.style.animation = 'principle-in .45s ease';
-            });
+            if (animate) {
+              requestAnimationFrame(() => {
+                detail.style.animation = 'principle-in .45s ease';
+              });
+            }
           }
         });
       };
-      const lastPrinciple = sessionStorage.getItem('lastPrinciple');
-      sessionStorage.removeItem('lastPrinciple');
-      const restoredIndex = rows.findIndex((row) => row.dataset.principleNumber === lastPrinciple);
-      if (restoredIndex >= 0) {
-        select(restoredIndex);
-        nameTitle(restoredIndex);
-      }
+      const restoredIndex = titles.findIndex((title) => title.hasAttribute('data-morph-restored'));
+      if (restoredIndex >= 0) select(restoredIndex, false);
+
+      bindMorphPairs(this, this.controller.signal);
 
       rows.forEach((row, index) => {
         row.addEventListener(
@@ -139,14 +134,10 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
           },
           { signal: this.controller.signal },
         );
-        row.addEventListener('pointerdown', () => nameTitle(index), {
-          signal: this.controller.signal,
-        });
         row.addEventListener(
           'click',
           () => {
             select(index);
-            nameTitle(index);
             const href = row.dataset.principleHref;
             if (href) void navigate(href);
           },

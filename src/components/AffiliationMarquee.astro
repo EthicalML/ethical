@@ -30,6 +30,9 @@ const items = partners.map(({ data: partner }) => ({
                   tabindex={duplicate ? -1 : undefined}
                   data-marquee-item={duplicate ? undefined : ''}
                   data-partner-logo={item.slug}
+                  data-morph-source={`partner-${item.slug}-${duplicate ? 'duplicate' : 'primary'}`}
+                  data-morph-name={`partner-logo-${item.slug}`}
+                  data-morph-pair={`partner-${item.slug}-${duplicate ? 'duplicate' : 'primary'}`}
                   aria-label={duplicate ? undefined : item.role ? `${item.name}: ${item.role}` : item.name}
                 >
                   <span class="marquee-logo-frame" style={`--logo-mask: url("${item.logo.src}"); --logo-ratio: ${item.logo.width / item.logo.height}`}>
@@ -53,22 +56,14 @@ const items = partners.map(({ data: partner }) => ({
 </style>
 
 <script>
+  import { bindMorphPairs } from '../shared/MorphPairs';
+
   class AffiliationMarquee extends HTMLElement {
     private controller = new AbortController();
 
     connectedCallback() {
       this.controller = new AbortController();
-      const logos = Array.from(this.querySelectorAll<HTMLElement>('[data-partner-logo]'));
-      const selectLogo = (event: Event) => {
-        logos.forEach((logo) => logo.style.removeProperty('view-transition-name'));
-        const logo = event.currentTarget as HTMLElement;
-        logo.style.viewTransitionName = `partner-logo-${logo.dataset.partnerLogo}`;
-      };
-
-      logos.forEach((logo) => {
-        logo.addEventListener('pointerdown', selectLogo, { signal: this.controller.signal });
-        logo.addEventListener('click', selectLogo, { signal: this.controller.signal });
-      });
+      bindMorphPairs(this, this.controller.signal);
     }
 
     disconnectedCallback() {

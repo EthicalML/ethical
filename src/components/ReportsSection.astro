@@ -57,7 +57,7 @@ const { reports } = Astro.props;
     <nav>
       {
         reports.actions.map(({ label, href, kind }) => (
-          <a class:list={['button', kind]} href={href} data-morph-target={href === '/data/survey-explorer/' ? 'survey-title' : undefined}>
+          <a class:list={['button', kind]} href={href} data-morph-pair={href === '/data/survey-explorer/' ? 'survey-title' : undefined}>
             {label}
           </a>
         ))
@@ -90,7 +90,7 @@ const { reports } = Astro.props;
               class:list={['button', kind]}
               href={href}
               rel={href.startsWith('http') ? 'noopener' : undefined}
-              data-morph-target={href === '/frameworks/maturity-model/' ? 'initiative-governance-title' : undefined}
+              data-morph-pair={href === '/frameworks/maturity-model/' ? 'initiative-governance-title' : undefined}
             >
               {label}
             </a>
@@ -135,7 +135,7 @@ const { reports } = Astro.props;
               class:list={['button', kind]}
               href={href}
               rel={href.startsWith('http') ? 'noopener' : undefined}
-              data-morph-target={href === '/frameworks/mlsecops/' ? 'initiative-security-title' : undefined}
+              data-morph-pair={href === '/frameworks/mlsecops/' ? 'initiative-security-title' : undefined}
             >
               {label}
             </a>
@@ -153,27 +153,14 @@ const { reports } = Astro.props;
 </style>
 
 <script>
+  import { bindMorphPairs } from '../shared/MorphPairs';
+
   class ReportsSection extends HTMLElement {
     private controller = new AbortController();
 
     connectedCallback() {
       this.controller = new AbortController();
-      const sources = Array.from(this.querySelectorAll<HTMLElement>('[data-morph-source]'));
-      const nameSource = (event: Event) => {
-        const name = (event.currentTarget as HTMLElement).dataset.morphTarget;
-        sources.forEach((source) => {
-          if (source.dataset.morphSource === name) {
-            source.style.viewTransitionName = name ?? '';
-          } else {
-            source.style.removeProperty('view-transition-name');
-          }
-        });
-      };
-
-      this.querySelectorAll<HTMLElement>('[data-morph-target]').forEach((link) => {
-        link.addEventListener('pointerdown', nameSource, { signal: this.controller.signal });
-        link.addEventListener('click', nameSource, { signal: this.controller.signal });
-      });
+      bindMorphPairs(this, this.controller.signal);
     }
 
     disconnectedCallback() {

@@ -3,15 +3,22 @@ interface Props {
   embedded?: boolean;
   panel?: boolean;
   transitionName?: string;
+  morphSource?: string;
 }
 
-const { embedded = false, panel = false, transitionName } = Astro.props;
+const { embedded = false, panel = false, transitionName, morphSource } = Astro.props;
 const transitionStyle = transitionName ? `view-transition-name: ${transitionName}` : undefined;
 ---
 
 {
   panel ? (
-    <kaos-graph class="kaos-canvas-mount" aria-label="KAOS agent graph" transition:name={transitionName} style={transitionStyle} />
+    <kaos-graph
+      class="kaos-canvas-mount"
+      aria-label="KAOS agent graph"
+      transition:name={transitionName}
+      style={transitionStyle}
+      data-morph-source={morphSource}
+    />
   ) : embedded ? (
     <kaos-graph class="widget embedded-widget kaos-canvas-mount" aria-label="KAOS agent graph" transition:name={transitionName} style={transitionStyle} />
   ) : (
