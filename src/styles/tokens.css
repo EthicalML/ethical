@@ -361,8 +361,10 @@ h3 {
   width: min(620px, 100%);
 }
 hero-cycle,
+institute-form,
 kompute-cube,
 nav-preview,
+site-header,
 type-writer {
   display: contents;
 }

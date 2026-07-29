@@ -67,61 +67,156 @@ const sectionClasses = ['join-section', isContactPage && 'contact-full', homepag
             </>
           )}
         </div>
-        <form
-          id="contact"
-          data-institute-form
-          data-variant={variant}
-          data-endpoint={site.forms.endpoint}
-          data-minimum-submission-ms={site.forms.minimumSubmissionMs}
-          data-confirmation={copy.form.confirmation}
-          data-demo-confirmation={copy.form.demoConfirmation}
-          data-error={copy.form.error}
-        >
-          <header>
-            <h3>{copy.form.title}</h3>
-          </header>
-          <div class="form-fields">
-            {copy.form.fields.map((field) => (
-              <label class:list={[field.wide && 'wide']}>
-                {field.label}{' '}
-                <input
-                  name={field.name}
-                  type={field.type as 'text' | 'email'}
-                  autocomplete={field.autocomplete}
-                  placeholder={field.placeholder}
-                  required={field.name === 'name' || field.name === 'email'}
-                />
-              </label>
-            ))}
-          </div>
-          <fieldset>
-            {copy.form.interests.map((interest) => (
-              <label>
-                <input
-                  type="checkbox"
-                  name="interests"
-                  value={interest.value}
-                  checked={interest.checked}
-                  data-application-interest={interest.value === 'network' ? '' : undefined}
-                />{' '}
-                {interest.label}
-              </label>
-            ))}
-          </fieldset>
-          <small class="application-helper" data-application-helper hidden>
-            Please provide enough information to consider your application.
-          </small>
-          <label class="form-honeypot" aria-hidden="true">
-            Website <input name="website" type="text" autocomplete="off" tabindex="-1" />
-          </label>
-          <input name="startedAt" type="hidden" value="" />
-          <button type="submit">{copy.form.button}</button>
-          <small>{copy.form.disclaimer}</small>
-          <p class="form-confirmation" data-form-confirmation role="status" hidden />
-        </form>
+        <institute-form>
+          <form
+            id="contact"
+            data-institute-form
+            data-variant={variant}
+            data-endpoint={site.forms.endpoint}
+            data-minimum-submission-ms={site.forms.minimumSubmissionMs}
+            data-confirmation={copy.form.confirmation}
+            data-demo-confirmation={copy.form.demoConfirmation}
+            data-error={copy.form.error}
+          >
+            <header>
+              <h3>{copy.form.title}</h3>
+            </header>
+            <div class="form-fields">
+              {copy.form.fields.map((field) => (
+                <label class:list={[field.wide && 'wide']}>
+                  {field.label}{' '}
+                  <input
+                    name={field.name}
+                    type={field.type as 'text' | 'email'}
+                    autocomplete={field.autocomplete}
+                    placeholder={field.placeholder}
+                    required={field.name === 'name' || field.name === 'email'}
+                  />
+                </label>
+              ))}
+            </div>
+            <fieldset>
+              {copy.form.interests.map((interest) => (
+                <label>
+                  <input
+                    type="checkbox"
+                    name="interests"
+                    value={interest.value}
+                    checked={interest.checked}
+                    data-application-interest={interest.value === 'network' ? '' : undefined}
+                  />{' '}
+                  {interest.label}
+                </label>
+              ))}
+            </fieldset>
+            <small class="application-helper" data-application-helper hidden>
+              Please provide enough information to consider your application.
+            </small>
+            <label class="form-honeypot" aria-hidden="true">
+              Website <input name="website" type="text" autocomplete="off" tabindex="-1" />
+            </label>
+            <input name="startedAt" type="hidden" value="" />
+            <button type="submit">{copy.form.button}</button>
+            <small>{copy.form.disclaimer}</small>
+            <p class="form-confirmation" data-form-confirmation role="status" hidden />
+          </form>
+        </institute-form>
       </div>
     </section>
   )
 }
 
-<script is:inline src="/assets/forms.js"></script>
+<script>
+  class InstituteForm extends HTMLElement {
+    private controller = new AbortController();
+    private startedAt = Date.now();
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      this.startedAt = Date.now();
+
+      const form = this.querySelector<HTMLFormElement>('[data-institute-form]');
+      const startedAtInput = form?.querySelector<HTMLInputElement>('[name="startedAt"]');
+      const message = form?.querySelector<HTMLElement>('[data-form-confirmation]');
+      const button = form?.querySelector<HTMLButtonElement>('[type="submit"]');
+      const applicationInterest = form?.querySelector<HTMLInputElement>('[data-application-interest]');
+      const applicationHelper = form?.querySelector<HTMLElement>('[data-application-helper]');
+      if (!form || !startedAtInput || !message || !button) return;
+
+      startedAtInput.value = String(this.startedAt);
+      if (applicationInterest && applicationHelper) {
+        const updateApplicationHelper = () => {
+          applicationHelper.hidden = !applicationInterest.checked;
+        };
+        applicationInterest.addEventListener('change', updateApplicationHelper, {
+          signal: this.controller.signal,
+        });
+        updateApplicationHelper();
+      }
+
+      form.addEventListener(
+        'submit',
+        (event) => {
+          void this.submit(event, form, message, button);
+        },
+        { signal: this.controller.signal },
+      );
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+    }
+
+    private async submit(event: SubmitEvent, form: HTMLFormElement, message: HTMLElement, button: HTMLButtonElement) {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+
+      const data = new FormData(form);
+      const endpoint = (form.dataset.endpoint ?? '').trim();
+      const clientKey = localStorage.getItem('ethical-form-client') || crypto.randomUUID();
+      localStorage.setItem('ethical-form-client', clientKey);
+      const payload = {
+        name: data.get('name'),
+        email: data.get('email'),
+        organisation: data.get('organisation'),
+        furtherInformation: data.get('furtherInformation'),
+        interests: data.getAll('interests'),
+        website: data.get('website'),
+        startedAt: Number(data.get('startedAt')),
+        elapsedMs: Date.now() - this.startedAt,
+        minimumSubmissionMs: Number(form.dataset.minimumSubmissionMs),
+        clientKey,
+        page: location.pathname,
+        variant: form.dataset.variant,
+      };
+
+      button.disabled = true;
+      message.hidden = true;
+      form.dataset.state = 'submitting';
+
+      try {
+        if (endpoint) {
+          await fetch(endpoint, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload),
+          });
+        }
+        form.dataset.state = 'success';
+        message.textContent = endpoint ? (form.dataset.confirmation ?? '') : (form.dataset.demoConfirmation ?? '');
+        message.hidden = false;
+      } catch {
+        form.dataset.state = 'error';
+        message.textContent = form.dataset.error ?? '';
+        message.hidden = false;
+      } finally {
+        button.disabled = false;
+      }
+    }
+  }
+
+  if (!customElements.get('institute-form')) {
+    customElements.define('institute-form', InstituteForm);
+  }
+</script>

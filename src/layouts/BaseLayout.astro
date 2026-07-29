@@ -63,6 +63,8 @@ const socialImage = new URL(frontmatter.image ?? site.ogImage, Astro.site);
       <span>{site.footer.identity}</span>
       <span>{site.footer.legal}</span>
     </footer>
-    <script is:inline src="/assets/site.js"></script>
+    <script>
+      import '../shared/Reveal';
+    </script>
   </body>
 </html>
