@@ -55,16 +55,16 @@ All first-party client behaviour is TypeScript. Do not add first-party runtime J
 - Elements that must stay above a morphing group need their own named group and explicit `::view-transition-group` z-order.
 - Text morphs require identical strings at both endpoints.
 
-| Motion                      | Endpoints                                                                      | Owners                                                              |
-| --------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
-| Content settle              | Every route → every route                                                      | `BaseLayout`, `tokens.css`                                          |
-| Header persistence          | Every route ↔ every route                                                      | `SiteHeader`, `BaseLayout`                                          |
-| Principle title morph       | Explorer detail → `/principles/NN/` h1                                         | `MorphPairs`, `PrinciplesExplorer`, `PrincipleLayout`, `BaseLayout` |
-| Survey title morph          | Homepage report heading → survey explorer hero                                 | `MorphPairs`, `ReportsSection`, `ArticleHero`                       |
-| Initiative title morphs     | Homepage maturity title / `MLSecOps Top 10` button → matching framework heroes | `MorphPairs`, `ReportsSection`, `ArticleHero`, `BaseLayout`         |
-| KAOS canvas morph           | Homepage KAOS card → KAOS hero canvas                                          | `MorphPairs`, `OpenSourceShowcase`, `KaosGraph`, `ArticleHero`      |
-| Partner logo morph          | Clicked marquee instance → matching directory logo                             | `MorphPairs`, `AffiliationMarquee`, `PartnerDirectory`              |
-| Principle directional slide | `/principles/NN/` prev/next → adjacent principle                               | `PrincipleLayout`, `Motion`, `tokens.css`                           |
+| Motion                      | Endpoints                                                            | Owners                                                              |
+| --------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Content settle              | Every route → every route                                            | `BaseLayout`, `tokens.css`                                          |
+| Header persistence          | Every route ↔ every route                                            | `SiteHeader`, `BaseLayout`                                          |
+| Principle title morph       | Explorer detail → `/principles/NN/` h1                               | `MorphPairs`, `PrinciplesExplorer`, `PrincipleLayout`, `BaseLayout` |
+| Survey title morph          | Homepage report heading → survey explorer hero                       | `MorphPairs`, `ReportsSection`, `ArticleHero`                       |
+| Initiative title morphs     | Homepage maturity / security card titles → matching framework heroes | `MorphPairs`, `ReportsSection`, `ArticleHero`, `BaseLayout`         |
+| KAOS canvas morph           | Homepage KAOS card → KAOS in-body feature graph                      | `MorphPairs`, `OpenSourceShowcase`, `KaosGraph`, `Feature`          |
+| Partner logo morph          | Clicked marquee instance → matching directory logo                   | `MorphPairs`, `AffiliationMarquee`, `PartnerDirectory`              |
+| Principle directional slide | `/principles/NN/` prev/next → adjacent principle                     | `PrincipleLayout`, `Motion`, `tokens.css`                           |
 
 ## MDX components
 
