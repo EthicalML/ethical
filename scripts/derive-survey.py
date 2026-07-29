@@ -12,7 +12,7 @@ SOURCES = {
     "y2024": ROOT / "src/data/survey-2024.csv",
     "y2025": ROOT / "src/data/survey-2025.csv",
 }
-OUTPUT = ROOT / "src/content/survey/questions.yaml"
+OUTPUT = ROOT / "src/content/survey-questions.yaml"
 
 QUESTIONS = {
     "frameworks": {

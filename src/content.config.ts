@@ -21,7 +21,7 @@ const principles = defineCollection({
 });
 
 const partners = defineCollection({
-  loader: file('./src/content/partners/partners.yaml'),
+  loader: file('./src/content/partners.yaml'),
   schema: z.object({
     name: z.string(),
     slug: z.string(),
@@ -54,12 +54,12 @@ const surveyQuestion = z.object({
 });
 
 const survey = defineCollection({
-  loader: file('./src/content/survey/questions.yaml'),
+  loader: file('./src/content/survey-questions.yaml'),
   schema: surveyQuestion,
 });
 
 const metrics = defineCollection({
-  loader: file('./src/content/metrics/repos.yaml'),
+  loader: file('./src/content/repos-metrics.yaml'),
   schema: z.object({
     values: z.array(
       z.object({

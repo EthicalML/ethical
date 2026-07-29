@@ -88,10 +88,10 @@ MDX prose follows JSX parsing rules. Escape a bare `<` as `&lt;`, escape `{` as 
 | --------------------------------------------------------------- | ---------------------------------------------------------------------- |
 | Hero, evidence, phases, project copy, reports, and network copy | `src/pages/index.mdx`                                                  |
 | Principle content                                               | `src/content/principles/*.md`                                          |
-| Repository facts                                                | `src/content/metrics/repos.yaml`                                       |
-| Partner directory and affiliation logos                         | `src/content/partners/partners.yaml`                                   |
+| Repository facts                                                | `src/content/repos-metrics.yaml`                                       |
+| Partner directory and affiliation logos                         | `src/content/partners.yaml`                                            |
 | Survey source rows                                              | `src/data/survey-2024.csv`, `src/data/survey-2025.csv`                 |
-| Derived survey questions                                        | `src/content/survey/questions.yaml`                                    |
+| Derived survey questions                                        | `src/content/survey-questions.yaml`                                    |
 | Recent newsletter issue numbers                                 | `public/mle/*.html` filenames via `src/utils/RecentIssues.ts`          |
 | Header navigation and wordmark                                  | `src/components/SiteHeader.astro`                                      |
 | Footer and footnote chrome                                      | `src/components/SiteFooter.astro`, `src/components/FootnoteBand.astro` |
