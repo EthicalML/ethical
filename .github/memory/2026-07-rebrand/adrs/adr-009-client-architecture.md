@@ -1,6 +1,6 @@
 # ADR-009 — Client architecture: components, behaviour, data, quality gates
 
-**Status:** PROPOSED (revision 2 after owner review) · Decisions only — the migration plan lives in `../plan/client-architecture-migration.md`.
+**Status:** ACCEPTED (owner-ratified 2026-07-29, after three review revisions) · Decisions only — the executable migration plan lives in `../plan/client-architecture-migration.md`.
 
 ## 0. Supersession register (what this ADR invalidates elsewhere)
 
@@ -21,7 +21,8 @@ src/
     principles/          01.md … 09.md   (entries WITH prose bodies → page-generating)
     metrics/             repos.yaml      (entries that are pure values → data-only)
   data/                # REAL data only: raw/extensive datasets (survey CSVs); never chrome or config
-  canvas/              # shared canvas engines — exact contents specified in the migration plan
+  shared/              # shared behaviour modules, grouped by domain; extensible
+    canvas/            #   the canvas engines — exact contents specified in the migration plan
   styles/              # central sheets (unchanged; out of scope here)
   assets/              # images processed via <Image>
 public/                # true passthrough: fonts/, favicon, CNAME
@@ -68,22 +69,22 @@ Opening `Hero.astro` shows you everything the hero does. No other file involved.
 **(b) Multiple consumers → a shared module that defines its element.** When the SAME behaviour is needed by several components (real case: the KAOS graph renders in the homepage card, the nav dropdown preview, and the project page), the element class moves to a module file; importing the module registers the element:
 
 ```ts
-// src/canvas/kaos-graph.ts — one implementation, three consumers
+// src/shared/canvas/KaosGraph.ts — one implementation, three consumers
 class KaosGraph extends HTMLElement { /* full engine */ }
 customElements.get('kaos-graph') ?? customElements.define('kaos-graph', KaosGraph);
 ```
 
 ```astro
 <!-- each consuming component -->
-<script> import '../canvas/kaos-graph'; </script>
+<script> import '../shared/canvas/KaosGraph'; </script>
 <kaos-graph compact></kaos-graph>
 ```
 
-The import is the entire wiring — jump-to-definition lands on the implementation. This is the *only* reason a behaviour file exists outside a component: two or more components need it. The folder name is secondary (§ naming below); the rule is the consumer count.
+File naming in `src/shared/`: PascalCase matching the class it exports (`KaosGraph.ts` → `class KaosGraph`), consistent with component file naming; the ELEMENT TAG stays kebab-case (`<kaos-graph>`) because the platform requires a dash in custom-element names. The import is the entire wiring — jump-to-definition lands on the implementation. This is the *only* reason a behaviour file exists outside a component: two or more components need it. The folder name is secondary (§ naming below); the rule is the consumer count.
 
 **(c) Page-wide behaviour → layout-owned.** Scroll reveal touches every section of every page; its owner is the layout, so `BaseLayout.astro` colocates a `<script>` importing it. This is "global" earned by ownership, not by a loader list.
 
-**Naming of shared-module folders:** purpose-named per domain (`src/canvas/` for the canvas engines — currently the only shared domain). The value over a generic `src/scripts/` is honestly modest: it is the same import mechanism either way; purpose-naming just keeps intent readable as domains accumulate. If only one shared domain ever exists, this distinction stays cosmetic.
+**Naming of shared-module folders:** purpose-named per domain (`src/shared/canvas/` for the canvas engines — the `src/shared/<domain>/` scheme leaves room for future domains). The value over a generic `src/scripts/` is honestly modest: it is the same import mechanism either way; purpose-naming just keeps intent readable as domains accumulate. If only one shared domain ever exists, this distinction stays cosmetic.
 
 **What is retired, plainly:** today, behaviour lives in four files under `public/assets/` (`site.js`, `canvases.js`, `widget-kaos.js`, `forms.js`) that BaseLayout force-loads on every page, and each file finds its targets by scanning the whole document for marker attributes like `data-widget="hero-typewriter"`. That loading list and that marker-scanning pattern are abolished: after migration, no `<script src>` list exists in BaseLayout, and no behaviour discovers its component by string matching — components own or import their behaviour explicitly. Data attributes survive only as element config (`compact`) or CSS hooks, never as the wiring mechanism.
 
@@ -91,7 +92,7 @@ The import is the entire wiring — jump-to-definition lands on the implementati
 
 ## 4. Language rule
 
-All first-party behaviour is TypeScript — colocated `<script>` blocks, shared modules, islands. No first-party `.js` in the target picture (legacy passthrough under `public/` is scheduled debt). This is inseparable from §3: TS is what the colocated/import model gives for free and the `public/` model could not.
+All first-party behaviour is TypeScript — colocated `<script>` blocks, shared modules under `src/shared/`, islands. No first-party `.js` in the target picture (legacy passthrough under `public/` is scheduled debt). This is inseparable from §3: TS is what the colocated/import model gives for free and the `public/` model could not.
 
 ## 5. Data and content placement (revision 3: src/data/ survives for REAL data only)
 

@@ -1,6 +1,6 @@
 # ADR-004 — Widgets: vanilla canvas vs Preact islands
 
-**Status:** ACCEPTED · Boundary validated in rounds 4-6 (all engines ported at fidelity in vanilla JS; survey as island).
+**Status:** SUPERSEDED by ADR-009 (2026-07-29) — see its supersession register for what survives (mount contract, engine facts) vs what is retired (data-widget registry, public/ behaviour files, global loading) · Boundary validated in rounds 4-6 (all engines ported at fidelity in vanilla JS; survey as island).
 
 ## The boundary rule
 
