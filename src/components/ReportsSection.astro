@@ -7,6 +7,11 @@ interface Action {
   kind: string;
 }
 
+interface TextLink {
+  label: string;
+  href: string;
+}
+
 interface Reports {
   eyebrow: string;
   title: string;
@@ -20,6 +25,8 @@ interface Reports {
     steps: Array<{ label: string; detail: string }>;
     title: string;
     text: string;
+    relatedIntro: string;
+    relatedLinks: TextLink[];
     actions: Action[];
   };
   security: {
@@ -103,6 +110,19 @@ const { reports } = Astro.props;
       <p class="eyebrow">{reports.security.eyebrow}</p>
       <h3>{reports.security.title}</h3>
       <p>{reports.security.text}</p>
+      <p>
+        {reports.security.relatedIntro}{' '}
+        {
+          reports.security.relatedLinks.map(({ label, href }, index) => (
+            <>
+              {index > 0 && (index === reports.security.relatedLinks.length - 1 ? ', and ' : ', ')}
+              <a class="text-link" href={href} rel="noopener">
+                {label}
+              </a>
+            </>
+          ))
+        }.
+      </p>
       <div class="initiative-actions">
         {
           reports.security.actions.map(({ label, href, kind }) => (

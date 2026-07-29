@@ -18,6 +18,7 @@ interface Projects {
     title: string;
     text: string;
     donationText: string;
+    donationLinkText: string;
     donationHref: string;
     tags: string[];
     actions: Action[];
@@ -73,7 +74,10 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
       <p class="figure-label"><span>{projects.kompute.figure}</span><span>{projects.kompute.affiliation}</span></p>
       <h3>{projects.kompute.title}</h3>
       <p>{projects.kompute.text}</p>
-      <p><a href={projects.kompute.donationHref} rel="noopener">{projects.kompute.donationText}</a></p>
+      <p>
+        {projects.kompute.donationText}{' '}
+        <a class="text-link" href={projects.kompute.donationHref} rel="noopener">{projects.kompute.donationLinkText}</a>.
+      </p>
       <div class="oss-metrics">
         {
           repoMetrics.kompute.map(({ value, label }: { value: string; label: string }) => (

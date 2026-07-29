@@ -121,6 +121,11 @@ a {
   text-decoration: none;
 }
 a:hover { opacity: .72; }
+.text-link {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: .16em;
+}
 ::selection { background: rgba(94, 230, 160, .3); }
 button,
 input { font: inherit; }
