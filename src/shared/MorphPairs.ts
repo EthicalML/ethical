@@ -65,7 +65,11 @@ export const bindMorphPairs = (root: ParentNode, signal: AbortSignal) => {
 
 document.addEventListener('astro:before-preparation', (event) => {
   const pair = readPair();
-  if (pair && location.pathname === pair.sourcePath && event.to.pathname !== pair.destinationPath) {
+  if (
+    pair &&
+    event.from.pathname === pair.sourcePath &&
+    event.to.pathname !== pair.destinationPath
+  ) {
     clearPair();
   }
 });
