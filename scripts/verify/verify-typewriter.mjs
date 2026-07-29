@@ -23,7 +23,7 @@ const openPage = async (viewport, reducedMotion = 'no-preference') => {
 };
 
 const normal = await openPage({ width: 1440, height: 1000 });
-const lede = normal.page.locator('[data-widget="hero-typewriter"]');
+const lede = normal.page.locator('type-writer .hero-subtitle');
 const lineMetrics = await lede.evaluate((element) => {
   const pillStyle = getComputedStyle(document.querySelector('.status-pill'));
   const ledeStyle = getComputedStyle(element);
@@ -54,7 +54,7 @@ const lineMetrics = await lede.evaluate((element) => {
 });
 
 await normal.page.waitForFunction(() => {
-  const element = document.querySelector('[data-widget="hero-typewriter"]');
+  const element = document.querySelector('type-writer .hero-subtitle');
   const outputs = [...element?.querySelectorAll('.hero-typewriter-text') ?? []];
   return element?.dataset.typewriterPhase === 'initial'
     && outputs[0]?.textContent.length > 0
@@ -68,7 +68,7 @@ await normal.page.waitForTimeout(120);
 const initialSecondFrame = await lede.screenshot();
 
 await normal.page.waitForFunction((line) => {
-  const element = document.querySelector('[data-widget="hero-typewriter"]');
+  const element = document.querySelector('type-writer .hero-subtitle');
   const outputs = [...element?.querySelectorAll('.hero-typewriter-text') ?? []];
   const cursorLine = element?.querySelector('.hero-typewriter-cursor')?.closest('.hero-typewriter-line');
   return outputs[0]?.textContent === line
@@ -82,7 +82,7 @@ const secondLineSample = await lede.evaluate((element) => (
 ));
 
 await normal.page.waitForFunction((lines) => {
-  const element = document.querySelector('[data-widget="hero-typewriter"]');
+  const element = document.querySelector('type-writer .hero-subtitle');
   const outputs = [...element?.querySelectorAll('.hero-typewriter-text') ?? []];
   const cursorLine = element?.querySelector('.hero-typewriter-cursor')?.closest('.hero-typewriter-line');
   return outputs[0]?.textContent === lines[0]
@@ -96,7 +96,7 @@ const thirdLineSample = await lede.evaluate((element) => (
 ));
 
 await normal.page.waitForFunction(() => (
-  document.querySelector('[data-widget="hero-typewriter"]')?.dataset.typewriterPhase === 'dwell'
+  document.querySelector('type-writer .hero-subtitle')?.dataset.typewriterPhase === 'dwell'
 ), null, { timeout: 8000 });
 const initialComplete = await lede.evaluate((element) => {
   const cursor = element.querySelector('.hero-typewriter-cursor');
@@ -157,7 +157,7 @@ const burstSample = await normal.page.evaluate(() => {
 });
 
 await normal.page.waitForFunction(() => (
-  document.querySelector('[data-widget="hero-typewriter"]')?.dataset.typewriterPhase === 'deleting'
+  document.querySelector('type-writer .hero-subtitle')?.dataset.typewriterPhase === 'deleting'
 ), null, { timeout: 12000, polling: 5 });
 const firstDeleteAt = await normal.page.evaluate(() => performance.now());
 const deleteSample = await lede.evaluate((element) => {
@@ -177,38 +177,38 @@ await normal.page.waitForTimeout(120);
 const secondFrame = await lede.screenshot();
 
 await normal.page.waitForFunction(() => {
-  const element = document.querySelector('[data-widget="hero-typewriter"]');
+  const element = document.querySelector('type-writer .hero-subtitle');
   return element?.dataset.typewriterPhase === 'dwell'
     && element.querySelector('.hero-typewriter-dynamic .hero-typewriter-text')?.textContent === 'the people who use it.';
 }, null, { timeout: 5000 });
 const rotatedBox = await lede.boundingBox();
 
 await normal.page.waitForFunction(() => (
-  document.querySelector('[data-widget="hero-typewriter"]')?.dataset.typewriterPhase === 'deleting'
+  document.querySelector('type-writer .hero-subtitle')?.dataset.typewriterPhase === 'deleting'
 ), null, { timeout: 10000, polling: 5 });
 const secondDeleteAt = await normal.page.evaluate(() => performance.now());
 const rotationInterval = secondDeleteAt - firstDeleteAt;
 
 await normal.page.waitForFunction(() => (
-  document.querySelector('[data-widget="hero-typewriter"]')?.dataset.typewriterPhase === 'dwell'
+  document.querySelector('type-writer .hero-subtitle')?.dataset.typewriterPhase === 'dwell'
 ), null, { timeout: 5000 });
 await normal.page.evaluate(() => {
-  const element = document.querySelector('[data-widget="hero-typewriter"]');
+  const element = document.querySelector('type-writer .hero-subtitle');
   const output = element.querySelector('.hero-typewriter-dynamic .hero-typewriter-text');
   const glitch = element.querySelector('.hero-typewriter-glitch');
   output.textContent = 'people and society.';
   glitch.dataset.text = 'people and society.';
 });
 await normal.page.evaluate(() => {
-  document.querySelector('[data-widget="hero-typewriter"]').dataset.underline = 'false';
+  document.querySelector('type-writer .hero-subtitle').dataset.underline = 'false';
 });
 await lede.screenshot({ path: 'tmp2/typewriter-underline-off.png' });
 await normal.page.evaluate(() => {
-  document.querySelector('[data-widget="hero-typewriter"]').dataset.underline = 'true';
+  document.querySelector('type-writer .hero-subtitle').dataset.underline = 'true';
 });
 await lede.screenshot({ path: 'tmp2/typewriter-underline-on.png' });
 await normal.page.evaluate(() => {
-  document.querySelector('[data-widget="hero-typewriter"]').dataset.underline = 'false';
+  document.querySelector('type-writer .hero-subtitle').dataset.underline = 'false';
 });
 await normal.page.addStyleTag({
   content: `
@@ -220,17 +220,17 @@ await normal.page.addStyleTag({
 await lede.locator('.hero-typewriter-dynamic').screenshot({ path: 'tmp2/typewriter-cursor.png' });
 
 const reduced = await openPage({ width: 1440, height: 1000 }, 'reduce');
-const reducedResult = await reduced.page.locator('[data-widget="hero-typewriter"]').evaluate((element) => ({
+const reducedResult = await reduced.page.locator('type-writer .hero-subtitle').evaluate((element) => ({
   cursorDisplay: getComputedStyle(element.querySelector('.hero-typewriter-cursor')).display,
   lines: [...element.querySelectorAll('.hero-typewriter-line')].map((line) => line.innerText),
   phase: element.dataset.typewriterPhase,
 }));
-const reducedFirstFrame = await reduced.page.locator('[data-widget="hero-typewriter"]').screenshot();
+const reducedFirstFrame = await reduced.page.locator('type-writer .hero-subtitle').screenshot();
 await reduced.page.waitForTimeout(800);
-const reducedSecondFrame = await reduced.page.locator('[data-widget="hero-typewriter"]').screenshot();
+const reducedSecondFrame = await reduced.page.locator('type-writer .hero-subtitle').screenshot();
 
 const mobile = await openPage({ width: 420, height: 900 });
-const mobileResult = await mobile.page.locator('[data-widget="hero-typewriter"]').evaluate((element) => ({
+const mobileResult = await mobile.page.locator('type-writer .hero-subtitle').evaluate((element) => ({
   blockHeight: element.getBoundingClientRect().height,
   componentOverflow: element.scrollWidth - element.clientWidth,
   fontSize: getComputedStyle(element).fontSize,
