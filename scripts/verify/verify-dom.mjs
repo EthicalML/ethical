@@ -505,7 +505,7 @@ for (const route of routes) {
       failures.push('homepage footnote standards type tier has regressed');
     if (
       checks.homepage.initiativeCards[0]?.eyebrow !== 'Governance' ||
-      checks.homepage.initiativeCards[0]?.heading !== 'AI Governance & Procurement' ||
+      checks.homepage.initiativeCards[0]?.heading !== 'ML Maturity Model' ||
       checks.homepage.initiativeCards[0]?.buttons.length !== 2 ||
       checks.homepage.initiativeCards[0]?.buttons.filter(
         ({ label }) => label === 'ML Maturity Model →',
