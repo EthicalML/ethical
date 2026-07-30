@@ -7,6 +7,17 @@ const expectedLines = [
   'ensure that frontier AI is safe, aligned and accountable to',
   'people and society.',
 ];
+const subtitleFontSize = 13;
+const expectedCursorGeometry = {
+  height: subtitleFontSize * 1.15,
+  verticalAlign: subtitleFontSize * -0.14,
+  width: 5.6, // .72ch in the rendered 13px Geist Mono subtitle
+};
+const cursorGeometryTolerance = {
+  height: 0.5,
+  verticalAlign: 0.15,
+  width: 0.5,
+};
 const browser = await chromium.launch({ headless: true });
 const errors = [];
 
@@ -328,12 +339,14 @@ const result = {
     JSON.stringify(initialComplete.lines) === JSON.stringify(expectedLines) &&
     initialComplete.cursorLine === 2 &&
     initialComplete.cursor.backgroundColor === 'rgb(255, 255, 255)' &&
-    initialComplete.cursor.height >= 9 &&
-    initialComplete.cursor.height <= 11 &&
+    Math.abs(initialComplete.cursor.height - expectedCursorGeometry.height) <=
+      cursorGeometryTolerance.height &&
     initialComplete.cursor.text === '' &&
-    initialComplete.cursor.verticalAlign === 'baseline' &&
-    initialComplete.cursor.width >= 4 &&
-    initialComplete.cursor.width <= 5 &&
+    Math.abs(
+      parseFloat(initialComplete.cursor.verticalAlign) - expectedCursorGeometry.verticalAlign,
+    ) <= cursorGeometryTolerance.verticalAlign &&
+    Math.abs(initialComplete.cursor.width - expectedCursorGeometry.width) <=
+      cursorGeometryTolerance.width &&
     lineMetrics.noWrap &&
     lineMetrics.componentOverflow <= 0 &&
     lineMetrics.lineOverflow.every((overflow) => overflow <= 0) &&
@@ -377,6 +390,10 @@ const result = {
     rotationInterval,
   },
   animation: {
+    cursorGeometryExpectation: {
+      expected: expectedCursorGeometry,
+      tolerance: cursorGeometryTolerance,
+    },
     initialFramesChanged: !initialFirstFrame.equals(initialSecondFrame),
     secondLineSample,
     thirdLineSample,
