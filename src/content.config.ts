@@ -9,8 +9,8 @@ const principles = defineCollection({
     title: z.string(),
     description: z.string(),
     commitment: z.string(),
-    failure_modes: z.array(z.string()).length(3).optional(),
-    controls: z.array(z.string()).length(3).optional(),
+    failure_modes: z.array(z.string()).length(3),
+    controls: z.array(z.string()).length(3),
     related_links: z.array(
       z.object({
         label: z.string(),

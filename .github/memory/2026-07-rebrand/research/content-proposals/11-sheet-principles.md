@@ -9,7 +9,7 @@ This version replaces the earlier annotation sheet with the actual proposed cont
 - **Persona:** the principles address teams that build systems with AI models: deployers, integrators and fine-tuners. Each entry stays readable by model builders; where the builder obligation differs, the entry states it.
 - "machine learning systems" wording replaced with "AI systems" throughout, including commitments.
 - `description` no longer duplicates the commitment.
-- Monitoring lives in 06 (evaluation continued in production); auditability lives in 04 (renamed Traceable operations). No tenth principle.
+- Monitoring lives in 06 (evaluation continued in production); auditability lives in 04 (renamed Reproducibility & Provenance). No tenth principle.
 - Boundary between 02 and 09 written into both bodies: 02 asks who carries the errors, 09 asks what the system is pursuing.
 - No em-dashes anywhere.
 
@@ -26,7 +26,7 @@ title: Human Augmentation
 description: Irrespective of how many levels of abstractions are introduced through AI systems, the impact is and will always continue to be human.
 commitment: We commit to assess the consequences of incorrect outputs and automated actions and, to design systems with human oversight to ensure aligned and safe outcomes.
 failure_modes:
-  - Full automation in justice, healthcare or transport [TODO: let's link this to prohibited usecases in context of the AI act, as healthcare automation makes sense, just not in specific contexts - eg generational impact from a wrong prediciotn]
+  - Automation of decisions the AI Act treats as high risk or prohibits
   - Agents acting beyond their mandate
   - Review in name only
 controls:
@@ -38,7 +38,9 @@ related_links:
   - "AI-RFX: operational process design"
 ```
 
-Irrespective of how many levels of abstractions are introduced through AI systems, the impact is and will always continue to be human. AI systems should be developed to augment human cognition and capability as a whole. Human oversight must be enabled, and where reasonable, enabling human-in-the-loop to drive chagnes to high risk outcomes. This is a requirement now codified in Article 14 of the EU AI Act, which [the institute contributed to through its policy work](TODO: add link).
+Irrespective of how many levels of abstractions are introduced through AI systems, the impact is and will always continue to be human. AI systems should be developed to augment human cognition and capability as a whole. Human oversight must be enabled, and where reasonable, enabling human-in-the-loop to drive changes to high risk outcomes. This is a requirement now codified in Article 14 of the EU AI Act, which [the institute contributed to through its policy work](/initiatives).
+
+The AI Act also draws the automation line in law: Article 5 prohibits some practices outright, such as social scoring and manipulative systems, while the high-risk uses of Annex III, including justice, healthcare and critical infrastructure, may only operate under the human oversight of Article 14. In these domains a single wrong prediction can carry generational impact, so the level of automation must follow the consequence, not the capability.
 
 ### Where it fails
 
@@ -57,7 +59,7 @@ Controls should keep accountable people close to consequential decisions and sca
 - Measure outcomes for the people affected, and keep escalation paths that work.
 
 ## P02 — Bias Evaluation
-[TODO: Explore if we rename to something else. I coudl be something about addressing bias. Or it could be Fairness / Equity. propose a few.]
+[PROPOSED renames, pick one: 1) Bias Calibration (recommended — matches the description's "identified and where required, calibrated" and goes beyond only evaluating); 2) Fairness by Calibration (matches the "X by Y" house pattern of P03/P07); 3) Bias & Fairness (plainest, most searchable); 4) Equitable Impact (names the outcome; pairs cleanly with the 02/09 boundary "who carries the errors").]
 
 ```yaml
 title: Bias Evaluation
@@ -84,10 +86,10 @@ This principle asks who carries the skewed impact of the AI system errors. Teams
 
 ```yaml
 title: Explainability by Justification
-description: Frontier models are black boxes, and AI systems that integrate them can be more opaque and undeterministic, or explainable through tooling, process and best practice.
+description: Frontier models are black boxes; however AI systems that integrate them can be more opaque and undeterministic, or explainable through tooling, process and best practice.
 commitment: We commit to develop tools and processes to enhance the transparency and explainability of AI systems where reasonable.
 failure_modes:
-  - Unnecessairily convoluted agentic graphs
+  - Unnecessarily convoluted agentic graphs
   - Stated reasoning diverging from actual behaviour
   - Lack of deterministic flows where systematic execution required
 controls:
@@ -99,7 +101,7 @@ related_links:
   - "AI-RFX: transparency capabilities"
 ```
 
-Frontier models are black boxes by design. When these are integrated into a larger AI system; these can become either more opaque or more transparent. This requires practitioners to work towards integrating and iteratively extending the infrastructure required to ensure key components have human interpretability and accountability. Explainability shoudl also be proportionate to the risk involved in the system's outputs themselves.
+Frontier models are black boxes by design. When these are integrated into a larger AI system; these can become either more opaque or more transparent. This requires practitioners to work towards integrating and iteratively extending the infrastructure required to ensure key components have human interpretability and accountability. Explainability should also be proportionate to the risk involved in the system's outputs themselves.
 
 Explainability today is built from interpretability and attribution tooling, grounding outputs in citable sources, and transparency artifacts. Foundational capabilities involve model and system cards that state what a system is, what it was evaluated on and where it should not be used. Any trade-offs that involve explainability vs capability/performance, should be documented and weighed against the domain's need for justification.
 
@@ -111,7 +113,7 @@ description: Storing traces of a system does not ensure provenance. These should
 commitment: We commit to develop the infrastructure required to enable reproducibility and provenance across the operations of our AI systems.
 failure_modes:
   - Unpinned model versions
-  - Gaps in data goverance throughout system
+  - Gaps in data governance throughout system
   - Historical steps that cannot be reconstructed
 controls:
   - Version pinning for models, prompts and configuration
@@ -124,13 +126,12 @@ related_links:
 
 Diagnosing a production incident requires reproducing the conditions that caused it. A team deploying a model it did not train cannot reproduce the model, but they can and must reproduce their own system. Foundational pillars of AI provenance include pinned model versions, the prompts and configuration in place, the data that flowed through, and the provenance of any fine-tune, including base model, data and adapters. Hosted models are updated and deprecated by their providers, so an unpinned version changes the system underneath its operators and must be explicitly captured.
 
-Reproducibility is also what makes auditability possible, not only lineage. For AI systems it is necessary to record not only decisions but also trajectory metadata required to reconstruct what specific steps previously carried out. Retaining these record is now an operational capability that is foundational for prodution best practices for any AI systems in production.
+Reproducibility is also what makes auditability possible, not only lineage. For AI systems it is necessary to record not only decisions but also trajectory metadata required to reconstruct what specific steps previously carried out. Retaining these records is now an operational capability that is foundational for production best practices for any AI systems in production.
 
-## P05 — Displacement strategy
-[TODO: Propose a few names on this one. Maybe reskilling strategy? or Reskilling by Design, propose.]
+## P05 — Reskilling by Design
 
 ```yaml
-title: Displacement strategy
+title: Reskilling by Design
 description: Automation at scale changes work across organisations and industries; those effects should be identified and planned for, not discovered.
 commitment: We commit to identify, document and systematically support the re-skilling and evolution of our domain experts to mitigate the impact on workers affected by automation.
 failure_modes:
@@ -153,26 +154,24 @@ Even if more junior practitioners do not lead an operational transformation, the
 
 ```yaml
 title: Monitoring & Evals
-[TODO: Update this principle to be about monitoring and evals, including all the content]
-description: Evaluation should reflect the domain-specific consequences of a system's behaviour, and it does not stop at deployment.
-commitment: We commit to develop evaluation processes that reflect the domain-specific consequences of our AI systems' behaviour, before deployment and in production.
+description: A system that is only evaluated before launch is unevaluated for most of its lifetime; robust observability and evaluation is required across the end-to-end lifecycle of the system.
+commitment: We commit to evaluate our AI systems against the domain-specific consequences of their behaviour, and to ensure robust observability capapbilities are in place for as long as the system operates.
 failure_modes:
-[TODO: let's link this to prohibited usecases 
   - Benchmark contamination and overfitting
   - Symmetric error assumptions
-  - Evaluation that stops at deployment
+  - Drift that goes undetected after deployment
 controls:
-  - Domain-grounded capability and safety evaluations
-  - Cost-weighted metrics
-  - Production monitoring and drift detection
+  - Domain-grounded capability and safety evals
+  - Cost-weighted metrics with production monitoring
+  - Incident feedback into the evaluation suite
 related_links:
   - "AI-RFX: practical benchmarks"
   - State of Production ML 2025
 ```
 
-A system can score well on public benchmarks and still be wrong in ways that matter in its domain, because benchmarks leak into training data and because headline metrics assume every error costs the same. Teams should examine the consequences of each kind of error and evaluate against them: capability evaluations for what the system must do, safety evaluations for what it must not, and cost-weighted measures that reflect the asymmetry between a false alarm and a missed harm. Automated judging, including using one model to grade another, inherits the judge's own failure modes and needs the same scrutiny.
+A system can score well on public benchmarks and still be wrong in ways that matter in its domain. Evals should be built from the consequences of each kind of error, including **capability evals** for what the system must do, **safety evals** for what it must not, and **cost-weighted measures** that reflect the asymmetry between a false alarm and a missed harm. 
 
-Pre-deployment evaluation is a rehearsal. The same activity continues in production as monitoring: tracking behaviour against real traffic, detecting drift as data, model versions and usage change, and feeding incidents back into the evaluation suite. A system that is only evaluated before launch is unevaluated for most of its life.
+In production the same questions continue once the system is in production and should be monitored with robust observability. Behaviour must be tracked against real traffic rather than curated test sets, and where relvevant advanced monitoring such as drift and outlier detection, as well as agent/model-as-judge patterns throughout the data flow of the systems.. Incidents and near misses should feed back into the evaluation suite, so each release is tested against the failures the previous one produced.
 
 ## P07 — Trust by Privacy
 
@@ -200,46 +199,44 @@ Privacy should be designed into the system and its operating processes: minimise
 
 ```yaml
 title: Security & Safety
-[TODO: Update htis one to be about security. you can use the agntic security OWASP top 10, as wel as few others. also safety important]
-description: Security is a lifecycle responsibility spanning data collection, model development, deployment, and retirement.
-commitment: We commit to develop and improve reasonable processes and infrastructure to ensure data and model security are taken into consideration across the lifecycle of our AI systems.
+description: The attack surface of an AI system includes every piece of text its models read and every tool its agents can call. Security failures become safety failures the moment a system can act.
+commitment: We commit to develop the processes and infrastructure required to secure our AI systems across their lifecycle, and to treat the safety of their actions as part of that security boundary.
 failure_modes:
-  - Prompt injection and jailbreaks
-  - Agent tool misuse
-  - Supply-chain vulnerabilities
+  - Prompt injection turning content into instructions
+  - Agents misusing tools and permissions
+  - Model and data supply-chain compromise
 controls:
-  - MLSecOps and agentic security controls
-  - Least-privilege access for models and tools
-  - Observability and lineage
+  - Threat reviews against the MLSecOps and OWASP agentic Top 10s
+  - Least-privilege, sandboxed tool access for agents
+  - Red-teaming, layered safeguards and monitoring
 related_links:
   - MLSecOps Top 10
   - OWASP Agentic Security (attack-vector report)
 ```
 
-Security is a lifecycle responsibility spanning data collection, model development, deployment, and retirement. Controls should match the system's exposure and the harm a compromise could cause. The threat surface now includes the model's interface itself: prompt injection turns any text a model reads into a potential instruction channel, jailbreaks defeat behavioural safeguards, and agents connected to tools convert a successful injection into real actions with real permissions.
+Security spans the full lifecycle of an AI system: training data can be poisoned, model artifacts and their dependencies compromised through the supply chain, and deployed models probed through their own interface. Prompt injection turns any text a model reads into a potential instruction channel, jailbreaks defeat behavioural safeguards, and an agent connected to tools converts a successful injection into real actions with real permissions. This is where security and safety meet: a compromised agent is not only a breached system but an unsafe one, and controls should match both the system's exposure and the harm its actions could cause.
 
-Teams should assume that models and their surrounding tools will be probed by capable adversaries, grant models and agents the least privilege their task requires, and validate layered safeguards through repeatable testing and monitoring. The institute's MLSecOps Top 10 covers the pipeline-level vulnerabilities; the attack vectors specific to agentic systems are catalogued in the OWASP agentic security work the institute co-authored.
+Teams should assume that capable adversaries will probe their models and tools, grant agents the least privilege their task requires, and validate layered safeguards through repeatable red-teaming and monitoring. The institute's MLSecOps Top 10 covers the pipeline-level vulnerabilities; the attack vectors specific to agentic systems are catalogued in the OWASP agentic security work the institute co-authored. Together with the OWASP Top 10 for LLM applications, these should anchor a threat review before any AI system reaches production.
 
-## P09 — Human Alignment
+## P09 — Intent Alignment
 
 ```yaml
-title: Human Alignment
-[TODO: Update it to be humane alignment, as well as algine dto the value that operator intended.]
-description: An aligned system should behave consistently with the purpose, constraints, and values established by accountable people.
-commitment: We commit to evaluate whether systems pursue the objectives intended by operators and stakeholders, and to test for goal misgeneralisation, misuse and deceptive behaviour where reasonable.
+title: Intent Alignment
+description: An aligned system pursues the objectives its operators intended, within bounds set by the interests of the people its actions affect. Neither the intent nor the bounds can be assumed; both must be specified and tested.
+commitment: We commit to evaluate whether our AI systems pursue the objectives their operators intended, to test for goal misgeneralisation, deception and misuse where reasonable, and to hold those objectives to the interests of the people they affect.
 failure_modes:
-  - Goal misgeneralisation
+  - Goal misgeneralisation outside training conditions
   - Deceptive behaviour under evaluation
-  - Misuse of autonomous agents
+  - Operator objectives that harm the people affected
 controls:
-  - Intent specification
+  - Testable intent specification
   - Adversarial and scheming evaluations
-  - Continuous monitoring
+  - Interruptible deployments with revisable objectives
 related_links:
   - K8s Agent OS (KAOS)
   - Agentic safety programme
 ```
 
-An aligned system should behave consistently with the purpose, constraints and values established by accountable people. A system can meet a narrow metric while producing a harmful wider outcome, and a capable system can satisfy its evaluations while pursuing something other than what its operators intended: optimising a proxy that diverges outside training, behaving differently when it detects it is being tested, or being repurposed for harm.
+An aligned system behaves consistently with the purpose, constraints and values established by accountable people. A capable system can satisfy its evaluations while pursuing something other than what its operators intended: optimising a proxy that diverges outside training, behaving differently when it detects it is being tested, or being repurposed for harm. Alignment to operator intent is therefore the first requirement, and it must be made testable rather than assumed.
 
-This principle asks what the system is pursuing. Whether its errors fall unevenly across people is the separate question covered by principle 02; a system can be free of bias and still misaligned, pursuing the wrong objective equally for everyone. Teams should make intent testable, examine how systems behave under adversarial pressure, and retain the ability to interrupt or revise deployments as real-world evidence changes.
+It is not the last requirement. An objective can be faithfully pursued and still cause harm, so the values a system serves must extend beyond its operator to the people its actions affect. This principle asks what the system is pursuing and for whom; whether its errors fall unevenly across people is the separate question covered by principle 02. Teams should specify intent, examine how systems behave under adversarial pressure, and retain the ability to interrupt or revise deployments as real-world evidence changes.
