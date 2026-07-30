@@ -10,5 +10,5 @@ const { title, eyebrow = 'FEATURE', widget } = Astro.props;
     <h2>{title}</h2>
     <div class="block-body"><slot /></div>
   </div>
-  {widget === 'kaos-graph' && <KaosGraph embedded transitionName="kaos-canvas" />}
+  {widget === 'kaos-graph' && <KaosGraph embedded />}
 </aside>

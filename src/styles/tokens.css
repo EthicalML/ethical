@@ -990,21 +990,9 @@ form[data-state="error"] .form-confirmation { color: var(--warn); font: var(--bo
 ::view-transition-new(*):only-child {
   animation: content-settle .22s ease both !important;
 }
-::view-transition-group(root),
-::view-transition-group(kaos-canvas),
-::view-transition-old(kaos-canvas),
-::view-transition-new(kaos-canvas),
-::view-transition-group(kaos-title),
-::view-transition-old(kaos-title),
-::view-transition-new(kaos-title) {
+::view-transition-group(root) {
   animation-duration: .22s !important;
   animation-timing-function: ease !important;
-}
-::view-transition-group(kaos-canvas) {
-  z-index: 1;
-}
-::view-transition-group(kaos-title) {
-  z-index: 2;
 }
 html[data-astro-transition="forward"]::view-transition-old(principle-page) {
   animation: principle-slide-out-left .22s ease both !important;
