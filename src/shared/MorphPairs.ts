@@ -45,6 +45,10 @@ export const bindMorphPairs = (root: ParentNode, signal: AbortSignal) => {
       navigationStarted = false;
     }
   };
+  const cancelActivation = () => {
+    clearPair();
+    clearNamedSources();
+  };
 
   root.querySelectorAll<HTMLElement>('[data-morph-pair]').forEach((trigger) => {
     const sourceId = trigger.dataset.morphPair;
@@ -100,12 +104,12 @@ export const bindMorphPairs = (root: ParentNode, signal: AbortSignal) => {
       () => {
         const pointerActivation = activation;
         requestAnimationFrame(() => {
-          if (activation === pointerActivation) clearNamedSources();
+          if (activation === pointerActivation) cancelActivation();
         });
       },
       { signal },
     );
-    trigger.addEventListener('pointercancel', () => clearNamedSources(), { signal });
+    trigger.addEventListener('pointercancel', cancelActivation, { signal });
     trigger.addEventListener(
       'click',
       (event) => {
@@ -113,7 +117,7 @@ export const bindMorphPairs = (root: ParentNode, signal: AbortSignal) => {
         activate();
         const clickActivation = activation;
         requestAnimationFrame(() => {
-          if (activation === clickActivation && !navigationStarted) clearNamedSources();
+          if (activation === clickActivation && !navigationStarted) cancelActivation();
         });
       },
       { signal },
@@ -129,7 +133,7 @@ export const bindMorphPairs = (root: ParentNode, signal: AbortSignal) => {
         event.to.pathname === activeDestinationPath;
       navigationStarted = Boolean(isActiveNavigation);
       clearNamedSources(isActiveNavigation ? activeSource : undefined);
-      event.signal.addEventListener('abort', () => clearNamedSources(), { once: true });
+      event.signal.addEventListener('abort', cancelActivation, { once: true });
     },
     { signal },
   );
