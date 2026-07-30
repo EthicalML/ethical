@@ -26,6 +26,8 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
                 type="button"
                 class:list={{ active: index === 0 }}
                 data-principle-row={index}
+                data-principle-number={data.number}
+                data-principle-href={`/principles/${data.number}/`}
                 data-morph-pair={`principle-${data.number}`}
                 data-morph-href={`/principles/${data.number}/`}
               >
@@ -141,7 +143,7 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
             // which erases the forward morph. Select without animating so the source is fully
             // opaque when snapshotted.
             select(index, false);
-            const href = row.dataset.morphHref;
+            const href = row.dataset.principleHref;
             if (href) void navigate(href);
           },
           { signal: this.controller.signal },

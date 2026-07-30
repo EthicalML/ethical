@@ -47,7 +47,7 @@ All first-party client behaviour is TypeScript. Do not add first-party runtime J
 ## Motion
 
 - Long-lived-page behaviour uses custom elements or explicit `astro:before-swap`/`astro:after-swap` hooks.
-- Morph sources use `MorphPairs` to set and record their inline name on pointerdown/click, then restore it for exactly one immediate return navigation to the source route; widget-local copies are not sanctioned.
+- Morph sources use `MorphPairs` to set and record their inline name on pointerdown/click, then restore it for exactly one back-navigation; widget-local copies are not sanctioned.
 - Singular destination names stay static, with inline companions for computed names; an unpaired destination settles with the same 220ms rise and fade as the root.
 - Principle and phase cards are user-controlled only; they never rotate automatically.
 - Verify morphs against the production build; dev mode can hide missing computed names.
