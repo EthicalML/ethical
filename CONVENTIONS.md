@@ -54,6 +54,9 @@ All first-party client behaviour is TypeScript. Do not add first-party runtime J
 - Stateful containers restore the state that makes a morph endpoint visible synchronously at mount.
 - Elements that must stay above a morphing group need their own named group and explicit `::view-transition-group` z-order.
 - Text morphs require identical strings at both endpoints.
+- Full-bleed backdrops behind hero text (the KAOS hero graph) must not carry card framing (`widget`/`embedded-widget`); a translucent dark plate behind text makes the route cross-fade read as content arriving dim. Use `<KaosGraph embedded backdrop />`.
+- Named elements are lifted out of ancestor effects during a transition; anything meant to fade with the page must not carry a `view-transition-name`.
+- Debugging motion: instrumented checks must assert snapshot opacity and landing position, not just presence; when instrumentation and the eye disagree, bisect by removing visible elements one build at a time.
 
 | Motion                      | Endpoints                                                            | Owners                                                              |
 | --------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------- |
@@ -62,7 +65,7 @@ All first-party client behaviour is TypeScript. Do not add first-party runtime J
 | Principle title morph       | Explorer detail → `/principles/NN/` h1                               | `MorphPairs`, `PrinciplesExplorer`, `PrincipleLayout`, `BaseLayout` |
 | Survey title morph          | Homepage report heading → survey explorer hero                       | `MorphPairs`, `ReportsSection`, `ArticleHero`                       |
 | Initiative title morphs     | Homepage maturity / security card titles → matching framework heroes | `MorphPairs`, `ReportsSection`, `ArticleHero`, `BaseLayout`         |
-| KAOS canvas morph           | Homepage KAOS card → KAOS in-body feature graph                      | `MorphPairs`, `OpenSourceShowcase`, `KaosGraph`, `Feature`          |
+| KAOS title morph            | Homepage KAOS card title → KAOS page hero h1                         | `MorphPairs`, `OpenSourceShowcase`, `ArticleHero`                   |
 | Partner logo morph          | Clicked marquee instance → matching directory logo                   | `MorphPairs`, `AffiliationMarquee`, `PartnerDirectory`              |
 | Principle directional slide | `/principles/NN/` prev/next → adjacent principle                     | `PrincipleLayout`, `Motion`, `tokens.css`                           |
 
