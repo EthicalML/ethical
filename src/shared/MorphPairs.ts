@@ -8,8 +8,6 @@ interface StoredMorphPair {
   sourcePath: string;
 }
 
-let activeSource: HTMLElement | undefined;
-
 const readPair = () => {
   try {
     const pair = JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? '') as StoredMorphPair;
@@ -27,12 +25,27 @@ const readPair = () => {
 };
 
 const clearPair = () => {
-  activeSource?.style.removeProperty('view-transition-name');
-  activeSource = undefined;
   sessionStorage.removeItem(STORAGE_KEY);
 };
 
 export const bindMorphPairs = (root: ParentNode, signal: AbortSignal) => {
+  let activeSource: HTMLElement | undefined;
+  let activeDestinationPath: string | undefined;
+  let activation = 0;
+  let navigationStarted = false;
+
+  const clearNamedSources = (preserve?: HTMLElement) => {
+    root.querySelectorAll<HTMLElement>('[data-morph-source]').forEach((source) => {
+      if (source === preserve) return;
+      source.style.removeProperty('view-transition-name');
+    });
+    if (activeSource !== preserve) {
+      activeSource = undefined;
+      activeDestinationPath = undefined;
+      navigationStarted = false;
+    }
+  };
+
   root.querySelectorAll<HTMLElement>('[data-morph-pair]').forEach((trigger) => {
     const sourceId = trigger.dataset.morphPair;
     if (!sourceId) return;
@@ -49,8 +62,11 @@ export const bindMorphPairs = (root: ParentNode, signal: AbortSignal) => {
     // across the viewport. These settle back plainly instead.
     const oneWay = source.dataset.morphOneWay !== undefined;
     const activate = () => {
-      activeSource?.style.removeProperty('view-transition-name');
+      activation += 1;
+      clearNamedSources();
       activeSource = source;
+      activeDestinationPath = destinationPath;
+      navigationStarted = false;
       source.style.viewTransitionName = name;
       sessionStorage.setItem(
         STORAGE_KEY,
@@ -63,10 +79,62 @@ export const bindMorphPairs = (root: ParentNode, signal: AbortSignal) => {
         } satisfies StoredMorphPair),
       );
     };
+    const isCurrentPageClick = (event: MouseEvent) =>
+      event.button === 0 &&
+      !event.altKey &&
+      !event.ctrlKey &&
+      !event.metaKey &&
+      !event.shiftKey &&
+      (!(trigger instanceof HTMLAnchorElement) ||
+        (!trigger.download && (!trigger.target || trigger.target === '_self')));
 
-    trigger.addEventListener('pointerdown', activate, { signal });
-    trigger.addEventListener('click', activate, { signal });
+    trigger.addEventListener(
+      'pointerdown',
+      (event) => {
+        if (isCurrentPageClick(event)) activate();
+      },
+      { signal },
+    );
+    trigger.addEventListener(
+      'pointerup',
+      () => {
+        const pointerActivation = activation;
+        requestAnimationFrame(() => {
+          if (activation === pointerActivation) clearNamedSources();
+        });
+      },
+      { signal },
+    );
+    trigger.addEventListener('pointercancel', () => clearNamedSources(), { signal });
+    trigger.addEventListener(
+      'click',
+      (event) => {
+        if (!isCurrentPageClick(event)) return;
+        activate();
+        const clickActivation = activation;
+        requestAnimationFrame(() => {
+          if (activation === clickActivation && !navigationStarted) clearNamedSources();
+        });
+      },
+      { signal },
+    );
   });
+
+  document.addEventListener(
+    'astro:before-preparation',
+    (event) => {
+      const isActiveNavigation =
+        activeSource &&
+        event.from.pathname === location.pathname &&
+        event.to.pathname === activeDestinationPath;
+      navigationStarted = Boolean(isActiveNavigation);
+      clearNamedSources(isActiveNavigation ? activeSource : undefined);
+      event.signal.addEventListener('abort', () => clearNamedSources(), { once: true });
+    },
+    { signal },
+  );
+  document.addEventListener('astro:before-swap', () => clearNamedSources(), { signal });
+  signal.addEventListener('abort', () => clearNamedSources(), { once: true });
 };
 
 document.addEventListener('astro:before-preparation', (event) => {
@@ -110,8 +178,4 @@ document.addEventListener('astro:before-swap', (event) => {
     delete source.dataset.morphRestored;
   };
   void event.viewTransition.finished.then(cleanUp, cleanUp);
-});
-
-document.addEventListener('astro:after-swap', () => {
-  activeSource = undefined;
 });
