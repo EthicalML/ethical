@@ -71,18 +71,26 @@ export const bindMorphPairs = (root: ParentNode, signal: AbortSignal) => {
 
 document.addEventListener('astro:before-preparation', (event) => {
   const pair = readPair();
-  if (
-    pair &&
-    event.from.pathname === pair.sourcePath &&
-    event.to.pathname !== pair.destinationPath
-  ) {
+  if (!pair) return;
+
+  const isForwardNavigation =
+    event.from.pathname === pair.sourcePath && event.to.pathname === pair.destinationPath;
+  const isImmediateReturn =
+    event.from.pathname === pair.destinationPath && event.to.pathname === pair.sourcePath;
+  if (!isForwardNavigation && !isImmediateReturn) {
     clearPair();
   }
 });
 
 document.addEventListener('astro:before-swap', (event) => {
   const pair = readPair();
-  if (!pair || event.direction !== 'back' || event.to.pathname !== pair.sourcePath) return;
+  if (
+    !pair ||
+    event.from.pathname !== pair.destinationPath ||
+    event.to.pathname !== pair.sourcePath
+  ) {
+    return;
+  }
 
   if (pair.oneWay) {
     sessionStorage.removeItem(STORAGE_KEY);
