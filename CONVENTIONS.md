@@ -57,6 +57,8 @@ All first-party client behaviour is TypeScript. Do not add first-party runtime J
 - Full-bleed backdrops behind hero text (the KAOS hero graph) must not carry card framing (`widget`/`embedded-widget`); a translucent dark plate behind text makes the route cross-fade read as content arriving dim. Use `<KaosGraph embedded backdrop />`.
 - Named elements are lifted out of ancestor effects during a transition; anything meant to fade with the page must not carry a `view-transition-name`.
 - Debugging motion: instrumented checks must assert snapshot opacity and landing position, not just presence; when instrumentation and the eye disagree, bisect by removing visible elements one build at a time.
+- Forward navigations without a hash pin the fresh page to the top until the transition finishes (`ScrollRestoration`). Firefox fires a browser-internal scroll on the new page after the router's own scroll-to-top and after the snapshot capture, which lands every morph offset by that scroll; the pin snaps it back before paint. Do not remove the pin without re-testing morphs in Firefox from a deeply scrolled origin page.
+- Motion changes land one at a time, in-session, and are owner-validated visually before commit; failed experiments are reverted, never left in the tree. Instrumentation is for diagnosis only — owner eyes are the acceptance gate.
 
 | Motion                      | Endpoints                                                            | Owners                                                              |
 | --------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------- |
