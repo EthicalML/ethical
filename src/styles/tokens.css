@@ -54,7 +54,7 @@
   --radius-row: 0;
   --radius-card: 0;
   --radius-card-lg: 0;
-  --radius-pill: 0;
+  --radius-pill: 999px;
   --radius-dropdown: 0;
   --shadow-panel: 0 30px 70px rgba(0, 0, 0, 0.6);
   --space-4: 4px;
@@ -435,9 +435,10 @@ type-writer {
   padding: 13px 22px;
 }
 .button.primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--accent-on);
+  background: transparent;
+  border-color: rgba(94, 230, 160, .45);
+  color: var(--accent);
+  font-family: var(--font-mono);
   font-weight: 500;
 }
 .graph-switcher {
@@ -734,11 +735,13 @@ dd { margin: 6px 0 0; }
 }
 .cta-block .block-body { max-width: 680px; }
 .cta-block a {
-  background: var(--accent);
+  background: transparent;
+  border: 1px solid rgba(94, 230, 160, .45);
   border-radius: var(--radius-control);
-  color: var(--accent-on);
+  color: var(--accent);
   flex: none;
   font-size: var(--body-14);
+  font-family: var(--font-mono);
   font-weight: 500;
   padding: 13px 20px;
 }
@@ -883,14 +886,16 @@ fieldset label {
 }
 fieldset input { accent-color: var(--accent); height: 15px; width: 15px; }
 form button {
-  background: var(--accent);
-  border: 0;
+  background: transparent;
+  border: 1px solid rgba(94, 230, 160, .45);
   border-radius: var(--radius-control);
-  color: var(--accent-on);
+  color: var(--accent);
   cursor: pointer;
+  font-family: var(--font-mono);
   font-weight: 500;
   padding: 13px 22px;
 }
+form button:hover { opacity: .72; }
 form button:disabled { cursor: wait; opacity: .6; }
 form small { color: rgba(244,242,238,.42); font-size: 12px; }
 .application-helper { color: var(--text-2); margin-top: -6px; }
