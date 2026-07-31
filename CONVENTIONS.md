@@ -8,6 +8,7 @@ The ratified decisions in `.github/memory/2026-07-rebrand/` are authoritative. A
 - Use a content collection when the site validates and iterates a set. Principles, partners, survey questions, and repository metrics are collections defined in `src/content.config.ts`.
 - Page-owned prose, headings, links, lists, and configuration belong in that page's MDX front matter or body.
 - Components arrange supplied content. They do not hide owner-editable page copy.
+- Frontmatter copy fields render as escaped plain text by default. When a field genuinely needs inline emphasis, the standard is inline HTML in the field rendered through `set:html` at the consuming component; do not add markdown filters for frontmatter, and do not enable `set:html` on a field before its content actually carries markup. Scope stays inline (`<strong>`, `<em>`) on first-party copy fields only, never links or block markup. Not currently enabled anywhere.
 - `composed: true` means the MDX owns its full-width composition. Otherwise `ProseLayout.astro` supplies the standard article shell.
 
 The placement rule is: content lives with its owner; a separate file must be earned by two unrelated consumers, a validated set, or a genuinely large dataset.
