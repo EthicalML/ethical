@@ -1700,6 +1700,15 @@ main > .home-section:last-child { padding-bottom: 120px; }
   font: 300 34px/1.12 var(--font-display);
   margin: 22px 0 18px;
 }
+.bridge-attribution {
+  border-left: 1px solid var(--accent);
+  color: var(--text-2);
+  font-size: 15px;
+  line-height: 1.7;
+  margin: 34px 0 0;
+  max-width: 980px;
+  padding: 3px 0 3px 20px;
+}
 .field-records { margin-top: 42px; }
 .field-records p {
   align-items: baseline;
