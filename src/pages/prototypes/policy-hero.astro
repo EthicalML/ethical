@@ -2,11 +2,9 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 const variants = [
-  { label: 'Orbital assembly', value: 1 },
-  { label: 'Jurisdiction arcs', value: 2 },
-  { label: 'Record flow', value: 3 },
-  { label: 'Living text', value: 4 },
-  { label: 'Policy assembly', value: 5 },
+  { label: 'Orbital baseline', value: 1 },
+  { label: 'Policy assembly', value: 2 },
+  { label: 'Ratification field', value: 3 },
 ];
 const frontmatter = {
   title: 'Policy hero canvas prototypes',
@@ -22,7 +20,7 @@ const intro =
       <span>POLICY HERO STUDIES</span>
       {
         variants.map((option) => (
-          <a href={`?v=${option.value}`} data-astro-reload data-variant-link={option.value}>
+          <a href={`?v=${option.value}`} data-variant-link={option.value}>
             <b>{option.value}</b>
             {option.label}
           </a>
@@ -41,40 +39,62 @@ const intro =
       ><policy-hero-1 class="policy-prototype-mount"><canvas class="hero-canvas" aria-hidden="true"></canvas></policy-hero-1></template
     >
     <template data-canvas-variant="2"
-      ><policy-hero-2 class="policy-prototype-mount"><canvas class="hero-canvas" aria-hidden="true"></canvas></policy-hero-2></template
+      ><policy-hero-assembly class="policy-prototype-mount"><canvas class="hero-canvas" aria-hidden="true"></canvas></policy-hero-assembly></template
     >
     <template data-canvas-variant="3"
-      ><policy-hero-3 class="policy-prototype-mount"><canvas class="hero-canvas" aria-hidden="true"></canvas></policy-hero-3></template
-    >
-    <template data-canvas-variant="4"
-      ><policy-hero-4 class="policy-prototype-mount"><canvas class="hero-canvas" aria-hidden="true"></canvas></policy-hero-4></template
-    >
-    <template data-canvas-variant="5"
-      ><policy-hero-5 class="policy-prototype-mount"><canvas class="hero-canvas" aria-hidden="true"></canvas></policy-hero-5></template
+      ><policy-hero-fusion class="policy-prototype-mount"><canvas class="hero-canvas" aria-hidden="true"></canvas></policy-hero-fusion></template
     >
   </policy-hero-prototype>
 </BaseLayout>
 
 <script>
   import '../../shared/canvas/PolicyHero1';
-  import '../../shared/canvas/PolicyHero2';
-  import '../../shared/canvas/PolicyHero3';
-  import '../../shared/canvas/PolicyHero4';
-  import '../../shared/canvas/PolicyHero5';
+  import '../../shared/canvas/PolicyHeroAssembly';
+  import '../../shared/canvas/PolicyHeroFusion';
 
   class PolicyHeroPrototype extends HTMLElement {
+    private controller = new AbortController();
+
     connectedCallback() {
+      this.controller = new AbortController();
+      this.querySelectorAll<HTMLAnchorElement>('[data-variant-link]').forEach((link) => {
+        link.addEventListener('click', this.handleVariantClick, { signal: this.controller.signal });
+      });
+      window.addEventListener('popstate', this.handlePopState, { signal: this.controller.signal });
+      this.selectVariant(this.variantFromUrl());
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+    }
+
+    private variantFromUrl() {
       const requested = Number.parseInt(new URL(window.location.href).searchParams.get('v') ?? '1', 10);
-      const variant = requested >= 1 && requested <= 5 ? requested : 1;
+      return requested >= 1 && requested <= 3 ? requested : 1;
+    }
+
+    private selectVariant(variant: number) {
       const template = this.querySelector<HTMLTemplateElement>(`template[data-canvas-variant="${variant}"]`);
       const mount = this.querySelector<HTMLElement>('[data-canvas-mount]');
       if (!template || !mount) return;
       mount.replaceChildren(template.content.cloneNode(true));
+      this.dataset.activeVariant = String(variant);
       this.querySelectorAll<HTMLAnchorElement>('[data-variant-link]').forEach((link) => {
         if (Number(link.dataset.variantLink) === variant) link.setAttribute('aria-current', 'page');
         else link.removeAttribute('aria-current');
       });
     }
+
+    private handleVariantClick = (event: Event) => {
+      const link = event.currentTarget as HTMLAnchorElement;
+      const variant = Number(link.dataset.variantLink);
+      if (!Number.isInteger(variant)) return;
+      event.preventDefault();
+      history.pushState({}, '', link.href);
+      this.selectVariant(variant);
+    };
+
+    private handlePopState = () => this.selectVariant(this.variantFromUrl());
   }
 
   if (!customElements.get('policy-hero-prototype')) {
