@@ -1,0 +1,288 @@
+{
+  "productionMl": {
+    "repository": "https://github.com/EthicalML/awesome-production-machine-learning",
+    "source": "https://raw.githubusercontent.com/EthicalML/awesome-production-machine-learning/master/README.md",
+    "branch": "master",
+    "categories": [
+      {
+        "emoji": "🔧",
+        "name": "AutoML",
+        "count": 18,
+        "anchor": "#automl"
+      },
+      {
+        "emoji": "🧮",
+        "name": "Computation & Communication Optimisation",
+        "count": 58,
+        "anchor": "#computation-and-communication-optimisation"
+      },
+      {
+        "emoji": "🏷️",
+        "name": "Data Annotation & Synthesis",
+        "count": 16,
+        "anchor": "#data-annotation-and-synthesis"
+      },
+      {
+        "emoji": "🧵",
+        "name": "Data Pipeline",
+        "count": 25,
+        "anchor": "#data-pipeline"
+      },
+      {
+        "emoji": "📓",
+        "name": "Data Science Notebook",
+        "count": 10,
+        "anchor": "#data-science-notebook"
+      },
+      {
+        "emoji": "💾",
+        "name": "Data Storage Optimisation",
+        "count": 25,
+        "anchor": "#data-storage-optimisation"
+      },
+      {
+        "emoji": "💸",
+        "name": "Data Stream Processing",
+        "count": 11,
+        "anchor": "#data-stream-processing"
+      },
+      {
+        "emoji": "💪",
+        "name": "Deployment & Serving",
+        "count": 60,
+        "anchor": "#deployment-and-serving"
+      },
+      {
+        "emoji": "📈",
+        "name": "Evaluation & Monitoring",
+        "count": 68,
+        "anchor": "#evaluation-and-monitoring"
+      },
+      {
+        "emoji": "🔍",
+        "name": "Explainability & Fairness",
+        "count": 14,
+        "anchor": "#explainability-and-fairness"
+      },
+      {
+        "emoji": "🎁",
+        "name": "Feature Store",
+        "count": 3,
+        "anchor": "#feature-store"
+      },
+      {
+        "emoji": "🔴",
+        "name": "Industry-strength Anomaly Detection",
+        "count": 5,
+        "anchor": "#industry-strength-anomaly-detection"
+      },
+      {
+        "emoji": "👁️",
+        "name": "Industry-strength Computer Vision",
+        "count": 13,
+        "anchor": "#industry-strength-computer-vision"
+      },
+      {
+        "emoji": "🔥",
+        "name": "Industry-strength Information Retrieval",
+        "count": 24,
+        "anchor": "#industry-strength-information-retrieval"
+      },
+      {
+        "emoji": "🔠",
+        "name": "Industry-strength Natural Language Processing",
+        "count": 45,
+        "anchor": "#industry-strength-nlp"
+      },
+      {
+        "emoji": "🙌",
+        "name": "Industry-strength Recommender System",
+        "count": 5,
+        "anchor": "#industry-strength-recommender-system"
+      },
+      {
+        "emoji": "🍕",
+        "name": "Industry-strength Reinforcement Learning",
+        "count": 39,
+        "anchor": "#industry-strength-reinforcement-learning"
+      },
+      {
+        "emoji": "🤖",
+        "name": "Industry-strength Robotics",
+        "count": 7,
+        "anchor": "#industry-strength-robotics"
+      },
+      {
+        "emoji": "📊",
+        "name": "Industry-strength Visualisation",
+        "count": 25,
+        "anchor": "#industry-strength-visualisation"
+      },
+      {
+        "emoji": "📅",
+        "name": "Metadata Management",
+        "count": 6,
+        "anchor": "#metadata-management"
+      },
+      {
+        "emoji": "📜",
+        "name": "Model, Data & Experiment Management",
+        "count": 16,
+        "anchor": "#model-data-and-experiment-management"
+      },
+      {
+        "emoji": "🔩",
+        "name": "Model Storage Optimisation",
+        "count": 10,
+        "anchor": "#model-storage-optimisation"
+      },
+      {
+        "emoji": "🏁",
+        "name": "Model Training & Orchestration",
+        "count": 27,
+        "anchor": "#model-training-and-orchestration"
+      },
+      {
+        "emoji": "🔏",
+        "name": "Privacy & Safety",
+        "count": 15,
+        "anchor": "#privacy-and-safety"
+      }
+    ]
+  },
+  "aiGuidelines": {
+    "repository": "https://github.com/EthicalML/awesome-artificial-intelligence-regulation",
+    "source": "https://raw.githubusercontent.com/EthicalML/awesome-artificial-intelligence-regulation/master/README.md",
+    "branch": "master",
+    "areas": [
+      {
+        "name": "Austria",
+        "emoji": "🇦🇹",
+        "count": 1,
+        "anchor": "#austria"
+      },
+      {
+        "name": "Brazil",
+        "emoji": "🇧🇷",
+        "count": 1,
+        "anchor": "#brazil"
+      },
+      {
+        "name": "Canada",
+        "emoji": "🇨🇦",
+        "count": 1,
+        "anchor": "#canada"
+      },
+      {
+        "name": "China",
+        "emoji": "🇨🇳",
+        "count": 7,
+        "anchor": "#china"
+      },
+      {
+        "name": "Dubai",
+        "emoji": "🇦🇪",
+        "count": 1,
+        "anchor": "#dubai"
+      },
+      {
+        "name": "European Union",
+        "emoji": "🇪🇺",
+        "count": 10,
+        "anchor": "#european-union"
+      },
+      {
+        "name": "India",
+        "emoji": "🇮🇳",
+        "count": 4,
+        "anchor": "#india"
+      },
+      {
+        "name": "Ireland",
+        "emoji": "🇮🇪",
+        "count": 1,
+        "anchor": "#ireland"
+      },
+      {
+        "name": "Israel",
+        "emoji": "🇮🇱",
+        "count": 1,
+        "anchor": "#israel"
+      },
+      {
+        "name": "Mexico",
+        "emoji": "🇲🇽",
+        "count": 1,
+        "anchor": "#mexico"
+      },
+      {
+        "name": "Singapore",
+        "emoji": "🇸🇬",
+        "count": 2,
+        "anchor": "#singapore"
+      },
+      {
+        "name": "Switzerland",
+        "emoji": "🇨🇭",
+        "count": 1,
+        "anchor": "#switzerland"
+      },
+      {
+        "name": "United Arab Emirates",
+        "emoji": "🇦🇪",
+        "count": 1,
+        "anchor": "#united-arab-emirates"
+      },
+      {
+        "name": "United Kingdom",
+        "emoji": "🇬🇧",
+        "count": 3,
+        "anchor": "#united-kingdom"
+      },
+      {
+        "name": "United States of America",
+        "emoji": "🇺🇸",
+        "count": 11,
+        "anchor": "#united-states-of-america"
+      }
+    ],
+    "themes": [
+      {
+        "emoji": "🔍",
+        "name": "High Level Frameworks & Principles",
+        "count": 21,
+        "anchor": "#high-level-frameworks-and-principles"
+      },
+      {
+        "emoji": "📜",
+        "name": "Industry standards initiatives",
+        "count": 5,
+        "anchor": "#industry-standards-initiatives"
+      },
+      {
+        "emoji": "🔨",
+        "name": "Interactive & Practical Tools",
+        "count": 25,
+        "anchor": "#interactive-and-practical-tools"
+      },
+      {
+        "emoji": "📚",
+        "name": "Online Courses",
+        "count": 7,
+        "anchor": "#online-courses-and-learning-resources"
+      },
+      {
+        "emoji": "🔏",
+        "name": "Processes & Checklists",
+        "count": 15,
+        "anchor": "#processes-and-checklists"
+      },
+      {
+        "emoji": "🤖",
+        "name": "Research and Industry Newsletters",
+        "count": 7,
+        "anchor": "#research-and-industry-newsletters"
+      }
+    ]
+  }
+}

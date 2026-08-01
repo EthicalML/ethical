@@ -1,4 +1,6 @@
 ---
+import { getEntry } from 'astro:content';
+
 interface Metric {
   value: string;
   label: string;
@@ -9,15 +11,23 @@ interface Props {
   contributors?: string;
   releases?: string;
   values?: Metric[];
+  metricId?: string;
+  labels?: string[];
   ariaLabel?: string;
 }
 
-const { stars, contributors, releases, values, ariaLabel = 'Project metrics' } = Astro.props;
-const metrics: Metric[] = values ?? [
-  { value: stars ?? '', label: 'STARS' },
-  { value: contributors ?? '', label: 'CONTRIBUTORS' },
-  { value: releases ?? '', label: 'RELEASES' },
-];
+const { stars, contributors, releases, values, metricId, labels, ariaLabel = 'Project metrics' } = Astro.props;
+const entry = metricId ? await getEntry('metrics', metricId) : undefined;
+const storedMetrics = entry?.data.values ?? [];
+const metrics: Metric[] = values
+  ? values
+  : metricId
+    ? storedMetrics.filter(({ label }) => !labels || labels.includes(label))
+    : [
+        { value: stars ?? '', label: 'STARS' },
+        { value: contributors ?? '', label: 'CONTRIBUTORS' },
+        { value: releases ?? '', label: 'RELEASES' },
+      ];
 ---
 
 <aside class="metrics-block prose-block" aria-label={ariaLabel} data-reveal style={`--metric-count: ${metrics.length}`}>

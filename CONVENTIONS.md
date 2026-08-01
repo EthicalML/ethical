@@ -71,6 +71,7 @@ All first-party client behaviour is TypeScript. Do not add first-party runtime J
 | KAOS title morph            | Homepage KAOS card title → KAOS page hero h1                         | `MorphPairs`, `OpenSourceShowcase`, `ArticleHero`                   |
 | Project portal activity     | `/open-source/` project panels and production ML constellation       | `ProjectPortal`, `CategoryConstellation`, `CanvasEngine`            |
 | Kompute sequence playback   | Kompute detail sequence pipeline                                     | `SequencePipeline`                                                  |
+| Production ML atlas drift   | Production ML catalogue category field                               | `CategoryAtlas`                                                     |
 | Partner logo morph          | Clicked marquee instance → matching directory logo                   | `MorphPairs`, `AffiliationMarquee`, `PartnerDirectory`              |
 | Principle directional slide | `/principles/NN/` prev/next → adjacent principle                     | `PrincipleLayout`, `Motion`, `tokens.css`                           |
 
