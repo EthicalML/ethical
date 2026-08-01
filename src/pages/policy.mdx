@@ -180,7 +180,7 @@ mandates:
       - role: Early member, ISO/IEC 42001 (AI management systems)
 ---
 
-import { AchievementGrid, ArticleHero, PolicyCorpusExplorer, PolicyMandates, PolicyRecord } from '../components/prose/components.js';
+import { AchievementGrid, AchievementVisual, ArticleHero, PolicyCorpusExplorer, PolicyMandates, PolicyRecord } from '../components/prose/components.js';
 import StatBand from '../components/StatBand.astro';
 
 <ArticleHero
@@ -200,85 +200,107 @@ import StatBand from '../components/StatBand.astro';
   </header>
   <AchievementGrid>
     <article className="achievement-card">
-      <span>EU · GPAI CODE OF PRACTICE</span>
-      <strong>8 of 12 recommendations adopted</strong>
-      <p>
-        ACM's second-draft response states that “eight (8) out of twelve (12) initial recommendations … are integrated in the main text of the Second Draft”.
-      </p>
-      <p className="achievement-links">
-        <a
-          href="https://www.acm.org/binaries/content/assets/public-policy/acm-europetpc-consultation-2024---2nd-general-purpose-ai-code-of-practice-1.pdf"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Read the response →
-        </a>
-      </p>
+      <AchievementVisual variant="eu-adoption" />
+      <div className="achievement-card-copy">
+        <span>EU · GPAI CODE OF PRACTICE</span>
+        <strong>8 of 12 recommendations adopted</strong>
+        <p>
+          ACM's second-draft response states that “eight (8) out of twelve (12) initial recommendations … are integrated in the main text of the Second Draft”.
+        </p>
+        <p className="achievement-links">
+          <a
+            href="https://www.acm.org/binaries/content/assets/public-policy/acm-europetpc-consultation-2024---2nd-general-purpose-ai-code-of-practice-1.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Read the response →
+          </a>
+        </p>
+      </div>
     </article>
     <article className="achievement-card">
-      <span>UNITED KINGDOM · AI REGULATION</span>
-      <strong>13 of 14 recommendations adopted</strong>
-      <p>The adoption total is owner-attested. The 2022 framework comments are the related first-stage artefact.</p>
-      <p className="achievement-links">
-        <a href="https://www.acm.org/binaries/content/assets/public-policy/europe-tpc-uk-ai-framework-comments.pdf" target="_blank" rel="noopener noreferrer">
-          Read the framework comments →
-        </a>
-      </p>
+      <AchievementVisual variant="uk-adoption" />
+      <div className="achievement-card-copy">
+        <span>UNITED KINGDOM · AI REGULATION</span>
+        <strong>13 of 14 recommendations adopted</strong>
+        <p>The adoption total is owner-attested. The 2022 framework comments are the related first-stage artefact.</p>
+        <p className="achievement-links">
+          <a href="https://www.acm.org/binaries/content/assets/public-policy/europe-tpc-uk-ai-framework-comments.pdf" target="_blank" rel="noopener noreferrer">
+            Read the framework comments →
+          </a>
+        </p>
+      </div>
     </article>
     <article className="achievement-card">
-      <span>CITED INTO THE CODE</span>
-      <strong>The Institute's MLSecOps framework</strong>
-      <p>Both GPAI responses cite MLSecOps in Recommendation 10 alongside MITRE ATT&CK, OWASP and UK NCSC as taxonomies for the Commission to build on.</p>
-      <p className="achievement-links">
-        <a href="/frameworks/security/">Explore MLSecOps →</a>
-        <a
-          href="https://www.acm.org/binaries/content/assets/public-policy/acm-europetpc-consultation-2024---2nd-general-purpose-ai-code-of-practice-1.pdf"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Read the response →
-        </a>
-      </p>
+      <AchievementVisual variant="citation-network" />
+      <div className="achievement-card-copy">
+        <span>CITED INTO THE CODE</span>
+        <strong>The Institute's MLSecOps framework</strong>
+        <p>Both GPAI responses cite MLSecOps in Recommendation 10 alongside MITRE ATT&CK, OWASP and UK NCSC as taxonomies for the Commission to build on.</p>
+        <p className="achievement-links">
+          <a href="/frameworks/security/">Explore MLSecOps →</a>
+          <a
+            href="https://www.acm.org/binaries/content/assets/public-policy/acm-europetpc-consultation-2024---2nd-general-purpose-ai-code-of-practice-1.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Read the response →
+          </a>
+        </p>
+      </div>
     </article>
     <article className="achievement-card">
-      <span>UNITED NATIONS</span>
-      <strong>Chair, Principles Committee</strong>
-      <p>The appointment covers the Data Governance Guidelines developed through the UN Commission on Science and Technology for Development.</p>
-      <p className="achievement-links">
-        <a
-          href="https://unctad.org/topic/commission-on-science-and-technology-for-development/working-group-on-data-governance"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Public record →
-        </a>
-      </p>
+      <AchievementVisual variant="un-chair" />
+      <div className="achievement-card-copy">
+        <span>UNITED NATIONS</span>
+        <strong>Chair, Principles Committee</strong>
+        <p>The appointment covers the Data Governance Guidelines developed through the UN Commission on Science and Technology for Development.</p>
+        <p className="achievement-links">
+          <a
+            href="https://unctad.org/topic/commission-on-science-and-technology-for-development/working-group-on-data-governance"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Public record →
+          </a>
+        </p>
+      </div>
     </article>
     <article className="achievement-card">
-      <span>ACM POLICY LEADERSHIP</span>
-      <strong>Founding Chair, Europe. Founding Committee, LATAM</strong>
-      <p>The Institute's Chief Scientist founded ACM's AI policy committee work in Europe and is a founding committee member for LATAM.</p>
-      <p className="achievement-links">
-        <a href="https://www.acm.org/volunteers/volunteer/saucedo_9722274" target="_blank" rel="noopener noreferrer">
-          ACM volunteer record →
-        </a>
-      </p>
+      <AchievementVisual variant="acm-bridges" />
+      <div className="achievement-card-copy">
+        <span>ACM POLICY LEADERSHIP</span>
+        <strong>Founding Chair, Europe. Founding Committee, LATAM</strong>
+        <p>The Institute's Chief Scientist founded ACM's AI policy committee work in Europe and is a founding committee member for LATAM.</p>
+        <p className="achievement-links">
+          <a href="https://www.acm.org/volunteers/volunteer/saucedo_9722274" target="_blank" rel="noopener noreferrer">
+            ACM volunteer record →
+          </a>
+        </p>
+      </div>
     </article>
     <article className="achievement-card">
-      <span>THE THROUGH-LINE</span>
-      <strong>From operational divergence to agentic oversight</strong>
-      <p>
-        The 2021 AI Act comments called for continuous post-deployment oversight of self-modifying systems. The 2026 brief applies the same position to agentic
-        frontier models.
-      </p>
-      <p className="achievement-links">
-        <a href="https://www.acm.org/binaries/content/assets/public-policy/europe-tpc-comments-ai-consultation.pdf" target="_blank" rel="noopener noreferrer">
-          2021 comments →
-        </a>
-        <a href="https://www.acm.org/public-policy/europe-tpc/calibrating-oversight-agentic-frontier-models-04272026" target="_blank" rel="noopener noreferrer">
-          2026 brief →
-        </a>
-      </p>
+      <AchievementVisual variant="policy-timeline" />
+      <div className="achievement-card-copy">
+        <span>THE THROUGH-LINE</span>
+        <strong>From operational divergence to agentic oversight</strong>
+        <p>
+          The 2021 AI Act comments called for continuous post-deployment oversight of self-modifying systems. The 2026 brief applies the same position to
+          agentic frontier models.
+        </p>
+        <p className="achievement-links">
+          <a href="https://www.acm.org/binaries/content/assets/public-policy/europe-tpc-comments-ai-consultation.pdf" target="_blank" rel="noopener noreferrer">
+            2021 comments →
+          </a>
+          <a
+            href="https://www.acm.org/public-policy/europe-tpc/calibrating-oversight-agentic-frontier-models-04272026"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            2026 brief →
+          </a>
+        </p>
+      </div>
     </article>
   </AchievementGrid>
   <p className="regulation-line" data-reveal>
