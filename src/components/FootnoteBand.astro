@@ -1,16 +1,10 @@
 ---
+import AffiliationMarquee from './AffiliationMarquee.astro';
+
 const footer = {
   about: {
     eyebrow: 'ABOUT THE INSTITUTE',
     text: 'An independent research institute working to ensure that frontier AI is safe, aligned and accountable to people and society.',
-    standardsLabel: 'Case studies:',
-    standards: [
-      { label: 'Association for Computing Machinery', href: '/partners/#acm' },
-      { label: 'United Nations', href: '/partners/#united-nations' },
-      { label: 'European Commission', href: '/partners/#european-commission' },
-      { label: 'Linux Foundation', href: '/partners/#linux-foundation' },
-      { label: 'NumFOCUS', href: '/partners/#numfocus' },
-    ],
   },
   talksEyebrow: 'TALKS & KEYNOTES',
   elsewhere: {
@@ -29,15 +23,12 @@ const talks = [
   { kind: 'TALK', title: 'KubeCon Europe — ML evaluation at scale' },
   { kind: 'TALK', title: 'PyCon keynote — monitoring, drift and explainability' },
 ];
-const standards = footer.about.standards;
 ---
 
 <aside class="footnote-band" data-reveal>
   <div class="footnote-about">
-    <p class="eyebrow">{footer.about.eyebrow}</p><p>{footer.about.text}</p><div class="standards">
-      <span>{footer.about.standardsLabel}</span>
-      {standards.map((standard) => <a href={standard.href}>{standard.label}</a>)}
-    </div>
+    <p class="eyebrow">{footer.about.eyebrow}</p><p>{footer.about.text}</p>
+    <AffiliationMarquee />
   </div>
   <div class="footnote-talks">
     <p class="eyebrow">{footer.talksEyebrow}</p>{

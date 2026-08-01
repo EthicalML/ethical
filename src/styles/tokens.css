@@ -919,16 +919,6 @@ form[data-state="success"] > :not(.form-confirmation) { display: none; }
 form[data-state="success"] .form-confirmation { margin: auto 0; }
 form[data-state="error"] .form-confirmation { color: var(--warn); font: var(--body-14)/1.5 var(--font-body); }
 
-.site-footer {
-  border-top: 1px solid var(--hairline);
-  color: var(--text-4);
-  display: flex;
-  font-family: var(--font-mono);
-  font-size: var(--mono-10);
-  justify-content: space-between;
-  letter-spacing: .1em;
-  padding: 26px 48px;
-}
 
 @keyframes menu-row {
   from { opacity: 0; transform: translateY(8px); }
@@ -1135,11 +1125,6 @@ html[data-astro-transition="back"]::view-transition-new(principle-page) {
   .network-stats div {
     border-bottom: 1px solid var(--hairline);
     border-right: 0;
-  }
-  .site-footer {
-    flex-direction: column;
-    gap: 10px;
-    padding: 26px 24px;
   }
 }
 
@@ -1568,8 +1553,15 @@ main > .home-section:last-child { padding-bottom: 120px; }
 .footnote-band p { color:rgba(244,242,238,.62); font-size:14px; line-height:1.62; margin:0; max-width:520px; }
 .footnote-band .eyebrow { color:rgba(244,242,238,.4); font:9.5px/normal var(--font-mono); letter-spacing:.14em; }
 .footnote-about > p:not(.eyebrow) { margin-top:12px; }
-.footnote-band .standards { color:rgba(244,242,238,.42); display:flex; flex-wrap:wrap; font:9.5px/normal var(--font-mono); gap:6px 18px; letter-spacing:.08em; margin-top:14px; }
-.footnote-band .standards a { color:inherit; font:inherit; }
+/* Compact marquee variant inside the footnote's left column: smaller logos, no
+   eyebrow/roles, tighter mask — the loop itself provides the horizontal crop. */
+.footnote-about .affiliations { border-bottom: 0; margin-top: 14px; padding: 0; }
+.footnote-about .affiliations > .eyebrow { display: none; }
+.footnote-about .marquee-mask { mask-image: linear-gradient(90deg, transparent, #000 32px, #000 calc(100% - 32px), transparent); max-width: 520px; }
+.footnote-about .marquee-item { height: 44px; padding: 0 22px; }
+.footnote-about .marquee-logo-frame { height: 22px; width: 100px; }
+.footnote-about .marquee-logo { width: clamp(38px, calc(var(--logo-ratio) * 22px), 100px); }
+.footnote-about .marquee-role { display: none; }
 .footnote-band a { color:rgba(244,242,238,.7); font-size:13px; }
 .footnote-talks { display:flex; flex-direction:column; }
 .footnote-talks > .eyebrow { margin-bottom:10px; }
@@ -2133,5 +2125,4 @@ main > .home-section:last-child { padding-bottom: 120px; }
   }
   .talk-grid h2 { font-size: 28px; }
   .footnote-band { padding: 40px 18px; }
-  .site-footer { padding-inline: 18px; }
 }

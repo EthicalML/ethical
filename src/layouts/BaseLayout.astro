@@ -5,7 +5,6 @@ import '../styles/layout.css';
 import { ClientRouter } from 'astro:transitions';
 import SiteHeader from '../components/SiteHeader.astro';
 import FootnoteBand from '../components/FootnoteBand.astro';
-import SiteFooter from '../components/SiteFooter.astro';
 
 const metaDescription = 'An independent research institute working to ensure that frontier AI is safe, aligned and accountable to people and society.';
 const ogImage = '/images/banner.jpg';
@@ -129,7 +128,6 @@ const socialImage = new URL(frontmatter.image ?? ogImage, Astro.site);
       <slot />
     </main>
     <FootnoteBand />
-    <SiteFooter />
     <script>
       import '../shared/MorphPairs';
       import '../shared/Motion';
