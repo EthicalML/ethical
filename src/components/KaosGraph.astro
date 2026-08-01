@@ -21,7 +21,12 @@ const transitionStyle = transitionName ? `view-transition-name: ${transitionName
       data-morph-source={morphSource}
     />
   ) : embedded ? (
-    <kaos-graph class:list={['kaos-canvas-mount', !backdrop && 'widget embedded-widget']} aria-label="KAOS agent graph" transition:name={transitionName} style={transitionStyle} />
+    <kaos-graph
+      class:list={['kaos-canvas-mount', !backdrop && 'widget embedded-widget']}
+      aria-label="KAOS agent graph"
+      transition:name={transitionName}
+      style={transitionStyle}
+    />
   ) : (
     <section id="opensource" aria-labelledby="kaos-heading" data-reveal>
       <p class="eyebrow">CUSTOM WIDGET</p>

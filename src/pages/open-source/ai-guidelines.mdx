@@ -1,0 +1,29 @@
+---
+title: Awesome AI Regulation, Principles & Guidelines
+description: 'A repository "mapping the ecosystem of guidelines, principles, codes of ethics, standards and regulation being put in place around artificial intelligence", from national law to practical checklists.'
+composed: true
+layout: ../../layouts/ProseLayout.astro
+---
+
+import { ArticleHero, CTA, Metrics, RegulationGrid } from '../../components/prose/components.js';
+import catalogues from '../../content/oss-catalogues.json';
+
+<ArticleHero
+  eyebrow="OPEN SOURCE · POLICY"
+  title={frontmatter.title}
+  intro={
+    'A repository "mapping the ecosystem of guidelines, principles, codes of ethics, standards and regulation being put in place around artificial intelligence", from national law to practical checklists.'
+  }
+/>
+
+## Two ways in
+
+By geography: national regulation and policy across fifteen economic areas, from the EU AI Act ("the first regulation implemented on AI") to national strategies across the Americas, Asia and the Middle East. By theme: high-level frameworks and principles, industry standards initiatives, practical tools and checklists, courses, and research newsletters.
+
+<RegulationGrid areas={catalogues.aiGuidelines.areas} themes={catalogues.aiGuidelines.themes} repository={catalogues.aiGuidelines.repository} />
+
+The Institute's own nine principles sit in the same ecosystem this list maps, which is why the repository is where our policy work and the wider landscape meet.
+
+<Metrics metricId="ai-guidelines" labels={['STARS', 'ECONOMIC AREAS', '']} />
+
+<CTA href="https://github.com/EthicalML/awesome-artificial-intelligence-regulation" label="Browse AI guidelines →" />

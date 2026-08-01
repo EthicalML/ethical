@@ -15,3 +15,5 @@ export { default as PartnerDirectory } from '../PartnerDirectory.astro';
 export { default as PrinciplesExplorer } from '../PrinciplesExplorer.astro';
 export { default as TalksGrid } from '../TalksGrid.astro';
 export { default as SurveyExplorer } from '../SurveyExplorerIsland.astro';
+export { default as CategoryAtlas } from '../CategoryAtlas.astro';
+export { default as RegulationGrid } from '../RegulationGrid.astro';

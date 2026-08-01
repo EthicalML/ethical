@@ -1,0 +1,119 @@
+---
+interface CatalogueItem {
+  name: string;
+  emoji: string;
+  count: number;
+  anchor: string;
+}
+
+interface Props {
+  areas: CatalogueItem[];
+  themes: CatalogueItem[];
+  repository: string;
+}
+
+const { areas, themes, repository } = Astro.props;
+---
+
+<div class="regulation-catalogue" data-reveal>
+  <nav class="regulation-grid" aria-label="AI regulation by economic area">
+    {
+      areas.map(({ name, emoji, count, anchor }) => (
+        <a href={`${repository}${anchor}`} rel="noopener">
+          <span aria-hidden="true">{emoji}</span>
+          <strong>{name}</strong>
+          <small>{count}</small>
+        </a>
+      ))
+    }
+  </nav>
+  <nav class="regulation-themes" aria-label="AI guidelines by theme">
+    {
+      themes.map(({ name, emoji, anchor }) => (
+        <a href={`${repository}${anchor}`} rel="noopener">
+          <span aria-hidden="true">{emoji}</span>
+          {name}
+        </a>
+      ))
+    }
+  </nav>
+</div>
+
+<style>
+  .regulation-catalogue {
+    margin-top: 34px;
+  }
+  .regulation-grid {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .regulation-grid a {
+    align-items: center;
+    border: 1px solid var(--hairline-card);
+    border-radius: var(--radius-row);
+    color: var(--text-1);
+    display: grid;
+    gap: 12px;
+    grid-template-columns: auto 1fr auto;
+    min-height: 64px;
+    padding: 12px 14px;
+    transition:
+      background 0.18s ease,
+      border-color 0.18s ease,
+      transform 0.18s ease;
+  }
+  .regulation-grid a:hover,
+  .regulation-grid a:focus-visible,
+  .regulation-themes a:hover,
+  .regulation-themes a:focus-visible {
+    background: var(--accent-wash-07);
+    border-color: rgba(94, 230, 160, 0.45);
+    outline: none;
+    transform: translateY(-2px);
+  }
+  .regulation-grid a > span {
+    font-size: 22px;
+  }
+  .regulation-grid strong {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.25;
+  }
+  .regulation-grid small {
+    color: var(--text-3);
+    font: var(--mono-10)/1 var(--font-mono);
+  }
+  .regulation-themes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+  }
+  .regulation-themes a {
+    border: 1px solid var(--hairline-card);
+    border-radius: var(--radius-pill);
+    color: var(--text-2);
+    font: var(--mono-10)/1.2 var(--font-mono);
+    padding: 10px 14px;
+    transition:
+      background 0.18s ease,
+      border-color 0.18s ease,
+      transform 0.18s ease;
+  }
+  .regulation-themes span {
+    margin-right: 7px;
+  }
+
+  @media (max-width: 800px) {
+    .regulation-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 480px) {
+    .regulation-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

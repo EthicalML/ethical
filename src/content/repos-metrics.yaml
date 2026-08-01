@@ -14,10 +14,22 @@ xai:
       label: CONTRIBUTORS
 ecosystem:
   values:
-    - value: 20.8k
+    - value: 20.8K
       label: STARS
     - value: '210'
       label: CONTRIBUTORS
+    - value: 550+
+      label: LIBRARIES
+    - value: '24'
+      label: CATEGORIES
+ai-guidelines:
+  values:
+    - value: 1.4K
+      label: STARS
+    - value: '15'
+      label: ECONOMIC AREAS
+    - value: MIT
+      label: ''
 kaos:
   values:
     - value: '268'

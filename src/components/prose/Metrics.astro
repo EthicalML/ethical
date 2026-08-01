@@ -1,10 +1,29 @@
 ---
-const { stars, contributors, releases } = Astro.props;
-const metrics = [
-  { value: stars, label: 'STARS' },
-  { value: contributors, label: 'CONTRIBUTORS' },
-  { value: releases, label: 'RELEASES' },
-];
+import { getEntry } from 'astro:content';
+
+interface Metric {
+  value: string;
+  label: string;
+}
+
+interface Props {
+  stars?: string;
+  contributors?: string;
+  releases?: string;
+  metricId?: string;
+  labels?: string[];
+}
+
+const { stars, contributors, releases, metricId, labels } = Astro.props;
+const entry = metricId ? await getEntry('metrics', metricId) : undefined;
+const storedMetrics = entry?.data.values ?? [];
+const metrics: Metric[] = metricId
+  ? storedMetrics.filter(({ label }) => !labels || labels.includes(label))
+  : [
+      { value: stars ?? '', label: 'STARS' },
+      { value: contributors ?? '', label: 'CONTRIBUTORS' },
+      { value: releases ?? '', label: 'RELEASES' },
+    ];
 ---
 
 <aside class="metrics-block prose-block" aria-label="Project metrics" data-reveal>
