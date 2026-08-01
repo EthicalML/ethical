@@ -1,66 +1,23 @@
 ---
 import { FORM_ENDPOINT } from 'astro:env/server';
 import { getRecentIssueNumbers } from '../utils/RecentIssues';
-
-interface Stat {
-  value: string;
-  label: string;
-}
-
-interface Sector {
-  name: string;
-  value: string;
-}
-
-interface FormField {
-  label: string;
-  name: string;
-  type: 'text' | 'email';
-  placeholder: string;
-  autocomplete: string;
-  wide?: boolean;
-}
-
-interface FormCopy {
-  title: string;
-  fields: FormField[];
-  interests: Array<{
-    value: string;
-    label: string;
-    checked: boolean;
-  }>;
-  button: string;
-  disclaimer: string;
-  confirmation: string;
-  demoConfirmation: string;
-  error: string;
-}
-
-interface Copy {
-  homeEyebrow: string;
-  contactEyebrow: string;
-  homeIntro: string;
-  contactIntro: string;
-  sectorEyebrow: string;
-  issuesEyebrow: string;
-  form: FormCopy;
-}
+import type { FormSectionCopy, FormSectionSector, FormSectionStat } from '../data/contactForm';
 
 interface Props {
   variant: string;
   title: string;
-  copy: Copy;
-  sectors?: Sector[];
-  stats?: Stat[];
+  copy: FormSectionCopy;
+  sectors?: FormSectionSector[];
+  stats?: FormSectionStat[];
+  eyebrow?: string;
+  submissionVariant?: string;
   homepage?: boolean;
 }
 
-const { variant, title, copy, sectors = [], stats = [], homepage = false } = Astro.props;
+const { variant, title, copy, sectors = [], stats = [], eyebrow = copy.homeEyebrow, submissionVariant = variant, homepage = false } = Astro.props;
 
 const isSupportedVariant = variant === 'network-split' || variant === 'contact-full';
-const isContactPage = variant === 'contact-full';
-const shouldShowHomeEyebrow = !isContactPage;
-const sectionClasses = ['join-section', isContactPage && 'contact-full', homepage && 'home-section'];
+const sectionClasses = ['join-section', variant === 'contact-full' && 'contact-full', homepage && 'home-section'];
 const issues = await getRecentIssueNumbers();
 const minimumSubmissionMs = 3000;
 ---
@@ -68,50 +25,44 @@ const minimumSubmissionMs = 3000;
 {
   isSupportedVariant && (
     <section id="join" class:list={sectionClasses} aria-labelledby="network-heading" data-reveal>
-      {shouldShowHomeEyebrow && <p class="eyebrow">{copy.homeEyebrow}</p>}
+      <p class="eyebrow">{eyebrow}</p>
       <div class="network-split">
         <div>
-          {isContactPage && <p class="eyebrow">{copy.contactEyebrow}</p>}
           <h2 id="network-heading">{title}</h2>
-          {isContactPage && <p>{copy.contactIntro}</p>}
-          {!isContactPage && (
-            <>
-              <p>{copy.homeIntro}</p>
-              <div class="network-stats">
-                {stats.map((stat) => (
-                  <div>
-                    <strong>{stat.value}</strong>
-                    <span>{stat.label}</span>
-                  </div>
-                ))}
+          <p>{copy.intro}</p>
+          <div class="network-stats">
+            {stats.map((stat) => (
+              <div>
+                <strong>{stat.value}</strong>
+                <span>{stat.label}</span>
               </div>
-              <div class="network-lists">
-                <div>
-                  <p class="eyebrow">{copy.sectorEyebrow}</p>
-                  {sectors.map(({ name, value }) => (
-                    <span>
-                      <i>{name}</i>
-                      <b>{value}</b>
-                    </span>
-                  ))}
-                </div>
-                <div>
-                  <p class="eyebrow">{copy.issuesEyebrow}</p>
-                  {issues.map((number) => (
-                    <a href="/network/">
-                      <b>#{number}</b>
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
+            ))}
+          </div>
+          <div class="network-lists">
+            <div>
+              <p class="eyebrow">{copy.sectorEyebrow}</p>
+              {sectors.map(({ name, value }) => (
+                <span>
+                  <i>{name}</i>
+                  <b>{value}</b>
+                </span>
+              ))}
+            </div>
+            <div>
+              <p class="eyebrow">{copy.issuesEyebrow}</p>
+              {issues.map((number) => (
+                <a href="/network/">
+                  <b>#{number}</b>
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
         <institute-form>
           <form
             id="contact"
             data-institute-form
-            data-variant={variant}
+            data-variant={submissionVariant}
             data-endpoint={FORM_ENDPOINT}
             data-minimum-submission-ms={minimumSubmissionMs}
             data-confirmation={copy.form.confirmation}
@@ -137,12 +88,13 @@ const minimumSubmissionMs = 3000;
             </div>
             <fieldset>
               {copy.form.interests.map((interest) => (
-                <label>
+                <label data-interest-row={interest.value}>
                   <input
                     type="checkbox"
                     name="interests"
                     value={interest.value}
                     checked={interest.checked}
+                    data-interest
                     data-application-interest={interest.value === 'network' ? '' : undefined}
                   />{' '}
                   {interest.label}
@@ -169,6 +121,7 @@ const minimumSubmissionMs = 3000;
 <script>
   class InstituteForm extends HTMLElement {
     private controller = new AbortController();
+    private preselectionTimer?: number;
     private startedAt = Date.now();
 
     connectedCallback() {
@@ -194,6 +147,23 @@ const minimumSubmissionMs = 3000;
         updateApplicationHelper();
       }
 
+      const requestedInterest = new URLSearchParams(location.search).get('interest');
+      const interestInput = Array.from(form.querySelectorAll<HTMLInputElement>('[data-interest]')).find((input) => input.value === requestedInterest);
+      if (interestInput) {
+        const row = interestInput.closest<HTMLElement>('[data-interest-row]');
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          interestInput.checked = true;
+          interestInput.dispatchEvent(new Event('change', { bubbles: true }));
+        } else if (row) {
+          interestInput.checked = false;
+          this.preselectionTimer = window.setTimeout(() => {
+            row.classList.add('interest-selecting');
+            interestInput.checked = true;
+            interestInput.dispatchEvent(new Event('change', { bubbles: true }));
+          }, 500);
+        }
+      }
+
       form.addEventListener(
         'submit',
         (event) => {
@@ -205,6 +175,7 @@ const minimumSubmissionMs = 3000;
 
     disconnectedCallback() {
       this.controller.abort();
+      if (this.preselectionTimer !== undefined) window.clearTimeout(this.preselectionTimer);
     }
 
     private async submit(event: SubmitEvent, form: HTMLFormElement, message: HTMLElement, button: HTMLButtonElement) {
@@ -260,3 +231,77 @@ const minimumSubmissionMs = 3000;
     customElements.define('institute-form', InstituteForm);
   }
 </script>
+
+<style>
+  fieldset input[type='checkbox'] {
+    appearance: none;
+    border: 1px solid rgba(255, 255, 255, 0.26);
+    border-radius: 3px;
+    display: grid;
+    flex: none;
+    padding: 0;
+    place-content: center;
+    transition:
+      background 140ms ease,
+      border-color 140ms ease;
+  }
+
+  fieldset input[type='checkbox']::before {
+    border-bottom: 2px solid var(--accent-on);
+    border-right: 2px solid var(--accent-on);
+    content: '';
+    height: 7px;
+    transform: rotate(45deg) scale(0);
+    transition: transform 180ms var(--ease-panel);
+    width: 4px;
+  }
+
+  fieldset input[type='checkbox']:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  fieldset input[type='checkbox']:checked::before {
+    transform: rotate(45deg) scale(1);
+  }
+
+  fieldset label.interest-selecting {
+    animation: interest-row-select 900ms ease-out;
+    border-radius: var(--radius-control);
+  }
+
+  fieldset label.interest-selecting input:checked {
+    animation: interest-checkbox-pop 300ms var(--ease-panel);
+  }
+
+  @keyframes interest-row-select {
+    0% {
+      background: var(--accent-wash-16);
+      box-shadow: 0 0 0 7px var(--accent-wash-16);
+      color: var(--accent);
+    }
+    100% {
+      background: transparent;
+      box-shadow: 0 0 0 7px transparent;
+    }
+  }
+
+  @keyframes interest-checkbox-pop {
+    0% {
+      transform: scale(0.72);
+    }
+    60% {
+      transform: scale(1.18);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    fieldset input[type='checkbox'],
+    fieldset input[type='checkbox']::before {
+      transition: none;
+    }
+  }
+</style>
