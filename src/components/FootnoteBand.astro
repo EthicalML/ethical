@@ -18,10 +18,8 @@ const footer = {
   },
 };
 const talks = [
-  { kind: 'TALK', title: 'NeurIPS 2023 Workshop keynote' },
-  { kind: 'TALK', title: 'NeurIPS 2022 — machine learning security' },
-  { kind: 'TALK', title: 'KubeCon Europe — ML evaluation at scale' },
-  { kind: 'TALK', title: 'PyCon keynote — monitoring, drift and explainability' },
+  { kind: 'TALK', title: 'NeurIPS 2023 Workshop Keynote' },
+  { kind: 'TALK', title: 'KubeCon Europe Keynote' },
 ];
 ---
 
@@ -42,10 +40,12 @@ const talks = [
         </a>
       ))
     }
+    <a class="footnote-all-talks" href="/talks/">All talks →</a>
   </div>
   <div class="footnote-elsewhere">
     <p class="eyebrow">{footer.elsewhere.eyebrow}</p><div class="footnote-links">
       {footer.elsewhere.links.map(({ label, href }) => <a href={href}>{label}</a>)}
     </div>
   </div>
+  <p class="footnote-legal">© {new Date().getFullYear()} The Institute for Ethical AI Alignment & Safety</p>
 </aside>

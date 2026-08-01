@@ -1570,6 +1570,8 @@ main > .home-section:last-child { padding-bottom: 120px; }
 .footnote-talks a span { color:rgba(244,242,238,.74); }
 .footnote-talks b { color:var(--accent); font-weight:400; margin-left:auto; }
 .footnote-links { display:flex; flex-direction:column; gap:7px; margin-top:12px; }
+.footnote-all-talks { color:var(--accent); font:var(--mono-10)/1 var(--font-mono); letter-spacing:.08em; margin-top:14px; text-transform:uppercase; }
+.footnote-band .footnote-legal { color:rgba(244,242,238,.35); font:9.5px/normal var(--font-mono); grid-column:1 / -1; justify-self:end; letter-spacing:.1em; margin:8px 0 0; max-width:none; text-align:right; }
 @media (max-width: 950px) {
   .primary-nav { display: none; }
   .nav-right .nav-trigger { display: none; }
