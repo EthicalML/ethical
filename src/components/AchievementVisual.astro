@@ -4,142 +4,68 @@ interface Props {
 }
 
 const { variant } = Astro.props;
-const meter = variant === 'eu-adoption' ? { adopted: 8, total: 12, open: 4 } : variant === 'uk-adoption' ? { adopted: 13, total: 14, open: 1 } : undefined;
-const segments = meter ? Array.from({ length: meter.total }, (_, index) => index) : [];
+const meter = variant === 'eu-adoption' ? { adopted: 8, total: 12 } : variant === 'uk-adoption' ? { adopted: 13, total: 14 } : undefined;
 ---
 
 <div class:list={['achievement-visual', `visual-${variant}`]} aria-hidden="true">
   {
     meter && (
-      <svg class="meter-svg" viewBox="0 0 560 205">
-        <g class="meter-segments" transform="translate(280 133)">
-          {segments.map((index) => {
-            const angle = -105 + (210 / (meter.total - 1)) * index;
-            return (
-              <g transform={`rotate(${angle})`}>
-                <line class="meter-base" x1="0" y1="-59" x2="0" y2="-86" />
-                {index < meter.adopted && <line class="meter-fill" style={`--segment-order:${index}`} x1="0" y1="-59" x2="0" y2="-86" />}
-              </g>
-            );
-          })}
-        </g>
-        <text class="visual-number" x="280" y="116" text-anchor="middle">
+      <svg viewBox="0 0 48 48">
+        <path class="glyph-hairline" d="M9 37h30" />
+        {Array.from({ length: meter.total }, (_, index) => {
+          const x = 9 + (30 / (meter.total - 1)) * index;
+          const height = index < meter.adopted ? 12 : 6;
+          return <path class:list={['meter-segment', { adopted: index < meter.adopted }]} d={`M${x} 35V${35 - height}`} />;
+        })}
+        <text x="9" y="13">
           {meter.adopted}/{meter.total}
         </text>
-        <text class="visual-label" x="36" y="180">
-          ADOPTED {meter.adopted}
-        </text>
-        <text class="visual-label visual-label-end" x="524" y="180" text-anchor="end">
-          OPEN {meter.open}
-        </text>
-        <path class="visual-hairline" d="M36 160H524" />
       </svg>
     )
   }
 
   {
     variant === 'citation-network' && (
-      <svg viewBox="0 0 360 190">
-        <path class="visual-hairline network-link" d="M83 95H184" />
-        <path class="visual-hairline network-link" d="M211 88 289 42M214 97h83M211 106l76 43" />
-        <path class="network-draw" d="M83 95H184" pathLength="1" />
-        <circle class="network-halo" cx="198" cy="96" r="34" />
-        <g class="network-node network-source">
-          <rect x="25" y="76" width="66" height="38" />
-          <circle cx="82" cy="95" r="4" />
-          <text x="34" y="99">
-            MLSECOPS
-          </text>
-        </g>
-        <g class="network-node network-code">
-          <circle cx="198" cy="96" r="24" />
-          <circle class="network-code-core" cx="198" cy="96" r="5" />
-          <text x="198" y="101" text-anchor="middle">
-            CODE
-          </text>
-        </g>
-        <g class="network-node network-reference">
-          <circle cx="295" cy="39" r="8" />
-          <circle cx="304" cy="97" r="8" />
-          <circle cx="293" cy="153" r="8" />
-          <text x="271" y="25">
-            MITRE
-          </text>
-          <text x="278" y="82">
-            OWASP
-          </text>
-          <text x="268" y="177">
-            NCSC
-          </text>
-        </g>
+      <svg viewBox="0 0 48 48">
+        <path class="glyph-hairline" d="M11 24h12M29 24l8-10M29 24l8 10" />
+        <path class="glyph-accent" d="M11 24h12" />
+        <circle class="glyph-node" cx="9" cy="24" r="3" />
+        <circle class="glyph-node glyph-node-main" cx="26" cy="24" r="5" />
+        <circle class="glyph-node" cx="39" cy="12" r="2.5" />
+        <circle class="glyph-node" cx="39" cy="36" r="2.5" />
       </svg>
     )
   }
 
   {
     variant === 'un-chair' && (
-      <svg viewBox="0 0 360 190">
-        <g class="committee-rings">
-          <circle class="visual-hairline ring ring-outer" cx="180" cy="95" r="69" />
-          <circle class="visual-hairline ring ring-middle" cx="180" cy="95" r="48" />
-          <circle class="visual-hairline ring" cx="180" cy="95" r="27" />
-          <path class="ring-tick" d="M180 19v14M249 95h-14M180 171v-14M111 95h14" />
-        </g>
-        <circle class="chair-halo" cx="229" cy="46" r="18" />
-        <circle class="chair-seat" cx="229" cy="46" r="7" />
-        <text class="visual-label" x="244" y="43">
-          CHAIR
-        </text>
-        <text class="visual-label" x="180" y="100" text-anchor="middle">
-          CSTD
-        </text>
+      <svg viewBox="0 0 48 48">
+        <circle class="glyph-hairline" cx="24" cy="24" r="15" />
+        <circle class="glyph-hairline glyph-dash" cx="24" cy="24" r="9" />
+        <circle class="glyph-node glyph-node-main" cx="35" cy="13" r="4" />
       </svg>
     )
   }
 
   {
     variant === 'acm-bridges' && (
-      <svg viewBox="0 0 360 190">
-        <path class="visual-hairline hub-field" d="M30 134Q178 22 330 128M30 146Q178 56 330 140M66 26v136M294 26v136" />
-        <path class="hub-base" d="M67 104Q177 33 294 114" />
-        <path class="hub-draw" d="M67 104Q177 33 294 114" pathLength="1" />
-        <circle class="hub-halo hub-europe-halo" cx="67" cy="104" r="20" />
-        <circle class="hub-halo hub-latam-halo" cx="294" cy="114" r="22" />
-        <circle class="hub-node hub-europe" cx="67" cy="104" r="7" />
-        <circle class="hub-node hub-latam" cx="294" cy="114" r="7" />
-        <text class="visual-label" x="40" y="137">
-          EUROPE
-        </text>
-        <text class="visual-label" x="266" y="147">
-          LATAM
-        </text>
-        <text class="visual-label" x="180" y="35" text-anchor="middle">
-          FOUNDING
-        </text>
+      <svg viewBox="0 0 48 48">
+        <path class="glyph-hairline glyph-dash" d="M8 31Q24 8 40 31" />
+        <path class="glyph-accent" d="M8 31Q24 8 40 31" />
+        <circle class="glyph-node glyph-node-main" cx="8" cy="31" r="4" />
+        <circle class="glyph-node" cx="40" cy="31" r="4" />
       </svg>
     )
   }
 
   {
     variant === 'policy-timeline' && (
-      <svg viewBox="0 0 360 190">
-        <path class="visual-hairline timeline-grid" d="M42 60H318M42 130H318M70 38v114M290 38v114" />
-        <path class="timeline-rail" d="M69 96H291" />
-        <path class="timeline-draw" d="M69 96H291" pathLength="1" />
-        <circle class="timeline-halo timeline-halo-start" cx="69" cy="96" r="18" />
-        <circle class="timeline-halo timeline-halo-end" cx="291" cy="96" r="18" />
-        <circle class="timeline-node" cx="69" cy="96" r="7" />
-        <circle class="timeline-node timeline-node-end" cx="291" cy="96" r="7" />
-        <circle class="timeline-pulse" cx="69" cy="96" r="4" />
-        <text class="visual-label" x="46" y="128">
-          2021
-        </text>
-        <text class="visual-label" x="268" y="128">
-          2026
-        </text>
-        <text class="visual-label" x="180" y="82" text-anchor="middle">
-          OVERSIGHT
-        </text>
+      <svg viewBox="0 0 48 48">
+        <path class="glyph-hairline" d="M8 25h32" />
+        <path class="glyph-accent" d="M8 25h23" />
+        <circle class="glyph-node glyph-node-main" cx="8" cy="25" r="4" />
+        <circle class="glyph-node" cx="40" cy="25" r="4" />
+        <path class="glyph-tick" d="M16 20v10M24 20v10M32 20v10" />
       </svg>
     )
   }
@@ -147,316 +73,56 @@ const segments = meter ? Array.from({ length: meter.total }, (_, index) => index
 
 <style>
   .achievement-visual {
-    background:
-      linear-gradient(rgba(94, 230, 160, 0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(94, 230, 160, 0.035) 1px, transparent 1px),
-      radial-gradient(70% 100% at 50% 100%, rgba(94, 230, 160, 0.08), transparent 72%);
-    background-size:
-      32px 32px,
-      32px 32px,
-      auto;
-    border-bottom: 1px solid var(--hairline-card);
-    display: block;
-    height: 178px;
-    overflow: hidden;
-    position: relative;
+    align-items: center;
+    background: rgba(94, 230, 160, 0.08);
+    border: 1px solid rgba(94, 230, 160, 0.24);
+    display: flex;
+    height: 52px;
+    justify-content: center;
+    left: 24px;
+    position: absolute;
+    top: 24px;
+    width: 52px;
+    z-index: 2;
   }
-
-  .visual-eu-adoption,
-  .visual-uk-adoption {
-    height: 214px;
-  }
-
   svg {
     display: block;
-    height: 100%;
-    width: 100%;
+    height: 40px;
+    width: 40px;
+  }
+  path,
+  circle {
+    fill: none;
+    vector-effect: non-scaling-stroke;
   }
   text {
-    fill: var(--text-4);
-    font: 9px var(--font-mono);
-    letter-spacing: 0.08em;
+    fill: var(--accent);
+    font: 7px var(--font-mono);
+    letter-spacing: 0.04em;
   }
-  .visual-number {
-    fill: var(--text-1);
-    font: 300 38px var(--font-display);
-    letter-spacing: -0.02em;
-  }
-  .visual-label {
-    fill: var(--text-4);
-    font-size: 8px;
-    letter-spacing: 0.12em;
-  }
-  .visual-hairline {
-    fill: none;
-    stroke: rgba(244, 242, 238, 0.13);
+  .glyph-hairline,
+  .glyph-node,
+  .glyph-tick,
+  .meter-segment {
+    stroke: rgba(244, 242, 238, 0.38);
     stroke-width: 1;
   }
-  .meter-base {
-    stroke: rgba(244, 242, 238, 0.19);
-    stroke-width: 4;
-  }
-  .meter-fill {
+  .glyph-accent,
+  .meter-segment.adopted {
     stroke: var(--accent);
-    stroke-dasharray: 27;
-    stroke-dashoffset: 21;
-    stroke-linecap: square;
-    stroke-width: 5;
-    transition:
-      opacity 160ms ease,
-      stroke-dashoffset 360ms cubic-bezier(0.2, 0.75, 0.2, 1);
-    transition-delay: calc(var(--segment-order) * 34ms);
-  }
-
-  .network-link {
-    stroke-dasharray: 3 4;
-  }
-  .network-draw,
-  .hub-draw,
-  .timeline-draw {
-    fill: none;
-    stroke: var(--accent);
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
     stroke-width: 1.5;
-    transition: stroke-dashoffset 620ms cubic-bezier(0.18, 0.74, 0.22, 1);
   }
-  .network-halo,
-  .chair-halo,
-  .hub-halo,
-  .timeline-halo {
-    fill: rgba(94, 230, 160, 0.04);
-    stroke: rgba(94, 230, 160, 0.14);
-  }
-  .network-node circle,
-  .network-node rect {
+  .glyph-node {
     fill: var(--bg-inset);
-    stroke: rgba(244, 242, 238, 0.22);
   }
-  .network-node rect {
-    rx: 0;
-  }
-  .network-source circle {
-    fill: var(--accent);
-    stroke: none;
-  }
-  .network-code-core {
-    fill: var(--accent) !important;
-    stroke: none !important;
-  }
-  .network-node text {
-    fill: var(--text-3);
-    font-size: 7px;
-  }
-  .network-code text {
-    fill: var(--text-1);
-  }
-  .network-halo {
-    opacity: 0;
-    transform-box: fill-box;
-    transform-origin: center;
-  }
-
-  .committee-rings {
-    transform-box: fill-box;
-    transform-origin: center;
-    transition: transform 560ms cubic-bezier(0.2, 0.75, 0.2, 1);
-  }
-  .ring-middle {
-    stroke-dasharray: 5 6;
-  }
-  .ring-outer {
-    stroke-dasharray: 2 5;
-  }
-  .ring-tick {
-    fill: none;
-    stroke: rgba(244, 242, 238, 0.24);
-  }
-  .chair-seat {
-    fill: var(--accent);
-  }
-  .chair-halo {
-    opacity: 0.28;
-    transform-box: fill-box;
-    transform-origin: center;
-  }
-
-  .hub-field {
-    stroke-dasharray: 2 6;
-  }
-  .hub-base {
-    fill: none;
-    stroke: rgba(244, 242, 238, 0.2);
-    stroke-dasharray: 4 5;
-  }
-  .hub-node {
-    fill: var(--bg-inset);
-    stroke: rgba(244, 242, 238, 0.45);
-  }
-  .hub-europe {
-    fill: rgba(94, 230, 160, 0.34);
-    stroke: var(--accent);
-  }
-  .hub-latam-halo {
-    opacity: 0;
-    transform-box: fill-box;
-    transform-origin: center;
-  }
-  .hub-latam {
-    transition:
-      fill 180ms ease,
-      stroke 180ms ease;
-  }
-
-  .timeline-grid {
-    stroke-dasharray: 2 7;
-  }
-  .timeline-rail {
-    fill: none;
-    stroke: rgba(244, 242, 238, 0.3);
-    stroke-width: 2;
-  }
-  .timeline-node {
-    fill: var(--accent);
-    stroke: var(--bg-inset);
-    stroke-width: 4;
-  }
-  .timeline-node-end {
-    fill: var(--bg-inset);
-    stroke: rgba(244, 242, 238, 0.32);
-    transition:
-      fill 180ms ease,
-      stroke 180ms ease;
-  }
-  .timeline-pulse {
-    fill: var(--accent);
-    opacity: 0.3;
-    transition:
-      opacity 160ms ease,
-      transform 650ms cubic-bezier(0.16, 0.76, 0.24, 1);
-  }
-  .timeline-halo {
-    opacity: 0.18;
-    transform-box: fill-box;
-    transform-origin: center;
-  }
-
-  :global(.achievement-card:hover) .meter-fill,
-  :global(.achievement-card:focus-within) .meter-fill {
-    stroke-dashoffset: 0;
-  }
-  :global(.achievement-card:hover) .network-draw,
-  :global(.achievement-card:focus-within) .network-draw,
-  :global(.achievement-card:hover) .hub-draw,
-  :global(.achievement-card:focus-within) .hub-draw,
-  :global(.achievement-card:hover) .timeline-draw,
-  :global(.achievement-card:focus-within) .timeline-draw {
-    stroke-dashoffset: 0;
-  }
-  :global(.achievement-card:hover) .network-halo,
-  :global(.achievement-card:focus-within) .network-halo {
-    animation: node-pulse 760ms ease-out;
-  }
-  :global(.achievement-card:hover) .committee-rings,
-  :global(.achievement-card:focus-within) .committee-rings {
-    transform: rotate(7deg);
-  }
-  :global(.achievement-card:hover) .ring-middle,
-  :global(.achievement-card:focus-within) .ring-middle {
-    transform: rotate(-13deg);
-    transform-box: fill-box;
-    transform-origin: center;
-  }
-  :global(.achievement-card:hover) .chair-halo,
-  :global(.achievement-card:focus-within) .chair-halo {
-    animation: seat-pulse 820ms ease-out;
-  }
-  :global(.achievement-card:hover) .hub-latam-halo,
-  :global(.achievement-card:focus-within) .hub-latam-halo {
-    animation: node-pulse 820ms ease-out;
-    opacity: 0.7;
-  }
-  :global(.achievement-card:hover) .hub-latam,
-  :global(.achievement-card:focus-within) .hub-latam {
+  .glyph-node-main {
     fill: var(--accent);
     stroke: var(--accent);
   }
-  :global(.achievement-card:hover) .timeline-pulse,
-  :global(.achievement-card:focus-within) .timeline-pulse {
-    opacity: 1;
-    transform: translateX(222px);
+  .glyph-dash {
+    stroke-dasharray: 2 3;
   }
-  :global(.achievement-card:hover) .timeline-node-end,
-  :global(.achievement-card:focus-within) .timeline-node-end {
-    fill: var(--accent);
-    stroke: var(--accent);
-    transition-delay: 480ms;
-  }
-  :global(.achievement-card:hover) .timeline-halo-end,
-  :global(.achievement-card:focus-within) .timeline-halo-end {
-    animation: node-pulse 760ms 440ms ease-out;
-  }
-
-  @keyframes node-pulse {
-    0% {
-      opacity: 0;
-      transform: scale(0.55);
-    }
-    55% {
-      opacity: 0.8;
-      transform: scale(1.18);
-    }
-    100% {
-      opacity: 0.25;
-      transform: scale(1);
-    }
-  }
-
-  @keyframes seat-pulse {
-    0% {
-      opacity: 0.25;
-      transform: scale(0.7);
-    }
-    55% {
-      opacity: 0.85;
-      transform: scale(1.25);
-    }
-    100% {
-      opacity: 0.35;
-      transform: scale(1);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .meter-fill,
-    .network-draw,
-    .hub-draw,
-    .timeline-draw {
-      stroke-dashoffset: 0;
-      transition: none;
-    }
-    .network-halo,
-    .chair-halo,
-    .hub-latam-halo,
-    .timeline-halo-end {
-      animation: none !important;
-      opacity: 0.35;
-      transform: none;
-    }
-    .committee-rings,
-    .ring-middle {
-      transform: none !important;
-      transition: none;
-    }
-    .hub-latam,
-    .timeline-node-end {
-      fill: var(--accent);
-      stroke: var(--accent);
-      transition: none;
-    }
-    .timeline-pulse {
-      opacity: 1;
-      transform: translateX(222px);
-      transition: none;
-    }
+  .glyph-tick {
+    opacity: 0.42;
   }
 </style>
