@@ -82,7 +82,7 @@ All first-party client behaviour is TypeScript. Do not add first-party runtime J
 | Production ML atlas drift   | Production ML catalogue category field                               | `CategoryAtlas`                                                                       |
 | Policy record timeline      | `/policy/` flagship hero                                             | `PolicyTimeline`, `CanvasEngine`                                                      |
 | Policy hero canvas studies  | `/prototypes/policy-hero/?v=1..5`                                    | `PolicyHero1..5`, `CanvasEngine`                                                      |
-| Policy achievement blocks   | `/policy/` achievement entrance and pointer hover                    | `AchievementGrid`, `tokens.css`                                                       |
+| Policy achievement blocks   | `/policy/` block entrance and six card-specific hover visuals        | `AchievementGrid`, `AchievementVisual`, `tokens.css`                                  |
 | Policy corpus field         | `/policy/` ambient quote field and user-selected quote reformation   | `PolicyCorpusExplorer`                                                                |
 | Partner logo morph          | Clicked marquee instance → matching directory logo                   | `MorphPairs`, `AffiliationMarquee`, `PartnerDirectory`                                |
 | Principle directional slide | `/principles/NN/` prev/next → adjacent principle                     | `PrincipleLayout`, `Motion`, `tokens.css`                                             |
