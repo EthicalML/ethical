@@ -6,6 +6,7 @@ const variants = [
   { label: 'Jurisdiction arcs', value: 2 },
   { label: 'Record flow', value: 3 },
   { label: 'Living text', value: 4 },
+  { label: 'Policy assembly', value: 5 },
 ];
 const frontmatter = {
   title: 'Policy hero canvas prototypes',
@@ -48,6 +49,9 @@ const intro =
     <template data-canvas-variant="4"
       ><policy-hero-4 class="policy-prototype-mount"><canvas class="hero-canvas" aria-hidden="true"></canvas></policy-hero-4></template
     >
+    <template data-canvas-variant="5"
+      ><policy-hero-5 class="policy-prototype-mount"><canvas class="hero-canvas" aria-hidden="true"></canvas></policy-hero-5></template
+    >
   </policy-hero-prototype>
 </BaseLayout>
 
@@ -56,11 +60,12 @@ const intro =
   import '../../shared/canvas/PolicyHero2';
   import '../../shared/canvas/PolicyHero3';
   import '../../shared/canvas/PolicyHero4';
+  import '../../shared/canvas/PolicyHero5';
 
   class PolicyHeroPrototype extends HTMLElement {
     connectedCallback() {
       const requested = Number.parseInt(new URL(window.location.href).searchParams.get('v') ?? '1', 10);
-      const variant = requested >= 1 && requested <= 4 ? requested : 1;
+      const variant = requested >= 1 && requested <= 5 ? requested : 1;
       const template = this.querySelector<HTMLTemplateElement>(`template[data-canvas-variant="${variant}"]`);
       const mount = this.querySelector<HTMLElement>('[data-canvas-mount]');
       if (!template || !mount) return;
