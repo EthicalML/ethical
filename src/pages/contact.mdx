@@ -3,60 +3,22 @@ title: Contact the Institute
 description: A single route into the network, frameworks, research and institutional partnerships.
 composed: true
 layout: ../layouts/ProseLayout.astro
-form_copy:
-  homeEyebrow: 05 — NETWORK & NEWSLETTER
-  contactEyebrow: ONE FORM / MANY WAYS IN
-  homeIntro: Responsible technology requires changes to models and to the systems around them. Membership includes the Ethical AI Network and the Machine Learning Engineer newsletter.
-  contactIntro: Tell us what you are working on, where you need help, or how you would like to contribute.
-  sectorEyebrow: WHO IS HERE
-  issuesEyebrow: RECENT ISSUES
-  form:
-    title: Contact form
-    fields:
-      - label: Name
-        name: name
-        type: text
-        placeholder: Alex Moreau
-        autocomplete: name
-      - label: Email
-        name: email
-        type: email
-        placeholder: you@organisation.org
-        autocomplete: email
-      - label: Organisation & role
-        name: organisation
-        type: text
-        placeholder: Institution — role
-        autocomplete: organization-title
-        wide: true
-      - label: Further information
-        name: furtherInformation
-        type: text
-        placeholder: Context, motivation or relevant links
-        autocomplete: off
-        wide: true
-    interests:
-      - value: network
-        label: Apply to join the Ethical AI Network
-        checked: false
-      - value: newsletter
-        label: Subscribe to the ML Engineer newsletter
-        checked: true
-      - value: frameworks
-        label: Request the AI-RFX materials or a collaboration
-        checked: false
-    button: Send
-    disclaimer: We only use your details to reply and to send what you asked for. Unsubscribe any time.
-    confirmation: Thank you. Your details have been sent to the Institute.
-    demoConfirmation: The form is in demo mode. No endpoint is configured and nothing was sent.
-    error: We could not send your details. Please try again or email hello@ethical.institute.
 ---
 
 import { ArticleHero, ChannelLinks, FormSection } from '../components/prose/components.js';
+import { contactFormCopy, contactFormTitle, networkSectors, networkStats } from '../data/contactForm';
 
 <ArticleHero eyebrow="CONTACT" title="Contact the Institute" intro="A single route into the network, frameworks, research and institutional partnerships." />
 
-<FormSection variant="contact-full" title="Join, subscribe or get in touch" copy={frontmatter.form_copy} />
+<FormSection
+  variant="network-split"
+  title={contactFormTitle}
+  copy={contactFormCopy}
+  sectors={networkSectors}
+  stats={networkStats}
+  eyebrow={contactFormCopy.contactEyebrow}
+  submissionVariant="contact-full"
+/>
 
 <ChannelLinks
   eyebrow="CHANNELS"
