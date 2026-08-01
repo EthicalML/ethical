@@ -1,118 +1,251 @@
-<request-path data-scenario="user" data-step="0">
-  <div class="scenario-row" role="group" aria-label="Request scenario">
-    <button type="button" class="active" aria-pressed="true" data-scenario="user">User request</button>
-    <button type="button" aria-pressed="false" data-scenario="agent">Autonomous agent</button>
-    <button type="button" aria-pressed="false" data-scenario="denied">Denied request</button>
-  </div>
-  <div class="identity-row" aria-live="polite">
-    <span class="token subject"><i></i>subject: <b data-subject>keycloak:user</b></span>
-    <span class="token actor"><i></i>actor: <b data-actor>serviceaccount:agent</b></span>
-  </div>
-  <div class="path" aria-label="Request authorization path">
-    <article data-path-step><span>01</span><strong>Client</strong><small>request</small></article><i aria-hidden="true">→</i>
-    <article data-path-step><span>02</span><strong>Envoy Gateway</strong><small>JWT verify</small></article><i aria-hidden="true">→</i>
-    <article data-path-step class="pdp"><span>03</span><strong>OPA PDP</strong><small data-decision>allow / deny</small></article><i aria-hidden="true">→</i>
-    <article data-path-step><span>04</span><strong>Agent</strong><small>identity checked</small></article><i aria-hidden="true">→</i>
-    <article data-path-step><span>05</span><strong>Onward hop</strong><small>both tokens</small></article>
-    <div class="denied-stamp" aria-hidden="true">403 · DENY</div>
-  </div>
-  <button class="step-button" type="button" data-step-button>Advance request →</button>
-</request-path>
+---
+import AnimationWindow from './AnimationWindow.astro';
+
+const scenarios = [
+  { id: 'user', number: '01', label: 'User request', outcome: 'ALLOW' },
+  { id: 'agent', number: '02', label: 'Autonomous agent', outcome: 'ALLOW' },
+  { id: 'denied', number: '03', label: 'Denied request', outcome: '403' },
+];
+---
+
+<AnimationWindow class="request-window" title="gateway.authorization">
+  <request-path data-scenario="user" data-step="0">
+    <div class="scenario-picker">
+      <span class="scenario-label">CHOOSE REQUEST</span>
+      <div class="scenario-buttons" role="group" aria-label="Request scenario">
+        {
+          scenarios.map(({ id, number, label, outcome }, index) => (
+            <button type="button" class:list={{ active: index === 0 }} aria-pressed={index === 0 ? 'true' : 'false'} data-scenario={id}>
+              <>
+                <small>{number}</small>
+                <span>{label}</span>
+                <b>{outcome}</b>
+              </>
+            </button>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="identity-row" aria-live="polite">
+      <span class="token subject"><i></i>subject: <b data-subject>keycloak:user</b></span>
+      <span class="token actor"><i></i>actor: <b data-actor>serviceaccount:agent</b></span>
+      <span class="identity-note">VERIFIED ON EVERY HOP</span>
+    </div>
+
+    <div class="path" aria-label="Request authorization path">
+      <div class="request-packet" aria-hidden="true">REQ</div>
+      <article data-path-step="0"><span>01</span><strong>Client</strong><small>request</small></article>
+      <i aria-hidden="true">→</i>
+      <article data-path-step="1" class="gateway">
+        <span>02</span><strong>Envoy Gateway</strong><small>JWT verify</small><em class="check-stamp">JWT ✓</em>
+      </article>
+      <i aria-hidden="true">→</i>
+      <article data-path-step="2" class="pdp">
+        <span>03</span><strong>OPA PDP</strong><small data-decision>allow</small><em class="decision-stamp" data-decision-stamp>ALLOW ✓</em>
+      </article>
+      <i aria-hidden="true">→</i>
+      <article data-path-step="3"><span>04</span><strong>Agent</strong><small>identity checked</small><em class="check-stamp">ID ✓</em></article>
+      <i aria-hidden="true">→</i>
+      <article data-path-step="4"><span>05</span><strong>Onward hop</strong><small>both tokens</small><em class="check-stamp">ID ✓</em></article>
+      <div class="denied-return" aria-hidden="true">← 403 · FAIL CLOSED</div>
+    </div>
+
+    <div class="path-status" aria-live="polite">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span data-status>Request ready at client</span>
+      <small>Use the numbered scenarios to switch paths</small>
+    </div>
+  </request-path>
+</AnimationWindow>
 
 <script>
+  const statuses = [
+    'Request ready at client',
+    'JWT verified by Envoy Gateway',
+    'OPA policy decision applied',
+    'Acting agent identity checked',
+    'Authorised request continues with both tokens',
+  ];
+
   class RequestPath extends HTMLElement {
     private controller = new AbortController();
+    private timer = 0;
+    private step = 0;
 
     connectedCallback() {
       this.controller = new AbortController();
+      const windowElement = this.closest<HTMLElement>('animation-window');
       const scenarios = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-scenario]'));
-      const steps = Array.from(this.querySelectorAll<HTMLElement>('[data-path-step]'));
-      const advance = this.querySelector<HTMLButtonElement>('[data-step-button]');
-      const subject = this.querySelector<HTMLElement>('[data-subject]');
-      const actor = this.querySelector<HTMLElement>('[data-actor]');
-      const decision = this.querySelector<HTMLElement>('[data-decision]');
-      if (!scenarios.length || !steps.length || !advance || !subject || !actor || !decision) return;
-      let current = 0;
+      if (!windowElement || !scenarios.length) return;
 
-      const render = () => {
-        const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const denied = this.dataset.scenario === 'denied';
-        const limit = denied ? 2 : steps.length - 1;
-        steps.forEach((step, index) => step.classList.toggle('active', reduced || index <= Math.min(current, limit)));
-        this.dataset.step = String(current);
-        this.classList.toggle('is-denied', denied && (reduced || current >= limit));
-        advance.textContent = current >= limit ? 'Replay path ↺' : 'Advance request →';
-      };
-      const select = (button: HTMLButtonElement) => {
-        this.dataset.scenario = button.dataset.scenario;
-        current = 0;
-        scenarios.forEach((item) => {
-          const active = item === button;
-          item.classList.toggle('active', active);
-          item.setAttribute('aria-pressed', String(active));
-        });
-        const autonomous = this.dataset.scenario === 'agent';
-        const denied = this.dataset.scenario === 'denied';
-        subject.textContent = autonomous ? 'serviceaccount:agent' : denied ? 'keycloak:unknown' : 'keycloak:user';
-        actor.textContent = 'serviceaccount:agent';
-        decision.textContent = denied ? 'deny · fail closed' : 'allow';
-        render();
-      };
-      scenarios.forEach((button) => button.addEventListener('click', () => select(button), { signal: this.controller.signal }));
-      advance.addEventListener(
-        'click',
-        () => {
-          const limit = this.dataset.scenario === 'denied' ? 2 : steps.length - 1;
-          current = current >= limit ? 0 : current + 1;
-          render();
-        },
-        { signal: this.controller.signal },
-      );
-      render();
+      scenarios.forEach((button) => {
+        button.addEventListener('click', () => this.selectScenario(button, scenarios, windowElement), { signal: this.controller.signal });
+      });
+      windowElement.addEventListener('animationwindow:play', () => this.play(), { signal: this.controller.signal });
+      windowElement.addEventListener('animationwindow:pause', () => this.pause(), { signal: this.controller.signal });
+      this.render();
+      if (windowElement.dataset.playing === 'true') this.play();
     }
 
     disconnectedCallback() {
       this.controller.abort();
+      window.clearTimeout(this.timer);
+    }
+
+    private selectScenario(button: HTMLButtonElement, scenarios: HTMLButtonElement[], windowElement: HTMLElement) {
+      this.dataset.scenario = button.dataset.scenario;
+      scenarios.forEach((item) => {
+        const active = item === button;
+        item.classList.toggle('active', active);
+        item.setAttribute('aria-pressed', String(active));
+      });
+      this.step = 0;
+      this.render();
+      if (windowElement.dataset.playing === 'true') this.play();
+    }
+
+    private play() {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const limit = this.dataset.scenario === 'denied' ? 2 : 4;
+      if (this.step >= limit) this.step = 0;
+      this.render();
+      this.scheduleNext(limit);
+    }
+
+    private pause() {
+      window.clearTimeout(this.timer);
+    }
+
+    private scheduleNext(limit: number) {
+      window.clearTimeout(this.timer);
+      this.timer = window.setTimeout(() => {
+        this.step += 1;
+        this.render();
+        if (this.step >= limit) {
+          this.dispatchEvent(new CustomEvent('animationwindow:complete', { bubbles: true }));
+          return;
+        }
+        this.scheduleNext(limit);
+      }, 900);
+    }
+
+    private render() {
+      const scenario = this.dataset.scenario ?? 'user';
+      const denied = scenario === 'denied';
+      const autonomous = scenario === 'agent';
+      const limit = denied ? 2 : 4;
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const visibleStep = reduced ? limit : this.step;
+      this.dataset.step = String(visibleStep);
+      this.classList.toggle('is-denied', denied && visibleStep >= 2);
+
+      const subject = this.querySelector<HTMLElement>('[data-subject]');
+      const actor = this.querySelector<HTMLElement>('[data-actor]');
+      const decision = this.querySelector<HTMLElement>('[data-decision]');
+      const decisionStamp = this.querySelector<HTMLElement>('[data-decision-stamp]');
+      const status = this.querySelector<HTMLElement>('[data-status]');
+      if (subject) subject.textContent = autonomous ? 'serviceaccount:agent' : denied ? 'keycloak:unknown' : 'keycloak:user';
+      if (actor) actor.textContent = 'serviceaccount:agent';
+      if (decision) decision.textContent = denied ? 'deny · fail closed' : 'allow';
+      if (decisionStamp) decisionStamp.textContent = denied ? 'DENY ×' : 'ALLOW ✓';
+      if (status) status.textContent = denied && visibleStep >= 2 ? 'OPA denied the request · 403 returned' : statuses[visibleStep];
+
+      this.querySelectorAll<HTMLElement>('[data-path-step]').forEach((step) => {
+        const index = Number(step.dataset.pathStep);
+        step.classList.toggle('passed', index < visibleStep && index <= limit);
+        step.classList.toggle('current', index === visibleStep && index <= limit);
+      });
     }
   }
+
   if (!customElements.get('request-path')) customElements.define('request-path', RequestPath);
 </script>
 
 <style>
-  request-path {
-    border: 1px solid var(--hairline-card);
-    display: block;
+  .request-window {
     margin-top: 38px;
   }
-  .scenario-row {
+  request-path {
+    display: block;
+  }
+  .scenario-picker {
+    align-items: center;
     border-bottom: 1px solid var(--hairline-card);
-    display: flex;
-    padding: 10px;
+    display: grid;
+    gap: 18px;
+    grid-template-columns: auto 1fr;
+    padding: 16px 20px;
+  }
+  .scenario-label,
+  .identity-note {
+    color: var(--text-3);
+    font: var(--mono-9)/1.3 var(--font-mono);
+    letter-spacing: 0.12em;
+  }
+  .scenario-buttons {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(3, 1fr);
   }
   button {
+    align-items: center;
     background: transparent;
-    border: 0;
+    border: 1px solid var(--hairline-card);
     color: var(--text-3);
     cursor: pointer;
-    font-family: var(--font-mono);
-    font-size: var(--mono-10);
-    padding: 10px 12px;
+    display: grid;
+    gap: 8px;
+    grid-template-columns: auto 1fr auto;
+    min-height: 44px;
+    min-width: 0;
+    padding: 12px;
+    text-align: left;
   }
-  .scenario-row button.active {
-    background: var(--accent-wash-09);
+  button small,
+  button span,
+  button b {
+    font-family: var(--font-mono);
+    font-size: var(--mono-9);
+  }
+  button small {
     color: var(--accent);
   }
+  button span {
+    color: var(--text-2);
+  }
+  button b {
+    color: var(--text-4);
+    font-weight: 400;
+  }
+  button.active {
+    background: var(--accent-wash-09);
+    border-color: rgba(94, 230, 160, 0.42);
+  }
+  button.active span,
+  button.active b {
+    color: var(--accent);
+  }
+  [data-scenario='denied'] button.active {
+    background: rgba(255, 84, 112, 0.07);
+    border-color: var(--glitch-red);
+  }
+  [data-scenario='denied'] button.active small,
+  [data-scenario='denied'] button.active span,
+  [data-scenario='denied'] button.active b {
+    color: var(--glitch-red);
+  }
   .identity-row {
+    align-items: center;
     display: flex;
     gap: 8px;
-    padding: 22px 24px 0;
+    padding: 20px 20px 0;
   }
   .token {
     border: 1px solid var(--hairline-card);
     color: var(--text-3);
-    font-family: var(--font-mono);
-    font-size: var(--mono-9);
-    padding: 7px 10px;
+    font: var(--mono-9)/1 var(--font-mono);
+    padding: 8px 10px;
   }
   .token i {
     background: var(--accent);
@@ -126,14 +259,17 @@
     color: var(--text-1);
     font-weight: 400;
   }
+  .identity-note {
+    margin-left: auto;
+  }
   .path {
     align-items: center;
     display: grid;
     gap: 9px;
     grid-template-columns: 1fr auto 1.25fr auto 1fr auto 1fr auto 1fr;
-    min-height: 250px;
+    min-height: 260px;
     overflow: hidden;
-    padding: 28px 24px;
+    padding: 28px 20px;
     position: relative;
   }
   .path > i {
@@ -142,76 +278,144 @@
   }
   article {
     border: 1px solid var(--hairline-card);
-    min-height: 106px;
-    opacity: 0.25;
+    min-height: 128px;
+    opacity: 0.3;
     padding: 16px 12px;
+    position: relative;
     transition:
       border-color 0.25s ease,
+      box-shadow 0.25s ease,
       opacity 0.25s ease,
       transform 0.25s ease;
   }
-  article.active {
-    border-color: rgba(94, 230, 160, 0.42);
+  article.passed,
+  article.current {
     opacity: 1;
-    transform: translateY(-3px);
+  }
+  article.passed {
+    border-color: rgba(94, 230, 160, 0.28);
+  }
+  article.current {
+    border-color: var(--accent);
+    box-shadow: 0 0 24px rgba(94, 230, 160, 0.08);
+    transform: translateY(-4px);
   }
   article span,
   article small {
     color: var(--text-3);
     display: block;
-    font-family: var(--font-mono);
-    font-size: var(--mono-9);
+    font: var(--mono-9)/1.35 var(--font-mono);
   }
   article strong {
     display: block;
     font-size: var(--body-13);
     font-weight: 500;
-    margin: 15px 0 5px;
+    margin: 18px 0 6px;
   }
-  .denied-stamp {
-    border: 1px solid var(--glitch-red);
-    color: var(--glitch-red);
-    font-family: var(--font-mono);
-    font-size: var(--body-14);
-    font-weight: 600;
-    left: 55%;
+  article em {
+    border: 1px solid var(--accent);
+    bottom: 12px;
+    color: var(--accent);
+    font: normal var(--mono-9)/1 var(--font-mono);
     opacity: 0;
-    padding: 9px 12px;
-    pointer-events: none;
+    padding: 5px 6px;
     position: absolute;
-    top: 47%;
-    transform: rotate(-8deg) scale(1.4);
+    right: 10px;
+    transform: rotate(-5deg) scale(1.2);
     transition:
       opacity 0.2s ease,
       transform 0.2s ease;
   }
+  article.passed em,
+  article.current em {
+    opacity: 1;
+    transform: rotate(-5deg) scale(1);
+  }
+  .request-packet {
+    background: var(--accent);
+    border-radius: 2px;
+    color: var(--accent-on);
+    font: 700 8px/1 var(--font-mono);
+    left: 3%;
+    opacity: 0;
+    padding: 5px;
+    position: absolute;
+    top: 20px;
+    transition:
+      left 0.7s ease,
+      opacity 0.2s ease;
+    z-index: 2;
+  }
+  :global(animation-window[data-playing='true']) .request-packet {
+    opacity: 1;
+  }
+  [data-step='1'] .request-packet {
+    left: 23%;
+  }
+  [data-step='2'] .request-packet {
+    left: 45%;
+  }
+  [data-step='3'] .request-packet {
+    left: 65%;
+  }
+  [data-step='4'] .request-packet {
+    left: 86%;
+  }
   .is-denied .pdp {
     border-color: var(--glitch-red);
+    box-shadow: 0 0 24px rgba(255, 84, 112, 0.1);
   }
-  .is-denied .denied-stamp {
+  .is-denied .pdp em {
+    border-color: var(--glitch-red);
+    color: var(--glitch-red);
+  }
+  .is-denied article:nth-of-type(n + 4) {
+    opacity: 0.15;
+  }
+  .denied-return {
+    color: var(--glitch-red);
+    font: var(--mono-10)/1 var(--font-mono);
+    left: 33%;
+    opacity: 0;
+    position: absolute;
+    top: 220px;
+    transition: opacity 0.2s ease;
+  }
+  .is-denied .denied-return {
     opacity: 1;
-    transform: rotate(-8deg) scale(1);
   }
-  .step-button {
+  .path-status {
+    align-items: center;
     border-top: 1px solid var(--hairline-card);
-    color: var(--accent);
-    padding: 18px 24px;
-    text-align: left;
-    width: 100%;
+    display: flex;
+    gap: 9px;
+    padding: 16px 20px;
   }
-  @media (prefers-reduced-motion: reduce) {
-    article,
-    .denied-stamp {
-      transition: none;
-    }
-    article.active {
-      transform: none;
-    }
-    .step-button {
-      display: none;
-    }
+  .path-status span,
+  .path-status small {
+    font: var(--mono-10)/1.4 var(--font-mono);
+  }
+  .path-status span {
+    color: var(--text-2);
+  }
+  .path-status small {
+    color: var(--text-4);
+    margin-left: auto;
+  }
+  .status-dot {
+    background: var(--accent);
+    border-radius: 50%;
+    height: 6px;
+    width: 6px;
+  }
+  .is-denied .status-dot {
+    background: var(--glitch-red);
   }
   @media (max-width: 850px) {
+    .scenario-picker {
+      align-items: start;
+      grid-template-columns: 1fr;
+    }
     .path {
       align-items: stretch;
       grid-template-columns: 1fr;
@@ -221,21 +425,39 @@
       transform: rotate(90deg);
     }
     article {
-      min-height: auto;
+      min-height: 110px;
     }
-    .denied-stamp {
-      left: 45%;
-      top: 48%;
+    .request-packet,
+    .denied-return {
+      display: none;
     }
   }
-  @media (max-width: 560px) {
-    .scenario-row {
-      display: grid;
+  @media (max-width: 620px) {
+    .scenario-buttons {
       grid-template-columns: 1fr;
     }
-    .identity-row {
+    .identity-row,
+    .path-status {
       align-items: flex-start;
       flex-direction: column;
+    }
+    .identity-note,
+    .path-status small {
+      margin-left: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    article,
+    article em,
+    .request-packet,
+    .denied-return {
+      transition: none;
+    }
+    article.current {
+      transform: none;
+    }
+    .request-packet {
+      display: none;
     }
   }
 </style>

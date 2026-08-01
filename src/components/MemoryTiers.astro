@@ -1,214 +1,488 @@
 ---
+import AnimationWindow from './AnimationWindow.astro';
+
 interface Props {
   storage: string;
 }
+
 const { storage }: Props = Astro.props;
+const tenants = [
+  { id: 'a', label: 'Tenant A', agent: 'agent-a' },
+  { id: 'b', label: 'Tenant B', agent: 'agent-b' },
+  { id: 'c', label: 'Tenant C', agent: 'agent-c' },
+];
 const scopes = ['session', 'agent', 'user', 'store'];
 ---
 
-<memory-tiers data-scope="session">
-  <div class="scope-row">
-    <span>SCOPE OF READ</span>
-    <div role="group" aria-label="Memory scope">
-      {
-        scopes.map((scope, index) => (
-          <button type="button" class:list={{ active: index === 0 }} aria-pressed={index === 0 ? 'true' : 'false'} data-scope={scope}>
-            {scope}
-          </button>
-        ))
-      }
+<AnimationWindow class="memory-window" title="memory.scope">
+  <memory-tiers data-tenant="a" data-stage="0">
+    <div class="tenant-picker" role="group" aria-label="Select an authenticated agent">
+      <span class="picker-label">AUTHENTICATED AGENT</span>
+      <div class="tenant-buttons">
+        {
+          tenants.map(({ id, label, agent }, index) => (
+            <button type="button" class:list={{ active: index === 0 }} aria-pressed={index === 0 ? 'true' : 'false'} data-tenant-button={id}>
+              <span>{label}</span>
+              <small>{agent}</small>
+            </button>
+          ))
+        }
+      </div>
     </div>
-  </div>
-  <div class="tiers">
-    <article class="tier short" data-tier="short">
-      <span class="tier-index">01</span><div><h3>Short-term rows</h3><p>Recent conversation window · relational records</p></div>
-      <i class="memory-event" aria-hidden="true"></i>
-    </article>
-    <article class="tier digest" data-tier="digest">
-      <span class="tier-index">02</span><div><h3>Rolling digest</h3><p>Optional summary · narrative continuity</p></div>
-      <i class="memory-event" aria-hidden="true"></i>
-    </article>
-    <article class="tier long" data-tier="long">
-      <span class="tier-index">03</span><div><h3>Long-term vector recall</h3><p>Semantic facts · relevance across sessions</p></div>
-      <i class="memory-event" aria-hidden="true"></i>
-    </article>
-  </div>
-  <p class="storage-fact">{storage}</p>
-</memory-tiers>
+
+    <div class="scope-derivation" aria-label="Server-derived memory scope">
+      <span class="identity-chip"><i aria-hidden="true"></i><b data-active-agent>agent-a</b> identity</span>
+      <span class="scope-arrow" aria-hidden="true">→</span>
+      <div class="server-scope">
+        <small>DERIVED SERVER-SIDE</small>
+        <div>{scopes.map((scope) => <span>{scope}</span>)}</div>
+      </div>
+      <span class="scope-arrow" aria-hidden="true">→</span>
+      <span class="partition-chip"><b data-active-tenant>Tenant A</b> partition</span>
+    </div>
+
+    <div class="memory-flow" aria-label="Message moving through the three memory tiers">
+      <article class="tier short" data-tier="1">
+        <span class="tier-index">01</span>
+        <div><h3>Short-term rows</h3><p>Recent conversation window · relational records</p></div>
+        <span class="event-label">MESSAGE ENTERS</span>
+      </article>
+      <div class="tier-link" aria-hidden="true"><i></i></div>
+      <article class="tier digest" data-tier="2">
+        <span class="tier-index">02</span>
+        <div><h3>Rolling digest</h3><p>Optional summary · narrative continuity</p></div>
+        <span class="event-label">ABSORBED</span>
+      </article>
+      <div class="tier-link" aria-hidden="true"><i></i></div>
+      <article class="tier long" data-tier="3">
+        <span class="tier-index">03</span>
+        <div><h3>Long-term vector recall</h3><p>Semantic facts · relevance across sessions</p></div>
+        <span class="event-label">FACT CRYSTALLISES</span>
+      </article>
+    </div>
+
+    <div class="isolation" aria-label="Tenant-isolated memory reads">
+      <span class="isolation-label">ISOLATED READS</span>
+      <div class="tenant-lanes">
+        {
+          tenants.map(({ id, label, agent }) => (
+            <div class="tenant-lane" data-tenant-lane={id}>
+              <>
+                <span>{agent}</span>
+                <i aria-hidden="true" />
+                <b>{label} recall only</b>
+              </>
+            </div>
+          ))
+        }
+      </div>
+      <p><span aria-hidden="true">✓</span> Cross-tenant recall blocked</p>
+    </div>
+
+    <p class="storage-fact">{storage}</p>
+  </memory-tiers>
+</AnimationWindow>
 
 <script>
   class MemoryTiers extends HTMLElement {
     private controller = new AbortController();
-    private observer?: IntersectionObserver;
+    private timer = 0;
+    private stage = 0;
 
     connectedCallback() {
       this.controller = new AbortController();
-      const buttons = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-scope]'));
+      const windowElement = this.closest<HTMLElement>('animation-window');
+      const buttons = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-tenant-button]'));
+      if (!windowElement || !buttons.length) return;
+
       buttons.forEach((button) => {
-        button.addEventListener(
-          'click',
-          () => {
-            this.dataset.scope = button.dataset.scope;
-            buttons.forEach((item) => {
-              const active = item === button;
-              item.classList.toggle('active', active);
-              item.setAttribute('aria-pressed', String(active));
-            });
-          },
-          { signal: this.controller.signal },
-        );
+        button.addEventListener('click', () => this.selectTenant(button, buttons, windowElement), { signal: this.controller.signal });
       });
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
-      this.observer = new IntersectionObserver(([entry]) => this.classList.toggle('is-visible', entry.isIntersecting), { threshold: 0.25 });
-      this.observer.observe(this);
+      windowElement.addEventListener('animationwindow:play', () => this.play(), { signal: this.controller.signal });
+      windowElement.addEventListener('animationwindow:pause', () => this.pause(), { signal: this.controller.signal });
+      this.render();
+      if (windowElement.dataset.playing === 'true') this.play();
     }
 
     disconnectedCallback() {
       this.controller.abort();
-      this.observer?.disconnect();
+      window.clearTimeout(this.timer);
+    }
+
+    private selectTenant(button: HTMLButtonElement, buttons: HTMLButtonElement[], windowElement: HTMLElement) {
+      this.dataset.tenant = button.dataset.tenantButton;
+      buttons.forEach((item) => {
+        const active = item === button;
+        item.classList.toggle('active', active);
+        item.setAttribute('aria-pressed', String(active));
+      });
+      this.stage = 0;
+      this.render();
+      if (windowElement.dataset.playing === 'true') this.play();
+    }
+
+    private play() {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (this.stage >= 3) this.stage = 0;
+      this.render();
+      this.scheduleNext();
+    }
+
+    private pause() {
+      window.clearTimeout(this.timer);
+    }
+
+    private scheduleNext() {
+      window.clearTimeout(this.timer);
+      this.timer = window.setTimeout(() => {
+        this.stage += 1;
+        this.render();
+        if (this.stage >= 3) {
+          this.dispatchEvent(new CustomEvent('animationwindow:complete', { bubbles: true }));
+          return;
+        }
+        this.scheduleNext();
+      }, 1250);
+    }
+
+    private render() {
+      this.dataset.stage = String(this.stage);
+      const tenant = this.dataset.tenant ?? 'a';
+      const label = `Tenant ${tenant.toUpperCase()}`;
+      const agent = `agent-${tenant}`;
+      const activeAgent = this.querySelector<HTMLElement>('[data-active-agent]');
+      const activeTenant = this.querySelector<HTMLElement>('[data-active-tenant]');
+      if (activeAgent) activeAgent.textContent = agent;
+      if (activeTenant) activeTenant.textContent = label;
+      this.querySelectorAll<HTMLElement>('[data-tenant-lane]').forEach((lane) => lane.classList.toggle('selected', lane.dataset.tenantLane === tenant));
+      this.querySelectorAll<HTMLElement>('[data-tier]').forEach((tier) => {
+        tier.classList.toggle('active', Number(tier.dataset.tier) <= this.stage);
+      });
     }
   }
+
   if (!customElements.get('memory-tiers')) customElements.define('memory-tiers', MemoryTiers);
 </script>
 
 <style>
-  memory-tiers {
-    border: 1px solid var(--hairline-card);
-    display: block;
+  .memory-window {
     margin-top: 38px;
   }
-  .scope-row {
-    align-items: center;
-    border-bottom: 1px solid var(--hairline-card);
-    display: flex;
-    justify-content: space-between;
-    padding: 14px 18px;
+  memory-tiers {
+    display: block;
   }
-  .scope-row > span {
-    color: var(--text-3);
-    font-family: var(--font-mono);
-    font-size: var(--mono-9);
-    letter-spacing: 0.12em;
-  }
-  button {
-    background: transparent;
-    border: 0;
-    color: var(--text-3);
-    cursor: pointer;
-    font-family: var(--font-mono);
-    font-size: var(--mono-10);
-    padding: 8px 10px;
-  }
-  button.active {
-    background: var(--accent-wash-09);
-    color: var(--accent);
-  }
-  .tier {
+  .tenant-picker {
     align-items: center;
     border-bottom: 1px solid var(--hairline-card);
     display: grid;
-    gap: 22px;
-    grid-template-columns: 38px 1fr;
-    min-height: 126px;
-    overflow: hidden;
-    padding: 22px 28px;
+    gap: 18px;
+    grid-template-columns: auto 1fr;
+    padding: 16px 20px;
+  }
+  .picker-label,
+  .isolation-label {
+    color: var(--text-3);
+    font: var(--mono-9)/1.3 var(--font-mono);
+    letter-spacing: 0.12em;
+  }
+  .tenant-buttons {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  button {
+    background: transparent;
+    border: 1px solid var(--hairline-card);
+    color: var(--text-3);
+    cursor: pointer;
+    min-width: 0;
+    padding: 10px 12px;
+    text-align: left;
+  }
+  button span,
+  button small {
+    display: block;
+    font-family: var(--font-mono);
+  }
+  button span {
+    color: var(--text-2);
+    font-size: var(--mono-10);
+  }
+  button small {
+    font-size: var(--mono-9);
+    margin-top: 4px;
+  }
+  button.active {
+    background: var(--accent-wash-09);
+    border-color: rgba(94, 230, 160, 0.42);
+  }
+  button.active span,
+  button.active small {
+    color: var(--accent);
+  }
+  .scope-derivation {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.018);
+    border-bottom: 1px solid var(--hairline-card);
+    display: grid;
+    gap: 14px;
+    grid-template-columns: auto auto 1fr auto auto;
+    padding: 20px;
+  }
+  .identity-chip,
+  .partition-chip {
+    border: 1px solid var(--hairline-card);
+    color: var(--text-3);
+    font: var(--mono-9)/1.4 var(--font-mono);
+    padding: 10px 12px;
+  }
+  .identity-chip i {
+    background: var(--accent);
+    border-radius: 50%;
+    display: inline-block;
+    height: 6px;
+    margin-right: 7px;
+    width: 6px;
+  }
+  .identity-chip b,
+  .partition-chip b {
+    color: var(--text-1);
+    font-weight: 400;
+  }
+  .scope-arrow {
+    color: var(--text-4);
+  }
+  .server-scope {
+    text-align: center;
+  }
+  .server-scope small {
+    color: var(--accent);
+    font: var(--mono-9)/1 var(--font-mono);
+    letter-spacing: 0.1em;
+  }
+  .server-scope div {
+    display: grid;
+    gap: 4px;
+    grid-template-columns: repeat(4, 1fr);
+    margin-top: 8px;
+  }
+  .server-scope span {
+    background: rgba(94, 230, 160, 0.06);
+    color: var(--text-2);
+    font: var(--mono-9)/1 var(--font-mono);
+    padding: 7px 5px;
+  }
+  .memory-flow {
+    display: grid;
+    grid-template-columns: 1fr 36px 1fr 36px 1fr;
+    padding: 24px 20px;
+  }
+  .tier {
+    border: 1px solid var(--hairline-card);
+    min-height: 158px;
+    opacity: 0.42;
+    padding: 18px;
     position: relative;
-    transition: opacity var(--duration-34) ease;
+    transition:
+      border-color 0.3s ease,
+      opacity 0.3s ease,
+      transform 0.3s ease;
+  }
+  .tier.active {
+    border-color: rgba(94, 230, 160, 0.42);
+    opacity: 1;
+    transform: translateY(-3px);
   }
   .tier-index {
     color: var(--accent);
-    font-family: var(--font-mono);
-    font-size: var(--mono-10);
+    font: var(--mono-10)/1 var(--font-mono);
   }
   h3 {
-    font-family: var(--font-display);
-    font-size: var(--display-26);
-    font-weight: 400;
-    margin: 0 0 5px;
+    font: 400 var(--body-18)/1.15 var(--font-display);
+    margin: 22px 0 7px;
   }
   .tier p {
     color: var(--text-3);
-    font-family: var(--font-mono);
-    font-size: var(--mono-10);
+    font: var(--mono-9)/1.5 var(--font-mono);
     margin: 0;
   }
-  .memory-event {
-    background: var(--accent);
-    border-radius: 50%;
-    box-shadow: 0 0 18px rgba(94, 230, 160, 0.75);
-    height: 8px;
-    left: -12px;
+  .event-label {
+    bottom: 14px;
+    color: var(--accent);
+    font: var(--mono-9)/1 var(--font-mono);
+    left: 18px;
     opacity: 0;
     position: absolute;
-    top: calc(50% - 4px);
-    width: 8px;
+    transition: opacity 0.25s ease;
   }
-  .is-visible .short .memory-event {
-    animation: memory-flow 4.8s ease-in-out infinite;
+  .tier.active .event-label {
+    opacity: 1;
   }
-  .is-visible .digest .memory-event {
-    animation: memory-flow 4.8s 1.1s ease-in-out infinite;
+  .tier-link {
+    align-items: center;
+    display: flex;
   }
-  .is-visible .long .memory-event {
-    animation: memory-flow 4.8s 2.2s ease-in-out infinite;
+  .tier-link::before {
+    border-top: 1px solid var(--hairline-card);
+    content: '';
+    width: 100%;
   }
-  [data-scope='session'] .digest,
-  [data-scope='session'] .long,
-  [data-scope='agent'] .long {
-    opacity: 0.3;
+  .tier-link i {
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 14px rgba(94, 230, 160, 0.7);
+    height: 6px;
+    margin-left: -100%;
+    opacity: 0;
+    width: 6px;
+  }
+  [data-stage='2'] .memory-flow .tier-link:first-of-type i,
+  [data-stage='3'] .memory-flow .tier-link:last-of-type i {
+    animation: tier-transfer 0.6s ease both;
+  }
+  .isolation {
+    border-top: 1px solid var(--hairline-card);
+    display: grid;
+    gap: 16px;
+    grid-template-columns: auto 1fr auto;
+    padding: 20px;
+  }
+  .tenant-lanes {
+    display: grid;
+    gap: 7px;
+  }
+  .tenant-lane {
+    align-items: center;
+    display: grid;
+    gap: 8px;
+    grid-template-columns: 62px 1fr auto;
+  }
+  .tenant-lane span,
+  .tenant-lane b,
+  .isolation p {
+    color: var(--text-3);
+    font: var(--mono-9)/1.3 var(--font-mono);
+  }
+  .tenant-lane b {
+    font-weight: 400;
+  }
+  .tenant-lane i {
+    border-top: 1px solid var(--hairline-card);
+    position: relative;
+  }
+  .tenant-lane i::after {
+    background: var(--text-4);
+    border-radius: 50%;
+    content: '';
+    height: 5px;
+    left: 10%;
+    position: absolute;
+    top: -3px;
+    width: 5px;
+  }
+  .tenant-lane.selected span,
+  .tenant-lane.selected b,
+  .isolation p span {
+    color: var(--accent);
+  }
+  :global(animation-window[data-playing='true']) .tenant-lane i::after {
+    animation: isolated-read 2.4s ease-in-out infinite;
+  }
+  :global(animation-window[data-playing='true']) .tenant-lane:nth-child(2) i::after {
+    animation-delay: 0.35s;
+  }
+  :global(animation-window[data-playing='true']) .tenant-lane:nth-child(3) i::after {
+    animation-delay: 0.7s;
+  }
+  .isolation p {
+    margin: 0;
   }
   .storage-fact {
+    border-top: 1px solid var(--hairline-card);
     color: var(--text-2);
-    font-family: var(--font-mono);
-    font-size: var(--mono-10);
-    letter-spacing: 0.05em;
+    font: var(--mono-10)/1.7 var(--font-mono);
+    letter-spacing: 0.04em;
     margin: 0;
-    padding: 18px 28px;
+    padding: 17px 20px;
   }
-  @keyframes memory-flow {
+  @keyframes tier-transfer {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+  }
+  @keyframes isolated-read {
     0%,
-    14% {
+    20% {
       opacity: 0;
       transform: translateX(0);
     }
-    24%,
-    70% {
+    45%,
+    75% {
       opacity: 1;
     }
-    84%,
     100% {
       opacity: 0;
-      transform: translateX(720px);
+      transform: translateX(calc(100% - 8px));
+    }
+  }
+  @media (max-width: 850px) {
+    .tenant-picker,
+    .isolation {
+      align-items: start;
+      grid-template-columns: 1fr;
+    }
+    .scope-derivation {
+      grid-template-columns: 1fr;
+    }
+    .scope-arrow {
+      text-align: center;
+      transform: rotate(90deg);
+    }
+    .memory-flow {
+      grid-template-columns: 1fr;
+    }
+    .tier-link {
+      height: 28px;
+      justify-content: center;
+    }
+    .tier-link::before {
+      border-left: 1px solid var(--hairline-card);
+      border-top: 0;
+      height: 100%;
+      width: 0;
+    }
+  }
+  @media (max-width: 560px) {
+    .tenant-buttons,
+    .server-scope div {
+      grid-template-columns: 1fr;
+    }
+    .tenant-lane {
+      grid-template-columns: 58px 1fr;
+    }
+    .tenant-lane b {
+      grid-column: 1 / -1;
     }
   }
   @media (prefers-reduced-motion: reduce) {
-    .memory-event {
-      display: none;
-    }
-    .tier {
+    .tier,
+    .event-label {
       transition: none;
     }
-  }
-  @media (max-width: 650px) {
-    .scope-row {
-      align-items: flex-start;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .scope-row div {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      width: 100%;
-    }
-    button {
-      padding-inline: 5px;
-    }
     .tier {
-      padding-inline: 18px;
+      opacity: 1;
+      transform: none;
     }
-    .storage-fact {
-      line-height: 1.7;
-      padding-inline: 18px;
+    .event-label {
+      opacity: 1;
+    }
+    .tenant-lane i::after {
+      left: calc(100% - 8px);
     }
   }
 </style>
