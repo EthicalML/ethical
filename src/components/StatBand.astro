@@ -11,7 +11,7 @@ interface Props {
 const { stats } = Astro.props;
 ---
 
-<section class="stat-band" aria-label="Institute statistics" data-reveal>
+<section class:list={['stat-band', stats.length === 4 && 'four-stat']} aria-label="Institute statistics" data-reveal style={`--stat-columns: ${stats.length}`}>
   {
     stats.map((stat) => (
       <div class="stat">

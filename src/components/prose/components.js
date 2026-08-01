@@ -36,3 +36,5 @@ export { default as FrameworkCards } from '../FrameworkCards.astro';
 export { default as CriteriaMap } from '../CriteriaMap.astro';
 export { default as ProcurementFlow } from '../ProcurementFlow.astro';
 export { default as FrameworkLinkCards } from '../FrameworkLinkCards.astro';
+export { default as PolicyMandates } from '../PolicyMandates.astro';
+export { default as PolicyRecord } from '../PolicyRecord.astro';
