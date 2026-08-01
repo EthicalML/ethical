@@ -37,7 +37,15 @@ links:
     href: https://axsaucedo.github.io/kaos/
 ---
 
-import { ArticleHero, ControlPlaneMap, KaosProjectFooter, MediaBand, MemoryTiers, QuickstartTerminal, RequestPath } from '../../components/prose/components.js';
+import {
+  ArticleHero,
+  ControlPlaneMap,
+  KaosProjectFooter,
+  MediaBand,
+  MemoryLifecycle,
+  QuickstartTerminal,
+  RequestPath,
+} from '../../components/prose/components.js';
 
 <ArticleHero eyebrow="OPEN SOURCE · V0.7.0 · APACHE-2.0" title={frontmatter.title} intro={frontmatter.description} canvas="kaos" transitionName="kaos-title" />
 
@@ -59,7 +67,7 @@ Five custom resources define an agent system: **Agent** (the running agent, its 
 
 Scopes make memory multi-tenant: reads select session, agent, user or store scope, and "scope is derived server-side from the authenticated agent identity", never from model arguments. When a store fails, the agent keeps serving short-term-only and surfaces a `MemoryDegraded` condition instead of going down.
 
-<MemoryTiers storage="LOCAL: Chroma + SQLite on one volume · EXTERNAL: pgvector + Postgres, 2 replicas" />
+<MemoryLifecycle storage="LOCAL: Chroma + SQLite on one volume · EXTERNAL: pgvector + Postgres, 2 replicas" />
 
 ## Secured at the gateway
 
