@@ -1,4 +1,7 @@
 ---
+import { Code } from 'astro:components';
+import AnimationWindow from './AnimationWindow.astro';
+
 interface TerminalLine {
   command: string;
   output?: string;
@@ -6,132 +9,129 @@ interface TerminalLine {
 
 interface Props {
   cli: TerminalLine[];
-  helm: TerminalLine[];
 }
 
-const { cli, helm }: Props = Astro.props;
+const { cli }: Props = Astro.props;
 ---
 
-<quickstart-terminal data-cli={JSON.stringify(cli)} data-helm={JSON.stringify(helm)}>
-  <div class="terminal-bar">
-    <div class="terminal-tabs" role="tablist" aria-label="Installation path">
-      <button type="button" role="tab" aria-selected="true" data-terminal-tab="cli">CLI quickstart</button>
-      <button type="button" role="tab" aria-selected="false" data-terminal-tab="helm">Helm path</button>
+<AnimationWindow class="quickstart-window" title="kaos-cli">
+  <quickstart-terminal>
+    <div class="terminal-body" role="region" aria-label="KAOS CLI quickstart">
+      {
+        cli.map(({ command, output }) => (
+          <div class="terminal-step" data-terminal-step>
+            <div class="terminal-command">
+              <>
+                <span class="terminal-prompt">$ </span>
+                <Code code={command} lang="shellscript" theme="github-dark" inline />
+              </>
+            </div>
+            {output && (
+              <div class="terminal-output" data-terminal-output>
+                {output}
+              </div>
+            )}
+            <div class="terminal-separator" data-terminal-separator aria-hidden="true" />
+          </div>
+        ))
+      }
     </div>
-    <button class="terminal-replay" type="button" data-terminal-replay>Replay</button>
-  </div>
-  <pre
-    aria-live="polite"><code data-terminal-output>{cli.map(({ command, output }) => `$ ${command}${output ? `\n${output}` : ''}`).join('\n')}</code><span class="terminal-cursor" aria-hidden="true" /></pre>
-</quickstart-terminal>
+  </quickstart-terminal>
+</AnimationWindow>
 
 <script>
-  interface TerminalLine {
-    command: string;
-    output?: string;
+  interface AnimationOperation {
+    delay: number;
+    run: () => void;
   }
 
   class QuickstartTerminal extends HTMLElement {
     private controller = new AbortController();
-    private observer?: IntersectionObserver;
-    private timers: number[] = [];
-    private runs = 0;
+    private operations: AnimationOperation[] = [];
+    private operationIndex = 0;
+    private timer = 0;
+    private started = false;
+    private complete = false;
 
     connectedCallback() {
       this.controller = new AbortController();
-      const tabs = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-terminal-tab]'));
-      const replay = this.querySelector<HTMLButtonElement>('[data-terminal-replay]');
-      const output = this.querySelector<HTMLElement>('[data-terminal-output]');
-      if (!tabs.length || !replay || !output) return;
+      const windowElement = this.closest<HTMLElement>('animation-window');
+      if (!windowElement) return;
 
-      const sequences: Record<string, TerminalLine[]> = {
-        cli: this.parse(this.dataset.cli),
-        helm: this.parse(this.dataset.helm),
-      };
-      let selected = 'cli';
-
-      const show = (animate = true) => {
-        this.runs += 1;
-        this.timers.forEach(window.clearTimeout);
-        this.timers = [];
-        const run = this.runs;
-        const lines = sequences[selected];
-        const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const fullText = lines.map(({ command, output: response }) => `$ ${command}${response ? `\n${response}` : ''}`).join('\n');
-        if (!animate || reduced) {
-          output.textContent = fullText;
-          this.dataset.running = 'false';
-          return;
-        }
-
-        output.textContent = '';
-        this.dataset.running = 'true';
-        let delay = 180;
-        lines.forEach(({ command, output: response }, index) => {
-          const commandText = `${index ? '\n' : ''}$ ${command}`;
-          [...commandText].forEach((character) => {
-            delay += character === ' ' ? 18 : 28;
-            this.timers.push(
-              window.setTimeout(() => {
-                if (run === this.runs) output.textContent += character;
-              }, delay),
-            );
-          });
-          if (response) {
-            delay += 320;
-            this.timers.push(
-              window.setTimeout(() => {
-                if (run === this.runs) output.textContent += `\n${response}`;
-              }, delay),
-            );
-            delay += 380;
-          }
-        });
-        this.timers.push(
-          window.setTimeout(() => {
-            if (run === this.runs) this.dataset.running = 'false';
-          }, delay + 80),
-        );
-      };
-
-      tabs.forEach((tab) => {
-        tab.addEventListener(
-          'click',
-          () => {
-            selected = tab.dataset.terminalTab ?? 'cli';
-            tabs.forEach((item) => item.setAttribute('aria-selected', String(item === tab)));
-            show(false);
-          },
-          { signal: this.controller.signal },
-        );
-      });
-      replay.addEventListener('click', () => show(), { signal: this.controller.signal });
-
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
-        show(false);
-        return;
-      }
-      this.observer = new IntersectionObserver(([entry]) => {
-        if (!entry.isIntersecting) return;
-        this.observer?.disconnect();
-        show();
-      });
-      this.observer.observe(this);
+      this.prepareOperations();
+      windowElement.addEventListener('animationwindow:play', () => this.play(), { signal: this.controller.signal });
+      windowElement.addEventListener('animationwindow:pause', () => this.pause(), { signal: this.controller.signal });
+      if (windowElement.dataset.playing === 'true') this.play();
     }
 
     disconnectedCallback() {
-      this.runs += 1;
-      this.timers.forEach(window.clearTimeout);
       this.controller.abort();
-      this.observer?.disconnect();
+      window.clearTimeout(this.timer);
     }
 
-    private parse(value?: string): TerminalLine[] {
-      try {
-        const parsed: unknown = JSON.parse(value ?? '[]');
-        return Array.isArray(parsed) ? (parsed as TerminalLine[]) : [];
-      } catch {
-        return [];
+    private prepareOperations() {
+      const steps = Array.from(this.querySelectorAll<HTMLElement>('[data-terminal-step]'));
+      steps.forEach((step) => {
+        const command = step.querySelector<HTMLElement>('.terminal-command');
+        const output = step.querySelector<HTMLElement>('[data-terminal-output]');
+        const separator = step.querySelector<HTMLElement>('[data-terminal-separator]');
+        if (!command || !separator) return;
+
+        const textNodes: Text[] = [];
+        const walker = document.createTreeWalker(command, NodeFilter.SHOW_TEXT);
+        let textNode = walker.nextNode();
+        while (textNode) {
+          textNodes.push(textNode as Text);
+          textNode = walker.nextNode();
+        }
+        textNodes.forEach((node) => {
+          const fragment = document.createDocumentFragment();
+          Array.from(node.data).forEach((character) => {
+            const span = document.createElement('span');
+            span.className = 'terminal-character';
+            span.textContent = character;
+            fragment.append(span);
+            this.operations.push({ delay: character === ' ' ? 18 : 28, run: () => span.classList.add('is-visible') });
+          });
+          node.replaceWith(fragment);
+        });
+        if (output) this.operations.push({ delay: 320, run: () => output.classList.add('is-visible') });
+        this.operations.push({ delay: output ? 380 : 180, run: () => separator.classList.add('is-visible') });
+      });
+    }
+
+    private play() {
+      if (this.complete) this.reset();
+      if (!this.started) {
+        this.started = true;
+        this.classList.add('is-animating');
       }
+      this.runNext();
+    }
+
+    private pause() {
+      window.clearTimeout(this.timer);
+    }
+
+    private reset() {
+      this.operationIndex = 0;
+      this.complete = false;
+      this.querySelectorAll('.is-visible').forEach((element) => element.classList.remove('is-visible'));
+    }
+
+    private runNext() {
+      window.clearTimeout(this.timer);
+      const operation = this.operations[this.operationIndex];
+      if (!operation) {
+        this.complete = true;
+        this.dispatchEvent(new CustomEvent('animationwindow:complete', { bubbles: true }));
+        return;
+      }
+      this.timer = window.setTimeout(() => {
+        operation.run();
+        this.operationIndex += 1;
+        this.runNext();
+      }, operation.delay);
     }
   }
 
@@ -139,87 +139,58 @@ const { cli, helm }: Props = Astro.props;
 </script>
 
 <style>
+  .quickstart-window {
+    margin-top: 38px;
+  }
   quickstart-terminal {
-    background: var(--bg-inset);
-    border: 1px solid var(--hairline-card);
     display: block;
-    margin: 38px 0 0;
-    min-height: 430px;
+    min-height: 385px;
   }
-  .terminal-bar {
-    align-items: center;
-    border-bottom: 1px solid var(--hairline-card);
-    display: flex;
-    justify-content: space-between;
-    padding: 0 16px;
-  }
-  .terminal-tabs {
-    display: flex;
-  }
-  button {
-    background: transparent;
-    border: 0;
-    color: var(--text-3);
-    cursor: pointer;
-    font-family: var(--font-mono);
-    font-size: var(--mono-10);
-    letter-spacing: 0.1em;
-    padding: 16px 12px;
-    text-transform: uppercase;
-  }
-  [role='tab'][aria-selected='true'] {
-    box-shadow: inset 0 -1px var(--accent);
-    color: var(--accent);
-  }
-  .terminal-replay {
-    color: var(--text-2);
-  }
-  pre {
+  .terminal-body {
     color: var(--text-1);
     font-family: var(--font-mono);
     font-size: clamp(12px, 1.35vw, 14px);
     line-height: 1.8;
     margin: 0;
-    min-height: 365px;
+    min-height: 385px;
     overflow: auto;
     padding: 28px;
+  }
+  .terminal-command,
+  .terminal-output,
+  :global(code) {
+    font: inherit;
     white-space: pre-wrap;
   }
-  .terminal-cursor {
-    background: var(--accent);
-    display: inline-block;
-    height: 1.1em;
-    margin-left: 4px;
-    transform: translateY(2px);
-    width: 7px;
+  .terminal-prompt {
+    color: var(--accent);
   }
-  quickstart-terminal[data-running='true'] .terminal-cursor {
-    animation: blink 0.85s step-end infinite;
+  .terminal-command :global(.astro-code) {
+    background-color: transparent !important;
   }
-  @keyframes blink {
-    50% {
-      opacity: 0;
-    }
+  .terminal-output {
+    color: var(--text-3);
   }
-  @media (prefers-reduced-motion: reduce) {
-    .terminal-cursor {
-      display: none;
-    }
+  .terminal-separator {
+    border-bottom: 1px solid var(--hairline-card);
+    margin: 13px 0 15px;
+  }
+  quickstart-terminal.is-animating :global(.terminal-character),
+  quickstart-terminal.is-animating .terminal-output,
+  quickstart-terminal.is-animating .terminal-separator {
+    visibility: hidden;
+  }
+  quickstart-terminal.is-animating :global(.terminal-character.is-visible),
+  quickstart-terminal.is-animating .terminal-output.is-visible,
+  quickstart-terminal.is-animating .terminal-separator.is-visible {
+    visibility: visible;
   }
   @media (max-width: 600px) {
-    quickstart-terminal {
-      min-height: 390px;
+    quickstart-terminal,
+    .terminal-body {
+      min-height: 345px;
     }
-    .terminal-bar {
-      align-items: stretch;
-      padding-right: 6px;
-    }
-    button {
-      letter-spacing: 0.04em;
-      padding-inline: 8px;
-    }
-    pre {
-      min-height: 325px;
+    .terminal-body {
       padding: 20px 16px;
     }
   }

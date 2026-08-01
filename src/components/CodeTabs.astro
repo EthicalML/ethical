@@ -1,4 +1,7 @@
 ---
+import { Code } from 'astro:components';
+import AnimationWindow from './AnimationWindow.astro';
+
 interface Props {
   python: string;
   cpp: string;
@@ -8,13 +11,15 @@ const { python, cpp } = Astro.props;
 ---
 
 <code-tabs class="code-tabs prose-block" data-reveal>
-  <div class="code-toolbar" role="tablist" aria-label="Kompute language examples">
-    <button type="button" role="tab" aria-selected="true" aria-controls="kompute-python" data-language="python">Python</button>
-    <button type="button" role="tab" aria-selected="false" aria-controls="kompute-cpp" data-language="cpp">C++</button>
-    <button type="button" class="copy-button" data-copy>Copy Python</button>
-  </div>
-  <div id="kompute-python" role="tabpanel" data-code-panel="python"><pre tabindex="0"><code class="language-python">{python}</code></pre></div>
-  <div id="kompute-cpp" role="tabpanel" data-code-panel="cpp" hidden><pre tabindex="0"><code class="language-cpp">{cpp}</code></pre></div>
+  <AnimationWindow title="kompute.py" chromeOnly>
+    <button slot="controls" type="button" class="copy-button" data-copy>Copy Python</button>
+    <div class="code-toolbar" role="tablist" aria-label="Kompute language examples">
+      <button type="button" role="tab" aria-selected="true" aria-controls="kompute-python" data-language="python">Python</button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="kompute-cpp" data-language="cpp">C++</button>
+    </div>
+    <div id="kompute-python" role="tabpanel" data-code-panel="python"><Code code={python} lang="python" theme="github-dark" tabindex="0" /></div>
+    <div id="kompute-cpp" role="tabpanel" data-code-panel="cpp" hidden><Code code={cpp} lang="cpp" theme="github-dark" tabindex="0" /></div>
+  </AnimationWindow>
 </code-tabs>
 
 <script>
@@ -27,6 +32,7 @@ const { python, cpp } = Astro.props;
       const tabs = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-language]'));
       const panels = Array.from(this.querySelectorAll<HTMLElement>('[data-code-panel]'));
       const copy = this.querySelector<HTMLButtonElement>('[data-copy]');
+      const title = this.querySelector<HTMLElement>('[data-window-title]');
       let active = 'python';
 
       const select = (language: string) => {
@@ -36,6 +42,7 @@ const { python, cpp } = Astro.props;
           panel.hidden = panel.dataset.codePanel !== language;
         });
         if (copy) copy.textContent = `Copy ${language === 'cpp' ? 'C++' : 'Python'}`;
+        if (title) title.textContent = language === 'cpp' ? 'kompute.cpp' : 'kompute.py';
       };
 
       tabs.forEach((tab) => tab.addEventListener('click', () => select(tab.dataset.language ?? 'python'), { signal: this.controller.signal }));
@@ -66,7 +73,6 @@ const { python, cpp } = Astro.props;
   code-tabs {
     display: block;
     margin-top: 34px;
-    overflow: hidden;
   }
   .code-toolbar {
     align-items: center;
@@ -78,6 +84,7 @@ const { python, cpp } = Astro.props;
     background: transparent;
     border: 0;
     border-bottom: 2px solid transparent;
+    border-radius: var(--radius-control);
     color: var(--text-4);
     cursor: pointer;
     font: 11px var(--font-mono);
@@ -89,13 +96,19 @@ const { python, cpp } = Astro.props;
     color: var(--accent);
   }
   .copy-button {
-    border: 1px solid var(--hairline-card);
-    margin-left: auto;
-    padding: 8px 11px;
-  }
-  pre {
-    background: #0a0c0b;
+    border-left: 1px solid var(--hairline-card);
     color: var(--text-2);
+    min-width: 100px;
+    padding: 0 12px;
+  }
+  .copy-button:hover,
+  .copy-button:focus-visible {
+    background: var(--accent-wash-09);
+    color: var(--accent);
+    outline: none;
+  }
+  [data-code-panel] :global(.astro-code) {
+    background: #0d1117 !important;
     font: 12px/1.65 var(--font-mono);
     margin: 0;
     max-height: 620px;
@@ -103,7 +116,7 @@ const { python, cpp } = Astro.props;
     padding: 24px;
     tab-size: 4;
   }
-  code {
+  [data-code-panel] :global(code) {
     font: inherit;
   }
   [hidden] {
@@ -116,7 +129,10 @@ const { python, cpp } = Astro.props;
     button {
       padding-inline: 9px;
     }
-    pre {
+    .copy-button {
+      min-width: auto;
+    }
+    [data-code-panel] :global(.astro-code) {
       font-size: 11px;
       padding: 18px;
     }

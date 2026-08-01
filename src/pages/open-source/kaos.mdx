@@ -18,14 +18,6 @@ quickstart:
       output: Hello! How can I help you today?
     - command: kaos ui
       output: Dashboard available at http://localhost:3000
-  helm:
-    - command: helm repo add kaos https://axsaucedo.github.io/kaos/charts
-      output: Repository "kaos" added
-    - command: helm install kaos kaos/kaos-operator -n kaos-system --create-namespace
-      output: STATUS deployed
-    - command: kubectl apply -f my-agent.yaml
-      output: agent.kaos.ai/my-agent created
-
 media:
   - alt: KAOS dashboard workflow showing agent operations
     caption: Dashboard workflow
@@ -53,7 +45,7 @@ import { ArticleHero, ControlPlaneMap, KaosProjectFooter, MediaBand, MemoryTiers
 
 An agent is a resource, not a script. Install the system, deploy a model API and an agent, and talk to it; every agent exposes an OpenAI-compatible `/v1/chat/completions` endpoint, so existing clients work unchanged.
 
-<QuickstartTerminal cli={frontmatter.quickstart.cli} helm={frontmatter.quickstart.helm} />
+<QuickstartTerminal cli={frontmatter.quickstart.cli} />
 
 ## The control plane
 

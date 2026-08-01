@@ -73,6 +73,7 @@ All first-party client behaviour is TypeScript. Do not add first-party runtime J
 | OSS portal title morphs     | `/open-source/` panel titles → project page heroes                   | `MorphPairs`, `ProjectPortal`, `ArticleHero`                        |
 | Project portal activity     | `/open-source/` project panels and production ML constellation       | `ProjectPortal`, `CategoryConstellation`, `CanvasEngine`            |
 | Kompute sequence playback   | Kompute detail sequence pipeline                                     | `SequencePipeline`                                                  |
+| Shared animation playback   | Animated windows entering/leaving the viewport                       | `AnimationWindow`, slotted animation owner                          |
 | Production ML atlas drift   | Production ML catalogue category field                               | `CategoryAtlas`                                                     |
 | Partner logo morph          | Clicked marquee instance → matching directory logo                   | `MorphPairs`, `AffiliationMarquee`, `PartnerDirectory`              |
 | Principle directional slide | `/principles/NN/` prev/next → adjacent principle                     | `PrincipleLayout`, `Motion`, `tokens.css`                           |

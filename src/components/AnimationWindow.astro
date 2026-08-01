@@ -1,0 +1,194 @@
+---
+interface Props {
+  title?: string;
+  chromeOnly?: boolean;
+  class?: string;
+}
+
+const { title, chromeOnly = false, class: className }: Props = Astro.props;
+---
+
+<animation-window class:list={[className, { 'is-chrome-only': chromeOnly }]} data-playing="false" data-chrome-only={chromeOnly ? '' : undefined}>
+  <header class="window-header">
+    <span class="traffic-lights" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="window-title" data-window-title>{title}</span>
+    <span class="window-controls">
+      <slot name="controls" />
+      {
+        !chromeOnly && (
+          <button class="play-toggle" type="button" aria-label="Play animation" data-play-toggle>
+            <svg class="play-icon" aria-hidden="true" viewBox="0 0 12 12">
+              <path d="m3 2 7 4-7 4z" />
+            </svg>
+            <svg class="pause-icon" aria-hidden="true" viewBox="0 0 12 12">
+              <path d="M3 2h2v8H3zm4 0h2v8H7z" />
+            </svg>
+          </button>
+        )
+      }
+    </span>
+  </header>
+  <div class="window-content"><slot /></div>
+</animation-window>
+
+<!--
+  Playback contract: animated descendants read the host's data-playing value and
+  listen on their closest <animation-window> for animationwindow:play and
+  animationwindow:pause. A descendant may bubble animationwindow:complete when
+  its finite animation ends so the shared control returns to its play state.
+-->
+<script>
+  class AnimationWindowElement extends HTMLElement {
+    private controller = new AbortController();
+    private observer?: IntersectionObserver;
+    private playing = false;
+    private userPaused = false;
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const toggle = this.querySelector<HTMLButtonElement>('[data-play-toggle]');
+      if (!toggle) return;
+
+      this.setPlaying(false, false);
+      toggle.addEventListener(
+        'click',
+        () => {
+          this.userPaused = this.playing;
+          this.setPlaying(!this.playing);
+        },
+        { signal: this.controller.signal },
+      );
+      this.addEventListener(
+        'animationwindow:complete',
+        () => {
+          this.userPaused = true;
+          this.setPlaying(false);
+        },
+        { signal: this.controller.signal },
+      );
+
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduced || !('IntersectionObserver' in window)) return;
+
+      this.observer = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) {
+          if (!this.userPaused) this.setPlaying(true);
+        } else {
+          this.setPlaying(false);
+        }
+      });
+      this.observer.observe(this);
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+      this.observer?.disconnect();
+    }
+
+    private setPlaying(playing: boolean, announce = true) {
+      if (playing === this.playing && announce) return;
+      this.playing = playing;
+      this.dataset.playing = String(playing);
+      const toggle = this.querySelector<HTMLButtonElement>('[data-play-toggle]');
+      toggle?.setAttribute('aria-label', playing ? 'Pause animation' : 'Play animation');
+      if (announce) this.dispatchEvent(new CustomEvent(`animationwindow:${playing ? 'play' : 'pause'}`));
+    }
+  }
+
+  if (!customElements.get('animation-window')) customElements.define('animation-window', AnimationWindowElement);
+</script>
+
+<style>
+  animation-window {
+    background: var(--bg-inset);
+    border: 1px solid var(--hairline-card);
+    display: block;
+    overflow: hidden;
+  }
+  .window-header {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.025);
+    border-bottom: 1px solid var(--hairline-card);
+    display: grid;
+    grid-template-columns: minmax(76px, 1fr) auto minmax(76px, 1fr);
+    min-height: 44px;
+  }
+  .traffic-lights {
+    display: flex;
+    gap: 7px;
+    padding-left: 15px;
+  }
+  .traffic-lights i {
+    background: var(--text-4);
+    border-radius: 50%;
+    height: 8px;
+    width: 8px;
+  }
+  .traffic-lights i:first-child {
+    background: var(--glitch-red);
+  }
+  .traffic-lights i:nth-child(2) {
+    background: var(--warn);
+  }
+  .traffic-lights i:last-child {
+    background: var(--accent);
+  }
+  .window-title {
+    color: var(--text-3);
+    font: var(--mono-10)/1 var(--font-mono);
+    letter-spacing: 0.08em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .window-controls {
+    align-items: center;
+    display: flex;
+    justify-content: flex-end;
+    min-width: 44px;
+  }
+  .play-toggle {
+    align-items: center;
+    align-self: stretch;
+    background: transparent;
+    border: 0;
+    border-left: 1px solid var(--hairline-card);
+    border-radius: var(--radius-control);
+    color: var(--text-2);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0;
+  }
+  .play-toggle:hover,
+  .play-toggle:focus-visible {
+    background: var(--accent-wash-09);
+    color: var(--accent);
+    outline: none;
+  }
+  .play-toggle svg {
+    fill: currentColor;
+    height: 13px;
+    width: 13px;
+  }
+  .pause-icon,
+  animation-window[data-playing='true'] .play-icon {
+    display: none;
+  }
+  animation-window[data-playing='true'] .pause-icon {
+    display: block;
+  }
+  .window-content {
+    min-width: 0;
+  }
+  @media (max-width: 520px) {
+    .window-header {
+      grid-template-columns: minmax(68px, 1fr) auto minmax(68px, 1fr);
+    }
+    .traffic-lights {
+      padding-left: 12px;
+    }
+  }
+</style>
