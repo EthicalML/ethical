@@ -80,6 +80,7 @@ All first-party client behaviour is TypeScript. Do not add first-party runtime J
 | Looping demo playback       | Memory lifecycle, request path, Kompute sequence and XAI workflow    | `AnimationWindow`, `MemoryLifecycle`, `RequestPath`, `SequencePipeline`, `XaiProcess` |
 | Finite terminal playback    | KAOS quickstart terminal                                             | `AnimationWindow`, `QuickstartTerminal`                                               |
 | Production ML atlas drift   | Production ML catalogue category field                               | `CategoryAtlas`                                                                       |
+| Policy record timeline      | `/policy/` flagship hero                                             | `PolicyTimeline`, `CanvasEngine`                                                      |
 | Partner logo morph          | Clicked marquee instance → matching directory logo                   | `MorphPairs`, `AffiliationMarquee`, `PartnerDirectory`                                |
 | Principle directional slide | `/principles/NN/` prev/next → adjacent principle                     | `PrincipleLayout`, `Motion`, `tokens.css`                                             |
 | Contact interest selection  | Framework contact CTAs → matching contact form interest row          | `FormSection`                                                                         |

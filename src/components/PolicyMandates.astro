@@ -1,0 +1,94 @@
+---
+interface Mandate {
+  href?: string;
+  role: string;
+}
+
+interface MandateGroup {
+  body: string;
+  mandates: Mandate[];
+}
+
+interface Props {
+  groups: MandateGroup[];
+}
+
+const { groups } = Astro.props;
+---
+
+<div class="mandate-grid">
+  {
+    groups.map((group) => (
+      <article>
+        <p>{group.body}</p>
+        <div>
+          {group.mandates.map((mandate) => (
+            <p class="mandate-row">
+              <span>{mandate.role}</span>
+              {mandate.href && (
+                <a href={mandate.href} target="_blank" rel="noopener noreferrer" aria-label={`Public record for ${mandate.role}`}>
+                  Record →
+                </a>
+              )}
+            </p>
+          ))}
+        </div>
+      </article>
+    ))
+  }
+</div>
+
+<style>
+  .mandate-grid {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 38px;
+  }
+
+  article {
+    border: 1px solid var(--hairline-card);
+    min-height: 250px;
+    padding: 28px;
+  }
+
+  article > p {
+    color: var(--accent);
+    font: var(--mono-10) / 1 var(--font-mono);
+    letter-spacing: 0.12em;
+    margin-bottom: 28px;
+    text-transform: uppercase;
+  }
+
+  .mandate-row {
+    border-top: 1px solid var(--hairline);
+    color: var(--text-2);
+    display: grid;
+    font-size: 14px;
+    gap: 18px;
+    grid-template-columns: 1fr auto;
+    line-height: 1.55;
+    margin: 0;
+    padding: 15px 0;
+  }
+
+  a {
+    color: var(--accent);
+    font: var(--mono-9) / 1.4 var(--font-mono);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 800px) {
+    .mandate-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    article {
+      min-height: auto;
+      padding: 22px;
+    }
+  }
+</style>
