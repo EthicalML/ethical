@@ -81,7 +81,7 @@ All first-party client behaviour is TypeScript. Do not add first-party runtime J
 | Finite terminal playback    | KAOS quickstart terminal                                             | `AnimationWindow`, `QuickstartTerminal`                                               |
 | Production ML atlas drift   | Production ML catalogue category field                               | `CategoryAtlas`                                                                       |
 | Policy record timeline      | `/policy/` flagship hero                                             | `PolicyTimeline`, `CanvasEngine`                                                      |
-| Policy hero canvas studies  | `/prototypes/policy-hero/?v=1..5`                                    | `PolicyHero1..5`, `CanvasEngine`                                                      |
+| Policy hero canvas studies  | `/prototypes/policy-hero/?v=1..3`                                    | `PolicyHero1`, `PolicyHeroAssembly`, `PolicyHeroFusion`, `CanvasEngine`               |
 | Partner logo morph          | Clicked marquee instance → matching directory logo                   | `MorphPairs`, `AffiliationMarquee`, `PartnerDirectory`                                |
 | Principle directional slide | `/principles/NN/` prev/next → adjacent principle                     | `PrincipleLayout`, `Motion`, `tokens.css`                                             |
 | Contact interest selection  | Framework contact CTAs → matching contact form interest row          | `FormSection`                                                                         |

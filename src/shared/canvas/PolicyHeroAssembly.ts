@@ -338,7 +338,7 @@ const drawPolicyAssembly: CanvasDraw = (context, width, height, elapsed) => {
   context.textAlign = 'left';
 };
 
-export class PolicyHero5 extends HTMLElement {
+export class PolicyHeroAssembly extends HTMLElement {
   private engine?: CanvasEngine;
 
   connectedCallback() {
@@ -351,4 +351,6 @@ export class PolicyHero5 extends HTMLElement {
   }
 }
 
-if (!customElements.get('policy-hero-5')) customElements.define('policy-hero-5', PolicyHero5);
+if (!customElements.get('policy-hero-assembly')) {
+  customElements.define('policy-hero-assembly', PolicyHeroAssembly);
+}
