@@ -174,23 +174,20 @@ const morphName = (visual: string) => `${visual}-title`;
   }
 
   .portal-panels {
+    display: grid;
+    gap: 16px;
     min-width: 0;
   }
 
   .portal-panel {
     align-items: end;
     border: 1px solid var(--hairline-card);
-    border-bottom: 0;
     display: grid;
     min-height: min(76vh, 760px);
     overflow: hidden;
     padding: 48px;
     position: relative;
     scroll-margin-top: 88px;
-  }
-
-  .portal-panel:last-child {
-    border-bottom: 1px solid var(--hairline-card);
   }
 
   .portal-panel::after {

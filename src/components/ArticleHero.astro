@@ -6,7 +6,7 @@ import KomputeCube from './KomputeCube.astro';
 const { eyebrow, title, intro, canvas = false, transitionName } = Astro.props;
 ---
 
-<header class:list={['article-hero', canvas && 'canvas-variant']} data-reveal>
+<header class:list={['article-hero', canvas && 'canvas-variant', canvas === 'kompute' && 'kompute-variant']} data-reveal>
   {canvas === 'kaos' ? <KaosGraph embedded backdrop /> : canvas === true && <ArticleHeroCanvas />}
   {canvas === 'kompute' && <KomputeCube embedded backdrop />}
   <p class="eyebrow">{eyebrow}</p>

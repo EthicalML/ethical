@@ -187,7 +187,7 @@ button.nav-trigger {
 [aria-expanded="true"] .caret { transform: rotate(180deg); }
 .join-pill {
   border: 1px solid rgba(94, 230, 160, .45);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-control);
   color: var(--accent);
   font-family: var(--font-mono);
   font-size: var(--mono-10-5);
@@ -1336,8 +1336,7 @@ main > .home-section:last-child { padding-bottom: 120px; }
 .oss-menu-list > a.active span { color: var(--accent); }
 .oss-menu-list strong { font-size: 15.5px; font-weight: 400; margin-top: 4px; }
 .oss-menu-list small { color: rgba(244,242,238,.55); font-size: 12.5px; line-height: 1.45; margin-top: 2px; }
-.oss-menu-list footer { border-top: 1px solid rgba(255,255,255,.08); display: flex; flex-direction: column; font: 9.5px/1.4 var(--font-mono); gap: 8px; letter-spacing: .14em; margin-top: 16px; padding: 16px 12px 0; }
-.oss-menu-list footer a { color: rgba(244,242,238,.5); }
+.oss-menu-list footer { align-items: flex-start; border-top: 1px solid rgba(255,255,255,.08); display: flex; flex-direction: column; font: 9.5px/1.4 var(--font-mono); gap: 8px; letter-spacing: .14em; margin-top: 16px; padding: 16px 12px 0; }
 .oss-menu-preview { background: var(--bg-inset); min-height: 300px; overflow: hidden; position: relative; }
 .oss-menu-preview canvas { height: 100%; inset: 0; position: absolute; width: 100%; }
 .oss-menu-preview p { bottom: 22px; display: flex; flex-direction: column; gap: 4px; left: 26px; margin: 0; position: absolute; right: 26px; }
@@ -1381,6 +1380,14 @@ main > .home-section:last-child { padding-bottom: 120px; }
 .article-hero h1 { font: 300 clamp(54px, 7vw, 88px)/.98 var(--font-display); letter-spacing: -.025em; margin: 24px 0; max-width: 960px; }
 .article-hero > p:last-child { color: var(--text-2); font-size: 18px; line-height: 1.6; max-width: 680px; }
 .article-hero.canvas-variant { min-height: 650px; overflow: hidden; }
+.article-hero.canvas-variant.kompute-variant::after {
+  background: linear-gradient(90deg, rgba(15, 16, 15, .92) 0%, rgba(15, 16, 15, .7) 42%, transparent 76%);
+  content: '';
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+}
 .article-hero.canvas-variant > :not(canvas, .kaos-canvas-mount, .kompute-canvas-mount) { position: relative; z-index: 2; }
 .article-hero.canvas-variant .hero-canvas { opacity: .85; }
 .article-hero.canvas-variant > .kaos-canvas-mount {

@@ -81,10 +81,7 @@ const menus: Record<string, Menu> = {
         href: '/open-source/',
       },
     ],
-    footerLinks: [
-      { label: 'ALL REPOSITORIES ↗', href: '/open-source/' },
-      { label: 'CONTRIBUTE', href: '/contact/' },
-    ],
+    footerLinks: [{ label: 'All projects →', href: '/open-source/' }],
   },
   initiatives: {
     label: 'Initiatives',
@@ -269,7 +266,9 @@ const initialProject = menus.oss.items![0]!;
                     ))}
                     <footer>
                       {menu.footerLinks!.map(({ label, href }) => (
-                        <a href={href}>{label}</a>
+                        <a class="button primary" href={href}>
+                          {label}
+                        </a>
                       ))}
                     </footer>
                   </div>
