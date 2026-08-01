@@ -2,14 +2,14 @@
 import AnimationWindow from './AnimationWindow.astro';
 
 const scenarios = [
-  { id: 'user', number: '01', label: 'User request', outcome: 'ALLOW' },
-  { id: 'agent', number: '02', label: 'Autonomous agent', outcome: 'ALLOW' },
-  { id: 'denied', number: '03', label: 'Denied request', outcome: '403' },
+  { id: 'denied', number: '01', label: 'Denied request', outcome: '403' },
+  { id: 'user', number: '02', label: 'User request', outcome: 'ALLOW' },
+  { id: 'agent', number: '03', label: 'Autonomous agent', outcome: 'ALLOW' },
 ];
 ---
 
 <AnimationWindow class="request-window" title="gateway.authorization">
-  <request-path data-scenario="user" data-step="0">
+  <request-path data-scenario="denied" data-step="0">
     <div class="scenario-picker">
       <span class="scenario-label">CHOOSE REQUEST</span>
       <div class="scenario-buttons" role="group" aria-label="Request scenario">
@@ -127,7 +127,7 @@ const scenarios = [
     }
 
     private render() {
-      const scenario = this.dataset.scenario ?? 'user';
+      const scenario = this.dataset.scenario ?? 'denied';
       const denied = scenario === 'denied';
       const autonomous = scenario === 'agent';
       const limit = denied ? 2 : 4;

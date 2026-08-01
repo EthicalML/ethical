@@ -112,11 +112,6 @@ const resources = [
             ))
           }
         </div>
-
-        <button class="trace" type="button" data-trace>
-          <span aria-hidden="true">▶</span>
-          <span><strong>Replay reconciliation</strong><small>Operator → Agent → agent pods</small></span>
-        </button>
       </div>
     </div>
   </AnimationWindow>
@@ -127,7 +122,6 @@ const resources = [
 
   interface InteractiveKaosGraph extends HTMLElement {
     selectResource(id: string): void;
-    trace(): void;
   }
 
   class ControlPlaneMap extends HTMLElement {
@@ -138,8 +132,7 @@ const resources = [
       const graph = this.querySelector<InteractiveKaosGraph>('kaos-architecture');
       const tabs = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-resource]'));
       const panels = Array.from(this.querySelectorAll<HTMLElement>('[data-resource-panel]'));
-      const trace = this.querySelector<HTMLButtonElement>('[data-trace]');
-      if (!graph || !tabs.length || !panels.length || !trace) return;
+      if (!graph || !tabs.length || !panels.length) return;
 
       const select = (id: string, focus = false) => {
         tabs.forEach((tab) => {
@@ -169,7 +162,6 @@ const resources = [
       graph.addEventListener('kaosarchitecture:select', (event) => select((event as CustomEvent<{ id: string }>).detail.id), {
         signal: this.controller.signal,
       });
-      trace.addEventListener('click', () => graph.trace(), { signal: this.controller.signal });
     }
 
     disconnectedCallback() {
@@ -375,47 +367,6 @@ const resources = [
     display: inline-block;
     font-size: var(--body-13);
     margin-top: 16px;
-  }
-  .trace {
-    align-items: center;
-    background: rgba(94, 230, 160, 0.035);
-    border: 0;
-    border-top: 1px solid rgba(94, 230, 160, 0.24);
-    color: var(--accent);
-    cursor: pointer;
-    display: flex;
-    font-family: var(--font-mono);
-    gap: 12px;
-    padding: 15px 18px;
-    text-align: left;
-    width: 100%;
-  }
-  .trace > span:first-child {
-    align-items: center;
-    border: 1px solid rgba(94, 230, 160, 0.45);
-    display: flex;
-    height: 28px;
-    justify-content: center;
-    width: 28px;
-  }
-  .trace strong,
-  .trace small {
-    display: block;
-  }
-  .trace strong {
-    font-size: var(--mono-10);
-    font-weight: 500;
-    letter-spacing: 0.04em;
-  }
-  .trace small {
-    color: var(--text-3);
-    font-size: var(--mono-8-5);
-    margin-top: 4px;
-  }
-  .trace:hover,
-  .trace:focus-visible {
-    background: rgba(94, 230, 160, 0.09);
-    outline: none;
   }
   @keyframes panel-in {
     from {
