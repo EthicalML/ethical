@@ -53,6 +53,11 @@ export class HeroCycle extends HTMLElement {
   private context?: CanvasRenderingContext2D;
   private controller = new AbortController();
   private graph?: { nodes: GraphNode[]; edges: GraphEdge[] };
+  private heroCopy?: HTMLElement;
+  private parallaxFrame = 0;
+  private scrollCurrent = 0;
+  private scrollProgress = 0;
+  private variant = 1;
   private height = 0;
   private host?: HTMLElement;
   private lastPointer?: { x: number; y: number };
@@ -84,6 +89,11 @@ export class HeroCycle extends HTMLElement {
       undefined;
     this.context = this.canvas?.getContext('2d') ?? undefined;
     if (!this.canvas || !this.context || !this.host) return;
+    this.heroCopy = this.host.querySelector<HTMLElement>('.hero-copy') ?? undefined;
+    // Parallax comparator: ?v=1 none · ?v=2 pinned hero · ?v=3 background trail ·
+    // ?v=4 shared drift + expansion · ?v=5 v4 + defocus · ?v=6 pinned object growing.
+    const requested = Number(new URLSearchParams(location.search).get('v') ?? '1');
+    this.variant = requested >= 1 && requested <= 6 ? Math.floor(requested) : 1;
 
     this.buttons = Array.from(this.host.querySelectorAll<HTMLButtonElement>('[data-hero-mode]'));
     this.buttons.forEach((button) =>
@@ -103,14 +113,83 @@ export class HeroCycle extends HTMLElement {
     this.fit();
     this.draw(0);
     this.resizeObserver.observe(this.canvas);
-    if (!this.reducedMotion) this.animationFrame = requestAnimationFrame(this.loop);
+    if (!this.reducedMotion) {
+      this.animationFrame = requestAnimationFrame(this.loop);
+      if (this.variant > 1) {
+        this.scrollCurrent = window.scrollY;
+        addEventListener('scroll', this.handleParallax, { passive: true, signal: this.controller.signal });
+        this.handleParallax();
+      }
+    }
   }
 
   disconnectedCallback() {
     cancelAnimationFrame(this.animationFrame);
+    cancelAnimationFrame(this.parallaxFrame);
     this.controller.abort();
     this.resizeObserver?.disconnect();
   }
+
+  private handleParallax = () => {
+    if (this.parallaxFrame) return;
+    this.parallaxFrame = requestAnimationFrame(() => {
+      this.parallaxFrame = 0;
+      if (!this.canvas || !this.host) return;
+      // Variants 4/5 ease toward the scroll position instead of snapping to it: the
+      // one-frame desync of main-thread transforms against compositor scrolling (worst
+      // in Firefox) is absorbed into a deliberate inertial glide. The chain keeps
+      // animating after scroll events stop until the eased value settles.
+      const smoothed = this.variant >= 4 && this.variant <= 5;
+      const target = window.scrollY;
+      this.scrollCurrent = smoothed ? this.scrollCurrent + (target - this.scrollCurrent) * 0.28 : target;
+      if (smoothed && Math.abs(target - this.scrollCurrent) > 0.4) this.handleParallax();
+      const scrolled = this.scrollCurrent;
+      const heroHeight = this.host.offsetHeight || 1;
+      const pin = Math.min(scrolled, heroHeight);
+      const progress = pin / heroHeight;
+      const fade = (over: number) => `${Math.max(0, 1 - scrolled / (heroHeight * over))}`;
+      const copy = this.heroCopy;
+      if (this.variant === 2) {
+        // Pinned hero: both layers counter-scrolled at the full rate, copy fades away.
+        this.canvas.style.transform = `translate3d(0, ${pin}px, 0)`;
+        if (copy) {
+          copy.style.transform = `translate3d(0, ${pin}px, 0)`;
+          copy.style.opacity = fade(0.9);
+        }
+      } else if (this.variant === 3) {
+        // Background trail: canvas lags the scroll slightly, copy scrolls normally.
+        this.canvas.style.transform = `translate3d(0, ${pin * 0.2}px, 0)`;
+      } else if (this.variant === 4) {
+        // Shared drift + expansion: both layers drift down together; within that motion
+        // the background dollies bigger (see draw) and pushes the copy left, growing it.
+        this.scrollProgress = progress;
+        this.canvas.style.transform = `translate3d(0, ${pin * 0.8}px, 0)`;
+        this.canvas.style.opacity = fade(1.2);
+        if (copy) {
+          copy.style.transform = `translate3d(${pin * -0.35}px, ${pin * 0.8}px, 0) scale(${1 + progress * 0.16})`;
+          copy.style.opacity = fade(0.9);
+        }
+      } else if (this.variant === 5) {
+        // Variant 4 plus defocus: the same shared drift and expansion, with the whole
+        // hero slipping out of focus as it goes. The copy's blur trails the object's so
+        // the text stays legible slightly longer.
+        this.scrollProgress = progress;
+        this.canvas.style.transform = `translate3d(0, ${pin * 0.8}px, 0)`;
+        this.canvas.style.filter = `blur(${(progress * 7).toFixed(2)}px)`;
+        this.canvas.style.opacity = fade(1.2);
+        if (copy) {
+          copy.style.transform = `translate3d(${pin * -0.35}px, ${pin * 0.8}px, 0) scale(${1 + progress * 0.16})`;
+          copy.style.filter = `blur(${(Math.max(0, progress - 0.12) * 6).toFixed(2)}px)`;
+          copy.style.opacity = fade(0.9);
+        }
+      } else if (this.variant === 6) {
+        // No exit effects: the 3D object simply holds its place and grows via the camera
+        // dolly while the page (copy included) scrolls past normally.
+        this.scrollProgress = progress;
+        this.canvas.style.transform = `translate3d(0, ${pin}px, 0)`;
+      }
+    });
+  };
 
   private draw(elapsed: number) {
     const context = this.context!;
@@ -175,8 +254,10 @@ export class HeroCycle extends HTMLElement {
       this.paint(mode, bufferContext, this.width, this.height, elapsed);
       bufferContext.restore();
     };
-    layer(this.state.current, 1 - mix, 1 + mix * 0.16);
-    if (this.state.next) layer(this.state.next, mix, 0.86 + mix * 0.14);
+    // Variants 4 and 5: the camera pulls back as you scroll, growing the projection.
+    const dolly = this.variant >= 4 ? 1 + this.scrollProgress * 0.35 : 1;
+    layer(this.state.current, 1 - mix, (1 + mix * 0.16) * dolly);
+    if (this.state.next) layer(this.state.next, mix, (0.86 + mix * 0.14) * dolly);
 
     context.clearRect(0, 0, this.width, this.height);
     if (tear < 0.02) {
