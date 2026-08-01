@@ -1549,6 +1549,88 @@ main > .home-section:last-child { padding-bottom: 120px; }
 .talk-grid article { border-bottom: 1px solid var(--hairline); padding-bottom: 24px; }
 .talk-grid img { aspect-ratio: 5/3; display: block; object-fit: cover; width: 100%; }
 .talk-grid .eyebrow { margin-top: 18px; }.talk-grid h2 { font:300 30px/1.1 var(--font-display); margin:12px 0; }.talk-grid article > span { color:var(--text-3); font-size:13px; }
+.cluster-section {
+  border-top: 1px solid var(--hairline);
+  padding: 88px 48px 96px;
+}
+.cluster-section > h2,
+.engagement-band > h2 {
+  font: 300 44px/1.1 var(--font-display);
+  margin: 18px 0 24px;
+  max-width: 820px;
+}
+.cluster-section > p:not(.eyebrow) {
+  color: var(--text-2);
+  font-size: var(--body-16);
+  line-height: 1.7;
+  max-width: 880px;
+}
+.cluster-section .theme-line {
+  color: var(--text-4);
+  font: var(--mono-10)/1.7 var(--font-mono);
+  letter-spacing: .08em;
+  margin: 28px 0;
+  text-transform: uppercase;
+}
+.recent-issues-rail {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 38px 0 30px;
+}
+.recent-issues-rail a {
+  border: 1px solid var(--hairline-card);
+  color: inherit;
+  display: grid;
+  gap: 9px;
+  margin: -1px 0 0 -1px;
+  padding: 24px;
+}
+.recent-issues-rail strong { color: var(--accent); font: 300 28px var(--font-display); }
+.recent-issues-rail span { color: var(--text-3); font: var(--mono-10)/1 var(--font-mono); letter-spacing: .08em; }
+.recent-issues-rail i { color: var(--accent); font-style: normal; justify-self: end; }
+.network-section .network-directory { padding: 54px 0 0; }
+.join-intro { padding-bottom: 48px; }
+.join-intro a,
+.text-link { color: var(--accent); }
+.featured-talks-grid { display: grid; gap: 18px; grid-template-columns: 1fr 1fr; margin: 36px 0; }
+.featured-talks .text-link { display: inline-block; font: var(--mono-10)/1 var(--font-mono); letter-spacing: .08em; padding: 14px 0; }
+.benefit-rows { margin-top: 34px; max-width: 980px; }
+.benefit-rows p {
+  border-top: 1px solid var(--hairline);
+  display: grid;
+  gap: 30px;
+  grid-template-columns: minmax(180px, .45fr) 1fr;
+  margin: 0;
+  padding: 22px 0;
+}
+.benefit-rows strong { color: var(--text-1); font: 300 24px/1.2 var(--font-display); }
+.benefit-rows span { color: var(--text-2); line-height: 1.65; }
+.policy-feature {
+  color: inherit;
+  display: block;
+  margin: 0 48px 96px;
+  padding: 44px;
+}
+.policy-feature h2 { font: 300 52px/1.08 var(--font-display); margin: 16px 0; }
+.policy-feature p:not(.eyebrow) { color: var(--text-2); line-height: 1.7; max-width: 760px; }
+.policy-feature > span { color: var(--accent); display: inline-block; font: var(--mono-10)/1 var(--font-mono); letter-spacing: .08em; margin-top: 20px; }
+.policy-eu-feature { margin: 0 48px 88px; padding: 44px; }
+.policy-eu-feature h2 { font: 300 46px/1.1 var(--font-display); margin: 16px 0; }
+.policy-eu-feature p:not(.eyebrow) { color: var(--text-2); font-size: var(--body-16); line-height: 1.7; max-width: 840px; }
+.partner-list-heading { padding-bottom: 18px; }
+.engagement-band { border-block: 1px solid var(--hairline); margin-top: 24px; padding: 72px 48px 82px; }
+.engagement-row {
+  align-items: baseline;
+  border-top: 1px solid var(--hairline);
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1.1fr 1.15fr 1.2fr 150px;
+  padding: 19px 0;
+}
+.engagement-row strong { font: 300 20px/1.3 var(--font-display); }
+.engagement-row span { color: var(--text-3); font-size: 13px; line-height: 1.5; }
+.engagement-row a { color: var(--accent); font-size: 12px; }
+.engagement-row > a { font: var(--mono-9)/1.4 var(--font-mono); letter-spacing: .07em; }
 .footnote-band { align-items:start; border-top: 1px solid var(--hairline); display:grid; gap:44px; grid-template-columns:1.15fr .85fr 250px; padding:44px 48px 34px; }
 .footnote-band p { color:rgba(244,242,238,.62); font-size:14px; line-height:1.62; margin:0; max-width:520px; }
 .footnote-band .eyebrow { color:rgba(244,242,238,.4); font:9.5px/normal var(--font-mono); letter-spacing:.14em; }
@@ -2055,6 +2137,11 @@ main > .home-section:last-child { padding-bottom: 120px; }
     grid-template-columns: 1fr;
     padding-inline: 24px;
   }
+  .cluster-section,
+  .engagement-band { padding: 68px 24px 72px; }
+  .recent-issues-rail { grid-template-columns: 1fr 1fr; }
+  .policy-feature, .policy-eu-feature { margin: 0 24px 72px; }
+  .engagement-row { grid-template-columns: 1fr 1fr; }
   .button,
   .cta-block a,
   .principle-pagination a {
@@ -2126,5 +2213,16 @@ main > .home-section:last-child { padding-bottom: 120px; }
     gap: 5px;
   }
   .talk-grid h2 { font-size: 28px; }
+  .cluster-section,
+  .engagement-band { padding: 56px 18px 60px; }
+  .cluster-section > h2,
+  .engagement-band > h2 { font-size: 36px; }
+  .recent-issues-rail,
+  .featured-talks-grid { grid-template-columns: 1fr; }
+  .benefit-rows p { gap: 8px; grid-template-columns: 1fr; }
+  .policy-feature, .policy-eu-feature { margin: 0 18px 60px; padding: 28px 22px; }
+  .policy-feature h2 { font-size: 38px; }
+  .policy-eu-feature h2 { font-size: 36px; }
+  .engagement-row { gap: 8px; grid-template-columns: 1fr; }
   .footnote-band { padding: 40px 18px; }
 }

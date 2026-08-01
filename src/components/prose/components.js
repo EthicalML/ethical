@@ -10,6 +10,7 @@ export { default as CenteredCTA } from '../CenteredCTA.astro';
 export { default as FormSection } from '../FormSection.astro';
 export { default as MaturityModelContent } from '../MaturityModelContent.astro';
 export { default as NetworkDirectory } from '../NetworkDirectory.astro';
+export { default as RecentIssuesRail } from '../RecentIssuesRail.astro';
 export { default as OpenSourceShowcase } from '../OpenSourceShowcase.astro';
 export { default as PartnerDirectory } from '../PartnerDirectory.astro';
 export { default as ProjectPortal } from '../ProjectPortal.astro';

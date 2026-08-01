@@ -32,8 +32,9 @@ export default defineConfig({
     '/eal.html': '/open-source/',
     '/mlmm.html': '/frameworks/maturity-model/',
     '/network.html': '/network/',
+    '/initiatives/': '/policy/',
     '/contact.html': '/contact/',
-    '/mle.html': '/network/', // TODO: point to the newsletter landing page when it exists.
+    '/mle.html': '/network/',
     '/privacypolicy.html': '/privacy/',
   },
   markdown: {

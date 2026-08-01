@@ -1,15 +1,50 @@
 ---
 title: Partners
-description: Institutional relationships, roles and standards collaborations connected to the Institute's practical work.
+description: Organisations work with the Institute through frameworks, open source, the network, and standards and policy engagement.
 composed: true
 layout: ../layouts/ProseLayout.astro
 ---
 
-import { AffiliationMarquee, ArticleHero, CenteredCTA, PartnerDirectory } from '../components/prose/components.js';
+import { ArticleHero, CenteredCTA, PartnerDirectory } from '../components/prose/components.js';
 
-<ArticleHero eyebrow="PARTNERS" title="Relationships behind the work" />
+<ArticleHero
+  eyebrow="PARTNERS"
+  title="Work with the Institute."
+  intro="Organisations engage through procurement pilots, research collaboration, open-source contribution, and joint standards and policy work."
+/>
 
-<AffiliationMarquee />
+## Forms of partnership
+
+<div className="benefit-rows partnership-rows">
+  <p>
+    <strong>Standards & policy</strong>
+    <span>Engagement with ISO/IEC, IEEE, ACM, Linux Foundation, UN CSTD and European Commission channels.</span>
+  </p>
+  <p>
+    <strong>Frameworks</strong>
+    <span>Piloting AI-RFX and the ML Maturity Model in procurement and system assessment.</span>
+  </p>
+  <p>
+    <strong>Open source</strong>
+    <span>Contributing to KAOS, Kompute, explainability work and the production-ML ecosystem.</span>
+  </p>
+  <p>
+    <strong>Network & newsletter</strong>
+    <span>Supporting practitioner exchange through the Ethical AI Network and ML Engineer newsletter.</span>
+  </p>
+</div>
+
+<a className="policy-feature prose-block" href="/policy/" data-reveal>
+  <p className="eyebrow">FEATURED — POLICY & STANDARDS</p>
+  <h2>From principles to the public record.</h2>
+  <p>Read about work across EU AI policy, UN CSTD, ISO/IEC, ACM, IEEE, Linux Foundation committees and open-source security.</p>
+  <span>Explore policy and standards →</span>
+</a>
+
+<section className="cluster-section partner-list-heading" data-reveal>
+  <p className="eyebrow">CURRENT PARTNERS</p>
+  <h2>Institutional relationships and collaborations</h2>
+</section>
 
 <PartnerDirectory />
 

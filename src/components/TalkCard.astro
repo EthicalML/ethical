@@ -1,10 +1,10 @@
 ---
-const { href, image, title } = Astro.props;
+const { href, image, title, eyebrow = 'PYDATA LONDON 2019 · VIDEO', alt = 'PyData London 2019 XAI talk', layout = 'wide' } = Astro.props;
 ---
 
-<a class="talk-card prose-block" href={href} target="_blank" rel="noopener noreferrer" data-reveal>
-  <img src={image} alt="PyData London 2019 XAI talk" loading="lazy" />
-  <span><small>PYDATA LONDON 2019 · VIDEO</small><strong>{title}</strong><i>Watch the talk →</i></span>
+<a class:list={['talk-card', 'prose-block', layout === 'grid' && 'grid-card']} href={href} target="_blank" rel="noopener noreferrer" data-reveal>
+  <img src={image} alt={alt} loading="lazy" />
+  <span><small>{eyebrow}</small><strong>{title}</strong><i>Watch the talk →</i></span>
 </a>
 
 <style>
@@ -39,6 +39,11 @@ const { href, image, title } = Astro.props;
   i {
     color: var(--accent);
     font: normal 12px var(--font-mono);
+  }
+  .grid-card {
+    gap: 24px;
+    grid-template-columns: 1fr;
+    margin-top: 0;
   }
   @media (max-width: 700px) {
     .talk-card {
