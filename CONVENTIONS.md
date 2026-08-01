@@ -70,6 +70,7 @@ All first-party client behaviour is TypeScript. Do not add first-party runtime J
 | Survey title morph          | Homepage report heading → survey explorer hero                       | `MorphPairs`, `ReportsSection`, `ArticleHero`                       |
 | Initiative title morphs     | Homepage maturity / security card titles → matching framework heroes | `MorphPairs`, `ReportsSection`, `ArticleHero`, `BaseLayout`         |
 | KAOS title morph            | Homepage KAOS card title → KAOS page hero h1                         | `MorphPairs`, `OpenSourceShowcase`, `ArticleHero`                   |
+| KAOS architecture orbit     | Homepage showcase, project portal, KAOS hero and control-plane map   | `KaosGraph`, `CanvasEngine`, `AnimationWindow`                      |
 | OSS portal title morphs     | `/open-source/` panel titles → project page heroes                   | `MorphPairs`, `ProjectPortal`, `ArticleHero`                        |
 | Project portal activity     | `/open-source/` project panels and production ML constellation       | `ProjectPortal`, `CategoryConstellation`, `CanvasEngine`            |
 | Kompute sequence playback   | Kompute detail sequence pipeline                                     | `SequencePipeline`                                                  |

@@ -18,12 +18,14 @@ export class CanvasEngine {
   private context: CanvasRenderingContext2D;
   private height = 0;
   private intersectionObserver: IntersectionObserver;
+  private elapsedSeconds = 0;
+  private lastFrameAt?: number;
   private lastPointer?: CanvasPointer;
+  private playing = true;
   private pointer: CanvasPointer = { x: 0.5, y: 0.5 };
   private pointerTarget: CanvasPointer = { x: 0.5, y: 0.5 };
   private reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   private resizeObserver: ResizeObserver;
-  private startedAt = performance.now();
   private width = 0;
 
   constructor(
@@ -57,13 +59,15 @@ export class CanvasEngine {
   }
 
   redraw() {
-    this.drawFrame(
-      this.context,
-      this.width,
-      this.height,
-      (performance.now() - this.startedAt) / 1000,
-      this.pointer,
-    );
+    this.drawFrame(this.context, this.width, this.height, this.elapsedSeconds, this.pointer);
+  }
+
+  setPlaying(playing: boolean) {
+    if (this.reducedMotion || playing === this.playing) return;
+    this.playing = playing;
+    this.lastFrameAt = undefined;
+    cancelAnimationFrame(this.animationFrame);
+    if (playing && this.active) this.animationFrame = requestAnimationFrame(this.frame);
   }
 
   private fit() {
@@ -77,16 +81,13 @@ export class CanvasEngine {
   }
 
   private frame = (now: number) => {
+    if (this.lastFrameAt !== undefined)
+      this.elapsedSeconds += Math.min(0.05, (now - this.lastFrameAt) / 1000);
+    this.lastFrameAt = now;
     this.pointer.x += (this.pointerTarget.x - this.pointer.x) * 0.12;
     this.pointer.y += (this.pointerTarget.y - this.pointer.y) * 0.12;
-    this.drawFrame(
-      this.context,
-      this.width,
-      this.height,
-      (now - this.startedAt) / 1000,
-      this.pointer,
-    );
-    if (this.active && !this.reducedMotion) {
+    this.drawFrame(this.context, this.width, this.height, this.elapsedSeconds, this.pointer);
+    if (this.active && this.playing && !this.reducedMotion) {
       this.animationFrame = requestAnimationFrame(this.frame);
     }
   };
@@ -95,8 +96,8 @@ export class CanvasEngine {
     const nextActive = entry.isIntersecting;
     if (nextActive && !this.active) {
       this.active = true;
-      this.startedAt = performance.now();
-      this.animationFrame = requestAnimationFrame(this.frame);
+      this.lastFrameAt = undefined;
+      if (this.playing) this.animationFrame = requestAnimationFrame(this.frame);
     }
     this.active = nextActive;
     if (!nextActive) cancelAnimationFrame(this.animationFrame);
@@ -121,6 +122,6 @@ export class CanvasEngine {
 
   private handleResize = () => {
     this.fit();
-    this.drawFrame(this.context, this.width, this.height, 0, this.pointer);
+    this.redraw();
   };
 }
