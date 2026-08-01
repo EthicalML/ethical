@@ -1,0 +1,208 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AchievementGrid from '../../components/AchievementGrid.astro';
+import AchievementRendition from '../../components/AchievementRendition.astro';
+import AchievementVisual from '../../components/AchievementVisual.astro';
+import PrototypeSwitcher from '../../components/PrototypeSwitcher.astro';
+
+const frontmatter = {
+  title: 'Policy achievement prototypes',
+  description: 'Three composition studies for the policy achievement record.',
+};
+
+const cards = [
+  {
+    piece: 'eu',
+    eyebrow: 'EU · GPAI CODE OF PRACTICE',
+    title: '8 of 12',
+    glyph: 'eu-adoption' as const,
+    description:
+      "Recommendations adopted. ACM's second-draft response states that “eight (8) out of twelve (12) initial recommendations … are integrated in the main text of the Second Draft”.",
+    summary: 'Eight recommendations entered the Second Draft of the GPAI Code.',
+    links: [
+      {
+        label: 'Read the response',
+        href: 'https://www.acm.org/binaries/content/assets/public-policy/acm-europetpc-consultation-2024---2nd-general-purpose-ai-code-of-practice-1.pdf',
+      },
+    ],
+  },
+  {
+    piece: 'uk',
+    eyebrow: 'UNITED KINGDOM · AI REGULATION',
+    title: '13 of 14',
+    glyph: 'uk-adoption' as const,
+    description: 'Recommendations adopted. The total is owner-attested. The 2022 framework comments are the related first-stage artefact.',
+    summary: 'Owner-attested adoption total, with the 2022 comments as the related artefact.',
+    links: [
+      {
+        label: 'Read the framework comments',
+        href: 'https://www.acm.org/binaries/content/assets/public-policy/europe-tpc-uk-ai-framework-comments.pdf',
+      },
+    ],
+  },
+  {
+    piece: 'mlsecops',
+    eyebrow: 'CITED INTO THE CODE',
+    title: 'MLSecOps in the Code',
+    glyph: 'citation-network' as const,
+    description:
+      "Both GPAI responses cite the Institute's MLSecOps framework in Recommendation 10 alongside MITRE ATT&CK, OWASP and UK NCSC as taxonomies for the Commission to build on.",
+    summary: 'Both GPAI responses cite the framework beside MITRE, OWASP and UK NCSC.',
+    links: [
+      { label: 'Explore MLSecOps', href: '/frameworks/security/' },
+      {
+        label: 'Read the response',
+        href: 'https://www.acm.org/binaries/content/assets/public-policy/acm-europetpc-consultation-2024---2nd-general-purpose-ai-code-of-practice-1.pdf',
+      },
+    ],
+  },
+  {
+    piece: 'un',
+    eyebrow: 'UNITED NATIONS',
+    title: 'Chair, Principles Committee',
+    glyph: 'un-chair' as const,
+    description: 'The appointment covers the Data Governance Guidelines developed through the UN Commission on Science and Technology for Development.',
+    summary: 'Data Governance Guidelines at the UN Commission on Science and Technology for Development.',
+    links: [
+      {
+        label: 'Public record',
+        href: 'https://unctad.org/topic/commission-on-science-and-technology-for-development/working-group-on-data-governance',
+      },
+    ],
+  },
+  {
+    piece: 'acm',
+    eyebrow: 'ACM POLICY LEADERSHIP',
+    title: 'Founding in Europe and LATAM',
+    glyph: 'acm-bridges' as const,
+    description: "The Institute's Chief Scientist founded ACM's AI policy committee work in Europe and is a founding committee member for LATAM.",
+    summary: 'Founding policy leadership in Europe, followed by a founding committee role in LATAM.',
+    links: [{ label: 'ACM volunteer record', href: 'https://www.acm.org/volunteers/volunteer/saucedo_9722274' }],
+  },
+  {
+    piece: 'through-line',
+    eyebrow: 'THE THROUGH-LINE',
+    title: '2021 to 2026',
+    glyph: 'policy-timeline' as const,
+    description:
+      'The 2021 AI Act comments called for continuous post-deployment oversight of self-modifying systems. The 2026 brief applies the same position to agentic frontier models.',
+    summary: 'Continuous oversight from the 2021 AI Act comments to the 2026 agentic brief.',
+    links: [
+      { label: '2021 comments', href: 'https://www.acm.org/binaries/content/assets/public-policy/europe-tpc-comments-ai-consultation.pdf' },
+      { label: '2026 brief', href: 'https://www.acm.org/public-policy/europe-tpc/calibrating-oversight-agentic-frontier-models-04272026' },
+    ],
+  },
+];
+
+const orders = [3, 7, 10, 5, 13, 15];
+---
+
+<BaseLayout frontmatter={frontmatter}>
+  <header class="prototype-header">
+    <p class="eyebrow">PROTOTYPE · POLICY ACHIEVEMENTS</p>
+    <h1>How should the achievements assemble?</h1>
+    <p>Compare the current collage with a cleaner shared-grid composition and a light-surface two-row system.</p>
+  </header>
+
+  <PrototypeSwitcher
+    options={[
+      { label: 'V1 · CURRENT', value: '1' },
+      { label: 'V2 · CLEAN', value: '2' },
+      { label: 'V3 · LIGHT', value: '3' },
+    ]}
+  >
+    <section class="policy-section prototype-achievements" data-prototype-variant="1">
+      <header>
+        <p class="eyebrow">V1 · CURRENT COLLAGE</p>
+        <h2>Highlight achievements</h2>
+      </header>
+      <AchievementGrid>
+        {
+          cards.map((card, index) => (
+            <article class="achievement-card" data-piece={card.piece} data-order={orders[index]} data-hover={index < 2 ? 'slide' : 'tilt'}>
+              <AchievementVisual variant={card.glyph} />
+              <div class="achievement-card-copy">
+                <span>{card.eyebrow}</span>
+                <strong>{card.title}</strong>
+                <p>{card.description}</p>
+                <p class="achievement-links">
+                  {card.links.map((link) => {
+                    const external = link.href.startsWith('http');
+                    return (
+                      <a href={link.href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
+                        {link.label} →
+                      </a>
+                    );
+                  })}
+                </p>
+              </div>
+            </article>
+          ))
+        }
+      </AchievementGrid>
+    </section>
+
+    <section class="rendition-section" data-prototype-variant="2" hidden>
+      <header>
+        <p class="eyebrow">V2 · CLEAN SHARED GRID</p>
+        <h2>Highlight achievements</h2>
+        <p>Flush seams, two quiet fillers, one structural accent and more open card interiors.</p>
+      </header>
+      <AchievementRendition variant="clean" cards={cards} />
+    </section>
+
+    <section class="rendition-section" data-prototype-variant="3" hidden>
+      <header>
+        <p class="eyebrow">V3 · LIGHT SURFACE</p>
+        <h2>Highlight achievements</h2>
+        <p>A strict two-row system using warm light surfaces against the Institute's dark field.</p>
+      </header>
+      <AchievementRendition variant="light" cards={cards} />
+    </section>
+  </PrototypeSwitcher>
+</BaseLayout>
+
+<style>
+  .prototype-header {
+    padding: 128px 48px 72px;
+  }
+  .prototype-header h1 {
+    font: 300 clamp(52px, 7vw, 92px) / 0.98 var(--font-display);
+    letter-spacing: -0.03em;
+    margin: 20px 0 24px;
+    max-width: 1040px;
+  }
+  .prototype-header > p:last-child,
+  .rendition-section > header > p:last-child {
+    color: var(--text-2);
+    font-size: var(--body-16);
+    line-height: 1.7;
+    margin: 0;
+    max-width: 760px;
+  }
+  .rendition-section {
+    padding: 72px 48px 100px;
+  }
+  .rendition-section > header {
+    margin-bottom: 54px;
+  }
+  .rendition-section h2 {
+    font: 300 clamp(48px, 6vw, 76px) / 1 var(--font-display);
+    letter-spacing: -0.025em;
+    margin: 18px 0 22px;
+  }
+  section[hidden] {
+    display: none;
+  }
+  @media (max-width: 600px) {
+    .prototype-header {
+      padding: 104px 18px 56px;
+    }
+    .rendition-section {
+      padding: 56px 0 72px;
+    }
+    .rendition-section > header {
+      padding-inline: 18px;
+    }
+  }
+</style>

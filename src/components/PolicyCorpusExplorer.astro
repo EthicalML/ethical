@@ -135,7 +135,7 @@ const featuredKeys = new Set(
 const ambientQuotes = quotePool.filter((_, index) => index % 2 === 0).slice(0, 20);
 ---
 
-<policy-corpus class="policy-corpus" data-quote-count={quotePool.length} data-document-count={documents.length} data-reveal>
+<policy-corpus class="policy-corpus" data-quote-count={quotePool.length} data-document-count={documents.length}>
   <header class="corpus-header">
     <div>
       <p class="eyebrow">CORPUS EXPLORER</p>
@@ -218,6 +218,9 @@ const ambientQuotes = quotePool.filter((_, index) => index % 2 === 0).slice(0, 2
         });
       });
 
+      const defaultButton = this.querySelector<HTMLButtonElement>('[data-theme-filter="all"]');
+      if (defaultButton) this.selectTheme(defaultButton, true);
+
       if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) {
         this.dataset.inView = 'true';
         return;
@@ -236,7 +239,7 @@ const ambientQuotes = quotePool.filter((_, index) => index % 2 === 0).slice(0, 2
       this.animations.clear();
     }
 
-    private selectTheme(activeButton: HTMLButtonElement) {
+    private selectTheme(activeButton: HTMLButtonElement, immediate = false) {
       const theme = activeButton.dataset.themeFilter ?? 'all';
       this.querySelectorAll<HTMLButtonElement>('[data-theme-filter]').forEach((button) => {
         button.setAttribute('aria-pressed', String(button === activeButton));
@@ -253,7 +256,7 @@ const ambientQuotes = quotePool.filter((_, index) => index % 2 === 0).slice(0, 2
       const next = candidates.slice(0, 4);
 
       if (this.switchTimer) clearTimeout(this.switchTimer);
-      if (reduced) {
+      if (reduced || immediate) {
         current.forEach((quote) => (quote.hidden = true));
         next.forEach((quote) => (quote.hidden = false));
         return;
@@ -410,11 +413,11 @@ const ambientQuotes = quotePool.filter((_, index) => index % 2 === 0).slice(0, 2
     animation: corpus-fragment-drift var(--fragment-duration) linear infinite;
     animation-delay: var(--fragment-delay);
     animation-play-state: paused;
-    color: rgba(244, 242, 238, 0.085);
+    color: rgba(244, 242, 238, 0.16);
     font: var(--mono-9) / 1.6 var(--font-mono);
     left: var(--fragment-x);
     max-width: 340px;
-    opacity: 0.48;
+    opacity: 0.68;
     overflow: hidden;
     position: absolute;
     text-overflow: ellipsis;
@@ -429,11 +432,11 @@ const ambientQuotes = quotePool.filter((_, index) => index % 2 === 0).slice(0, 2
     animation-play-state: running;
   }
   .corpus-fragment[data-matched='false'] {
-    opacity: 0.12;
+    opacity: 0.18;
   }
   .corpus-fragment[data-matched='true'] {
-    color: rgba(94, 230, 160, 0.17);
-    opacity: 0.9;
+    color: rgba(94, 230, 160, 0.28);
+    opacity: 0.88;
   }
 
   .corpus-quotes {
@@ -547,13 +550,13 @@ const ambientQuotes = quotePool.filter((_, index) => index % 2 === 0).slice(0, 2
   @media (prefers-reduced-motion: reduce) {
     .corpus-fragment {
       animation: none;
-      opacity: 0.2;
+      opacity: 0.42;
     }
     .corpus-fragment[data-matched='false'] {
       opacity: 0.08;
     }
     .corpus-fragment[data-matched='true'] {
-      opacity: 0.35;
+      opacity: 0.62;
     }
   }
 </style>

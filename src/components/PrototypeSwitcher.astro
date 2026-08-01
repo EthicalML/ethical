@@ -1,0 +1,82 @@
+---
+interface Option {
+  label: string;
+  value: string;
+}
+
+interface Props {
+  options: Option[];
+}
+
+const { options } = Astro.props;
+---
+
+<prototype-switcher data-default-variant={options[0]?.value}>
+  <nav class="prototype-switcher-nav" aria-label="Choose prototype variant">
+    {
+      options.map((option, index) => (
+        <a href={`?v=${option.value}`} data-prototype-link={option.value} aria-current={index === 0 ? 'page' : undefined}>
+          {option.label}
+        </a>
+      ))
+    }
+  </nav>
+  <slot />
+</prototype-switcher>
+
+<script>
+  class PrototypeSwitcherElement extends HTMLElement {
+    connectedCallback() {
+      const available = [...this.querySelectorAll<HTMLElement>('[data-prototype-variant]')];
+      const requested = new URL(location.href).searchParams.get('v');
+      const selected = available.some((variant) => variant.dataset.prototypeVariant === requested) ? requested : this.dataset.defaultVariant;
+      available.forEach((variant) => (variant.hidden = variant.dataset.prototypeVariant !== selected));
+      this.querySelectorAll<HTMLAnchorElement>('[data-prototype-link]').forEach((link) => {
+        if (link.dataset.prototypeLink === selected) link.setAttribute('aria-current', 'page');
+        else link.removeAttribute('aria-current');
+      });
+      this.dataset.selected = selected ?? '';
+    }
+  }
+
+  if (!customElements.get('prototype-switcher')) {
+    customElements.define('prototype-switcher', PrototypeSwitcherElement);
+  }
+</script>
+
+<style>
+  prototype-switcher {
+    display: block;
+  }
+  .prototype-switcher-nav {
+    align-items: center;
+    background: rgba(15, 16, 15, 0.92);
+    border: 1px solid var(--hairline-card);
+    display: flex;
+    gap: 8px;
+    margin: 0 48px 32px;
+    padding: 8px;
+    position: sticky;
+    top: 82px;
+    width: fit-content;
+    z-index: 20;
+  }
+  a {
+    border-radius: var(--radius-pill);
+    color: var(--text-3);
+    font: var(--mono-9) / 1 var(--font-mono);
+    letter-spacing: 0.09em;
+    padding: 11px 14px;
+    text-transform: uppercase;
+  }
+  a[aria-current='page'] {
+    background: var(--accent);
+    color: var(--accent-on);
+  }
+  @media (max-width: 600px) {
+    .prototype-switcher-nav {
+      margin-inline: 18px;
+      top: 70px;
+    }
+  }
+</style>
