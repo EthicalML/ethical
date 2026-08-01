@@ -1390,7 +1390,13 @@ main > .home-section:last-child { padding-bottom: 120px; }
   z-index: 1;
 }
 .article-hero.canvas-variant > :not(canvas, .kaos-architecture-mount, .kompute-canvas-mount) { position: relative; z-index: 2; }
-.article-hero.canvas-variant .hero-canvas { opacity: .85; }
+.article-hero.canvas-variant .hero-canvas {
+  left: 34%;
+  mask-image: linear-gradient(90deg, transparent 0, #000 260px);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 260px);
+  opacity: .85;
+  width: 66%;
+}
 .article-hero.canvas-variant > .kaos-architecture-mount {
   height: min(500px, 100%);
   left: 34%;
@@ -1419,6 +1425,8 @@ main > .home-section:last-child { padding-bottom: 120px; }
 }
 .article-hero.canvas-variant > .kompute-canvas-mount canvas { height: 100%; width: 100%; }
 .section-intro { color: var(--text-2); line-height: 1.6; max-width: 560px; }
+
+.prose-section > :is(animation-window, control-plane-map, media-band, code-tabs, stage-explorer) { margin-bottom: 28px; }
 
 .principles-explorer { display: block; }
 .principles-explorer-grid { align-items: start; display: grid; gap: 56px; grid-template-columns: 1fr 1.15fr; margin-top: 20px; }
@@ -2019,7 +2027,8 @@ main > .home-section:last-child { padding-bottom: 120px; }
   }
   .article-hero h1 { font-size: clamp(48px, 8vw, 64px); }
   .article-hero.canvas-variant > .kaos-architecture-mount,
-  .article-hero.canvas-variant > .kompute-canvas-mount {
+  .article-hero.canvas-variant > .kompute-canvas-mount,
+  .article-hero.canvas-variant .hero-canvas {
     bottom: 0;
     height: 340px;
     left: 0;

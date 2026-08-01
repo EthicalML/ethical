@@ -83,13 +83,6 @@ mgr.sequence()
 ->record<kp::OpAlgoDispatch>(algorithm, pushConstsB) // Overrides push consts
 ->eval(); // Evaluates only last recorded operation`;
 
-export const facts = [
-  { value: '90% UNIT TEST COVERAGE', label: '' },
-  { value: 'MONTHLY COMMUNITY CALLS', label: '' },
-  { value: 'FOSDEM TALKS', label: '' },
-  { value: 'C++ AND PYTHON', label: '' },
-];
-
 export const links = [
   { label: 'View on GitHub →', href: 'https://github.com/KomputeProject/kompute' },
   { label: 'kompute.cc →', href: 'https://kompute.cc' },
@@ -101,7 +94,7 @@ export const metricEntry = await getEntry('metrics', 'kompute');
   eyebrow="OPEN SOURCE · LINUX FOUNDATION · APACHE-2.0"
   title={frontmatter.title}
   intro={
-    '"The general purpose GPU compute framework for cross vendor graphics cards (AMD, Qualcomm, NVIDIA & friends). Blazing fast, mobile-enabled, asynchronous, and optimized for advanced GPU acceleration usecases." Donated by the Institute and "backed by the Linux Foundation as a hosted project by the LF AI & Data Foundation."'
+    'The general purpose GPU compute framework for cross vendor graphics cards (AMD, Qualcomm, NVIDIA & friends). Blazing fast, mobile-enabled, asynchronous, and optimized for advanced GPU acceleration usecases. Donated by the Institute and backed by the Linux Foundation as a hosted project of the LF AI & Data Foundation.'
   }
   canvas="kompute"
   transitionName="kompute-title"
@@ -115,14 +108,13 @@ Four concepts carry the whole framework: a **Manager** owns the device, **Tensor
 
 ## Two languages, one API
 
-<CodeTabs python={pythonCode} cpp={cppCode} />
-
 The Python module covers experimentation; the C++ SDK goes as deep as the optimisation requires. Asynchronous and parallel execution comes through GPU family queues, and the BYOV design ("bring-your-own-Vulkan") plugs into existing Vulkan applications.
+
+<CodeTabs python={pythonCode} cpp={cppCode} />
 
 ## Proven where it counts
 
 Kompute backs on-device LLM inference in **GPT4ALL**, appeared as a backend in **llama.cpp**, and powers **vkJAX**, the JAX interpreter for Vulkan. It runs on Android via the NDK, on Raspberry Pi through Mesa, and in the Godot engine for game development.
 
-<Metrics values={facts} ariaLabel="Project facts" />
 <Metrics values={metricEntry.data.values} />
 <ProjectLinks links={links} />

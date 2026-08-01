@@ -14,7 +14,7 @@ interface Props {
 }
 const { links }: Props = Astro.props;
 const metricsEntry = await getEntry('metrics', 'kaos');
-const metrics: Metric[] = (metricsEntry?.data.values ?? []).filter(({ label }) => label !== 'CONTRIBUTORS');
+const metrics: Metric[] = metricsEntry?.data.values ?? [];
 ---
 
 <div class="kaos-project-footer" data-reveal>

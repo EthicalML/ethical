@@ -49,11 +49,9 @@ An agent is a resource, not a script. Install the system, deploy a model API and
 
 ## The control plane
 
-Five custom resources define an agent system: **Agent** (the running agent, its model, tools, peers and memory binding), **ModelAPI** (LLM access, proxied via LiteLLM or hosted in-cluster with Ollama), **MCPServer** (tool servers speaking the Model Context Protocol), **MemoryStore** (the central memory service agents bind to) and **AccessGrant** (who may reach what). Four controllers reconcile them into pods, services and policy.
+Five custom resources define an agent system: **Agent** (the running agent, its model, tools, peers and memory binding), **ModelAPI** (LLM access, proxied via LiteLLM or hosted in-cluster with Ollama), **MCPServer** (tool servers speaking the Model Context Protocol), **MemoryStore** (the central memory service agents bind to) and **AccessGrant** (who may reach what). Four controllers reconcile them into pods, services and policy. Agents delegate through the A2A protocol: discovery via `/.well-known/agent.json`, sub-agents exposed to the model as tools, and "hierarchical agent systems with automatic delegation".
 
 <ControlPlaneMap />
-
-Agents delegate through the A2A protocol: discovery via `/.well-known/agent.json`, sub-agents exposed to the model as tools, and "hierarchical agent systems with automatic delegation".
 
 ## Memory that survives the session
 
@@ -73,10 +71,10 @@ Authorization is declarative: `AccessGrant` resources bind users, groups and age
 
 ## Watch it work
 
-<MediaBand items={frontmatter.media} />
-
 The dashboard covers the operational loop: monitor agents, chat with them live, inspect memory sessions and events, debug MCP tools with real calls, and stream pod logs. Agents ship OpenTelemetry instrumentation, so traces land in your existing observability stack.
 
-## Metrics + CTAs
+<MediaBand items={frontmatter.media} />
+
+## Project metrics & links
 
 <KaosProjectFooter links={frontmatter.links} />

@@ -31,7 +31,6 @@ const { cli }: Props = Astro.props;
                 {output}
               </div>
             )}
-            <div class="terminal-separator" data-terminal-separator aria-hidden="true" />
           </div>
         ))
       }
@@ -74,8 +73,7 @@ const { cli }: Props = Astro.props;
       steps.forEach((step) => {
         const command = step.querySelector<HTMLElement>('.terminal-command');
         const output = step.querySelector<HTMLElement>('[data-terminal-output]');
-        const separator = step.querySelector<HTMLElement>('[data-terminal-separator]');
-        if (!command || !separator) return;
+        if (!command) return;
 
         const textNodes: Text[] = [];
         const walker = document.createTreeWalker(command, NodeFilter.SHOW_TEXT);
@@ -96,7 +94,6 @@ const { cli }: Props = Astro.props;
           node.replaceWith(fragment);
         });
         if (output) this.operations.push({ delay: 320, run: () => output.classList.add('is-visible') });
-        this.operations.push({ delay: output ? 380 : 180, run: () => separator.classList.add('is-visible') });
       });
     }
 
@@ -171,18 +168,15 @@ const { cli }: Props = Astro.props;
   .terminal-output {
     color: var(--text-3);
   }
-  .terminal-separator {
-    border-bottom: 1px solid var(--hairline-card);
-    margin: 13px 0 15px;
+  .terminal-step + .terminal-step {
+    margin-top: 28px;
   }
   quickstart-terminal.is-animating :global(.terminal-character),
-  quickstart-terminal.is-animating .terminal-output,
-  quickstart-terminal.is-animating .terminal-separator {
+  quickstart-terminal.is-animating .terminal-output {
     visibility: hidden;
   }
   quickstart-terminal.is-animating :global(.terminal-character.is-visible),
-  quickstart-terminal.is-animating .terminal-output.is-visible,
-  quickstart-terminal.is-animating .terminal-separator.is-visible {
+  quickstart-terminal.is-animating .terminal-output.is-visible {
     visibility: visible;
   }
   @media (max-width: 600px) {
