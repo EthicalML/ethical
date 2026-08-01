@@ -1,0 +1,410 @@
+---
+import AchievementVisual from './AchievementVisual.astro';
+
+interface AchievementLink {
+  href: string;
+  label: string;
+}
+
+interface AchievementCard {
+  eyebrow: string;
+  glyph: 'eu-adoption' | 'uk-adoption' | 'citation-network' | 'un-chair' | 'acm-bridges' | 'policy-timeline';
+  links: AchievementLink[];
+  piece: string;
+  summary: string;
+  title: string;
+}
+
+interface Props {
+  cards: AchievementCard[];
+  variant: 'clean' | 'light';
+}
+
+const { cards, variant } = Astro.props;
+---
+
+<achievement-rendition class:list={['achievement-rendition', `rendition-${variant}`]} data-rendition={variant}>
+  <div class="rendition-canvas">
+    {
+      variant === 'clean' ? (
+        <>
+          <i class="rendition-piece clean-filler clean-filler-west" data-rendition-piece data-order="0" aria-hidden="true" />
+          <i class="rendition-piece clean-filler clean-filler-east" data-rendition-piece data-order="7" aria-hidden="true" />
+          <i class="rendition-piece clean-accent" data-rendition-piece data-order="2" aria-hidden="true" />
+        </>
+      ) : (
+        <i class="rendition-piece light-accent" data-rendition-piece data-order="1" aria-hidden="true" />
+      )
+    }
+    {
+      cards.map((card, index) => {
+        const slide = variant === 'clean' ? index === 0 : index === 1;
+        return (
+          <article
+            class="rendition-piece rendition-card"
+            data-rendition-piece
+            data-piece={card.piece}
+            data-hover={slide ? 'slide' : 'tilt'}
+            data-order={index * 2 + 1}
+            style={`--pickup-rotation:${index % 2 ? 3.8 : -3.8}deg`}
+          >
+            <AchievementVisual variant={card.glyph} />
+            <div class="rendition-copy">
+              <span>{card.eyebrow}</span>
+              <strong>{card.title}</strong>
+              <p>{card.summary}</p>
+              <footer>
+                {card.links.map((link) => {
+                  const external = link.href.startsWith('http');
+                  return (
+                    <a href={link.href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
+                      {link.label} →
+                    </a>
+                  );
+                })}
+              </footer>
+            </div>
+          </article>
+        );
+      })
+    }
+  </div>
+</achievement-rendition>
+
+<script>
+  class AchievementRenditionElement extends HTMLElement {
+    private controller = new AbortController();
+    private observer?: IntersectionObserver;
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const pieces = [...this.querySelectorAll<HTMLElement>('[data-rendition-piece]')];
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      pieces.forEach((piece, index) => {
+        piece.style.setProperty('--rendition-order', piece.dataset.order ?? String(index));
+        if (reduced) piece.dataset.settled = 'true';
+        else piece.addEventListener('animationend', () => (piece.dataset.settled = 'true'), { once: true, signal: this.controller.signal });
+      });
+      this.dataset.motionReady = 'true';
+      if (this.dataset.entered === 'true') return;
+      if (reduced || !('IntersectionObserver' in window)) {
+        this.dataset.entered = 'true';
+        return;
+      }
+      this.observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) return;
+          this.dataset.entered = 'true';
+          this.observer?.disconnect();
+        },
+        { threshold: 0.08 },
+      );
+      this.observer.observe(this);
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+      this.observer?.disconnect();
+    }
+  }
+
+  if (!customElements.get('achievement-rendition')) {
+    customElements.define('achievement-rendition', AchievementRenditionElement);
+  }
+</script>
+
+<style>
+  .achievement-rendition {
+    display: block;
+    overflow: clip;
+  }
+  .rendition-canvas {
+    margin: 0 auto;
+    max-width: 1344px;
+    position: relative;
+  }
+  .rendition-piece {
+    position: absolute;
+  }
+  .rendition-card {
+    background: var(--prototype-surface, #1a1c1b);
+    border: 0;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    color: var(--prototype-text, var(--text-1));
+    transform-origin: 50% 55%;
+    transition:
+      border-color 200ms ease,
+      box-shadow 240ms ease,
+      transform 240ms cubic-bezier(0.2, 0.86, 0.24, 1);
+    z-index: 3;
+  }
+  .rendition-copy {
+    bottom: 0;
+    left: 0;
+    padding: 24px 26px 25px;
+    position: absolute;
+    right: 0;
+  }
+  .rendition-copy > span {
+    color: var(--prototype-muted, var(--text-4));
+    display: block;
+    font: var(--mono-9) / 1.4 var(--font-mono);
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+  .rendition-copy > strong {
+    color: inherit;
+    display: block;
+    font: 300 clamp(31px, 2.7vw, 44px) / 1.02 var(--font-display);
+    max-width: 16ch;
+  }
+  .rendition-copy > p {
+    color: var(--prototype-copy, var(--text-2));
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 13px 0 0;
+    max-width: 48ch;
+  }
+  footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px 14px;
+    margin-top: 15px;
+  }
+  footer a {
+    color: var(--prototype-link, var(--accent));
+    font: var(--mono-9) / 1.4 var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .rendition-clean .rendition-canvas {
+    height: 920px;
+  }
+  .rendition-clean .rendition-card[data-piece='eu'] {
+    --prototype-surface: #1b1d1c;
+    height: 280px;
+    left: 25%;
+    top: 0;
+    width: 51%;
+  }
+  .rendition-clean .rendition-card[data-piece='uk'] {
+    --prototype-surface: #181a19;
+    height: 290px;
+    left: 25%;
+    top: 280px;
+    width: 25.5%;
+  }
+  .rendition-clean .rendition-card[data-piece='mlsecops'] {
+    --prototype-surface: #1a1c1b;
+    height: 290px;
+    left: 50.5%;
+    top: 280px;
+    width: 25.5%;
+  }
+  .rendition-clean .rendition-card[data-piece='un'] {
+    --prototype-surface: #181a19;
+    height: 410px;
+    left: 80%;
+    top: 160px;
+    width: 18%;
+  }
+  .rendition-clean .rendition-card[data-piece='acm'] {
+    --prototype-surface: #191b1a;
+    height: 330px;
+    left: 5%;
+    top: 570px;
+    width: 38%;
+  }
+  .rendition-clean .rendition-card[data-piece='through-line'] {
+    --prototype-surface: #1b1d1c;
+    height: 330px;
+    left: 43%;
+    top: 570px;
+    width: 37%;
+  }
+  .clean-filler {
+    background: #161817;
+    z-index: 1;
+  }
+  .clean-filler-west {
+    height: 290px;
+    left: 5%;
+    top: 280px;
+    width: 20%;
+  }
+  .clean-filler-east {
+    background: #151716;
+    height: 330px;
+    left: 80%;
+    top: 570px;
+    width: 18%;
+  }
+  .clean-accent {
+    background: var(--accent);
+    height: 160px;
+    left: 76%;
+    top: 0;
+    transition: transform 240ms cubic-bezier(0.2, 0.86, 0.24, 1);
+    width: 4%;
+    z-index: 2;
+  }
+  .rendition-light {
+    --prototype-text: #191b19;
+    --prototype-copy: rgba(25, 27, 25, 0.72);
+    --prototype-muted: rgba(25, 27, 25, 0.52);
+    --prototype-link: #12643c;
+  }
+  .rendition-light .rendition-canvas {
+    height: 740px;
+    max-width: 1200px;
+  }
+  .rendition-light .rendition-card {
+    --prototype-surface: #d7d3c9;
+  }
+  .rendition-light .rendition-card:nth-of-type(even) {
+    --prototype-surface: #e0ddd4;
+  }
+  .rendition-light .rendition-card[data-piece='eu'] {
+    height: 420px;
+    left: 3%;
+    top: 0;
+    width: 50%;
+  }
+  .rendition-light .rendition-card[data-piece='uk'] {
+    height: 420px;
+    left: 53%;
+    top: 0;
+    width: 22%;
+  }
+  .rendition-light .rendition-card[data-piece='un'] {
+    height: 420px;
+    left: 75%;
+    top: 0;
+    width: 22%;
+  }
+  .rendition-light .rendition-card[data-piece='mlsecops'] {
+    height: 320px;
+    left: 3%;
+    top: 420px;
+    width: 27%;
+  }
+  .rendition-light .rendition-card[data-piece='acm'] {
+    height: 320px;
+    left: 30%;
+    top: 420px;
+    width: 31%;
+  }
+  .rendition-light .rendition-card[data-piece='through-line'] {
+    height: 320px;
+    left: 61%;
+    top: 420px;
+    width: 36%;
+  }
+  .light-accent {
+    background: var(--accent);
+    height: 220px;
+    left: 0;
+    top: 60px;
+    transition: transform 240ms cubic-bezier(0.2, 0.86, 0.24, 1);
+    width: 4%;
+    z-index: 2;
+  }
+  .rendition-light :global(.achievement-visual) {
+    background: rgba(255, 255, 255, 0.36);
+    border-color: rgba(25, 27, 25, 0.18);
+  }
+  .rendition-light :global(.achievement-visual .glyph-hairline),
+  .rendition-light :global(.achievement-visual .glyph-node),
+  .rendition-light :global(.achievement-visual .glyph-tick),
+  .rendition-light :global(.achievement-visual .meter-segment) {
+    stroke: rgba(25, 27, 25, 0.52) !important;
+  }
+  achievement-rendition[data-motion-ready='true']:not([data-entered='true']) [data-rendition-piece] {
+    opacity: 0;
+    transform: translate3d(0, -116px, 0) rotate(var(--drop-rotation, 3deg));
+  }
+  achievement-rendition[data-entered='true'] [data-rendition-piece]:not([data-settled='true']) {
+    animation: rendition-drop 520ms cubic-bezier(0.2, 0.78, 0.2, 1) both;
+    animation-delay: calc(var(--rendition-order) * 70ms);
+  }
+  .rendition-card:nth-of-type(even) {
+    --drop-rotation: -3deg;
+  }
+  @keyframes rendition-drop {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, -116px, 0) rotate(var(--drop-rotation, 3deg));
+    }
+    62% {
+      opacity: 1;
+      transform: translate3d(0, 9px, 0) rotate(-0.3deg);
+    }
+    80% {
+      opacity: 1;
+      transform: translate3d(0, -3px, 0) rotate(0.12deg);
+    }
+    100% {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (hover: hover) {
+    .rendition-card[data-hover='tilt']:hover {
+      box-shadow: 0 24px 52px rgba(0, 0, 0, 0.38);
+      transform: translate3d(0, -11px, 0) rotate(var(--pickup-rotation, 4deg));
+      z-index: 8;
+    }
+    .rendition-clean:has(.rendition-card[data-hover='slide']:hover) .clean-accent {
+      transform: translateX(34px);
+    }
+    .rendition-clean:has(.rendition-card[data-hover='slide']:hover) .clean-filler-west {
+      transform: translateX(-6px);
+    }
+    .rendition-light:has(.rendition-card[data-hover='slide']:hover) .light-accent {
+      transform: translateX(-30px);
+    }
+  }
+  @media (max-width: 900px) {
+    .rendition-canvas {
+      display: grid;
+      gap: 10px;
+      height: auto !important;
+      padding-inline: 24px;
+    }
+    .rendition-canvas > i {
+      display: none;
+    }
+    .rendition-card {
+      height: auto !important;
+      left: auto !important;
+      min-height: 310px;
+      position: relative;
+      top: auto !important;
+      width: auto !important;
+    }
+    .rendition-copy {
+      padding-top: 112px;
+      position: relative;
+    }
+  }
+  @media (max-width: 600px) {
+    .rendition-canvas {
+      padding-inline: 18px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    achievement-rendition [data-rendition-piece] {
+      animation: none;
+      opacity: 1;
+      transform: none !important;
+    }
+    .rendition-card {
+      box-shadow: none !important;
+      transition: border-color 180ms ease;
+    }
+    .rendition-card:hover {
+      outline: 1px solid var(--accent);
+    }
+  }
+</style>
