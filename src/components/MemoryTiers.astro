@@ -30,53 +30,55 @@ const scopes = ['session', 'agent', 'user', 'store'];
       </div>
     </div>
 
-    <div class="scope-derivation" aria-label="Server-derived memory scope">
-      <span><i aria-hidden="true"></i><b data-active-agent>agent-a</b> identity</span>
-      <strong aria-hidden="true">→</strong>
-      <div><small>DERIVED SERVER-SIDE</small>{scopes.map((scope) => <b>{scope}</b>)}</div>
-      <strong aria-hidden="true">→</strong>
-      <span><b data-active-tenant>Tenant A</b> partition</span>
-    </div>
-
-    <div class="memory-model">
-      <div class="tier-rings" aria-label="Message moving from short-term rows through rolling digest to long-term vector recall">
-        <article class="tier long" data-tier="3">
-          <span class="tier-index">03</span>
-          <div><h3>Long-term vector recall</h3><p>Semantic facts · relevance across sessions</p></div>
-          <small>FACT CRYSTALLISES</small>
-        </article>
-        <article class="tier digest" data-tier="2">
-          <span class="tier-index">02</span>
-          <div><h3>Rolling digest</h3><p>Optional summary · narrative continuity</p></div>
-          <small>ABSORBED</small>
-        </article>
-        <article class="tier short" data-tier="1">
-          <span class="tier-index">01</span>
-          <div><h3>Short-term rows</h3><p>Recent conversation window · relational records</p></div>
-          <small>MESSAGE ENTERS</small>
-        </article>
-        <div class="identity-core"><i aria-hidden="true"></i><span data-active-agent>agent-a</span><small>MEMORY CORE</small></div>
-        <span class="memory-pulse" aria-hidden="true"></span>
+    <div class="memory-stage">
+      <div class="scope-derivation" aria-label="Server-derived memory scope">
+        <span><i aria-hidden="true"></i><b data-active-agent>agent-a</b> identity</span>
+        <strong aria-hidden="true">→</strong>
+        <div><small>DERIVED SERVER-SIDE</small>{scopes.map((scope) => <b>{scope}</b>)}</div>
+        <strong aria-hidden="true">→</strong>
+        <span><b data-active-tenant>Tenant A</b> partition</span>
       </div>
 
-      <aside class="isolation" aria-label="Tenant-isolated memory reads">
-        <header><span>ISOLATION BOUNDARY</span><b>SERVER ENFORCED</b></header>
-        <div class="tenant-vault">
-          {
-            tenants.map(({ id, label, agent }) => (
-              <div class="tenant-lane" data-tenant-lane={id}>
-                <span>{agent}</span>
-                <i aria-hidden="true" />
-                <b>{label} recall only</b>
-              </div>
-            ))
-          }
+      <div class="memory-model">
+        <div class="tier-rings" aria-label="Message moving from short-term rows through rolling digest to long-term vector recall">
+          <article class="tier long" data-tier="3">
+            <span class="tier-index">03</span>
+            <div><h3>Long-term vector recall</h3><p>Semantic facts · relevance across sessions</p></div>
+            <small>FACT CRYSTALLISES</small>
+          </article>
+          <article class="tier digest" data-tier="2">
+            <span class="tier-index">02</span>
+            <div><h3>Rolling digest</h3><p>Optional summary · narrative continuity</p></div>
+            <small>ABSORBED</small>
+          </article>
+          <article class="tier short" data-tier="1">
+            <span class="tier-index">01</span>
+            <div><h3>Short-term rows</h3><p>Recent conversation window · relational records</p></div>
+            <small>MESSAGE ENTERS</small>
+          </article>
+          <div class="identity-core"><i aria-hidden="true"></i><span data-active-agent>agent-a</span><small>MEMORY CORE</small></div>
+          <span class="memory-pulse" aria-hidden="true"></span>
         </div>
-        <p><span aria-hidden="true">✓</span> Cross-tenant recall blocked</p>
-      </aside>
-    </div>
 
-    <p class="storage-fact"><span>STORAGE</span>{storage}</p>
+        <aside class="isolation" aria-label="Tenant-isolated memory reads">
+          <header><span>ISOLATION BOUNDARY</span><b>SERVER ENFORCED</b></header>
+          <div class="tenant-vault">
+            {
+              tenants.map(({ id, label, agent }) => (
+                <div class="tenant-lane" data-tenant-lane={id}>
+                  <span>{agent}</span>
+                  <i aria-hidden="true" />
+                  <b>{label} recall only</b>
+                </div>
+              ))
+            }
+          </div>
+          <p><span aria-hidden="true">✓</span> Cross-tenant recall blocked</p>
+        </aside>
+      </div>
+
+      <p class="storage-fact"><span>STORAGE</span>{storage}</p>
+    </div>
   </memory-tiers>
 </AnimationWindow>
 
@@ -578,6 +580,50 @@ const scopes = ['session', 'agent', 'user', 'store'];
     }
     .tier > div {
       display: none;
+    }
+  }
+  @media (max-width: 799px) {
+    memory-tiers {
+      container-type: inline-size;
+      overflow: hidden;
+    }
+    .memory-stage {
+      width: 1340px;
+      zoom: calc(100cqw / 1340px);
+    }
+    .scope-derivation {
+      grid-template-columns: auto auto 1fr auto auto;
+    }
+    .scope-derivation > strong {
+      transform: none;
+    }
+    .scope-derivation > div {
+      flex-wrap: nowrap;
+    }
+    .memory-model {
+      grid-template-columns: minmax(540px, 1.55fr) minmax(265px, 0.72fr);
+    }
+    .isolation {
+      border-left: 1px solid rgba(182, 148, 255, 0.2);
+      border-top: 0;
+    }
+    .tier-rings {
+      min-height: 430px;
+    }
+    .tier.long {
+      height: 360px;
+      width: min(88%, 620px);
+    }
+    .tier.digest {
+      height: 250px;
+      width: min(65%, 450px);
+    }
+    .tier.short {
+      height: 145px;
+      width: min(40%, 270px);
+    }
+    .tier > div {
+      display: block;
     }
   }
   @media (prefers-reduced-motion: reduce) {

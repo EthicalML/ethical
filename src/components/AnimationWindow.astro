@@ -199,4 +199,15 @@ const { title, chromeOnly = false, finite = false, class: className }: Props = A
       padding-left: 10px;
     }
   }
+  @media (pointer: coarse) {
+    .play-toggle {
+      position: relative;
+      z-index: 1;
+    }
+    .play-toggle::after {
+      content: '';
+      inset: -7px;
+      position: absolute;
+    }
+  }
 </style>
