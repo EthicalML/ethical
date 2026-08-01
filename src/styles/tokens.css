@@ -138,6 +138,10 @@ section { padding: var(--section-padding); }
   border-bottom: 1px solid var(--hairline);
   position: sticky;
   top: 0;
+  /* Pin the header to its own compositor layer: without this, Chrome re-rasterizes the
+     backdrop-filter whenever a canvas beneath promotes/demotes layers, which flickers. */
+  transform: translateZ(0);
+  will-change: backdrop-filter;
   z-index: 60;
 }
 .header-row {

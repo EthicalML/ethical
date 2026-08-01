@@ -69,6 +69,24 @@ export const bindMorphPairs = (root: ParentNode, signal: AbortSignal) => {
   });
 };
 
+// A named element outside the viewport must not seed a morph: its old-image group would
+// fly across the screen from an invisible position. Before the old page is captured,
+// silence view-transition-names on offscreen elements (inline 'none' also overrides
+// names applied by Astro's compiled transition:name rules). Partially visible counts
+// as visible; the new document is untouched, so entry fades still run.
+document.addEventListener('astro:before-preparation', () => {
+  document
+    .querySelectorAll<HTMLElement>(
+      '[data-morph-source], [data-astro-transition-scope], [style*="view-transition-name"]',
+    )
+    .forEach((el) => {
+      const rect = el.getBoundingClientRect();
+      const visible =
+        rect.bottom > 0 && rect.top < innerHeight && rect.right > 0 && rect.left < innerWidth;
+      if (!visible) el.style.setProperty('view-transition-name', 'none');
+    });
+});
+
 document.addEventListener('astro:before-preparation', (event) => {
   const pair = readPair();
   if (
