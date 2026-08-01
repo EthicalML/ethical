@@ -10,8 +10,10 @@ xai:
   values:
     - value: 1.3k
       label: STARS
-    - value: '3'
-      label: CONTRIBUTORS
+    - value: MIT
+      label: ''
+    - value: ALPHA — ACTIVE
+      label: ''
 ecosystem:
   values:
     - value: 20.8k

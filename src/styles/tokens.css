@@ -703,7 +703,7 @@ dd { margin: 6px 0 0; }
 }
 .metrics-block {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(var(--metric-count, 3), 1fr);
   margin-top: 20px;
 }
 .metrics-block div {
@@ -1381,7 +1381,7 @@ main > .home-section:last-child { padding-bottom: 120px; }
 .article-hero h1 { font: 300 clamp(54px, 7vw, 88px)/.98 var(--font-display); letter-spacing: -.025em; margin: 24px 0; max-width: 960px; }
 .article-hero > p:last-child { color: var(--text-2); font-size: 18px; line-height: 1.6; max-width: 680px; }
 .article-hero.canvas-variant { min-height: 650px; overflow: hidden; }
-.article-hero.canvas-variant > *:not(canvas) { position: relative; z-index: 2; }
+.article-hero.canvas-variant > :not(canvas, .kaos-canvas-mount, .kompute-canvas-mount) { position: relative; z-index: 2; }
 .article-hero.canvas-variant .hero-canvas { opacity: .85; }
 .article-hero.canvas-variant > .kaos-canvas-mount {
   height: min(500px, 100%);
@@ -1392,6 +1392,14 @@ main > .home-section:last-child { padding-bottom: 120px; }
   transform: translateY(-50%);
   z-index: 0;
 }
+.article-hero.canvas-variant > .kompute-canvas-mount {
+  height: 100%;
+  inset: 0;
+  opacity: .58;
+  position: absolute;
+  z-index: 0;
+}
+.article-hero.canvas-variant > .kompute-canvas-mount canvas { height: 100%; width: 100%; }
 .section-intro { color: var(--text-2); line-height: 1.6; max-width: 560px; }
 
 .principles-explorer { display: block; }

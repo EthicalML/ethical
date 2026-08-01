@@ -15,3 +15,9 @@ export { default as PartnerDirectory } from '../PartnerDirectory.astro';
 export { default as PrinciplesExplorer } from '../PrinciplesExplorer.astro';
 export { default as TalksGrid } from '../TalksGrid.astro';
 export { default as SurveyExplorer } from '../SurveyExplorerIsland.astro';
+
+export { default as CodeTabs } from '../CodeTabs.astro';
+export { default as ProjectLinks } from '../ProjectLinks.astro';
+export { default as SequencePipeline } from '../SequencePipeline.astro';
+export { default as StageExplorer } from '../StageExplorer.astro';
+export { default as TalkCard } from '../TalkCard.astro';
