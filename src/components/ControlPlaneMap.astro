@@ -1,0 +1,201 @@
+---
+const resources = [
+  {
+    name: 'Agent',
+    definition: 'The running agent, its model, tools, peers and memory binding.',
+    fields: ['spec.model', 'spec.modelApiRef', 'spec.mcpServers / spec.subAgents'],
+  },
+  {
+    name: 'ModelAPI',
+    definition: 'LLM access, proxied through LiteLLM or hosted in-cluster with Ollama.',
+    fields: ['spec.mode', 'spec.model', 'spec.provider'],
+  },
+  { name: 'MCPServer', definition: 'A tool server speaking the Model Context Protocol.', fields: ['spec.transport', 'spec.url', 'spec.command'] },
+  { name: 'MemoryStore', definition: 'The central memory service that agents bind to.', fields: ['spec.backend', 'spec.vectorStore', 'spec.storage'] },
+  {
+    name: 'AccessGrant',
+    definition: 'The declarative binding between identities and reachable resources.',
+    fields: ['spec.subjects', 'spec.resources', 'spec.verbs'],
+  },
+];
+---
+
+<control-plane-map>
+  <div class="map-stage">
+    <canvas aria-label="Five KAOS custom resources reconciled by the operator into runtime services"></canvas>
+    <div class="map-legend" aria-hidden="true"><span>CRD</span><span>RECONCILED RUNTIME</span></div>
+  </div>
+  <div class="map-detail">
+    <div class="crd-tabs" role="tablist" aria-label="Custom resources">
+      {
+        resources.map(({ name }, index) => (
+          <button type="button" role="tab" aria-selected={index === 0 ? 'true' : 'false'} class:list={{ active: index === 0 }} data-crd>
+            {name}
+          </button>
+        ))
+      }
+    </div>
+    <div class="crd-panels">
+      {
+        resources.map(({ name, definition, fields }, index) => (
+          <article class:list={{ active: index === 0 }} data-crd-panel>
+            <p class="eyebrow">KIND · {name}</p>
+            <h3>{name}</h3>
+            <p>{definition}</p>
+            <dl>
+              {fields.map((field) => (
+                <>
+                  <dt>{field}</dt>
+                  <dd>key spec field</dd>
+                </>
+              ))}
+            </dl>
+          </article>
+        ))
+      }
+    </div>
+    <button class="delegate" type="button" data-delegate>Trace delegation: Agent → MCPServer + Agent → Agent</button>
+  </div>
+</control-plane-map>
+
+<script>
+  import '../shared/canvas/ControlPlaneMap';
+</script>
+
+<style>
+  control-plane-map {
+    border: 1px solid var(--hairline-card);
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.75fr);
+    margin-top: 38px;
+    min-height: 560px;
+  }
+  .map-stage {
+    background: var(--bg-inset);
+    min-height: 560px;
+    position: relative;
+  }
+  canvas {
+    height: 100%;
+    inset: 0;
+    position: absolute;
+    width: 100%;
+  }
+  .map-legend {
+    bottom: 18px;
+    display: flex;
+    font-family: var(--font-mono);
+    font-size: var(--mono-9);
+    gap: 20px;
+    left: 20px;
+    letter-spacing: 0.08em;
+    position: absolute;
+  }
+  .map-legend span:first-child {
+    color: var(--text-2);
+  }
+  .map-legend span:last-child {
+    color: var(--accent);
+  }
+  .map-detail {
+    border-left: 1px solid var(--hairline-card);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .crd-tabs {
+    border-bottom: 1px solid var(--hairline-card);
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px;
+  }
+  button {
+    background: transparent;
+    border: 0;
+    color: var(--text-3);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: var(--mono-9);
+    padding: 8px;
+  }
+  .crd-tabs button.active {
+    color: var(--accent);
+  }
+  .crd-panels {
+    flex: 1;
+    position: relative;
+  }
+  article {
+    display: none;
+    padding: 34px 28px;
+  }
+  article.active {
+    animation: panel-in 0.28s var(--ease-panel);
+    display: block;
+  }
+  article h3 {
+    font-family: var(--font-display);
+    font-size: var(--display-34);
+    font-weight: 400;
+    margin: 12px 0;
+  }
+  article > p:not(.eyebrow) {
+    color: var(--text-2);
+    line-height: 1.65;
+  }
+  dl {
+    border-top: 1px solid var(--hairline);
+    margin-top: 26px;
+  }
+  dl > :global(*) {
+    border-bottom: 1px solid var(--hairline);
+    margin: 0;
+    padding: 10px 0;
+  }
+  dt {
+    color: var(--text-1);
+    font-family: var(--font-mono);
+    font-size: var(--mono-10);
+  }
+  dd {
+    color: var(--text-4);
+    font-size: var(--body-12-5);
+  }
+  .delegate {
+    border-top: 1px solid var(--hairline-card);
+    color: var(--accent);
+    padding: 18px;
+    text-align: left;
+  }
+  @keyframes panel-in {
+    from {
+      opacity: 0;
+      transform: translateX(10px);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    article.active {
+      animation: none;
+    }
+  }
+  @media (max-width: 800px) {
+    control-plane-map {
+      grid-template-columns: 1fr;
+    }
+    .map-stage {
+      min-height: 430px;
+    }
+    .map-detail {
+      border-left: 0;
+      border-top: 1px solid var(--hairline-card);
+    }
+  }
+  @media (max-width: 520px) {
+    .map-stage {
+      min-height: 370px;
+    }
+    article {
+      padding: 28px 20px;
+    }
+  }
+</style>

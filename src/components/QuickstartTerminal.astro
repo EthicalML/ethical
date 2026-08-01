@@ -1,0 +1,226 @@
+---
+interface TerminalLine {
+  command: string;
+  output?: string;
+}
+
+interface Props {
+  cli: TerminalLine[];
+  helm: TerminalLine[];
+}
+
+const { cli, helm }: Props = Astro.props;
+---
+
+<quickstart-terminal data-cli={JSON.stringify(cli)} data-helm={JSON.stringify(helm)}>
+  <div class="terminal-bar">
+    <div class="terminal-tabs" role="tablist" aria-label="Installation path">
+      <button type="button" role="tab" aria-selected="true" data-terminal-tab="cli">CLI quickstart</button>
+      <button type="button" role="tab" aria-selected="false" data-terminal-tab="helm">Helm path</button>
+    </div>
+    <button class="terminal-replay" type="button" data-terminal-replay>Replay</button>
+  </div>
+  <pre
+    aria-live="polite"><code data-terminal-output>{cli.map(({ command, output }) => `$ ${command}${output ? `\n${output}` : ''}`).join('\n')}</code><span class="terminal-cursor" aria-hidden="true" /></pre>
+</quickstart-terminal>
+
+<script>
+  interface TerminalLine {
+    command: string;
+    output?: string;
+  }
+
+  class QuickstartTerminal extends HTMLElement {
+    private controller = new AbortController();
+    private observer?: IntersectionObserver;
+    private timers: number[] = [];
+    private runs = 0;
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const tabs = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-terminal-tab]'));
+      const replay = this.querySelector<HTMLButtonElement>('[data-terminal-replay]');
+      const output = this.querySelector<HTMLElement>('[data-terminal-output]');
+      if (!tabs.length || !replay || !output) return;
+
+      const sequences: Record<string, TerminalLine[]> = {
+        cli: this.parse(this.dataset.cli),
+        helm: this.parse(this.dataset.helm),
+      };
+      let selected = 'cli';
+
+      const show = (animate = true) => {
+        this.runs += 1;
+        this.timers.forEach(window.clearTimeout);
+        this.timers = [];
+        const run = this.runs;
+        const lines = sequences[selected];
+        const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const fullText = lines.map(({ command, output: response }) => `$ ${command}${response ? `\n${response}` : ''}`).join('\n');
+        if (!animate || reduced) {
+          output.textContent = fullText;
+          this.dataset.running = 'false';
+          return;
+        }
+
+        output.textContent = '';
+        this.dataset.running = 'true';
+        let delay = 180;
+        lines.forEach(({ command, output: response }, index) => {
+          const commandText = `${index ? '\n' : ''}$ ${command}`;
+          [...commandText].forEach((character) => {
+            delay += character === ' ' ? 18 : 28;
+            this.timers.push(
+              window.setTimeout(() => {
+                if (run === this.runs) output.textContent += character;
+              }, delay),
+            );
+          });
+          if (response) {
+            delay += 320;
+            this.timers.push(
+              window.setTimeout(() => {
+                if (run === this.runs) output.textContent += `\n${response}`;
+              }, delay),
+            );
+            delay += 380;
+          }
+        });
+        this.timers.push(
+          window.setTimeout(() => {
+            if (run === this.runs) this.dataset.running = 'false';
+          }, delay + 80),
+        );
+      };
+
+      tabs.forEach((tab) => {
+        tab.addEventListener(
+          'click',
+          () => {
+            selected = tab.dataset.terminalTab ?? 'cli';
+            tabs.forEach((item) => item.setAttribute('aria-selected', String(item === tab)));
+            show(false);
+          },
+          { signal: this.controller.signal },
+        );
+      });
+      replay.addEventListener('click', () => show(), { signal: this.controller.signal });
+
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
+        show(false);
+        return;
+      }
+      this.observer = new IntersectionObserver(([entry]) => {
+        if (!entry.isIntersecting) return;
+        this.observer?.disconnect();
+        show();
+      });
+      this.observer.observe(this);
+    }
+
+    disconnectedCallback() {
+      this.runs += 1;
+      this.timers.forEach(window.clearTimeout);
+      this.controller.abort();
+      this.observer?.disconnect();
+    }
+
+    private parse(value?: string): TerminalLine[] {
+      try {
+        const parsed: unknown = JSON.parse(value ?? '[]');
+        return Array.isArray(parsed) ? (parsed as TerminalLine[]) : [];
+      } catch {
+        return [];
+      }
+    }
+  }
+
+  if (!customElements.get('quickstart-terminal')) customElements.define('quickstart-terminal', QuickstartTerminal);
+</script>
+
+<style>
+  quickstart-terminal {
+    background: var(--bg-inset);
+    border: 1px solid var(--hairline-card);
+    display: block;
+    margin: 38px 0 0;
+    min-height: 430px;
+  }
+  .terminal-bar {
+    align-items: center;
+    border-bottom: 1px solid var(--hairline-card);
+    display: flex;
+    justify-content: space-between;
+    padding: 0 16px;
+  }
+  .terminal-tabs {
+    display: flex;
+  }
+  button {
+    background: transparent;
+    border: 0;
+    color: var(--text-3);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: var(--mono-10);
+    letter-spacing: 0.1em;
+    padding: 16px 12px;
+    text-transform: uppercase;
+  }
+  [role='tab'][aria-selected='true'] {
+    box-shadow: inset 0 -1px var(--accent);
+    color: var(--accent);
+  }
+  .terminal-replay {
+    color: var(--text-2);
+  }
+  pre {
+    color: var(--text-1);
+    font-family: var(--font-mono);
+    font-size: clamp(12px, 1.35vw, 14px);
+    line-height: 1.8;
+    margin: 0;
+    min-height: 365px;
+    overflow: auto;
+    padding: 28px;
+    white-space: pre-wrap;
+  }
+  .terminal-cursor {
+    background: var(--accent);
+    display: inline-block;
+    height: 1.1em;
+    margin-left: 4px;
+    transform: translateY(2px);
+    width: 7px;
+  }
+  quickstart-terminal[data-running='true'] .terminal-cursor {
+    animation: blink 0.85s step-end infinite;
+  }
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .terminal-cursor {
+      display: none;
+    }
+  }
+  @media (max-width: 600px) {
+    quickstart-terminal {
+      min-height: 390px;
+    }
+    .terminal-bar {
+      align-items: stretch;
+      padding-right: 6px;
+    }
+    button {
+      letter-spacing: 0.04em;
+      padding-inline: 8px;
+    }
+    pre {
+      min-height: 325px;
+      padding: 20px 16px;
+    }
+  }
+</style>

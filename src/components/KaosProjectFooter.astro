@@ -1,0 +1,94 @@
+---
+import { getEntry } from 'astro:content';
+
+interface Metric {
+  value: string;
+  label: string;
+}
+interface Link {
+  href: string;
+  label: string;
+}
+interface Props {
+  links: Link[];
+}
+const { links }: Props = Astro.props;
+const metricsEntry = await getEntry('metrics', 'kaos');
+const metrics: Metric[] = (metricsEntry?.data.values ?? []).filter(({ label }) => label !== 'CONTRIBUTORS');
+---
+
+<div class="kaos-project-footer" data-reveal>
+  <aside aria-label="KAOS project metrics">
+    {
+      metrics.map(({ value, label }) => (
+        <div>
+          <strong>{value}</strong>
+          {label && <span>{label}</span>}
+        </div>
+      ))
+    }
+  </aside>
+  <nav aria-label="KAOS project links">
+    {
+      links.map(({ href, label }, index) => (
+        <a class:list={['button', index === 0 && 'primary']} href={href} rel="noopener">
+          {label}
+        </a>
+      ))
+    }
+  </nav>
+</div>
+
+<style>
+  .kaos-project-footer {
+    border: 1px solid var(--hairline-card);
+    margin-top: 38px;
+  }
+  aside {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+  aside div {
+    align-items: baseline;
+    border-right: 1px solid var(--hairline-card);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 24px;
+  }
+  aside div:last-child {
+    border-right: 0;
+  }
+  strong {
+    font-family: var(--font-display);
+    font-size: var(--display-30);
+    font-weight: 400;
+  }
+  span {
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: var(--mono-9);
+    letter-spacing: 0.12em;
+  }
+  nav {
+    border-top: 1px solid var(--hairline-card);
+    display: flex;
+    gap: 10px;
+    padding: 20px 24px;
+  }
+  @media (max-width: 680px) {
+    aside {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    aside div:nth-child(2) {
+      border-right: 0;
+    }
+    aside div:nth-child(-n + 2) {
+      border-bottom: 1px solid var(--hairline-card);
+    }
+    nav {
+      align-items: stretch;
+      flex-direction: column;
+    }
+  }
+</style>

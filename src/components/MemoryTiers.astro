@@ -1,0 +1,214 @@
+---
+interface Props {
+  storage: string;
+}
+const { storage }: Props = Astro.props;
+const scopes = ['session', 'agent', 'user', 'store'];
+---
+
+<memory-tiers data-scope="session">
+  <div class="scope-row">
+    <span>SCOPE OF READ</span>
+    <div role="group" aria-label="Memory scope">
+      {
+        scopes.map((scope, index) => (
+          <button type="button" class:list={{ active: index === 0 }} aria-pressed={index === 0 ? 'true' : 'false'} data-scope={scope}>
+            {scope}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+  <div class="tiers">
+    <article class="tier short" data-tier="short">
+      <span class="tier-index">01</span><div><h3>Short-term rows</h3><p>Recent conversation window · relational records</p></div>
+      <i class="memory-event" aria-hidden="true"></i>
+    </article>
+    <article class="tier digest" data-tier="digest">
+      <span class="tier-index">02</span><div><h3>Rolling digest</h3><p>Optional summary · narrative continuity</p></div>
+      <i class="memory-event" aria-hidden="true"></i>
+    </article>
+    <article class="tier long" data-tier="long">
+      <span class="tier-index">03</span><div><h3>Long-term vector recall</h3><p>Semantic facts · relevance across sessions</p></div>
+      <i class="memory-event" aria-hidden="true"></i>
+    </article>
+  </div>
+  <p class="storage-fact">{storage}</p>
+</memory-tiers>
+
+<script>
+  class MemoryTiers extends HTMLElement {
+    private controller = new AbortController();
+    private observer?: IntersectionObserver;
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const buttons = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-scope]'));
+      buttons.forEach((button) => {
+        button.addEventListener(
+          'click',
+          () => {
+            this.dataset.scope = button.dataset.scope;
+            buttons.forEach((item) => {
+              const active = item === button;
+              item.classList.toggle('active', active);
+              item.setAttribute('aria-pressed', String(active));
+            });
+          },
+          { signal: this.controller.signal },
+        );
+      });
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+      this.observer = new IntersectionObserver(([entry]) => this.classList.toggle('is-visible', entry.isIntersecting), { threshold: 0.25 });
+      this.observer.observe(this);
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+      this.observer?.disconnect();
+    }
+  }
+  if (!customElements.get('memory-tiers')) customElements.define('memory-tiers', MemoryTiers);
+</script>
+
+<style>
+  memory-tiers {
+    border: 1px solid var(--hairline-card);
+    display: block;
+    margin-top: 38px;
+  }
+  .scope-row {
+    align-items: center;
+    border-bottom: 1px solid var(--hairline-card);
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 18px;
+  }
+  .scope-row > span {
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: var(--mono-9);
+    letter-spacing: 0.12em;
+  }
+  button {
+    background: transparent;
+    border: 0;
+    color: var(--text-3);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: var(--mono-10);
+    padding: 8px 10px;
+  }
+  button.active {
+    background: var(--accent-wash-09);
+    color: var(--accent);
+  }
+  .tier {
+    align-items: center;
+    border-bottom: 1px solid var(--hairline-card);
+    display: grid;
+    gap: 22px;
+    grid-template-columns: 38px 1fr;
+    min-height: 126px;
+    overflow: hidden;
+    padding: 22px 28px;
+    position: relative;
+    transition: opacity var(--duration-34) ease;
+  }
+  .tier-index {
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: var(--mono-10);
+  }
+  h3 {
+    font-family: var(--font-display);
+    font-size: var(--display-26);
+    font-weight: 400;
+    margin: 0 0 5px;
+  }
+  .tier p {
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: var(--mono-10);
+    margin: 0;
+  }
+  .memory-event {
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 18px rgba(94, 230, 160, 0.75);
+    height: 8px;
+    left: -12px;
+    opacity: 0;
+    position: absolute;
+    top: calc(50% - 4px);
+    width: 8px;
+  }
+  .is-visible .short .memory-event {
+    animation: memory-flow 4.8s ease-in-out infinite;
+  }
+  .is-visible .digest .memory-event {
+    animation: memory-flow 4.8s 1.1s ease-in-out infinite;
+  }
+  .is-visible .long .memory-event {
+    animation: memory-flow 4.8s 2.2s ease-in-out infinite;
+  }
+  [data-scope='session'] .digest,
+  [data-scope='session'] .long,
+  [data-scope='agent'] .long {
+    opacity: 0.3;
+  }
+  .storage-fact {
+    color: var(--text-2);
+    font-family: var(--font-mono);
+    font-size: var(--mono-10);
+    letter-spacing: 0.05em;
+    margin: 0;
+    padding: 18px 28px;
+  }
+  @keyframes memory-flow {
+    0%,
+    14% {
+      opacity: 0;
+      transform: translateX(0);
+    }
+    24%,
+    70% {
+      opacity: 1;
+    }
+    84%,
+    100% {
+      opacity: 0;
+      transform: translateX(720px);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .memory-event {
+      display: none;
+    }
+    .tier {
+      transition: none;
+    }
+  }
+  @media (max-width: 650px) {
+    .scope-row {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .scope-row div {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      width: 100%;
+    }
+    button {
+      padding-inline: 5px;
+    }
+    .tier {
+      padding-inline: 18px;
+    }
+    .storage-fact {
+      line-height: 1.7;
+      padding-inline: 18px;
+    }
+  }
+</style>
