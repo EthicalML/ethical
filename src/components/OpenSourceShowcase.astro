@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { isExternalHref } from '../utils/external-links.mjs';
 import KaosGraph from './KaosGraph.astro';
 
 interface Action {
@@ -77,7 +78,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
       <p>{projects.kompute.text}</p>
       <p>
         {projects.kompute.donationText}{' '}
-        <a class="text-link" href={projects.kompute.donationHref} rel="noopener">{projects.kompute.donationLinkText}</a>.
+        <a class="text-link" href={projects.kompute.donationHref} target="_blank" rel="noopener noreferrer">{projects.kompute.donationLinkText}</a>.
       </p>
       <div class="oss-metrics">
         {
@@ -95,7 +96,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
       <div class="actions">
         {
           projects.kompute.actions.map(({ label, href, kind }) => (
-            <a class:list={['button', kind]} href={href} rel="noopener">
+            <a class:list={['button', kind]} href={href} target="_blank" rel="noopener noreferrer">
               {label}
             </a>
           ))
@@ -153,8 +154,8 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
       <p>{projects.ecosystem.text}</p>
       <div class="oss-statline">{statline('ecosystem').map((stat) => <span>{stat}</span>)}</div>
       <div class="actions">
-        <a class="button primary" href={projects.ecosystem.linkHref} rel="noopener">{projects.ecosystem.linkLabel}</a>
-        <a class="button" href={projects.ecosystem.guidelinesHref} rel="noopener">{projects.ecosystem.guidelinesLabel}</a>
+        <a class="button primary" href={projects.ecosystem.linkHref} target="_blank" rel="noopener noreferrer">{projects.ecosystem.linkLabel}</a>
+        <a class="button" href={projects.ecosystem.guidelinesHref} target="_blank" rel="noopener noreferrer">{projects.ecosystem.guidelinesLabel}</a>
       </div>
     </article>
   </div>
@@ -183,7 +184,8 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
             <a
               class:list={['button', kind]}
               href={href}
-              rel={href.startsWith('http') ? 'noopener' : undefined}
+              target={isExternalHref(href) ? '_blank' : undefined}
+              rel={isExternalHref(href) ? 'noopener noreferrer' : undefined}
               data-morph-pair={href === '/open-source/kaos/' ? 'kaos-title' : undefined}
             >
               {label}

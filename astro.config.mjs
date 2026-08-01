@@ -3,6 +3,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { unified } from '@astrojs/markdown-remark';
 import preact from '@astrojs/preact';
+import rehypeExternalLinks from './src/plugins/rehype-external-links.mjs';
 import rehypeSectionize from './src/plugins/rehype-sectionize.mjs';
 
 export default defineConfig({
@@ -36,7 +37,7 @@ export default defineConfig({
     '/privacypolicy.html': '/privacy/',
   },
   markdown: {
-    processor: unified({ rehypePlugins: [rehypeSectionize] }),
+    processor: unified({ rehypePlugins: [rehypeExternalLinks, rehypeSectionize] }),
   },
   integrations: [mdx(), preact(), sitemap()],
 });

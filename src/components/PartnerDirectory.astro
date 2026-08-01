@@ -35,7 +35,7 @@ const entries = partners.map(({ data: partner }) => ({
         {partner.links.length > 0 && (
           <p class="partner-links">
             {partner.links.map((link) => (
-              <a href={link.url} rel="noopener">
+              <a href={link.url} target="_blank" rel="noopener noreferrer">
                 {link.label}
               </a>
             ))}

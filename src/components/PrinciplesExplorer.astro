@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { isExternalHref } from '../utils/external-links.mjs';
 
 interface Props {
   eyebrow: string;
@@ -74,7 +75,12 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
               </div>
               <div class="principle-links">
                 {data.related_links.map(({ label, href }) => (
-                  <a class="button" href={href}>
+                  <a
+                    class="button"
+                    href={href}
+                    target={isExternalHref(href) ? '_blank' : undefined}
+                    rel={isExternalHref(href) ? 'noopener noreferrer' : undefined}
+                  >
                     {label}
                   </a>
                 ))}
