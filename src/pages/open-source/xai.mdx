@@ -6,7 +6,7 @@ layout: ../../layouts/ProseLayout.astro
 ---
 
 import { getEntry } from 'astro:content';
-import { ArticleHero, Metrics, ProjectLinks, StageExplorer, TalkCard } from '../../components/prose/components.js';
+import { ArticleHero, Metrics, ProjectLinks, StageExplorer, TalkCard, XaiProcess } from '../../components/prose/components.js';
 
 export const stages = [
   {
@@ -54,6 +54,24 @@ export const stages = [
   },
 ];
 
+export const processSteps = [
+  {
+    number: '01',
+    title: 'Data analysis',
+    checkpoint: 'Surface imbalance across data and protected attributes, then correct it before training.',
+  },
+  {
+    number: '02',
+    title: 'Model evaluation',
+    checkpoint: 'Explain model behaviour and compare outcomes across protected groups.',
+  },
+  {
+    number: '03',
+    title: 'Production monitoring',
+    checkpoint: 'Monitor predictions, surface bias and feed findings back into mitigation.',
+  },
+];
+
 export const links = [
   { label: 'Open the framework →', href: 'https://github.com/EthicalML/xai' },
   { label: 'Read the docs →', href: 'https://ethicalml.github.io/xai' },
@@ -69,6 +87,12 @@ export const metricEntry = await getEntry('metrics', 'xai');
   }
   transitionName="xai-title"
 />
+
+## The process, by checkpoint
+
+XAI converts the Responsible AI Principles into a practical **tool + process** approach. The process carries explainability and bias mitigation through the full responsible-ML workflow, rather than treating them as a one-off report after training.
+
+<XaiProcess steps={processSteps} />
 
 ## The toolbox, by stage
 

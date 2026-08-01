@@ -30,3 +30,4 @@ export { default as TalkCard } from '../TalkCard.astro';
 export { default as CategoryAtlas } from '../CategoryAtlas.astro';
 export { default as RegulationGrid } from '../RegulationGrid.astro';
 export { default as AnimationWindow } from '../AnimationWindow.astro';
+export { default as XaiProcess } from '../XaiProcess.astro';
