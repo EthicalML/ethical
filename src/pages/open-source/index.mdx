@@ -1,20 +1,40 @@
 ---
 title: Open source & tools
-description: Openly licensed software for explainability, safe agents, GPU compute and production ML.
+description: Openly licensed software for agent orchestration, GPU compute, explainability and production ML.
 composed: true
 layout: ../../layouts/ProseLayout.astro
+projects:
+  - pills: [v0.7.0, APACHE-2.0, K8S ≥1.28]
+    title: KAOS
+    subtitle: Deploy, manage and orchestrate AI agents on Kubernetes.
+    visual: kaos
+    href: /open-source/kaos/
+  - pills: [LINUX FOUNDATION, APACHE-2.0, 2.5K STARS]
+    title: Kompute
+    subtitle: The general-purpose GPU compute framework for cross-vendor graphics cards, hosted by LF AI & Data.
+    visual: kompute
+    href: /open-source/kompute/
+  - pills: [ALPHA, MIT, 1.3K STARS]
+    title: XAI
+    subtitle: An explainability toolbox for machine learning, across data, model and production.
+    visual: xai
+    href: /open-source/xai/
+  - pills: [COMMUNITY, 20.8K STARS]
+    title: Awesome Production ML
+    subtitle: 'The community catalogue of production ML tooling: 24 categories, 550+ libraries.'
+    visual: production-ml
+    href: /open-source/production-ml-list/
 ---
 
-import { ArticleHero, CenteredCTA, OpenSourceShowcase } from '../../components/prose/components.js';
-import { frontmatter as home } from '../index.mdx';
+import { ArticleHero, CenteredCTA, ProjectPortal } from '../../components/prose/components.js';
 
 <ArticleHero
   canvas
   eyebrow="OPEN SOURCE / BUILT IN PUBLIC"
   title="Open-source software and tools"
-  intro="Openly licensed software for explainability, safe agents, GPU compute and production ML."
+  intro="Openly licensed software for agent orchestration, GPU compute, explainability and production ML. Built in public, governed in the open, used in production."
 />
 
-<OpenSourceShowcase projects={home.projects} compact />
+<ProjectPortal projects={frontmatter.projects} />
 
 <CenteredCTA eyebrow="CONTRIBUTE" heading="Contribute to the open-source projects." href="/contact/" label="Start a conversation →" />
