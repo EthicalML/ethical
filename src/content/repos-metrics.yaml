@@ -22,6 +22,8 @@ kaos:
   values:
     - value: '268'
       label: STARS
+    - value: V0.7.0
+      label: ''
     - value: '5'
       label: CONTRIBUTORS
     - value: APACHE-2.0

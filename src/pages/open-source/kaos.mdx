@@ -1,49 +1,90 @@
 ---
-title: K8s Agent OS (KAOS)
-description: KAOS provides a control plane for autonomous agents, with controls for tools, credentials, budgets, time, approval steps and audit records.
-composed: true
 layout: ../../layouts/ProseLayout.astro
-capabilities:
-  - capability: Scoped credentials
-    detail: Issue task-specific access and remove it when the work ends.
-  - capability: Sandboxed execution
-    detail: Isolate tools and untrusted inputs from sensitive systems.
-  - capability: Budget limits
-    detail: Bound compute, tokens, requests, and external spend.
-  - capability: Time horizon
-    detail: Limit how long an agent can act without renewed approval.
-  - capability: Human approval
-    detail: Gate consequential actions behind accountable decisions.
-  - capability: Audit trail
-    detail: Record plans, tool calls, policy decisions, and outcomes.
+title: K8s Agent OS (KAOS)
+description: Deploy, manage and orchestrate AI agents on Kubernetes. KAOS turns agents, models, tools and memory into declarative Kubernetes resources, reconciled by an operator, secured at the gateway and observable end to end. "Managing the chaos in your agentic systems."
+composed: true
+
+quickstart:
+  cli:
+    - command: pip install kaos-cli
+      output: Successfully installed kaos-cli
+    - command: kaos system install
+      output: KAOS operator and system services are ready
+    - command: kaos modelapi deploy my-api --mode Hosted --model "smollm2:135m"
+      output: ModelAPI/my-api created · Ready
+    - command: kaos agent deploy my-agent --modelapi my-api --model "smollm2:135m"
+      output: Agent/my-agent created · Ready
+    - command: kaos agent invoke my-agent --message "Hello"
+      output: Hello! How can I help you today?
+    - command: kaos ui
+      output: Dashboard available at http://localhost:3000
+  helm:
+    - command: helm repo add kaos https://axsaucedo.github.io/kaos/charts
+      output: Repository "kaos" added
+    - command: helm install kaos kaos/kaos-operator -n kaos-system --create-namespace
+      output: STATUS deployed
+    - command: kubectl apply -f my-agent.yaml
+      output: agent.kaos.ai/my-agent created
+
+media:
+  - alt: KAOS dashboard workflow showing agent operations
+    caption: Dashboard workflow
+    href: https://axsaucedo.github.io/kaos/
+    poster: /images/oss/demo-poster.webp
+    src: /images/oss/demo.gif
+  - alt: KAOS monitoring view showing traces and flamegraphs
+    caption: Observability with traces and flamegraphs
+    href: https://axsaucedo.github.io/kaos/
+    poster: /images/oss/demo-monitoring-poster.webp
+    src: /images/oss/demo-monitoring.gif
+
+links:
+  - label: Explore the project →
+    href: https://github.com/axsaucedo/kaos
+  - label: Read the docs →
+    href: https://axsaucedo.github.io/kaos/
 ---
 
-import { ArticleHero, CapabilityTable, CTA, Feature, Metrics } from '../../components/prose/components.js';
+import { ArticleHero, ControlPlaneMap, KaosProjectFooter, MediaBand, MemoryTiers, QuickstartTerminal, RequestPath } from '../../components/prose/components.js';
 
-<ArticleHero eyebrow="OPEN SOURCE" title={frontmatter.title} intro={frontmatter.description} canvas="kaos" transitionName="kaos-title" />
+<ArticleHero eyebrow="OPEN SOURCE · V0.7.0 · APACHE-2.0" title={frontmatter.title} intro={frontmatter.description} canvas="kaos" transitionName="kaos-title" />
 
-<Feature title="Bounded agency by design" widget="kaos-graph">
+## From zero to a running agent
 
-Each agent receives only the authority required for its task. Planning, execution, policy checks, verification, and audit remain visible as work moves through the system.
+An agent is a resource, not a script. Install the system, deploy a model API and an agent, and talk to it; every agent exposes an OpenAI-compatible `/v1/chat/completions` endpoint, so existing clients work unchanged.
 
-The graph represents explicit control points where teams can constrain or interrupt autonomous behaviour.
+<QuickstartTerminal cli={frontmatter.quickstart.cli} helm={frontmatter.quickstart.helm} />
 
-</Feature>
+## The control plane
 
-## Capabilities
+Five custom resources define an agent system: **Agent** (the running agent, its model, tools, peers and memory binding), **ModelAPI** (LLM access, proxied via LiteLLM or hosted in-cluster with Ollama), **MCPServer** (tool servers speaking the Model Context Protocol), **MemoryStore** (the central memory service agents bind to) and **AccessGrant** (who may reach what). Four controllers reconcile them into pods, services and policy.
 
-KAOS implements safety controls as runtime infrastructure. Its tabular capability model is reused across the site.
+<ControlPlaneMap />
 
-<CapabilityTable items={frontmatter.capabilities} />
+Agents delegate through the A2A protocol: discovery via `/.well-known/agent.json`, sub-agents exposed to the model as tools, and "hierarchical agent systems with automatic delegation".
 
-<Metrics stars="1.8k" contributors="42" releases="160+" />
+## Memory that survives the session
 
-## Build with bounded autonomy
+"Memory is augmentation, not a hard dependency." A MemoryStore runs one central memory service per store, with Mem0 embedded as a library rather than a separate server. Short-term memory keeps the recent conversation window in relational rows; an optional rolling summary preserves narrative continuity; long-term memory holds semantic facts in a vector store, recalled by relevance across sessions.
 
-Agent systems should remain governable as their capabilities increase. KAOS gives engineering teams a small set of enforceable controls for defining operational boundaries.
+Scopes make memory multi-tenant: reads select session, agent, user or store scope, and "scope is derived server-side from the authenticated agent identity", never from model arguments. When a store fails, the agent keeps serving short-term-only and surfaces a `MemoryDegraded` condition instead of going down.
 
-<CTA href="https://github.com/axsaucedo/kaos" label="Explore the project →">
+<MemoryTiers storage="LOCAL: Chroma + SQLite on one volume · EXTERNAL: pgvector + Postgres, 2 replicas" />
 
-Start with the architecture and adapt the controls to your environment. Contributions based on implementation experience are welcome.
+## Secured at the gateway
 
-</CTA>
+Security is off until you turn it on, and fail-closed once you do: protected routes pass Envoy Gateway, which verifies JWTs and consults an OPA policy decision point; "an unavailable PDP never permits a request". Identity is two-plane: the subject (a Keycloak user, or the agent itself when autonomous) and the acting agent, verified on every hop. Agent identity comes from per-agent ServiceAccounts with short-lived projected tokens, an identity broker, or per-agent OAuth clients registered dynamically.
+
+Authorization is declarative: `AccessGrant` resources bind users, groups and agents to the resources they may enter, and the operator projects them into policy. Memory enforces the same identities, so one user's recall can never serve another's session.
+
+<RequestPath />
+
+## Watch it work
+
+<MediaBand items={frontmatter.media} />
+
+The dashboard covers the operational loop: monitor agents, chat with them live, inspect memory sessions and events, debug MCP tools with real calls, and stream pod logs. Agents ship OpenTelemetry instrumentation, so traces land in your existing observability stack.
+
+## Metrics + CTAs
+
+<KaosProjectFooter links={frontmatter.links} />
