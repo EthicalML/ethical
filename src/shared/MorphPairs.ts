@@ -69,22 +69,48 @@ export const bindMorphPairs = (root: ParentNode, signal: AbortSignal) => {
   });
 };
 
-// A named element outside the viewport must not seed a morph: its old-image group would
-// fly across the screen from an invisible position. Before the old page is captured,
-// silence view-transition-names on offscreen elements (inline 'none' also overrides
-// names applied by Astro's compiled transition:name rules). Partially visible counts
-// as visible; the new document is untouched, so entry fades still run.
-document.addEventListener('astro:before-preparation', () => {
-  document
-    .querySelectorAll<HTMLElement>(
-      '[data-morph-source], [data-astro-transition-scope], [style*="view-transition-name"]',
-    )
-    .forEach((el) => {
-      const rect = el.getBoundingClientRect();
-      const visible =
-        rect.bottom > 0 && rect.top < innerHeight && rect.right > 0 && rect.left < innerWidth;
-      if (!visible) el.style.setProperty('view-transition-name', 'none');
-    });
+// A named element outside the viewport must not join a morph: an offscreen old image
+// would fly across the screen from an invisible position, and an offscreen new image
+// would fly out to one. Both sides are gated with the same visibility check (partially
+// visible counts as visible; inline 'none' also overrides names applied by Astro's
+// compiled transition:name rules), leaving the visible side to fade in place.
+const NAMED_SELECTOR =
+  '[data-morph-source], [data-astro-transition-scope], [style*="view-transition-name"]';
+
+const silenceOffscreenNames = (restorable: boolean) => {
+  document.querySelectorAll<HTMLElement>(NAMED_SELECTOR).forEach((el) => {
+    const rect = el.getBoundingClientRect();
+    const visible =
+      rect.bottom > 0 && rect.top < innerHeight && rect.right > 0 && rect.left < innerWidth;
+    if (visible) return;
+    // The new document outlives the transition, so remember the prior inline name to
+    // put back afterwards; the old document is discarded, so nothing to restore there.
+    if (restorable && el.dataset.morphSilenced === undefined) {
+      el.dataset.morphSilenced = el.style.viewTransitionName;
+    }
+    el.style.setProperty('view-transition-name', 'none');
+  });
+};
+
+// Old side: gate before the outgoing page is captured.
+document.addEventListener('astro:before-preparation', () => silenceOffscreenNames(false));
+
+// New side: gate after the swap, before the new state is captured. The router applies
+// scroll (hash targets, history restore) synchronously after dispatching after-swap, so
+// defer one microtask to measure against the final scroll position.
+document.addEventListener('astro:after-swap', () => {
+  queueMicrotask(() => silenceOffscreenNames(true));
+});
+
+// Once the transition settles, hand silenced elements their inline names back so a later
+// navigation involving them still morphs.
+document.addEventListener('astro:page-load', () => {
+  document.querySelectorAll<HTMLElement>('[data-morph-silenced]').forEach((el) => {
+    const previous = el.dataset.morphSilenced;
+    if (previous) el.style.setProperty('view-transition-name', previous);
+    else el.style.removeProperty('view-transition-name');
+    delete el.dataset.morphSilenced;
+  });
 });
 
 document.addEventListener('astro:before-preparation', (event) => {
@@ -118,6 +144,9 @@ document.addEventListener('astro:before-swap', (event) => {
   const cleanUp = () => {
     source.style.removeProperty('view-transition-name');
     delete source.dataset.morphRestored;
+    // If the offscreen gate silenced this element mid-transition, drop its marker too so
+    // the page-load restore does not re-apply the one-shot name we just removed.
+    delete source.dataset.morphSilenced;
   };
   void event.viewTransition.finished.then(cleanUp, cleanUp);
 });

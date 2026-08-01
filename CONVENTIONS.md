@@ -51,7 +51,7 @@ All first-party client behaviour is TypeScript. Do not add first-party runtime J
 
 - Long-lived-page behaviour uses custom elements or explicit `astro:before-swap`/`astro:after-swap` hooks.
 - Morph sources use `MorphPairs` to set and record their inline name on pointerdown/click, then restore it for exactly one back-navigation; widget-local copies are not sanctioned.
-- `MorphPairs` silences view-transition-names on offscreen elements before the old page is captured, so a scrolled-away title never flies in from outside the viewport; partially visible elements still morph.
+- `MorphPairs` silences view-transition-names on offscreen elements on both sides of a navigation — before the old page is captured and (one microtask after `astro:after-swap`, once the router has applied scroll) before the new page is captured — so a title never flies in from or out to a point outside the viewport; the visible side fades in place, partially visible elements still morph, and silenced inline names are restored on `astro:page-load`.
 - Singular destination names stay static, with inline companions for computed names; an unpaired destination settles with the same 220ms rise and fade as the root.
 - Principle and phase cards are user-controlled only; they never rotate automatically.
 - Verify morphs against the production build; dev mode can hide missing computed names.
