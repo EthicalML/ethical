@@ -8,7 +8,7 @@ This version replaces the earlier CURRENT/SOURCE/PROPOSED tables with the propos
 
 | Decision | Detail |
 | --- | --- |
-| Page set | `/network` (reworked, newsletter-first) · `/talks` (Talks & Events MERGED into one page: upcoming speaking, past events, featured talks) · `/membership` (NEW: the value and benefits of membership) · `/partners` (kept as the router page) + `/partners/<slug>` deep-dive pages, with a FEATURED policy/standards deep-dive that becomes the home for sheet 17's content. |
+| Page set | `/network` (reworked, newsletter-first) · `/talks` (Talks & Events MERGED into one page: upcoming speaking, past events, featured talks) · `/membership` (NEW: the value and benefits of membership) · `/partners` (kept as the router page, NO per-partner deep dives for now — not enough detail to justify them) · `/policy/` (NEW, the featured page the partners index points to; the home for sheet 17's standards & policy content). |
 | Dropped | `/fellowships` — not a page we keep (no programme exists; removed from the sitemap and nav proposal). `/events` as a standalone route — merged into `/talks`. `/newsletter` as a standalone route — the newsletter opens `/network` instead; the archive under `public/mle/` stays as is. |
 | Sheet 16 | `16-sheet-research.md` DELETED — the Institute has no research estate to build a page from at the moment; drop the route from the sitemap. |
 | Featured talks source | Verified against the owner's YouTube playlist (`youtube.com/playlist?list=PL7F3ZwS1Ae8UJIbFB_yBFUSe3cNtpZObi`, fetched 2026-08-01, 15 videos) — full list in the /talks section below. This CONFIRMS the KubeCon Europe talk the previous sheet version flagged as invented (KubeCon Europe 2021, "Automated Machine Learning Performance Evaluation in Kubernetes at Scale"). |
@@ -59,15 +59,14 @@ NEW page: what membership is worth, not who the members are. Replaces the fellow
 - **Section — How it works**: apply via the shared form (network interest pre-ticked via `/contact/?interest=network#contact` with the tick animation), applications reviewed by the Institute. **[OWNER: confirm the actual review/acceptance process in one sentence.]**
 - **Widget**: none new — benefit rows + the existing form/CTA vocabulary. Deliberately a prose-and-rows page.
 
-## /partners — index + deep dives
+## /partners — index (+ featured /policy/)
 
-`/partners` stays the router: who the Institute works with and the ways in. NEW: selected relationships get `/partners/<slug>` deep-dive pages; the FIRST and featured deep dive is the policy & standards work, which is where sheet 17 (`17-sheet-standards-policy.md`) content lands — that sheet now feeds `/partners/policy/` rather than a standalone standards section.
+`/partners` stays the router: who the Institute works with and the ways in. Per-partner deep-dive pages are DEFERRED — there is not enough per-org detail to justify them yet. The one detail page that does exist is `/policy/` (its own top-level route, not under /partners), which is where sheet 17 (`17-sheet-standards-policy.md`) content lands; the partners index features it prominently.
 
 - **Index hero**: eyebrow `PARTNERS`, title *"Work with the Institute."*, intro: *"Organisations engage through procurement pilots, research collaboration, open-source contribution, and joint standards and policy work."*
 - **Index — forms of partnership** (ships as-is, conservative): Standards & policy (ISO/IEC, IEEE, ACM, Linux Foundation, UN CSTD, European Commission channels) · Frameworks (piloting AI-RFX / maturity model in procurement) · Open source (KAOS, Kompute, XAI, production-ML ecosystem) · Network & newsletter support.
-- **Index — current partners**: the owner-verified org list only (same list as the homepage marquee — one list, never two divergent ones), each row linking out, and linking to a deep-dive page where one exists. **Widget**: reuse the partner directory/marquee vocabulary; rows with a `DEEP DIVE →` affordance where a detail page exists.
-- **Deep-dive template `/partners/<slug>`**: hero (org/programme, relationship eyebrow), "What we do together" (concrete artefacts: committees, publications, donated projects, contributed clauses), links to the artefacts, CTA back to contact. First instances: **FEATURED: `/partners/policy/`** — the standards & policy engagement page (EU AI Act contribution incl. the Article 14 human-oversight work already cited on P01, UN CSTD, ISO/IEC, ACM, IEEE, Linux Foundation committees) — content to be finalised from sheet 17, which should now be drafted AS this page. Candidate seconds when ready: Linux Foundation (Kompute donation + ML Security Committee), OWASP (agentic top-10 reviewer credit, cross-linking `/frameworks/security/`). **[OWNER: confirm the first deep-dive set — recommend shipping with policy only and growing.]**
-- The featured policy page is surfaced on the index with a full-width featured card above the partner rows.
+- **Index — current partners**: the owner-verified org list only (same list as the homepage marquee — one list, never two divergent ones), each row linking out. **Widget**: reuse the partner directory/marquee vocabulary; plain rows, no deep-dive affordances for now.
+- **Featured card — `/policy/`**: a full-width featured card above the partner rows pointing to the standards & policy page (EU AI Act contribution incl. the Article 14 human-oversight work already cited on P01, UN CSTD, ISO/IEC, ACM, IEEE, Linux Foundation committees). Sheet 17 should now be drafted AS the `/policy/` page. Per-partner deep dives (Linux Foundation, OWASP, …) remain a future option once there is enough per-org substance.
 
 ## Build inventory
 
@@ -76,8 +75,8 @@ NEW page: what membership is worth, not who the members are. Replaces the fellow
 | Network | `/network/` | recompose | ArticleHero, newsletter section (recent-issues rail derived from `public/mle/`), `NetworkDirectory`, `FormSection` (shared copy) |
 | Talks & Events | `/talks/` | rework | ArticleHero, upcoming list rows, `TalkCard` grid (featured playlist), past-events rows |
 | Membership | `/membership/` | NEW | ArticleHero + benefit rows + CTA (no new machinery) |
-| Partners index | `/partners/` | rework | ArticleHero, featured policy card, partner rows with deep-dive affordances |
-| Policy deep dive | `/partners/policy/` | NEW (featured) | from sheet 17 — drafted as this page |
+| Partners index | `/partners/` | rework | ArticleHero, featured policy card, partner rows |
+| Policy | `/policy/` | NEW (featured from /partners) | from sheet 17 — drafted as this page |
 | Fellowships | — | DROPPED | remove route/nav references |
 | Research | — | DROPPED | sheet 16 deleted; no route |
 
@@ -87,4 +86,4 @@ NEW page: what membership is worth, not who the members are. Replaces the fellow
 2. Real sector distribution for the directory, or drop the sector panel.
 3. Upcoming speaking engagements for /talks, and the featured 6–9 picks from the verified list.
 4. Membership process sentence (how applications are reviewed) and confirmation membership stays free.
-5. First deep-dive set beyond `/partners/policy/` (recommend: launch with policy only).
+5. (Resolved: no per-partner deep dives for now; the only detail page is `/policy/`, featured from the partners index.)
