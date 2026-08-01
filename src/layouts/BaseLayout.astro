@@ -36,6 +36,36 @@ const socialImage = new URL(frontmatter.image ?? ogImage, Astro.site);
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={socialImage} />
+    <script is:inline>
+      // The router keeps history.scrollRestoration = 'manual', so on reload the browser
+      // paints the top of the page before any script can restore the position — a
+      // flicker no post-paint code can beat. When a deep restore is pending, keep the
+      // body invisible (background only) from before first paint until the document is
+      // tall enough to jump, capped at 800ms so it can never stick. Runs only on real
+      // page loads; the router marks inline scripts executed across view transitions.
+      (() => {
+        const stored = history.state;
+        const top = (stored && stored.scrollY) || 0;
+        if (!top) return;
+        const veil = document.createElement('style');
+        veil.textContent = 'body { visibility: hidden }';
+        document.head.appendChild(veil);
+        const deadline = performance.now() + 800;
+        const tick = () => {
+          if (Math.abs(scrollY - top) < 2 || performance.now() > deadline) {
+            veil.remove();
+            return;
+          }
+          if (document.body && document.documentElement.scrollHeight > top) {
+            scrollTo({ left: stored.scrollX || 0, top, behavior: 'instant' });
+            veil.remove();
+            return;
+          }
+          requestAnimationFrame(tick);
+        };
+        tick();
+      })();
+    </script>
     <ClientRouter />
     <style is:inline>
       @media (prefers-reduced-motion: reduce) {
