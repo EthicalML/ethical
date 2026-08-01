@@ -1,32 +1,66 @@
-PROPOSAL — for owner review
+PROPOSAL — implemented for owner review & iteration (v2 flagship)
 
-# Policy & standards content sheet — the single /policy/ page
+# Policy & standards content sheet — /policy/ as a flagship page
 
-This version replaces the earlier six-page `/standards/*` + `/policy/*` scaffold with ONE page, per the owner's direction in sheet 14: `/policy/` is a top-level route, featured from the `/partners/` index. It consolidates the standards and policy engagements that were previously spread across six blocked scaffolds. ⚠ = unverified role · **[OWNER: …]** = confirmation needed.
+v2, 2026-08-01: full content rethink per owner direction. The owner supplied the delivered-products list, flagship outcomes and verified participation roles, and rated this "the absolutely strongest position of the Institute", to stand with open source as the Institute's two main drivers. The page is REBUILT as a flagship (OSS-page-grade richness), written for an audience of POLICY MAKERS. ⚠ = fact to keep conservative until further evidence · **[OWNER: …]** = input wanted during iteration.
 
-## Scope and grounding decisions
+## The argument (what the page must land)
 
-| Decision | Detail |
+The Institute's unique position: **the people who write the consultation responses are the people who ship the code.** Most policy advice comes from people who don't build; most builders never sit in the rooms where rules are drafted. The Institute does both — an open-source estate on one side (KAOS, Kompute, XAI, the production-ML ecosystem), a delivered policy record on the other (25+ policy products across every major European digital instrument, with measured adoption). For a policymaker, that is the offer: practitioner evidence, technical review of draft instruments, and standards participation from a source that maintains real production tooling.
+
+## Flagship facts (owner-supplied 2026-08-01)
+
+- Contributed to every major European digital policy through its planning, creation and execution: the **AI Act**, the **Data Act**, the **DSA**, the **Cyber Resilience Act**, and the **UK's AI regulatory proposal**.
+- **8 of 12 recommendations adopted** — EU (2nd draft) General-Purpose AI Code of Practice (evidence: owner's LinkedIn post `linkedin.com/posts/axsaucedo_eu-2nd-draft-ai-code-of-practice-activity-7281944634149244928-jpnq`).
+- **13 of 14 recommendations adopted** — the UK's AI Regulatory Proposal.
+- Sustainability record: ACM climate disclosure statement + data-center statement (EN `acm_data_center_final.pdf` + ES `acm-data-center-final-spanish`).
+- US/global: USTPC-approved generative-AI principles (`acm.org/binaries/content/assets/public-policy/ustpc-approved-generative-ai-principles`), joint AI statement update (`…/final-joint-ai-statement-update.pdf`).
+
+## Participation — verified roles (owner-supplied; state these titles)
+
+Grouped for the mandates band:
+
+| Body | Role |
 | --- | --- |
-| One page | The six-page split (ISO/IEC, IEEE, ACM, LF, UN/UN CSTD, EC) collapses into sections of `/policy/`. Per-body pages can be split back out later if any engagement grows enough substance. |
-| Supersedes /initiatives/ | The existing `/initiatives/` page is an earlier draft of exactly this content and already carries citable public records. `/policy/` is built FROM it; `/initiatives/` route redirects to `/policy/` and inbound links (P01's "policy work" related link, nav) are updated. |
-| Citable records (verified links, already on /initiatives/) | UN CSTD working group on data governance: `unctad.org/topic/commission-on-science-and-technology-for-development/working-group-on-data-governance` · ACM volunteer record: `acm.org/volunteers/volunteer/saucedo_9722274` · LF AI joining announcement: `lfaidata.foundation/blog/2019/10/09/the-institute-for-ethical-ai-and-machine-learning-joins-lf-ai/` · NumFOCUS case study: `numfocus.org/case-studies/ethics-in-ai-ml` · OWASP agentic top-10 announcement (official-reviewer credit per sheet 13). These anchor the page; role labels beyond them stay conservative. |
-| Register | Collaboration and engagement, never endorsement or inflated authority (`01-voice-and-messaging.md` §5). Where a role label from `affiliations.json` lacks a public record (ISO/IEC "AI standards group", IEEE, EC "appointed expert", UN "AI expert"), the page states the engagement domain without the unverified title. ⚠ **[OWNER: supply verified role wording + any public record for ISO/IEC, IEEE, EC and the UN AI-expert line to strengthen those rows.]** |
-| OWASP + OpenSSF + NumFOCUS | Not in the old six-page nav plan but real engagements — they get rows here (OWASP cross-links `/frameworks/security/`; OpenSSF stays a small mention under the LF item per sheet 13). Nothing silently drops. |
+| European Commission | Selected to the reserve list of the High-Level Expert Group on AI (AI HLEG — the group whose Ethics Guidelines for Trustworthy AI preceded the AI Act; members were replaced from the reserve list) |
+| European Commission | Member, Frontier AI Forum |
+| European Commission | Member, European AI Alliance |
+| European Commission | Member, Code of Practice for General-Purpose Models with Systemic Risk |
+| United Nations | Chair, Principles Committee — Data Governance Guidelines, UN CSTD (public record: `unctad.org/topic/commission-on-science-and-technology-for-development/working-group-on-data-governance`) |
+| United Nations | AI Expert, UN AI Advisory Committee |
+| ACM | Founding Chair, ACM AI Policy Committee in Europe (Europe TPC; volunteer record `acm.org/volunteers/volunteer/saucedo_9722274`) |
+| IEEE | Early member, IEEE P700x standards series |
+| ISO/IEC | Early member, ISO/IEC 42001 (AI management systems) |
 
-## /policy/ — page spec
+HLEG phrasing note: "reserve list" is the accurate term. There is NO public roster of reserve-list members (owner confirmed after checking) — so the page states the role and links to where the reserve list's existence is documented, the EC's AI HLEG page (`digital-strategy.ec.europa.eu/en/policies/expert-group-ai`, which records that departing members were replaced from a reserve list). Never inflate to full membership; never imply a public roster entry.
 
-- **Hero**: eyebrow `POLICY & STANDARDS`, title *"From principles to the public record."*, intro: *"The Institute carries the nine principles into the rooms where rules are made — AI standards bodies, professional associations and public policy processes — and back again into frameworks practitioners can use."*
-- **Section — Regulation (featured, EU)**: the strongest narrative first: the Institute's contribution to EU AI policy, including the human-oversight work now codified in Article 14 of the EU AI Act (the claim P01 already carries — this page becomes its landing target). Scope line for the EC engagement: AI Act, Data Act, Digital Services Act, Cyber Resilience Act ⚠ conservative phrasing until the specific appointment is confirmed. Tie to the four-phase strategy's "By Regulation" phase.
-- **Section — United Nations**: the UN CSTD working group on data governance with its public record linked; framed as the national-scale end of the principles. ⚠ chair/expert titles only if owner confirms; otherwise "committee role with a public record" (the current /initiatives/ phrasing, which is already conservative and citable).
-- **Section — Standards bodies**: ISO/IEC and IEEE AI standards work in one section: what the formal baseline covers, and the Institute's position that AI-RFX and the ML Maturity Model operationalise rather than replace it (links `/frameworks/ai-rfx/`, `/frameworks/maturity-model/`). ACM alongside with its volunteer record link and the Code-of-Ethics ↔ nine-principles complement framing.
-- **Section — Open-source foundations & security**: Linux Foundation AI & Data (joining announcement link, Kompute donation link to `/open-source/kompute/`, ML Security Committee with the OpenSSF collaboration as a small mention) · NumFOCUS (case-study link) · OWASP (official reviewer of the Top 10 for Agentic Applications, cross-linking `/frameworks/security/`).
-- **Widget — engagement band**: one structured band listing each body as a row: body · engagement domain · related Institute work (internal links) · `PUBLIC RECORD →` external link where one exists. This is the page's scannable spine; the sections above are the narrative. Rows without a public record simply omit the link rather than carrying an unverified title. Static rows, no new interactive machinery.
-- **CTA**: *"Work with the Institute on standards and policy →"* to `/partners/` (the reciprocal of the partners index featuring this page).
-- **Route mechanics**: `/initiatives/` → redirect to `/policy/`; update P01's related link and any nav reference; partners index features this page with a full-width card (per sheet 14).
+## Policy products — the delivered record (owner list, deduped ~27 items)
 
-## Open owner inputs
+All via the ACM Europe Technology Policy Committee unless noted; the Article 50 response verifiably names Alejandro Saucedo as an author. ⚠ ACM pages are Cloudflare-protected: the builder takes titles as given below (slug-derived), links verbatim from the owner list. Dates kept only where slug-derived or attested; otherwise grouped by instrument without a fabricated date. Grouping for the timeline widget:
 
-1. Verified role wording (and any public link) for: ISO/IEC, IEEE, EC appointment, UN AI-expert line. The page ships without the titles until then — the engagement-domain phrasing is safe.
-2. Whether the EU AI Act / Article 14 contribution can be stated with a citable reference (a consultation response, publication, or press mention) — currently it rests on the P01 claim.
-3. Confirm the /initiatives → /policy replacement (recommended: yes, one page owns this content).
+**EU — AI Act line**: EU AI White Paper comments (2020) · AI consultation comments · AI-system definition guidelines (2024) · Regulation (EU) 2024/1689 consultation (Apr 2026) · Article 50 transparency guidelines response (Jun 2026) · Digital Omnibus on AI regulation (2026) · GPAI Code of Practice (2024) + 2nd GPAI Code of Practice · AI scientific panel of independent experts comments (Nov 2024) · Calibrating oversight of agentic frontier models (Apr 2026) · reflections on draft prEN 18282.
+**EU — digital acts**: DSA comments + delegated-regulation comments (2024) · Data Act comments (May 2022) · Cyber Resilience Act comments · digital principles comments · ETPC response to targeted EC consultation · ETPC survey responses.
+**United Kingdom**: UK AI paper comments · UK AI framework comments · UK National Data Strategy comments.
+**United Nations / global**: Independent International Scientific Panel on AI consultation (2025) · EU–US TTC AI taxonomy comments (Nov 2023) · joint AI statement update · USTPC generative-AI principles.
+**Sustainability**: climate disclosure statement · data-center statements (EN + ES).
+**[OWNER: one opaque item remains — `contribution55012b10-…pdf` — name/date it or drop it.]**
+
+## /policy/ — flagship page spec (implemented; iterate from here)
+
+Audience: policymakers and regulators first, practitioners second. Voice: evidence, delivered artefacts, measured outcomes — never self-congratulation; every claim carries a link or a number.
+
+1. **Hero**: eyebrow `POLICY & STANDARDS`, title *"Policy written by practitioners."*, intro: *"The Institute has contributed to every major European digital policy through its planning, creation and execution — the AI Act, the Data Act, the DSA, the Cyber Resilience Act and the UK's regulatory proposal — carrying evidence from its open-source and production-ML practice into the rooms where rules are made."* Ambient canvas backdrop on the right two-thirds like the other flagship heroes (design call for the worker: a quiet timeline/constellation motif, no card framing, morph-safe).
+2. **Impact band**: the measured outcomes as a stat band: `8/12 RECOMMENDATIONS ADOPTED — EU GPAI CODE OF PRACTICE` · `13/14 — UK AI REGULATORY PROPOSAL` · `25+ POLICY PRODUCTS DELIVERED` · `EU · UK · UN · US ENGAGEMENT`. (The frameworks no-numbers rule does not apply here: these are outcomes, the core evidence.)
+3. **Section — Outcomes that stuck**: the adoption story in prose: what it means for recommendations to be adopted into the GPAI Code of Practice and the UK proposal, each with its evidence link. One line tying to the four-phase strategy's "By Regulation" end-state.
+4. **Widget — The policy record (flagship)**: interactive, filterable record of the ~27 products: filter pills by track (EU AI ACT · EU DIGITAL ACTS · UK · UN & GLOBAL · SUSTAINABILITY · ALL), rows show title · instrument · date where known · `READ →` external link. Custom element for the filtering (colocated script), static data in page frontmatter per the placement rule. Dense, scannable, the page's spine.
+5. **Section — Mandates**: the nine verified roles as grouped cards (European Commission / United Nations / ACM / Standards bodies), each with its public-record link where one exists. The HLEG reserve-list phrasing per above.
+6. **Section — The practitioner bridge (the case for policy makers)**: why this record is different: the same organisation maintains the open-source estate — KAOS for agent orchestration, Kompute in the Linux Foundation, the production-ML ecosystem — and turns that practice into consultation evidence. Cross-links `/open-source/`, `/frameworks/ai-rfx/`, `/frameworks/security/`, and P01/P09. Includes the security-adjacent engagements (OWASP official reviewer, LF ML Security Committee with OpenSSF mention, NumFOCUS) so nothing from the previous page's band is lost.
+7. **Section — Work with us**: the direct offer to policymakers: technical review of draft instruments, practitioner evidence for consultations, standards participation. CTA *"Engage the Institute →"* to `/contact/` and a secondary link to `/partners/`.
+8. **Route mechanics**: unchanged — `/policy/` route, `/initiatives/` redirect stands, partners index featured card stands, P01/P09 links stand.
+
+## Iteration inputs
+
+1. The opaque contribution PDF (name/date or drop).
+2. Whether the non-AI sustainability products stay on the page (currently: yes, as their own track — they show breadth).
+3. Any public roster links for Frontier AI Forum / AI Alliance / GPAI Code of Practice membership to harden those rows.
+4. Homepage follow-up (separate pass): elevate policy alongside open source as the two main-driver sections.
