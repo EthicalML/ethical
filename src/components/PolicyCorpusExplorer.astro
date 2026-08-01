@@ -1,0 +1,559 @@
+---
+import { getCollection } from 'astro:content';
+
+const themes = [
+  { label: 'ALL', value: 'all' },
+  { label: 'OVERSIGHT', value: 'oversight' },
+  { label: 'TRANSPARENCY', value: 'transparency' },
+  { label: 'SECURITY', value: 'security' },
+  { label: 'DEFINITIONS', value: 'definitions' },
+  { label: 'SUSTAINABILITY', value: 'sustainability' },
+] as const;
+
+type Theme = Exclude<(typeof themes)[number]['value'], 'all'>;
+
+interface Quote {
+  date?: string;
+  documentId: string;
+  href: string;
+  score: number;
+  text: string;
+  theme: Theme;
+  title: string;
+}
+
+const themePatterns: Record<Theme, RegExp[]> = {
+  oversight: [/oversight/i, /monitor/i, /human.in.the.loop/i, /incident/i, /audit/i, /diverg/i, /accountab/i],
+  transparency: [/transparen/i, /disclos/i, /public (?:record|registr|scrutin)/i, /traceab/i, /redress/i, /contestab/i],
+  security: [/security/i, /cyber/i, /vulnerab/i, /attack/i, /breach/i, /SBOM/i, /privacy/i],
+  definitions: [/defin/i, /terminolog/i, /classification/i, /risk.based/i, /precision/i, /scope/i],
+  sustainability: [/sustainab/i, /environment/i, /energy/i, /water/i, /climate/i, /emission/i, /carbon/i],
+};
+
+const preferredQuotes: Array<{ fragment: string; score: number; theme: Theme }> = [
+  { fragment: 'incident response and handling of security breaches', score: 100, theme: 'security' },
+  { fragment: 'software bills of material will be central', score: 95, theme: 'security' },
+  { fragment: 'Existing mechanisms and modes for avoiding such harm likely will not suffice', score: 90, theme: 'security' },
+  { fragment: 'security flaws of machine learning systems being exploited', score: 85, theme: 'security' },
+  { fragment: 'narrowness is maintained rather than merely declared', score: 82, theme: 'oversight' },
+  { fragment: 'certain artifacts are irreducible for a meaningful audit', score: 80, theme: 'oversight' },
+  { fragment: 'ADM processes must be traceable so that they can be subjected to democratic control', score: 82, theme: 'transparency' },
+  { fragment: 'Transparency must be paired with processes for accountability', score: 80, theme: 'transparency' },
+  { fragment: 'Human-centered AI systems work in partnership with human beings', score: 82, theme: 'definitions' },
+  { fragment: 'sunlight is often the best disinfectant', score: 82, theme: 'sustainability' },
+  { fragment: 'public availability of model weights should not exempt developers', score: 80, theme: 'sustainability' },
+];
+
+const fallbackThemes: Record<string, Theme> = {
+  'eu-ai-act': 'oversight',
+  'eu-digital-acts': 'transparency',
+  uk: 'definitions',
+  global: 'definitions',
+  sustainability: 'sustainability',
+};
+const emDash = String.fromCodePoint(0x2014);
+
+function sentences(body: string) {
+  const protectedStop = '\uE000';
+  const normalised = body
+    .replaceAll(/\s+/g, ' ')
+    .replaceAll(/\S+@\S+/g, ' ')
+    .replaceAll(/(?:https?:\/\/|www\.)\S+/gi, ' ')
+    .replaceAll(/www\.acm\.\s*org\/public-policy/gi, ' ')
+    .replaceAll(/(\d)\.(\d)/g, `$1${protectedStop}$2`)
+    .replaceAll(/\b(?:e\.g|i\.e|Art|Arts|Rec|Fig|No)\./gi, (abbreviation) => abbreviation.replaceAll('.', protectedStop))
+    .trim();
+  return (normalised.match(/[^.!?]+[.!?](?:[”"'])?(?=\s+[A-Z“"(]|\s*$)/gu) ?? []).map((sentence) => sentence.replaceAll(protectedStop, '.'));
+}
+
+function classify(text: string, fallback: Theme) {
+  const preferred = preferredQuotes.find(({ fragment }) => text.toLowerCase().includes(fragment.toLowerCase()));
+  if (preferred) return { score: preferred.score, theme: preferred.theme };
+
+  const scores = Object.entries(themePatterns).map(([theme, patterns]) => ({
+    theme: theme as Theme,
+    score: patterns.reduce((total, pattern) => total + Number(pattern.test(text)), 0),
+  }));
+  scores.sort((left, right) => right.score - left.score);
+  const best = scores[0];
+  return { score: best.score, theme: best.score ? best.theme : fallback };
+}
+
+function quoteCandidates(body: string, fallback: Theme) {
+  return sentences(body)
+    .map((text) =>
+      text
+        .trim()
+        .replaceAll(/^[•●▪\u200B\s]+/gu, '')
+        .replace(/^['“"]|['”"]$/g, ''),
+    )
+    .filter(
+      (text) =>
+        text.length >= 72 &&
+        text.length <= 300 &&
+        !text.includes(emDash) &&
+        !/https?:\/\/|@|Table of Contents|Contribution ID|Fields marked with/i.test(text) &&
+        (text.match(/[a-z]/gi)?.length ?? 0) > text.length * 0.55,
+    )
+    .map((text) => {
+      const classification = classify(text, fallback);
+      const directive = /\b(recommend|should|must|require|urge|propose)\b/i.test(text) ? 3 : 0;
+      const lengthFit = text.length >= 105 && text.length <= 240 ? 2 : 0;
+      return { text, theme: classification.theme, score: classification.score * 4 + directive + lengthFit };
+    })
+    .sort((left, right) => right.score - left.score || left.text.length - right.text.length);
+}
+
+const documents = await getCollection('policyProducts');
+const quotePool = documents.flatMap((document) => {
+  const candidates = quoteCandidates(document.body ?? '', fallbackThemes[document.data.track]);
+  if (candidates.length < 2) throw new Error(`Policy corpus needs two quotable sentences in ${document.id}.`);
+
+  const selected = [candidates[0]];
+  const distinctTheme = candidates.find((candidate) => candidate.theme !== selected[0].theme);
+  if (distinctTheme) selected.push(distinctTheme);
+  else selected.push(candidates[1]);
+
+  return selected.map<Quote>((quote) => ({
+    ...quote,
+    date: document.data.date,
+    documentId: document.id,
+    href: document.data.href,
+    title: document.data.title,
+  }));
+});
+
+quotePool.sort((left, right) => right.score - left.score || left.title.localeCompare(right.title));
+
+const featuredKeys = new Set(
+  (themes.filter((theme) => theme.value !== 'all') as Array<{ label: string; value: Theme }>)
+    .map(({ value }) => quotePool.find((quote) => quote.theme === value))
+    .filter((quote): quote is Quote => Boolean(quote))
+    .slice(0, 4)
+    .map((quote) => `${quote.documentId}:${quote.text}`),
+);
+const ambientQuotes = quotePool.filter((_, index) => index % 2 === 0).slice(0, 20);
+---
+
+<policy-corpus class="policy-corpus" data-quote-count={quotePool.length} data-document-count={documents.length} data-reveal>
+  <header class="corpus-header">
+    <div>
+      <p class="eyebrow">CORPUS EXPLORER</p>
+      <h2>The record speaks.</h2>
+    </div>
+    <p>{quotePool.length} passages selected from {documents.length} source documents.</p>
+  </header>
+
+  <p class="corpus-intro">Select a theme to bring verbatim positions from the delivered record into focus.</p>
+
+  <div class="corpus-filters" aria-label="Filter policy corpus by theme">
+    {
+      themes.map((theme, index) => (
+        <button type="button" data-theme-filter={theme.value} aria-pressed={index === 0 ? 'true' : 'false'}>
+          {theme.label}
+        </button>
+      ))
+    }
+  </div>
+
+  <div class="corpus-stage">
+    <div class="corpus-field" aria-hidden="true">
+      {
+        ambientQuotes.map((quote, index) => (
+          <span
+            class="corpus-fragment"
+            data-fragment-theme={quote.theme}
+            style={`--fragment-x:${(index * 37 + 7) % 92}%;--fragment-y:${(index * 29 + 4) % 88}%;--fragment-shift:${(index % 5) * 9 - 18}px;--fragment-duration:${24 + (index % 6) * 3}s;--fragment-delay:${index * -1.7}s`}
+          >
+            {quote.text}
+          </span>
+        ))
+      }
+    </div>
+
+    <div class="corpus-quotes" aria-live="polite">
+      {
+        quotePool.map((quote, index) => {
+          const featured = featuredKeys.has(`${quote.documentId}:${quote.text}`);
+          return (
+            <article
+              class="corpus-quote"
+              data-quote
+              data-quote-theme={quote.theme}
+              data-featured={featured ? 'true' : undefined}
+              data-origin-x={`${(index % 2 ? 1 : -1) * (80 + (index % 4) * 28)}`}
+              data-origin-y={`${((index % 3) - 1) * 42}`}
+              hidden={!featured}
+            >
+              <blockquote>{quote.text}</blockquote>
+              <footer>
+                <span>
+                  <strong>{quote.title}</strong>
+                  {quote.date && <time>{quote.date}</time>}
+                </span>
+                <a href={quote.href} target="_blank" rel="noopener noreferrer">
+                  Read source →
+                </a>
+              </footer>
+            </article>
+          );
+        })
+      }
+    </div>
+  </div>
+</policy-corpus>
+
+<script>
+  class PolicyCorpusElement extends HTMLElement {
+    private animations = new Set<Animation>();
+    private controller = new AbortController();
+    private observer?: IntersectionObserver;
+    private switchTimer?: number;
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      this.querySelectorAll<HTMLButtonElement>('[data-theme-filter]').forEach((button) => {
+        button.addEventListener('click', () => this.selectTheme(button), {
+          signal: this.controller.signal,
+        });
+      });
+
+      if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        this.dataset.inView = 'true';
+        return;
+      }
+      this.observer = new IntersectionObserver(([entry]) => {
+        this.dataset.inView = String(entry.isIntersecting);
+      });
+      this.observer.observe(this);
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+      this.observer?.disconnect();
+      if (this.switchTimer) clearTimeout(this.switchTimer);
+      this.animations.forEach((animation) => animation.cancel());
+      this.animations.clear();
+    }
+
+    private selectTheme(activeButton: HTMLButtonElement) {
+      const theme = activeButton.dataset.themeFilter ?? 'all';
+      this.querySelectorAll<HTMLButtonElement>('[data-theme-filter]').forEach((button) => {
+        button.setAttribute('aria-pressed', String(button === activeButton));
+      });
+      this.querySelectorAll<HTMLElement>('[data-fragment-theme]').forEach((fragment) => {
+        fragment.dataset.matched = String(theme === 'all' || fragment.dataset.fragmentTheme === theme);
+      });
+
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const current = [...this.querySelectorAll<HTMLElement>('[data-quote]:not([hidden])')];
+      const candidates = [...this.querySelectorAll<HTMLElement>('[data-quote]')].filter((quote) =>
+        theme === 'all' ? quote.dataset.featured === 'true' : quote.dataset.quoteTheme === theme,
+      );
+      const next = candidates.slice(0, 4);
+
+      if (this.switchTimer) clearTimeout(this.switchTimer);
+      if (reduced) {
+        current.forEach((quote) => (quote.hidden = true));
+        next.forEach((quote) => (quote.hidden = false));
+        return;
+      }
+
+      this.animations.forEach((animation) => animation.cancel());
+      this.animations.clear();
+      current.forEach((quote, index) => {
+        this.play(
+          quote,
+          [
+            { opacity: 1, filter: 'blur(0)', transform: 'none' },
+            { opacity: 0, filter: 'blur(5px)', transform: `translateY(${10 + index * 3}px)` },
+          ],
+          { duration: 140, easing: 'ease-in', fill: 'forwards' },
+        );
+      });
+
+      this.switchTimer = window.setTimeout(() => {
+        current.forEach((quote) => (quote.hidden = true));
+        next.forEach((quote, index) => {
+          quote.hidden = false;
+          const originX = Number(quote.dataset.originX ?? 0);
+          const originY = Number(quote.dataset.originY ?? 0);
+          this.play(
+            quote,
+            [
+              {
+                clipPath: 'inset(0 100% 0 0)',
+                filter: 'blur(8px)',
+                opacity: 0,
+                transform: `translate3d(${originX}px,${originY}px,0) scale(.97)`,
+              },
+              {
+                clipPath: 'inset(0 0 0 0)',
+                filter: 'blur(0)',
+                opacity: 1,
+                transform: 'none',
+              },
+            ],
+            {
+              delay: index * 85,
+              duration: 520,
+              easing: 'cubic-bezier(.18,.76,.22,1)',
+              fill: 'both',
+            },
+          );
+        });
+      }, 150);
+    }
+
+    private play(target: HTMLElement, keyframes: Keyframe[], options: KeyframeAnimationOptions) {
+      const animation = target.animate(keyframes, options);
+      this.animations.add(animation);
+      animation.addEventListener('finish', () => this.animations.delete(animation), { once: true });
+    }
+  }
+
+  if (!customElements.get('policy-corpus')) {
+    customElements.define('policy-corpus', PolicyCorpusElement);
+  }
+</script>
+
+<style>
+  .policy-corpus {
+    background: radial-gradient(80% 90% at 18% 35%, rgba(94, 230, 160, 0.075), transparent 64%), var(--bg-inset);
+    border-block: 1px solid var(--hairline);
+    display: block;
+    overflow: hidden;
+    padding: 92px 48px 104px;
+    position: relative;
+  }
+
+  .corpus-header {
+    align-items: end;
+    display: flex;
+    gap: 40px;
+    justify-content: space-between;
+  }
+
+  h2 {
+    font: 300 clamp(48px, 6vw, 76px) / 1 var(--font-display);
+    letter-spacing: -0.025em;
+    margin: 18px 0 0;
+  }
+
+  .corpus-header > p {
+    color: var(--text-4);
+    font: var(--mono-10) / 1.6 var(--font-mono);
+    letter-spacing: 0.08em;
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  .corpus-intro {
+    color: var(--text-2);
+    font-size: var(--body-16);
+    line-height: 1.7;
+    margin: 28px 0 0;
+    max-width: 700px;
+  }
+
+  .corpus-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 38px 0 30px;
+  }
+
+  button {
+    background: rgba(17, 19, 18, 0.72);
+    border: 1px solid var(--hairline-card);
+    border-radius: var(--radius-pill);
+    color: var(--text-3);
+    cursor: pointer;
+    font: var(--mono-9) / 1 var(--font-mono);
+    letter-spacing: 0.1em;
+    min-height: 38px;
+    padding: 0 14px;
+    transition:
+      background 180ms ease,
+      border-color 180ms ease,
+      color 180ms ease;
+  }
+
+  button:hover,
+  button:focus-visible {
+    border-color: rgba(94, 230, 160, 0.45);
+    color: var(--accent);
+    outline: none;
+  }
+
+  button[aria-pressed='true'] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-on);
+  }
+
+  .corpus-stage {
+    border-block: 1px solid var(--hairline);
+    min-height: 680px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .corpus-field {
+    inset: 0;
+    mask-image: linear-gradient(180deg, transparent, #000 12%, #000 86%, transparent);
+    pointer-events: none;
+    position: absolute;
+  }
+
+  .corpus-fragment {
+    animation: corpus-fragment-drift var(--fragment-duration) linear infinite;
+    animation-delay: var(--fragment-delay);
+    animation-play-state: paused;
+    color: rgba(244, 242, 238, 0.085);
+    font: var(--mono-9) / 1.6 var(--font-mono);
+    left: var(--fragment-x);
+    max-width: 340px;
+    opacity: 0.48;
+    overflow: hidden;
+    position: absolute;
+    text-overflow: ellipsis;
+    top: var(--fragment-y);
+    transition:
+      color 320ms ease,
+      opacity 320ms ease;
+    white-space: nowrap;
+  }
+
+  .policy-corpus[data-in-view='true'] .corpus-fragment {
+    animation-play-state: running;
+  }
+  .corpus-fragment[data-matched='false'] {
+    opacity: 0.12;
+  }
+  .corpus-fragment[data-matched='true'] {
+    color: rgba(94, 230, 160, 0.17);
+    opacity: 0.9;
+  }
+
+  .corpus-quotes {
+    display: grid;
+    gap: 10px;
+    margin: 0 auto;
+    max-width: 980px;
+    padding: 88px 0 74px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .corpus-quote {
+    backdrop-filter: blur(14px);
+    background: rgba(13, 15, 14, 0.82);
+    border: 1px solid rgba(244, 242, 238, 0.11);
+    padding: 24px 26px 20px;
+  }
+
+  .corpus-quote[hidden] {
+    display: none;
+  }
+
+  blockquote {
+    color: var(--text-1);
+    font: 300 clamp(22px, 2.4vw, 31px) / 1.27 var(--font-display);
+    margin: 0;
+    max-width: 900px;
+  }
+
+  footer {
+    align-items: end;
+    border-top: 1px solid var(--hairline);
+    display: flex;
+    gap: 24px;
+    justify-content: space-between;
+    margin-top: 22px;
+    padding-top: 15px;
+  }
+
+  footer span {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  footer strong,
+  footer time,
+  footer a {
+    font: var(--mono-9) / 1.4 var(--font-mono);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  footer strong {
+    color: var(--text-3);
+    font-weight: 400;
+  }
+  footer time {
+    color: var(--text-4);
+  }
+  footer a {
+    color: var(--accent);
+    flex: none;
+  }
+
+  @keyframes corpus-fragment-drift {
+    from {
+      transform: translate3d(0, 34px, 0);
+    }
+    to {
+      transform: translate3d(var(--fragment-shift), -68px, 0);
+    }
+  }
+
+  @media (max-width: 800px) {
+    .policy-corpus {
+      padding: 68px 24px 76px;
+    }
+    .corpus-header {
+      align-items: start;
+      flex-direction: column;
+    }
+    .corpus-stage {
+      min-height: 760px;
+    }
+    .corpus-quotes {
+      padding-block: 64px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .policy-corpus {
+      padding: 56px 18px 64px;
+    }
+    .corpus-header > p {
+      max-width: 260px;
+    }
+    .corpus-stage {
+      min-height: 860px;
+    }
+    .corpus-quote {
+      padding: 20px;
+    }
+    footer {
+      align-items: start;
+      flex-direction: column;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .corpus-fragment {
+      animation: none;
+      opacity: 0.2;
+    }
+    .corpus-fragment[data-matched='false'] {
+      opacity: 0.08;
+    }
+    .corpus-fragment[data-matched='true'] {
+      opacity: 0.35;
+    }
+  }
+</style>

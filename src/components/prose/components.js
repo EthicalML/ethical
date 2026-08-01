@@ -38,3 +38,5 @@ export { default as ProcurementFlow } from '../ProcurementFlow.astro';
 export { default as FrameworkLinkCards } from '../FrameworkLinkCards.astro';
 export { default as PolicyMandates } from '../PolicyMandates.astro';
 export { default as PolicyRecord } from '../PolicyRecord.astro';
+export { default as AchievementGrid } from '../AchievementGrid.astro';
+export { default as PolicyCorpusExplorer } from '../PolicyCorpusExplorer.astro';
