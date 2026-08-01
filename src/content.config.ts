@@ -70,4 +70,14 @@ const metrics = defineCollection({
   }),
 });
 
-export const collections = { metrics, partners, principles, survey };
+const policyProducts = defineCollection({
+  loader: glob({ pattern: '*.md', base: './src/content/policy-products' }),
+  schema: z.object({
+    title: z.string(),
+    date: z.string().optional(),
+    track: z.enum(['eu-ai-act', 'eu-digital-acts', 'uk', 'global', 'sustainability']),
+    href: z.url(),
+  }),
+});
+
+export const collections = { metrics, partners, policyProducts, principles, survey };

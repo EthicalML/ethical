@@ -180,7 +180,7 @@ mandates:
       - role: Early member, ISO/IEC 42001 (AI management systems)
 ---
 
-import { ArticleHero, PolicyMandates, PolicyRecord } from '../components/prose/components.js';
+import { AchievementGrid, ArticleHero, PolicyCorpusExplorer, PolicyMandates, PolicyRecord } from '../components/prose/components.js';
 import StatBand from '../components/StatBand.astro';
 
 <ArticleHero
@@ -192,13 +192,13 @@ import StatBand from '../components/StatBand.astro';
 
 <StatBand stats={frontmatter.impact} />
 
-<section className="policy-section policy-outcomes" data-reveal aria-labelledby="outcomes-heading">
-  <header>
+<section className="policy-section policy-outcomes" aria-labelledby="outcomes-heading">
+  <header data-reveal>
     <p className="eyebrow">ACHIEVEMENTS</p>
     <h2 id="outcomes-heading">Highlight achievements</h2>
     <p>Selected outcomes, appointments and technical positions from the delivered record.</p>
   </header>
-  <div className="achievement-grid">
+  <AchievementGrid>
     <article className="achievement-card">
       <span>EU · GPAI CODE OF PRACTICE</span>
       <strong>8 of 12 recommendations adopted</strong>
@@ -280,8 +280,8 @@ import StatBand from '../components/StatBand.astro';
         </a>
       </p>
     </article>
-  </div>
-  <p className="regulation-line">
+  </AchievementGrid>
+  <p className="regulation-line" data-reveal>
     These achievements represent the “By Regulation” phase of the Institute's four-phase strategy, where practitioner controls enter public instruments.
   </p>
 </section>
@@ -373,6 +373,8 @@ import StatBand from '../components/StatBand.astro';
     </p>
   </div>
 </section>
+
+<PolicyCorpusExplorer />
 
 <section className="policy-work" data-reveal aria-labelledby="work-heading">
   <p className="eyebrow">WORK WITH US</p>
