@@ -2,13 +2,19 @@
 interface Props {
   title?: string;
   chromeOnly?: boolean;
+  finite?: boolean;
   class?: string;
 }
 
-const { title, chromeOnly = false, class: className }: Props = Astro.props;
+const { title, chromeOnly = false, finite = false, class: className }: Props = Astro.props;
 ---
 
-<animation-window class:list={[className, { 'is-chrome-only': chromeOnly }]} data-playing="false" data-chrome-only={chromeOnly ? '' : undefined}>
+<animation-window
+  class:list={[className, { 'is-chrome-only': chromeOnly }]}
+  data-playing="false"
+  data-chrome-only={chromeOnly ? '' : undefined}
+  data-finite={finite ? '' : undefined}
+>
   <header class="window-header">
     <span class="traffic-lights" aria-hidden="true"><i></i><i></i><i></i></span>
     <span class="window-title" data-window-title>{title}</span>
@@ -32,10 +38,10 @@ const { title, chromeOnly = false, class: className }: Props = Astro.props;
 </animation-window>
 
 <!--
-  Playback contract: animated descendants read the host's data-playing value and
+  Playback contract: looping descendants read the host's data-playing value and
   listen on their closest <animation-window> for animationwindow:play and
-  animationwindow:pause. A descendant may bubble animationwindow:complete when
-  its finite animation ends so the shared control returns to its play state.
+  animationwindow:pause. Controls autoplay on view and remain playing until the
+  user pauses. The finite mode is reserved for discrete, replayable sequences.
 -->
 <script>
   class AnimationWindowElement extends HTMLElement {
@@ -61,6 +67,7 @@ const { title, chromeOnly = false, class: className }: Props = Astro.props;
       this.addEventListener(
         'animationwindow:complete',
         () => {
+          if (!this.hasAttribute('data-finite')) return;
           this.userPaused = true;
           this.setPlaying(false);
         },
@@ -102,6 +109,7 @@ const { title, chromeOnly = false, class: className }: Props = Astro.props;
   animation-window {
     background: var(--bg-inset);
     border: 1px solid var(--hairline-card);
+    border-radius: 10px;
     display: block;
     overflow: hidden;
   }
@@ -110,19 +118,19 @@ const { title, chromeOnly = false, class: className }: Props = Astro.props;
     background: rgba(255, 255, 255, 0.025);
     border-bottom: 1px solid var(--hairline-card);
     display: grid;
-    grid-template-columns: minmax(76px, 1fr) auto minmax(76px, 1fr);
-    min-height: 44px;
+    grid-template-columns: minmax(58px, 1fr) auto minmax(58px, 1fr);
+    min-height: 30px;
   }
   .traffic-lights {
     display: flex;
-    gap: 7px;
-    padding-left: 15px;
+    gap: 6px;
+    padding-left: 12px;
   }
   .traffic-lights i {
     background: var(--text-4);
     border-radius: 50%;
-    height: 8px;
-    width: 8px;
+    height: 7px;
+    width: 7px;
   }
   .traffic-lights i:first-child {
     background: var(--glitch-red);
@@ -135,7 +143,7 @@ const { title, chromeOnly = false, class: className }: Props = Astro.props;
   }
   .window-title {
     color: var(--text-3);
-    font: var(--mono-10)/1 var(--font-mono);
+    font: var(--mono-9)/1 var(--font-mono);
     letter-spacing: 0.08em;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -145,7 +153,7 @@ const { title, chromeOnly = false, class: className }: Props = Astro.props;
     align-items: center;
     display: flex;
     justify-content: flex-end;
-    min-width: 44px;
+    min-width: 30px;
   }
   .play-toggle {
     align-items: center;
@@ -158,8 +166,8 @@ const { title, chromeOnly = false, class: className }: Props = Astro.props;
     cursor: pointer;
     display: flex;
     justify-content: center;
-    min-height: 44px;
-    min-width: 44px;
+    min-height: 30px;
+    min-width: 30px;
     padding: 0;
   }
   .play-toggle:hover,
@@ -170,8 +178,8 @@ const { title, chromeOnly = false, class: className }: Props = Astro.props;
   }
   .play-toggle svg {
     fill: currentColor;
-    height: 13px;
-    width: 13px;
+    height: 11px;
+    width: 11px;
   }
   .pause-icon,
   animation-window[data-playing='true'] .play-icon {
@@ -185,10 +193,10 @@ const { title, chromeOnly = false, class: className }: Props = Astro.props;
   }
   @media (max-width: 520px) {
     .window-header {
-      grid-template-columns: minmax(68px, 1fr) auto minmax(68px, 1fr);
+      grid-template-columns: minmax(54px, 1fr) auto minmax(54px, 1fr);
     }
     .traffic-lights {
-      padding-left: 12px;
+      padding-left: 10px;
     }
   }
 </style>

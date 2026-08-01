@@ -101,12 +101,8 @@ const stages = [
     private scheduleNext() {
       window.clearTimeout(this.timer);
       this.timer = window.setTimeout(() => {
-        this.stage += 1;
+        this.stage = this.stage >= 4 ? 0 : this.stage + 1;
         this.render();
-        if (this.stage >= 4) {
-          this.dispatchEvent(new CustomEvent('animationwindow:complete', { bubbles: true }));
-          return;
-        }
         this.scheduleNext();
       }, 1050);
     }
@@ -133,7 +129,11 @@ const stages = [
 </script>
 
 <style>
-  .sequence-window {
+  :global(.sequence-window) {
+    --accent: #4ac7ff;
+    --accent-wash-09: rgba(74, 199, 255, 0.09);
+    border-color: rgba(74, 199, 255, 0.25);
+    box-shadow: inset 0 2px rgba(74, 199, 255, 0.45);
     margin-top: 34px;
   }
   sequence-pipeline {

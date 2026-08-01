@@ -120,12 +120,8 @@ const scenarios = [
     private scheduleNext(limit: number) {
       window.clearTimeout(this.timer);
       this.timer = window.setTimeout(() => {
-        this.step += 1;
+        this.step = this.step >= limit ? 0 : this.step + 1;
         this.render();
-        if (this.step >= limit) {
-          this.dispatchEvent(new CustomEvent('animationwindow:complete', { bubbles: true }));
-          return;
-        }
         this.scheduleNext(limit);
       }, 900);
     }

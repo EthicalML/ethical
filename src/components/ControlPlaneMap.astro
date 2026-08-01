@@ -51,12 +51,12 @@ const resources = [
 ---
 
 <control-plane-map>
-  <AnimationWindow title="kaos control plane" class="control-plane-window">
+  <AnimationWindow title="kaos control plane" class="control-plane-window" chromeOnly>
     <div class="map-shell">
       <div class="map-stage">
-        <kaos-graph variant="interactive" aria-label="Interactive KAOS control plane architecture; select a custom resource to inspect it">
+        <kaos-architecture variant="interactive" aria-label="Interactive KAOS control plane architecture; select a custom resource to inspect it">
           <canvas aria-hidden="true"></canvas>
-        </kaos-graph>
+        </kaos-architecture>
         <p class="map-hint"><span aria-hidden="true">↗</span> Select a resource node</p>
         <div class="map-legend" aria-hidden="true"><span><i></i>CRD</span><span><i></i>RECONCILED RUNTIME</span></div>
       </div>
@@ -123,7 +123,7 @@ const resources = [
 </control-plane-map>
 
 <script>
-  import '../shared/canvas/KaosGraph';
+  import '../shared/canvas/KaosArchitecture';
 
   interface InteractiveKaosGraph extends HTMLElement {
     selectResource(id: string): void;
@@ -135,7 +135,7 @@ const resources = [
 
     connectedCallback() {
       this.controller = new AbortController();
-      const graph = this.querySelector<InteractiveKaosGraph>('kaos-graph');
+      const graph = this.querySelector<InteractiveKaosGraph>('kaos-architecture');
       const tabs = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-resource]'));
       const panels = Array.from(this.querySelectorAll<HTMLElement>('[data-resource-panel]'));
       const trace = this.querySelector<HTMLButtonElement>('[data-trace]');
@@ -166,7 +166,7 @@ const resources = [
           { signal: this.controller.signal },
         );
       });
-      graph.addEventListener('kaosgraph:select', (event) => select((event as CustomEvent<{ id: string }>).detail.id), {
+      graph.addEventListener('kaosarchitecture:select', (event) => select((event as CustomEvent<{ id: string }>).detail.id), {
         signal: this.controller.signal,
       });
       trace.addEventListener('click', () => graph.trace(), { signal: this.controller.signal });
@@ -201,7 +201,7 @@ const resources = [
     overflow: hidden;
     position: relative;
   }
-  kaos-graph,
+  kaos-architecture,
   canvas {
     height: 100%;
     inset: 0;

@@ -56,29 +56,29 @@ All first-party client behaviour is TypeScript. Do not add first-party runtime J
 - Stateful containers restore the state that makes a morph endpoint visible synchronously at mount.
 - Elements that must stay above a morphing group need their own named group and explicit `::view-transition-group` z-order.
 - Text morphs require identical strings at both endpoints.
-- Full-bleed backdrops behind hero text (the KAOS hero graph) must not carry card framing (`widget`/`embedded-widget`); a translucent dark plate behind text makes the route cross-fade read as content arriving dim. Use `<KaosGraph embedded backdrop />`.
+- Full-bleed backdrops behind hero text (the KAOS architecture) must not carry card framing (`widget`/`embedded-widget`); a translucent dark plate behind text makes the route cross-fade read as content arriving dim. Use `<KaosArchitecture embedded backdrop />`.
 - Named elements are lifted out of ancestor effects during a transition; anything meant to fade with the page must not carry a `view-transition-name`.
 - Debugging motion: instrumented checks must assert snapshot opacity and landing position, not just presence; when instrumentation and the eye disagree, bisect by removing visible elements one build at a time.
 - Forward navigations without a hash pin the fresh page to the top until the transition finishes (`ScrollRestoration`). Firefox fires a browser-internal scroll on the new page after the router's own scroll-to-top and after the snapshot capture, which lands every morph offset by that scroll; the pin snaps it back before paint. Do not remove the pin without re-testing morphs in Firefox from a deeply scrolled origin page.
 - Motion changes land one at a time, in-session, and are owner-validated visually before commit; failed experiments are reverted, never left in the tree. Instrumentation is for diagnosis only — owner eyes are the acceptance gate.
 
-| Motion                      | Endpoints                                                            | Owners                                                              |
-| --------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| Content settle              | Every route → every route                                            | `BaseLayout`, `tokens.css`                                          |
-| Header persistence          | Every route ↔ every route                                            | `SiteHeader`, `BaseLayout`                                          |
-| Principle title morph       | Explorer detail → `/principles/NN/` h1                               | `MorphPairs`, `PrinciplesExplorer`, `PrincipleLayout`, `BaseLayout` |
-| Survey title morph          | Homepage report heading → survey explorer hero                       | `MorphPairs`, `ReportsSection`, `ArticleHero`                       |
-| Initiative title morphs     | Homepage maturity / security card titles → matching framework heroes | `MorphPairs`, `ReportsSection`, `ArticleHero`, `BaseLayout`         |
-| KAOS title morph            | Homepage KAOS card title → KAOS page hero h1                         | `MorphPairs`, `OpenSourceShowcase`, `ArticleHero`                   |
-| KAOS architecture orbit     | Homepage showcase, project portal, KAOS hero and control-plane map   | `KaosGraph`, `CanvasEngine`, `AnimationWindow`                      |
-| OSS portal title morphs     | `/open-source/` panel titles → project page heroes                   | `MorphPairs`, `ProjectPortal`, `ArticleHero`                        |
-| Project portal activity     | `/open-source/` project panels and production ML constellation       | `ProjectPortal`, `CategoryConstellation`, `CanvasEngine`            |
-| Kompute sequence playback   | Kompute detail sequence pipeline                                     | `SequencePipeline`                                                  |
-| Shared animation playback   | Animated windows entering/leaving the viewport                       | `AnimationWindow`, slotted animation owner                          |
-| Responsible ML process      | XAI process checkpoint playback                                      | `XaiProcess`, `AnimationWindow`                                     |
-| Production ML atlas drift   | Production ML catalogue category field                               | `CategoryAtlas`                                                     |
-| Partner logo morph          | Clicked marquee instance → matching directory logo                   | `MorphPairs`, `AffiliationMarquee`, `PartnerDirectory`              |
-| Principle directional slide | `/principles/NN/` prev/next → adjacent principle                     | `PrincipleLayout`, `Motion`, `tokens.css`                           |
+| Motion                      | Endpoints                                                            | Owners                                                                            |
+| --------------------------- | -------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Content settle              | Every route → every route                                            | `BaseLayout`, `tokens.css`                                                        |
+| Header persistence          | Every route ↔ every route                                            | `SiteHeader`, `BaseLayout`                                                        |
+| Principle title morph       | Explorer detail → `/principles/NN/` h1                               | `MorphPairs`, `PrinciplesExplorer`, `PrincipleLayout`, `BaseLayout`               |
+| Survey title morph          | Homepage report heading → survey explorer hero                       | `MorphPairs`, `ReportsSection`, `ArticleHero`                                     |
+| Initiative title morphs     | Homepage maturity / security card titles → matching framework heroes | `MorphPairs`, `ReportsSection`, `ArticleHero`, `BaseLayout`                       |
+| KAOS title morph            | Homepage KAOS card title → KAOS page hero h1                         | `MorphPairs`, `OpenSourceShowcase`, `ArticleHero`                                 |
+| Homepage KAOS agent graph   | Homepage showcase and principle feature                              | `KaosGraph`                                                                       |
+| KAOS architecture orbit     | Project portal, KAOS hero and control-plane map                      | `KaosArchitecture`, `CanvasEngine`                                                |
+| OSS portal title morphs     | `/open-source/` panel titles → project page heroes                   | `MorphPairs`, `ProjectPortal`, `ArticleHero`                                      |
+| Project portal activity     | `/open-source/` project panels and production ML constellation       | `ProjectPortal`, `CategoryConstellation`, `CanvasEngine`                          |
+| Looping demo playback       | Memory lifecycle, request path, Kompute sequence and XAI workflow    | `AnimationWindow`, `MemoryTiers`, `RequestPath`, `SequencePipeline`, `XaiProcess` |
+| Finite terminal playback    | KAOS quickstart terminal                                             | `AnimationWindow`, `QuickstartTerminal`                                           |
+| Production ML atlas drift   | Production ML catalogue category field                               | `CategoryAtlas`                                                                   |
+| Partner logo morph          | Clicked marquee instance → matching directory logo                   | `MorphPairs`, `AffiliationMarquee`, `PartnerDirectory`                            |
+| Principle directional slide | `/principles/NN/` prev/next → adjacent principle                     | `PrincipleLayout`, `Motion`, `tokens.css`                                         |
 
 ## MDX components
 

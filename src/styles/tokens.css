@@ -1178,7 +1178,7 @@ html[data-astro-transition="back"]::view-transition-new(principle-page) {
 .oss-tags span { border: 1px solid rgba(255,255,255,.14); border-radius: var(--radius-pill); color: var(--text-2); font: var(--mono-10-5)/1 var(--font-mono); padding: 8px 12px; }
 .oss-copy > .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
 .fixed-canvas { height: 440px; min-height: 220px; position: relative; }
-.fixed-canvas canvas, .kaos-canvas-mount canvas { height: 100%; inset: 0; position: absolute; width: 100%; }
+.fixed-canvas canvas, .kaos-canvas-mount canvas, .kaos-architecture-mount canvas { height: 100%; inset: 0; position: absolute; width: 100%; }
 .oss-pair { display: grid; gap: 26px; grid-template-columns: 1fr 1fr; margin-top: 26px; }
 .oss-half { background: linear-gradient(180deg,rgba(255,255,255,.035),transparent); border: 1px solid var(--hairline-card); border-radius: var(--radius-card-lg); padding: 26px; }
 .oss-preview { background: var(--bg-inset); border: 1px solid rgba(255,255,255,.09); border-radius: var(--radius-card); padding: 22px; }
@@ -1210,7 +1210,8 @@ html[data-astro-transition="back"]::view-transition-new(principle-page) {
 .kaos-panel { background: var(--bg-inset); border: 1px solid rgba(255,255,255,.09); border-radius: var(--radius-card); padding: 18px; }
 .kaos-panel [data-kaos-status] { color: var(--accent); }
 .kaos-canvas-mount { height: 400px; margin-top: 12px; min-height: 220px; overflow: hidden; position: relative; width: 100%; }
-kaos-graph { display: block; }
+.kaos-architecture-mount { height: 400px; margin-top: 12px; min-height: 220px; overflow: hidden; position: relative; width: 100%; }
+kaos-graph, kaos-architecture { display: block; }
 .oss-menu-preview .kaos-canvas-mount { height: 180px; min-height: 180px; }
 .embedded-widget.kaos-canvas-mount { height: 360px; }
 
@@ -1380,30 +1381,40 @@ main > .home-section:last-child { padding-bottom: 120px; }
 .article-hero h1 { font: 300 clamp(54px, 7vw, 88px)/.98 var(--font-display); letter-spacing: -.025em; margin: 24px 0; max-width: 960px; }
 .article-hero > p:last-child { color: var(--text-2); font-size: 18px; line-height: 1.6; max-width: 680px; }
 .article-hero.canvas-variant { min-height: 650px; overflow: hidden; }
-.article-hero.canvas-variant.kompute-variant::after {
-  background: linear-gradient(90deg, rgba(15, 16, 15, .92) 0%, rgba(15, 16, 15, .7) 42%, transparent 76%);
+.article-hero.canvas-variant::after {
+  background: linear-gradient(90deg, rgba(15, 16, 15, .94) 0%, rgba(15, 16, 15, .76) 35%, transparent 72%);
   content: '';
   inset: 0;
   pointer-events: none;
   position: absolute;
   z-index: 1;
 }
-.article-hero.canvas-variant > :not(canvas, .kaos-canvas-mount, .kompute-canvas-mount) { position: relative; z-index: 2; }
+.article-hero.canvas-variant > :not(canvas, .kaos-architecture-mount, .kompute-canvas-mount) { position: relative; z-index: 2; }
 .article-hero.canvas-variant .hero-canvas { opacity: .85; }
-.article-hero.canvas-variant > .kaos-canvas-mount {
+.article-hero.canvas-variant > .kaos-architecture-mount {
   height: min(500px, 100%);
-  inset: 50% 0 auto;
+  left: 34%;
+  mask-image: linear-gradient(90deg, transparent 0, #000 260px);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 260px);
   margin: 0;
   opacity: .72;
   position: absolute;
+  right: 0;
+  top: 50%;
   transform: translateY(-50%);
+  width: 66%;
   z-index: 0;
 }
 .article-hero.canvas-variant > .kompute-canvas-mount {
   height: 100%;
-  inset: 0;
+  left: 34%;
+  mask-image: linear-gradient(90deg, transparent 0, #000 260px);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 260px);
   opacity: .58;
   position: absolute;
+  right: 0;
+  top: 0;
+  width: 66%;
   z-index: 0;
 }
 .article-hero.canvas-variant > .kompute-canvas-mount canvas { height: 100%; width: 100%; }
@@ -2007,6 +2018,19 @@ main > .home-section:last-child { padding-bottom: 120px; }
     padding: 80px 24px 56px;
   }
   .article-hero h1 { font-size: clamp(48px, 8vw, 64px); }
+  .article-hero.canvas-variant > .kaos-architecture-mount,
+  .article-hero.canvas-variant > .kompute-canvas-mount {
+    bottom: 0;
+    height: 340px;
+    left: 0;
+    mask-image: linear-gradient(180deg, transparent, #000 30%);
+    -webkit-mask-image: linear-gradient(180deg, transparent, #000 30%);
+    opacity: .5;
+    right: 0;
+    top: auto;
+    transform: none;
+    width: 100%;
+  }
   .prose-section { padding: 68px 24px 72px; }
   .prose-content > p { padding: 0 24px 64px; }
   .feature-block {

@@ -5,25 +5,28 @@ interface Props {
   backdrop?: boolean;
   transitionName?: string;
   morphSource?: string;
+  variant?: 'ambient' | 'interactive';
 }
 
-const { embedded = false, panel = false, backdrop = false, transitionName, morphSource } = Astro.props;
+const { embedded = false, panel = false, backdrop = false, transitionName, morphSource, variant = 'ambient' } = Astro.props;
 const transitionStyle = transitionName ? `view-transition-name: ${transitionName}` : undefined;
 ---
 
 {
   panel ? (
-    <kaos-graph
-      class="kaos-canvas-mount"
-      aria-label="KAOS agent graph"
+    <kaos-architecture
+      class="kaos-architecture-mount"
+      aria-label="KAOS control-plane architecture"
+      variant={variant}
       transition:name={transitionName}
       style={transitionStyle}
       data-morph-source={morphSource}
     />
   ) : embedded ? (
-    <kaos-graph
-      class:list={['kaos-canvas-mount', !backdrop && 'widget embedded-widget']}
-      aria-label="KAOS agent graph"
+    <kaos-architecture
+      class:list={['kaos-architecture-mount', !backdrop && 'widget embedded-widget']}
+      aria-label="KAOS control-plane architecture"
+      variant={variant}
       transition:name={transitionName}
       style={transitionStyle}
     />
@@ -31,11 +34,11 @@ const transitionStyle = transitionName ? `view-transition-name: ${transitionName
     <section id="opensource" aria-labelledby="kaos-heading" data-reveal>
       <p class="eyebrow">CUSTOM WIDGET</p>
       <h2 id="kaos-heading">KAOS agent graph</h2>
-      <kaos-graph class="widget kaos-canvas-mount" transition:name={transitionName} style={transitionStyle} />
+      <kaos-architecture class="widget kaos-architecture-mount" variant={variant} transition:name={transitionName} style={transitionStyle} />
     </section>
   )
 }
 
 <script>
-  import '../shared/canvas/KaosGraph';
+  import '../shared/canvas/KaosArchitecture';
 </script>

@@ -102,12 +102,8 @@ const { steps }: Props = Astro.props;
     private scheduleNext() {
       window.clearTimeout(this.timer);
       this.timer = window.setTimeout(() => {
-        this.stage += 1;
+        this.stage = this.stage >= 2 ? 0 : this.stage + 1;
         this.render();
-        if (this.stage >= 2) {
-          this.dispatchEvent(new CustomEvent('animationwindow:complete', { bubbles: true }));
-          return;
-        }
         this.scheduleNext();
       }, 1400);
     }
@@ -128,7 +124,11 @@ const { steps }: Props = Astro.props;
 </script>
 
 <style>
-  .xai-process-window {
+  :global(.xai-process-window) {
+    --accent: #e8b45c;
+    --accent-wash-09: rgba(232, 180, 92, 0.09);
+    border-color: rgba(232, 180, 92, 0.25);
+    box-shadow: inset 3px 0 rgba(232, 180, 92, 0.45);
     margin-top: 34px;
   }
   xai-process {
