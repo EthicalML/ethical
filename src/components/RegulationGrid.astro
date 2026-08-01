@@ -19,7 +19,7 @@ const { areas, themes, repository } = Astro.props;
   <nav class="regulation-grid" aria-label="AI regulation by economic area">
     {
       areas.map(({ name, emoji, count, anchor }) => (
-        <a href={`${repository}${anchor}`} rel="noopener">
+        <a href={`${repository}${anchor}`} target="_blank" rel="noopener noreferrer">
           <span aria-hidden="true">{emoji}</span>
           <strong>{name}</strong>
           <small>{count}</small>
@@ -30,7 +30,7 @@ const { areas, themes, repository } = Astro.props;
   <nav class="regulation-themes" aria-label="AI guidelines by theme">
     {
       themes.map(({ name, emoji, anchor }) => (
-        <a href={`${repository}${anchor}`} rel="noopener">
+        <a href={`${repository}${anchor}`} target="_blank" rel="noopener noreferrer">
           <span aria-hidden="true">{emoji}</span>
           {name}
         </a>

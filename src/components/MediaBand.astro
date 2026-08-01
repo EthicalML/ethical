@@ -18,7 +18,7 @@ const { items }: Props = Astro.props;
       <figure>
         <img src={poster} data-animated-src={src} alt={alt} loading="lazy" decoding="async" />
         <figcaption>
-          <a href={href} rel="noopener">
+          <a href={href} target="_blank" rel="noopener noreferrer">
             {caption} →
           </a>
         </figcaption>

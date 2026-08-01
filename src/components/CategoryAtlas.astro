@@ -25,7 +25,8 @@ const maximum = Math.max(...categories.map(({ count }) => count));
           <a
             class="atlas-tile"
             href={`${repository}${anchor}`}
-            rel="noopener"
+            target="_blank"
+            rel="noopener noreferrer"
             style={`--atlas-size: ${size}px; --atlas-span: ${span}; --atlas-delay: ${(index % 8) * -0.42}s`}
           >
             <span class="atlas-emoji" aria-hidden="true">

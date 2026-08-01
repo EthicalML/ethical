@@ -14,7 +14,7 @@ const { links } = Astro.props;
 <nav class="project-links" aria-label="Project links" data-reveal>
   {
     links.map(({ label, href }, index) => (
-      <a class:list={['button', index === 0 && 'primary']} href={href} rel="noopener">
+      <a class:list={['button', index === 0 && 'primary']} href={href} target="_blank" rel="noopener noreferrer">
         {label}
       </a>
     ))

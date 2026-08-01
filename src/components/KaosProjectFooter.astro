@@ -31,7 +31,7 @@ const metrics: Metric[] = (metricsEntry?.data.values ?? []).filter(({ label }) =
   <nav aria-label="KAOS project links">
     {
       links.map(({ href, label }, index) => (
-        <a class:list={['button', index === 0 && 'primary']} href={href} rel="noopener">
+        <a class:list={['button', index === 0 && 'primary']} href={href} target="_blank" rel="noopener noreferrer">
           {label}
         </a>
       ))

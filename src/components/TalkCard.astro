@@ -2,7 +2,7 @@
 const { href, image, title } = Astro.props;
 ---
 
-<a class="talk-card prose-block" href={href} rel="noopener" data-reveal>
+<a class="talk-card prose-block" href={href} target="_blank" rel="noopener noreferrer" data-reveal>
   <img src={image} alt="PyData London 2019 XAI talk" loading="lazy" />
   <span><small>PYDATA LONDON 2019 · VIDEO</small><strong>{title}</strong><i>Watch the talk →</i></span>
 </a>

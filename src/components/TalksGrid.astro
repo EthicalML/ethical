@@ -30,7 +30,7 @@ const { talks } = Astro.props;
           <p class="eyebrow">{talk.label}</p>
           <h2>
             {talk.href ? (
-              <a href={talk.href} rel="noopener">
+              <a href={talk.href} target="_blank" rel="noopener noreferrer">
                 {talk.title}
               </a>
             ) : (
