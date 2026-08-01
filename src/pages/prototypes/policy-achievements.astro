@@ -1,13 +1,14 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AchievementGrid from '../../components/AchievementGrid.astro';
+import AchievementNeonRendition from '../../components/AchievementNeonRendition.astro';
 import AchievementRendition from '../../components/AchievementRendition.astro';
 import AchievementVisual from '../../components/AchievementVisual.astro';
 import PrototypeSwitcher from '../../components/PrototypeSwitcher.astro';
 
 const frontmatter = {
   title: 'Policy achievement prototypes',
-  description: 'Three composition studies for the policy achievement record.',
+  description: 'Five composition and motion studies for the policy achievement record.',
 };
 
 const cards = [
@@ -101,7 +102,7 @@ const orders = [3, 7, 10, 5, 13, 15];
   <header class="prototype-header">
     <p class="eyebrow">PROTOTYPE · POLICY ACHIEVEMENTS</p>
     <h1>How should the achievements assemble?</h1>
-    <p>Compare the current collage with a cleaner shared-grid composition and a light-surface two-row system.</p>
+    <p>Compare five composition and motion studies built from the same six policy achievements.</p>
   </header>
 
   <PrototypeSwitcher
@@ -109,6 +110,8 @@ const orders = [3, 7, 10, 5, 13, 15];
       { label: 'V1 · CURRENT', value: '1' },
       { label: 'V2 · CLEAN', value: '2' },
       { label: 'V3 · LIGHT', value: '3' },
+      { label: 'V4 · SCROLL LEGO', value: '4' },
+      { label: 'V5 · TRIGGERED LEGO', value: '5' },
     ]}
   >
     <section class="policy-section prototype-achievements" data-prototype-variant="1">
@@ -158,6 +161,24 @@ const orders = [3, 7, 10, 5, 13, 15];
         <p>A strict two-row system using warm light surfaces against the Institute's dark field.</p>
       </header>
       <AchievementRendition variant="light" cards={cards} />
+    </section>
+
+    <section class="rendition-section" data-prototype-variant="4" hidden>
+      <header>
+        <p class="eyebrow">V4 · SCROLL-LINKED LEGO</p>
+        <h2>Highlight achievements</h2>
+        <p>Scroll assembles the dark blocks. Shift a card to uncover its stationary neon layer.</p>
+      </header>
+      <AchievementNeonRendition mode="scroll" cards={cards} />
+    </section>
+
+    <section class="rendition-section" data-prototype-variant="5" hidden>
+      <header>
+        <p class="eyebrow">V5 · TRIGGERED LEGO</p>
+        <h2>Highlight achievements</h2>
+        <p>The same neon reveal with a fast, once-only sequence of hard landings.</p>
+      </header>
+      <AchievementNeonRendition mode="triggered" cards={cards} />
     </section>
   </PrototypeSwitcher>
 </BaseLayout>
