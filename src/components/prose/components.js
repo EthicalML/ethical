@@ -22,3 +22,8 @@ export { default as MemoryTiers } from '../MemoryTiers.astro';
 export { default as RequestPath } from '../RequestPath.astro';
 export { default as MediaBand } from '../MediaBand.astro';
 export { default as KaosProjectFooter } from '../KaosProjectFooter.astro';
+export { default as CodeTabs } from '../CodeTabs.astro';
+export { default as ProjectLinks } from '../ProjectLinks.astro';
+export { default as SequencePipeline } from '../SequencePipeline.astro';
+export { default as StageExplorer } from '../StageExplorer.astro';
+export { default as TalkCard } from '../TalkCard.astro';

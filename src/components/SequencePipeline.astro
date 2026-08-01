@@ -1,0 +1,340 @@
+<sequence-pipeline class="sequence-pipeline prose-block" data-reveal>
+  <div class="sequence-heading">
+    <div>
+      <p class="eyebrow">SEQUENCE RECORDING</p>
+      <h3>From host tensors to shader results</h3>
+    </div>
+    <button type="button" data-replay>Replay sequence ↻</button>
+  </div>
+
+  <div class="concept-flow" aria-label="Kompute API creation order">
+    <span><b>01</b> Manager</span><i>→</i><span><b>02</b> Tensors</span><i>→</i><span><b>03</b> Algorithm</span><i>→</i><span><b>04</b> Sequence</span>
+  </div>
+
+  <div class="pipeline-animation" aria-label="Sequence operation flow">
+    <div class="band host-band">
+      <span class="band-label">HOST</span>
+      <div class="tensor-set">
+        <span>tensorInA</span><span>tensorInB</span><span>tensorOutA</span><span>tensorOutB</span>
+      </div>
+    </div>
+    <div class="operation sync-device"><span>OpSyncDevice</span><i>↓</i></div>
+    <div class="band device-band">
+      <span class="band-label">DEVICE</span>
+      <div class="shader-block"><small>ALGORITHM</small><strong>shader.spv</strong><span>push constants [2] → [3]</span></div>
+    </div>
+    <div class="operation dispatch"><span>OpAlgoDispatch</span><i>⚡</i></div>
+    <div class="operation sync-local"><span>OpSyncLocal</span><i>↑</i></div>
+    <p class="result">RESULTS SYNCHRONISED</p>
+  </div>
+
+  <figure class="pipeline-static">
+    <img
+      src="/images/oss/kompute-architecture.jpg"
+      alt="Kompute Manager architecture linking sequences, algorithms, tensors, and the Vulkan device"
+      loading="lazy"
+    />
+    <figcaption>Kompute’s Manager, Sequence, Algorithm and Tensor architecture.</figcaption>
+  </figure>
+</sequence-pipeline>
+
+<script>
+  class SequencePipeline extends HTMLElement {
+    private controller = new AbortController();
+    private observer?: IntersectionObserver;
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const replay = this.querySelector<HTMLButtonElement>('[data-replay]');
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      const play = () => {
+        this.classList.remove('playing');
+        void this.offsetWidth;
+        this.classList.add('playing');
+      };
+
+      replay?.addEventListener('click', play, { signal: this.controller.signal });
+      this.observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) return;
+          play();
+          this.observer?.disconnect();
+        },
+        { threshold: 0.35 },
+      );
+      this.observer.observe(this);
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+      this.observer?.disconnect();
+    }
+  }
+
+  if (!customElements.get('sequence-pipeline')) customElements.define('sequence-pipeline', SequencePipeline);
+</script>
+
+<style>
+  sequence-pipeline {
+    display: block;
+    margin-top: 34px;
+    overflow: hidden;
+    padding: 30px;
+  }
+  .sequence-heading {
+    align-items: end;
+    display: flex;
+    gap: 24px;
+    justify-content: space-between;
+  }
+  .sequence-heading h3 {
+    font: 300 30px/1.15 var(--font-display);
+    margin: 12px 0 0;
+  }
+  button {
+    background: transparent;
+    border: 1px solid var(--hairline-card);
+    color: var(--accent);
+    cursor: pointer;
+    font: 11px var(--font-mono);
+    min-height: 44px;
+    padding: 11px 14px;
+  }
+  .concept-flow {
+    align-items: center;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(7, auto);
+    margin: 34px 0 22px;
+  }
+  .concept-flow span {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid var(--hairline);
+    color: var(--text-2);
+    padding: 14px;
+    text-align: center;
+  }
+  .concept-flow b {
+    color: var(--accent);
+    display: block;
+    font: 9px var(--font-mono);
+    margin-bottom: 5px;
+  }
+  .concept-flow i {
+    color: var(--text-4);
+    font-style: normal;
+    text-align: center;
+  }
+  .pipeline-animation {
+    background: var(--bg-inset);
+    min-height: 380px;
+    overflow: hidden;
+    padding: 26px;
+    position: relative;
+  }
+  .band {
+    border: 1px solid var(--hairline);
+    left: 26px;
+    padding: 20px;
+    position: absolute;
+    right: 26px;
+  }
+  .host-band {
+    top: 26px;
+  }
+  .device-band {
+    bottom: 26px;
+  }
+  .band-label {
+    color: var(--text-4);
+    font: 9px var(--font-mono);
+    letter-spacing: 0.16em;
+  }
+  .tensor-set {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .tensor-set span {
+    background: rgba(94, 230, 160, 0.08);
+    border: 1px solid rgba(94, 230, 160, 0.25);
+    color: var(--text-2);
+    font: 10px var(--font-mono);
+    padding: 9px 11px;
+  }
+  .shader-block {
+    align-items: baseline;
+    display: grid;
+    gap: 7px 18px;
+    grid-template-columns: auto 1fr;
+    margin-top: 12px;
+    opacity: 0.5;
+    padding-left: 34%;
+  }
+  .shader-block small {
+    color: var(--accent);
+    font: 9px var(--font-mono);
+  }
+  .shader-block strong {
+    font: 400 18px var(--font-display);
+  }
+  .shader-block span {
+    color: var(--text-4);
+    font: 10px var(--font-mono);
+    grid-column: 1 / -1;
+  }
+  .operation {
+    align-items: center;
+    display: flex;
+    font: 10px var(--font-mono);
+    gap: 8px;
+    left: 50%;
+    opacity: 0.25;
+    position: absolute;
+    transform: translateX(-50%);
+  }
+  .operation i {
+    color: var(--accent);
+    font-size: 20px;
+    font-style: normal;
+  }
+  .sync-device {
+    top: 142px;
+  }
+  .dispatch {
+    bottom: 110px;
+    left: 24%;
+  }
+  .sync-local {
+    bottom: 110px;
+    left: 76%;
+  }
+  .result {
+    bottom: 35px;
+    color: var(--accent);
+    font: 9px var(--font-mono);
+    margin: 0;
+    opacity: 0;
+    position: absolute;
+    right: 46px;
+  }
+  .pipeline-static {
+    display: none;
+    margin: 24px 0 0;
+  }
+  .pipeline-static img {
+    background: #fff;
+    display: block;
+    height: auto;
+    width: 100%;
+  }
+  .pipeline-static figcaption {
+    color: var(--text-4);
+    font: 10px/1.5 var(--font-mono);
+    margin-top: 10px;
+  }
+  .playing .tensor-set span {
+    animation: tensor-load 0.7s both;
+  }
+  .playing .tensor-set span:nth-child(2) {
+    animation-delay: 0.12s;
+  }
+  .playing .tensor-set span:nth-child(3) {
+    animation-delay: 0.24s;
+  }
+  .playing .tensor-set span:nth-child(4) {
+    animation-delay: 0.36s;
+  }
+  .playing .sync-device {
+    animation: operation-pulse 0.8s 1.1s both;
+  }
+  .playing .shader-block {
+    animation: shader-fire 0.9s 2.1s both;
+  }
+  .playing .dispatch {
+    animation: operation-pulse 0.8s 2.1s both;
+  }
+  .playing .sync-local {
+    animation: operation-pulse 0.8s 3.5s both;
+  }
+  .playing .result {
+    animation: result-in 0.5s 4.25s both;
+  }
+  @keyframes tensor-load {
+    from {
+      opacity: 0;
+      transform: translateX(-18px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes operation-pulse {
+    0% {
+      opacity: 0.25;
+    }
+    50% {
+      opacity: 1;
+      text-shadow: 0 0 18px rgba(94, 230, 160, 0.8);
+    }
+    100% {
+      opacity: 0.5;
+    }
+  }
+  @keyframes shader-fire {
+    0% {
+      opacity: 0.5;
+    }
+    45% {
+      background: rgba(94, 230, 160, 0.12);
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.75;
+    }
+  }
+  @keyframes result-in {
+    to {
+      opacity: 1;
+    }
+  }
+  @media (max-width: 700px) {
+    sequence-pipeline {
+      padding: 20px;
+    }
+    .sequence-heading {
+      align-items: start;
+      flex-direction: column;
+    }
+    .concept-flow {
+      align-items: stretch;
+      grid-template-columns: 1fr;
+    }
+    .concept-flow i {
+      transform: rotate(90deg);
+    }
+    .pipeline-animation {
+      min-height: 420px;
+      padding-inline: 14px;
+    }
+    .band {
+      left: 14px;
+      right: 14px;
+    }
+    .shader-block {
+      padding-left: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    button,
+    .pipeline-animation {
+      display: none;
+    }
+    .pipeline-static {
+      display: block;
+    }
+  }
+</style>

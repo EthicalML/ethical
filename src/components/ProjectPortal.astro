@@ -37,7 +37,7 @@ const panelId = (title: string) => `project-${title.toLowerCase().replace(/[^a-z
         <article id={panelId(project.title)} class={`portal-panel visual-${project.visual}`} data-project-panel data-reveal>
           <div class="portal-visual" aria-hidden="true">
             {project.visual === 'kaos' && <KaosGraph panel />}
-            {project.visual === 'kompute' && <KomputeCube />}
+            {project.visual === 'kompute' && <KomputeCube embedded backdrop />}
             {project.visual === 'xai' && (
               <svg viewBox="0 0 640 420" role="presentation">
                 <g class="plot-grid">
@@ -169,7 +169,7 @@ const panelId = (title: string) => `project-${title.toLowerCase().replace(/[^a-z
   }
 
   .portal-visual :global(.kaos-canvas-mount),
-  .portal-visual :global(.kompute-cube-mount),
+  .portal-visual :global(.kompute-canvas-mount),
   .portal-visual :global(category-constellation),
   .portal-visual canvas,
   .portal-visual svg {

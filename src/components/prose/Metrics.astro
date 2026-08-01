@@ -1,13 +1,26 @@
 ---
-const { stars, contributors, releases } = Astro.props;
-const metrics = [
-  { value: stars, label: 'STARS' },
-  { value: contributors, label: 'CONTRIBUTORS' },
-  { value: releases, label: 'RELEASES' },
+interface Metric {
+  value: string;
+  label: string;
+}
+
+interface Props {
+  stars?: string;
+  contributors?: string;
+  releases?: string;
+  values?: Metric[];
+  ariaLabel?: string;
+}
+
+const { stars, contributors, releases, values, ariaLabel = 'Project metrics' } = Astro.props;
+const metrics: Metric[] = values ?? [
+  { value: stars ?? '', label: 'STARS' },
+  { value: contributors ?? '', label: 'CONTRIBUTORS' },
+  { value: releases ?? '', label: 'RELEASES' },
 ];
 ---
 
-<aside class="metrics-block prose-block" aria-label="Project metrics" data-reveal>
+<aside class="metrics-block prose-block" aria-label={ariaLabel} data-reveal style={`--metric-count: ${metrics.length}`}>
   {
     metrics.map((metric) => (
       <div>

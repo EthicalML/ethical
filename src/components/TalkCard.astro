@@ -1,0 +1,48 @@
+---
+const { href, image, title } = Astro.props;
+---
+
+<a class="talk-card prose-block" href={href} rel="noopener" data-reveal>
+  <img src={image} alt="PyData London 2019 XAI talk" loading="lazy" />
+  <span><small>PYDATA LONDON 2019 · VIDEO</small><strong>{title}</strong><i>Watch the talk →</i></span>
+</a>
+
+<style>
+  .talk-card {
+    color: inherit;
+    display: grid;
+    gap: 28px;
+    grid-template-columns: minmax(240px, 0.9fr) 1.1fr;
+    margin-top: 34px;
+    overflow: hidden;
+    padding: 22px;
+  }
+  img {
+    aspect-ratio: 16 / 9;
+    display: block;
+    object-fit: cover;
+    width: 100%;
+  }
+  span {
+    align-self: center;
+    display: grid;
+    gap: 14px;
+  }
+  small {
+    color: var(--text-4);
+    font: 9px var(--font-mono);
+    letter-spacing: 0.14em;
+  }
+  strong {
+    font: 300 28px/1.15 var(--font-display);
+  }
+  i {
+    color: var(--accent);
+    font: normal 12px var(--font-mono);
+  }
+  @media (max-width: 700px) {
+    .talk-card {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

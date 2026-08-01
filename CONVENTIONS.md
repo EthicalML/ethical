@@ -70,6 +70,7 @@ All first-party client behaviour is TypeScript. Do not add first-party runtime J
 | Initiative title morphs     | Homepage maturity / security card titles → matching framework heroes | `MorphPairs`, `ReportsSection`, `ArticleHero`, `BaseLayout`         |
 | KAOS title morph            | Homepage KAOS card title → KAOS page hero h1                         | `MorphPairs`, `OpenSourceShowcase`, `ArticleHero`                   |
 | Project portal activity     | `/open-source/` project panels and production ML constellation       | `ProjectPortal`, `CategoryConstellation`, `CanvasEngine`            |
+| Kompute sequence playback   | Kompute detail sequence pipeline                                     | `SequencePipeline`                                                  |
 | Partner logo morph          | Clicked marquee instance → matching directory logo                   | `MorphPairs`, `AffiliationMarquee`, `PartnerDirectory`              |
 | Principle directional slide | `/principles/NN/` prev/next → adjacent principle                     | `PrincipleLayout`, `Motion`, `tokens.css`                           |
 
