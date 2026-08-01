@@ -1356,9 +1356,9 @@ main > .home-section:last-child { padding-bottom: 120px; }
 .network-menu strong { font-size: 14.5px; font-weight: 400; }
 .network-menu span { color: rgba(244,242,238,.55); font-size: 12.5px; line-height: 1.45; }
 .mega-panel-body[data-menu-body="overview"] { height: 365px; }
-.mega-panel-body[data-menu-body="initiatives"] { height: 293px; padding: 0; }
+.mega-panel-body[data-menu-body="initiatives"] { height: 340px; padding: 0; }
 .mega-panel-body[data-menu-body="about"] { height: 323px; }
-.initiative-menu { display: grid; grid-template-columns: 230px 1fr; height: 293px; margin: 0; }
+.initiative-menu { display: grid; grid-template-columns: 230px 1fr; height: 340px; margin: 0; }
 .group-rail { border-right: 1px solid var(--hairline); display:flex; flex-direction:column; gap:2px; padding:24px 18px; }
 .group-rail button { align-items:center; background: none; border: 0; border-radius:0; color: inherit; column-gap:10px; display: grid; grid-template-columns: 1fr auto; padding: 11px 13px; row-gap:2px; text-align: left; width: 100%; }
 .group-rail button.active { background: var(--accent-wash-09); }

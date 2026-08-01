@@ -31,3 +31,7 @@ export { default as CategoryAtlas } from '../CategoryAtlas.astro';
 export { default as RegulationGrid } from '../RegulationGrid.astro';
 export { default as AnimationWindow } from '../AnimationWindow.astro';
 export { default as XaiProcess } from '../XaiProcess.astro';
+export { default as FrameworkCards } from '../FrameworkCards.astro';
+export { default as CriteriaMap } from '../CriteriaMap.astro';
+export { default as ProcurementFlow } from '../ProcurementFlow.astro';
+export { default as FrameworkLinkCards } from '../FrameworkLinkCards.astro';

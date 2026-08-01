@@ -71,6 +71,7 @@ All first-party client behaviour is TypeScript. Do not add first-party runtime J
 | Principle title morph       | Explorer detail → `/principles/NN/` h1                               | `MorphPairs`, `PrinciplesExplorer`, `PrincipleLayout`, `BaseLayout`                                  |
 | Survey title morph          | Homepage report heading → survey explorer hero                       | `MorphPairs`, `ReportsSection`, `ArticleHero`                                                        |
 | Initiative title morphs     | Homepage maturity / security card titles → matching framework heroes | `MorphPairs`, `ReportsSection`, `ArticleHero`, `BaseLayout`                                          |
+| Framework title morphs      | `/frameworks/` cards → five matching framework heroes                | `MorphPairs`, `FrameworkCards`, `ArticleHero`, `BaseLayout`                                          |
 | KAOS title morph            | Homepage KAOS card title → KAOS page hero h1                         | `MorphPairs`, `OpenSourceShowcase`, `ArticleHero`                                                    |
 | Homepage KAOS agent graph   | Homepage showcase and principle feature                              | `KaosGraph`                                                                                          |
 | KAOS architecture orbit     | Project portal, KAOS hero and selectable control-plane map           | `KaosArchitecture`, `CanvasEngine`                                                                   |

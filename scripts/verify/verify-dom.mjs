@@ -512,10 +512,10 @@ for (const route of routes) {
       ).length !== 1 ||
       !checks.homepage.initiativeCards[0]?.buttons[0]?.primary ||
       checks.homepage.initiativeCards[1]?.eyebrow !== 'Security' ||
-      checks.homepage.initiativeCards[1]?.heading !== 'ML & Agent Security' ||
+      checks.homepage.initiativeCards[1]?.heading !== 'Agentic & ML Security' ||
       checks.homepage.initiativeCards[1]?.buttons.length !== 1 ||
       !checks.homepage.initiativeCards[1]?.buttons[0]?.primary ||
-      checks.homepage.initiativeCards[1]?.inlineLinks.length !== 3 ||
+      checks.homepage.initiativeCards[1]?.inlineLinks.length !== 1 ||
       checks.homepage.initiativeCards[1]?.inlineLinks.some(
         ({ color, decoration }) => color !== 'rgb(94, 230, 160)' || decoration !== 'underline',
       )
