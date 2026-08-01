@@ -64,3 +64,36 @@ Audience: policymakers and regulators first, practitioners second. Voice: eviden
 2. Whether the non-AI sustainability products stay on the page (currently: yes, as their own track — they show breadth).
 3. Any public roster links for Frontier AI Forum / AI Alliance / GPAI Code of Practice membership to harden those rows.
 4. Homepage follow-up (separate pass): elevate policy alongside open source as the two main-driver sections.
+
+## Appendix — canonical raw URL list (owner-supplied; the record widget must link these exact documents)
+
+https://www.acm.org/public-policy/europe-tpc/reflections-draft-pren-18282
+https://www.acm.org/public-policy/europe-tpc/etpc-response-targeted-ec-consultation
+https://www.acm.org/public-policy/europe-tpc/response-consultation-article-50-ai-act-06022026
+https://www.acm.org/public-policy/europe-tpc/calibrating-oversight-agentic-frontier-models-04272026
+https://www.acm.org/public-policy/europe-tpc/consultation-on-regulation-on-eu-ai-act-eu-2024-1689-04082026
+https://www.acm.org/binaries/content/assets/public-policy/europe-tpc/acm-consultation-submission-2026---digital-omnibus-on-ai-regulation-proposal.pdf
+https://www.acm.org/binaries/content/assets/public-policy/europe-tpc/acm_climate_disclosure_final.pdf
+https://www.acm.org/binaries/content/assets/public-policy/europe-tpc/acm_data_center_final.pdf
+https://www.acm.org/public-policy/europe-tpc/acm-data-center-final-spanish
+https://www.acm.org/binaries/content/assets/public-policy/acm-europetpc-consultation-2025---independent-international-scientific-panel-on-ai---united-nations-office-for-digital-and-emerging-technologies-1.pdf
+https://www.acm.org/binaries/content/assets/public-policy/acm-europetpc-consultation-2024---2nd-general-purpose-ai-code-of-practice-1.pdf
+https://www.acm.org/binaries/content/assets/public-policy/acm-europetpc-consultation-2024---general-purpose-ai-code-of-practice.pdf
+https://www.acm.org/binaries/content/assets/public-policy/contribution55012b10-52ec-43b1-9b8a-cda4848401cf.pdf
+https://www.acm.org/binaries/content/assets/public-policy/acm-consultation-submission-2024---guidelines-on-the-application-of-the-definition-of-an-ai-system.pdf
+https://www.acm.org/binaries/content/assets/public-policy/acm-europe-tpc-delegated-regulation-dsa-draft-act-comments-2024.pdf
+https://www.acm.org/binaries/content/assets/public-policy/europe-tpc-comments-ai-scientific-panel-of-independent-experts-111524.pdf
+https://www.acm.org/binaries/content/assets/public-policy/acm-etpc-ttc-ai-taxonomy-112123.pdf
+https://www.acm.org/binaries/content/assets/public-policy/etpc-survey-responses.pdf
+https://www.acm.org/binaries/content/assets/public-policy/final-acm_etpc-uk-ai-paper-comments.pdf
+https://www.acm.org/binaries/content/assets/public-policy/acm-europe-tpc-dsa-comments.pdf
+https://www.acm.org/binaries/content/assets/public-policy/acm-europe-tpc-cyber-reslience-comments-pdf
+https://www.acm.org/binaries/content/assets/public-policy/acm-eur-tpc-data-act-comments-13may22a.pdf
+https://www.acm.org/binaries/content/assets/public-policy/europetpc-comments-digital-principles.pdf
+https://www.acm.org/binaries/content/assets/public-policy/europe-tpc-comments-ai-consultation.pdf
+https://www.acm.org/binaries/content/assets/public-policy/europetpc-digital-services-act-comments.pdf
+https://www.acm.org/binaries/content/assets/public-policy/europe-tpc-comments-uknds.pdf
+https://www.acm.org/binaries/content/assets/public-policy/europe-tpc-comments-euc-ai-white-paper.pdf
+https://www.acm.org/binaries/content/assets/public-policy/europe-tpc-uk-ai-framework-comments.pdf
+https://www.acm.org/binaries/content/assets/public-policy/ustpc-approved-generative-ai-principles
+https://www.acm.org/binaries/content/assets/public-policy/final-joint-ai-statement-update.pdf
