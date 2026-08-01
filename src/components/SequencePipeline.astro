@@ -366,6 +366,38 @@ const stages = [
       transform: rotate(90deg);
     }
   }
+  @media (max-width: 799px) {
+    :global(.sequence-window .window-content) {
+      container-type: inline-size;
+      overflow: hidden;
+    }
+    sequence-pipeline {
+      box-sizing: border-box;
+      width: 1340px;
+      zoom: calc(100cqw / 1340px);
+    }
+    .pipeline-heading {
+      align-items: end;
+      flex-direction: row;
+    }
+    .stage-flow {
+      grid-template-columns: 1.1fr auto 1fr auto 1.1fr auto 1.1fr auto 1fr;
+      padding-top: 28px;
+    }
+    .flow-arrow,
+    .sequence-operations > i {
+      transform: none;
+    }
+    .tensor-packet {
+      display: flex;
+    }
+    .sequence-operations {
+      grid-template-columns: auto 1fr auto 1fr auto 1fr;
+    }
+    .operation-label {
+      writing-mode: vertical-rl;
+    }
+  }
   @media (prefers-reduced-motion: reduce) {
     .stage-flow article,
     .sequence-operations > div,

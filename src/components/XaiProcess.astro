@@ -326,6 +326,37 @@ const { steps }: Props = Astro.props;
       display: none;
     }
   }
+  @media (max-width: 799px) {
+    :global(.xai-process-window .window-content) {
+      container-type: inline-size;
+      overflow: hidden;
+    }
+    xai-process {
+      box-sizing: border-box;
+      width: 1340px;
+      zoom: calc(100cqw / 1340px);
+    }
+    .process-heading {
+      align-items: end;
+      flex-direction: row;
+    }
+    .process-flow {
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      padding-top: 28px;
+    }
+    .process-arrow {
+      transform: none;
+    }
+    .model-packet {
+      display: flex;
+    }
+    .feedback-loop {
+      grid-template-columns: auto 1fr auto 1fr auto;
+    }
+    .feedback-loop i {
+      display: block;
+    }
+  }
   @media (prefers-reduced-motion: reduce) {
     .process-flow article,
     .checkpoint-stamp,
