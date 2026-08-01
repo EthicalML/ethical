@@ -1,0 +1,386 @@
+---
+import AnimationWindow from '../AnimationWindow.astro';
+---
+
+<AnimationWindow class="lifecycle-window" title="memory.lifecycle">
+  <memory-lifecycle data-stage="0">
+    <div class="lifecycle-head">
+      <div><span>ONE CONVERSATION</span><strong>Watch memory change form</strong></div>
+      <button type="button" data-add-turn>+ ADD TURN</button>
+    </div>
+
+    <div class="identity-band"><span>agent/research</span><i>→</i><b>server derives tenant/research · session/42</b><i>→</i><span>MemoryStore</span></div>
+
+    <div class="lifecycle-track">
+      <section class="turn-source" data-lifecycle-step="0">
+        <small>REMOTE CLIENT</small><strong>Agent pod</strong>
+        <blockquote>“Remember that the risk review is every Friday.”</blockquote>
+        <span>write(turn)</span>
+      </section>
+      <i aria-hidden="true">→</i>
+      <section class="short" data-lifecycle-step="1">
+        <header><b>01</b><div><strong>Short-term</strong><small>VERBATIM · RELATIONAL</small></div></header>
+        <div class="rows"><span>turn 17</span><span>turn 18</span><span class="new-row">turn 19</span></div>
+        <p><b>3,842 / 4,000 tokens</b><i><span></span></i></p>
+      </section>
+      <i aria-hidden="true">→</i>
+      <section class="medium" data-lifecycle-step="2">
+        <header><b>02</b><div><strong>Medium-term</strong><small>ROLLING · APPEND-ONLY</small></div></header>
+        <div class="summary"><small>SESSION/42 · WINDOW 07</small><p>Risk review cadence and owners agreed…</p></div>
+        <span class="append">+ APPEND SUMMARY</span>
+      </section>
+      <i aria-hidden="true">→</i>
+      <section class="long" data-lifecycle-step="3">
+        <header><b>03</b><div><strong>Long-term</strong><small>MEM0 · VECTOR</small></div></header>
+        <div class="fact"><i></i><p>Risk review occurs Fridays</p><small>DEDUPED · 0.94</small></div>
+        <span class="extract">FACT EXTRACTED</span>
+      </section>
+    </div>
+
+    <div class="lifecycle-status">
+      <p><span></span><b data-lifecycle-status>New turn leaves the agent pod</b></p>
+      <div><span>DEV · SQLite rows + Chroma vectors</span><span>PROD · Postgres + pgvector</span></div>
+    </div>
+  </memory-lifecycle>
+</AnimationWindow>
+
+<script>
+  const lifecycleStatuses = [
+    'New turn leaves the agent pod',
+    'Verbatim turn enters the token-budgeted window',
+    'Older context is appended to the session summary',
+    'Mem0 extracts and deduplicates a durable fact',
+  ];
+
+  class MemoryLifecycle extends HTMLElement {
+    private controller = new AbortController();
+    private timer = 0;
+    private stage = 0;
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const windowElement = this.closest<HTMLElement>('animation-window');
+      if (!windowElement) return;
+      this.querySelector('[data-add-turn]')?.addEventListener(
+        'click',
+        () => {
+          this.stage = 0;
+          this.render();
+          if (windowElement.dataset.playing === 'true') this.play();
+        },
+        { signal: this.controller.signal },
+      );
+      windowElement.addEventListener('animationwindow:play', () => this.play(), { signal: this.controller.signal });
+      windowElement.addEventListener('animationwindow:pause', () => this.pause(), { signal: this.controller.signal });
+      this.render();
+      if (windowElement.dataset.playing === 'true') this.play();
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+      this.pause();
+    }
+
+    private play() {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      this.pause();
+      this.timer = window.setTimeout(() => {
+        this.stage = (this.stage + 1) % 4;
+        this.render();
+        this.play();
+      }, 1450);
+    }
+
+    private pause() {
+      window.clearTimeout(this.timer);
+    }
+
+    private render() {
+      const stage = matchMedia('(prefers-reduced-motion: reduce)').matches ? 3 : this.stage;
+      this.dataset.stage = String(stage);
+      const status = this.querySelector<HTMLElement>('[data-lifecycle-status]');
+      if (status) status.textContent = lifecycleStatuses[stage];
+      this.querySelectorAll<HTMLElement>('[data-lifecycle-step]').forEach((step) => {
+        const index = Number(step.dataset.lifecycleStep);
+        step.classList.toggle('passed', index < stage);
+        step.classList.toggle('current', index === stage);
+      });
+    }
+  }
+
+  if (!customElements.get('memory-lifecycle')) customElements.define('memory-lifecycle', MemoryLifecycle);
+</script>
+
+<style>
+  :global(.lifecycle-window) {
+    --memory: #b694ff;
+    border-color: rgba(182, 148, 255, 0.28);
+  }
+  memory-lifecycle {
+    display: block;
+    min-height: 520px;
+  }
+  .lifecycle-head {
+    align-items: center;
+    border-bottom: 1px solid var(--hairline-card);
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 18px;
+  }
+  .lifecycle-head div span,
+  .lifecycle-head div strong {
+    display: block;
+  }
+  .lifecycle-head div span {
+    color: var(--text-4);
+    font: var(--mono-8-5)/1 var(--font-mono);
+    letter-spacing: 0.12em;
+  }
+  .lifecycle-head div strong {
+    font: 400 var(--body-18)/1.2 var(--font-display);
+    margin-top: 6px;
+  }
+  button {
+    background: rgba(182, 148, 255, 0.06);
+    border: 1px solid rgba(182, 148, 255, 0.35);
+    color: var(--memory);
+    cursor: pointer;
+    font: var(--mono-9)/1 var(--font-mono);
+    padding: 10px 12px;
+  }
+  .identity-band {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.014);
+    border-bottom: 1px solid var(--hairline-card);
+    color: var(--text-3);
+    display: flex;
+    font: var(--mono-9)/1 var(--font-mono);
+    gap: 12px;
+    justify-content: center;
+    padding: 12px 18px;
+  }
+  .identity-band b {
+    color: var(--memory);
+    font-weight: 400;
+  }
+  .identity-band i {
+    color: var(--text-4);
+    font-style: normal;
+  }
+  .lifecycle-track {
+    align-items: center;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 0.88fr auto 1fr auto 1fr auto 1fr;
+    min-height: 360px;
+    padding: 28px 18px;
+  }
+  .lifecycle-track > i {
+    color: var(--text-4);
+    font-style: normal;
+  }
+  .lifecycle-track section {
+    border: 1px solid var(--hairline-card);
+    min-height: 240px;
+    opacity: 0.3;
+    padding: 16px;
+    transition:
+      border-color 0.25s ease,
+      opacity 0.25s ease,
+      transform 0.25s ease;
+  }
+  .lifecycle-track section.current,
+  .lifecycle-track section.passed {
+    opacity: 1;
+  }
+  .lifecycle-track section.current {
+    border-color: var(--memory);
+    box-shadow: 0 0 24px rgba(182, 148, 255, 0.07);
+    transform: translateY(-5px);
+  }
+  .turn-source {
+    background: rgba(74, 199, 255, 0.025);
+  }
+  .turn-source > small {
+    color: #4ac7ff;
+    font: var(--mono-8-5)/1 var(--font-mono);
+    letter-spacing: 0.1em;
+  }
+  .turn-source > strong {
+    display: block;
+    font: 400 var(--body-18)/1.2 var(--font-display);
+    margin-top: 13px;
+  }
+  blockquote {
+    border-left: 2px solid #4ac7ff;
+    color: var(--text-2);
+    font-size: var(--body-13);
+    line-height: 1.45;
+    margin: 22px 0;
+    padding-left: 10px;
+  }
+  .turn-source > span {
+    color: #4ac7ff;
+    font: var(--mono-9)/1 var(--font-mono);
+  }
+  section header {
+    align-items: center;
+    border-bottom: 1px solid var(--hairline-card);
+    display: flex;
+    gap: 10px;
+    padding-bottom: 12px;
+  }
+  section header > b {
+    color: var(--memory);
+    font: 400 var(--mono-9)/1 var(--font-mono);
+  }
+  section header strong,
+  section header small {
+    display: block;
+  }
+  section header strong {
+    font-size: var(--body-13);
+  }
+  section header small {
+    color: var(--text-4);
+    font: var(--mono-8-5)/1.3 var(--font-mono);
+    margin-top: 3px;
+  }
+  .rows {
+    display: grid;
+    gap: 5px;
+    margin-top: 18px;
+  }
+  .rows span {
+    background: rgba(255, 255, 255, 0.025);
+    color: var(--text-3);
+    font: var(--mono-9)/1 var(--font-mono);
+    padding: 8px;
+  }
+  .rows .new-row {
+    color: var(--memory);
+  }
+  .short > p {
+    color: var(--text-4);
+    font: var(--mono-8-5)/1 var(--font-mono);
+    margin: 16px 0 0;
+  }
+  .short > p b {
+    font-weight: 400;
+  }
+  .short > p i {
+    background: rgba(255, 255, 255, 0.05);
+    display: block;
+    height: 3px;
+    margin-top: 6px;
+  }
+  .short > p i span {
+    background: var(--memory);
+    display: block;
+    height: 100%;
+    width: 96%;
+  }
+  .summary,
+  .fact {
+    background: rgba(182, 148, 255, 0.04);
+    border: 1px solid rgba(182, 148, 255, 0.18);
+    margin-top: 20px;
+    padding: 12px;
+  }
+  .summary small,
+  .fact small {
+    color: var(--text-4);
+    font: var(--mono-8-5)/1 var(--font-mono);
+  }
+  .summary p,
+  .fact p {
+    color: var(--text-2);
+    font-size: var(--body-13);
+    line-height: 1.45;
+    margin: 10px 0 0;
+  }
+  .append,
+  .extract {
+    color: var(--memory);
+    display: block;
+    font: var(--mono-8-5)/1 var(--font-mono);
+    margin-top: 18px;
+    opacity: 0;
+  }
+  [data-stage='2'] .append,
+  [data-stage='3'] .append,
+  [data-stage='3'] .extract {
+    opacity: 1;
+  }
+  .fact i {
+    background: var(--memory);
+    border-radius: 50%;
+    display: block;
+    height: 6px;
+    margin-bottom: 10px;
+    width: 6px;
+  }
+  .fact small {
+    display: block;
+    margin-top: 12px;
+  }
+  .lifecycle-status {
+    align-items: center;
+    border-top: 1px solid var(--hairline-card);
+    display: flex;
+    justify-content: space-between;
+    min-height: 56px;
+    padding: 0 18px;
+  }
+  .lifecycle-status p {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+    margin: 0;
+  }
+  .lifecycle-status p span {
+    background: var(--memory);
+    border-radius: 50%;
+    height: 6px;
+    width: 6px;
+  }
+  .lifecycle-status p b {
+    color: var(--text-2);
+    font: 400 var(--mono-9)/1.3 var(--font-mono);
+  }
+  .lifecycle-status > div {
+    display: flex;
+    gap: 16px;
+  }
+  .lifecycle-status > div span {
+    color: var(--text-4);
+    font: 8px/1 var(--font-mono);
+  }
+  @media (max-width: 900px) {
+    .lifecycle-track {
+      align-items: stretch;
+      grid-template-columns: 1fr;
+    }
+    .lifecycle-track > i {
+      text-align: center;
+      transform: rotate(90deg);
+    }
+    .lifecycle-track section {
+      min-height: 200px;
+    }
+    .lifecycle-status {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 10px;
+      padding-block: 14px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lifecycle-track section {
+      transition: none;
+    }
+    .lifecycle-track section.current {
+      transform: none;
+    }
+  }
+</style>

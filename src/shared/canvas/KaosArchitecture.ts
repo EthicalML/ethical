@@ -97,10 +97,8 @@ export class KaosArchitecture extends HTMLElement {
   private canvas?: HTMLCanvasElement;
   private controller = new AbortController();
   private engine?: CanvasEngine;
-  private lastElapsed = 0;
   private nodes: ProjectedNode[] = [];
   private selected = 'agent';
-  private traceStartedAt = -1;
 
   connectedCallback() {
     this.controller = new AbortController();
@@ -140,11 +138,6 @@ export class KaosArchitecture extends HTMLElement {
     this.engine?.redraw();
   }
 
-  trace() {
-    this.traceStartedAt = this.lastElapsed;
-    this.engine?.redraw();
-  }
-
   private get interactive() {
     return this.getAttribute('variant') === 'interactive';
   }
@@ -156,7 +149,6 @@ export class KaosArchitecture extends HTMLElement {
     elapsed: number,
     pointer: CanvasPointer,
   ) {
-    this.lastElapsed = elapsed;
     context.clearRect(0, 0, width, height);
     const compact = width < 560;
     const center = { x: width * 0.5, y: height * (compact ? 0.48 : 0.49) };
@@ -221,7 +213,6 @@ export class KaosArchitecture extends HTMLElement {
     [...this.nodes, operator]
       .sort((a, b) => a.depth - b.depth)
       .forEach((node) => this.drawNode(context, node, elapsed));
-    this.drawTrace(context, lookup, elapsed);
     context.textAlign = 'left';
   }
 
@@ -382,42 +373,6 @@ export class KaosArchitecture extends HTMLElement {
     context.globalAlpha = 1;
   }
 
-  private drawTrace(
-    context: CanvasRenderingContext2D,
-    lookup: Map<string, ProjectedNode>,
-    elapsed: number,
-  ) {
-    if (this.traceStartedAt < 0) return;
-    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const progress = reduced ? 1 : Math.min(1, (elapsed - this.traceStartedAt) / 2.2);
-    const path = ['operator', 'agent', 'pods'] as const;
-    for (let index = 0; index < path.length - 1; index += 1) {
-      const start = lookup.get(path[index])!;
-      const end = lookup.get(path[index + 1])!;
-      const local = Math.max(0, Math.min(1, progress * 1.55 - index * 0.52));
-      context.beginPath();
-      context.moveTo(start.x, start.y);
-      context.lineTo(end.x, end.y);
-      context.strokeStyle = 'rgba(94,230,160,.78)';
-      context.lineWidth = 2;
-      context.stroke();
-      context.beginPath();
-      context.arc(
-        start.x + (end.x - start.x) * local,
-        start.y + (end.y - start.y) * local,
-        5,
-        0,
-        Math.PI * 2,
-      );
-      context.fillStyle = '#5ee6a0';
-      context.shadowBlur = 18;
-      context.shadowColor = '#5ee6a0';
-      context.fill();
-      context.shadowBlur = 0;
-    }
-    if (progress >= 1 && !reduced) this.traceStartedAt = -1;
-  }
-
   private nodeAt(event: PointerEvent) {
     const bounds = this.canvas!.getBoundingClientRect();
     const x = event.clientX - bounds.left;
@@ -444,7 +399,6 @@ export class KaosArchitecture extends HTMLElement {
 
   private handlePlay = () => {
     this.setPlaying(true);
-    if (this.interactive) this.trace();
   };
 
   private handlePause = () => this.setPlaying(false);

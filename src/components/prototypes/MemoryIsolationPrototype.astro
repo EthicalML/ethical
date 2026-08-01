@@ -1,0 +1,490 @@
+---
+import AnimationWindow from '../AnimationWindow.astro';
+
+const tenants = [
+  { id: 'support', agent: 'agent-support', color: '#b694ff' },
+  { id: 'research', agent: 'agent-research', color: '#4ac7ff' },
+  { id: 'ops', agent: 'agent-ops', color: '#e8b45c' },
+];
+---
+
+<AnimationWindow class="isolation-window" title="memory.tenant-boundary">
+  <memory-isolation data-tenant="support" data-stage="0" data-backend="dev">
+    <div class="isolation-controls">
+      <span>AUTHENTICATED AGENT</span>
+      <div class="tenant-switcher" role="group" aria-label="Change the authenticated agent">
+        {
+          tenants.map(({ id, agent }, index) => (
+            <button type="button" data-tenant={id} aria-pressed={index === 0 ? 'true' : 'false'} class:list={{ active: index === 0 }}>
+              {agent}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="isolation-stage">
+      <section class="client-card">
+        <small>AGENT POD</small><strong data-agent-name>agent-support</strong><span>remote MemoryStore client</span>
+        <code>recall("risk review")</code>
+      </section>
+
+      <div class="scope-gate">
+        <span class="recall-packet" aria-hidden="true">RECALL</span>
+        <small>SERVER-SIDE GATE</small><strong>Authenticated identity</strong><i aria-hidden="true">↓</i>
+        <div><span>session</span><span>agent</span><span>user</span><span>store</span></div>
+        <b data-derived-scope>tenant/support</b>
+      </div>
+
+      <section class="tenant-vault">
+        <header><span>CENTRAL MEMORYSTORE</span><b>CROSS-TENANT READS DENIED</b></header>
+        <div class="partitions">
+          {
+            tenants.map(({ id, agent, color }) => (
+              <article data-partition={id} style={`--tenant-color: ${color}`}>
+                <div>
+                  <>
+                    <i />
+                    <strong>{id}</strong>
+                    <small>{agent}</small>
+                  </>
+                </div>
+                <ul>
+                  <>
+                    <li>short · rows</li>
+                    <li>medium · summary</li>
+                    <li>long · vectors</li>
+                  </>
+                </ul>
+                <>
+                  <span class="lock">LOCKED</span>
+                  <span class="recall">SCOPED RECALL ✓</span>
+                </>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      <p><span></span><b data-isolation-status>Identity arrives from the agent pod</b></p>
+      <div class="backend-switcher" role="group" aria-label="Show a storage backend">
+        <button type="button" data-backend="dev" class="active" aria-pressed="true">DEV · SQLite + Chroma · one volume</button>
+        <button type="button" data-backend="prod" aria-pressed="false">PROD · Postgres + pgvector</button>
+      </div>
+    </footer>
+  </memory-isolation>
+</AnimationWindow>
+
+<script>
+  const isolationStatuses = [
+    'Identity arrives from the agent pod',
+    'MemoryStore derives scope from authenticated identity',
+    'Only the matching tenant partition unlocks',
+    'Recall returns without crossing a tenant boundary',
+  ];
+
+  class MemoryIsolation extends HTMLElement {
+    private controller = new AbortController();
+    private timer = 0;
+    private stage = 0;
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const windowElement = this.closest<HTMLElement>('animation-window');
+      if (!windowElement) return;
+      const tenantButtons = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-tenant]'));
+      tenantButtons.forEach((button) =>
+        button.addEventListener(
+          'click',
+          () => {
+            this.dataset.tenant = button.dataset.tenant;
+            tenantButtons.forEach((item) => {
+              const active = item === button;
+              item.classList.toggle('active', active);
+              item.setAttribute('aria-pressed', String(active));
+            });
+            this.stage = 0;
+            this.render();
+            if (windowElement.dataset.playing === 'true') this.play();
+          },
+          { signal: this.controller.signal },
+        ),
+      );
+      const backendButtons = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-backend]'));
+      backendButtons.forEach((button) =>
+        button.addEventListener(
+          'click',
+          () => {
+            this.dataset.backend = button.dataset.backend;
+            backendButtons.forEach((item) => {
+              const active = item === button;
+              item.classList.toggle('active', active);
+              item.setAttribute('aria-pressed', String(active));
+            });
+          },
+          { signal: this.controller.signal },
+        ),
+      );
+      windowElement.addEventListener('animationwindow:play', () => this.play(), { signal: this.controller.signal });
+      windowElement.addEventListener('animationwindow:pause', () => this.pause(), { signal: this.controller.signal });
+      this.render();
+      if (windowElement.dataset.playing === 'true') this.play();
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+      this.pause();
+    }
+
+    private play() {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      this.pause();
+      this.timer = window.setTimeout(() => {
+        this.stage = (this.stage + 1) % 4;
+        this.render();
+        this.play();
+      }, 1300);
+    }
+
+    private pause() {
+      window.clearTimeout(this.timer);
+    }
+
+    private render() {
+      const tenant = this.dataset.tenant ?? 'support';
+      const stage = matchMedia('(prefers-reduced-motion: reduce)').matches ? 3 : this.stage;
+      this.dataset.stage = String(stage);
+      const agent = `agent-${tenant}`;
+      const agentName = this.querySelector<HTMLElement>('[data-agent-name]');
+      const scope = this.querySelector<HTMLElement>('[data-derived-scope]');
+      const status = this.querySelector<HTMLElement>('[data-isolation-status]');
+      if (agentName) agentName.textContent = agent;
+      if (scope) scope.textContent = `tenant/${tenant}`;
+      if (status) status.textContent = isolationStatuses[stage];
+      this.querySelectorAll<HTMLElement>('[data-partition]').forEach((partition) =>
+        partition.classList.toggle('selected', partition.dataset.partition === tenant),
+      );
+    }
+  }
+
+  if (!customElements.get('memory-isolation')) customElements.define('memory-isolation', MemoryIsolation);
+</script>
+
+<style>
+  :global(.isolation-window) {
+    --memory: #b694ff;
+    border-color: rgba(182, 148, 255, 0.28);
+  }
+  memory-isolation {
+    display: block;
+    min-height: 520px;
+  }
+  .isolation-controls {
+    align-items: center;
+    border-bottom: 1px solid var(--hairline-card);
+    display: flex;
+    gap: 18px;
+    justify-content: space-between;
+    padding: 12px 18px;
+  }
+  .isolation-controls > span {
+    color: var(--text-3);
+    font: var(--mono-9)/1 var(--font-mono);
+    letter-spacing: 0.12em;
+  }
+  .tenant-switcher {
+    display: flex;
+    gap: 6px;
+  }
+  button {
+    background: transparent;
+    border: 1px solid var(--hairline-card);
+    color: var(--text-3);
+    cursor: pointer;
+    font: var(--mono-8-5)/1 var(--font-mono);
+    padding: 9px 11px;
+  }
+  button.active {
+    background: rgba(182, 148, 255, 0.08);
+    border-color: var(--memory);
+    color: var(--memory);
+  }
+  .isolation-stage {
+    align-items: center;
+    display: grid;
+    gap: 22px;
+    grid-template-columns: minmax(160px, 0.65fr) minmax(175px, 0.7fr) minmax(470px, 1.8fr);
+    min-height: 410px;
+    padding: 26px 22px;
+  }
+  .client-card {
+    background: rgba(74, 199, 255, 0.025);
+    border: 1px solid rgba(74, 199, 255, 0.3);
+    padding: 20px 16px;
+  }
+  .client-card small,
+  .client-card strong,
+  .client-card span {
+    display: block;
+  }
+  .client-card small {
+    color: var(--text-4);
+    font: var(--mono-8-5)/1 var(--font-mono);
+    letter-spacing: 0.1em;
+  }
+  .client-card strong {
+    font: 400 var(--body-18)/1.2 var(--font-display);
+    margin: 16px 0 5px;
+  }
+  .client-card span {
+    color: #4ac7ff;
+    font: var(--mono-9)/1.4 var(--font-mono);
+  }
+  .client-card code {
+    border-top: 1px solid var(--hairline-card);
+    color: var(--text-2);
+    display: block;
+    font: var(--mono-8-5)/1.4 var(--font-mono);
+    margin-top: 18px;
+    padding-top: 12px;
+  }
+  .scope-gate {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    text-align: center;
+  }
+  .scope-gate > small {
+    color: var(--text-4);
+    font: var(--mono-8-5)/1 var(--font-mono);
+    letter-spacing: 0.1em;
+  }
+  .scope-gate > strong {
+    font-size: var(--body-13);
+    margin-top: 7px;
+  }
+  .scope-gate > i {
+    color: var(--memory);
+    font-style: normal;
+    margin: 10px 0;
+  }
+  .scope-gate > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-content: center;
+  }
+  .scope-gate > div span {
+    border: 1px solid var(--hairline-card);
+    color: var(--text-3);
+    font: var(--mono-8-5)/1 var(--font-mono);
+    padding: 5px;
+  }
+  .scope-gate > b {
+    border: 1px solid rgba(182, 148, 255, 0.4);
+    color: var(--memory);
+    font: 400 var(--mono-9)/1 var(--font-mono);
+    margin-top: 12px;
+    padding: 8px;
+  }
+  .recall-packet {
+    background: var(--memory);
+    color: #17151c;
+    font: 700 8px/1 var(--font-mono);
+    left: -14%;
+    opacity: 0;
+    padding: 5px;
+    position: absolute;
+    top: 46%;
+    transition:
+      left 0.55s ease,
+      opacity 0.2s ease;
+  }
+  [data-stage='1'] .recall-packet {
+    left: 42%;
+    opacity: 1;
+  }
+  [data-stage='2'] .recall-packet {
+    left: 105%;
+    opacity: 1;
+  }
+  [data-stage='3'] .recall-packet {
+    left: -14%;
+    opacity: 1;
+  }
+  .tenant-vault {
+    border: 1px solid rgba(182, 148, 255, 0.3);
+    padding: 16px;
+  }
+  .tenant-vault header {
+    align-items: center;
+    border-bottom: 1px solid var(--hairline-card);
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 13px;
+  }
+  .tenant-vault header span,
+  .tenant-vault header b {
+    font: var(--mono-8-5)/1 var(--font-mono);
+  }
+  .tenant-vault header span {
+    color: var(--text-2);
+    letter-spacing: 0.1em;
+  }
+  .tenant-vault header b {
+    color: var(--glitch-red);
+    font-weight: 400;
+  }
+  .partitions {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(3, 1fr);
+    padding-top: 14px;
+  }
+  .partitions article {
+    border: 1px solid var(--hairline-card);
+    min-width: 0;
+    opacity: 0.38;
+    padding: 12px;
+    transition:
+      background 0.25s ease,
+      border-color 0.25s ease,
+      opacity 0.25s ease,
+      transform 0.25s ease;
+  }
+  .partitions article > div {
+    display: grid;
+    gap: 4px;
+    grid-template-columns: auto 1fr;
+  }
+  .partitions article i {
+    background: var(--tenant-color);
+    border-radius: 50%;
+    grid-row: 1 / 3;
+    height: 7px;
+    margin-top: 3px;
+    width: 7px;
+  }
+  .partitions article strong {
+    color: var(--tenant-color);
+    font: 400 var(--mono-10)/1 var(--font-mono);
+  }
+  .partitions article small {
+    color: var(--text-4);
+    font: var(--mono-8-5)/1 var(--font-mono);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  ul {
+    display: grid;
+    gap: 5px;
+    list-style: none;
+    margin: 18px 0;
+    padding: 0;
+  }
+  li {
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--text-3);
+    font: var(--mono-8-5)/1 var(--font-mono);
+    padding: 7px;
+  }
+  .lock,
+  .recall {
+    display: block;
+    font: 8px/1 var(--font-mono);
+    letter-spacing: 0.08em;
+  }
+  .lock {
+    color: var(--text-4);
+  }
+  .recall {
+    color: var(--tenant-color);
+    display: none;
+  }
+  [data-stage='2'] .partitions article.selected,
+  [data-stage='3'] .partitions article.selected {
+    background: color-mix(in srgb, var(--tenant-color) 7%, transparent);
+    border-color: var(--tenant-color);
+    opacity: 1;
+    transform: translateY(-4px);
+  }
+  [data-stage='2'] .selected .lock,
+  [data-stage='3'] .selected .lock {
+    display: none;
+  }
+  [data-stage='2'] .selected .recall,
+  [data-stage='3'] .selected .recall {
+    display: block;
+  }
+  footer {
+    align-items: center;
+    border-top: 1px solid var(--hairline-card);
+    display: flex;
+    justify-content: space-between;
+    min-height: 58px;
+    padding: 0 18px;
+  }
+  footer p {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+    margin: 0;
+  }
+  footer p span {
+    background: var(--memory);
+    border-radius: 50%;
+    height: 6px;
+    width: 6px;
+  }
+  footer p b {
+    color: var(--text-2);
+    font: 400 var(--mono-9)/1.3 var(--font-mono);
+  }
+  .backend-switcher {
+    display: flex;
+  }
+  .backend-switcher button {
+    color: var(--text-4);
+    font-size: 8px;
+  }
+  [data-backend='dev'] .backend-switcher [data-backend='dev'],
+  [data-backend='prod'] .backend-switcher [data-backend='prod'] {
+    border-color: var(--memory);
+    color: var(--memory);
+  }
+  @media (max-width: 860px) {
+    .isolation-controls {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+    .tenant-switcher {
+      flex-wrap: wrap;
+    }
+    .isolation-stage {
+      grid-template-columns: 1fr;
+    }
+    .scope-gate {
+      min-height: 150px;
+    }
+    .partitions {
+      grid-template-columns: 1fr;
+    }
+    footer {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 10px;
+      padding-block: 14px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .recall-packet {
+      display: none;
+    }
+    .partitions article {
+      transition: none;
+    }
+  }
+</style>
