@@ -25,9 +25,9 @@ export default defineConfig({
   },
   redirects: {
     '/principles.html': '/principles/',
-    '/security.html': '/frameworks/mlsecops/',
-    '/rfx.html': '/frameworks/',
-    '/rfp.html': '/frameworks/',
+    '/security.html': '/frameworks/security/',
+    '/rfx.html': '/frameworks/ai-rfx/',
+    '/rfp.html': '/frameworks/ai-rfx/',
     '/xai.html': '/open-source/',
     '/eal.html': '/open-source/',
     '/mlmm.html': '/frameworks/maturity-model/',
