@@ -1,4 +1,14 @@
 <achievement-grid class="achievement-grid">
+  <div class="collage-piece collage-filler filler-west" data-collage-piece data-order="0" aria-hidden="true"></div>
+  <div class="collage-piece collage-diamond diamond-north" data-collage-piece data-order="1" aria-hidden="true"></div>
+  <div class="collage-piece collage-filler filler-north" data-collage-piece data-order="2" aria-hidden="true"></div>
+  <div class="collage-piece collage-accent accent-eu" data-collage-piece data-order="4" aria-hidden="true"></div>
+  <div class="collage-piece collage-filler filler-east" data-collage-piece data-order="6" aria-hidden="true"></div>
+  <div class="collage-piece collage-accent accent-uk" data-collage-piece data-order="8" aria-hidden="true"></div>
+  <div class="collage-piece collage-filler filler-centre" data-collage-piece data-order="9" aria-hidden="true"></div>
+  <div class="collage-piece collage-filler filler-south" data-collage-piece data-order="12" aria-hidden="true"></div>
+  <div class="collage-piece collage-accent accent-static" data-collage-piece data-order="14" aria-hidden="true"></div>
+  <div class="collage-piece collage-diamond diamond-south" data-collage-piece data-order="16" aria-hidden="true"></div>
   <slot />
 </achievement-grid>
 
@@ -9,30 +19,19 @@
 
     connectedCallback() {
       this.controller = new AbortController();
-      const cards = [...this.querySelectorAll<HTMLElement>('.achievement-card')];
+      const pieces = [...this.querySelectorAll<HTMLElement>('.achievement-card, [data-collage-piece]')];
       const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      cards.forEach((card, index) => {
-        card.style.setProperty('--achievement-order', String(index));
+      pieces.forEach((piece, index) => {
+        piece.style.setProperty('--piece-order', piece.dataset.order ?? String(index));
         if (reduced) {
-          card.dataset.settled = 'true';
+          piece.dataset.settled = 'true';
           return;
         }
-        card.addEventListener('animationend', () => (card.dataset.settled = 'true'), {
+        piece.addEventListener('animationend', () => (piece.dataset.settled = 'true'), {
           once: true,
           signal: this.controller.signal,
         });
-        card.addEventListener('pointermove', (event) => this.trackPointer(card, event), {
-          signal: this.controller.signal,
-        });
-        card.addEventListener(
-          'pointerleave',
-          () => {
-            card.style.removeProperty('--hover-x');
-            card.style.removeProperty('--hover-y');
-          },
-          { signal: this.controller.signal },
-        );
       });
 
       this.dataset.motionReady = 'true';
@@ -56,14 +55,6 @@
     disconnectedCallback() {
       this.controller.abort();
       this.observer?.disconnect();
-    }
-
-    private trackPointer(card: HTMLElement, event: PointerEvent) {
-      const bounds = card.getBoundingClientRect();
-      const x = ((event.clientX - bounds.left) / bounds.width) * 100;
-      const y = ((event.clientY - bounds.top) / bounds.height) * 100;
-      card.style.setProperty('--hover-x', `${Math.max(0, Math.min(100, x))}%`);
-      card.style.setProperty('--hover-y', `${Math.max(0, Math.min(100, y))}%`);
     }
   }
 

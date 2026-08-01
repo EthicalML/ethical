@@ -199,13 +199,14 @@ import StatBand from '../components/StatBand.astro';
     <p>Selected outcomes, appointments and technical positions from the delivered record.</p>
   </header>
   <AchievementGrid>
-    <article className="achievement-card">
+    <article className="achievement-card" data-piece="eu" data-order="3" data-hover="slide">
       <AchievementVisual variant="eu-adoption" />
       <div className="achievement-card-copy">
         <span>EU · GPAI CODE OF PRACTICE</span>
-        <strong>8 of 12 recommendations adopted</strong>
+        <strong>8 of 12</strong>
         <p>
-          ACM's second-draft response states that “eight (8) out of twelve (12) initial recommendations … are integrated in the main text of the Second Draft”.
+          Recommendations adopted. ACM's second-draft response states that “eight (8) out of twelve (12) initial recommendations … are integrated in the main
+          text of the Second Draft”.
         </p>
         <p className="achievement-links">
           <a
@@ -218,12 +219,12 @@ import StatBand from '../components/StatBand.astro';
         </p>
       </div>
     </article>
-    <article className="achievement-card">
+    <article className="achievement-card" data-piece="uk" data-order="7" data-hover="slide">
       <AchievementVisual variant="uk-adoption" />
       <div className="achievement-card-copy">
         <span>UNITED KINGDOM · AI REGULATION</span>
-        <strong>13 of 14 recommendations adopted</strong>
-        <p>The adoption total is owner-attested. The 2022 framework comments are the related first-stage artefact.</p>
+        <strong>13 of 14</strong>
+        <p>Recommendations adopted. The total is owner-attested. The 2022 framework comments are the related first-stage artefact.</p>
         <p className="achievement-links">
           <a href="https://www.acm.org/binaries/content/assets/public-policy/europe-tpc-uk-ai-framework-comments.pdf" target="_blank" rel="noopener noreferrer">
             Read the framework comments →
@@ -231,12 +232,15 @@ import StatBand from '../components/StatBand.astro';
         </p>
       </div>
     </article>
-    <article className="achievement-card">
+    <article className="achievement-card" data-piece="mlsecops" data-order="10" data-hover="tilt">
       <AchievementVisual variant="citation-network" />
       <div className="achievement-card-copy">
         <span>CITED INTO THE CODE</span>
-        <strong>The Institute's MLSecOps framework</strong>
-        <p>Both GPAI responses cite MLSecOps in Recommendation 10 alongside MITRE ATT&CK, OWASP and UK NCSC as taxonomies for the Commission to build on.</p>
+        <strong>MLSecOps in the Code</strong>
+        <p>
+          Both GPAI responses cite the Institute's MLSecOps framework in Recommendation 10 alongside MITRE ATT&CK, OWASP and UK NCSC as taxonomies for the
+          Commission to build on.
+        </p>
         <p className="achievement-links">
           <a href="/frameworks/security/">Explore MLSecOps →</a>
           <a
@@ -249,7 +253,7 @@ import StatBand from '../components/StatBand.astro';
         </p>
       </div>
     </article>
-    <article className="achievement-card">
+    <article className="achievement-card" data-piece="un" data-order="5" data-hover="tilt">
       <AchievementVisual variant="un-chair" />
       <div className="achievement-card-copy">
         <span>UNITED NATIONS</span>
@@ -266,11 +270,11 @@ import StatBand from '../components/StatBand.astro';
         </p>
       </div>
     </article>
-    <article className="achievement-card">
+    <article className="achievement-card" data-piece="acm" data-order="13" data-hover="tilt">
       <AchievementVisual variant="acm-bridges" />
       <div className="achievement-card-copy">
         <span>ACM POLICY LEADERSHIP</span>
-        <strong>Founding Chair, Europe. Founding Committee, LATAM</strong>
+        <strong>Founding in Europe and LATAM</strong>
         <p>The Institute's Chief Scientist founded ACM's AI policy committee work in Europe and is a founding committee member for LATAM.</p>
         <p className="achievement-links">
           <a href="https://www.acm.org/volunteers/volunteer/saucedo_9722274" target="_blank" rel="noopener noreferrer">
@@ -279,11 +283,11 @@ import StatBand from '../components/StatBand.astro';
         </p>
       </div>
     </article>
-    <article className="achievement-card">
+    <article className="achievement-card" data-piece="through-line" data-order="15" data-hover="tilt">
       <AchievementVisual variant="policy-timeline" />
       <div className="achievement-card-copy">
         <span>THE THROUGH-LINE</span>
-        <strong>From operational divergence to agentic oversight</strong>
+        <strong>2021 to 2026</strong>
         <p>
           The 2021 AI Act comments called for continuous post-deployment oversight of self-modifying systems. The 2026 brief applies the same position to
           agentic frontier models.
