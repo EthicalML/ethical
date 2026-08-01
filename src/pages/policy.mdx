@@ -4,14 +4,14 @@ description: Practitioner evidence, public-policy products and standards partici
 composed: true
 layout: ../layouts/ProseLayout.astro
 impact:
-  - value: 8/12
-    label: RECOMMENDATIONS ADOPTED — EU GPAI CODE OF PRACTICE
-  - value: 13/14
-    label: RECOMMENDATIONS ADOPTED — UK AI REGULATORY PROPOSAL
-  - value: 25+
+  - value: '10'
+    label: MANDATES ACROSS EC, UN, ACM, IEEE AND ISO/IEC
+  - value: '28'
     label: POLICY PRODUCTS DELIVERED
-  - value: EU · UK · UN · US
-    label: ENGAGEMENT
+  - value: 2020–2026
+    label: CONTINUOUS DELIVERED RECORD
+  - value: EU · UK · US
+    label: JURISDICTIONS ENGAGED
 filters:
   - label: ALL
     value: all
@@ -152,7 +152,7 @@ products:
     instrument: SUSTAINABILITY
     track: sustainability
     href: https://www.acm.org/binaries/content/assets/public-policy/europe-tpc/acm_data_center_final.pdf
-  - title: Data-centre statement — Spanish
+  - title: 'Data-centre statement: Spanish'
     instrument: SUSTAINABILITY
     track: sustainability
     href: https://www.acm.org/public-policy/europe-tpc/acm-data-center-final-spanish
@@ -166,13 +166,14 @@ mandates:
       - role: Member, Code of Practice for General-Purpose Models with Systemic Risk
   - body: UNITED NATIONS
     mandates:
-      - role: Chair, Principles Committee — Data Governance Guidelines, UN CSTD
+      - role: 'Chair, Principles Committee: Data Governance Guidelines, UN CSTD'
         href: https://unctad.org/topic/commission-on-science-and-technology-for-development/working-group-on-data-governance
       - role: AI Expert, UN AI Advisory Committee
   - body: ACM
     mandates:
       - role: Founding Chair, ACM AI Policy Committee in Europe (Europe TPC)
         href: https://www.acm.org/volunteers/volunteer/saucedo_9722274
+      - role: Founding Committee Member, ACM LATAM AI Policy Committee
   - body: STANDARDS
     mandates:
       - role: Early member, IEEE P700x standards series
@@ -186,46 +187,102 @@ import StatBand from '../components/StatBand.astro';
   canvas="policy"
   eyebrow="POLICY & STANDARDS"
   title="Policy written by practitioners."
-  intro="The Institute has contributed to every major European digital policy through its planning, creation and execution — the AI Act, the Data Act, the DSA, the Cyber Resilience Act and the UK's regulatory proposal — carrying evidence from its open-source and production-ML practice into the rooms where rules are made."
+  intro="The Institute has contributed to the planning, creation and execution of the AI Act, Data Act, DSA, Cyber Resilience Act and the UK's regulatory proposal. Its consultation work draws on open-source software and production-ML practice."
 />
 
 <StatBand stats={frontmatter.impact} />
 
 <section className="policy-section policy-outcomes" data-reveal aria-labelledby="outcomes-heading">
   <header>
-    <p className="eyebrow">MEASURED OUTCOMES</p>
-    <h2 id="outcomes-heading">Outcomes that stuck</h2>
-    <p>Recommendations are useful when they change the instrument under review. These two records track that change between drafts.</p>
+    <p className="eyebrow">ACHIEVEMENTS</p>
+    <h2 id="outcomes-heading">Highlight achievements</h2>
+    <p>Selected outcomes, appointments and technical positions from the delivered record.</p>
   </header>
-  <div className="outcome-stories">
-    <article>
+  <div className="achievement-grid">
+    <article className="achievement-card">
       <span>EU · GPAI CODE OF PRACTICE</span>
-      <strong>8 of 12</strong>
+      <strong>8 of 12 recommendations adopted</strong>
       <p>
         ACM's second-draft response states that “eight (8) out of twelve (12) initial recommendations … are integrated in the main text of the Second Draft”.
-        The
+      </p>
+      <p className="achievement-links">
         <a
           href="https://www.acm.org/binaries/content/assets/public-policy/acm-europetpc-consultation-2024---2nd-general-purpose-ai-code-of-practice-1.pdf"
           target="_blank"
           rel="noopener noreferrer"
         >
-          primary response records the adoption.
+          Read the response →
         </a>
       </p>
     </article>
-    <article>
+    <article className="achievement-card">
       <span>UNITED KINGDOM · AI REGULATION</span>
-      <strong>13 of 14</strong>
-      <p>
-        The 13-of-14 adoption total for the UK's AI regulatory proposal is owner-attested. The
+      <strong>13 of 14 recommendations adopted</strong>
+      <p>The adoption total is owner-attested. The 2022 framework comments are the related first-stage artefact.</p>
+      <p className="achievement-links">
         <a href="https://www.acm.org/binaries/content/assets/public-policy/europe-tpc-uk-ai-framework-comments.pdf" target="_blank" rel="noopener noreferrer">
-          2022 framework comments are the related first-stage artefact.
+          Read the framework comments →
+        </a>
+      </p>
+    </article>
+    <article className="achievement-card">
+      <span>CITED INTO THE CODE</span>
+      <strong>The Institute's MLSecOps framework</strong>
+      <p>Both GPAI responses cite MLSecOps in Recommendation 10 alongside MITRE ATT&CK, OWASP and UK NCSC as taxonomies for the Commission to build on.</p>
+      <p className="achievement-links">
+        <a href="/frameworks/security/">Explore MLSecOps →</a>
+        <a
+          href="https://www.acm.org/binaries/content/assets/public-policy/acm-europetpc-consultation-2024---2nd-general-purpose-ai-code-of-practice-1.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Read the response →
+        </a>
+      </p>
+    </article>
+    <article className="achievement-card">
+      <span>UNITED NATIONS</span>
+      <strong>Chair, Principles Committee</strong>
+      <p>The appointment covers the Data Governance Guidelines developed through the UN Commission on Science and Technology for Development.</p>
+      <p className="achievement-links">
+        <a
+          href="https://unctad.org/topic/commission-on-science-and-technology-for-development/working-group-on-data-governance"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Public record →
+        </a>
+      </p>
+    </article>
+    <article className="achievement-card">
+      <span>ACM POLICY LEADERSHIP</span>
+      <strong>Founding Chair, Europe. Founding Committee, LATAM</strong>
+      <p>The Institute's Chief Scientist founded ACM's AI policy committee work in Europe and is a founding committee member for LATAM.</p>
+      <p className="achievement-links">
+        <a href="https://www.acm.org/volunteers/volunteer/saucedo_9722274" target="_blank" rel="noopener noreferrer">
+          ACM volunteer record →
+        </a>
+      </p>
+    </article>
+    <article className="achievement-card">
+      <span>THE THROUGH-LINE</span>
+      <strong>From operational divergence to agentic oversight</strong>
+      <p>
+        The 2021 AI Act comments called for continuous post-deployment oversight of self-modifying systems. The 2026 brief applies the same position to agentic
+        frontier models.
+      </p>
+      <p className="achievement-links">
+        <a href="https://www.acm.org/binaries/content/assets/public-policy/europe-tpc-comments-ai-consultation.pdf" target="_blank" rel="noopener noreferrer">
+          2021 comments →
+        </a>
+        <a href="https://www.acm.org/public-policy/europe-tpc/calibrating-oversight-agentic-frontier-models-04272026" target="_blank" rel="noopener noreferrer">
+          2026 brief →
         </a>
       </p>
     </article>
   </div>
   <p className="regulation-line">
-    This is the “By Regulation” end-state of the Institute's four-phase strategy: practitioner controls carried into public instruments.
+    These achievements represent the “By Regulation” phase of the Institute's four-phase strategy, where practitioner controls enter public instruments.
   </p>
 </section>
 
@@ -235,7 +292,7 @@ import StatBand from '../components/StatBand.astro';
   <header>
     <p className="eyebrow">VERIFIED PARTICIPATION</p>
     <h2 id="mandates-heading">Mandates</h2>
-    <p>Nine roles across public institutions, professional policy work and standards development. Links point to the public record where one is available.</p>
+    <p>Ten roles across public institutions, professional policy work and standards development. Links point to the public record where one is available.</p>
   </header>
   <PolicyMandates groups={frontmatter.mandates} />
   <p className="mandate-note">
@@ -246,48 +303,41 @@ import StatBand from '../components/StatBand.astro';
 <section className="policy-section policy-bridge" data-reveal aria-labelledby="bridge-heading">
   <header>
     <p className="eyebrow">THE PRACTITIONER BRIDGE</p>
-    <h2 id="bridge-heading">The people writing the evidence ship the code.</h2>
+    <h2 id="bridge-heading">Production evidence in the policy record.</h2>
     <p>
-      The same organisation maintains an <a href="/open-source/">open-source estate</a> spanning KAOS agent orchestration, Kompute in the Linux Foundation and
-      the production-ML ecosystem. That practice informs consultation evidence on system architecture, security, data governance and technical feasibility.
+      The Institute's <a href="/open-source/">open-source work</a> provides technical evidence for consultation responses. Findings from policy processes also
+      update the Institute's frameworks and principles.
     </p>
   </header>
-  <p className="bridge-attribution">
-    Alejandro Saucedo is named as an author or contributor on 11+ products in this record. He is credited as principal author of five — the 2021 AI Act, 2022
-    Data Act, 2022 UK framework, 2020 UK National Data Strategy and 2021 Digital Principles responses — and as a lead author of the 2023 joint Generative AI
-    Principles; each credits him as Chief Scientist of the Institute.
-  </p>
   <div className="bridge-grid">
     <article>
-      <span>FROM PRACTICE</span>
-      <h3>Controls that teams can implement</h3>
+      <span>PRACTICE INTO EVIDENCE</span>
+      <h3>Technical limits made explicit</h3>
       <p>
-        <a href="/frameworks/ai-rfx/">AI-RFX</a> translates assurance requirements into procurement criteria. The{' '}
-        <a href="/frameworks/security/">MLSecOps framework</a> is cited by both the{' '}
+        {'The 2026 '}
         <a
-          href="https://www.acm.org/binaries/content/assets/public-policy/acm-europetpc-consultation-2024---general-purpose-ai-code-of-practice.pdf"
+          href="https://www.acm.org/binaries/content/assets/public-policy/europe-tpc/acm-consultation-submission-2026---digital-omnibus-on-ai-regulation-proposal.pdf"
           target="_blank"
           rel="noopener noreferrer"
         >
-          first
-        </a>{' '}
-        and{' '}
-        <a
-          href="https://www.acm.org/binaries/content/assets/public-policy/acm-europetpc-consultation-2024---2nd-general-purpose-ai-code-of-practice-1.pdf"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          second
-        </a>{' '}
-        GPAI Code responses alongside MITRE ATT&CK, OWASP and UK NCSC taxonomies in Recommendation 10.
+          {'Digital Omnibus response'}
+        </a>
+        {
+          ' addresses watermark detectability, false-positive and false-negative rates, and the way synthetic data can inherit or mask bias. These positions draw on production practice.'
+        }
       </p>
     </article>
     <article>
-      <span>INTO POLICY</span>
-      <h3>Evidence grounded in operating systems</h3>
+      <span>POLICY INTO PRACTICE</span>
+      <h3>Requirements carried back into controls</h3>
       <p>
-        <a href="/principles/01/">P01 Human Augmentation by Oversight</a> and <a href="/principles/09/">P09 Human Alignment by Intent</a> connect human
-        authority and system mandates to the questions regulators must specify.
+        {'Article 14 oversight informs '}
+        <a href="/principles/01/">{'P01 Human Augmentation by Oversight'}</a>
+        {'. Agentic oversight informs '}
+        <a href="/principles/09/">{'P09 Human Alignment by Intent'}</a>
+        {' and the '}
+        <a href="/frameworks/security/">{'Agentic & ML Security framework'}</a>
+        {'.'}
       </p>
     </article>
   </div>
@@ -300,7 +350,7 @@ import StatBand from '../components/StatBand.astro';
         target="_blank"
         rel="noopener noreferrer"
       >
-        Public record →
+        {'Public record →'}
       </a>
     </p>
     <p>
@@ -311,14 +361,14 @@ import StatBand from '../components/StatBand.astro';
         target="_blank"
         rel="noopener noreferrer"
       >
-        Public record →
+        {'Public record →'}
       </a>
     </p>
     <p>
       <strong>NUMFOCUS</strong>
       <span>Open-source practice and institutional contribution</span>
       <a href="https://numfocus.org/case-studies/ethics-in-ai-ml" target="_blank" rel="noopener noreferrer">
-        Case study →
+        {'Case study →'}
       </a>
     </p>
   </div>

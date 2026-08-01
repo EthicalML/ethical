@@ -1653,38 +1653,100 @@ main > .home-section:last-child { padding-bottom: 120px; }
 }
 .policy-section a,
 .policy-work a { color: var(--accent); }
-.outcome-stories,
 .bridge-grid {
   display: grid;
   gap: 14px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   margin-top: 42px;
 }
-.outcome-stories article,
 .bridge-grid article {
   border: 1px solid var(--hairline-card);
   min-height: 310px;
   padding: 30px;
 }
-.outcome-stories span,
 .bridge-grid article > span {
   color: var(--text-4);
   font: var(--mono-9)/1.4 var(--font-mono);
   letter-spacing: .1em;
 }
-.outcome-stories strong {
-  color: var(--accent);
-  display: block;
-  font: 300 clamp(56px, 7vw, 90px)/1 var(--font-display);
-  margin: 38px 0 24px;
-}
-.outcome-stories p,
 .bridge-grid p {
   color: var(--text-2);
   font-size: 15px;
   line-height: 1.65;
 }
-.outcome-stories a { text-decoration: underline; text-decoration-color: rgba(94,230,160,.35); text-underline-offset: 3px; }
+.achievement-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 42px;
+}
+.achievement-card {
+  background:
+    radial-gradient(90% 100% at var(--achievement-x, 75%) 0%, rgba(94,230,160,var(--achievement-alpha, .1)), transparent 68%),
+    linear-gradient(180deg,rgba(255,255,255,.03),transparent 72%);
+  border: 1px solid var(--hairline-card);
+  display: flex;
+  flex-direction: column;
+  min-height: 340px;
+  overflow: hidden;
+  padding: 30px;
+  position: relative;
+  transition: background var(--duration-3) ease, border-color var(--duration-3) ease, transform var(--duration-3) ease;
+}
+.achievement-card:nth-child(2) { --achievement-alpha: .07; --achievement-x: 25%; }
+.achievement-card:nth-child(3) { --achievement-alpha: .14; --achievement-x: 90%; }
+.achievement-card:nth-child(4) { --achievement-alpha: .08; --achievement-x: 52%; }
+.achievement-card:nth-child(5) { --achievement-alpha: .12; --achievement-x: 12%; }
+.achievement-card:nth-child(6) { --achievement-alpha: .09; --achievement-x: 82%; }
+.achievement-card::after {
+  background: linear-gradient(90deg,var(--accent),rgba(94,230,160,.08));
+  bottom: 0;
+  content: "";
+  height: 2px;
+  left: 30px;
+  opacity: .38;
+  position: absolute;
+  right: 30px;
+  transition: opacity var(--duration-3) ease;
+}
+.achievement-card:hover {
+  background:
+    radial-gradient(100% 110% at var(--achievement-x, 75%) 0%, rgba(94,230,160,calc(var(--achievement-alpha, .1) + .035)), transparent 70%),
+    linear-gradient(180deg,rgba(255,255,255,.04),transparent 72%);
+  border-color: rgba(94,230,160,.28);
+  transform: translateY(-2px);
+}
+.achievement-card:hover::after { opacity: .9; }
+.achievement-card > span {
+  color: var(--text-3);
+  font: var(--mono-9)/1.4 var(--font-mono);
+  letter-spacing: .11em;
+}
+.achievement-card > strong {
+  color: var(--text-1);
+  display: block;
+  font: 300 clamp(27px,2.4vw,36px)/1.08 var(--font-display);
+  margin: 28px 0 18px;
+}
+.achievement-card > p:not(.achievement-links) {
+  color: var(--text-2);
+  font-size: 14.5px;
+  line-height: 1.65;
+}
+.achievement-links {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px 16px;
+  margin: auto 0 0;
+  padding-top: 24px;
+}
+.achievement-links a {
+  color: var(--accent);
+  font: var(--mono-9)/1.4 var(--font-mono);
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
 .regulation-line,
 .mandate-note {
   border-top: 1px solid var(--hairline);
@@ -1699,15 +1761,6 @@ main > .home-section:last-child { padding-bottom: 120px; }
 .bridge-grid h3 {
   font: 300 34px/1.12 var(--font-display);
   margin: 22px 0 18px;
-}
-.bridge-attribution {
-  border-left: 1px solid var(--accent);
-  color: var(--text-2);
-  font-size: 15px;
-  line-height: 1.7;
-  margin: 34px 0 0;
-  max-width: 980px;
-  padding: 3px 0 3px 20px;
 }
 .field-records { margin-top: 42px; }
 .field-records p {
@@ -2346,15 +2399,16 @@ main > .home-section:last-child { padding-bottom: 120px; }
   .stat-band.four-stat { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .policy-section,
   .policy-work { padding: 68px 24px 72px; }
+  .achievement-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 600px) {
   .stat-band.four-stat .stat:last-child { grid-column: auto; }
   .policy-section,
   .policy-work { padding: 56px 18px 60px; }
-  .outcome-stories,
+  .achievement-grid,
   .bridge-grid { grid-template-columns: 1fr; }
-  .outcome-stories article,
+  .achievement-card,
   .bridge-grid article { min-height: auto; padding: 24px 22px; }
   .field-records p { gap: 8px; grid-template-columns: 1fr; }
 }
