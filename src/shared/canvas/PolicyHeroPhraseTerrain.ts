@@ -176,11 +176,6 @@ export class PolicyHeroPhraseTerrain extends HTMLElement {
     context.fillStyle = bodyGlow;
     context.fillRect(0, 0, width, height);
 
-    // Every ~2.2s a random fragment flickers for a fraction of it (ambient interference).
-    const glitchCycle = time * 0.45;
-    const glitchFragment = Math.floor(hash(Math.floor(glitchCycle), 7) * SHORT.length);
-    const glitchOn = !reducedMotion && glitchCycle % 1 < 0.12;
-
     // Painter's order: far side first so near-side phrases sit on top.
     const ordered = ANCHORS.map((anchor) => ({
       anchor,
@@ -228,23 +223,11 @@ export class PolicyHeroPhraseTerrain extends HTMLElement {
       const drawX = Math.min(Math.max(x - drawW / 2, 2), width - drawW - 2);
       const drawY = y - drawH / 2;
 
-      // Stronger, steadier slice on hovered phrases as they resolve; a brief flicker otherwise.
-      const glitching = anchor.fragment === glitchFragment && glitchOn;
-      const slice = reducedMotion ? 0 : heat > 0.12 ? heat * 2.4 : glitching ? 3 : 0;
-
       context.globalAlpha = alpha;
-      drawPhrase(context, base.canvas, drawX, drawY, drawW, drawH, slice);
+      drawPhrase(context, base.canvas, drawX, drawY, drawW, drawH, 0);
       if (heat > 0.01) {
         context.globalAlpha = alpha * smooth(clamp(heat));
-        drawPhrase(
-          context,
-          sprite(anchor.fragment, true).canvas,
-          drawX,
-          drawY,
-          drawW,
-          drawH,
-          slice,
-        );
+        drawPhrase(context, sprite(anchor.fragment, true).canvas, drawX, drawY, drawW, drawH, 0);
       }
     });
     context.globalAlpha = 1;
