@@ -63,9 +63,8 @@ export const products: PolicyRecordProduct[] = [
     track: 'eu-ai-act',
     href: 'https://www.acm.org/public-policy/europe-tpc/consultation-on-regulation-on-eu-ai-act-eu-2024-1689-04082026',
     slug: '03-consultation-on-regulation-on-eu-ai-act-eu-2024-1689-04082026',
-    unverified: true,
     summary:
-      'Consultation response on the consolidated EU AI Act (Regulation (EU) 2024/1689). Summary derived from title and instrument; the page is HTML and its text was not extracted.',
+      'Responds to the proposed implementing regulation on the conduct of Commission proceedings under the AI Act, including how unilateral interim measures interact with parallel proceedings and an encrypted shadow-logging mechanism to balance confidentiality with security.',
   },
   {
     title: 'Article 50 transparency guidelines response',
