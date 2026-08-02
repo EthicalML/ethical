@@ -70,7 +70,7 @@ const intro =
 
     private variantFromUrl() {
       const requested = Number.parseInt(new URL(window.location.href).searchParams.get('v') ?? '1', 10);
-      return requested >= 1 && requested <= 3 ? requested : 1;
+      return this.querySelector(`template[data-canvas-variant="${requested}"]`) ? requested : 1;
     }
 
     private selectVariant(variant: number) {
