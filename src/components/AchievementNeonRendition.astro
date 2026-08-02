@@ -112,7 +112,7 @@ const isoStructures = [
   // uk: taller adoption tower, columns of 4 and 2
   {
     ox: 62,
-    oy: 24,
+    oy: 46,
     cubes: [
       { x: 0, y: 0, z: 0, fill: true },
       { x: 0, y: 0, z: 1, fill: true },
@@ -640,13 +640,19 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
   /* The isometric structure takes the ghost treatment: oversized, dim, anchored
      to the bottom-right with part of it cropped past the corner. */
   .iso-ghost {
-    bottom: -26px;
-    height: 150px;
+    bottom: -12%;
+    height: 62%;
     opacity: 0.6;
     position: absolute;
-    right: -24px;
-    width: 220px;
+    right: -8%;
+    width: 58%;
     z-index: 1;
+  }
+  /* The narrow right-column collage card gets a fixed larger stage so its
+     structure matches the neighbours instead of scaling down with the card. */
+  [data-variation='1'] .neon-slot[data-piece='un'] .iso-ghost {
+    height: 170px;
+    width: 215px;
   }
   .iso-group {
     transform-box: fill-box;
