@@ -70,13 +70,14 @@ const { groups } = Astro.props;
 
   .active-pill {
     align-self: center;
-    border: 1px solid rgba(94, 230, 160, 0.4);
+    background: var(--accent);
     border-radius: var(--radius-pill);
-    color: var(--accent);
-    font: var(--mono-9) / 1 var(--font-mono);
+    color: #0f100f;
+    font: 600 var(--mono-9) / 1 var(--font-mono);
     font-style: normal;
-    letter-spacing: 0.1em;
-    padding: 5px 10px;
+    justify-self: end;
+    letter-spacing: 0.12em;
+    padding: 6px 12px;
   }
 
   @media (max-width: 800px) {

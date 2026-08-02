@@ -632,7 +632,6 @@ dd { margin: 6px 0 0; }
   padding: 0 48px 72px;
 }
 .prose-section {
-  border-top: 1px solid var(--hairline);
   padding: 88px 48px 96px;
   scroll-margin-top: 96px;
 }
@@ -789,7 +788,8 @@ th {
   text-transform: uppercase;
 }
 
-.join-section { padding: 0 48px 96px; scroll-margin-top: 124px; }
+.join-section { padding: 88px 48px 96px; scroll-margin-top: 124px; }
+.join-section form { scroll-margin-top: 124px; }
 .join-section > .network-split {
   background: linear-gradient(180deg,rgba(255,255,255,.035),transparent);
   border: 1px solid var(--hairline-card);
@@ -1204,7 +1204,7 @@ kaos-graph, kaos-architecture { display: block; }
 .oss-menu-preview .kaos-canvas-mount { height: 180px; min-height: 180px; }
 .embedded-widget.kaos-canvas-mount { height: 360px; }
 
-.reports-section { border-top: 1px solid var(--hairline); padding: 90px 48px; }
+.reports-section { padding: 90px 48px; }
 .reports-section > header { align-items: end; display: grid; gap: 56px; grid-template-columns: 1fr 420px; }
 .reports-section > header h2 { font: 300 44px/1.06 var(--font-display); letter-spacing: -.015em; margin: 16px 0 0; }
 .reports-section > header p:not(.eyebrow) { color: var(--text-2); font-size: 16px; line-height: 1.6; max-width: 640px; }
@@ -1251,7 +1251,6 @@ kaos-graph, kaos-architecture { display: block; }
 .survey-focus div { display: flex; flex-direction: column; gap: 5px; }.survey-focus span { color: var(--text-3); font: var(--mono-10)/1 var(--font-mono); letter-spacing: .1em; }.survey-focus strong { font-size: 17px; font-weight: 400; }
 .survey-focus p { color: var(--text-2); flex: 1; font-size: 13.5px; line-height: 1.55; margin: 0; min-width: 260px; }
 .home-section {
-  border-top: 1px solid var(--hairline);
   padding: 120px 48px 0;
   scroll-margin-top: 124px;
 }
@@ -1362,7 +1361,6 @@ main > .home-section:last-child { padding-bottom: 120px; }
 @keyframes om-swap { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 
 .article-hero {
-  border-bottom: 1px solid var(--hairline);
   min-height: 480px;
   padding: 108px 48px 76px;
   position: relative;
@@ -1551,7 +1549,6 @@ main > .home-section:last-child { padding-bottom: 120px; }
 .talk-grid img { aspect-ratio: 5/3; display: block; object-fit: cover; width: 100%; }
 .talk-grid .eyebrow { margin-top: 18px; }.talk-grid h2 { font:300 30px/1.1 var(--font-display); margin:12px 0; }.talk-grid article > span { color:var(--text-3); font-size:13px; }
 .cluster-section {
-  border-top: 1px solid var(--hairline);
   padding: 88px 48px 96px;
 }
 .cluster-section > h2,
@@ -1619,7 +1616,7 @@ main > .home-section:last-child { padding-bottom: 120px; }
 .policy-eu-feature h2 { font: 300 46px/1.1 var(--font-display); margin: 16px 0; }
 .policy-eu-feature p:not(.eyebrow) { color: var(--text-2); font-size: var(--body-16); line-height: 1.7; max-width: 840px; }
 .partner-list-heading { padding-bottom: 18px; }
-.engagement-band { border-block: 1px solid var(--hairline); margin-top: 24px; padding: 72px 48px 82px; }
+.engagement-band { margin-top: 24px; padding: 72px 48px 82px; }
 .engagement-row {
   align-items: baseline;
   border-top: 1px solid var(--hairline);
@@ -1634,7 +1631,6 @@ main > .home-section:last-child { padding-bottom: 120px; }
 .engagement-row > a { font: var(--mono-9)/1.4 var(--font-mono); letter-spacing: .07em; }
 
 .policy-section {
-  border-top: 1px solid var(--hairline);
   padding: 88px 48px 96px;
 }
 .policy-section > header > h2,
@@ -1703,7 +1699,6 @@ main > .home-section:last-child { padding-bottom: 120px; }
 }
 .policy-work {
   background: radial-gradient(80% 180% at 80% 50%, rgba(94,230,160,.08), transparent 58%);
-  border-block: 1px solid var(--hairline);
   padding: 96px 48px 104px;
 }
 .policy-work > div {
