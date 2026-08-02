@@ -8,11 +8,12 @@ import {
   spherePoint,
 } from './PolicyHeroShared';
 
-// A planet made of language: verbatim fragments are positioned on the rotating displaced
-// sphere surface. Near-side phrases are brighter and larger, far-side phrases dimmer and
-// smaller, so depth reads as brightness and scale. The hemisphere is anchored low in the
-// section so it rises from the hero's lower edge. Phrases render in warm off-white by default
-// and cross-fade to the green accent, enlarging to readable, as the cursor passes over them.
+// A planet made of language: verbatim fragments are positioned on a full rotating displaced
+// sphere. Near-side phrases are brighter and larger, far-side phrases dimmer and smaller, so
+// depth reads as brightness and scale. Phrases render in the green accent by default (with the
+// depth fade). The cursor is a gravity field: phrases within a generous radius are pulled
+// toward it with a smooth falloff, enlarge, and resolve to white, easing back on leave. A faint
+// signal-interference slice flickers a random phrase every few seconds and rides hovered ones.
 
 // Shorter fragments only, so each phrase stays a legible surface tag rather than a ribbon.
 const SHORT = POLICY_FRAGMENTS.filter((fragment) => fragment.length <= 33);
@@ -53,6 +54,7 @@ interface Sprite {
 }
 
 // Two colour variants per fragment share identical metrics; the key packs the hover flag.
+// Default is the green accent (with depth fade); hovered phrases resolve to white.
 const spriteCache = new Map<number, Sprite>();
 
 const sprite = (fragmentIndex: number, hot: boolean): Sprite => {
@@ -71,11 +73,35 @@ const sprite = (fragmentIndex: number, hot: boolean): Sprite => {
   context.font = `${pixel}px 'Geist Mono', monospace`;
   context.textAlign = 'center';
   context.textBaseline = 'middle';
-  context.fillStyle = `rgb(${hot ? ACCENT : WHITE})`;
+  context.fillStyle = `rgb(${hot ? WHITE : ACCENT})`;
   context.fillText(text, width / 2, height / 2);
   const built = { canvas, w: width / SUPERSAMPLE, h: height / SUPERSAMPLE };
   spriteCache.set(key, built);
   return built;
+};
+
+// Draws a sprite, optionally split into horizontal bands with an alternating x offset for a
+// signal-interference glitch. slice = 0 takes the common single-draw path.
+const drawPhrase = (
+  context: CanvasRenderingContext2D,
+  image: HTMLCanvasElement,
+  dx: number,
+  dy: number,
+  w: number,
+  h: number,
+  slice: number,
+) => {
+  if (slice <= 0.01) {
+    context.drawImage(image, dx, dy, w, h);
+    return;
+  }
+  const bands = 3;
+  const sh = image.height / bands;
+  const dh = h / bands;
+  for (let b = 0; b < bands; b += 1) {
+    const offset = b === 1 ? slice : -slice * 0.5;
+    context.drawImage(image, 0, sh * b, image.width, sh, dx + offset, dy + dh * b, w, dh);
+  }
 };
 
 export class PolicyHeroPhraseTerrain extends HTMLElement {
@@ -119,10 +145,10 @@ export class PolicyHeroPhraseTerrain extends HTMLElement {
     context.clearRect(0, 0, width, height);
     const time = reducedMotion ? 6.4 : elapsed + 2.2;
     const scale = Math.min(width / 920, height / 650);
-    // Anchored low so only the upper hemisphere emerges from the section's lower edge.
-    const center = { x: width * 0.5, y: height * 0.92 };
-    const radiusX = Math.min(width * 0.4, height * 0.62);
-    const radiusY = Math.min(height * 0.62, width * 0.42);
+    // Full floating sphere, centred in the canvas.
+    const center = { x: width * 0.49, y: height * 0.48 };
+    const radiusX = Math.min(width * 0.35, height * 0.53);
+    const radiusY = Math.min(height * 0.53, width * 0.37);
     const rotation = time * 0.05;
     const sweep = Math.sin(time * 0.26) * 0.82;
 
@@ -132,7 +158,8 @@ export class PolicyHeroPhraseTerrain extends HTMLElement {
     const strength = this.pointer.strength;
     const cursorX = this.pointer.x * width;
     const cursorY = this.pointer.y * height;
-    const hoverRadius = Math.min(width, height) * 0.26;
+    // A generous gravity field: phrases well beyond the cursor are affected, nearest strongest.
+    const hoverRadius = Math.min(width, height) * 0.4;
 
     // Quiet body glow so the sphere reads as a mass even between phrases.
     const bodyGlow = context.createRadialGradient(
@@ -149,6 +176,11 @@ export class PolicyHeroPhraseTerrain extends HTMLElement {
     context.fillStyle = bodyGlow;
     context.fillRect(0, 0, width, height);
 
+    // Every ~2.2s a random fragment flickers for a fraction of it (ambient interference).
+    const glitchCycle = time * 0.45;
+    const glitchFragment = Math.floor(hash(Math.floor(glitchCycle), 7) * SHORT.length);
+    const glitchOn = !reducedMotion && glitchCycle % 1 < 0.12;
+
     // Painter's order: far side first so near-side phrases sit on top.
     const ordered = ANCHORS.map((anchor) => ({
       anchor,
@@ -162,37 +194,57 @@ export class PolicyHeroPhraseTerrain extends HTMLElement {
       const surfaceX = point.x * 0.72 - point.y * 0.44;
       const band = Math.exp(-Math.pow((surfaceX - sweep) / 0.22, 2));
       const directional = clamp((-point.x * 0.5 + point.y * 0.68 + 0.46) / 1.42);
-      const x = center.x + point.x * radiusX;
+      let x = center.x + point.x * radiusX;
       let y = center.y - point.y * radiusY;
 
       let alpha = clamp(0.05 + depthN * 0.34 + directional * 0.24 + band * 0.42) * fade;
       let k = scale * anchor.size * (0.42 + depthN * 0.62);
 
-      // Local hover heat: phrases near the cursor brighten, enlarge and lift toward the viewer.
+      // Gravity field: phrases inside a generous radius are pulled toward the cursor with a
+      // smooth falloff (nearest strongest), brighten, enlarge and resolve to white. The pull
+      // scales with the eased pointer strength, so phrases drift back when the cursor leaves.
       let heat = 0;
       if (strength > 0.01) {
-        const distance = Math.hypot(cursorX - x, cursorY - y);
+        const dx = cursorX - x;
+        const dy = cursorY - y;
+        const distance = Math.hypot(dx, dy);
         if (distance < hoverRadius) {
-          heat = clamp(Math.pow(1 - distance / hoverRadius, 2) * strength);
+          heat = clamp(smooth(1 - distance / hoverRadius) * strength);
+          const pull = heat * 0.26;
+          x += dx * pull;
+          y += dy * pull;
           alpha = clamp(alpha + heat * 0.8);
-          k += heat * 0.5 * scale * anchor.size;
+          k += heat * 0.55 * scale * anchor.size;
           y -= heat * 3 * scale;
         }
       }
       if (alpha < 0.02) return;
 
-      // Metrics are colour-independent, so size from the white base and overlay green on heat.
+      // Metrics are colour-independent, so size from the green base and overlay white on heat.
       const base = sprite(anchor.fragment, false);
       const drawW = base.w * k;
       const drawH = base.h * k;
       // Keep the sprite fully inside the canvas so no phrase is cut off at the frame edge.
       const drawX = Math.min(Math.max(x - drawW / 2, 2), width - drawW - 2);
       const drawY = y - drawH / 2;
+
+      // Stronger, steadier slice on hovered phrases as they resolve; a brief flicker otherwise.
+      const glitching = anchor.fragment === glitchFragment && glitchOn;
+      const slice = reducedMotion ? 0 : heat > 0.12 ? heat * 2.4 : glitching ? 3 : 0;
+
       context.globalAlpha = alpha;
-      context.drawImage(base.canvas, drawX, drawY, drawW, drawH);
+      drawPhrase(context, base.canvas, drawX, drawY, drawW, drawH, slice);
       if (heat > 0.01) {
         context.globalAlpha = alpha * smooth(clamp(heat));
-        context.drawImage(sprite(anchor.fragment, true).canvas, drawX, drawY, drawW, drawH);
+        drawPhrase(
+          context,
+          sprite(anchor.fragment, true).canvas,
+          drawX,
+          drawY,
+          drawW,
+          drawH,
+          slice,
+        );
       }
     });
     context.globalAlpha = 1;
