@@ -33,8 +33,6 @@ export const POLICY_FRAGMENTS = [
   'public climate-metrics registry',
 ];
 
-export const ORGANISATIONS = ['EC', 'UN', 'ACM', 'IEEE', 'ISO', 'OWASP', 'LF AI'];
-
 export interface SphereDot {
   elevation: number;
   latitude: number;
@@ -48,26 +46,6 @@ export const smooth = (value: number) => value * value * (3 - 2 * value);
 export const hash = (index: number, salt = 0) => {
   const value = Math.sin(index * 127.1 + salt * 311.7) * 43758.5453;
   return value - Math.floor(value);
-};
-
-export const createSphereDots = (rows: number, columns: number, salt = 0): SphereDot[] => {
-  const dots: SphereDot[] = [];
-  for (let row = 0; row < rows; row += 1) {
-    const rowProgress = (row + 0.5) / rows;
-    const latitude = (rowProgress - 0.5) * Math.PI;
-    const rowColumns = Math.max(12, Math.round(columns * (0.44 + Math.cos(latitude) * 0.56)));
-    for (let column = 0; column < rowColumns; column += 1) {
-      const seed = hash(row * columns + column, salt);
-      const longitude =
-        (column / rowColumns) * Math.PI * 2 + latitude * 0.22 + (seed - 0.5) * 0.025;
-      const ridge =
-        Math.sin(longitude * 3.1 + latitude * 4.7) * 0.035 +
-        Math.sin(longitude * 7.3 - latitude * 2.9) * 0.018 +
-        Math.cos(longitude * 1.7 + latitude * 8.2) * 0.013;
-      dots.push({ elevation: ridge, latitude, longitude, seed });
-    }
-  }
-  return dots;
 };
 
 export const spherePoint = (dot: SphereDot, rotation: number) => {

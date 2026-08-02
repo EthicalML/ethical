@@ -1,4 +1,4 @@
-// Shared isometric vocabulary for the policy hero iso studies (v4 assembly, v5 circuit):
+// Shared isometric vocabulary for the policy hero citadel study (v2 policy circuit):
 // a 2:1 axonometric projector, a dark-faced hairline cube, and edge helpers for pulses.
 
 export type IsoPoint = [number, number];
@@ -12,8 +12,6 @@ export const createIso = (unit: number, originX: number, originY: number): IsoPr
     originY + (gx + gz) * 0.5 * unit - gy * unit,
   ];
 };
-
-export const isoDepth = (gx: number, gy: number, gz: number) => gx + gz + gy * 0.6;
 
 export const lerpPoint = (a: IsoPoint, b: IsoPoint, t: number): IsoPoint => [
   a[0] + (b[0] - a[0]) * t,
