@@ -1,14 +1,11 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import AchievementGrid from '../../components/AchievementGrid.astro';
 import AchievementNeonRendition from '../../components/AchievementNeonRendition.astro';
-import AchievementRendition from '../../components/AchievementRendition.astro';
-import AchievementVisual from '../../components/AchievementVisual.astro';
 import PrototypeSwitcher from '../../components/PrototypeSwitcher.astro';
 
 const frontmatter = {
   title: 'Policy achievement prototypes',
-  description: 'Five composition and motion studies for the policy achievement record.',
+  description: 'Five triggered-lego studies for the policy achievement record.',
 };
 
 const cards = [
@@ -17,8 +14,6 @@ const cards = [
     eyebrow: 'EU · GPAI CODE OF PRACTICE',
     title: '8 of 12',
     glyph: 'eu-adoption' as const,
-    description:
-      "Recommendations adopted. ACM's second-draft response states that “eight (8) out of twelve (12) initial recommendations … are integrated in the main text of the Second Draft”.",
     summary: 'Eight recommendations entered the Second Draft of the GPAI Code.',
     links: [
       {
@@ -32,7 +27,6 @@ const cards = [
     eyebrow: 'UNITED KINGDOM · AI REGULATION',
     title: '13 of 14',
     glyph: 'uk-adoption' as const,
-    description: 'Recommendations adopted. The total is owner-attested. The 2022 framework comments are the related first-stage artefact.',
     summary: 'Owner-attested adoption total, with the 2022 comments as the related artefact.',
     links: [
       {
@@ -46,8 +40,6 @@ const cards = [
     eyebrow: 'CITED INTO THE CODE',
     title: 'MLSecOps in the Code',
     glyph: 'citation-network' as const,
-    description:
-      "Both GPAI responses cite the Institute's MLSecOps framework in Recommendation 10 alongside MITRE ATT&CK, OWASP and UK NCSC as taxonomies for the Commission to build on.",
     summary: 'Both GPAI responses cite the framework beside MITRE, OWASP and UK NCSC.',
     links: [
       { label: 'Explore MLSecOps', href: '/frameworks/security/' },
@@ -62,7 +54,6 @@ const cards = [
     eyebrow: 'UNITED NATIONS',
     title: 'Chair, Principles Committee',
     glyph: 'un-chair' as const,
-    description: 'The appointment covers the Data Governance Guidelines developed through the UN Commission on Science and Technology for Development.',
     summary: 'Data Governance Guidelines at the UN Commission on Science and Technology for Development.',
     links: [
       {
@@ -76,7 +67,6 @@ const cards = [
     eyebrow: 'ACM POLICY LEADERSHIP',
     title: 'Founding in Europe and LATAM',
     glyph: 'acm-bridges' as const,
-    description: "The Institute's Chief Scientist founded ACM's AI policy committee work in Europe and is a founding committee member for LATAM.",
     summary: 'Founding policy leadership in Europe, followed by a founding committee role in LATAM.',
     links: [{ label: 'ACM volunteer record', href: 'https://www.acm.org/volunteers/volunteer/saucedo_9722274' }],
   },
@@ -85,8 +75,6 @@ const cards = [
     eyebrow: 'THE THROUGH-LINE',
     title: '2021 to 2026',
     glyph: 'policy-timeline' as const,
-    description:
-      'The 2021 AI Act comments called for continuous post-deployment oversight of self-modifying systems. The 2026 brief applies the same position to agentic frontier models.',
     summary: 'Continuous oversight from the 2021 AI Act comments to the 2026 agentic brief.',
     links: [
       { label: '2021 comments', href: 'https://www.acm.org/binaries/content/assets/public-policy/europe-tpc-comments-ai-consultation.pdf' },
@@ -95,91 +83,60 @@ const cards = [
   },
 ];
 
-const orders = [3, 7, 10, 5, 13, 15];
+const variations = [
+  {
+    value: 1 as const,
+    label: 'V1 · BASE',
+    eyebrow: 'V1 · THE BASE, EXACT',
+    description: 'The selected triggered-lego composition with the fixed entrance and card-shift reveal.',
+  },
+  {
+    value: 2 as const,
+    label: 'V2 · BLACK',
+    eyebrow: 'V2 · PITCH-BLACK CARDS',
+    description: 'True-black content surfaces leave structure to the hairlines and revealed neon.',
+  },
+  {
+    value: 3 as const,
+    label: 'V3 · CASCADE',
+    eyebrow: 'V3 · OWN ARRANGEMENT',
+    description: 'A diagonal cascade steps from the upper-left anchor into open space on the right.',
+  },
+  {
+    value: 4 as const,
+    label: 'V4 · GHOST',
+    eyebrow: 'V4 · GHOST NUMERALS',
+    description: 'Oversized clipped identifiers replace icon boxes, with a landing rule across each card.',
+  },
+  {
+    value: 5 as const,
+    label: 'V5 · MICRO',
+    eyebrow: 'V5 · LIVE MICRO-ELEMENTS',
+    description: 'Small edge instruments replace icons and carry restrained, card-specific signals.',
+  },
+];
 ---
 
 <BaseLayout frontmatter={frontmatter}>
   <header class="prototype-header">
     <p class="eyebrow">PROTOTYPE · POLICY ACHIEVEMENTS</p>
-    <h1>How should the achievements assemble?</h1>
-    <p>Compare five composition and motion studies built from the same six policy achievements.</p>
+    <h1>Five studies from one lego base.</h1>
+    <p>Every variation shares the same later trigger, compact collage, one-second card shift and clipped neon reveal.</p>
   </header>
 
-  <PrototypeSwitcher
-    options={[
-      { label: 'V1 · CURRENT', value: '1' },
-      { label: 'V2 · CLEAN', value: '2' },
-      { label: 'V3 · LIGHT', value: '3' },
-      { label: 'V4 · SCROLL LEGO', value: '4' },
-      { label: 'V5 · TRIGGERED LEGO', value: '5' },
-    ]}
-  >
-    <section class="policy-section prototype-achievements" data-prototype-variant="1">
-      <header>
-        <p class="eyebrow">V1 · CURRENT COLLAGE</p>
-        <h2>Highlight achievements</h2>
-      </header>
-      <AchievementGrid>
-        {
-          cards.map((card, index) => (
-            <article class="achievement-card" data-piece={card.piece} data-order={orders[index]} data-hover={index < 2 ? 'slide' : 'tilt'}>
-              <AchievementVisual variant={card.glyph} />
-              <div class="achievement-card-copy">
-                <span>{card.eyebrow}</span>
-                <strong>{card.title}</strong>
-                <p>{card.description}</p>
-                <p class="achievement-links">
-                  {card.links.map((link) => {
-                    const external = link.href.startsWith('http');
-                    return (
-                      <a href={link.href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
-                        {link.label} →
-                      </a>
-                    );
-                  })}
-                </p>
-              </div>
-            </article>
-          ))
-        }
-      </AchievementGrid>
-    </section>
-
-    <section class="rendition-section" data-prototype-variant="2" hidden>
-      <header>
-        <p class="eyebrow">V2 · CLEAN SHARED GRID</p>
-        <h2>Highlight achievements</h2>
-        <p>Flush seams, two quiet fillers, one structural accent and more open card interiors.</p>
-      </header>
-      <AchievementRendition variant="clean" cards={cards} />
-    </section>
-
-    <section class="rendition-section" data-prototype-variant="3" hidden>
-      <header>
-        <p class="eyebrow">V3 · LIGHT SURFACE</p>
-        <h2>Highlight achievements</h2>
-        <p>A strict two-row system using warm light surfaces against the Institute's dark field.</p>
-      </header>
-      <AchievementRendition variant="light" cards={cards} />
-    </section>
-
-    <section class="rendition-section" data-prototype-variant="4" hidden>
-      <header>
-        <p class="eyebrow">V4 · SCROLL-LINKED LEGO</p>
-        <h2>Highlight achievements</h2>
-        <p>Scroll assembles the dark blocks. Shift a card to uncover its stationary neon layer.</p>
-      </header>
-      <AchievementNeonRendition mode="scroll" cards={cards} />
-    </section>
-
-    <section class="rendition-section" data-prototype-variant="5" hidden>
-      <header>
-        <p class="eyebrow">V5 · TRIGGERED LEGO</p>
-        <h2>Highlight achievements</h2>
-        <p>The same neon reveal with a fast, once-only sequence of hard landings.</p>
-      </header>
-      <AchievementNeonRendition mode="triggered" cards={cards} />
-    </section>
+  <PrototypeSwitcher options={variations.map(({ label, value }) => ({ label, value: String(value) }))}>
+    {
+      variations.map((variation, index) => (
+        <section class="rendition-section" data-prototype-variant={String(variation.value)} hidden={index !== 0}>
+          <header>
+            <p class="eyebrow">{variation.eyebrow}</p>
+            <h2>Highlight achievements</h2>
+            <p>{variation.description}</p>
+          </header>
+          <AchievementNeonRendition variant={variation.value} cards={cards} />
+        </section>
+      ))
+    }
   </PrototypeSwitcher>
 </BaseLayout>
 
