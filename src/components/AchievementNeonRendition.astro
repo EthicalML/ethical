@@ -289,10 +289,15 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
               <p>{card.summary}</p>
               {isCollage && card.footnote && <span class="footnote">{card.footnote}</span>}
               <footer>
-                {(block.size === 'long' ? card.links : card.links.slice(0, 1)).map((link) => {
+                {(variant === 1 ? card.links.slice(0, 1) : block.size === 'long' ? card.links : card.links.slice(0, 1)).map((link) => {
                   const external = link.href.startsWith('http');
                   return (
-                    <a href={link.href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
+                    <a
+                      class:list={[{ 'button primary': variant === 1 }]}
+                      href={link.href}
+                      target={external ? '_blank' : undefined}
+                      rel={external ? 'noopener noreferrer' : undefined}
+                    >
                       {link.label} →
                     </a>
                   );
@@ -361,6 +366,32 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
       window.addEventListener('scroll', this.requestEntranceFrame, { passive: true, signal: this.controller.signal });
       window.addEventListener('resize', this.requestEntranceFrame, { passive: true, signal: this.controller.signal });
       this.requestEntranceFrame();
+
+      // The freeform collage shrinks proportionally below its design width (the
+      // stacked column takes over under 640px via CSS).
+      const freeformCanvas = this.querySelector<HTMLElement>('.neon-canvas[data-freeform]');
+      if (freeformCanvas) {
+        const design = 1100;
+        const naturalHeight = Number.parseFloat(getComputedStyle(freeformCanvas).getPropertyValue('--freeform-h')) || 973;
+        const applyScale = () => {
+          const width = this.clientWidth;
+          if (window.innerWidth <= 640 || width >= design) {
+            delete this.dataset.scaled;
+            freeformCanvas.style.transform = '';
+            freeformCanvas.style.width = '';
+            freeformCanvas.style.marginBottom = '';
+            return;
+          }
+          const scale = width / design;
+          this.dataset.scaled = 'true';
+          freeformCanvas.style.width = `${design}px`;
+          freeformCanvas.style.transformOrigin = 'top left';
+          freeformCanvas.style.transform = `scale(${scale})`;
+          freeformCanvas.style.marginBottom = `${-naturalHeight * (1 - scale)}px`;
+        };
+        applyScale();
+        window.addEventListener('resize', applyScale, { passive: true, signal: this.controller.signal });
+      }
     }
 
     disconnectedCallback() {
@@ -453,6 +484,9 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
 <style>
   .achievement-neon-rendition {
     display: block;
+  }
+  .achievement-neon-rendition[data-scaled='true'] {
+    overflow-x: clip;
   }
   /* A fixed cell grid driven by grid-template-areas from the layout map. Long
      blocks span two cells; duds fill the gaps. Row height and canvas width are
@@ -597,18 +631,21 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
     text-transform: uppercase;
     white-space: nowrap;
   }
+  [data-variation='1'] .neon-copy > .eyebrow {
+    font-size: 7.5px;
+  }
   [data-variation='2'] .neon-copy > .eyebrow {
-    font-size: 8px;
+    font-size: 9.5px;
   }
   /* The isometric structure takes the ghost treatment: oversized, dim, anchored
      to the bottom-right with part of it cropped past the corner. */
   .iso-ghost {
-    bottom: -12%;
-    height: 62%;
+    bottom: -26px;
+    height: 150px;
     opacity: 0.6;
     position: absolute;
-    right: -8%;
-    width: 58%;
+    right: -24px;
+    width: 220px;
     z-index: 1;
   }
   .iso-group {
@@ -837,10 +874,8 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
 
   /* --- Responsive: hold the grid to a tablet width, then a single column --- */
   @media (max-width: 900px) {
-    .neon-canvas,
-    [data-variation='2'] .neon-canvas,
-    [data-variation='3'] .neon-canvas,
-    .neon-canvas[data-freeform] {
+    .neon-canvas:not([data-freeform]),
+    [data-variation='2'] .neon-canvas:not([data-freeform]) {
       display: flex;
       flex-direction: column;
       gap: 14px;
@@ -848,7 +883,7 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
       max-width: none;
       padding-inline: 34px;
     }
-    .neon-slot {
+    .neon-canvas:not([data-freeform]) .neon-slot {
       grid-area: auto !important;
       height: 300px !important;
       left: auto !important;
@@ -856,7 +891,30 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
       top: auto !important;
       width: auto !important;
     }
-    .dud {
+    .neon-canvas:not([data-freeform]) .dud {
+      display: none;
+    }
+  }
+  @media (max-width: 640px) {
+    .neon-canvas[data-freeform] {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      height: auto !important;
+      margin-bottom: 0 !important;
+      max-width: none;
+      padding-inline: 34px;
+      transform: none !important;
+      width: auto !important;
+    }
+    .neon-canvas[data-freeform] .neon-slot {
+      height: 300px !important;
+      left: auto !important;
+      position: relative;
+      top: auto !important;
+      width: auto !important;
+    }
+    .neon-canvas[data-freeform] .dud {
       display: none;
     }
   }
