@@ -12,22 +12,76 @@ interface AchievementCard {
   title: string;
 }
 
+interface Block {
+  area: string;
+  dir: number;
+  size: 'long' | 'short';
+}
+
+interface Layout {
+  areas: string[];
+  blocks: Record<string, Block>;
+  duds: string[];
+}
+
 interface Props {
   cards: AchievementCard[];
+  layout: Layout;
   variant: 1 | 2 | 3 | 4 | 5;
 }
 
-const { cards, variant } = Astro.props;
+const { cards, layout, variant } = Astro.props;
 
 // Card colour: green for the two adoption cards, then blue, purple, orange, red.
 const neon = ['#5ee6a0', '#35d787', '#38bdf8', '#a855f7', '#ff5c1f', '#ff3b57'];
 const ghostLabels = ['8/12', '13/14', 'CODE', 'UN', 'ACM', '2026'];
 const figureLabels = ['8 / 12', '13 / 14', 'CODE', 'UN', 'ACM', '2026'];
-// Reveal travel per card, alternating direction. Speed/travel are owner-approved.
-const shifts = [-58, 58, -58, 58, -58, 58];
+// A long block slides further than a short one; direction is the block sign.
+const longTravel = 58;
+const shortTravel = 46;
+const dudTravel = 26;
 
 const round = (n: number) => Math.round(n * 100) / 100;
 const point = (p: number[]) => `${round(p[0])},${round(p[1])}`;
+
+// ---------------------------------------------------------------------------
+// Wave placement, derived from the layout map so a new block is a data change.
+// grid-template-areas comes straight from the rows; entrance order is bottom-up
+// (blocks stack from the floor of the wave) so lower rows land first.
+// ---------------------------------------------------------------------------
+const grid = layout.areas.map((row) => row.trim().split(/\s+/));
+const columns = grid[0].length;
+const templateAreas = grid.map((row) => `"${row.join(' ')}"`).join(' ');
+const placement: Record<string, { col: number; rowBottom: number }> = {};
+grid.forEach((row, r) =>
+  row.forEach((token, c) => {
+    if (token === '.') return;
+    const seen = placement[token];
+    if (!seen) placement[token] = { col: c, rowBottom: r };
+    else {
+      seen.col = Math.min(seen.col, c);
+      seen.rowBottom = Math.max(seen.rowBottom, r);
+    }
+  }),
+);
+const orderOf = Object.fromEntries(
+  Object.keys(placement)
+    .sort((a, b) => placement[b].rowBottom - placement[a].rowBottom || placement[a].col - placement[b].col)
+    .map((token, index) => [token, index + 1]),
+);
+
+const placed = cards.map((card, index) => {
+  const block = layout.blocks[card.piece];
+  const order = orderOf[block.area];
+  const travel = block.size === 'long' ? longTravel : shortTravel;
+  return { card, index, block, order, shiftX: block.dir * travel };
+});
+const duds = layout.duds.map((area, i) => ({
+  area,
+  order: orderOf[area],
+  shiftX: (i % 2 ? -1 : 1) * dudTravel,
+  neon: neon[(i + 2) % neon.length],
+}));
 
 // Small deterministic generator so build output is stable.
 function rng(seed: number) {
@@ -39,7 +93,8 @@ function rng(seed: number) {
 }
 
 // ---------------------------------------------------------------------------
-// V2 isometric structures (30-degree projection, three-face shading)
+// V2 isometric structures (30-degree projection, three-face shading).
+// Long uses the full structure; short crops to the first three cubes, no links.
 // ---------------------------------------------------------------------------
 const ISO_A = 11;
 const ISO_FH = 13;
@@ -158,13 +213,16 @@ const isoStructures = [
     ],
   },
 ];
+function isoRender(cubes: { x: number; y: number; z: number; fill?: boolean }[], links: number[][], ox: number, oy: number) {
+  return { faces: isoFaces(cubes, ox, oy), links: links.map((l) => `M${point(isoTop(l[0], l[1], l[2], ox, oy))} L${point(isoTop(l[3], l[4], l[5], ox, oy))}`) };
+}
 const isoByCard = isoStructures.map((s) => ({
-  faces: isoFaces(s.cubes, s.ox, s.oy),
-  links: s.links.map((l) => `M${point(isoTop(l[0], l[1], l[2], s.ox, s.oy))} L${point(isoTop(l[3], l[4], l[5], s.ox, s.oy))}`),
+  long: isoRender(s.cubes, s.links, s.ox, s.oy),
+  short: isoRender(s.cubes.slice(0, 3), [], 30, s.oy + 6),
 }));
 
 // ---------------------------------------------------------------------------
-// V3 transformer plates (mix of hexagon, triangles and squares per card)
+// V3 transformer plates. Short keeps the hex core plus two plates.
 // ---------------------------------------------------------------------------
 function transformerPanels(seed: number) {
   const rand = rng(seed + 11);
@@ -184,7 +242,6 @@ function transformerPanels(seed: number) {
   panels.push({ pts: [point([midTop, 0]), point([100, 0]), point([100, cy]), point([cx, 0])].join(' '), tx: 4, ty: -3, rot: 2 });
   panels.push({ pts: [point([0, cy]), point([0, 100]), point([cx, 100])].join(' '), tx: -4, ty: 4, rot: 2 });
   panels.push({ pts: [point([100, cy]), point([100, 100]), point([cx, 100])].join(' '), tx: 4 * flip, ty: 4, rot: -2 });
-  // a small extra plate that varies the mix per card
   if (seed % 2 === 0) {
     panels.push({ pts: [point([cx - 9, 84]), point([cx + 9, 84]), point([cx, 96])].join(' '), tx: 0, ty: 5, rot: 0 });
   } else {
@@ -192,10 +249,14 @@ function transformerPanels(seed: number) {
   }
   return panels;
 }
-const transformerByCard = [0, 1, 2, 3, 4, 5].map((i) => transformerPanels(i));
+const transformerByCard = [0, 1, 2, 3, 4, 5].map((i) => {
+  const full = transformerPanels(i);
+  return { long: full, short: [full[0], full[1], full[3]] };
+});
 
 // ---------------------------------------------------------------------------
-// V4 volcanic cracks and V5 circuit etch share per-card origin corners
+// V4 volcanic cracks and V5 circuit etch share per-card origin corners.
+// Short renditions run fewer steps and drop the branches.
 // ---------------------------------------------------------------------------
 const origins = [
   [8, 8],
@@ -205,12 +266,11 @@ const origins = [
   [50, 8],
   [8, 52],
 ];
-function crackSet(origin: number[], seed: number) {
+function crackSet(origin: number[], seed: number, steps: number, withBranches: boolean) {
   const rand = rng(seed + 5);
   const [sx, sy] = origin;
   const tx = sx < 50 ? 96 : 4;
   const ty = sy < 50 ? 92 : 8;
-  const steps = 6;
   const pts: number[][] = [[sx, sy]];
   const dxp = ty - sy;
   const dyp = -(tx - sx);
@@ -229,11 +289,12 @@ function crackSet(origin: number[], seed: number) {
     const b2 = [round(b1[0] + dir * (7 + rand() * 9)), round(b1[1] + (rand() - 0.5) * 22)];
     return `M${point([ax, ay])} L${point(b1)} L${point(b2)}`;
   };
-  return { main, branches: [branch(2, 1), branch(4, -1)], hint: `M${point([sx, sy])} L${point(pts[1])}`, origin };
+  const branches = withBranches ? [branch(2, 1), branch(Math.min(4, steps), -1)] : [];
+  return { main, branches, hint: `M${point([sx, sy])} L${point(pts[1])}`, origin };
 }
-const cracksByCard = origins.map((o, i) => crackSet(o, i));
+const cracksByCard = origins.map((o, i) => ({ long: crackSet(o, i, 6, true), short: crackSet(o, i, 3, false) }));
 
-function circuitSet(origin: number[], seed: number) {
+function circuitSet(origin: number[], seed: number, iters: number, withBranches: boolean) {
   const rand = rng(seed + 3);
   const [sx, sy] = origin;
   const dirX = sx < 50 ? 1 : -1;
@@ -244,7 +305,7 @@ function circuitSet(origin: number[], seed: number) {
   pts.push([round(px), round(py)]);
   const pads: number[][] = [];
   let horiz = true;
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < iters; i++) {
     const step = 12 + rand() * 15;
     if (horiz) px += dirX * step;
     else py += dirY * step;
@@ -257,128 +318,151 @@ function circuitSet(origin: number[], seed: number) {
   const terminus = pts[pts.length - 1];
   const main = 'M' + pts.map(point).join(' L');
   const branches: string[] = [];
-  for (const idx of [2, 4]) {
-    const [ax, ay] = pts[idx];
-    const bx = Math.max(8, Math.min(92, round(ax + dirX * (10 + rand() * 8))));
-    const by = Math.max(8, Math.min(92, round(ay - dirY * (8 + rand() * 8))));
-    branches.push(`M${point([ax, ay])} L${point([bx, ay])} L${point([bx, by])}`);
-    pads.push([bx, by]);
+  if (withBranches) {
+    for (const idx of [2, 4]) {
+      const [ax, ay] = pts[idx];
+      const bx = Math.max(8, Math.min(92, round(ax + dirX * (10 + rand() * 8))));
+      const by = Math.max(8, Math.min(92, round(ay - dirY * (8 + rand() * 8))));
+      branches.push(`M${point([ax, ay])} L${point([bx, ay])} L${point([bx, by])}`);
+      pads.push([bx, by]);
+    }
   }
   return { main, branches, pads, terminus, hint: `M${point([sx, sy])} L${point(pts[1])}`, origin };
 }
-const circuitByCard = origins.map((o, i) => circuitSet(o, i));
+const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), short: circuitSet(o, i, 3, false) }));
 ---
 
 <achievement-neon-rendition class="achievement-neon-rendition" data-variation={variant}>
-  <div class="neon-canvas">
+  <div class="neon-canvas" style={`--columns:${columns};--rows:${grid.length};grid-template-areas:${templateAreas}`}>
     {
-      cards.map((card, index) => (
-        <div
-          class="lego-piece neon-slot"
-          data-lego-piece
-          data-neon-slot
-          data-order={index + 1}
-          data-piece={card.piece}
-          style={`--neon:${neon[index]};--shift-x:${shifts[index]}px;--drop-rotation:${index % 2 ? -1.6 : 1.6}deg`}
-        >
-          <i class="neon-underlay" data-neon-block aria-hidden="true" />
-          <article class="neon-card">
-            {(variant === 1 || variant === 2) && (
-              <span class="ghost-mark" aria-hidden="true">
-                {ghostLabels[index]}
-              </span>
-            )}
-            {(variant === 1 || variant === 2) && <i class="ghost-rule" aria-hidden="true" />}
-
-            {variant === 2 && (
-              <span class="iso-stage" aria-hidden="true">
-                <svg viewBox="0 0 120 96" preserveAspectRatio="xMidYMid meet">
-                  <g class="iso-group">
-                    {isoByCard[index].links.map((d) => (
-                      <path class="iso-link" d={d} />
-                    ))}
-                    {isoByCard[index].faces.map((face) => (
-                      <path class:list={['iso-face', `iso-${face.face}`, { 'iso-fill': face.fill }]} d={face.d} />
-                    ))}
-                  </g>
-                </svg>
-              </span>
-            )}
-
-            {variant === 3 && (
-              <span class="tf-stage" aria-hidden="true">
-                <i class="tf-glow" />
-                <svg class="tf-plates" viewBox="0 0 100 100" preserveAspectRatio="none">
-                  {transformerByCard[index].map((panel) => (
-                    <polygon
-                      class:list={['tf-panel', { 'tf-core': panel.core }]}
-                      points={panel.pts}
-                      style={`--tx:${panel.tx}px;--ty:${panel.ty}px;--rot:${panel.rot}deg`}
-                    />
-                  ))}
-                </svg>
-              </span>
-            )}
-
-            {variant === 4 && (
-              <span class="vc-stage" aria-hidden="true">
-                <span class="vc-shimmer" style={`left:${cracksByCard[index].origin[0]}%;top:${cracksByCard[index].origin[1]}%`} />
-                <svg class="vc-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-                  <g class="vc-glow">
-                    <path class="vc-glow-path" d={cracksByCard[index].main} pathLength="100" />
-                    {cracksByCard[index].branches.map((d) => (
-                      <path class="vc-glow-path" d={d} pathLength="100" />
-                    ))}
-                  </g>
-                  <path class="vc-hint" d={cracksByCard[index].hint} />
-                  <path class="vc-crack vc-crack-main" d={cracksByCard[index].main} pathLength="100" />
-                  {cracksByCard[index].branches.map((d) => (
-                    <path class="vc-crack vc-crack-branch" d={d} pathLength="100" />
-                  ))}
-                </svg>
-              </span>
-            )}
-
-            {variant === 5 && (
-              <span class="ce-stage" aria-hidden="true">
-                <svg class="ce-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-                  <path class="ce-hint" d={circuitByCard[index].hint} />
-                  <g class="ce-traces">
-                    <path class="ce-trace ce-trace-main" d={circuitByCard[index].main} pathLength="100" />
-                    {circuitByCard[index].branches.map((d) => (
-                      <path class="ce-trace ce-trace-branch" d={d} pathLength="100" />
-                    ))}
-                  </g>
-                  <path class="ce-pulse" d={circuitByCard[index].main} pathLength="100" />
-                  <g class="ce-pads">
-                    {circuitByCard[index].pads.map((p) => (
-                      <rect class="ce-pad" x={round(p[0] - 1.6)} y={round(p[1] - 1.6)} width="3.2" height="3.2" />
-                    ))}
-                    <circle class="ce-via" cx={circuitByCard[index].terminus[0]} cy={circuitByCard[index].terminus[1]} r="2.4" />
-                  </g>
-                </svg>
-                <span class="ce-figure" style={`left:${circuitByCard[index].terminus[0]}%;top:${circuitByCard[index].terminus[1]}%`}>
-                  {figureLabels[index]}
+      placed.map(({ card, index, block, order, shiftX }) => {
+        const iso = isoByCard[index][block.size];
+        const tf = transformerByCard[index][block.size];
+        const vc = cracksByCard[index][block.size];
+        const ce = circuitByCard[index][block.size];
+        return (
+          <div
+            class="lego-piece neon-slot"
+            data-lego-piece
+            data-neon-slot
+            data-order={order}
+            data-size={block.size}
+            data-piece={card.piece}
+            style={`grid-area:${block.area};--neon:${neon[index]};--shift-x:${shiftX}px;--drop-rotation:${order % 2 ? -1.6 : 1.6}deg;--fall-dur:${block.size === 'long' ? 440 : 320}ms`}
+          >
+            <i class="neon-underlay" data-neon-block aria-hidden="true" />
+            <article class="neon-card">
+              {(variant === 1 || variant === 2) && (
+                <span class="ghost-mark" aria-hidden="true">
+                  {ghostLabels[index]}
                 </span>
-              </span>
-            )}
+              )}
+              {(variant === 1 || variant === 2) && <i class="ghost-rule" aria-hidden="true" />}
 
-            <div class="neon-copy">
-              <span>{card.eyebrow}</span>
-              <strong>{card.title}</strong>
-              <p>{card.summary}</p>
-              <footer>
-                {card.links.map((link) => {
-                  const external = link.href.startsWith('http');
-                  return (
-                    <a href={link.href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
-                      {link.label} →
-                    </a>
-                  );
-                })}
-              </footer>
-            </div>
-          </article>
+              {variant === 2 && (
+                <span class="stage iso-stage" aria-hidden="true">
+                  <svg viewBox="0 0 120 96" preserveAspectRatio="xMidYMid meet">
+                    <g class="iso-group">
+                      {iso.links.map((d) => (
+                        <path class="iso-link" d={d} />
+                      ))}
+                      {iso.faces.map((face) => (
+                        <path class:list={['iso-face', `iso-${face.face}`, { 'iso-fill': face.fill }]} d={face.d} />
+                      ))}
+                    </g>
+                  </svg>
+                </span>
+              )}
+
+              {variant === 3 && (
+                <span class="stage tf-stage" aria-hidden="true">
+                  <i class="tf-glow" />
+                  <svg class="tf-plates" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    {tf.map((panel) => (
+                      <polygon
+                        class:list={['tf-panel', { 'tf-core': panel.core }]}
+                        points={panel.pts}
+                        style={`--tx:${panel.tx}px;--ty:${panel.ty}px;--rot:${panel.rot}deg`}
+                      />
+                    ))}
+                  </svg>
+                </span>
+              )}
+
+              {variant === 4 && (
+                <span class="stage vc-stage" aria-hidden="true">
+                  <span class="vc-shimmer" style={`left:${vc.origin[0]}%;top:${vc.origin[1]}%`} />
+                  <svg class="vc-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <g class="vc-glow">
+                      <path class="vc-glow-path" d={vc.main} pathLength="100" />
+                      {vc.branches.map((d) => (
+                        <path class="vc-glow-path" d={d} pathLength="100" />
+                      ))}
+                    </g>
+                    <path class="vc-hint" d={vc.hint} />
+                    <path class="vc-crack vc-crack-main" d={vc.main} pathLength="100" />
+                    {vc.branches.map((d) => (
+                      <path class="vc-crack vc-crack-branch" d={d} pathLength="100" />
+                    ))}
+                  </svg>
+                </span>
+              )}
+
+              {variant === 5 && (
+                <span class="stage ce-stage" aria-hidden="true">
+                  <svg class="ce-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <path class="ce-hint" d={ce.hint} />
+                    <g class="ce-traces">
+                      <path class="ce-trace ce-trace-main" d={ce.main} pathLength="100" />
+                      {ce.branches.map((d) => (
+                        <path class="ce-trace ce-trace-branch" d={d} pathLength="100" />
+                      ))}
+                    </g>
+                    <path class="ce-pulse" d={ce.main} pathLength="100" />
+                    <g class="ce-pads">
+                      {ce.pads.map((p) => (
+                        <rect class="ce-pad" x={round(p[0] - 1.6)} y={round(p[1] - 1.6)} width="3.2" height="3.2" />
+                      ))}
+                      <circle class="ce-via" cx={ce.terminus[0]} cy={ce.terminus[1]} r="2.4" />
+                    </g>
+                  </svg>
+                  <span class="ce-figure" style={`left:${ce.terminus[0]}%;top:${ce.terminus[1]}%`}>
+                    {figureLabels[index]}
+                  </span>
+                </span>
+              )}
+
+              <div class="neon-copy">
+                <span>{card.eyebrow}</span>
+                <strong>{card.title}</strong>
+                <p>{card.summary}</p>
+                <footer>
+                  {(block.size === 'long' ? card.links : card.links.slice(0, 1)).map((link) => {
+                    const external = link.href.startsWith('http');
+                    return (
+                      <a href={link.href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
+                        {link.label} →
+                      </a>
+                    );
+                  })}
+                </footer>
+              </div>
+            </article>
+          </div>
+        );
+      })
+    }
+    {
+      duds.map((dud) => (
+        <div
+          class="lego-piece dud"
+          data-lego-piece
+          data-order={dud.order}
+          data-size="short"
+          style={`grid-area:${dud.area};--neon:${dud.neon};--shift-x:${dud.shiftX}px;--drop-rotation:${dud.order % 2 ? -1.6 : 1.6}deg;--fall-dur:320ms`}
+        >
+          <i class="neon-underlay" aria-hidden="true" />
+          <span class="dud-face" aria-hidden="true" />
         </div>
       ))
     }
@@ -495,16 +579,18 @@ const circuitByCard = origins.map((o, i) => circuitSet(o, i));
   .achievement-neon-rendition {
     display: block;
   }
-  /* Shared equal-tile grid: three columns, two rows, degrading to two then one. */
+  /* The Wave: a fixed cell grid driven by grid-template-areas from the layout
+     map. Long blocks span two cells; duds fill the muted structure. The whole
+     canvas is 720px tall and clears the sticky navs inside a 900px viewport. */
   .neon-canvas {
     display: grid;
     gap: 16px;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(var(--columns), 1fr);
+    grid-template-rows: repeat(var(--rows), 168px);
     margin: 0 auto;
-    max-width: 1152px;
+    max-width: 1160px;
   }
   .neon-slot {
-    height: 384px;
     overflow: clip;
     position: relative;
     z-index: 2;
@@ -529,68 +615,126 @@ const circuitByCard = origins.map((o, i) => circuitSet(o, i));
     will-change: transform;
     z-index: 2;
   }
-  .neon-slot:nth-of-type(even) .neon-card {
+  .neon-slot[data-size='long'] .neon-card {
     background: #131615;
   }
 
-  /* --- Copy (identical across variants) --- */
+  /* --- Dud blocks: muted structure carrying its own neon under-block --- */
+  .dud {
+    overflow: clip;
+    position: relative;
+    z-index: 1;
+  }
+  .dud-face {
+    background: #101211;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    inset: 0;
+    position: absolute;
+    transform: translate3d(0, 0, 0);
+    transition: transform 1000ms cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 2;
+  }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .dud:hover .dud-face {
+      transform: translate3d(var(--shift-x), 0, 0);
+    }
+  }
+
+  /* --- Copy: long anchors to the left column, short fills the block --- */
   .neon-copy {
-    bottom: 20px;
+    bottom: 0;
     left: 0;
-    padding: 0 22px;
+    padding: 15px 18px 16px;
     position: absolute;
     right: 0;
-    top: 118px;
     z-index: 6;
+  }
+  .neon-slot[data-size='long'] .neon-copy {
+    right: 46%;
   }
   .neon-copy > span {
     color: var(--text-4);
     display: block;
-    font: var(--mono-8) / 1.35 var(--font-mono);
+    font: var(--mono-8) / 1.3 var(--font-mono);
     letter-spacing: 0.1em;
-    margin-bottom: 9px;
+    margin-bottom: 7px;
     text-transform: uppercase;
   }
   .neon-copy > strong {
     display: -webkit-box;
-    font: 300 clamp(26px, 2.15vw, 34px) / 1.04 var(--font-display);
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
     overflow: hidden;
+  }
+  .neon-slot[data-size='long'] .neon-copy > strong {
+    font: 300 clamp(30px, 3.4vw, 44px) / 1 var(--font-display);
+    letter-spacing: -0.02em;
+    -webkit-line-clamp: 2;
+  }
+  .neon-slot[data-size='short'] .neon-copy > strong {
+    font: 300 clamp(16px, 2vw, 18px) / 1.12 var(--font-display);
+    -webkit-line-clamp: 3;
   }
   .neon-copy > p {
     color: var(--text-2);
     display: -webkit-box;
     font-size: 12px;
-    line-height: 1.45;
-    margin: 9px 0 0;
+    line-height: 1.42;
+    margin: 8px 0 0;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 4;
+    -webkit-line-clamp: 2;
     overflow: hidden;
+  }
+  .neon-slot[data-size='short'] .neon-copy > p {
+    display: none;
   }
   footer {
     display: flex;
     flex-wrap: wrap;
-    gap: 5px 10px;
-    margin-top: 12px;
+    gap: 4px 10px;
+    margin-top: 10px;
   }
   footer a {
     color: var(--accent);
-    font: var(--mono-8) / 1.35 var(--font-mono);
+    font: var(--mono-8) / 1.3 var(--font-mono);
     letter-spacing: 0.05em;
     text-transform: uppercase;
   }
 
-  /* --- V1 / V2 ghost numerals --- */
+  /* --- Shared stage region (all SVG surfaces sit here) --- */
+  .stage {
+    position: absolute;
+    z-index: 2;
+  }
+  .neon-slot[data-size='long'] .stage {
+    bottom: 0;
+    left: 53%;
+    right: 0;
+    top: 0;
+  }
+  .neon-slot[data-size='short'] .stage {
+    height: 74px;
+    left: 0;
+    right: 0;
+    top: 0;
+  }
+
+  /* --- V1 / V2 ghost numerals (cropped by the block edge) --- */
   .ghost-mark {
     color: rgba(244, 242, 238, 0.05);
-    font: 300 clamp(96px, 12vw, 150px) / 0.8 var(--font-display);
+    font: 300 100px/0.8 var(--font-display);
     letter-spacing: -0.08em;
     position: absolute;
     right: -0.02em;
     top: -0.1em;
     white-space: nowrap;
     z-index: 1;
+  }
+  .neon-slot[data-size='long'] .ghost-mark {
+    font-size: clamp(86px, 9vw, 124px);
+  }
+  .neon-slot[data-size='short'] .ghost-mark {
+    font-size: clamp(56px, 8vw, 78px);
+    right: -0.04em;
   }
   .ghost-rule {
     background: var(--neon);
@@ -614,15 +758,7 @@ const circuitByCard = origins.map((o, i) => circuitSet(o, i));
     }
   }
 
-  /* --- V2 isometric stages (equal on every card) --- */
-  .iso-stage {
-    height: 118px;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-    z-index: 2;
-  }
+  /* --- V2 isometric stages --- */
   .iso-stage svg {
     height: 100%;
     width: 100%;
@@ -695,11 +831,6 @@ const circuitByCard = origins.map((o, i) => circuitSet(o, i));
   }
 
   /* --- V3 transformer plates --- */
-  .tf-stage {
-    inset: 0;
-    position: absolute;
-    z-index: 2;
-  }
   .tf-glow {
     background: radial-gradient(circle at 50% 42%, var(--neon), transparent 62%);
     inset: 0;
@@ -744,11 +875,6 @@ const circuitByCard = origins.map((o, i) => circuitSet(o, i));
   }
 
   /* --- V4 volcanic cracks --- */
-  .vc-stage {
-    inset: 0;
-    position: absolute;
-    z-index: 2;
-  }
   .vc-svg {
     height: 100%;
     inset: 0;
@@ -844,11 +970,6 @@ const circuitByCard = origins.map((o, i) => circuitSet(o, i));
   }
 
   /* --- V5 circuit etch --- */
-  .ce-stage {
-    inset: 0;
-    position: absolute;
-    z-index: 2;
-  }
   .ce-svg {
     height: 100%;
     inset: 0;
@@ -897,7 +1018,7 @@ const circuitByCard = origins.map((o, i) => circuitSet(o, i));
   }
   .ce-figure {
     color: var(--neon);
-    font: 300 22px/1 var(--font-display);
+    font: 300 20px/1 var(--font-display);
     letter-spacing: -0.02em;
     opacity: 0;
     position: absolute;
@@ -942,13 +1063,13 @@ const circuitByCard = origins.map((o, i) => circuitSet(o, i));
     }
   }
 
-  /* --- Lego entrance (shared) --- */
+  /* --- Lego entrance (shared; singles fall snappier than doubles) --- */
   achievement-neon-rendition[data-motion-ready='true']:not([data-entered='true']) [data-lego-piece] {
     opacity: 0;
     transform: translate3d(0, -150px, 0) rotate(var(--drop-rotation, 1.6deg));
   }
   achievement-neon-rendition[data-entered='true'] [data-lego-piece]:not([data-settled='true']) {
-    animation: lego-click 360ms cubic-bezier(0.18, 0.78, 0.22, 1) both;
+    animation: lego-click var(--fall-dur, 360ms) cubic-bezier(0.18, 0.78, 0.22, 1) both;
     animation-delay: calc(var(--lego-order) * 60ms);
   }
   [data-lego-piece][data-neighbour-nudge='true'] {
@@ -978,7 +1099,8 @@ const circuitByCard = origins.map((o, i) => circuitSet(o, i));
     }
   }
 
-  /* --- Slide reveal (shared) --- */
+  /* --- Slide reveal (shared; each block slides into its adjacent empty space,
+     the underlay showing behind it, the slot clip keeping the opposite edge clean) --- */
   @media (hover: hover) and (prefers-reduced-motion: no-preference) {
     .neon-slot:hover .neon-card {
       transform: translate3d(var(--shift-x), 0, 0);
@@ -990,34 +1112,49 @@ const circuitByCard = origins.map((o, i) => circuitSet(o, i));
     }
   }
 
-  /* --- Responsive --- */
-  @media (max-width: 1180px) {
-    .neon-slot {
-      height: 400px;
-    }
-  }
+  /* --- Responsive: hold the wave to a tablet width, then a single column --- */
   @media (max-width: 900px) {
     .neon-canvas {
+      display: flex;
+      flex-direction: column;
       gap: 14px;
-      grid-template-columns: repeat(2, 1fr);
+      max-width: none;
       padding-inline: 34px;
     }
     .neon-slot {
-      height: 384px;
+      grid-area: auto !important;
+      height: 300px;
+    }
+    .neon-slot[data-size='long'] .neon-copy {
+      right: 0;
+    }
+    .neon-slot[data-size='long'] .stage {
+      bottom: auto;
+      height: 118px;
+      left: 0;
+      right: 0;
+      top: 0;
+    }
+    .neon-slot[data-size='short'] .stage {
+      height: 118px;
+    }
+    .neon-slot[data-size='short'] .neon-copy > p {
+      display: -webkit-box;
+    }
+    .dud {
+      display: none;
     }
   }
   @media (max-width: 600px) {
     .neon-canvas {
-      grid-template-columns: 1fr;
       padding-inline: 24px;
     }
     .neon-slot {
       --shift-x: 52px !important;
-      height: 360px;
     }
   }
 
-  /* --- Reduced motion: static settled collage, outline hover only --- */
+  /* --- Reduced motion: static settled wave, outline hover only --- */
   @media (prefers-reduced-motion: reduce) {
     .lego-piece,
     .iso-group,

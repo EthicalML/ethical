@@ -77,12 +77,37 @@ const cards = [
   },
 ];
 
+// The Wave: a diagonal cascade on a 6x4 cell grid. Letters are content blocks
+// (a repeated letter spans two cells), `m*` are muted dud blocks, `.` is empty.
+// Adding a block later is a data change here: extend `areas` and add a `blocks`
+// entry; the component derives grid placement, entrance order and reveal clip.
+//
+//   a  m1 .  .  f  .
+//   .  b  b  m2 .  .
+//   .  m3 c  c  m4 .
+//   e  e  m5 d  .  .
+const layout = {
+  areas: ['a m1 . . f .', '. b b m2 . .', '. m3 c c m4 .', 'e e m5 d . .'],
+  // piece -> grid area, card format, and reveal slide sign (+1 right, -1 left).
+  // The two adoption cards (eu, uk) and the narrative through-line take the
+  // double blocks (long format); the three compact records take singles (short).
+  blocks: {
+    eu: { area: 'b', size: 'long' as const, dir: -1 },
+    uk: { area: 'c', size: 'long' as const, dir: -1 },
+    'through-line': { area: 'e', size: 'long' as const, dir: 1 },
+    un: { area: 'a', size: 'short' as const, dir: 1 },
+    mlsecops: { area: 'f', size: 'short' as const, dir: -1 },
+    acm: { area: 'd', size: 'short' as const, dir: 1 },
+  },
+  duds: ['m1', 'm2', 'm3', 'm4', 'm5'],
+};
+
 const variations = [
   {
     value: 1 as const,
     label: 'V1 · GHOST',
     eyebrow: 'V1 · GHOST NUMERALS',
-    description: 'Oversized dim identifiers sit behind the copy, with a thin accent rule drawing across the top edge on landing.',
+    description: 'Oversized dim identifiers sit behind the copy, cropped by the block edge, with a thin accent rule drawing across the top on landing.',
   },
   {
     value: 2 as const,
@@ -115,7 +140,7 @@ const variations = [
   <header class="prototype-header">
     <p class="eyebrow">PROTOTYPE · POLICY ACHIEVEMENTS</p>
     <h1>Five surfaces on one lego grid.</h1>
-    <p>Every variation shares the same later trigger, equal-tile grid, one-second card shift and clipped neon reveal.</p>
+    <p>Every variation shares the same later trigger, diagonal wave of long and short blocks, one-second card shift and clipped neon reveal.</p>
   </header>
 
   <PrototypeSwitcher options={variations.map(({ label, value }) => ({ label, value: String(value) }))}>
@@ -127,7 +152,7 @@ const variations = [
             <h2>Highlight achievements</h2>
             <p>{variation.description}</p>
           </header>
-          <AchievementNeonRendition variant={variation.value} cards={cards} />
+          <AchievementNeonRendition variant={variation.value} cards={cards} layout={layout} />
         </section>
       ))
     }
