@@ -5,10 +5,14 @@ import PrototypeSwitcher from '../../components/PrototypeSwitcher.astro';
 
 const frontmatter = {
   title: 'Policy achievement prototypes',
-  description: 'Four triggered-lego studies for the policy achievement record.',
+  description: 'Three layout studies for the policy achievement record on one card system.',
 };
 
-const cards = [
+// One consistent card system across every variant: eyebrow (or collage glyph) at
+// a fixed top position, a hard one-line title, a description, then at most a
+// primary and a secondary link. The two variants below reuse these six cards; the
+// collage overrides the copy to the artifact's shorter titles and adds glyphs.
+const baseCards = [
   {
     piece: 'eu',
     eyebrow: 'EU · GPAI CODE OF PRACTICE',
@@ -77,23 +81,43 @@ const cards = [
   },
 ];
 
-// The Stack: pieces fall on top of each other on a 5x4 cell grid. Letters are
-// content blocks (a repeated letter spans two cells), `d*` are inert dud blocks
-// (a lighter grey raised surface taking square, diamond and triangle shapes),
-// `.` is empty. Adjacent letters in a row are one multi-cell block. Every piece
-// overlaps at least part of the piece(s) below, so the entrance reads as blocks
-// landing on each other, bottom row first. Adding a block later is a data change
-// here: extend `areas` and add a `blocks` entry.
-//
-//   A A .  .  S     -> LONG cols1-2 (eu) · SHORT col5 (un)
-//   .  B B .  d1    -> LONG cols2-3 (mlsecops) · dud col5
-//   .  d2 C C d3    -> dud col2 · LONG cols3-4 (acm) · dud col5
-//   E E .  D D      -> LONG cols1-2 (through-line) · LONG cols4-5 (uk)
-const layout = {
-  areas: ['A A . . S', '. B B . d1', '. d2 C C d3', 'E E . D D'],
-  // piece -> grid area, card format, and reveal slide sign (+1 right, -1 left):
-  // each block slides into the open space adjacent to its position. The adoption
-  // pair (eu, uk) sits on prominent longs; the compact record (un) is the short.
+// Collage copy, from the Set Table artifact: pixel-cluster glyph top-left, the
+// shorter titles, the ACM Europe TPC footnote on the lead card, links per the
+// anatomy (long cards keep both, the short middle row keeps a single primary).
+const collageOverrides: Record<string, { glyph: 'scatter' | 'bracket' | 'tee' | 'corner'; title: string; summary: string; footnote?: string; links?: number }> =
+  {
+    eu: {
+      glyph: 'scatter',
+      title: '8 of 12',
+      summary: 'Recommendations adopted into the main text of the second draft, EU GPAI Code of Practice.',
+      footnote: 'ACM Europe TPC / Verbatim',
+    },
+    uk: { glyph: 'scatter', title: '13 of 14', summary: 'Recommendations adopted, UK AI Regulatory Proposal.' },
+    mlsecops: { glyph: 'bracket', title: 'MLSecOps', summary: 'Recommendation 10, both GPAI Code responses.', links: 1 },
+    un: { glyph: 'tee', title: 'Chair', summary: 'Principles Committee, UN CSTD.', links: 1 },
+    acm: { glyph: 'scatter', title: 'Founding Chair', summary: 'ACM AI Policy Committee in Europe, founding member for LATAM.', links: 1 },
+    'through-line': {
+      glyph: 'corner',
+      title: '2021 to 2026',
+      summary: 'From AI Act comments demanding post deployment oversight of self modifying systems to the 2026 brief on agentic frontier oversight.',
+    },
+  };
+const collageCards = baseCards.map((card) => {
+  const over = collageOverrides[card.piece];
+  return {
+    ...card,
+    glyph: over.glyph,
+    title: over.title,
+    summary: over.summary,
+    footnote: over.footnote,
+    links: over.links ? card.links.slice(0, over.links) : card.links,
+  };
+});
+
+// V1 THE STACK: the current map, far-right column reordered bottom-to-top to a
+// dud square (row 3), the UN short card (row 2) and a dud triangle (row 1).
+const stackLayout = {
+  areas: ['A A . . d3', '. B B . S', '. d2 C C d1', 'E E . D D'],
   blocks: {
     eu: { area: 'A', size: 'long' as const, dir: 1 },
     uk: { area: 'D', size: 'long' as const, dir: -1 },
@@ -102,7 +126,6 @@ const layout = {
     'through-line': { area: 'E', size: 'long' as const, dir: 1 },
     un: { area: 'S', size: 'short' as const, dir: -1 },
   },
-  // Inert grey duds; shape is centred in the cell (square, diamond, triangle).
   duds: [
     { area: 'd1', shape: 'square' as const },
     { area: 'd2', shape: 'diamond' as const },
@@ -110,30 +133,69 @@ const layout = {
   ],
 };
 
+// V2 FULL-WIDTH GRID: the uniform three-by-two grid from before the wave. Six
+// equal tiles, one card system, no duds.
+const gridLayout = {
+  areas: ['A B C', 'D E F'],
+  blocks: {
+    eu: { area: 'A', size: 'long' as const, dir: 1 },
+    uk: { area: 'B', size: 'long' as const, dir: -1 },
+    mlsecops: { area: 'C', size: 'long' as const, dir: 1 },
+    un: { area: 'D', size: 'long' as const, dir: -1 },
+    acm: { area: 'E', size: 'long' as const, dir: 1 },
+    'through-line': { area: 'F', size: 'long' as const, dir: -1 },
+  },
+  duds: [],
+};
+
+// V3 SET TABLE COLLAGE: the artifact grid. Tall lead card (E) left, 13/14 (U)
+// top-middle, a plain dud and a solid accent slab top-right, the short middle row
+// (M, C, F), the wide through-line (T) bottom-left, the large diamond dud region
+// bottom-right.
+const collageLayout = {
+  areas: ['E E U U p g', 'E E M C F F', 'T T T D D D'],
+  blocks: {
+    eu: { area: 'E', size: 'long' as const, dir: -1 },
+    uk: { area: 'U', size: 'long' as const, dir: -1 },
+    mlsecops: { area: 'M', size: 'short' as const, dir: -1 },
+    un: { area: 'C', size: 'short' as const, dir: -1 },
+    acm: { area: 'F', size: 'short' as const, dir: -1 },
+    'through-line': { area: 'T', size: 'long' as const, dir: -1 },
+  },
+  duds: [
+    { area: 'p', shape: 'plain' as const },
+    { area: 'g', shape: 'accent' as const },
+    { area: 'D', shape: 'diamond-open' as const },
+  ],
+};
+
 const variations = [
   {
     value: 1 as const,
-    label: 'V1 · GHOST',
-    eyebrow: 'V1 · GHOST NUMERALS',
-    description: 'Oversized dim identifiers sit behind the copy, cropped by the block edge, with a thin accent rule drawing across the top on landing.',
+    label: 'V1 · STACK',
+    eyebrow: 'V1 · THE STACK',
+    cards: baseCards,
+    layout: stackLayout,
+    description:
+      'The falling stack, far-right column reordered: a dud square, the UN short card and a dud triangle land above the adoption longs. Ghost numerals sit behind the copy; the reveal slides the card sideways onto the neon beneath.',
   },
   {
     value: 2 as const,
-    label: 'V2 · ISOMETRIC',
-    eyebrow: 'V2 · GHOST + ISOMETRIC STAGES',
-    description: 'The ghost treatment gains an equal isometric stage per card, each a themed block structure that loops idle and activates in neon on hover.',
+    label: 'V2 · GRID',
+    eyebrow: 'V2 · FULL-WIDTH GRID',
+    cards: baseCards,
+    layout: gridLayout,
+    description:
+      'The uniform full-width grid from before the wave: three by two equal tiles, the same card system, ghost numerals, lego entrance and the displacing neon reveal. No duds.',
   },
   {
     value: 3 as const,
-    label: 'V3 · VOLCANIC',
-    eyebrow: 'V3 · VOLCANIC NEON CRACKS',
-    description: 'On hover fissures branch across the surface from a point, with the neon colour glowing through the cracks and a faint heat shimmer.',
-  },
-  {
-    value: 4 as const,
-    label: 'V4 · CIRCUIT',
-    eyebrow: 'V4 · CIRCUIT ETCH',
-    description: 'A PCB trace etches from a corner with pads and vias, a neon current runs the trace, and the key figure ignites where it terminates.',
+    label: 'V3 · SET TABLE',
+    eyebrow: 'V3 · SET TABLE COLLAGE',
+    cards: collageCards,
+    layout: collageLayout,
+    description:
+      'The set-table collage: a tall lead card, a solid accent slab, pixel-cluster glyphs top-left and a diagonal card lift that uncovers a neon slab on the bottom and right edges. The large dud region carries a faint diamond outline.',
   },
 ];
 ---
@@ -141,10 +203,10 @@ const variations = [
 <BaseLayout frontmatter={frontmatter}>
   <header class="prototype-header">
     <p class="eyebrow">PROTOTYPE · POLICY ACHIEVEMENTS</p>
-    <h1>Four surfaces on one lego stack.</h1>
+    <h1>Three layouts on one card system.</h1>
     <p>
-      Every variation shares the same later trigger, falling stack of long and short blocks over inert grey duds, and one-second reveal where the card itself
-      slides out of its cell onto the neon beneath.
+      Every variant shares the same later trigger, falling lego blocks and one-second reveal where the card slides out of its cell onto the neon beneath. The
+      card anatomy is consistent throughout: a top-anchored eyebrow or glyph, a hard one-line title, a description, then at most a primary and a secondary link.
     </p>
   </header>
 
@@ -157,7 +219,7 @@ const variations = [
             <h2>Highlight achievements</h2>
             <p>{variation.description}</p>
           </header>
-          <AchievementNeonRendition variant={variation.value} cards={cards} layout={layout} />
+          <AchievementNeonRendition variant={variation.value} cards={variation.cards} layout={variation.layout} />
         </section>
       ))
     }
