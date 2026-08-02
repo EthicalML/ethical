@@ -260,11 +260,9 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
           data-size={block.size}
           data-piece={card.piece}
           data-hover={mode}
-          style={`${freeform && block.rect ? rectStyle(block.rect) : `grid-area:${block.area};`}--neon:${neon[index]};--shift-x:${shiftX}px;--shift-y:${shiftY}px;--pickup:${block.tilt ?? 4}deg;--drop-rotation:${order % 2 ? -1.6 : 1.6}deg;--fall-dur:${block.size === 'long' ? 440 : 320}ms`}
+          style={`${freeform && block.rect ? rectStyle(block.rect) : `grid-area:${block.area};`}--neon:${neon[index]};--slot-z:${2 + order};--shift-x:${shiftX}px;--shift-y:${shiftY}px;--pickup:${block.tilt ?? 4}deg;--drop-rotation:${order % 2 ? -1.6 : 1.6}deg;--fall-dur:${block.size === 'long' ? 440 : 320}ms`}
         >
-          <i class="neon-underlay" data-neon-block aria-hidden="true">
-            {isCollage && <span class="ghost-carbon">{ghostLabels[index]}</span>}
-          </i>
+          <i class="neon-underlay" data-neon-block aria-hidden="true" />
           <article class="neon-card">
             <span class="ghost-mark" aria-hidden="true">
               {ghostLabels[index]}
@@ -348,9 +346,6 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
       const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       pieces.forEach((piece) => piece.style.setProperty('--lego-order', piece.dataset.order ?? '0'));
-      this.querySelectorAll<HTMLElement>('[data-neon-slot]').forEach((slot) => {
-        slot.addEventListener('pointerleave', this.handleReturn, { signal: this.controller.signal });
-      });
       this.addEventListener('click', this.handleTap, { signal: this.controller.signal });
       window.addEventListener('keydown', this.handleKey, { signal: this.controller.signal });
 
@@ -372,13 +367,6 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
       this.impactTimers.forEach((timer) => clearTimeout(timer));
       this.impactTimers = [];
     }
-
-    private handleReturn = (event: PointerEvent) => {
-      const slot = event.currentTarget as HTMLElement;
-      slot.dataset.returning = 'true';
-      const timer = window.setTimeout(() => delete slot.dataset.returning, 1050);
-      this.impactTimers.push(timer);
-    };
 
     private handleTap = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
@@ -495,16 +483,12 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
   }
   /* The slot is NOT clipped: on reveal the card physically slides out of its own
      cell (see the slide rule), so a hovered card is lifted above its neighbours. */
+  /* Stacking is STATIC: each slot keeps one permanent layer derived from its
+     entrance order, so hovering never reorders cards and nothing ever pops in
+     front of or behind a neighbour mid-interaction. */
   .neon-slot {
     position: relative;
-    z-index: 2;
-  }
-  .neon-slot:hover,
-  .neon-slot[data-active='true'] {
-    z-index: 12;
-  }
-  .neon-slot[data-returning='true'] {
-    z-index: 10;
+    z-index: var(--slot-z, 2);
   }
   .neon-underlay,
   .neon-card {
@@ -738,17 +722,13 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
     color: rgba(244, 242, 238, 0.05);
     font: 300 100px/0.8 var(--font-display);
     letter-spacing: -0.08em;
+    max-width: 50%;
+    overflow: hidden;
     position: absolute;
     right: -0.02em;
     top: -0.1em;
     white-space: nowrap;
     z-index: 1;
-  }
-  /* The 50% cap applies to the collage only; in the set table the ghost and its
-     carbon must share identical geometry so the continuation aligns. */
-  [data-variation='1'] .ghost-mark {
-    max-width: 50%;
-    overflow: hidden;
   }
   .neon-slot[data-size='long'] .ghost-mark {
     font-size: clamp(86px, 9vw, 124px);
@@ -853,43 +833,6 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
     opacity: 0;
   }
   /* Picked-up cards do not reveal a neon block; the lift itself is the effect. */
-  /* Continuation ghost: a black copy of the ghost inside the clipped underlay,
-     aligned to the card's ghost and translated in sync with it, so the part of
-     the glyph that leaves the card appears as dark ink on the revealed neon. */
-  .neon-underlay {
-    overflow: hidden;
-  }
-  .ghost-carbon {
-    /* A much darker shade of the slab's own neon, so the continuation reads as
-       ink pressed into the colour rather than a pitch-black cutout. Only the
-       underlay clips it, so the glyph is complete wherever the slab shows. */
-    color: color-mix(in srgb, var(--neon) 24%, #0b0c0b);
-    font: 300 100px/0.8 var(--font-display);
-    letter-spacing: -0.08em;
-    position: absolute;
-    right: -0.02em;
-    top: -0.1em;
-    transform: translate3d(0, 0, 0);
-    transition: transform 1000ms cubic-bezier(0.22, 1, 0.36, 1);
-    white-space: nowrap;
-  }
-  .neon-slot[data-size='long'] .ghost-carbon {
-    font-size: clamp(86px, 9vw, 124px);
-  }
-  .neon-slot[data-size='short'] .ghost-carbon {
-    font-size: clamp(56px, 8vw, 78px);
-    right: -0.04em;
-  }
-  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-    .neon-slot[data-hover='slide']:hover .ghost-carbon {
-      transform: translate3d(var(--shift-x), var(--shift-y), 0);
-    }
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    .neon-slot[data-hover='slide'][data-active='true'] .ghost-carbon {
-      transform: translate3d(var(--shift-x), var(--shift-y), 0);
-    }
-  }
   .neon-slot[data-hover='tilt'] .neon-underlay {
     display: none;
   }
