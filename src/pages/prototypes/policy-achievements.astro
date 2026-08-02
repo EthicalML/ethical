@@ -5,7 +5,7 @@ import PrototypeSwitcher from '../../components/PrototypeSwitcher.astro';
 
 const frontmatter = {
   title: 'Policy achievement prototypes',
-  description: 'Five triggered-lego studies for the policy achievement record.',
+  description: 'Four triggered-lego studies for the policy achievement record.',
 };
 
 const cards = [
@@ -77,29 +77,37 @@ const cards = [
   },
 ];
 
-// The Wave: a diagonal cascade on a 6x4 cell grid. Letters are content blocks
-// (a repeated letter spans two cells), `m*` are muted dud blocks, `.` is empty.
-// Adding a block later is a data change here: extend `areas` and add a `blocks`
-// entry; the component derives grid placement, entrance order and reveal clip.
+// The Stack: pieces fall on top of each other on a 5x4 cell grid. Letters are
+// content blocks (a repeated letter spans two cells), `d*` are inert dud blocks
+// (a lighter grey raised surface taking square, diamond and triangle shapes),
+// `.` is empty. Adjacent letters in a row are one multi-cell block. Every piece
+// overlaps at least part of the piece(s) below, so the entrance reads as blocks
+// landing on each other, bottom row first. Adding a block later is a data change
+// here: extend `areas` and add a `blocks` entry.
 //
-//   a  m1 .  .  f  .
-//   .  b  b  m2 .  .
-//   .  m3 c  c  m4 .
-//   e  e  m5 d  .  .
+//   A A .  .  S     -> LONG cols1-2 (eu) · SHORT col5 (un)
+//   .  B B .  d1    -> LONG cols2-3 (mlsecops) · dud col5
+//   .  d2 C C d3    -> dud col2 · LONG cols3-4 (acm) · dud col5
+//   E E .  D D      -> LONG cols1-2 (through-line) · LONG cols4-5 (uk)
 const layout = {
-  areas: ['a m1 . . f .', '. b b m2 . .', '. m3 c c m4 .', 'e e m5 d . .'],
-  // piece -> grid area, card format, and reveal slide sign (+1 right, -1 left).
-  // The two adoption cards (eu, uk) and the narrative through-line take the
-  // double blocks (long format); the three compact records take singles (short).
+  areas: ['A A . . S', '. B B . d1', '. d2 C C d3', 'E E . D D'],
+  // piece -> grid area, card format, and reveal slide sign (+1 right, -1 left):
+  // each block slides into the open space adjacent to its position. The adoption
+  // pair (eu, uk) sits on prominent longs; the compact record (un) is the short.
   blocks: {
-    eu: { area: 'b', size: 'long' as const, dir: -1 },
-    uk: { area: 'c', size: 'long' as const, dir: -1 },
-    'through-line': { area: 'e', size: 'long' as const, dir: 1 },
-    un: { area: 'a', size: 'short' as const, dir: 1 },
-    mlsecops: { area: 'f', size: 'short' as const, dir: -1 },
-    acm: { area: 'd', size: 'short' as const, dir: 1 },
+    eu: { area: 'A', size: 'long' as const, dir: 1 },
+    uk: { area: 'D', size: 'long' as const, dir: -1 },
+    mlsecops: { area: 'B', size: 'long' as const, dir: 1 },
+    acm: { area: 'C', size: 'long' as const, dir: -1 },
+    'through-line': { area: 'E', size: 'long' as const, dir: 1 },
+    un: { area: 'S', size: 'short' as const, dir: -1 },
   },
-  duds: ['m1', 'm2', 'm3', 'm4', 'm5'],
+  // Inert grey duds; shape is centred in the cell (square, diamond, triangle).
+  duds: [
+    { area: 'd1', shape: 'square' as const },
+    { area: 'd2', shape: 'diamond' as const },
+    { area: 'd3', shape: 'triangle' as const },
+  ],
 };
 
 const variations = [
@@ -117,20 +125,14 @@ const variations = [
   },
   {
     value: 3 as const,
-    label: 'V3 · TRANSFORMER',
-    eyebrow: 'V3 · ROBOTIC TRANSFORMER',
-    description: 'Each surface is plated from hairline panels that slide apart on hover, letting the card colour glow from the opened seams.',
-  },
-  {
-    value: 4 as const,
-    label: 'V4 · VOLCANIC',
-    eyebrow: 'V4 · VOLCANIC NEON CRACKS',
+    label: 'V3 · VOLCANIC',
+    eyebrow: 'V3 · VOLCANIC NEON CRACKS',
     description: 'On hover fissures branch across the surface from a point, with the neon colour glowing through the cracks and a faint heat shimmer.',
   },
   {
-    value: 5 as const,
-    label: 'V5 · CIRCUIT',
-    eyebrow: 'V5 · CIRCUIT ETCH',
+    value: 4 as const,
+    label: 'V4 · CIRCUIT',
+    eyebrow: 'V4 · CIRCUIT ETCH',
     description: 'A PCB trace etches from a corner with pads and vias, a neon current runs the trace, and the key figure ignites where it terminates.',
   },
 ];
@@ -139,8 +141,11 @@ const variations = [
 <BaseLayout frontmatter={frontmatter}>
   <header class="prototype-header">
     <p class="eyebrow">PROTOTYPE · POLICY ACHIEVEMENTS</p>
-    <h1>Five surfaces on one lego grid.</h1>
-    <p>Every variation shares the same later trigger, diagonal wave of long and short blocks, one-second card shift and clipped neon reveal.</p>
+    <h1>Four surfaces on one lego stack.</h1>
+    <p>
+      Every variation shares the same later trigger, falling stack of long and short blocks over inert grey duds, and one-second reveal where the card itself
+      slides out of its cell onto the neon beneath.
+    </p>
   </header>
 
   <PrototypeSwitcher options={variations.map(({ label, value }) => ({ label, value: String(value) }))}>
