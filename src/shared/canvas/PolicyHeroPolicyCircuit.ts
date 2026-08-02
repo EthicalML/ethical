@@ -79,7 +79,7 @@ const TOWERS: District[] = [
   },
 ];
 
-const R = 6.3; // perimeter radius: the outskirts sit well clear of the five-tower core
+const R = 8.2; // perimeter radius: the outskirts sit well clear of the five-tower core
 
 // Outer ring in clockwise order so consecutive entries are joined by the perimeter conduit:
 // corner bastion, cardinal gate, corner bastion, gate, ... Gates are taller arch blocks, the
@@ -250,7 +250,7 @@ export class PolicyHeroPolicyCircuit extends HTMLElement {
   private draw: CanvasDraw = (context, width, height, elapsed) => {
     context.clearRect(0, 0, width, height);
     const time = reducedMotion ? 7 : elapsed + 3;
-    const unit = Math.min(width, height) * 0.0365;
+    const unit = Math.min(width, height) * 0.0295;
     const project = createIso(unit, width * 0.54, height * 0.5);
 
     this.pointer.x += (this.pointer.targetX - this.pointer.x) * 0.12;
