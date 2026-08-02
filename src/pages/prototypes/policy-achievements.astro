@@ -13,7 +13,6 @@ const cards = [
     piece: 'eu',
     eyebrow: 'EU · GPAI CODE OF PRACTICE',
     title: '8 of 12',
-    glyph: 'eu-adoption' as const,
     summary: 'Eight recommendations entered the Second Draft of the GPAI Code.',
     links: [
       {
@@ -26,7 +25,6 @@ const cards = [
     piece: 'uk',
     eyebrow: 'UNITED KINGDOM · AI REGULATION',
     title: '13 of 14',
-    glyph: 'uk-adoption' as const,
     summary: 'Owner-attested adoption total, with the 2022 comments as the related artefact.',
     links: [
       {
@@ -39,7 +37,6 @@ const cards = [
     piece: 'mlsecops',
     eyebrow: 'CITED INTO THE CODE',
     title: 'MLSecOps in the Code',
-    glyph: 'citation-network' as const,
     summary: 'Both GPAI responses cite the framework beside MITRE, OWASP and UK NCSC.',
     links: [
       { label: 'Explore MLSecOps', href: '/frameworks/security/' },
@@ -53,7 +50,6 @@ const cards = [
     piece: 'un',
     eyebrow: 'UNITED NATIONS',
     title: 'Chair, Principles Committee',
-    glyph: 'un-chair' as const,
     summary: 'Data Governance Guidelines at the UN Commission on Science and Technology for Development.',
     links: [
       {
@@ -66,7 +62,6 @@ const cards = [
     piece: 'acm',
     eyebrow: 'ACM POLICY LEADERSHIP',
     title: 'Founding in Europe and LATAM',
-    glyph: 'acm-bridges' as const,
     summary: 'Founding policy leadership in Europe, followed by a founding committee role in LATAM.',
     links: [{ label: 'ACM volunteer record', href: 'https://www.acm.org/volunteers/volunteer/saucedo_9722274' }],
   },
@@ -74,7 +69,6 @@ const cards = [
     piece: 'through-line',
     eyebrow: 'THE THROUGH-LINE',
     title: '2021 to 2026',
-    glyph: 'policy-timeline' as const,
     summary: 'Continuous oversight from the 2021 AI Act comments to the 2026 agentic brief.',
     links: [
       { label: '2021 comments', href: 'https://www.acm.org/binaries/content/assets/public-policy/europe-tpc-comments-ai-consultation.pdf' },
@@ -86,33 +80,33 @@ const cards = [
 const variations = [
   {
     value: 1 as const,
-    label: 'V1 · BASE',
-    eyebrow: 'V1 · THE BASE, EXACT',
-    description: 'The selected triggered-lego composition with the fixed entrance and card-shift reveal.',
+    label: 'V1 · GHOST',
+    eyebrow: 'V1 · GHOST NUMERALS',
+    description: 'Oversized dim identifiers sit behind the copy, with a thin accent rule drawing across the top edge on landing.',
   },
   {
     value: 2 as const,
-    label: 'V2 · BLACK',
-    eyebrow: 'V2 · PITCH-BLACK CARDS',
-    description: 'True-black content surfaces leave structure to the hairlines and revealed neon.',
+    label: 'V2 · ISOMETRIC',
+    eyebrow: 'V2 · GHOST + ISOMETRIC STAGES',
+    description: 'The ghost treatment gains an equal isometric stage per card, each a themed block structure that loops idle and activates in neon on hover.',
   },
   {
     value: 3 as const,
-    label: 'V3 · CASCADE',
-    eyebrow: 'V3 · OWN ARRANGEMENT',
-    description: 'A diagonal cascade steps from the upper-left anchor into open space on the right.',
+    label: 'V3 · TRANSFORMER',
+    eyebrow: 'V3 · ROBOTIC TRANSFORMER',
+    description: 'Each surface is plated from hairline panels that slide apart on hover, letting the card colour glow from the opened seams.',
   },
   {
     value: 4 as const,
-    label: 'V4 · GHOST',
-    eyebrow: 'V4 · GHOST NUMERALS',
-    description: 'Oversized clipped identifiers replace icon boxes, with a landing rule across each card.',
+    label: 'V4 · VOLCANIC',
+    eyebrow: 'V4 · VOLCANIC NEON CRACKS',
+    description: 'On hover fissures branch across the surface from a point, with the neon colour glowing through the cracks and a faint heat shimmer.',
   },
   {
     value: 5 as const,
-    label: 'V5 · MICRO',
-    eyebrow: 'V5 · LIVE MICRO-ELEMENTS',
-    description: 'Small edge instruments replace icons and carry restrained, card-specific signals.',
+    label: 'V5 · CIRCUIT',
+    eyebrow: 'V5 · CIRCUIT ETCH',
+    description: 'A PCB trace etches from a corner with pads and vias, a neon current runs the trace, and the key figure ignites where it terminates.',
   },
 ];
 ---
@@ -120,8 +114,8 @@ const variations = [
 <BaseLayout frontmatter={frontmatter}>
   <header class="prototype-header">
     <p class="eyebrow">PROTOTYPE · POLICY ACHIEVEMENTS</p>
-    <h1>Five studies from one lego base.</h1>
-    <p>Every variation shares the same later trigger, compact collage, one-second card shift and clipped neon reveal.</p>
+    <h1>Five surfaces on one lego grid.</h1>
+    <p>Every variation shares the same later trigger, equal-tile grid, one-second card shift and clipped neon reveal.</p>
   </header>
 
   <PrototypeSwitcher options={variations.map(({ label, value }) => ({ label, value: String(value) }))}>
