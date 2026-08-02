@@ -841,11 +841,12 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
     overflow: hidden;
   }
   .ghost-carbon {
-    color: #0f100f;
+    /* A much darker shade of the slab's own neon, so the continuation reads as
+       ink pressed into the colour rather than a pitch-black cutout. Only the
+       underlay clips it, so the glyph is complete wherever the slab shows. */
+    color: color-mix(in srgb, var(--neon) 24%, #0b0c0b);
     font: 300 100px/0.8 var(--font-display);
     letter-spacing: -0.08em;
-    max-width: 50%;
-    overflow: hidden;
     position: absolute;
     right: -0.02em;
     top: -0.1em;
