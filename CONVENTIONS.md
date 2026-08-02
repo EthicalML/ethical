@@ -81,8 +81,8 @@ All first-party client behaviour is TypeScript. Do not add first-party runtime J
 | Finite terminal playback    | KAOS quickstart terminal                                             | `AnimationWindow`, `QuickstartTerminal`                                               |
 | Production ML atlas drift   | Production ML catalogue category field                               | `CategoryAtlas`                                                                       |
 | Policy record timeline      | `/policy/` flagship hero                                             | `PolicyTimeline`, `CanvasEngine`                                                      |
-| Policy achievement collage  | `/policy/` and prototype loose-block assemblies, slides and pick-up  | `AchievementGrid`, `AchievementRendition`, `AchievementVisual`, `tokens.css`          |
-| Policy neon shift reveals   | Achievement prototypes v4/v5 lego falls and card shifts              | `AchievementNeonRendition`                                                            |
+| Policy achievement collage  | `/policy/` loose-block assembly, slides and card pick-up             | `AchievementGrid`, `AchievementVisual`, `tokens.css`                                  |
+| Policy achievement studies  | `/prototypes/policy-achievements/?v=1..5` lego falls and card shifts | `AchievementNeonRendition`, `AchievementVisual`                                       |
 | Policy corpus fields        | `/policy/` DOM field and prototype canvas text convergence           | `PolicyCorpusExplorer`, `PolicyCorpusCanvas`, `PolicyCorpusField`, `CanvasEngine`     |
 | Partner logo morph          | Clicked marquee instance → matching directory logo                   | `MorphPairs`, `AffiliationMarquee`, `PartnerDirectory`                                |
 | Principle directional slide | `/principles/NN/` prev/next → adjacent principle                     | `PrincipleLayout`, `Motion`, `tokens.css`                                             |

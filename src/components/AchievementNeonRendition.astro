@@ -17,25 +17,37 @@ interface AchievementCard {
 
 interface Props {
   cards: AchievementCard[];
-  mode: 'scroll' | 'triggered';
+  variant: 1 | 2 | 3 | 4 | 5;
 }
 
-const { cards, mode } = Astro.props;
+const { cards, variant } = Astro.props;
 const neon = ['#5ee6a0', '#35d787', '#38bdf8', '#ff3b57', '#a855f7', '#ff5c1f'];
-const shifts = [
-  { x: 22, y: 0 },
-  { x: -18, y: 0 },
-  { x: 20, y: 0 },
-  { x: 22, y: -4 },
-  { x: -16, y: 18 },
-  { x: 16, y: 18 },
+const ghostLabels = ['8/12', '13/14', 'CODE', 'UN', 'ACM', '2026'];
+const baseShifts = [
+  { x: -55, y: 0 },
+  { x: -45, y: 0 },
+  { x: 50, y: 0 },
+  { x: 42, y: -45 },
+  { x: -42, y: 42 },
+  { x: 42, y: 42 },
 ];
+const cascadeShifts = [
+  { x: 55, y: -40 },
+  { x: 45, y: 40 },
+  { x: -50, y: 0 },
+  { x: 45, y: -40 },
+  { x: -42, y: 40 },
+  { x: 45, y: 40 },
+];
+const shifts = variant === 3 ? cascadeShifts : baseShifts;
 ---
 
-<achievement-neon-rendition class="achievement-neon-rendition" data-mode={mode}>
+<achievement-neon-rendition class="achievement-neon-rendition" data-variation={variant}>
   <div class="neon-canvas">
     <i class="lego-piece neon-filler neon-filler-west" data-lego-piece data-order="0" aria-hidden="true"></i>
     <i class="lego-piece neon-filler neon-filler-east" data-lego-piece data-order="6" aria-hidden="true"></i>
+    {variant === 3 && <i class="lego-piece cascade-diamond cascade-diamond-north" data-lego-piece data-order="2" aria-hidden="true" />}
+    {variant === 3 && <i class="lego-piece cascade-diamond cascade-diamond-south" data-lego-piece data-order="7" aria-hidden="true" />}
     {
       cards.map((card, index) => (
         <div
@@ -46,9 +58,48 @@ const shifts = [
           data-piece={card.piece}
           style={`--neon:${neon[index]};--shift-x:${shifts[index].x}px;--shift-y:${shifts[index].y}px;--drop-rotation:${index % 2 ? -1.6 : 1.6}deg`}
         >
-          <i class="neon-underlay" data-neon-block aria-hidden="true" />
+          <div class="neon-reveal-clip" aria-hidden="true">
+            <i class="neon-underlay" data-neon-block />
+          </div>
           <article class="neon-card">
-            <AchievementVisual variant={card.glyph} />
+            {variant <= 3 && <AchievementVisual variant={card.glyph} />}
+            {variant === 4 && (
+              <span class="ghost-mark" aria-hidden="true">
+                {ghostLabels[index]}
+              </span>
+            )}
+            {variant === 4 && <i class="ghost-rule" aria-hidden="true" />}
+            {variant === 5 && index < 2 && (
+              <span class="micro-element micro-meter" aria-hidden="true">
+                {Array.from({ length: index === 0 ? 12 : 14 }, (_, segment) => (
+                  <i data-adopted={segment < (index === 0 ? 8 : 13) ? 'true' : undefined} style={`--micro-index:${segment}`} />
+                ))}
+              </span>
+            )}
+            {variant === 5 && index === 2 && (
+              <span class="micro-element micro-citation" aria-hidden="true">
+                <i />
+                <i />
+                <i />
+              </span>
+            )}
+            {variant === 5 && index === 3 && <span class="micro-element micro-ring" aria-hidden="true" />}
+            {variant === 5 && index === 4 && (
+              <span class="micro-element micro-arc" aria-hidden="true">
+                <svg viewBox="0 0 72 28">
+                  <path d="M5 22Q36-8 67 22" />
+                  <circle cx="5" cy="22" r="3" />
+                  <circle cx="67" cy="22" r="3" />
+                </svg>
+              </span>
+            )}
+            {variant === 5 && index === 5 && (
+              <span class="micro-element micro-rail" aria-hidden="true">
+                <i />
+                <i />
+                <i />
+              </span>
+            )}
             <div class="neon-copy">
               <span>{card.eyebrow}</span>
               <strong>{card.title}</strong>
@@ -76,48 +127,30 @@ const shifts = [
     private controller = new AbortController();
     private frame?: number;
     private impactTimers: number[] = [];
-    private observer?: IntersectionObserver;
 
     connectedCallback() {
       this.controller = new AbortController();
       const pieces = [...this.querySelectorAll<HTMLElement>('[data-lego-piece]')];
       const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+      pieces.forEach((piece) => piece.style.setProperty('--lego-order', piece.dataset.order ?? '0'));
       this.addEventListener('click', this.handleTap, { signal: this.controller.signal });
       window.addEventListener('keydown', this.handleKey, { signal: this.controller.signal });
 
       if (reduced) {
-        this.dataset.assembled = 'true';
-        pieces.forEach((piece) => this.setPieceProgress(piece, 1, 0));
-        return;
-      }
-
-      if (this.dataset.mode === 'scroll') {
-        window.addEventListener('scroll', this.requestScrollFrame, { passive: true, signal: this.controller.signal });
-        window.addEventListener('resize', this.requestScrollFrame, { passive: true, signal: this.controller.signal });
-        this.requestScrollFrame();
+        this.dataset.entered = 'true';
+        pieces.forEach((piece) => (piece.dataset.settled = 'true'));
         return;
       }
 
       this.dataset.motionReady = 'true';
-      if (!('IntersectionObserver' in window)) {
-        this.enterTriggered(pieces);
-        return;
-      }
-      this.observer = new IntersectionObserver(
-        ([entry]) => {
-          if (!entry.isIntersecting) return;
-          this.enterTriggered(pieces);
-          this.observer?.disconnect();
-        },
-        { threshold: 0.08 },
-      );
-      this.observer.observe(this);
+      window.addEventListener('scroll', this.requestEntranceFrame, { passive: true, signal: this.controller.signal });
+      window.addEventListener('resize', this.requestEntranceFrame, { passive: true, signal: this.controller.signal });
+      this.requestEntranceFrame();
     }
 
     disconnectedCallback() {
       this.controller.abort();
-      this.observer?.disconnect();
       if (this.frame) cancelAnimationFrame(this.frame);
       this.impactTimers.forEach((timer) => clearTimeout(timer));
       this.impactTimers = [];
@@ -140,74 +173,40 @@ const shifts = [
       this.querySelectorAll<HTMLElement>('[data-neon-slot][data-active="true"]').forEach((slot) => delete slot.dataset.active);
     };
 
-    private requestScrollFrame = () => {
-      if (this.frame) return;
+    private requestEntranceFrame = () => {
+      if (this.frame || this.dataset.entered === 'true') return;
       this.frame = requestAnimationFrame(() => {
         this.frame = undefined;
-        this.updateScrollAssembly();
+        this.updateEntranceProgress();
       });
     };
 
-    private updateScrollAssembly() {
-      const pieces = [...this.querySelectorAll<HTMLElement>('[data-lego-piece]')];
+    private updateEntranceProgress() {
+      if (this.offsetParent === null) return;
       const bounds = this.getBoundingClientRect();
-      const start = innerHeight * 0.92;
-      const end = innerHeight * 0.18;
-      const progress = Math.max(0, Math.min(1, (start - bounds.top) / (start - end)));
-      const maximumOrder = Math.max(...pieces.map((piece) => Number(piece.dataset.order ?? 0)), 1);
-      const localProgress = pieces.map((piece) => {
-        const order = Number(piece.dataset.order ?? 0);
-        return Math.max(0, Math.min(1, progress * 1.35 - (order / maximumOrder) * 0.35));
-      });
-      const impact = Math.max(...localProgress.map((value) => this.impactAmount(value)));
-      pieces.forEach((piece, index) => this.setPieceProgress(piece, localProgress[index], impact));
-      this.style.setProperty('--assembly-progress', progress.toFixed(3));
-      this.dataset.assemblyProgress = progress.toFixed(3);
-      this.dataset.assembled = String(progress >= 0.998);
-    }
-
-    private setPieceProgress(piece: HTMLElement, progress: number, impact: number) {
-      const order = Number(piece.dataset.order ?? 0);
-      const drop = 150 + (order % 3) * 18;
-      let y: number;
-      let scaleY = 1;
-      if (progress < 0.78) {
-        const travel = progress / 0.78;
-        const eased = travel * travel * (3 - 2 * travel);
-        y = -drop * (1 - eased);
-      } else if (progress < 0.9) {
-        const compression = (progress - 0.78) / 0.12;
-        y = 2 * compression;
-        scaleY = 1 - 0.018 * compression;
-      } else {
-        const settle = (progress - 0.9) / 0.1;
-        y = 2 * (1 - settle);
-        scaleY = 0.982 + 0.018 * settle;
-      }
-      const nudge = (order % 2 ? 1 : -1) * impact * 1.5;
-      piece.style.setProperty('--lego-x', `${nudge.toFixed(2)}px`);
-      piece.style.setProperty('--lego-y', `${y.toFixed(2)}px`);
-      piece.style.setProperty('--lego-opacity', String(Math.min(1, progress / 0.15)));
-      piece.style.setProperty('--lego-rotation', `${((1 - progress) * (order % 2 ? -1.6 : 1.6)).toFixed(2)}deg`);
-      piece.style.setProperty('--lego-scale-y', scaleY.toFixed(3));
-      piece.dataset.pieceProgress = progress.toFixed(3);
-    }
-
-    private impactAmount(progress: number) {
-      if (progress < 0.78 || progress > 0.96) return 0;
-      return Math.sin(((progress - 0.78) / 0.18) * Math.PI);
+      const scrollReach = Math.min(bounds.height, innerHeight);
+      const progress = Math.max(0, Math.min(1, (innerHeight - bounds.top) / scrollReach));
+      this.dataset.entranceProgress = progress.toFixed(3);
+      if (progress < 0.75) return;
+      this.enterTriggered([...this.querySelectorAll<HTMLElement>('[data-lego-piece]')]);
     }
 
     private enterTriggered(pieces: HTMLElement[]) {
       if (this.dataset.entered === 'true') return;
       this.dataset.entered = 'true';
+      this.dataset.triggerProgress = this.dataset.entranceProgress ?? '0.750';
       pieces.forEach((piece) => {
+        if (getComputedStyle(piece).display === 'none') {
+          piece.dataset.settled = 'true';
+          return;
+        }
         const order = Number(piece.dataset.order ?? 0);
-        piece.style.setProperty('--lego-order', String(order));
-        piece.addEventListener('animationend', () => (piece.dataset.settled = 'true'), {
-          once: true,
-          signal: this.controller.signal,
-        });
+        const onAnimationEnd = (event: AnimationEvent) => {
+          if (event.target !== piece || event.animationName !== 'lego-click') return;
+          piece.dataset.settled = 'true';
+          piece.removeEventListener('animationend', onAnimationEnd);
+        };
+        piece.addEventListener('animationend', onAnimationEnd, { signal: this.controller.signal });
         const timer = window.setTimeout(() => this.nudgeNeighbours(piece), order * 60 + 250);
         this.impactTimers.push(timer);
       });
@@ -235,139 +234,450 @@ const shifts = [
     overflow: clip;
   }
   .neon-canvas {
-    height: 890px;
+    height: 850px;
     margin: 0 auto;
-    max-width: 1344px;
+    max-width: 1120px;
     position: relative;
   }
   .lego-piece {
-    opacity: var(--lego-opacity, 1);
     position: absolute;
-    transform: translate3d(var(--lego-x, 0), var(--lego-y, 0), 0) rotate(var(--lego-rotation, 0deg)) scaleY(var(--lego-scale-y, 1));
     transform-origin: center bottom;
-    will-change: transform, opacity;
   }
   .neon-slot {
     z-index: 2;
   }
   .neon-slot[data-piece='eu'] {
-    height: 280px;
-    left: 24%;
+    height: 220px;
+    left: 25%;
     top: 0;
-    width: 52%;
+    width: 46%;
   }
   .neon-slot[data-piece='uk'] {
-    height: 280px;
-    left: 24%;
-    top: 280px;
-    width: 26%;
+    height: 310px;
+    left: 25%;
+    top: 240px;
+    width: 20%;
   }
   .neon-slot[data-piece='mlsecops'] {
-    height: 280px;
-    left: 50%;
-    top: 280px;
-    width: 26%;
+    height: 310px;
+    left: 49%;
+    top: 240px;
+    width: 25%;
   }
   .neon-slot[data-piece='un'] {
-    height: 420px;
-    left: 80%;
-    top: 140px;
-    width: 18%;
+    height: 440px;
+    left: 79%;
+    top: 110px;
+    width: 16%;
   }
   .neon-slot[data-piece='acm'] {
-    height: 310px;
-    left: 5%;
-    top: 560px;
-    width: 38%;
+    height: 280px;
+    left: 6%;
+    top: 570px;
+    width: 36%;
   }
   .neon-slot[data-piece='through-line'] {
-    height: 310px;
-    left: 43%;
-    top: 560px;
-    width: 37%;
+    height: 280px;
+    left: 47%;
+    top: 570px;
+    width: 33%;
   }
+  .neon-reveal-clip,
   .neon-underlay,
   .neon-card {
     inset: 0;
     position: absolute;
   }
+  .neon-reveal-clip {
+    overflow: hidden;
+    z-index: 1;
+  }
   .neon-underlay {
     background: var(--neon);
-    z-index: 1;
   }
   .neon-card {
     background: #1a1c1b;
     border: 0;
     color: var(--text-1);
+    overflow: hidden;
     transform: translate3d(0, 0, 0);
     transition:
       outline-color 180ms ease,
-      transform 240ms cubic-bezier(0.2, 0.9, 0.25, 1.15);
+      transform 1000ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
     z-index: 2;
   }
   .neon-slot:nth-of-type(even) .neon-card {
     background: #181a19;
   }
+  achievement-neon-rendition[data-variation='2'] .neon-card {
+    background: #000;
+  }
   .neon-copy {
-    bottom: 0;
+    bottom: auto;
     left: 0;
-    padding: 24px 26px 25px;
+    padding: 18px 20px 19px;
     position: absolute;
     right: 0;
+    top: 76px;
+    z-index: 2;
   }
   .neon-copy > span {
     color: var(--text-4);
     display: block;
-    font: var(--mono-9) / 1.4 var(--font-mono);
+    font: var(--mono-8) / 1.35 var(--font-mono);
     letter-spacing: 0.1em;
-    margin-bottom: 12px;
+    margin-bottom: 9px;
     text-transform: uppercase;
   }
   .neon-copy > strong {
     display: block;
-    font: 300 clamp(31px, 2.7vw, 44px) / 1.02 var(--font-display);
+    font: 300 clamp(27px, 2.25vw, 38px) / 1.02 var(--font-display);
     max-width: 16ch;
   }
   .neon-copy > p {
     color: var(--text-2);
-    font-size: 14px;
-    line-height: 1.5;
-    margin: 13px 0 0;
+    font-size: 12px;
+    line-height: 1.45;
+    margin: 9px 0 0;
     max-width: 48ch;
   }
   footer {
     display: flex;
     flex-wrap: wrap;
-    gap: 7px 14px;
-    margin-top: 15px;
+    gap: 5px 10px;
+    margin-top: 10px;
   }
   footer a {
     color: var(--accent);
-    font: var(--mono-9) / 1.4 var(--font-mono);
-    letter-spacing: 0.06em;
+    font: var(--mono-8) / 1.35 var(--font-mono);
+    letter-spacing: 0.05em;
     text-transform: uppercase;
+  }
+  :global(.achievement-visual) {
+    height: 44px;
+    left: 18px;
+    top: 18px;
+    width: 44px;
+  }
+  :global(.achievement-visual svg) {
+    height: 34px;
+    width: 34px;
   }
   .neon-filler {
     background: #151716;
     z-index: 1;
   }
   .neon-filler-west {
-    height: 280px;
-    left: 5%;
-    top: 280px;
-    width: 19%;
+    height: 310px;
+    left: 6%;
+    top: 240px;
+    width: 14%;
   }
   .neon-filler-east {
-    height: 310px;
-    left: 80%;
-    top: 560px;
-    width: 18%;
+    height: 280px;
+    left: 86%;
+    top: 570px;
+    width: 10%;
   }
-  achievement-neon-rendition[data-mode='triggered'][data-motion-ready='true']:not([data-entered='true']) [data-lego-piece] {
+  achievement-neon-rendition[data-variation='3'] {
+    overflow: visible;
+  }
+  achievement-neon-rendition[data-variation='3'] .neon-canvas {
+    height: 860px;
+  }
+  achievement-neon-rendition[data-variation='3'] .neon-slot[data-piece='eu'] {
+    height: 210px;
+    left: 4%;
+    top: 50px;
+    width: 46%;
+  }
+  achievement-neon-rendition[data-variation='3'] .neon-slot[data-piece='uk'] {
+    height: 300px;
+    left: 60%;
+    top: -18px;
+    width: 20%;
+  }
+  achievement-neon-rendition[data-variation='3'] .neon-slot[data-piece='uk'] .neon-copy {
+    top: 64px;
+  }
+  achievement-neon-rendition[data-variation='3'] .neon-slot[data-piece='uk'] .neon-evidence {
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+  }
+  achievement-neon-rendition[data-variation='3'] .neon-slot[data-piece='mlsecops'] {
+    height: 260px;
+    left: 22%;
+    top: 300px;
+    width: 32%;
+  }
+  achievement-neon-rendition[data-variation='3'] .neon-slot[data-piece='un'] {
+    height: 330px;
+    left: 61%;
+    top: 290px;
+    width: 17%;
+  }
+  achievement-neon-rendition[data-variation='3'] .neon-slot[data-piece='acm'] {
+    height: 280px;
+    left: 12%;
+    top: 580px;
+    width: 35%;
+  }
+  achievement-neon-rendition[data-variation='3'] .neon-slot[data-piece='through-line'] {
+    height: 240px;
+    left: 53%;
+    top: 620px;
+    width: 32%;
+  }
+  achievement-neon-rendition[data-variation='3'] .neon-filler-west {
+    height: 220px;
+    left: 0;
+    top: 300px;
+    width: 16%;
+  }
+  achievement-neon-rendition[data-variation='3'] .neon-filler-east {
+    height: 180px;
+    left: 84%;
+    top: 80px;
+    width: 10%;
+  }
+  .cascade-diamond {
+    background: #171918;
+    height: 42px;
+    transform: rotate(45deg);
+    width: 42px;
+    z-index: 1;
+  }
+  .cascade-diamond-north {
+    left: 84%;
+    top: 24px;
+  }
+  .cascade-diamond-south {
+    left: 89%;
+    top: 732px;
+  }
+  .ghost-mark {
+    color: rgba(244, 242, 238, 0.035);
+    font: 300 clamp(116px, 15vw, 190px) / 0.8 var(--font-display);
+    letter-spacing: -0.08em;
+    position: absolute;
+    right: -0.02em;
+    top: -0.08em;
+    white-space: nowrap;
+    z-index: 1;
+  }
+  .ghost-rule {
+    background: var(--neon);
+    height: 1px;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transform: scaleX(0);
+    transform-origin: left;
+    z-index: 3;
+  }
+  achievement-neon-rendition[data-variation='4'][data-entered='true'] .ghost-rule {
+    animation: ghost-rule-in 460ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-delay: calc(var(--lego-order) * 60ms + 250ms);
+  }
+  @keyframes ghost-rule-in {
+    to {
+      transform: scaleX(1);
+    }
+  }
+  .micro-element {
+    left: 50%;
+    opacity: 0.42;
+    position: absolute;
+    right: auto;
+    top: 18px;
+    transform: translateX(-50%);
+    transition:
+      filter 300ms ease,
+      opacity 300ms ease,
+      transform 300ms ease;
+    z-index: 3;
+  }
+  .neon-slot:hover .micro-element,
+  .neon-slot[data-active='true'] .micro-element {
+    filter: brightness(1.35);
+    opacity: 0.95;
+    transform: translateX(-50%) scale(1.12);
+  }
+  .micro-meter {
+    align-items: end;
+    display: flex;
+    gap: 2px;
+    height: 22px;
+  }
+  .micro-meter i {
+    background: rgba(244, 242, 238, 0.28);
+    display: block;
+    height: 9px;
+    opacity: 0.18;
+    transform: scaleY(0.2);
+    transform-origin: bottom;
+    width: 2px;
+  }
+  .micro-meter i[data-adopted='true'] {
+    background: var(--neon);
+    height: 18px;
+  }
+  achievement-neon-rendition[data-variation='5'][data-entered='true'] .micro-meter i {
+    animation: micro-fill 320ms ease-out both;
+    animation-delay: calc(var(--lego-order) * 60ms + var(--micro-index) * 22ms + 260ms);
+  }
+  @keyframes micro-fill {
+    to {
+      opacity: 0.9;
+      transform: scaleY(1);
+    }
+  }
+  .micro-citation {
+    height: 30px;
+    width: 64px;
+  }
+  .micro-citation::before {
+    background: rgba(244, 242, 238, 0.24);
+    content: '';
+    height: 1px;
+    left: 7px;
+    position: absolute;
+    top: 14px;
+    width: 50px;
+  }
+  .micro-citation i {
+    background: #0f100f;
+    border: 1px solid rgba(244, 242, 238, 0.4);
+    height: 7px;
+    position: absolute;
+    top: 11px;
+    width: 7px;
+  }
+  .micro-citation i:nth-child(1) {
+    left: 3px;
+  }
+  .micro-citation i:nth-child(2) {
+    background: var(--neon);
+    border-color: var(--neon);
+    left: 28px;
+  }
+  .micro-citation i:nth-child(3) {
+    right: 3px;
+  }
+  .micro-citation i:nth-child(2) {
+    animation: citation-ping 3.8s ease-out infinite;
+  }
+  @keyframes citation-ping {
+    0%,
+    12%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(56, 189, 248, 0);
+    }
+    5% {
+      box-shadow: 0 0 0 7px rgba(56, 189, 248, 0.24);
+    }
+  }
+  .micro-ring {
+    border: 1px solid rgba(244, 242, 238, 0.2);
+    border-radius: 50%;
+    border-right-color: var(--neon);
+    border-top-color: var(--neon);
+    height: 34px;
+    width: 34px;
+    animation: ring-turn 12s linear infinite;
+  }
+  @keyframes ring-turn {
+    to {
+      transform: translateX(-50%) rotate(360deg);
+    }
+  }
+  .neon-slot:hover .micro-ring,
+  .neon-slot[data-active='true'] .micro-ring {
+    transform: translateX(-50%) scale(1.12);
+  }
+  .micro-arc {
+    height: 30px;
+    width: 72px;
+  }
+  .micro-arc svg {
+    height: 100%;
+    overflow: visible;
+    width: 100%;
+  }
+  .micro-arc path {
+    animation: arc-redraw 5.2s ease-in-out infinite;
+    fill: none;
+    stroke: var(--neon);
+    stroke-dasharray: 82;
+    stroke-width: 1;
+  }
+  .micro-arc circle {
+    fill: var(--neon);
+  }
+  @keyframes arc-redraw {
+    0%,
+    18% {
+      stroke-dashoffset: 82;
+    }
+    34%,
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+  .micro-rail {
+    background: rgba(244, 242, 238, 0.24);
+    height: 1px;
+    width: 72px;
+  }
+  .micro-rail i:nth-child(1),
+  .micro-rail i:nth-child(2) {
+    background: #0f100f;
+    border: 1px solid var(--neon);
+    border-radius: 50%;
+    height: 7px;
+    position: absolute;
+    top: -3px;
+    width: 7px;
+  }
+  .micro-rail i:nth-child(1) {
+    left: 0;
+  }
+  .micro-rail i:nth-child(2) {
+    right: 0;
+  }
+  .micro-rail i:nth-child(3) {
+    animation: rail-blip 4s ease-in-out infinite;
+    background: var(--neon);
+    border-radius: 50%;
+    height: 5px;
+    left: 0;
+    position: absolute;
+    top: -2px;
+    width: 5px;
+  }
+  @keyframes rail-blip {
+    0%,
+    15%,
+    100% {
+      opacity: 0;
+      transform: translateX(0);
+    }
+    4% {
+      opacity: 1;
+    }
+    14% {
+      opacity: 0;
+      transform: translateX(67px);
+    }
+  }
+  achievement-neon-rendition[data-motion-ready='true']:not([data-entered='true']) [data-lego-piece] {
     opacity: 0;
-    transform: translate3d(0, -168px, 0) rotate(var(--drop-rotation, 1.6deg));
+    transform: translate3d(0, -150px, 0) rotate(var(--drop-rotation, 1.6deg));
   }
-  achievement-neon-rendition[data-mode='triggered'][data-entered='true'] [data-lego-piece]:not([data-settled='true']) {
+  achievement-neon-rendition[data-entered='true'] [data-lego-piece]:not([data-settled='true']) {
     animation: lego-click 360ms cubic-bezier(0.18, 0.78, 0.22, 1) both;
     animation-delay: calc(var(--lego-order) * 60ms);
   }
@@ -378,7 +688,7 @@ const shifts = [
   @keyframes lego-click {
     0% {
       opacity: 0;
-      transform: translate3d(0, -168px, 0) rotate(var(--drop-rotation, 1.6deg));
+      transform: translate3d(0, -150px, 0) rotate(var(--drop-rotation, 1.6deg));
     }
     72% {
       opacity: 1;
@@ -408,38 +718,56 @@ const shifts = [
     }
   }
   @media (max-width: 900px) {
-    .neon-canvas {
-      display: grid;
-      gap: 32px;
-      height: auto;
-      padding-inline: 30px;
+    .achievement-neon-rendition {
+      overflow: clip !important;
     }
-    .neon-filler {
+    .neon-canvas,
+    achievement-neon-rendition[data-variation='3'] .neon-canvas {
+      display: grid;
+      gap: 58px;
+      height: auto;
+      padding-inline: 34px;
+    }
+    .neon-filler,
+    .cascade-diamond {
       display: none;
     }
-    .neon-slot {
+    .neon-slot,
+    achievement-neon-rendition[data-variation='3'] .neon-slot {
       --shift-x: 0px !important;
-      --shift-y: 16px !important;
+      --shift-y: 44px !important;
       height: auto !important;
       left: auto !important;
-      min-height: 320px;
+      min-height: 280px;
       position: relative;
       top: auto !important;
       width: auto !important;
     }
+    .neon-slot[data-piece='mlsecops'] {
+      min-height: 300px;
+    }
+    .neon-slot[data-piece='un'] {
+      min-height: 360px;
+    }
   }
   @media (max-width: 600px) {
-    .neon-canvas {
-      padding-inline: 22px;
+    .neon-canvas,
+    achievement-neon-rendition[data-variation='3'] .neon-canvas {
+      padding-inline: 24px;
     }
   }
   @media (prefers-reduced-motion: reduce) {
-    .lego-piece {
+    .lego-piece,
+    .ghost-rule,
+    .micro-element,
+    .micro-element * {
       animation: none !important;
+    }
+    .lego-piece {
       opacity: 1 !important;
       transform: none !important;
     }
-    .neon-underlay {
+    .neon-reveal-clip {
       display: none;
     }
     .neon-card {
@@ -448,6 +776,29 @@ const shifts = [
     .neon-card:hover {
       outline: 1px solid var(--accent);
       outline-offset: -1px;
+    }
+    .ghost-rule {
+      transform: scaleX(1);
+    }
+    .micro-element {
+      opacity: 0.72;
+      transform: translateX(-50%);
+    }
+    .micro-meter i {
+      opacity: 0.42;
+      transform: scaleY(1);
+    }
+    .micro-meter i[data-adopted='true'] {
+      opacity: 0.9;
+    }
+    .micro-arc path {
+      stroke-dashoffset: 0;
+    }
+    .micro-rail i:nth-child(3) {
+      left: auto;
+      opacity: 1;
+      right: 1px;
+      transform: none;
     }
   }
 </style>
