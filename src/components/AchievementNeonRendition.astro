@@ -416,12 +416,12 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
           {dud.shape === 'square' && <span class="dud-face" aria-hidden="true" />}
           {dud.shape === 'diamond' && (
             <svg class="dud-shape" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-              <rect x="26" y="26" width="48" height="48" transform="rotate(45 50 50)" />
+              <polygon points="50,1 99,50 50,99 1,50" />
             </svg>
           )}
           {dud.shape === 'triangle' && (
             <svg class="dud-shape" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-              <polygon points="50,24 80,76 20,76" />
+              <polygon points="50,3 97,97 3,97" />
             </svg>
           )}
         </div>
@@ -554,10 +554,10 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
      heading), and clears the sticky navs inside a 900px viewport. */
   .neon-canvas {
     display: grid;
-    gap: 16px;
+    gap: 0;
     grid-template-columns: repeat(var(--columns), 1fr);
-    grid-template-rows: repeat(var(--rows), 168px);
-    margin: 0;
+    grid-template-rows: repeat(var(--rows), 180px);
+    margin: 0 auto;
     max-width: 1000px;
   }
   /* The slot is NOT clipped: on reveal the card physically slides out of its own
@@ -591,6 +591,7 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
   }
   .neon-card {
     background: #171918;
+    border: 1px solid var(--hairline-card);
     color: var(--text-1);
     overflow: hidden;
     transform: translate3d(0, 0, 0);
@@ -656,7 +657,7 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
     overflow: hidden;
   }
   .neon-slot[data-size='long'] .neon-copy > strong {
-    font: 300 clamp(30px, 3.4vw, 44px) / 1 var(--font-display);
+    font: 300 clamp(24px, 2.4vw, 34px) / 1.04 var(--font-display);
     letter-spacing: -0.02em;
     -webkit-line-clamp: 2;
   }
@@ -690,33 +691,23 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
     text-transform: uppercase;
   }
 
-  /* --- Shared stage region (all SVG surfaces sit here) --- */
+  /* --- Shared stage region: every SVG surface (isometric, cracks, circuit) is
+     boxed into the TOP-RIGHT corner at both card sizes, clear of the
+     bottom-anchored copy. Kept compact on purpose: effects are accents, not
+     full-card washes. --- */
   .stage {
+    bottom: auto;
+    left: auto;
     position: absolute;
+    right: 10px;
+    top: 8px;
     z-index: 2;
   }
   .neon-slot[data-size='long'] .stage {
-    inset: 0;
-  }
-  .neon-slot[data-size='short'] .stage {
-    height: 74px;
-    left: 0;
-    right: 0;
-    top: 0;
-  }
-  /* The isometric stage is boxed into the TOP-RIGHT corner (both sizes), clear of
-     the bottom-anchored copy so it never overlaps eyebrow, lead, one-liner or links. */
-  .neon-slot .iso-stage {
-    bottom: auto;
-    left: auto;
-    right: 10px;
-    top: 8px;
-  }
-  .neon-slot[data-size='long'] .iso-stage {
     height: 88px;
     width: 46%;
   }
-  .neon-slot[data-size='short'] .iso-stage {
+  .neon-slot[data-size='short'] .stage {
     height: 66px;
     width: 64%;
   }
