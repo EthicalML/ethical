@@ -18,16 +18,21 @@ interface Block {
   size: 'long' | 'short';
 }
 
+interface Dud {
+  area: string;
+  shape: 'square' | 'diamond' | 'triangle';
+}
+
 interface Layout {
   areas: string[];
   blocks: Record<string, Block>;
-  duds: string[];
+  duds: Dud[];
 }
 
 interface Props {
   cards: AchievementCard[];
   layout: Layout;
-  variant: 1 | 2 | 3 | 4 | 5;
+  variant: 1 | 2 | 3 | 4;
 }
 
 const { cards, layout, variant } = Astro.props;
@@ -39,7 +44,6 @@ const figureLabels = ['8 / 12', '13 / 14', 'CODE', 'UN', 'ACM', '2026'];
 // A long block slides further than a short one; direction is the block sign.
 const longTravel = 58;
 const shortTravel = 46;
-const dudTravel = 26;
 
 const round = (n: number) => Math.round(n * 100) / 100;
 const point = (p: number[]) => `${round(p[0])},${round(p[1])}`;
@@ -76,12 +80,9 @@ const placed = cards.map((card, index) => {
   const travel = block.size === 'long' ? longTravel : shortTravel;
   return { card, index, block, order, shiftX: block.dir * travel };
 });
-const duds = layout.duds.map((area, i) => ({
-  area,
-  order: orderOf[area],
-  shiftX: (i % 2 ? -1 : 1) * dudTravel,
-  neon: neon[(i + 2) % neon.length],
-}));
+// Duds are inert: a lighter grey raised surface, no neon and no slide. They land
+// with the stack (order) but never reveal or move on hover.
+const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, order: orderOf[dud.area] }));
 
 // Small deterministic generator so build output is stable.
 function rng(seed: number) {
@@ -222,40 +223,7 @@ const isoByCard = isoStructures.map((s) => ({
 }));
 
 // ---------------------------------------------------------------------------
-// V3 transformer plates. Short keeps the hex core plus two plates.
-// ---------------------------------------------------------------------------
-function transformerPanels(seed: number) {
-  const rand = rng(seed + 11);
-  const flip = seed % 2 === 0 ? 1 : -1;
-  const cx = 50;
-  const cy = 46;
-  const hr = 21 + Math.round(rand() * 6);
-  const hex: number[][] = [];
-  for (let i = 0; i < 6; i++) {
-    const ang = Math.PI / 6 + (i * Math.PI) / 3;
-    hex.push([round(cx + hr * Math.cos(ang)), round(cy + hr * Math.sin(ang))]);
-  }
-  const midTop = 40 + Math.round(rand() * 20);
-  const panels: { pts: string; tx: number; ty: number; rot: number; core?: boolean }[] = [];
-  panels.push({ pts: hex.map(point).join(' '), tx: 0, ty: 0, rot: 0, core: true });
-  panels.push({ pts: [point([0, 0]), point([midTop, 0]), point([0, cy])].join(' '), tx: -4 * flip, ty: -4, rot: -2 });
-  panels.push({ pts: [point([midTop, 0]), point([100, 0]), point([100, cy]), point([cx, 0])].join(' '), tx: 4, ty: -3, rot: 2 });
-  panels.push({ pts: [point([0, cy]), point([0, 100]), point([cx, 100])].join(' '), tx: -4, ty: 4, rot: 2 });
-  panels.push({ pts: [point([100, cy]), point([100, 100]), point([cx, 100])].join(' '), tx: 4 * flip, ty: 4, rot: -2 });
-  if (seed % 2 === 0) {
-    panels.push({ pts: [point([cx - 9, 84]), point([cx + 9, 84]), point([cx, 96])].join(' '), tx: 0, ty: 5, rot: 0 });
-  } else {
-    panels.push({ pts: [point([12, 8]), point([26, 8]), point([26, 22]), point([12, 22])].join(' '), tx: -5, ty: -5, rot: -3 });
-  }
-  return panels;
-}
-const transformerByCard = [0, 1, 2, 3, 4, 5].map((i) => {
-  const full = transformerPanels(i);
-  return { long: full, short: [full[0], full[1], full[3]] };
-});
-
-// ---------------------------------------------------------------------------
-// V4 volcanic cracks and V5 circuit etch share per-card origin corners.
+// V3 volcanic cracks and V4 circuit etch share per-card origin corners.
 // Short renditions run fewer steps and drop the branches.
 // ---------------------------------------------------------------------------
 const origins = [
@@ -337,7 +305,6 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
     {
       placed.map(({ card, index, block, order, shiftX }) => {
         const iso = isoByCard[index][block.size];
-        const tf = transformerByCard[index][block.size];
         const vc = cracksByCard[index][block.size];
         const ce = circuitByCard[index][block.size];
         return (
@@ -375,21 +342,6 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
               )}
 
               {variant === 3 && (
-                <span class="stage tf-stage" aria-hidden="true">
-                  <i class="tf-glow" />
-                  <svg class="tf-plates" viewBox="0 0 100 100" preserveAspectRatio="none">
-                    {tf.map((panel) => (
-                      <polygon
-                        class:list={['tf-panel', { 'tf-core': panel.core }]}
-                        points={panel.pts}
-                        style={`--tx:${panel.tx}px;--ty:${panel.ty}px;--rot:${panel.rot}deg`}
-                      />
-                    ))}
-                  </svg>
-                </span>
-              )}
-
-              {variant === 4 && (
                 <span class="stage vc-stage" aria-hidden="true">
                   <span class="vc-shimmer" style={`left:${vc.origin[0]}%;top:${vc.origin[1]}%`} />
                   <svg class="vc-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -408,7 +360,7 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
                 </span>
               )}
 
-              {variant === 5 && (
+              {variant === 4 && (
                 <span class="stage ce-stage" aria-hidden="true">
                   <svg class="ce-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
                     <path class="ce-hint" d={ce.hint} />
@@ -458,11 +410,20 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
           class="lego-piece dud"
           data-lego-piece
           data-order={dud.order}
-          data-size="short"
-          style={`grid-area:${dud.area};--neon:${dud.neon};--shift-x:${dud.shiftX}px;--drop-rotation:${dud.order % 2 ? -1.6 : 1.6}deg;--fall-dur:320ms`}
+          data-shape={dud.shape}
+          style={`grid-area:${dud.area};--drop-rotation:${dud.order % 2 ? -1.6 : 1.6}deg;--fall-dur:320ms`}
         >
-          <i class="neon-underlay" aria-hidden="true" />
-          <span class="dud-face" aria-hidden="true" />
+          {dud.shape === 'square' && <span class="dud-face" aria-hidden="true" />}
+          {dud.shape === 'diamond' && (
+            <svg class="dud-shape" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <rect x="26" y="26" width="48" height="48" transform="rotate(45 50 50)" />
+            </svg>
+          )}
+          {dud.shape === 'triangle' && (
+            <svg class="dud-shape" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <polygon points="50,24 80,76 20,76" />
+            </svg>
+          )}
         </div>
       ))
     }
@@ -587,9 +548,9 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
   .achievement-neon-rendition {
     display: block;
   }
-  /* The Wave: a fixed cell grid driven by grid-template-areas from the layout
-     map. Long blocks span two cells; duds fill the muted structure. The canvas
-     is 720px tall, anchored to the content-left margin (aligned with the section
+  /* The Stack: a fixed cell grid driven by grid-template-areas from the layout
+     map. Long blocks span two cells; inert duds fill the gaps. The canvas is
+     720px tall, anchored to the content-left margin (aligned with the section
      heading), and clears the sticky navs inside a 900px viewport. */
   .neon-canvas {
     display: grid;
@@ -597,31 +558,35 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
     grid-template-columns: repeat(var(--columns), 1fr);
     grid-template-rows: repeat(var(--rows), 168px);
     margin: 0;
-    max-width: 1160px;
+    max-width: 1000px;
   }
+  /* The slot is NOT clipped: on reveal the card physically slides out of its own
+     cell (see the slide rule), so a hovered card is lifted above its neighbours. */
   .neon-slot {
-    contain: paint;
-    overflow: clip;
     position: relative;
     z-index: 2;
+  }
+  .neon-slot:hover,
+  .neon-slot[data-active='true'] {
+    z-index: 10;
   }
   .neon-underlay,
   .neon-card {
     inset: 0;
     position: absolute;
   }
-  /* The neon under-block stays transparent except while a card is actively
-     revealing, so the solid colour can never flood the page (a fractional-zoom
-     compositing quirk otherwise painted this layer outside its clip). */
+  /* The neon under-block sits only within the card's original footprint, so when
+     the card slides off it the colour is revealed on the vacated side only and
+     nothing shows on the opposite edge. It stays transparent at rest (no solid
+     colour can ever flood the page) and fades in symmetrically while revealing. */
   .neon-underlay {
     background: var(--neon);
     opacity: 0;
-    transition: opacity 220ms ease;
+    transition: opacity 300ms ease;
     z-index: 0;
   }
   .neon-slot:hover .neon-underlay,
-  .neon-slot[data-active='true'] .neon-underlay,
-  .dud:hover .neon-underlay {
+  .neon-slot[data-active='true'] .neon-underlay {
     opacity: 1;
   }
   .neon-card {
@@ -638,26 +603,33 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
     background: #131615;
   }
 
-  /* --- Dud blocks: muted structure carrying its own neon under-block --- */
+  /* --- Dud blocks: inert lighter-grey raised surfaces, no neon and no slide.
+     They take a filled square, a 45deg diamond or a triangle, centred in the
+     cell with a hairline. #212423 is the site's muted raised-surface tone,
+     clearly lighter than the cards but still dark-theme. --- */
   .dud {
-    contain: paint;
-    overflow: clip;
     position: relative;
     z-index: 1;
   }
   .dud-face {
-    background: #101211;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: #212423;
+    border: 1px solid var(--hairline-card);
     inset: 0;
     position: absolute;
-    transform: translate3d(0, 0, 0);
-    transition: transform 1000ms cubic-bezier(0.22, 1, 0.36, 1);
-    z-index: 2;
   }
-  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-    .dud:hover .dud-face {
-      transform: translate3d(var(--shift-x), 0, 0);
-    }
+  .dud-shape {
+    height: 100%;
+    inset: 0;
+    position: absolute;
+    width: 100%;
+  }
+  .dud-shape rect,
+  .dud-shape polygon {
+    fill: #212423;
+    stroke: var(--hairline-card);
+    stroke-linejoin: round;
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
   }
 
   /* --- Copy: both sizes fill the block width and anchor to the bottom, so
@@ -731,6 +703,22 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
     left: 0;
     right: 0;
     top: 0;
+  }
+  /* The isometric stage is boxed into the TOP-RIGHT corner (both sizes), clear of
+     the bottom-anchored copy so it never overlaps eyebrow, lead, one-liner or links. */
+  .neon-slot .iso-stage {
+    bottom: auto;
+    left: auto;
+    right: 10px;
+    top: 8px;
+  }
+  .neon-slot[data-size='long'] .iso-stage {
+    height: 88px;
+    width: 46%;
+  }
+  .neon-slot[data-size='short'] .iso-stage {
+    height: 66px;
+    width: 64%;
   }
 
   /* --- V1 / V2 ghost numerals (cropped by the block edge) --- */
@@ -845,51 +833,7 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
     }
   }
 
-  /* --- V3 transformer plates --- */
-  .tf-glow {
-    background: radial-gradient(circle at 50% 42%, var(--neon), transparent 62%);
-    inset: 0;
-    opacity: 0;
-    position: absolute;
-    transition: opacity 320ms ease;
-  }
-  .tf-plates {
-    height: 100%;
-    inset: 0;
-    position: absolute;
-    width: 100%;
-  }
-  .tf-panel {
-    fill: #141615;
-    stroke: rgba(244, 242, 238, 0.14);
-    stroke-width: 1;
-    transform: translate3d(0, 0, 0);
-    transform-box: fill-box;
-    transform-origin: center;
-    transition:
-      transform 340ms cubic-bezier(0.22, 1, 0.36, 1),
-      stroke 300ms ease;
-    vector-effect: non-scaling-stroke;
-  }
-  .tf-core {
-    fill: #191c1a;
-  }
-  .neon-slot:hover .tf-glow,
-  .neon-slot[data-active='true'] .tf-glow {
-    opacity: 0.5;
-  }
-  .neon-slot:hover .tf-panel,
-  .neon-slot[data-active='true'] .tf-panel {
-    stroke: color-mix(in srgb, var(--neon) 70%, transparent);
-    transform: translate3d(var(--tx), var(--ty), 0) rotate(var(--rot));
-  }
-  .neon-slot:hover .tf-core,
-  .neon-slot[data-active='true'] .tf-core {
-    fill: color-mix(in srgb, var(--neon) 22%, #16110c);
-    stroke: var(--neon);
-  }
-
-  /* --- V4 volcanic cracks --- */
+  /* --- V3 volcanic cracks --- */
   .vc-svg {
     height: 100%;
     inset: 0;
@@ -984,7 +928,7 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
     }
   }
 
-  /* --- V5 circuit etch --- */
+  /* --- V4 circuit etch --- */
   .ce-svg {
     height: 100%;
     inset: 0;
@@ -1114,8 +1058,10 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
     }
   }
 
-  /* --- Slide reveal (shared; each block slides into its adjacent empty space,
-     the underlay showing behind it, the slot clip keeping the opposite edge clean) --- */
+  /* --- Slide reveal (shared): on hover the CARD itself slides out of its cell
+     toward the adjacent open space and lifts above its neighbours, uncovering the
+     neon under-block within its original footprint; the opposite edge stays clean
+     because the under-block never extends past that footprint. --- */
   @media (hover: hover) and (prefers-reduced-motion: no-preference) {
     .neon-slot:hover .neon-card {
       transform: translate3d(var(--shift-x), 0, 0);
@@ -1127,7 +1073,7 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
     }
   }
 
-  /* --- Responsive: hold the wave to a tablet width, then a single column --- */
+  /* --- Responsive: hold the stack to a tablet width, then a single column --- */
   @media (max-width: 900px) {
     .neon-canvas {
       display: flex;
@@ -1143,12 +1089,14 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
     .neon-slot[data-size='long'] .neon-copy {
       right: 0;
     }
-    .neon-slot[data-size='long'] .stage {
+    .neon-slot[data-size='long'] .stage,
+    .neon-slot .iso-stage {
       bottom: auto;
       height: 118px;
       left: 0;
       right: 0;
       top: 0;
+      width: auto;
     }
     .neon-slot[data-size='short'] .stage {
       height: 118px;
@@ -1169,7 +1117,7 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
     }
   }
 
-  /* --- Reduced motion: static settled wave, outline hover only --- */
+  /* --- Reduced motion: static settled stack, outline hover only --- */
   @media (prefers-reduced-motion: reduce) {
     .lego-piece,
     .iso-group,
@@ -1182,8 +1130,6 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
       transform: none !important;
     }
     .neon-underlay,
-    .tf-glow,
-    .tf-plates,
     .vc-stage,
     .ce-stage {
       display: none;
