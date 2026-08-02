@@ -9,12 +9,15 @@ import {
 } from './PolicyHeroShared';
 
 // A planet made of language: verbatim fragments are positioned on the rotating displaced
-// sphere surface exactly as the dotted terrain places dots. Near-side phrases are brighter
-// and larger, far-side phrases dimmer and smaller, so depth reads as brightness and scale.
+// sphere surface. Near-side phrases are brighter and larger, far-side phrases dimmer and
+// smaller, so depth reads as brightness and scale. The hemisphere is anchored low in the
+// section so it rises from the hero's lower edge. Phrases render in warm off-white by default
+// and cross-fade to the green accent, enlarging to readable, as the cursor passes over them.
 
 // Shorter fragments only, so each phrase stays a legible surface tag rather than a ribbon.
 const SHORT = POLICY_FRAGMENTS.filter((fragment) => fragment.length <= 33);
 const ACCENT = '94,230,160';
+const WHITE = '244,242,238';
 const FONT_BASE = 15;
 const SUPERSAMPLE = 2;
 const GOLDEN = Math.PI * (3 - Math.sqrt(5));
@@ -49,10 +52,12 @@ interface Sprite {
   w: number;
 }
 
+// Two colour variants per fragment share identical metrics; the key packs the hover flag.
 const spriteCache = new Map<number, Sprite>();
 
-const sprite = (fragmentIndex: number): Sprite => {
-  const cached = spriteCache.get(fragmentIndex);
+const sprite = (fragmentIndex: number, hot: boolean): Sprite => {
+  const key = fragmentIndex * 2 + (hot ? 1 : 0);
+  const cached = spriteCache.get(key);
   if (cached) return cached;
   const text = SHORT[fragmentIndex];
   const canvas = document.createElement('canvas');
@@ -66,10 +71,10 @@ const sprite = (fragmentIndex: number): Sprite => {
   context.font = `${pixel}px 'Geist Mono', monospace`;
   context.textAlign = 'center';
   context.textBaseline = 'middle';
-  context.fillStyle = `rgb(${ACCENT})`;
+  context.fillStyle = `rgb(${hot ? ACCENT : WHITE})`;
   context.fillText(text, width / 2, height / 2);
   const built = { canvas, w: width / SUPERSAMPLE, h: height / SUPERSAMPLE };
-  spriteCache.set(fragmentIndex, built);
+  spriteCache.set(key, built);
   return built;
 };
 
@@ -114,9 +119,10 @@ export class PolicyHeroPhraseTerrain extends HTMLElement {
     context.clearRect(0, 0, width, height);
     const time = reducedMotion ? 6.4 : elapsed + 2.2;
     const scale = Math.min(width / 920, height / 650);
-    const center = { x: width * 0.49, y: height * 0.48 };
-    const radiusX = Math.min(width * 0.35, height * 0.53);
-    const radiusY = Math.min(height * 0.53, width * 0.37);
+    // Anchored low so only the upper hemisphere emerges from the section's lower edge.
+    const center = { x: width * 0.5, y: height * 0.92 };
+    const radiusX = Math.min(width * 0.4, height * 0.62);
+    const radiusY = Math.min(height * 0.62, width * 0.42);
     const rotation = time * 0.05;
     const sweep = Math.sin(time * 0.26) * 0.82;
 
@@ -162,24 +168,32 @@ export class PolicyHeroPhraseTerrain extends HTMLElement {
       let alpha = clamp(0.05 + depthN * 0.34 + directional * 0.24 + band * 0.42) * fade;
       let k = scale * anchor.size * (0.42 + depthN * 0.62);
 
+      // Local hover heat: phrases near the cursor brighten, enlarge and lift toward the viewer.
+      let heat = 0;
       if (strength > 0.01) {
         const distance = Math.hypot(cursorX - x, cursorY - y);
         if (distance < hoverRadius) {
-          const local = Math.pow(1 - distance / hoverRadius, 2) * strength;
-          alpha = clamp(alpha + local * 0.8);
-          k += local * 0.5 * scale * anchor.size;
-          y -= local * 3 * scale;
+          heat = clamp(Math.pow(1 - distance / hoverRadius, 2) * strength);
+          alpha = clamp(alpha + heat * 0.8);
+          k += heat * 0.5 * scale * anchor.size;
+          y -= heat * 3 * scale;
         }
       }
       if (alpha < 0.02) return;
 
-      const image = sprite(anchor.fragment);
-      const drawW = image.w * k;
-      const drawH = image.h * k;
+      // Metrics are colour-independent, so size from the white base and overlay green on heat.
+      const base = sprite(anchor.fragment, false);
+      const drawW = base.w * k;
+      const drawH = base.h * k;
       // Keep the sprite fully inside the canvas so no phrase is cut off at the frame edge.
       const drawX = Math.min(Math.max(x - drawW / 2, 2), width - drawW - 2);
+      const drawY = y - drawH / 2;
       context.globalAlpha = alpha;
-      context.drawImage(image.canvas, drawX, y - drawH / 2, drawW, drawH);
+      context.drawImage(base.canvas, drawX, drawY, drawW, drawH);
+      if (heat > 0.01) {
+        context.globalAlpha = alpha * smooth(clamp(heat));
+        context.drawImage(sprite(anchor.fragment, true).canvas, drawX, drawY, drawW, drawH);
+      }
     });
     context.globalAlpha = 1;
   };
