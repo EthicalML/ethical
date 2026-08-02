@@ -319,14 +319,14 @@ export const products: PolicyRecordProduct[] = [
     ],
   },
   {
-    title: 'ETPC response to targeted EC consultation',
-    instrument: 'EC CONSULTATION',
-    track: 'eu-digital-acts',
+    title: 'High-risk AI classification guidelines response',
+    instrument: 'EU AI ACT',
+    date: 'JUN 2026',
+    track: 'eu-ai-act',
     href: 'https://www.acm.org/public-policy/europe-tpc/etpc-response-targeted-ec-consultation',
     slug: '16-etpc-response-targeted-ec-consultation',
-    unverified: true,
     summary:
-      'Response to a targeted European Commission consultation. Summary derived from title and instrument; the page is HTML and its text was not extracted.',
+      'Responds to the draft Commission guidelines on classifying high-risk AI systems, warning that the broad end-to-end mandate makes benign subcomponents inherit high-risk status and arguing for modular classification and a workable Article 6(3) filter.',
     phrases: [],
   },
   {
