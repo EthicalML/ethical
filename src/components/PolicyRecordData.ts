@@ -327,8 +327,7 @@ export const products: PolicyRecordProduct[] = [
 // The second shelf: instruments and reports the Institute contributed to rather than
 // authored: chaired, reviewed, forum membership, or recommendations adopted. Kept separate
 // from `products` so the "28 policy products delivered" stat stays scoped to authored work.
-// Reviewer credits are verified against each document's text where extractable; the MCP
-// third-party guide credit is owner-asserted (acknowledgments not in the text layer).
+// Every OWASP reviewer credit is verified against the document's own text.
 export const instrumentFilters = [
   { label: 'ALL', value: 'all' },
   { label: 'UN', value: 'un' },
@@ -435,17 +434,6 @@ export const instruments: PolicyRecordProduct[] = [
     role: 'REVIEWER',
     summary:
       'A landscape view of securing and governing autonomous AI systems: the evolving tool ecosystem, emerging regulation, and actionable insight for developing and deploying agentic systems responsibly.',
-  },
-  {
-    title: 'Practical guide for securely using third-party MCP servers',
-    instrument: 'OWASP MCP',
-    date: 'OCT 2025',
-    track: 'owasp',
-    href: 'https://genai.owasp.org/resource/cheatsheet-a-practical-guide-for-securely-using-third-party-mcp-servers-1-0/',
-    slug: 'i09-owasp-mcp-third-party-guide',
-    role: 'REVIEWER',
-    summary:
-      'Guidance on the risks of connecting AI models to third-party MCP servers, including tool poisoning, prompt injection, memory poisoning and tool interference, with deployment safeguards.',
   },
   {
     title: 'Multi-Agentic system Threat Modeling Guide v1.0',
