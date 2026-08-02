@@ -7,15 +7,46 @@ interface Tower {
   gx: number;
   gz: number;
   label: string;
+  payload: string;
+  rise: string;
 }
 
-// One tower per policy track from /policy/, arranged around a central hub.
+// One tower per policy track from /policy/, arranged around a central hub. Each tower has a
+// short payload phrase that travels its conduit and a phrase that rises when its beat lands.
 const TOWERS: Tower[] = [
-  { label: 'EU AI ACT', gx: -3, gz: -1, base: 2 },
-  { label: 'EU DIGITAL ACTS', gx: -1, gz: -3, base: 1 },
-  { label: 'UK', gx: 3, gz: -2, base: 2 },
-  { label: 'UN & GLOBAL', gx: 2.5, gz: 3, base: 1 },
-  { label: 'SUSTAINABILITY', gx: -2.5, gz: 3, base: 2 },
+  {
+    label: 'EU AI ACT',
+    gx: -3,
+    gz: -1,
+    base: 2,
+    payload: 'risk tier',
+    rise: 'classification follows risk',
+  },
+  {
+    label: 'EU DIGITAL ACTS',
+    gx: -1,
+    gz: -3,
+    base: 1,
+    payload: 'provenance',
+    rise: 'dataset provenance',
+  },
+  { label: 'UK', gx: 3, gz: -2, base: 2, payload: 'oversight', rise: 'continuous oversight' },
+  {
+    label: 'UN & GLOBAL',
+    gx: 2.5,
+    gz: 3,
+    base: 1,
+    payload: 'interoperable',
+    rise: 'inclusive AI governance',
+  },
+  {
+    label: 'SUSTAINABILITY',
+    gx: -2.5,
+    gz: 3,
+    base: 2,
+    payload: 'energy',
+    rise: 'inference-phase transparency',
+  },
 ];
 
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -74,7 +105,7 @@ export class PolicyHeroPolicyCircuit extends HTMLElement {
 
   private draw: CanvasDraw = (context, width, height, elapsed) => {
     context.clearRect(0, 0, width, height);
-    const time = reducedMotion ? 6 : elapsed + 3;
+    const time = reducedMotion ? 7 : elapsed + 3;
     const unit = Math.min(width, height) * 0.05;
     const project = createIso(unit, width * 0.58, height * 0.52);
 
@@ -138,6 +169,14 @@ export class PolicyHeroPolicyCircuit extends HTMLElement {
           context.arc(point[0], point[1], 1.5, 0, Math.PI * 2);
           context.fillStyle = 'rgba(180,255,214,0.85)';
           context.fill();
+          // The phrase is the data flowing through the conduit; show it on lit routes.
+          if (p === 0 && hot) {
+            context.font = `${Math.max(7.5, unit * 0.4)}px 'Geist Mono', monospace`;
+            context.fillStyle = 'rgba(190,255,220,0.92)';
+            context.textAlign = 'left';
+            context.fillText(tower.payload, point[0] + unit * 0.45, point[1] - unit * 0.35);
+            context.textAlign = 'start';
+          }
         }
       }
     });
@@ -185,6 +224,22 @@ export class PolicyHeroPolicyCircuit extends HTMLElement {
       context.fillText(tower.label, topPoint[0], topPoint[1] - unit * 0.7);
       context.textAlign = 'start';
     });
+
+    // A phrase rises from the active tower as its beat lands, holding readable for a moment.
+    const activeTower = TOWERS[active];
+    const beatProgress = (time % BEAT) / BEAT;
+    const riseAlpha = clamp(Math.sin(beatProgress * Math.PI) * 1.5);
+    if (riseAlpha > 0.02) {
+      // Start well above the tower label so the rising phrase never collides with it.
+      const lift = 1.9 + beatProgress * 1.8;
+      const risePoint = project(activeTower.gx, 0.3 + this.heights[active] + lift, activeTower.gz);
+      drawGlow(context, risePoint[0], risePoint[1], unit * 1.7, riseAlpha * 0.16);
+      context.font = `${Math.max(9.5, unit * 0.52)}px 'Geist Mono', monospace`;
+      context.textAlign = 'center';
+      context.fillStyle = `rgba(200,255,224,${riseAlpha})`;
+      context.fillText(activeTower.rise, risePoint[0], risePoint[1]);
+      context.textAlign = 'start';
+    }
   };
 }
 

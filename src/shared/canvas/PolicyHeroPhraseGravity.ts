@@ -86,8 +86,23 @@ export class PolicyHeroPhraseGravity extends HTMLElement {
     const breath = 1 + Math.sin(time * 0.48) * 0.025;
     // Slow oscillating illumination wave that sweeps the field on a diagonal.
     const wavePos = 0.5 + Math.sin(time * 0.2) * 0.62;
-    const bandWidth = 0.19;
+    const bandWidth = 0.16;
     let maxStep = 0;
+
+    // Visible luminous band: a soft additive gradient sweeping along the same diagonal
+    // (coordinate = nx*0.72 + ny*0.28) so the wave's passage is unmistakable, not just
+    // implied by the phrases it lights.
+    const ax = 0.72 / width;
+    const ay = 0.28 / height;
+    const inv = 1 / (ax * ax + ay * ay);
+    const bandGradient = context.createLinearGradient(0, 0, ax * inv, ay * inv);
+    const lo = Math.max(0, wavePos - bandWidth * 2.6);
+    const hi = Math.min(1, wavePos + bandWidth * 2.6);
+    bandGradient.addColorStop(lo, 'rgba(94,230,160,0)');
+    bandGradient.addColorStop(clamp(wavePos), 'rgba(120,240,180,0.09)');
+    bandGradient.addColorStop(hi, 'rgba(94,230,160,0)');
+    context.fillStyle = bandGradient;
+    context.fillRect(0, 0, width, height);
 
     PARTICLES.forEach((particle, index) => {
       const baseX = (particle.x - 0.5) * breath + 0.5;
@@ -103,21 +118,25 @@ export class PolicyHeroPhraseGravity extends HTMLElement {
       const dy = gravityY - targetY;
       const distance = Math.hypot(dx, dy);
       const releaseAt = particle.inGravity ? exitRadius : enterRadius;
-      let hoverLit = 0;
+      // Readability lens: everything inside the lens radius brightens and enlarges,
+      // peaking at the cursor and falling off outward, so hovering makes the record
+      // legible. The gravity pull stays gated behind the hysteresis boundary.
+      const lens = clamp(1 - distance / exitRadius) * this.pointer.strength;
+      const hoverLit = lens * 0.85;
       if (distance < releaseAt && this.pointer.strength > 0.01) {
         particle.inGravity = true;
         const pull = Math.pow(1 - Math.min(1, distance / exitRadius), 2) * this.pointer.strength;
         targetX += dx * pull * (0.2 + particle.depth * 0.16);
         targetY += dy * pull * (0.2 + particle.depth * 0.16);
-        hoverLit = clamp(1 - distance / exitRadius) * this.pointer.strength * 0.6;
       } else {
         particle.inGravity = false;
       }
 
       const larger = index % 31 === 0;
+      const hoverScale = 1 + lens * lens * 2.3;
       const fontSize = Math.max(
         5.7,
-        (larger ? 9.4 : 6.2) * particle.scale * particle.depth * scale,
+        (larger ? 9.4 : 6.2) * particle.scale * particle.depth * scale * hoverScale,
       );
       context.font = `${fontSize}px 'Geist Mono', monospace`;
       const phrase = POLICY_FRAGMENTS[particle.fragment];
@@ -144,17 +163,21 @@ export class PolicyHeroPhraseGravity extends HTMLElement {
       const coordinate = particle.x * 0.72 + particle.y * 0.28;
       const band = Math.exp(-Math.pow((coordinate - wavePos) / bandWidth, 2));
       const headline = larger ? 0.16 + Math.sin(time * 0.34 + particle.phase) * 0.12 : 0;
-      const lum = clamp(0.08 + band * 1.02 + hoverLit + headline);
+      const lum = clamp(0.08 + band * 1.15 + hoverLit + headline);
       const depthFade = 0.62 + particle.depth * 0.38;
+      // A phrase brought under the lens ignores depth fade so it can reach full legibility.
+      const readable = Math.max(lens, band * 0.55);
 
       if (larger) {
-        const alpha = clamp(particle.alpha * 0.5 + lum * 0.72) * depthFade;
-        context.fillStyle = `rgba(${Math.round(120 + (1 - lum) * 70)},235,${Math.round(150 + (1 - lum) * 40)},${alpha})`;
+        const alpha = clamp(clamp(particle.alpha * 0.5 + lum * 0.85) * depthFade + lens * 0.7);
+        context.fillStyle = `rgba(${Math.round(140 + readable * 70)},240,${Math.round(180 + readable * 40)},${alpha})`;
       } else {
-        const alpha = clamp(0.1 + lum * 0.7) * depthFade * (0.5 + particle.alpha);
-        const r = Math.round(150 + (1 - lum) * 94);
-        const g = Math.round(234 + lum * 8);
-        const b = Math.round(172 + (1 - lum) * 66);
+        const alpha = clamp(
+          clamp(0.1 + lum * 0.9) * depthFade * (0.5 + particle.alpha) + lens * 0.7,
+        );
+        const r = Math.round(150 + readable * 70);
+        const g = Math.round(234 + readable * 12);
+        const b = Math.round(172 + readable * 58);
         context.fillStyle = `rgba(${r},${g},${b},${alpha})`;
       }
       context.fillText(phrase, particle.cx, particle.cy);

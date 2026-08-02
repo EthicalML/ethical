@@ -4,9 +4,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 const variants = [
   { label: 'Phrase gravity', value: 1 },
   { label: 'Dotted terrain', value: 2 },
-  { label: 'Brace terrain', value: 3 },
-  { label: 'Isometric assembly', value: 4 },
-  { label: 'Policy circuit', value: 5 },
+  { label: 'Phrase terrain', value: 3 },
+  { label: 'Policy circuit', value: 4 },
+  { label: 'Circuit configurations', value: 5 },
 ];
 const frontmatter = {
   title: 'Policy hero canvas prototypes',
@@ -45,14 +45,16 @@ const intro =
       ><policy-hero-dotted-planet class="policy-prototype-mount"><canvas class="hero-canvas" aria-hidden="true"></canvas></policy-hero-dotted-planet></template
     >
     <template data-canvas-variant="3"
-      ><policy-hero-brace-terrain class="policy-prototype-mount"><canvas class="hero-canvas" aria-hidden="true"></canvas></policy-hero-brace-terrain></template
+      ><policy-hero-phrase-terrain class="policy-prototype-mount"><canvas class="hero-canvas" aria-hidden="true"></canvas></policy-hero-phrase-terrain
+      ></template
     >
     <template data-canvas-variant="4"
-      ><policy-hero-isometric-assembly class="policy-prototype-mount"><canvas class="hero-canvas" aria-hidden="true"></canvas></policy-hero-isometric-assembly
+      ><policy-hero-policy-circuit class="policy-prototype-mount"><canvas class="hero-canvas" aria-hidden="true"></canvas></policy-hero-policy-circuit
       ></template
     >
     <template data-canvas-variant="5"
-      ><policy-hero-policy-circuit class="policy-prototype-mount"><canvas class="hero-canvas" aria-hidden="true"></canvas></policy-hero-policy-circuit
+      ><policy-hero-circuit-configurations class="policy-prototype-mount"
+        ><canvas class="hero-canvas" aria-hidden="true"></canvas></policy-hero-circuit-configurations
       ></template
     >
   </policy-hero-prototype>
@@ -61,9 +63,9 @@ const intro =
 <script>
   import '../../shared/canvas/PolicyHeroPhraseGravity';
   import '../../shared/canvas/PolicyHeroDottedPlanet';
-  import '../../shared/canvas/PolicyHeroBraceTerrain';
-  import '../../shared/canvas/PolicyHeroIsometricAssembly';
+  import '../../shared/canvas/PolicyHeroPhraseTerrain';
   import '../../shared/canvas/PolicyHeroPolicyCircuit';
+  import '../../shared/canvas/PolicyHeroCircuitConfigurations';
 
   class PolicyHeroPrototype extends HTMLElement {
     private controller = new AbortController();

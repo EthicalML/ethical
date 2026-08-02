@@ -1,5 +1,13 @@
 import { CanvasEngine, type CanvasDraw } from './CanvasEngine';
-import { clamp, createSphereDots, drawGlow, hash, smooth, spherePoint } from './PolicyHeroShared';
+import {
+  clamp,
+  createSphereDots,
+  drawGlow,
+  hash,
+  POLICY_FRAGMENTS,
+  smooth,
+  spherePoint,
+} from './PolicyHeroShared';
 
 const DOTS = createSphereDots(80, 150, 5);
 const STARS = Array.from({ length: 54 }, (_, index) => ({
@@ -8,6 +16,17 @@ const STARS = Array.from({ length: 54 }, (_, index) => ({
   radius: 0.35 + hash(index, 53) * 1.1,
   x: hash(index, 54),
   y: hash(index, 55) * 0.75,
+}));
+
+// Verbatim fragments floating in the field around the planet. Positioned across the
+// right two-thirds so they never collide with the copy behind the left mask.
+const PHRASES = Array.from({ length: 15 }, (_, index) => ({
+  alpha: 0.26 + hash(index, 64) * 0.16,
+  drift: hash(index, 63) * Math.PI * 2,
+  fragment: (index * 7 + 2) % POLICY_FRAGMENTS.length,
+  size: 0.9 + hash(index, 62) * 0.55,
+  x: 0.46 + hash(index, 60) * 0.5,
+  y: 0.12 + hash(index, 61) * 0.7,
 }));
 
 interface OrgMarker {
@@ -240,6 +259,44 @@ export class PolicyHeroDottedPlanet extends HTMLElement {
         context.fillStyle = `rgba(94,230,160,${reveal * 0.72})`;
         context.fillText(marker.org, x + 22 * scale, y - 3 * scale);
       }
+    });
+
+    // Floating phrases: each carries a subtle translucent backing plate so it stays
+    // legible over the dots. Local-dawn pushes the nearest phrases to full readability.
+    context.textAlign = 'start';
+    context.textBaseline = 'alphabetic';
+    PHRASES.forEach((phrase) => {
+      const wobble = reducedMotion ? 0 : Math.sin(time * 0.3 + phrase.drift) * 6 * scale;
+      const fontPx = Math.max(9, 10.5 * scale * phrase.size);
+      context.font = `${fontPx}px 'Geist Mono', monospace`;
+      const text = POLICY_FRAGMENTS[phrase.fragment];
+      const textWidth = context.measureText(text).width;
+      // Keep the whole phrase inside the canvas so none are cut off at the frame edge.
+      const px = Math.min(phrase.x * width + wobble, width - textWidth - 8);
+      const py = phrase.y * height + Math.cos(time * 0.24 + phrase.drift) * 5 * scale;
+
+      let dawn = 0;
+      if (strength > 0.01) {
+        const distance = Math.hypot(cursorX - px, cursorY - py);
+        dawn = clamp(1 - distance / (hoverRadius * 1.35)) * strength;
+      }
+      const padX = 5 * scale;
+      const padY = 3.5 * scale;
+      const plateAlpha = 0.34 + dawn * 0.5;
+      context.fillStyle = `rgba(6,11,9,${plateAlpha})`;
+      context.beginPath();
+      context.roundRect(
+        px - padX,
+        py - fontPx + padY * 0.5,
+        textWidth + padX * 2,
+        fontPx + padY,
+        3 * scale,
+      );
+      context.fill();
+
+      const textAlpha = clamp(phrase.alpha + dawn * 0.72);
+      context.fillStyle = `rgba(${Math.round(150 + dawn * 74)},${Math.round(232 + dawn * 16)},${Math.round(176 + dawn * 54)},${textAlpha})`;
+      context.fillText(text, px, py);
     });
   };
 }
