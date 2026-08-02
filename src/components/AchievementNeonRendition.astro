@@ -18,17 +18,28 @@ interface Block {
   area: string;
   dir: number;
   size: 'long' | 'short';
+  /* slide displaces the card revealing the neon beneath; tilt picks the card up. */
+  mode?: 'slide' | 'tilt';
+  tilt?: number;
+  /* Explicit reveal direction in px; falls back to dir-derived horizontal travel. */
+  lift?: [number, number];
+  /* Freeform geometry: [left %, top px, width %, height px]. */
+  rect?: [number, number, number, number];
 }
 
 interface Dud {
   area: string;
   shape: 'square' | 'diamond' | 'triangle' | 'plain' | 'accent' | 'diamond-open';
+  rect?: [number, number, number, number];
 }
 
 interface Layout {
   areas: string[];
   blocks: Record<string, Block>;
   duds: Dud[];
+  /* When set, the canvas is a freeform absolute composition of this height (px)
+     using each piece's rect, replicating the live /policy/ collage. */
+  freeform?: number;
 }
 
 interface Props {
@@ -52,97 +63,195 @@ const ghostShortTravel = 46;
 const collageTravel = 30;
 const isCollage = variant === 3;
 
+const round = (n: number) => Math.round(n * 100) / 100;
+const point = (p: number[]) => `${round(p[0])},${round(p[1])}`;
+
 // ---------------------------------------------------------------------------
-// V3 pixel-cluster glyphs, lifted from the Set Table artifact. Each glyph is a
-// small cell grid (3x3) with one accent pixel in the card's neon colour.
+// V3 icons: the isometric mini-structures (recovered), one themed per card,
+// rendered at icon scale in the copy header and colourised on hover.
 // ---------------------------------------------------------------------------
-const glyphCells: Record<NonNullable<AchievementCard['glyph']>, { cells: number[][]; on: number[] }> = {
-  scatter: {
-    cells: [
-      [0, 0],
-      [2, 0],
-      [1, 1],
-      [0, 2],
-      [2, 2],
+const ISO_A = 11;
+const ISO_FH = 13;
+const ISO_B = ISO_A / 2;
+function isoTop(x: number, y: number, z: number, ox: number, oy: number) {
+  return [ox + (x - y) * ISO_A, oy + (x + y) * ISO_B - z * ISO_FH];
+}
+function isoFaces(cubes: { x: number; y: number; z: number; fill?: boolean }[], ox: number, oy: number) {
+  const ordered = [...cubes].sort((a, b) => a.x + a.y - (b.x + b.y) || a.z - b.z);
+  const faces: { face: string; fill: boolean; d: string }[] = [];
+  for (const cube of ordered) {
+    const [cx, cy] = isoTop(cube.x, cube.y, cube.z, ox, oy);
+    const T = [cx, cy];
+    const R = [cx + ISO_A, cy + ISO_B];
+    const B = [cx, cy + 2 * ISO_B];
+    const L = [cx - ISO_A, cy + ISO_B];
+    const fill = Boolean(cube.fill);
+    faces.push({ face: 'top', fill, d: `M${point(T)} L${point(R)} L${point(B)} L${point(L)} Z` });
+    faces.push({ face: 'left', fill, d: `M${point(L)} L${point(B)} L${point([B[0], B[1] + ISO_FH])} L${point([L[0], L[1] + ISO_FH])} Z` });
+    faces.push({ face: 'right', fill, d: `M${point(B)} L${point(R)} L${point([R[0], R[1] + ISO_FH])} L${point([B[0], B[1] + ISO_FH])} Z` });
+  }
+  return faces;
+}
+const isoStructures = [
+  // eu: stacked adoption blocks, columns of 3, 2, 1
+  {
+    ox: 56,
+    oy: 30,
+    cubes: [
+      { x: 0, y: 0, z: 0, fill: true },
+      { x: 0, y: 0, z: 1, fill: true },
+      { x: 0, y: 0, z: 2, fill: true },
+      { x: 1, y: 0, z: 0, fill: true },
+      { x: 1, y: 0, z: 1, fill: true },
+      { x: 2, y: 0, z: 0 },
     ],
-    on: [1, 1],
+    links: [],
   },
-  bracket: {
-    cells: [
-      [0, 0],
-      [0, 1],
-      [0, 2],
-      [1, 2],
+  // uk: taller adoption tower, columns of 4 and 2
+  {
+    ox: 62,
+    oy: 24,
+    cubes: [
+      { x: 0, y: 0, z: 0, fill: true },
+      { x: 0, y: 0, z: 1, fill: true },
+      { x: 0, y: 0, z: 2, fill: true },
+      { x: 0, y: 0, z: 3, fill: true },
+      { x: 1, y: 0, z: 0, fill: true },
+      { x: 1, y: 0, z: 1 },
     ],
-    on: [0, 0],
+    links: [],
   },
-  tee: {
-    cells: [
-      [0, 0],
-      [1, 0],
-      [2, 0],
-      [1, 1],
-      [1, 2],
+  // mlsecops: a hub cube with four linked satellites (citation network)
+  {
+    ox: 56,
+    oy: 26,
+    cubes: [
+      { x: 1, y: 1, z: 0, fill: true },
+      { x: 0, y: 1, z: 0 },
+      { x: 2, y: 1, z: 0 },
+      { x: 1, y: 0, z: 0 },
+      { x: 1, y: 2, z: 0 },
     ],
-    on: [1, 0],
-  },
-  corner: {
-    cells: [
-      [0, 0],
-      [1, 0],
-      [0, 1],
-      [1, 1],
+    links: [
+      [1, 1, 0, 0, 1, 0],
+      [1, 1, 0, 2, 1, 0],
+      [1, 1, 0, 1, 0, 0],
+      [1, 1, 0, 1, 2, 0],
     ],
-    on: [0, 0],
   },
-};
-const glyphRects = (name: NonNullable<AchievementCard['glyph']>) => {
-  const g = glyphCells[name];
-  return g.cells.map(([x, y]) => ({ x: x * 4, y: y * 4, on: x === g.on[0] && y === g.on[1] }));
-};
+  // un: ringed council structure (square ring of blocks around an empty centre)
+  {
+    ox: 44,
+    oy: 12,
+    cubes: [
+      { x: 0, y: 0, z: 0 },
+      { x: 1, y: 0, z: 0 },
+      { x: 2, y: 0, z: 0, fill: true },
+      { x: 2, y: 1, z: 0 },
+      { x: 2, y: 2, z: 0 },
+      { x: 1, y: 2, z: 0 },
+      { x: 0, y: 2, z: 0 },
+      { x: 0, y: 1, z: 0 },
+    ],
+    links: [],
+  },
+  // acm: two-hub bridge, two platforms joined by a span
+  {
+    ox: 40,
+    oy: 24,
+    cubes: [
+      { x: 0, y: 0, z: 0, fill: true },
+      { x: 0, y: 1, z: 0, fill: true },
+      { x: 3, y: 0, z: 0, fill: true },
+      { x: 3, y: 1, z: 0, fill: true },
+    ],
+    links: [
+      [0, 0, 1, 3, 0, 1],
+      [0, 1, 1, 3, 1, 1],
+    ],
+  },
+  // through-line: linked chain receding along the diagonal
+  {
+    ox: 40,
+    oy: 6,
+    cubes: [
+      { x: 0, y: 0, z: 0, fill: true },
+      { x: 1, y: 1, z: 0, fill: true },
+      { x: 2, y: 2, z: 0, fill: true },
+      { x: 3, y: 3, z: 0, fill: true },
+    ],
+    links: [
+      [0, 0, 1, 1, 1, 1],
+      [1, 1, 1, 2, 2, 1],
+      [2, 2, 1, 3, 3, 1],
+    ],
+  },
+];
+function isoRender(cubes: { x: number; y: number; z: number; fill?: boolean }[], links: number[][], ox: number, oy: number) {
+  return { faces: isoFaces(cubes, ox, oy), links: links.map((l) => `M${point(isoTop(l[0], l[1], l[2], ox, oy))} L${point(isoTop(l[3], l[4], l[5], ox, oy))}`) };
+}
+const isoIcons = isoStructures.map((s) => isoRender(s.cubes, s.links, s.ox, s.oy));
 
 // ---------------------------------------------------------------------------
 // Placement derived from the layout map so a new block is a data change. Entrance
 // order is bottom-up (blocks stack from the floor) so lower rows land first.
 // ---------------------------------------------------------------------------
+const freeform = layout.freeform;
 const grid = layout.areas.map((row) => row.trim().split(/\s+/));
-const columns = grid[0].length;
+const columns = grid[0]?.length ?? 1;
 const templateAreas = grid.map((row) => `"${row.join(' ')}"`).join(' ');
+// Entrance order is bottom-up so lower pieces land first: from row occupancy in
+// cell mode, from rect bottoms in freeform mode.
 const placement: Record<string, { col: number; rowBottom: number }> = {};
-grid.forEach((row, r) =>
-  row.forEach((token, c) => {
-    if (token === '.') return;
-    const seen = placement[token];
-    if (!seen) placement[token] = { col: c, rowBottom: r };
-    else {
-      seen.col = Math.min(seen.col, c);
-      seen.rowBottom = Math.max(seen.rowBottom, r);
-    }
-  }),
-);
+if (freeform) {
+  const register = (area: string, rect?: [number, number, number, number]) => {
+    if (!rect) return;
+    placement[area] = { col: rect[0], rowBottom: rect[1] + rect[3] };
+  };
+  Object.values(layout.blocks).forEach((block) => register(block.area, block.rect));
+  layout.duds.forEach((dud) => register(dud.area, dud.rect));
+} else {
+  grid.forEach((row, r) =>
+    row.forEach((token, c) => {
+      if (token === '.') return;
+      const seen = placement[token];
+      if (!seen) placement[token] = { col: c, rowBottom: r };
+      else {
+        seen.col = Math.min(seen.col, c);
+        seen.rowBottom = Math.max(seen.rowBottom, r);
+      }
+    }),
+  );
+}
 const orderOf = Object.fromEntries(
   Object.keys(placement)
     .sort((a, b) => placement[b].rowBottom - placement[a].rowBottom || placement[a].col - placement[b].col)
     .map((token, index) => [token, index + 1]),
 );
+const rectStyle = (rect: [number, number, number, number]) => `left:${rect[0]}%;top:${rect[1]}px;width:${rect[2]}%;height:${rect[3]}px;`;
 
 const placed = cards.map((card, index) => {
   const block = layout.blocks[card.piece];
   const order = orderOf[block.area];
   const base = block.size === 'long' ? ghostLongTravel : ghostShortTravel;
-  const shiftX = isCollage ? -collageTravel : block.dir * base;
-  const shiftY = isCollage ? -collageTravel : 0;
-  return { card, index, block, order, shiftX, shiftY };
+  const shiftX = block.lift ? block.lift[0] : isCollage ? -collageTravel : block.dir * base;
+  const shiftY = block.lift ? block.lift[1] : isCollage ? -collageTravel : 0;
+  const mode = block.mode ?? 'slide';
+  return { card, index, block, order, shiftX, shiftY, mode };
 });
 // Duds are inert: a raised surface, no neon and no slide. They land with the
 // stack (order) but never reveal or move on hover.
-const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, order: orderOf[dud.area] }));
+const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect: dud.rect, order: orderOf[dud.area] }));
 ---
 
 <achievement-neon-rendition class="achievement-neon-rendition" data-variation={variant}>
-  <div class="neon-canvas" style={`--columns:${columns};--rows:${grid.length};grid-template-areas:${templateAreas}`}>
+  <div
+    class="neon-canvas"
+    data-freeform={freeform ? 'true' : undefined}
+    style={freeform ? `--freeform-h:${freeform}px` : `--columns:${columns};--rows:${grid.length};grid-template-areas:${templateAreas}`}
+  >
     {
-      placed.map(({ card, index, block, order, shiftX, shiftY }) => (
+      placed.map(({ card, index, block, order, shiftX, shiftY, mode }) => (
         <div
           class="lego-piece neon-slot"
           data-lego-piece
@@ -150,23 +259,27 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, order
           data-order={order}
           data-size={block.size}
           data-piece={card.piece}
-          style={`grid-area:${block.area};--neon:${neon[index]};--shift-x:${shiftX}px;--shift-y:${shiftY}px;--drop-rotation:${order % 2 ? -1.6 : 1.6}deg;--fall-dur:${block.size === 'long' ? 440 : 320}ms`}
+          data-hover={mode}
+          style={`${freeform && block.rect ? rectStyle(block.rect) : `grid-area:${block.area};`}--neon:${neon[index]};--shift-x:${shiftX}px;--shift-y:${shiftY}px;--pickup:${block.tilt ?? 4}deg;--drop-rotation:${order % 2 ? -1.6 : 1.6}deg;--fall-dur:${block.size === 'long' ? 440 : 320}ms`}
         >
           <i class="neon-underlay" data-neon-block aria-hidden="true" />
           <article class="neon-card">
-            {!isCollage && (
-              <span class="ghost-mark" aria-hidden="true">
-                {ghostLabels[index]}
-              </span>
-            )}
-            {!isCollage && <i class="ghost-rule" aria-hidden="true" />}
+            <span class="ghost-mark" aria-hidden="true">
+              {ghostLabels[index]}
+            </span>
+            <i class="ghost-rule" aria-hidden="true" />
 
             <div class="neon-copy">
               {isCollage ? (
-                <svg class="glyph" viewBox="0 0 11 11" width="20" height="20" aria-hidden="true">
-                  {glyphRects(card.glyph ?? 'scatter').map((r) => (
-                    <rect x={r.x} y={r.y} width="3" height="3" class:list={['glyph-px', { 'glyph-on': r.on }]} />
-                  ))}
+                <svg class="iso-icon" viewBox="0 0 120 96" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                  <g class="iso-group">
+                    {isoIcons[index].links.map((d) => (
+                      <path class="iso-link" d={d} />
+                    ))}
+                    {isoIcons[index].faces.map((face) => (
+                      <path class:list={['iso-face', `iso-${face.face}`, { 'iso-fill': face.fill }]} d={face.d} />
+                    ))}
+                  </g>
                 </svg>
               ) : (
                 <span class="eyebrow">{card.eyebrow}</span>
@@ -196,7 +309,7 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, order
           data-lego-piece
           data-order={dud.order}
           data-shape={dud.shape}
-          style={`grid-area:${dud.area};--drop-rotation:${dud.order % 2 ? -1.6 : 1.6}deg;--fall-dur:320ms`}
+          style={`${freeform && dud.rect ? rectStyle(dud.rect) : `grid-area:${dud.area};`}--drop-rotation:${dud.order % 2 ? -1.6 : 1.6}deg;--fall-dur:320ms`}
         >
           {(dud.shape === 'square' || dud.shape === 'plain' || dud.shape === 'accent' || dud.shape === 'diamond-open') && (
             <span class="dud-face" aria-hidden="true" />
@@ -361,6 +474,18 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, order
     --row-h: 230px;
     max-width: 1180px;
   }
+  /* Freeform mode replicates the live /policy/ collage: an absolute composition
+     of percent-positioned pieces on a fixed-height full-width canvas. */
+  .neon-canvas[data-freeform] {
+    display: block;
+    height: var(--freeform-h);
+    margin: 0;
+    max-width: none;
+    position: relative;
+  }
+  .neon-canvas[data-freeform] .lego-piece {
+    position: absolute;
+  }
   /* The slot is NOT clipped: on reveal the card physically slides out of its own
      cell (see the slide rule), so a hovered card is lifted above its neighbours. */
   .neon-slot {
@@ -473,16 +598,67 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, order
     text-transform: uppercase;
     white-space: nowrap;
   }
-  .neon-copy > .glyph {
+  .neon-copy > .iso-icon {
     display: block;
-    height: 20px;
-    width: 20px;
+    height: 34px;
+    width: 46px;
   }
-  .glyph-px {
-    fill: rgba(244, 242, 238, 0.34);
+  .iso-group {
+    transform-box: fill-box;
+    transform-origin: center;
   }
-  .glyph-on {
-    fill: var(--neon);
+  .iso-face {
+    stroke: rgba(244, 242, 238, 0.16);
+    stroke-linejoin: round;
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+  .iso-top {
+    fill: #212423;
+  }
+  .iso-left {
+    fill: #161817;
+  }
+  .iso-right {
+    fill: #0e100f;
+  }
+  .iso-fill.iso-top {
+    fill: #2a2e2c;
+  }
+  .iso-link {
+    fill: none;
+    stroke: rgba(244, 242, 238, 0.22);
+    stroke-dasharray: 2 3;
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .iso-group {
+      animation: iso-breathe 6s ease-in-out infinite;
+    }
+    @keyframes iso-breathe {
+      0%,
+      100% {
+        transform: translateY(1px);
+      }
+      50% {
+        transform: translateY(-1px);
+      }
+    }
+  }
+  .iso-face,
+  .iso-link {
+    transition:
+      fill 260ms ease,
+      stroke 260ms ease;
+  }
+  .neon-slot:hover .iso-fill.iso-top,
+  .neon-slot[data-active='true'] .iso-fill.iso-top {
+    fill: color-mix(in srgb, var(--neon) 42%, #14100c);
+  }
+  .neon-slot:hover .iso-fill,
+  .neon-slot[data-active='true'] .iso-fill {
+    stroke: var(--neon);
   }
   /* Title is a HARD single line: ellipsis when it does not fit, never two. */
   .neon-copy > strong {
@@ -617,30 +793,48 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, order
      collage) and lifts above its neighbours, uncovering the neon under-block
      within its original footprint. --- */
   @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-    .neon-slot:hover .neon-card {
+    .neon-slot[data-hover='slide']:hover .neon-card {
       transform: translate3d(var(--shift-x), var(--shift-y), 0);
+    }
+    .neon-slot[data-hover='tilt']:hover .neon-card {
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
+      transform: translate3d(0, -12px, 0) rotate(var(--pickup, 4deg));
     }
   }
   @media (prefers-reduced-motion: no-preference) {
-    .neon-slot[data-active='true'] .neon-card {
+    .neon-slot[data-hover='slide'][data-active='true'] .neon-card {
       transform: translate3d(var(--shift-x), var(--shift-y), 0);
     }
+    .neon-slot[data-hover='tilt'][data-active='true'] .neon-card {
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
+      transform: translate3d(0, -12px, 0) rotate(var(--pickup, 4deg));
+    }
+  }
+  /* Picked-up cards do not reveal a neon block; the lift itself is the effect. */
+  .neon-slot[data-hover='tilt'] .neon-underlay {
+    display: none;
   }
 
   /* --- Responsive: hold the grid to a tablet width, then a single column --- */
   @media (max-width: 900px) {
     .neon-canvas,
     [data-variation='2'] .neon-canvas,
-    [data-variation='3'] .neon-canvas {
+    [data-variation='3'] .neon-canvas,
+    .neon-canvas[data-freeform] {
       display: flex;
       flex-direction: column;
       gap: 14px;
+      height: auto;
       max-width: none;
       padding-inline: 34px;
     }
     .neon-slot {
       grid-area: auto !important;
-      height: 300px;
+      height: 300px !important;
+      left: auto !important;
+      position: relative;
+      top: auto !important;
+      width: auto !important;
     }
     .dud {
       display: none;
