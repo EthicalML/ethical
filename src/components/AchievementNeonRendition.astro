@@ -25,6 +25,8 @@ interface Block {
   lift?: [number, number];
   /* Freeform geometry: [left %, top px, width %, height px]. */
   rect?: [number, number, number, number];
+  /* Optional explicit stacking layer, overriding the entrance-order default. */
+  layer?: number;
 }
 
 interface Dud {
@@ -260,7 +262,7 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
           data-size={block.size}
           data-piece={card.piece}
           data-hover={mode}
-          style={`${freeform && block.rect ? rectStyle(block.rect) : `grid-area:${block.area};`}--neon:${neon[index]};--slot-z:${2 + order};--shift-x:${shiftX}px;--shift-y:${shiftY}px;--pickup:${block.tilt ?? 4}deg;--drop-rotation:${order % 2 ? -1.6 : 1.6}deg;--fall-dur:${block.size === 'long' ? 440 : 320}ms`}
+          style={`${freeform && block.rect ? rectStyle(block.rect) : `grid-area:${block.area};`}--neon:${neon[index]};--slot-z:${block.layer ?? 2 + order};--shift-x:${shiftX}px;--shift-y:${shiftY}px;--pickup:${block.tilt ?? 4}deg;--drop-rotation:${order % 2 ? -1.6 : 1.6}deg;--fall-dur:${block.size === 'long' ? 440 : 320}ms`}
         >
           <i class="neon-underlay" data-neon-block aria-hidden="true" />
           <article class="neon-card">
