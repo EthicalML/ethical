@@ -38,10 +38,10 @@ const HALF = 0.46;
 const CUBE_H = 0.9;
 
 const CUBE_STYLE = {
-  top: 'rgba(32,37,34,1)',
-  right: 'rgba(20,23,21,1)',
-  left: 'rgba(13,15,14,1)',
-  edge: 'rgba(150,170,158,0.14)',
+  top: 'rgba(40,46,42,1)',
+  right: 'rgba(25,29,26,1)',
+  left: 'rgba(16,19,17,1)',
+  edge: 'rgba(150,170,158,0.18)',
   edgeWidth: 1,
 };
 const CUBE_STYLE_HOT = {
@@ -88,9 +88,9 @@ export class PolicyHeroIsometricAssembly extends HTMLElement {
   private draw: CanvasDraw = (context, width, height, elapsed) => {
     context.clearRect(0, 0, width, height);
     const time = reducedMotion ? 3.4 : elapsed + 3;
-    const unit = Math.min(width, height) * 0.052;
+    const unit = Math.min(width, height) * 0.062;
     const originX = width * 0.6;
-    const originY = height * 0.6;
+    const originY = height * 0.58;
     const project = createIso(unit, originX, originY);
 
     this.pointer.x += (this.pointer.targetX - this.pointer.x) * 0.12;

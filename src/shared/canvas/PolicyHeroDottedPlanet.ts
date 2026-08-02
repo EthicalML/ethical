@@ -1,7 +1,7 @@
 import { CanvasEngine, type CanvasDraw } from './CanvasEngine';
 import { clamp, createSphereDots, drawGlow, hash, smooth, spherePoint } from './PolicyHeroShared';
 
-const DOTS = createSphereDots(66, 124, 5);
+const DOTS = createSphereDots(80, 150, 5);
 const STARS = Array.from({ length: 54 }, (_, index) => ({
   alpha: 0.08 + hash(index, 51) * 0.24,
   phase: hash(index, 52) * Math.PI * 2,
@@ -118,9 +118,9 @@ export class PolicyHeroDottedPlanet extends HTMLElement {
     context.clearRect(0, 0, width, height);
     const time = reducedMotion ? 6.4 : elapsed + 2.2;
     const scale = Math.min(width / 920, height / 650);
-    const center = { x: width * 0.6, y: height * 1.055 };
-    const radiusX = Math.min(width * 0.52, height * 0.76);
-    const radiusY = Math.min(height * 0.75, width * 0.54);
+    const center = { x: width * 0.6, y: height * 1.02 };
+    const radiusX = Math.min(width * 0.56, height * 0.82);
+    const radiusY = Math.min(height * 0.8, width * 0.58);
     const rotation = time * 0.044;
     // Clearer, faster oscillating light sweep across the surface.
     const sweep = Math.sin(time * 0.26) * 0.82;
@@ -149,8 +149,8 @@ export class PolicyHeroDottedPlanet extends HTMLElement {
       center.y,
       radiusX * 1.06,
     );
-    planetGlow.addColorStop(0, 'rgba(94,230,160,.07)');
-    planetGlow.addColorStop(0.55, 'rgba(94,230,160,.026)');
+    planetGlow.addColorStop(0, 'rgba(94,230,160,.1)');
+    planetGlow.addColorStop(0.55, 'rgba(94,230,160,.034)');
     planetGlow.addColorStop(1, 'rgba(94,230,160,0)');
     context.fillStyle = planetGlow;
     context.fillRect(0, height * 0.12, width, height * 0.88);
@@ -168,10 +168,9 @@ export class PolicyHeroDottedPlanet extends HTMLElement {
       const ridge = clamp((dot.elevation + 0.06) / 0.12);
       const x = center.x + point.x * radiusX;
       let y = center.y - point.y * radiusY;
-      let alpha =
-        clamp(0.03 + depth * 0.1 + directional * 0.26 + band * 0.74 + ridge * 0.05) * fade;
+      let alpha = clamp(0.07 + depth * 0.14 + directional * 0.6 + band * 0.5 + ridge * 0.06) * fade;
       let radius =
-        (0.42 + depth * 0.52 + directional * 0.44 + band * 0.96) * scale * (0.5 + fade * 0.5);
+        (0.5 + depth * 0.55 + directional * 0.86 + band * 0.78) * scale * (0.55 + fade * 0.45);
 
       if (strength > 0.01) {
         const distance = Math.hypot(cursorX - x, cursorY - y);
