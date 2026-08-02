@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
 const variants = [
   { label: 'Institute system', value: 1 },
-  { label: 'Policy assembly', value: 2 },
+  { label: 'Phrase gravity', value: 2 },
   { label: 'Ratification field', value: 3 },
   { label: 'Dotted terrain', value: 5 },
   { label: 'Neon sun system', value: 7 },
@@ -42,7 +42,8 @@ const intro =
       ></template
     >
     <template data-canvas-variant="2"
-      ><policy-hero-assembly class="policy-prototype-mount"><canvas class="hero-canvas" aria-hidden="true"></canvas></policy-hero-assembly></template
+      ><policy-hero-phrase-gravity class="policy-prototype-mount"><canvas class="hero-canvas" aria-hidden="true"></canvas></policy-hero-phrase-gravity
+      ></template
     >
     <template data-canvas-variant="3"
       ><policy-hero-fusion class="policy-prototype-mount"><canvas class="hero-canvas" aria-hidden="true"></canvas></policy-hero-fusion></template
@@ -58,7 +59,7 @@ const intro =
 
 <script>
   import '../../shared/canvas/PolicyHeroInstituteSystem';
-  import '../../shared/canvas/PolicyHeroAssembly';
+  import '../../shared/canvas/PolicyHeroPhraseGravity';
   import '../../shared/canvas/PolicyHeroFusion';
   import '../../shared/canvas/PolicyHeroDottedPlanet';
   import '../../shared/canvas/PolicyHeroSunSystem';
