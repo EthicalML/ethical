@@ -7,8 +7,11 @@ interface AchievementLink {
 interface AchievementCard {
   eyebrow: string;
   footnote?: string;
-  glyph?: 'scatter' | 'bracket' | 'tee' | 'corner';
+  /* Ghost surface: the oversized dim identifier cropped by the block edge. */
+  ghost: string;
   links: AchievementLink[];
+  /* Neon under-block colour revealed when the card displaces. */
+  neon: string;
   piece: string;
   summary: string;
   title: string;
@@ -52,11 +55,6 @@ interface Props {
 
 const { cards, layout, variant } = Astro.props;
 
-// Card colour: green for the two adoption cards, then blue, purple, orange, red.
-const neon = ['#5ee6a0', '#35d787', '#38bdf8', '#a855f7', '#ff5c1f', '#ff3b57'];
-// V1 / V2 ghost surface: an oversized dim identifier cropped by the block edge.
-const ghostLabels = ['8/12', '13/14', 'CODE', 'UN', 'ACM', '2026'];
-
 // Card displacement on reveal. The ghost variants slide horizontally out of the
 // cell (sign from the block); the collage lifts diagonally up-left, uncovering a
 // neon slab on the bottom and right edges as in the artifact.
@@ -94,9 +92,9 @@ function isoFaces(cubes: { x: number; y: number; z: number; fill?: boolean }[], 
   }
   return faces;
 }
-const isoStructures = [
+const isoStructures: Record<string, { ox: number; oy: number; cubes: { x: number; y: number; z: number; fill?: boolean }[]; links: number[][] }> = {
   // eu: stacked adoption blocks, columns of 3, 2, 1
-  {
+  eu: {
     ox: 56,
     oy: 30,
     cubes: [
@@ -110,7 +108,7 @@ const isoStructures = [
     links: [],
   },
   // uk: taller adoption tower, columns of 4 and 2
-  {
+  uk: {
     ox: 62,
     oy: 46,
     cubes: [
@@ -124,7 +122,7 @@ const isoStructures = [
     links: [],
   },
   // mlsecops: a hub cube with four linked satellites (citation network)
-  {
+  mlsecops: {
     ox: 56,
     oy: 26,
     cubes: [
@@ -142,7 +140,7 @@ const isoStructures = [
     ],
   },
   // un: ringed council structure (square ring of blocks around an empty centre)
-  {
+  un: {
     ox: 44,
     oy: 12,
     cubes: [
@@ -158,7 +156,7 @@ const isoStructures = [
     links: [],
   },
   // acm: two-hub bridge, two platforms joined by a span
-  {
+  acm: {
     ox: 40,
     oy: 24,
     cubes: [
@@ -173,7 +171,7 @@ const isoStructures = [
     ],
   },
   // through-line: linked chain running horizontally
-  {
+  'through-line': {
     ox: 26,
     oy: 40,
     cubes: [
@@ -188,11 +186,11 @@ const isoStructures = [
       [2, 0, 1, 3, 0, 1],
     ],
   },
-];
+};
 function isoRender(cubes: { x: number; y: number; z: number; fill?: boolean }[], links: number[][], ox: number, oy: number) {
   return { faces: isoFaces(cubes, ox, oy), links: links.map((l) => `M${point(isoTop(l[0], l[1], l[2], ox, oy))} L${point(isoTop(l[3], l[4], l[5], ox, oy))}`) };
 }
-const isoIcons = isoStructures.map((s) => isoRender(s.cubes, s.links, s.ox, s.oy));
+const isoIcons = Object.fromEntries(Object.entries(isoStructures).map(([piece, s]) => [piece, isoRender(s.cubes, s.links, s.ox, s.oy)]));
 
 // ---------------------------------------------------------------------------
 // Placement derived from the layout map so a new block is a data change. Entrance
@@ -232,14 +230,14 @@ const orderOf = Object.fromEntries(
 );
 const rectStyle = (rect: [number, number, number, number]) => `left:${rect[0]}%;top:${rect[1]}px;width:${rect[2]}%;height:${rect[3]}px;`;
 
-const placed = cards.map((card, index) => {
+const placed = cards.map((card) => {
   const block = layout.blocks[card.piece];
   const order = orderOf[block.area];
   const base = block.size === 'long' ? ghostLongTravel : ghostShortTravel;
   const shiftX = block.lift ? block.lift[0] : isCollage ? -collageTravel : block.dir * base;
   const shiftY = block.lift ? block.lift[1] : isCollage ? -collageTravel : 0;
   const mode = block.mode ?? 'slide';
-  return { card, index, block, order, shiftX, shiftY, mode };
+  return { card, block, order, shiftX, shiftY, mode };
 });
 // Duds are inert: a raised surface, no neon and no slide. They land with the
 // stack (order) but never reveal or move on hover.
@@ -253,7 +251,7 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
     style={freeform ? `--freeform-h:${freeform}px` : `--columns:${columns};--rows:${grid.length};grid-template-areas:${templateAreas}`}
   >
     {
-      placed.map(({ card, index, block, order, shiftX, shiftY, mode }) => (
+      placed.map(({ card, block, order, shiftX, shiftY, mode }) => (
         <div
           class="lego-piece neon-slot"
           data-lego-piece
@@ -262,22 +260,22 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
           data-size={block.size}
           data-piece={card.piece}
           data-hover={mode}
-          style={`${freeform && block.rect ? rectStyle(block.rect) : `grid-area:${block.area};`}--neon:${neon[index]};--slot-z:${block.layer ?? 2 + order};--shift-x:${shiftX}px;--shift-y:${shiftY}px;--pickup:${block.tilt ?? 4}deg;--drop-rotation:${order % 2 ? -1.6 : 1.6}deg;--fall-dur:${block.size === 'long' ? 440 : 320}ms`}
+          style={`${freeform && block.rect ? rectStyle(block.rect) : `grid-area:${block.area};`}--neon:${card.neon};--slot-z:${block.layer ?? 2 + order};--shift-x:${shiftX}px;--shift-y:${shiftY}px;--pickup:${block.tilt ?? 4}deg;--drop-rotation:${order % 2 ? -1.6 : 1.6}deg;--fall-dur:${block.size === 'long' ? 440 : 320}ms`}
         >
           <i class="neon-underlay" data-neon-block aria-hidden="true" />
           <article class="neon-card">
             <span class="ghost-mark" aria-hidden="true">
-              {ghostLabels[index]}
+              {card.ghost}
             </span>
             <i class="ghost-rule" aria-hidden="true" />
 
             {
               <svg class="iso-ghost" viewBox="0 0 120 96" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
                 <g class="iso-group">
-                  {isoIcons[index].links.map((d) => (
+                  {isoIcons[card.piece].links.map((d) => (
                     <path class="iso-link" d={d} />
                   ))}
-                  {isoIcons[index].faces.map((face) => (
+                  {isoIcons[card.piece].faces.map((face) => (
                     <path class:list={['iso-face', `iso-${face.face}`, { 'iso-fill': face.fill }]} d={face.d} />
                   ))}
                 </g>
