@@ -19,6 +19,7 @@ export interface PolicyRecordProduct {
   pages?: number;
   summary: string;
   unverified?: boolean;
+  role?: string;
 }
 
 export const products: PolicyRecordProduct[] = [
@@ -320,5 +321,141 @@ export const products: PolicyRecordProduct[] = [
     slug: '27-acm-data-center-final-spanish',
     summary:
       'Spanish edition of the greener data-centres policy brief, proposing five recommendations for policymakers to steer Europe toward more ecological data centres.',
+  },
+];
+
+// The second shelf: instruments and reports the Institute contributed to rather than
+// authored: chaired, reviewed, forum membership, or recommendations adopted. Kept separate
+// from `products` so the "28 policy products delivered" stat stays scoped to authored work.
+// Reviewer credits are verified against each document's text where extractable; the MCP
+// third-party guide credit is owner-asserted (acknowledgments not in the text layer).
+export const instrumentFilters = [
+  { label: 'ALL', value: 'all' },
+  { label: 'UN', value: 'un' },
+  { label: 'EU', value: 'eu' },
+  { label: 'OWASP', value: 'owasp' },
+];
+
+export const instruments: PolicyRecordProduct[] = [
+  {
+    title: 'UN data governance principles synthesis note',
+    instrument: 'UN CSTD WGDG',
+    track: 'un',
+    href: 'https://unctad.org/system/files/information-document/cstd-wgdg-synthesis-note-track-1_en.pdf',
+    slug: 'i00-un-wgdg-synthesis-note',
+    role: 'CHAIR, PRINCIPLES COMMITTEE',
+    unverified: true,
+    summary:
+      'Synthesis note of Track 1 of the UN CSTD Working Group on Data Governance, whose Principles Committee the Institute chairs. Summary pending: the PDF is bot-gated and awaits manual retrieval.',
+  },
+  {
+    title: 'Governing AI for Humanity: final report',
+    instrument: 'UN AI ADVISORY BODY',
+    date: 'SEP 2024',
+    track: 'un',
+    href: 'https://www.un.org/sites/un2.un.org/files/governing_ai_for_humanity_final_report_en.pdf',
+    slug: 'i01-governing-ai-for-humanity',
+    role: 'AI EXPERT',
+    summary:
+      'Final report of the UN Secretary-General’s High-level Advisory Body on AI, setting out recommendations for international AI governance including an independent scientific panel and a global policy dialogue.',
+  },
+  {
+    title: 'GPAI Code of Practice: Transparency chapter',
+    instrument: 'EU AI ACT',
+    date: 'JUL 2025',
+    track: 'eu',
+    href: 'https://ec.europa.eu/newsroom/dae/redirection/document/118120',
+    slug: 'i02-gpai-code-transparency',
+    role: 'RECOMMENDATIONS ADOPTED',
+    summary:
+      'Transparency chapter of the final Code of Practice: three measures signatories implement to meet the Article 53(1) documentation obligations, with the Model Documentation Form. The Institute’s two GPAI Code responses fed this Code (eight of twelve recommendations integrated at second draft).',
+  },
+  {
+    title: 'GPAI Code of Practice: Safety and Security chapter',
+    instrument: 'EU AI ACT',
+    date: 'JUL 2025',
+    track: 'eu',
+    href: 'https://ec.europa.eu/newsroom/dae/redirection/document/118119',
+    slug: 'i03-gpai-code-safety-security',
+    role: 'RECOMMENDATIONS ADOPTED',
+    summary:
+      'Safety and Security chapter of the final Code of Practice: the framework providers of general-purpose AI models with systemic risk commit to, spanning end-to-end risk assessment, model reports and external evaluation.',
+  },
+  {
+    title: 'Frontier AI expert findings: competitiveness, sovereignty and security',
+    instrument: 'EU AI OFFICE',
+    date: '2026',
+    track: 'eu',
+    href: 'https://digital-strategy.ec.europa.eu/en/library/ai-office-publishes-frontier-ai-expert-findings-eu-competitiveness-sovereignty-and-security',
+    slug: 'i04-frontier-ai-expert-findings',
+    role: 'FORUM MEMBER',
+    summary:
+      'Key insights from the first meeting of the European Expert Forum on Frontier AI, on enhancing the EU’s competitiveness, sovereignty and security in frontier AI. The Institute participates through its Frontier AI Forum membership.',
+  },
+  {
+    title: 'OWASP Top 10 for Agentic Applications 2026',
+    instrument: 'OWASP AGENTIC',
+    date: 'DEC 2025',
+    track: 'owasp',
+    href: 'https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/',
+    slug: 'i05-owasp-top10-agentic',
+    role: 'REVIEWER',
+    summary:
+      'The peer-reviewed benchmark of the ten most critical security risks facing autonomous and agentic applications, assembled from more than one hundred contributors across security research and industry.',
+  },
+  {
+    title: 'Agentic AI: threats and mitigations',
+    instrument: 'OWASP AGENTIC',
+    date: 'DEC 2025',
+    track: 'owasp',
+    href: 'https://genai.owasp.org/resource/agentic-ai-threats-and-mitigations/',
+    slug: 'i06-owasp-agentic-threats-mitigations',
+    role: 'REVIEWER',
+    summary:
+      'The Agentic Security Initiative’s threat-model-based reference of emerging agentic threats and mitigations, with a structured taxonomy covering agent design, memory, planning and autonomy, tool use, and deployment.',
+  },
+  {
+    title: 'Securing Agentic Applications Guide 1.0',
+    instrument: 'OWASP AGENTIC',
+    date: 'JUL 2025',
+    track: 'owasp',
+    href: 'https://genai.owasp.org/resource/securing-agentic-applications-guide-1-0/',
+    slug: 'i07-owasp-securing-agentic-apps',
+    role: 'REVIEWER',
+    summary:
+      'Practical technical guidance for securely designing and deploying LLM-powered agentic applications, from architecture patterns through operational controls.',
+  },
+  {
+    title: 'State of Agentic AI Security and Governance 2.01',
+    instrument: 'OWASP AGENTIC',
+    date: 'JUN 2026',
+    track: 'owasp',
+    href: 'https://genai.owasp.org/resource/state-of-agentic-ai-security-and-governance/',
+    slug: 'i08-owasp-state-agentic-security',
+    role: 'REVIEWER',
+    summary:
+      'A landscape view of securing and governing autonomous AI systems: the evolving tool ecosystem, emerging regulation, and actionable insight for developing and deploying agentic systems responsibly.',
+  },
+  {
+    title: 'Practical guide for securely using third-party MCP servers',
+    instrument: 'OWASP MCP',
+    date: 'OCT 2025',
+    track: 'owasp',
+    href: 'https://genai.owasp.org/resource/cheatsheet-a-practical-guide-for-securely-using-third-party-mcp-servers-1-0/',
+    slug: 'i09-owasp-mcp-third-party-guide',
+    role: 'REVIEWER',
+    summary:
+      'Guidance on the risks of connecting AI models to third-party MCP servers, including tool poisoning, prompt injection, memory poisoning and tool interference, with deployment safeguards.',
+  },
+  {
+    title: 'Multi-Agentic system Threat Modeling Guide v1.0',
+    instrument: 'OWASP AGENTIC',
+    date: 'APR 2025',
+    track: 'owasp',
+    href: 'https://genai.owasp.org/resource/multi-agentic-system-threat-modeling-guide-v1-0/',
+    slug: 'i10-owasp-multi-agent-threat-modeling',
+    role: 'REVIEWER',
+    summary:
+      'Applies the agentic threat taxonomy to real-world multi-agent systems, where coordinating autonomous agents introduce additional complexity and new attack surfaces.',
   },
 ];

@@ -11,9 +11,18 @@ interface Filter {
 interface Props {
   filters: Filter[];
   products: PolicyRecordProduct[];
+  eyebrow?: string;
+  title?: string;
+  lede?: string;
 }
 
-const { filters, products: rawProducts } = Astro.props;
+const {
+  filters,
+  products: rawProducts,
+  eyebrow = 'READING ROOM',
+  title = 'The policy record',
+  lede = 'Select a product for its dossier facts, what it argued, and the document itself, page by page.',
+} = Astro.props;
 const trackLabel: Record<string, string> = Object.fromEntries(filters.map((f) => [f.value, f.label]));
 
 // Newest first; dates like "19 JUN 2020" and "DEC 2024" both parse, undated sorts last.
@@ -37,9 +46,9 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
 <policy-record-preview class="prv" data-reveal>
   <header class="prv-head">
     <div>
-      <p class="eyebrow">READING ROOM</p>
-      <h2>The policy record</h2>
-      <p class="prv-lede">Select a product for its dossier facts, what it argued, and the document itself, page by page.</p>
+      <p class="eyebrow">{eyebrow}</p>
+      <h2>{title}</h2>
+      <p class="prv-lede">{lede}</p>
     </div>
     <p class="record-count" aria-live="polite"><strong>{products.length}</strong> / {products.length} records</p>
   </header>
@@ -74,6 +83,7 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
               <span class="prv-row-meta">
                 <span class="instrument-tag">{product.instrument}</span>
                 {product.date && <time>{product.date}</time>}
+                {product.role && <span class="role-tag">{product.role}</span>}
               </span>
             </button>
           ))
@@ -87,7 +97,10 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
         products.map((product, index) => (
           <template data-pane={index}>
             <div class="prv-facts">
-              <p class="eyebrow">{trackLabel[product.track] ?? product.track}</p>
+              <p class="eyebrow">
+                {trackLabel[product.track] ?? product.track}
+                {product.role && <span class="role-tag">{product.role}</span>}
+              </p>
               <h3>{product.title}</h3>
               <dl>
                 <div>
@@ -443,6 +456,20 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
 
   .instrument-tag {
     color: var(--text-3);
+  }
+
+  .role-tag {
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font: var(--mono-9) / 1 var(--font-mono);
+    letter-spacing: 0.08em;
+    padding: 3px 7px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .prv-facts .eyebrow .role-tag {
+    margin-left: 10px;
   }
 
   .prv-pane {
