@@ -632,7 +632,18 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
     white-space: nowrap;
   }
   [data-variation='1'] .neon-copy > .eyebrow {
-    font-size: 7.5px;
+    font-size: 11px;
+  }
+  [data-variation='1'] .neon-slot .neon-copy > strong {
+    font: 300 30px/1.12 var(--font-display);
+    letter-spacing: -0.02em;
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+  }
+  [data-variation='1'] footer a.button {
+    font-size: 11px;
+    padding: 9px 14px;
   }
   [data-variation='2'] .neon-copy > .eyebrow {
     font-size: 9.5px;
