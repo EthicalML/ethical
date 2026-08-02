@@ -534,7 +534,15 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
       const scrollReach = Math.min(bounds.height, innerHeight);
       const progress = Math.max(0, Math.min(1, (innerHeight - bounds.top) / scrollReach));
       this.dataset.entranceProgress = progress.toFixed(3);
-      if (progress < 0.75) return;
+      if (progress < 0.75) {
+        // A zoomed-out or very tall viewport can make 0.75 unreachable (no scroll distance
+        // left); fire once the section is visible rather than never entering.
+        const scroller = document.scrollingElement;
+        const remaining = scroller ? Math.max(0, scroller.scrollHeight - innerHeight - scroller.scrollTop) : 0;
+        const maxProgress = Math.max(0, Math.min(1, (innerHeight - (bounds.top - remaining)) / scrollReach));
+        const visible = bounds.top < innerHeight && bounds.bottom > 0;
+        if (maxProgress >= 0.75 || !visible) return;
+      }
       this.enterTriggered([...this.querySelectorAll<HTMLElement>('[data-lego-piece]')]);
     }
 
@@ -580,17 +588,19 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
     display: block;
   }
   /* The Wave: a fixed cell grid driven by grid-template-areas from the layout
-     map. Long blocks span two cells; duds fill the muted structure. The whole
-     canvas is 720px tall and clears the sticky navs inside a 900px viewport. */
+     map. Long blocks span two cells; duds fill the muted structure. The canvas
+     is 720px tall, anchored to the content-left margin (aligned with the section
+     heading), and clears the sticky navs inside a 900px viewport. */
   .neon-canvas {
     display: grid;
     gap: 16px;
     grid-template-columns: repeat(var(--columns), 1fr);
     grid-template-rows: repeat(var(--rows), 168px);
-    margin: 0 auto;
+    margin: 0;
     max-width: 1160px;
   }
   .neon-slot {
+    contain: paint;
     overflow: clip;
     position: relative;
     z-index: 2;
@@ -600,9 +610,19 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
     inset: 0;
     position: absolute;
   }
+  /* The neon under-block stays transparent except while a card is actively
+     revealing, so the solid colour can never flood the page (a fractional-zoom
+     compositing quirk otherwise painted this layer outside its clip). */
   .neon-underlay {
     background: var(--neon);
+    opacity: 0;
+    transition: opacity 220ms ease;
     z-index: 0;
+  }
+  .neon-slot:hover .neon-underlay,
+  .neon-slot[data-active='true'] .neon-underlay,
+  .dud:hover .neon-underlay {
+    opacity: 1;
   }
   .neon-card {
     background: #171918;
@@ -612,7 +632,6 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
     transition:
       outline-color 180ms ease,
       transform 1000ms cubic-bezier(0.22, 1, 0.36, 1);
-    will-change: transform;
     z-index: 2;
   }
   .neon-slot[data-size='long'] .neon-card {
@@ -621,6 +640,7 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
 
   /* --- Dud blocks: muted structure carrying its own neon under-block --- */
   .dud {
+    contain: paint;
     overflow: clip;
     position: relative;
     z-index: 1;
