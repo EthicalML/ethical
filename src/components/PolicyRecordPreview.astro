@@ -41,7 +41,7 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
       <h2>The policy record</h2>
       <p class="prv-lede">Select a product for its dossier facts, what it argued, and the document itself, page by page.</p>
     </div>
-    <p class="record-count" aria-live="polite"><strong>{products.length}</strong> records</p>
+    <p class="record-count" aria-live="polite"><strong>{products.length}</strong> / {products.length} records</p>
   </header>
 
   <div class="prv-split">
@@ -626,9 +626,9 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
     }
 
     .prv-back {
-      background: transparent;
-      border: 1px solid var(--hairline-card);
-      color: var(--text-2);
+      background: var(--accent);
+      border: 1px solid var(--accent);
+      color: var(--accent-on);
       cursor: pointer;
       display: inline-block;
       font: var(--mono-9) / 1 var(--font-mono);
