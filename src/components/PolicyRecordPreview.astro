@@ -1,4 +1,6 @@
 ---
+import { readdirSync } from 'node:fs';
+import path from 'node:path';
 import type { PolicyRecordProduct } from './PolicyRecordData';
 
 interface Filter {
@@ -13,6 +15,16 @@ interface Props {
 
 const { filters, products } = Astro.props;
 const trackLabel: Record<string, string> = Object.fromEntries(filters.map((f) => [f.value, f.label]));
+
+// Page renders produced by scripts/render-policy-pages.mjs; 0 pages = placeholder doc.
+const pageCount = (slug: string): number => {
+  try {
+    return readdirSync(path.resolve('public', 'images', 'policy-record', 'pages', slug)).filter((f) => f.endsWith('.webp')).length;
+  } catch {
+    return 0;
+  }
+};
+const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slug) }, (_, i) => `p${String(i + 1).padStart(2, '0')}.webp`);
 ---
 
 <policy-record-preview class="prv" data-reveal>
@@ -20,26 +32,37 @@ const trackLabel: Record<string, string> = Object.fromEntries(filters.map((f) =>
     <div>
       <p class="eyebrow">READING ROOM</p>
       <h2>The policy record</h2>
-      <p class="prv-lede">Select a product to preview its first page, its dossier facts and what it argued.</p>
+      <p class="prv-lede">Select a product for its dossier facts, what it argued, and the document itself, page by page.</p>
     </div>
     <p class="record-count" aria-live="polite"><strong>{products.length}</strong> records</p>
   </header>
 
-  <div class="prv-filters" role="group" aria-label="Filter policy products">
-    {
-      filters.map((filter, index) => (
-        <button type="button" data-filter={filter.value} aria-pressed={index === 0 ? 'true' : 'false'}>
-          {filter.label}
-        </button>
-      ))
-    }
+  <div class="prv-controls">
+    <div class="prv-filters" role="group" aria-label="Filter policy products">
+      {
+        filters.map((filter, index) => (
+          <button type="button" data-filter={filter.value} aria-pressed={index === 0 ? 'true' : 'false'}>
+            {filter.label}
+          </button>
+        ))
+      }
+    </div>
+    <input class="prv-search" type="search" placeholder="SEARCH THE RECORD" aria-label="Search policy products by title or instrument" data-search />
   </div>
 
   <div class="prv-split">
     <div class="prv-list" role="listbox" aria-label="Policy products" tabindex="-1">
       {
         products.map((product, index) => (
-          <button type="button" class="prv-row" role="option" data-index={index} data-track={product.track} aria-selected={index === 0 ? 'true' : 'false'}>
+          <button
+            type="button"
+            class="prv-row"
+            role="option"
+            data-index={index}
+            data-track={product.track}
+            data-search={`${product.title} ${product.instrument}`.toLowerCase()}
+            aria-selected={index === 0 ? 'true' : 'false'}
+          >
             <span class="prv-row-title">{product.title}</span>
             <span class="prv-row-meta">
               <span class="instrument-tag">{product.instrument}</span>
@@ -54,16 +77,6 @@ const trackLabel: Record<string, string> = Object.fromEntries(filters.map((f) =>
       {
         products.map((product, index) => (
           <template data-pane={index}>
-            <figure class="prv-thumb" data-kind={product.unverified ? 'placeholder' : 'image'}>
-              {product.unverified ? (
-                <div class="prv-placeholder">
-                  <span>{product.instrument}</span>
-                  <p>Web publication — no page-1 render available</p>
-                </div>
-              ) : (
-                <img src={`/images/policy-record/${product.slug}.webp`} alt={`First page of ${product.title}`} loading="lazy" decoding="async" width="520" />
-              )}
-            </figure>
             <div class="prv-facts">
               <p class="eyebrow">{trackLabel[product.track] ?? product.track}</p>
               <h3>{product.title}</h3>
@@ -78,7 +91,7 @@ const trackLabel: Record<string, string> = Object.fromEntries(filters.map((f) =>
                 </div>
                 <div>
                   <dt>Pages</dt>
-                  <dd>{product.pages ? String(product.pages) : '—'}</dd>
+                  <dd>{pageCount(product.slug) || '—'}</dd>
                 </div>
               </dl>
               <p class="prv-argued">
@@ -89,6 +102,34 @@ const trackLabel: Record<string, string> = Object.fromEntries(filters.map((f) =>
                 Open PDF ↗
               </a>
             </div>
+            {pageCount(product.slug) > 0 ? (
+              <figure class="prv-doc">
+                <div class="prv-doc-strip" data-strip tabindex="0" aria-label={`Pages of ${product.title}`}>
+                  {pageNames(product.slug).map((page, p) => (
+                    <img
+                      src={`/images/policy-record/pages/${product.slug}/${page}`}
+                      alt={`Page ${p + 1} of ${product.title}`}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ))}
+                </div>
+                <figcaption class="prv-doc-bar">
+                  <button type="button" data-page-prev aria-label="Previous page">
+                    ←
+                  </button>
+                  <span data-page-counter>1 / {pageCount(product.slug)}</span>
+                  <button type="button" data-page-next aria-label="Next page">
+                    →
+                  </button>
+                </figcaption>
+              </figure>
+            ) : (
+              <div class="prv-placeholder">
+                <span>{product.instrument}</span>
+                <p>Web publication. Read it at the source link above.</p>
+              </div>
+            )}
           </template>
         ))
       }
@@ -101,6 +142,8 @@ const trackLabel: Record<string, string> = Object.fromEntries(filters.map((f) =>
   class PolicyRecordPreview extends HTMLElement {
     private controller = new AbortController();
     private rows: HTMLButtonElement[] = [];
+    private track = 'all';
+    private query = '';
 
     connectedCallback() {
       this.controller = new AbortController();
@@ -112,6 +155,14 @@ const trackLabel: Record<string, string> = Object.fromEntries(filters.map((f) =>
       this.querySelectorAll<HTMLButtonElement>('[data-filter]').forEach((button) => {
         button.addEventListener('click', () => this.filter(button), { signal: this.controller.signal });
       });
+      this.querySelector<HTMLInputElement>('[data-search]')?.addEventListener(
+        'input',
+        (event) => {
+          this.query = (event.currentTarget as HTMLInputElement).value.trim().toLowerCase();
+          this.applyFilters();
+        },
+        { signal: this.controller.signal },
+      );
       this.select(0, false);
     }
 
@@ -140,6 +191,7 @@ const trackLabel: Record<string, string> = Object.fromEntries(filters.map((f) =>
       const mount = this.querySelector<HTMLElement>('[data-mount]');
       if (!template || !mount) return;
       mount.replaceChildren(template.content.cloneNode(true));
+      this.wireViewer(mount);
       this.rows.forEach((row) => row.setAttribute('aria-selected', String(Number(row.dataset.index) === index)));
       if (scroll) {
         const active = this.rows[index];
@@ -147,14 +199,44 @@ const trackLabel: Record<string, string> = Object.fromEntries(filters.map((f) =>
       }
     }
 
+    // The paginated document viewer: prev/next page one page-width at a time, counter
+    // follows manual scrolling too. Wired per mount because the pane is cloned per select.
+    private wireViewer(mount: HTMLElement) {
+      const strip = mount.querySelector<HTMLElement>('[data-strip]');
+      const counter = mount.querySelector<HTMLElement>('[data-page-counter]');
+      if (!strip || !counter) return;
+      const total = strip.children.length;
+      const pageAt = () => {
+        const step = strip.scrollWidth / total;
+        return Math.min(total - 1, Math.max(0, Math.round(strip.scrollLeft / step)));
+      };
+      const go = (delta: number) => {
+        const step = strip.scrollWidth / total;
+        strip.scrollTo({ left: (pageAt() + delta) * step, behavior: 'smooth' });
+      };
+      const signal = this.controller.signal;
+      mount.querySelector('[data-page-prev]')?.addEventListener('click', () => go(-1), { signal });
+      mount.querySelector('[data-page-next]')?.addEventListener('click', () => go(1), { signal });
+      strip.addEventListener('scroll', () => (counter.textContent = `${pageAt() + 1} / ${total}`), {
+        signal,
+        passive: true,
+      });
+    }
+
     private filter(activeButton: HTMLButtonElement) {
-      const track = activeButton.dataset.filter ?? 'all';
+      this.track = activeButton.dataset.filter ?? 'all';
       this.querySelectorAll<HTMLButtonElement>('[data-filter]').forEach((button) => {
         button.setAttribute('aria-pressed', String(button === activeButton));
       });
+      this.applyFilters();
+    }
+
+    private applyFilters() {
       let first = -1;
       this.rows.forEach((row) => {
-        const show = track === 'all' || row.dataset.track === track;
+        const trackHit = this.track === 'all' || row.dataset.track === this.track;
+        const queryHit = !this.query || (row.dataset.search ?? '').includes(this.query);
+        const show = trackHit && queryHit;
         row.hidden = !show;
         if (show && first === -1) first = Number(row.dataset.index);
       });
@@ -209,11 +291,39 @@ const trackLabel: Record<string, string> = Object.fromEntries(filters.map((f) =>
     margin-right: 7px;
   }
 
+  .prv-controls {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: space-between;
+    margin: 34px 0 28px;
+  }
+
   .prv-filters {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin: 34px 0 28px;
+  }
+
+  .prv-search {
+    background: transparent;
+    border: 1px solid var(--hairline-card);
+    color: var(--text-2);
+    font: var(--mono-9) / 1 var(--font-mono);
+    letter-spacing: 0.1em;
+    min-height: 36px;
+    min-width: 240px;
+    padding: 0 14px;
+  }
+
+  .prv-search::placeholder {
+    color: var(--text-4);
+  }
+
+  .prv-search:focus-visible {
+    border-color: var(--accent);
+    outline: none;
   }
 
   .prv-filters button {
@@ -259,6 +369,10 @@ const trackLabel: Record<string, string> = Object.fromEntries(filters.map((f) =>
     text-align: left;
   }
 
+  .prv-row[hidden] {
+    display: none;
+  }
+
   .prv-row:hover {
     background: rgba(255, 255, 255, 0.025);
   }
@@ -300,38 +414,74 @@ const trackLabel: Record<string, string> = Object.fromEntries(filters.map((f) =>
 
   .prv-pane {
     align-self: start;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
     position: sticky;
     top: 24px;
   }
 
-  .prv-thumb {
-    background: var(--bg-inset);
-    border: 1px solid var(--hairline-card);
-    margin: 0;
-    padding: 18px;
+  .prv-doc {
+    margin: 24px 0 0;
   }
 
-  .prv-thumb img {
+  .prv-doc-strip {
+    background: var(--bg-inset);
+    border: 1px solid var(--hairline-card);
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 16px;
+    scroll-snap-type: x mandatory;
+  }
+
+  .prv-doc-strip img {
+    background: #fff;
     border: 1px solid var(--hairline);
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
-    display: block;
-    height: auto;
-    margin-inline: auto;
-    max-width: 100%;
-    width: 340px;
+    flex: none;
+    height: clamp(320px, 46vh, 520px);
+    scroll-snap-align: start;
+    width: auto;
+  }
+
+  .prv-doc-bar {
+    align-items: center;
+    border: 1px solid var(--hairline-card);
+    border-top: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 8px;
+  }
+
+  .prv-doc-bar button {
+    background: transparent;
+    border: 0;
+    color: var(--text-2);
+    cursor: pointer;
+    font-size: 15px;
+    min-height: 34px;
+    min-width: 44px;
+  }
+
+  .prv-doc-bar button:hover {
+    color: var(--accent);
+  }
+
+  .prv-doc-bar span {
+    color: var(--text-4);
+    font: var(--mono-9) / 1 var(--font-mono);
+    letter-spacing: 0.1em;
   }
 
   .prv-placeholder {
     align-items: center;
-    aspect-ratio: 3 / 4;
     border: 1px dashed var(--hairline-card);
     color: var(--text-4);
     display: flex;
     flex-direction: column;
     gap: 12px;
     justify-content: center;
-    margin-inline: auto;
-    max-width: 340px;
+    margin-top: 24px;
+    min-height: 220px;
     padding: 24px;
     text-align: center;
   }
@@ -348,12 +498,12 @@ const trackLabel: Record<string, string> = Object.fromEntries(filters.map((f) =>
   }
 
   .prv-facts {
-    padding-top: 24px;
+    padding-top: 0;
   }
 
   .prv-facts h3 {
-    font: 300 26px/1.2 var(--font-display);
-    margin: 10px 0 20px;
+    font: 300 24px/1.2 var(--font-display);
+    margin: 8px 0 16px;
   }
 
   .prv-facts dl {
