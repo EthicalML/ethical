@@ -5,6 +5,7 @@ const variants = [
   { label: 'Orbital baseline', value: 1 },
   { label: 'Policy assembly', value: 2 },
   { label: 'Ratification field', value: 3 },
+  { label: 'Dotted terrain', value: 5 },
 ];
 const frontmatter = {
   title: 'Policy hero canvas prototypes',
@@ -44,6 +45,9 @@ const intro =
     <template data-canvas-variant="3"
       ><policy-hero-fusion class="policy-prototype-mount"><canvas class="hero-canvas" aria-hidden="true"></canvas></policy-hero-fusion></template
     >
+    <template data-canvas-variant="5"
+      ><policy-hero-dotted-planet class="policy-prototype-mount"><canvas class="hero-canvas" aria-hidden="true"></canvas></policy-hero-dotted-planet></template
+    >
   </policy-hero-prototype>
 </BaseLayout>
 
@@ -51,6 +55,7 @@ const intro =
   import '../../shared/canvas/PolicyHero1';
   import '../../shared/canvas/PolicyHeroAssembly';
   import '../../shared/canvas/PolicyHeroFusion';
+  import '../../shared/canvas/PolicyHeroDottedPlanet';
 
   class PolicyHeroPrototype extends HTMLElement {
     private controller = new AbortController();
