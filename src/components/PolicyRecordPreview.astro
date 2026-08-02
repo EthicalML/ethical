@@ -13,8 +13,15 @@ interface Props {
   products: PolicyRecordProduct[];
 }
 
-const { filters, products } = Astro.props;
+const { filters, products: rawProducts } = Astro.props;
 const trackLabel: Record<string, string> = Object.fromEntries(filters.map((f) => [f.value, f.label]));
+
+// Newest first; dates like "19 JUN 2020" and "DEC 2024" both parse, undated sorts last.
+const dateValue = (date?: string): number => {
+  const parsed = Date.parse(date ?? '');
+  return Number.isNaN(parsed) ? -Infinity : parsed;
+};
+const products = [...rawProducts].sort((a, b) => dateValue(b.date) - dateValue(a.date));
 
 // Page renders produced by scripts/render-policy-pages.mjs; 0 pages = placeholder doc.
 const pageCount = (slug: string): number => {
@@ -37,43 +44,45 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
     <p class="record-count" aria-live="polite"><strong>{products.length}</strong> records</p>
   </header>
 
-  <div class="prv-controls">
-    <div class="prv-filters" role="group" aria-label="Filter policy products">
-      {
-        filters.map((filter, index) => (
-          <button type="button" data-filter={filter.value} aria-pressed={index === 0 ? 'true' : 'false'}>
-            {filter.label}
-          </button>
-        ))
-      }
-    </div>
-    <input class="prv-search" type="search" placeholder="SEARCH THE RECORD" aria-label="Search policy products by title or instrument" data-search />
-  </div>
-
   <div class="prv-split">
-    <div class="prv-list" role="listbox" aria-label="Policy products" tabindex="-1">
-      {
-        products.map((product, index) => (
-          <button
-            type="button"
-            class="prv-row"
-            role="option"
-            data-index={index}
-            data-track={product.track}
-            data-search={`${product.title} ${product.instrument}`.toLowerCase()}
-            aria-selected={index === 0 ? 'true' : 'false'}
-          >
-            <span class="prv-row-title">{product.title}</span>
-            <span class="prv-row-meta">
-              <span class="instrument-tag">{product.instrument}</span>
-              {product.date && <time>{product.date}</time>}
-            </span>
-          </button>
-        ))
-      }
+    <div class="prv-main">
+      <div class="prv-controls">
+        <div class="prv-filters" role="group" aria-label="Filter policy products">
+          {
+            filters.map((filter, index) => (
+              <button type="button" data-filter={filter.value} aria-pressed={index === 0 ? 'true' : 'false'}>
+                {filter.label}
+              </button>
+            ))
+          }
+        </div>
+        <input class="prv-search" type="search" placeholder="SEARCH THE RECORD" aria-label="Search policy products by title or instrument" data-search />
+      </div>
+      <div class="prv-list" role="listbox" aria-label="Policy products" tabindex="-1">
+        {
+          products.map((product, index) => (
+            <button
+              type="button"
+              class="prv-row"
+              role="option"
+              data-index={index}
+              data-track={product.track}
+              data-search={`${product.title} ${product.instrument}`.toLowerCase()}
+              aria-selected={index === 0 ? 'true' : 'false'}
+            >
+              <span class="prv-row-title">{product.title}</span>
+              <span class="prv-row-meta">
+                <span class="instrument-tag">{product.instrument}</span>
+                {product.date && <time>{product.date}</time>}
+              </span>
+            </button>
+          ))
+        }
+      </div>
     </div>
 
     <aside class="prv-pane" aria-live="polite">
+      <button type="button" class="prv-back" data-back>← All documents</button>
       {
         products.map((product, index) => (
           <template data-pane={index}>
@@ -163,6 +172,14 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
         },
         { signal: this.controller.signal },
       );
+      this.querySelector('[data-back]')?.addEventListener(
+        'click',
+        () => {
+          delete this.dataset.view;
+          this.scrollIntoView({ block: 'start' });
+        },
+        { signal: this.controller.signal },
+      );
       this.select(0, false);
     }
 
@@ -186,16 +203,21 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
       next.focus();
     };
 
-    private select(index: number, scroll = true) {
+    // interactive = a user pick (click or arrow key), as opposed to the initial or
+    // post-filter reselect; only user picks flip the mobile list/detail view.
+    private select(index: number, interactive = true) {
       const template = this.querySelector<HTMLTemplateElement>(`template[data-pane="${index}"]`);
       const mount = this.querySelector<HTMLElement>('[data-mount]');
       if (!template || !mount) return;
       mount.replaceChildren(template.content.cloneNode(true));
       this.wireViewer(mount);
       this.rows.forEach((row) => row.setAttribute('aria-selected', String(Number(row.dataset.index) === index)));
-      if (scroll) {
-        const active = this.rows[index];
-        active?.scrollIntoView({ block: 'nearest' });
+      if (interactive) {
+        this.rows[index]?.scrollIntoView({ block: 'nearest' });
+        if (window.matchMedia('(max-width: 900px)').matches) {
+          this.dataset.view = 'detail';
+          this.scrollIntoView({ block: 'start' });
+        }
       }
     }
 
@@ -242,7 +264,7 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
       });
       const count = this.querySelector<HTMLElement>('.record-count strong');
       if (count) count.textContent = String(this.visibleRows().length);
-      if (first !== -1) this.select(first);
+      if (first !== -1) this.select(first, false);
     }
   }
 
@@ -295,9 +317,9 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
     align-items: center;
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 12px 16px;
     justify-content: space-between;
-    margin: 34px 0 28px;
+    margin: 0 0 22px;
   }
 
   .prv-filters {
@@ -344,15 +366,26 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
   }
 
   .prv-split {
+    align-items: stretch;
     display: grid;
     gap: 32px;
     grid-template-columns: 1fr minmax(360px, 45%);
+    margin-top: 34px;
+  }
+
+  /* The pane's natural height (facts + document viewer) defines the row; the list
+     fills the left column to the same bottom edge and scrolls internally. */
+  .prv-main {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
   }
 
   .prv-list {
     display: flex;
+    flex: 1 1 0;
     flex-direction: column;
-    max-height: 640px;
+    min-height: 320px;
     overflow-y: auto;
   }
 
@@ -413,11 +446,11 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
   }
 
   .prv-pane {
-    align-self: start;
-    max-height: calc(100vh - 48px);
-    overflow-y: auto;
-    position: sticky;
-    top: 24px;
+    min-width: 0;
+  }
+
+  .prv-back {
+    display: none;
   }
 
   .prv-doc {
@@ -574,14 +607,36 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
       grid-template-columns: 1fr;
     }
 
+    /* List-first: the pane only shows once a document is picked; the back button returns. */
     .prv-list {
-      max-height: none;
-      order: 2;
+      flex: none;
+      overflow: visible;
     }
 
     .prv-pane {
-      order: 1;
-      position: static;
+      display: none;
+    }
+
+    .prv[data-view='detail'] .prv-main {
+      display: none;
+    }
+
+    .prv[data-view='detail'] .prv-pane {
+      display: block;
+    }
+
+    .prv-back {
+      background: transparent;
+      border: 1px solid var(--hairline-card);
+      color: var(--text-2);
+      cursor: pointer;
+      display: inline-block;
+      font: var(--mono-9) / 1 var(--font-mono);
+      letter-spacing: 0.1em;
+      margin-bottom: 20px;
+      min-height: 38px;
+      padding: 0 14px;
+      text-transform: uppercase;
     }
   }
 </style>
