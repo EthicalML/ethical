@@ -268,3 +268,9 @@ const layout = {
 
 <AchievementNeonRendition variant={1} cards={cards} layout={layout} />
 ```
+
+## PhraseTerrain
+
+`src/shared/canvas/PhraseTerrain.ts`. A shared canvas custom element (`<phrase-terrain>` wrapping a `.hero-canvas`) rendering a slowly rotating sphere of short text phrases with depth fade, a band sweep, and a cursor gravity field (window-level pointer tracking; nearby phrases pull toward the cursor, brighten and resolve to white). `setPhrases(list)` swaps the phrase set with a ~400ms crossfade; with no list it defaults to the policy corpus fragments (`utils/PolicyCorpus` via `PolicyHeroShared`). Honors the canvas mount contract (IntersectionObserver gating, reduced-motion static frame, teardown on disconnect).
+
+Currently unwired: kept for a future home after the policy hero and record studies retired (the owner wants it reused, not discarded). To mount it, import the module and render `<phrase-terrain><canvas class="hero-canvas" aria-hidden="true"></canvas></phrase-terrain>`.
