@@ -102,25 +102,31 @@ achievementLayout:
 mandates:
   - body: EUROPEAN COMMISSION
     mandates:
-      - role: selected to the reserve list of the High-Level Expert Group on AI
-        href: https://digital-strategy.ec.europa.eu/en/policies/expert-group-ai
+      - role: Member, High-Level Expert Group on AI Reserve
       - role: Member, Frontier AI Forum
+        active: true
       - role: Member, European AI Alliance
+        active: true
       - role: Member, Code of Practice for General-Purpose Models with Systemic Risk
   - body: UNITED NATIONS
     mandates:
       - role: 'Chair, Principles Committee: Data Governance Guidelines, UN CSTD'
-        href: https://unctad.org/topic/commission-on-science-and-technology-for-development/working-group-on-data-governance
+        active: true
       - role: AI Expert, UN AI Advisory Committee
   - body: ACM
     mandates:
       - role: Founding Chair, ACM AI Policy Committee in Europe (Europe TPC)
-        href: https://www.acm.org/volunteers/volunteer/saucedo_9722274
       - role: Founding Committee Member, ACM LATAM AI Policy Committee
+      - role: Governing Board Member - Member at Large
+        active: true
+      - role: Committee Member - AI ACM Policy
+        active: true
   - body: STANDARDS
     mandates:
       - role: Early member, IEEE P700x standards series
       - role: Early member, ISO/IEC 42001 (AI management systems)
+      - role: OWASP Agentic Systems - Reviewer
+        active: true
 ---
 
 import { AchievementNeonRendition, ArticleHero, PolicyMandates, PolicyRecordPreview } from '../components/prose/components.js';
@@ -143,9 +149,6 @@ import StatBand from '../components/StatBand.astro';
     <p>Selected outcomes, appointments and technical positions from the delivered record.</p>
   </header>
   <AchievementNeonRendition variant={2} cards={frontmatter.achievements} layout={frontmatter.achievementLayout} />
-  <p className="regulation-line" data-reveal>
-    These achievements represent the “By Regulation” phase of the Institute's four-phase strategy, where practitioner controls enter public instruments.
-  </p>
 </section>
 
 <PolicyRecordPreview filters={frontmatter.filters} products={products} />
@@ -154,12 +157,9 @@ import StatBand from '../components/StatBand.astro';
   <header>
     <p className="eyebrow">VERIFIED PARTICIPATION</p>
     <h2 id="mandates-heading">Mandates</h2>
-    <p>Ten roles across public institutions, professional policy work and standards development. Links point to the public record where one is available.</p>
+    <p>Thirteen roles across public institutions, professional policy work and standards development.</p>
   </header>
   <PolicyMandates groups={frontmatter.mandates} />
-  <p className="mandate-note">
-    The European Commission records that departing AI HLEG members were replaced from a reserve list; it does not publish a reserve-list roster.
-  </p>
 </section>
 
 <section className="policy-work" data-reveal aria-labelledby="work-heading">
@@ -168,10 +168,10 @@ import StatBand from '../components/StatBand.astro';
   <p>Work with the Institute on technical review of draft instruments, practitioner evidence for consultations, and participation in standards development.</p>
   <div>
     <a className="button primary" href="/contact/">
-      Engage the Institute →
+      {'Engage the Institute →'}
     </a>
-    <a className="policy-secondary" href="/partners/">
-      Explore institutional partnerships →
+    <a className="button" href="/partners/">
+      {'Explore institutional partnerships →'}
     </a>
   </div>
 </section>

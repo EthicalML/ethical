@@ -287,15 +287,10 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
               <p>{card.summary}</p>
               {isCollage && card.footnote && <span class="footnote">{card.footnote}</span>}
               <footer>
-                {(variant === 1 ? card.links.slice(0, 1) : block.size === 'long' ? card.links : card.links.slice(0, 1)).map((link) => {
+                {(variant === 1 || block.size !== 'long' ? card.links.slice(0, 1) : card.links).map((link) => {
                   const external = link.href.startsWith('http');
                   return (
-                    <a
-                      class:list={[{ 'button primary': variant === 1 }]}
-                      href={link.href}
-                      target={external ? '_blank' : undefined}
-                      rel={external ? 'noopener noreferrer' : undefined}
-                    >
+                    <a class="button primary" href={link.href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
                       {link.label} →
                     </a>
                   );
@@ -430,14 +425,14 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
       const scrollReach = Math.min(bounds.height, innerHeight);
       const progress = Math.max(0, Math.min(1, (innerHeight - bounds.top) / scrollReach));
       this.dataset.entranceProgress = progress.toFixed(3);
-      if (progress < 0.75) {
-        // A zoomed-out or very tall viewport can make 0.75 unreachable (no scroll distance
+      if (progress < 0.5) {
+        // A zoomed-out or very tall viewport can make 0.5 unreachable (no scroll distance
         // left); fire once the section is visible rather than never entering.
         const scroller = document.scrollingElement;
         const remaining = scroller ? Math.max(0, scroller.scrollHeight - innerHeight - scroller.scrollTop) : 0;
         const maxProgress = Math.max(0, Math.min(1, (innerHeight - (bounds.top - remaining)) / scrollReach));
         const visible = bounds.top < innerHeight && bounds.bottom > 0;
-        if (maxProgress >= 0.75 || !visible) return;
+        if (maxProgress >= 0.5 || !visible) return;
       }
       this.enterTriggered([...this.querySelectorAll<HTMLElement>('[data-lego-piece]')]);
     }
@@ -445,7 +440,7 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
     private enterTriggered(pieces: HTMLElement[]) {
       if (this.dataset.entered === 'true') return;
       this.dataset.entered = 'true';
-      this.dataset.triggerProgress = this.dataset.entranceProgress ?? '0.750';
+      this.dataset.triggerProgress = this.dataset.entranceProgress ?? '0.500';
       pieces.forEach((piece) => {
         if (getComputedStyle(piece).display === 'none') {
           piece.dataset.settled = 'true';
@@ -644,7 +639,11 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
     padding: 9px 14px;
   }
   [data-variation='2'] .neon-copy > .eyebrow {
-    font-size: 9.5px;
+    font-size: 10.5px;
+  }
+  [data-variation='2'] footer a.button {
+    font-size: 10px;
+    padding: 8px 12px;
   }
   /* The isometric structure takes the ghost treatment: oversized, dim, anchored
      to the bottom-right with part of it cropped past the corner. */
@@ -735,6 +734,15 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
   .neon-slot[data-size='short'] .neon-copy > strong {
     font: 300 clamp(19px, 2vw, 23px) / 1.15 var(--font-display);
     letter-spacing: -0.01em;
+  }
+  /* The set table takes one fixed title scale across every card, sized to its
+     cells: titles may wrap, never ellipsize (mirrors the collage's fixed scale). */
+  [data-variation='2'] .neon-slot .neon-copy > strong {
+    font: 300 26px/1.12 var(--font-display);
+    letter-spacing: -0.02em;
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
   }
   .neon-copy > p {
     color: var(--text-2);
