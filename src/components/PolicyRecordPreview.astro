@@ -1,0 +1,437 @@
+---
+import type { PolicyRecordProduct } from './PolicyRecordData';
+
+interface Filter {
+  label: string;
+  value: string;
+}
+
+interface Props {
+  filters: Filter[];
+  products: PolicyRecordProduct[];
+}
+
+const { filters, products } = Astro.props;
+const trackLabel: Record<string, string> = Object.fromEntries(filters.map((f) => [f.value, f.label]));
+---
+
+<policy-record-preview class="prv" data-reveal>
+  <header class="prv-head">
+    <div>
+      <p class="eyebrow">READING ROOM</p>
+      <h2>The policy record</h2>
+      <p class="prv-lede">Select a product to preview its first page, its dossier facts and what it argued.</p>
+    </div>
+    <p class="record-count" aria-live="polite"><strong>{products.length}</strong> records</p>
+  </header>
+
+  <div class="prv-filters" role="group" aria-label="Filter policy products">
+    {
+      filters.map((filter, index) => (
+        <button type="button" data-filter={filter.value} aria-pressed={index === 0 ? 'true' : 'false'}>
+          {filter.label}
+        </button>
+      ))
+    }
+  </div>
+
+  <div class="prv-split">
+    <div class="prv-list" role="listbox" aria-label="Policy products" tabindex="-1">
+      {
+        products.map((product, index) => (
+          <button type="button" class="prv-row" role="option" data-index={index} data-track={product.track} aria-selected={index === 0 ? 'true' : 'false'}>
+            <span class="prv-row-title">{product.title}</span>
+            <span class="prv-row-meta">
+              <span class="instrument-tag">{product.instrument}</span>
+              {product.date && <time>{product.date}</time>}
+            </span>
+          </button>
+        ))
+      }
+    </div>
+
+    <aside class="prv-pane" aria-live="polite">
+      {
+        products.map((product, index) => (
+          <template data-pane={index}>
+            <figure class="prv-thumb" data-kind={product.unverified ? 'placeholder' : 'image'}>
+              {product.unverified ? (
+                <div class="prv-placeholder">
+                  <span>{product.instrument}</span>
+                  <p>Web publication — no page-1 render available</p>
+                </div>
+              ) : (
+                <img src={`/images/policy-record/${product.slug}.webp`} alt={`First page of ${product.title}`} loading="lazy" decoding="async" width="520" />
+              )}
+            </figure>
+            <div class="prv-facts">
+              <p class="eyebrow">{trackLabel[product.track] ?? product.track}</p>
+              <h3>{product.title}</h3>
+              <dl>
+                <div>
+                  <dt>Instrument</dt>
+                  <dd>{product.instrument}</dd>
+                </div>
+                <div>
+                  <dt>Date</dt>
+                  <dd>{product.date ?? 'Undated'}</dd>
+                </div>
+                <div>
+                  <dt>Pages</dt>
+                  <dd>{product.pages ? String(product.pages) : '—'}</dd>
+                </div>
+              </dl>
+              <p class="prv-argued">
+                {product.unverified && <span class="pending-tag">UNVERIFIED</span>}
+                {product.summary}
+              </p>
+              <a class="prv-cta" href={product.href} target="_blank" rel="noopener noreferrer">
+                Open PDF ↗
+              </a>
+            </div>
+          </template>
+        ))
+      }
+      <div class="prv-pane-mount" data-mount></div>
+    </aside>
+  </div>
+</policy-record-preview>
+
+<script>
+  class PolicyRecordPreview extends HTMLElement {
+    private controller = new AbortController();
+    private rows: HTMLButtonElement[] = [];
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      this.rows = Array.from(this.querySelectorAll<HTMLButtonElement>('.prv-row'));
+      this.rows.forEach((row) => {
+        row.addEventListener('click', () => this.select(Number(row.dataset.index)), { signal: this.controller.signal });
+        row.addEventListener('keydown', this.handleKey, { signal: this.controller.signal });
+      });
+      this.querySelectorAll<HTMLButtonElement>('[data-filter]').forEach((button) => {
+        button.addEventListener('click', () => this.filter(button), { signal: this.controller.signal });
+      });
+      this.select(0, false);
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+    }
+
+    private visibleRows() {
+      return this.rows.filter((row) => !row.hidden);
+    }
+
+    private handleKey = (event: KeyboardEvent) => {
+      if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+      event.preventDefault();
+      const visible = this.visibleRows();
+      const current = event.currentTarget as HTMLButtonElement;
+      const at = visible.indexOf(current);
+      const next = event.key === 'ArrowDown' ? visible[at + 1] : visible[at - 1];
+      if (!next) return;
+      this.select(Number(next.dataset.index));
+      next.focus();
+    };
+
+    private select(index: number, scroll = true) {
+      const template = this.querySelector<HTMLTemplateElement>(`template[data-pane="${index}"]`);
+      const mount = this.querySelector<HTMLElement>('[data-mount]');
+      if (!template || !mount) return;
+      mount.replaceChildren(template.content.cloneNode(true));
+      this.rows.forEach((row) => row.setAttribute('aria-selected', String(Number(row.dataset.index) === index)));
+      if (scroll) {
+        const active = this.rows[index];
+        active?.scrollIntoView({ block: 'nearest' });
+      }
+    }
+
+    private filter(activeButton: HTMLButtonElement) {
+      const track = activeButton.dataset.filter ?? 'all';
+      this.querySelectorAll<HTMLButtonElement>('[data-filter]').forEach((button) => {
+        button.setAttribute('aria-pressed', String(button === activeButton));
+      });
+      let first = -1;
+      this.rows.forEach((row) => {
+        const show = track === 'all' || row.dataset.track === track;
+        row.hidden = !show;
+        if (show && first === -1) first = Number(row.dataset.index);
+      });
+      const count = this.querySelector<HTMLElement>('.record-count strong');
+      if (count) count.textContent = String(this.visibleRows().length);
+      if (first !== -1) this.select(first);
+    }
+  }
+
+  if (!customElements.get('policy-record-preview')) {
+    customElements.define('policy-record-preview', PolicyRecordPreview);
+  }
+</script>
+
+<style>
+  .prv {
+    border-block: 1px solid var(--hairline);
+    display: block;
+    padding: 72px 48px 88px;
+  }
+
+  .prv-head {
+    align-items: end;
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  h2 {
+    font: 300 clamp(38px, 4.6vw, 60px) / 1 var(--font-display);
+    margin: 16px 0 0;
+  }
+
+  .prv-lede {
+    color: var(--text-3);
+    margin: 12px 0 0;
+    max-width: 46ch;
+  }
+
+  .record-count {
+    color: var(--text-4);
+    flex: none;
+    font: var(--mono-10) / 1 var(--font-mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .record-count strong {
+    color: var(--accent);
+    font-size: 22px;
+    font-weight: 400;
+    margin-right: 7px;
+  }
+
+  .prv-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 34px 0 28px;
+  }
+
+  .prv-filters button {
+    background: transparent;
+    border: 1px solid var(--hairline-card);
+    color: var(--text-3);
+    cursor: pointer;
+    font: var(--mono-9) / 1 var(--font-mono);
+    letter-spacing: 0.1em;
+    min-height: 36px;
+    padding: 0 14px;
+  }
+
+  .prv-filters button[aria-pressed='true'] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-on);
+  }
+
+  .prv-split {
+    display: grid;
+    gap: 32px;
+    grid-template-columns: 1fr minmax(360px, 45%);
+  }
+
+  .prv-list {
+    display: flex;
+    flex-direction: column;
+    max-height: 640px;
+    overflow-y: auto;
+  }
+
+  .prv-row {
+    background: transparent;
+    border: 0;
+    border-top: 1px solid var(--hairline);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 16px 16px 20px;
+    position: relative;
+    text-align: left;
+  }
+
+  .prv-row:hover {
+    background: rgba(255, 255, 255, 0.025);
+  }
+
+  .prv-row[aria-selected='true'] {
+    background: var(--accent-wash-09);
+  }
+
+  .prv-row[aria-selected='true']::before {
+    background: var(--accent);
+    content: '';
+    inset: 0 auto 0 0;
+    position: absolute;
+    width: 2px;
+  }
+
+  .prv-row-title {
+    color: var(--text-1);
+    font: 400 15px/1.35 var(--font-body);
+  }
+
+  .prv-row-meta {
+    align-items: center;
+    display: flex;
+    gap: 14px;
+  }
+
+  .instrument-tag,
+  time {
+    color: var(--text-4);
+    font: var(--mono-9) / 1.35 var(--font-mono);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .instrument-tag {
+    color: var(--text-3);
+  }
+
+  .prv-pane {
+    align-self: start;
+    position: sticky;
+    top: 24px;
+  }
+
+  .prv-thumb {
+    background: var(--bg-inset);
+    border: 1px solid var(--hairline-card);
+    margin: 0;
+    padding: 18px;
+  }
+
+  .prv-thumb img {
+    border: 1px solid var(--hairline);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+    display: block;
+    height: auto;
+    margin-inline: auto;
+    max-width: 100%;
+    width: 340px;
+  }
+
+  .prv-placeholder {
+    align-items: center;
+    aspect-ratio: 3 / 4;
+    border: 1px dashed var(--hairline-card);
+    color: var(--text-4);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    justify-content: center;
+    margin-inline: auto;
+    max-width: 340px;
+    padding: 24px;
+    text-align: center;
+  }
+
+  .prv-placeholder span {
+    color: var(--text-2);
+    font: var(--mono-10) / 1 var(--font-mono);
+    letter-spacing: 0.12em;
+  }
+
+  .prv-placeholder p {
+    font-size: 13px;
+    margin: 0;
+  }
+
+  .prv-facts {
+    padding-top: 24px;
+  }
+
+  .prv-facts h3 {
+    font: 300 26px/1.2 var(--font-display);
+    margin: 10px 0 20px;
+  }
+
+  .prv-facts dl {
+    border-top: 1px solid var(--hairline);
+    display: grid;
+    gap: 0;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 0 0 20px;
+  }
+
+  .prv-facts dl div {
+    border-bottom: 1px solid var(--hairline);
+    padding: 12px 0;
+  }
+
+  .prv-facts dt {
+    color: var(--text-4);
+    font: var(--mono-9) / 1 var(--font-mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .prv-facts dd {
+    color: var(--text-2);
+    font: var(--mono-10) / 1.3 var(--font-mono);
+    letter-spacing: 0.04em;
+    margin: 8px 0 0;
+    text-transform: uppercase;
+  }
+
+  .prv-argued {
+    color: var(--text-2);
+    line-height: 1.55;
+    margin: 0 0 24px;
+  }
+
+  .pending-tag {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-3);
+    font: var(--mono-9) / 1 var(--font-mono);
+    letter-spacing: 0.1em;
+    margin-right: 8px;
+    padding: 3px 6px;
+    vertical-align: 1px;
+  }
+
+  .prv-cta {
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    display: inline-block;
+    font: var(--mono-10) / 1 var(--font-mono);
+    letter-spacing: 0.1em;
+    padding: 12px 18px;
+    text-transform: uppercase;
+  }
+
+  .prv-cta:hover {
+    background: var(--accent);
+    color: var(--accent-on);
+  }
+
+  @media (max-width: 900px) {
+    .prv {
+      padding: 56px 22px 64px;
+    }
+
+    .prv-split {
+      grid-template-columns: 1fr;
+    }
+
+    .prv-list {
+      max-height: none;
+      order: 2;
+    }
+
+    .prv-pane {
+      order: 1;
+      position: static;
+    }
+  }
+</style>
