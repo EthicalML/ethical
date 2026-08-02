@@ -1,7 +1,7 @@
 import { CanvasEngine, type CanvasDraw } from './CanvasEngine';
 import { clamp, createSphereDots, drawGlow, hash, smooth, spherePoint } from './PolicyHeroShared';
 
-const DOTS = createSphereDots(43, 72, 5);
+const DOTS = createSphereDots(54, 90, 5);
 const STARS = Array.from({ length: 54 }, (_, index) => ({
   alpha: 0.08 + hash(index, 51) * 0.24,
   phase: hash(index, 52) * Math.PI * 2,
@@ -37,8 +37,8 @@ const drawDottedPlanet: CanvasDraw = (context, width, height, elapsed) => {
     center.y,
     radiusX * 1.06,
   );
-  planetGlow.addColorStop(0, 'rgba(94,230,160,.035)');
-  planetGlow.addColorStop(0.55, 'rgba(94,230,160,.014)');
+  planetGlow.addColorStop(0, 'rgba(94,230,160,.055)');
+  planetGlow.addColorStop(0.55, 'rgba(94,230,160,.022)');
   planetGlow.addColorStop(1, 'rgba(94,230,160,0)');
   context.fillStyle = planetGlow;
   context.fillRect(0, height * 0.12, width, height * 0.88);
@@ -51,8 +51,8 @@ const drawDottedPlanet: CanvasDraw = (context, width, height, elapsed) => {
     const band = Math.exp(-Math.pow((surfaceX - sweep) / 0.19, 2));
     const directional = clamp((-point.x * 0.48 + point.y * 0.7 + point.z * 0.22 + 0.38) / 1.5);
     const ridge = clamp((dot.elevation + 0.06) / 0.12);
-    const alpha = clamp(0.025 + depth * 0.09 + directional * 0.23 + band * 0.48 + ridge * 0.035);
-    const radius = (0.42 + depth * 0.58 + directional * 0.48 + band * 0.88) * scale;
+    const alpha = clamp(0.04 + depth * 0.12 + directional * 0.31 + band * 0.68 + ridge * 0.045);
+    const radius = (0.48 + depth * 0.62 + directional * 0.52 + band * 0.94) * scale;
     const x = center.x + point.x * radiusX;
     const y = center.y - point.y * radiusY;
     context.beginPath();
@@ -79,7 +79,7 @@ const drawDottedPlanet: CanvasDraw = (context, width, height, elapsed) => {
   const markerDot = {
     elevation: 0.035,
     latitude: 0.37,
-    longitude: 0.24,
+    longitude: 1.72,
     seed: 0,
   };
   const marker = spherePoint(markerDot, rotation);
