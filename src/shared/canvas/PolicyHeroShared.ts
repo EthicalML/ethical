@@ -35,16 +35,6 @@ export const POLICY_FRAGMENTS = [
 
 export const ORGANISATIONS = ['EC', 'UN', 'ACM', 'IEEE', 'ISO', 'OWASP', 'LF AI'];
 
-export interface PhraseStar {
-  alpha: number;
-  fragment: number;
-  phase: number;
-  scale: number;
-  speed: number;
-  x: number;
-  y: number;
-}
-
 export interface SphereDot {
   elevation: number;
   latitude: number;
@@ -54,23 +44,11 @@ export interface SphereDot {
 
 export const clamp = (value: number) => Math.max(0, Math.min(1, value));
 export const smooth = (value: number) => value * value * (3 - 2 * value);
-export const ease = (value: number) => smooth(smooth(clamp(value)));
 
 export const hash = (index: number, salt = 0) => {
   const value = Math.sin(index * 127.1 + salt * 311.7) * 43758.5453;
   return value - Math.floor(value);
 };
-
-export const createPhraseStars = (count: number, salt = 0): PhraseStar[] =>
-  Array.from({ length: count }, (_, index) => ({
-    alpha: 0.24 + hash(index, salt + 1) * 0.58,
-    fragment: (index * 7 + salt * 3) % POLICY_FRAGMENTS.length,
-    phase: hash(index, salt + 2) * Math.PI * 2,
-    scale: 0.62 + hash(index, salt + 3) * 0.92,
-    speed: 0.16 + hash(index, salt + 4) * 0.38,
-    x: 0.025 + hash(index, salt + 5) * 0.95,
-    y: 0.04 + hash(index, salt + 6) * 0.9,
-  }));
 
 export const createSphereDots = (rows: number, columns: number, salt = 0): SphereDot[] => {
   const dots: SphereDot[] = [];
