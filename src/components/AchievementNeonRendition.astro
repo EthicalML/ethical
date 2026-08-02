@@ -6,6 +6,8 @@ interface AchievementLink {
 
 interface AchievementCard {
   eyebrow: string;
+  footnote?: string;
+  glyph?: 'scatter' | 'bracket' | 'tee' | 'corner';
   links: AchievementLink[];
   piece: string;
   summary: string;
@@ -20,7 +22,7 @@ interface Block {
 
 interface Dud {
   area: string;
-  shape: 'square' | 'diamond' | 'triangle';
+  shape: 'square' | 'diamond' | 'triangle' | 'plain' | 'accent' | 'diamond-open';
 }
 
 interface Layout {
@@ -32,26 +34,76 @@ interface Layout {
 interface Props {
   cards: AchievementCard[];
   layout: Layout;
-  variant: 1 | 2 | 3 | 4;
+  variant: 1 | 2 | 3;
 }
 
 const { cards, layout, variant } = Astro.props;
 
 // Card colour: green for the two adoption cards, then blue, purple, orange, red.
 const neon = ['#5ee6a0', '#35d787', '#38bdf8', '#a855f7', '#ff5c1f', '#ff3b57'];
+// V1 / V2 ghost surface: an oversized dim identifier cropped by the block edge.
 const ghostLabels = ['8/12', '13/14', 'CODE', 'UN', 'ACM', '2026'];
-const figureLabels = ['8 / 12', '13 / 14', 'CODE', 'UN', 'ACM', '2026'];
-// A long block slides further than a short one; direction is the block sign.
-const longTravel = 58;
-const shortTravel = 46;
 
-const round = (n: number) => Math.round(n * 100) / 100;
-const point = (p: number[]) => `${round(p[0])},${round(p[1])}`;
+// Card displacement on reveal. The ghost variants slide horizontally out of the
+// cell (sign from the block); the collage lifts diagonally up-left, uncovering a
+// neon slab on the bottom and right edges as in the artifact.
+const ghostLongTravel = 58;
+const ghostShortTravel = 46;
+const collageTravel = 30;
+const isCollage = variant === 3;
 
 // ---------------------------------------------------------------------------
-// Wave placement, derived from the layout map so a new block is a data change.
-// grid-template-areas comes straight from the rows; entrance order is bottom-up
-// (blocks stack from the floor of the wave) so lower rows land first.
+// V3 pixel-cluster glyphs, lifted from the Set Table artifact. Each glyph is a
+// small cell grid (3x3) with one accent pixel in the card's neon colour.
+// ---------------------------------------------------------------------------
+const glyphCells: Record<NonNullable<AchievementCard['glyph']>, { cells: number[][]; on: number[] }> = {
+  scatter: {
+    cells: [
+      [0, 0],
+      [2, 0],
+      [1, 1],
+      [0, 2],
+      [2, 2],
+    ],
+    on: [1, 1],
+  },
+  bracket: {
+    cells: [
+      [0, 0],
+      [0, 1],
+      [0, 2],
+      [1, 2],
+    ],
+    on: [0, 0],
+  },
+  tee: {
+    cells: [
+      [0, 0],
+      [1, 0],
+      [2, 0],
+      [1, 1],
+      [1, 2],
+    ],
+    on: [1, 0],
+  },
+  corner: {
+    cells: [
+      [0, 0],
+      [1, 0],
+      [0, 1],
+      [1, 1],
+    ],
+    on: [0, 0],
+  },
+};
+const glyphRects = (name: NonNullable<AchievementCard['glyph']>) => {
+  const g = glyphCells[name];
+  return g.cells.map(([x, y]) => ({ x: x * 4, y: y * 4, on: x === g.on[0] && y === g.on[1] }));
+};
+
+// ---------------------------------------------------------------------------
+// Placement derived from the layout map so a new block is a data change. Entrance
+// order is bottom-up (blocks stack from the floor) so lower rows land first.
 // ---------------------------------------------------------------------------
 const grid = layout.areas.map((row) => row.trim().split(/\s+/));
 const columns = grid[0].length;
@@ -77,332 +129,65 @@ const orderOf = Object.fromEntries(
 const placed = cards.map((card, index) => {
   const block = layout.blocks[card.piece];
   const order = orderOf[block.area];
-  const travel = block.size === 'long' ? longTravel : shortTravel;
-  return { card, index, block, order, shiftX: block.dir * travel };
+  const base = block.size === 'long' ? ghostLongTravel : ghostShortTravel;
+  const shiftX = isCollage ? -collageTravel : block.dir * base;
+  const shiftY = isCollage ? -collageTravel : 0;
+  return { card, index, block, order, shiftX, shiftY };
 });
-// Duds are inert: a lighter grey raised surface, no neon and no slide. They land
-// with the stack (order) but never reveal or move on hover.
+// Duds are inert: a raised surface, no neon and no slide. They land with the
+// stack (order) but never reveal or move on hover.
 const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, order: orderOf[dud.area] }));
-
-// Small deterministic generator so build output is stable.
-function rng(seed: number) {
-  let s = (seed * 9301 + 49297) % 233280;
-  return () => {
-    s = (s * 9301 + 49297) % 233280;
-    return s / 233280;
-  };
-}
-
-// ---------------------------------------------------------------------------
-// V2 isometric structures (30-degree projection, three-face shading).
-// Long uses the full structure; short crops to the first three cubes, no links.
-// ---------------------------------------------------------------------------
-const ISO_A = 11;
-const ISO_FH = 13;
-const ISO_B = ISO_A / 2;
-function isoTop(x: number, y: number, z: number, ox: number, oy: number) {
-  return [ox + (x - y) * ISO_A, oy + (x + y) * ISO_B - z * ISO_FH];
-}
-function isoFaces(cubes: { x: number; y: number; z: number; fill?: boolean }[], ox: number, oy: number) {
-  const ordered = [...cubes].sort((a, b) => a.x + a.y - (b.x + b.y) || a.z - b.z);
-  const faces: { face: string; fill: boolean; d: string }[] = [];
-  for (const cube of ordered) {
-    const [cx, cy] = isoTop(cube.x, cube.y, cube.z, ox, oy);
-    const T = [cx, cy];
-    const R = [cx + ISO_A, cy + ISO_B];
-    const B = [cx, cy + 2 * ISO_B];
-    const L = [cx - ISO_A, cy + ISO_B];
-    const fill = Boolean(cube.fill);
-    faces.push({ face: 'top', fill, d: `M${point(T)} L${point(R)} L${point(B)} L${point(L)} Z` });
-    faces.push({ face: 'left', fill, d: `M${point(L)} L${point(B)} L${point([B[0], B[1] + ISO_FH])} L${point([L[0], L[1] + ISO_FH])} Z` });
-    faces.push({ face: 'right', fill, d: `M${point(B)} L${point(R)} L${point([R[0], R[1] + ISO_FH])} L${point([B[0], B[1] + ISO_FH])} Z` });
-  }
-  return faces;
-}
-const isoStructures = [
-  // eu: stacked adoption blocks, columns of 3, 2, 1
-  {
-    ox: 56,
-    oy: 30,
-    cubes: [
-      { x: 0, y: 0, z: 0, fill: true },
-      { x: 0, y: 0, z: 1, fill: true },
-      { x: 0, y: 0, z: 2, fill: true },
-      { x: 1, y: 0, z: 0, fill: true },
-      { x: 1, y: 0, z: 1, fill: true },
-      { x: 2, y: 0, z: 0 },
-    ],
-    links: [],
-  },
-  // uk: taller adoption tower, columns of 4 and 2
-  {
-    ox: 62,
-    oy: 24,
-    cubes: [
-      { x: 0, y: 0, z: 0, fill: true },
-      { x: 0, y: 0, z: 1, fill: true },
-      { x: 0, y: 0, z: 2, fill: true },
-      { x: 0, y: 0, z: 3, fill: true },
-      { x: 1, y: 0, z: 0, fill: true },
-      { x: 1, y: 0, z: 1 },
-    ],
-    links: [],
-  },
-  // mlsecops: a hub cube with four linked satellites (citation network)
-  {
-    ox: 56,
-    oy: 26,
-    cubes: [
-      { x: 1, y: 1, z: 0, fill: true },
-      { x: 0, y: 1, z: 0 },
-      { x: 2, y: 1, z: 0 },
-      { x: 1, y: 0, z: 0 },
-      { x: 1, y: 2, z: 0 },
-    ],
-    links: [
-      [1, 1, 0, 0, 1, 0],
-      [1, 1, 0, 2, 1, 0],
-      [1, 1, 0, 1, 0, 0],
-      [1, 1, 0, 1, 2, 0],
-    ],
-  },
-  // un: ringed council structure (square ring of blocks around an empty centre)
-  {
-    ox: 44,
-    oy: 12,
-    cubes: [
-      { x: 0, y: 0, z: 0 },
-      { x: 1, y: 0, z: 0 },
-      { x: 2, y: 0, z: 0, fill: true },
-      { x: 2, y: 1, z: 0 },
-      { x: 2, y: 2, z: 0 },
-      { x: 1, y: 2, z: 0 },
-      { x: 0, y: 2, z: 0 },
-      { x: 0, y: 1, z: 0 },
-    ],
-    links: [],
-  },
-  // acm: two-hub bridge, two platforms joined by a span
-  {
-    ox: 40,
-    oy: 24,
-    cubes: [
-      { x: 0, y: 0, z: 0, fill: true },
-      { x: 0, y: 1, z: 0, fill: true },
-      { x: 3, y: 0, z: 0, fill: true },
-      { x: 3, y: 1, z: 0, fill: true },
-    ],
-    links: [
-      [0, 0, 1, 3, 0, 1],
-      [0, 1, 1, 3, 1, 1],
-    ],
-  },
-  // through-line: linked chain receding along the diagonal
-  {
-    ox: 40,
-    oy: 6,
-    cubes: [
-      { x: 0, y: 0, z: 0, fill: true },
-      { x: 1, y: 1, z: 0, fill: true },
-      { x: 2, y: 2, z: 0, fill: true },
-      { x: 3, y: 3, z: 0, fill: true },
-    ],
-    links: [
-      [0, 0, 1, 1, 1, 1],
-      [1, 1, 1, 2, 2, 1],
-      [2, 2, 1, 3, 3, 1],
-    ],
-  },
-];
-function isoRender(cubes: { x: number; y: number; z: number; fill?: boolean }[], links: number[][], ox: number, oy: number) {
-  return { faces: isoFaces(cubes, ox, oy), links: links.map((l) => `M${point(isoTop(l[0], l[1], l[2], ox, oy))} L${point(isoTop(l[3], l[4], l[5], ox, oy))}`) };
-}
-const isoByCard = isoStructures.map((s) => ({
-  long: isoRender(s.cubes, s.links, s.ox, s.oy),
-  short: isoRender(s.cubes.slice(0, 3), [], 30, s.oy + 6),
-}));
-
-// ---------------------------------------------------------------------------
-// V3 volcanic cracks and V4 circuit etch share per-card origin corners.
-// Short renditions run fewer steps and drop the branches.
-// ---------------------------------------------------------------------------
-const origins = [
-  [8, 8],
-  [92, 10],
-  [10, 90],
-  [90, 90],
-  [50, 8],
-  [8, 52],
-];
-function crackSet(origin: number[], seed: number, steps: number, withBranches: boolean) {
-  const rand = rng(seed + 5);
-  const [sx, sy] = origin;
-  const tx = sx < 50 ? 96 : 4;
-  const ty = sy < 50 ? 92 : 8;
-  const pts: number[][] = [[sx, sy]];
-  const dxp = ty - sy;
-  const dyp = -(tx - sx);
-  const len = Math.hypot(dxp, dyp) || 1;
-  for (let i = 1; i <= steps; i++) {
-    const t = i / steps;
-    const bx = sx + (tx - sx) * t;
-    const by = sy + (ty - sy) * t;
-    const jitter = (rand() - 0.5) * 30;
-    pts.push([round(bx + (dxp / len) * jitter), round(by + (dyp / len) * jitter)]);
-  }
-  const main = 'M' + pts.map(point).join(' L');
-  const branch = (idx: number, dir: number) => {
-    const [ax, ay] = pts[idx];
-    const b1 = [round(ax + dir * (9 + rand() * 12)), round(ay + (rand() - 0.5) * 26)];
-    const b2 = [round(b1[0] + dir * (7 + rand() * 9)), round(b1[1] + (rand() - 0.5) * 22)];
-    return `M${point([ax, ay])} L${point(b1)} L${point(b2)}`;
-  };
-  const branches = withBranches ? [branch(2, 1), branch(Math.min(4, steps), -1)] : [];
-  return { main, branches, hint: `M${point([sx, sy])} L${point(pts[1])}`, origin };
-}
-const cracksByCard = origins.map((o, i) => ({ long: crackSet(o, i, 6, true), short: crackSet(o, i, 3, false) }));
-
-function circuitSet(origin: number[], seed: number, iters: number, withBranches: boolean) {
-  const rand = rng(seed + 3);
-  const [sx, sy] = origin;
-  const dirX = sx < 50 ? 1 : -1;
-  const dirY = sy < 50 ? 1 : -1;
-  const pts: number[][] = [[sx, sy]];
-  let px = sx + dirX * 6;
-  let py = sy + dirY * 6;
-  pts.push([round(px), round(py)]);
-  const pads: number[][] = [];
-  let horiz = true;
-  for (let i = 0; i < iters; i++) {
-    const step = 12 + rand() * 15;
-    if (horiz) px += dirX * step;
-    else py += dirY * step;
-    px = Math.max(8, Math.min(92, round(px)));
-    py = Math.max(8, Math.min(92, round(py)));
-    pts.push([px, py]);
-    if (rand() > 0.55) pads.push([px, py]);
-    horiz = !horiz;
-  }
-  const terminus = pts[pts.length - 1];
-  const main = 'M' + pts.map(point).join(' L');
-  const branches: string[] = [];
-  if (withBranches) {
-    for (const idx of [2, 4]) {
-      const [ax, ay] = pts[idx];
-      const bx = Math.max(8, Math.min(92, round(ax + dirX * (10 + rand() * 8))));
-      const by = Math.max(8, Math.min(92, round(ay - dirY * (8 + rand() * 8))));
-      branches.push(`M${point([ax, ay])} L${point([bx, ay])} L${point([bx, by])}`);
-      pads.push([bx, by]);
-    }
-  }
-  return { main, branches, pads, terminus, hint: `M${point([sx, sy])} L${point(pts[1])}`, origin };
-}
-const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), short: circuitSet(o, i, 3, false) }));
 ---
 
 <achievement-neon-rendition class="achievement-neon-rendition" data-variation={variant}>
   <div class="neon-canvas" style={`--columns:${columns};--rows:${grid.length};grid-template-areas:${templateAreas}`}>
     {
-      placed.map(({ card, index, block, order, shiftX }) => {
-        const iso = isoByCard[index][block.size];
-        const vc = cracksByCard[index][block.size];
-        const ce = circuitByCard[index][block.size];
-        return (
-          <div
-            class="lego-piece neon-slot"
-            data-lego-piece
-            data-neon-slot
-            data-order={order}
-            data-size={block.size}
-            data-piece={card.piece}
-            style={`grid-area:${block.area};--neon:${neon[index]};--shift-x:${shiftX}px;--drop-rotation:${order % 2 ? -1.6 : 1.6}deg;--fall-dur:${block.size === 'long' ? 440 : 320}ms`}
-          >
-            <i class="neon-underlay" data-neon-block aria-hidden="true" />
-            <article class="neon-card">
-              {(variant === 1 || variant === 2) && (
-                <span class="ghost-mark" aria-hidden="true">
-                  {ghostLabels[index]}
-                </span>
-              )}
-              {(variant === 1 || variant === 2) && <i class="ghost-rule" aria-hidden="true" />}
+      placed.map(({ card, index, block, order, shiftX, shiftY }) => (
+        <div
+          class="lego-piece neon-slot"
+          data-lego-piece
+          data-neon-slot
+          data-order={order}
+          data-size={block.size}
+          data-piece={card.piece}
+          style={`grid-area:${block.area};--neon:${neon[index]};--shift-x:${shiftX}px;--shift-y:${shiftY}px;--drop-rotation:${order % 2 ? -1.6 : 1.6}deg;--fall-dur:${block.size === 'long' ? 440 : 320}ms`}
+        >
+          <i class="neon-underlay" data-neon-block aria-hidden="true" />
+          <article class="neon-card">
+            {!isCollage && (
+              <span class="ghost-mark" aria-hidden="true">
+                {ghostLabels[index]}
+              </span>
+            )}
+            {!isCollage && <i class="ghost-rule" aria-hidden="true" />}
 
-              {variant === 2 && (
-                <span class="stage iso-stage" aria-hidden="true">
-                  <svg viewBox="0 0 120 96" preserveAspectRatio="xMidYMid meet">
-                    <g class="iso-group">
-                      {iso.links.map((d) => (
-                        <path class="iso-link" d={d} />
-                      ))}
-                      {iso.faces.map((face) => (
-                        <path class:list={['iso-face', `iso-${face.face}`, { 'iso-fill': face.fill }]} d={face.d} />
-                      ))}
-                    </g>
-                  </svg>
-                </span>
+            <div class="neon-copy">
+              {isCollage ? (
+                <svg class="glyph" viewBox="0 0 11 11" width="20" height="20" aria-hidden="true">
+                  {glyphRects(card.glyph ?? 'scatter').map((r) => (
+                    <rect x={r.x} y={r.y} width="3" height="3" class:list={['glyph-px', { 'glyph-on': r.on }]} />
+                  ))}
+                </svg>
+              ) : (
+                <span class="eyebrow">{card.eyebrow}</span>
               )}
-
-              {variant === 3 && (
-                <span class="stage vc-stage" aria-hidden="true">
-                  <span class="vc-shimmer" style={`left:${vc.origin[0]}%;top:${vc.origin[1]}%`} />
-                  <svg class="vc-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-                    <g class="vc-glow">
-                      <path class="vc-glow-path" d={vc.main} pathLength="100" />
-                      {vc.branches.map((d) => (
-                        <path class="vc-glow-path" d={d} pathLength="100" />
-                      ))}
-                    </g>
-                    <path class="vc-hint" d={vc.hint} />
-                    <path class="vc-crack vc-crack-main" d={vc.main} pathLength="100" />
-                    {vc.branches.map((d) => (
-                      <path class="vc-crack vc-crack-branch" d={d} pathLength="100" />
-                    ))}
-                  </svg>
-                </span>
-              )}
-
-              {variant === 4 && (
-                <span class="stage ce-stage" aria-hidden="true">
-                  <svg class="ce-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-                    <path class="ce-hint" d={ce.hint} />
-                    <g class="ce-traces">
-                      <path class="ce-trace ce-trace-main" d={ce.main} pathLength="100" />
-                      {ce.branches.map((d) => (
-                        <path class="ce-trace ce-trace-branch" d={d} pathLength="100" />
-                      ))}
-                    </g>
-                    <path class="ce-pulse" d={ce.main} pathLength="100" />
-                    <g class="ce-pads">
-                      {ce.pads.map((p) => (
-                        <rect class="ce-pad" x={round(p[0] - 1.6)} y={round(p[1] - 1.6)} width="3.2" height="3.2" />
-                      ))}
-                      <circle class="ce-via" cx={ce.terminus[0]} cy={ce.terminus[1]} r="2.4" />
-                    </g>
-                  </svg>
-                  <span class="ce-figure" style={`left:${ce.terminus[0]}%;top:${ce.terminus[1]}%`}>
-                    {figureLabels[index]}
-                  </span>
-                </span>
-              )}
-
-              <div class="neon-copy">
-                <span>{card.eyebrow}</span>
-                <strong>{card.title}</strong>
-                <p>{card.summary}</p>
-                <footer>
-                  {(block.size === 'long' ? card.links : card.links.slice(0, 1)).map((link) => {
-                    const external = link.href.startsWith('http');
-                    return (
-                      <a href={link.href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
-                        {link.label} →
-                      </a>
-                    );
-                  })}
-                </footer>
-              </div>
-            </article>
-          </div>
-        );
-      })
+              <strong>{card.title}</strong>
+              <p>{card.summary}</p>
+              {isCollage && card.footnote && <span class="footnote">{card.footnote}</span>}
+              <footer>
+                {(block.size === 'long' ? card.links : card.links.slice(0, 1)).map((link) => {
+                  const external = link.href.startsWith('http');
+                  return (
+                    <a href={link.href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
+                      {link.label} →
+                    </a>
+                  );
+                })}
+              </footer>
+            </div>
+          </article>
+        </div>
+      ))
     }
     {
       duds.map((dud) => (
@@ -413,15 +198,22 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
           data-shape={dud.shape}
           style={`grid-area:${dud.area};--drop-rotation:${dud.order % 2 ? -1.6 : 1.6}deg;--fall-dur:320ms`}
         >
-          {dud.shape === 'square' && <span class="dud-face" aria-hidden="true" />}
+          {(dud.shape === 'square' || dud.shape === 'plain' || dud.shape === 'accent' || dud.shape === 'diamond-open') && (
+            <span class="dud-face" aria-hidden="true" />
+          )}
           {dud.shape === 'diamond' && (
-            <svg class="dud-shape" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-              <polygon points="50,1 99,50 50,99 1,50" />
+            <svg class="dud-shape" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              <polygon points="50,0 100,50 50,100 0,50" />
             </svg>
           )}
           {dud.shape === 'triangle' && (
-            <svg class="dud-shape" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-              <polygon points="50,3 97,97 3,97" />
+            <svg class="dud-shape" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              <polygon points="50,0 100,100 0,100" />
+            </svg>
+          )}
+          {dud.shape === 'diamond-open' && (
+            <svg class="dud-outline" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <polygon points="50,6 94,50 50,94 6,50" />
             </svg>
           )}
         </div>
@@ -548,17 +340,26 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
   .achievement-neon-rendition {
     display: block;
   }
-  /* The Stack: a fixed cell grid driven by grid-template-areas from the layout
-     map. Long blocks span two cells; inert duds fill the gaps. The canvas is
-     720px tall, anchored to the content-left margin (aligned with the section
-     heading), and clears the sticky navs inside a 900px viewport. */
+  /* A fixed cell grid driven by grid-template-areas from the layout map. Long
+     blocks span two cells; duds fill the gaps. Row height and canvas width are
+     per-variant so the stack, the full-width grid and the collage each read
+     correctly while clearing the sticky navs inside a 900px viewport. */
   .neon-canvas {
+    --row-h: 180px;
     display: grid;
     gap: 0;
     grid-template-columns: repeat(var(--columns), 1fr);
-    grid-template-rows: repeat(var(--rows), 180px);
+    grid-template-rows: repeat(var(--rows), var(--row-h));
     margin: 0 auto;
     max-width: 1000px;
+  }
+  [data-variation='2'] .neon-canvas {
+    --row-h: 236px;
+    max-width: 1180px;
+  }
+  [data-variation='3'] .neon-canvas {
+    --row-h: 230px;
+    max-width: 1180px;
   }
   /* The slot is NOT clipped: on reveal the card physically slides out of its own
      cell (see the slide rule), so a hovered card is lifted above its neighbours. */
@@ -576,9 +377,8 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
     position: absolute;
   }
   /* The neon under-block sits only within the card's original footprint, so when
-     the card slides off it the colour is revealed on the vacated side only and
-     nothing shows on the opposite edge. It stays transparent at rest (no solid
-     colour can ever flood the page) and fades in symmetrically while revealing. */
+     the card slides off it the colour is revealed on the vacated side only. It
+     stays transparent at rest and fades in while revealing. */
   .neon-underlay {
     background: var(--neon);
     opacity: 0;
@@ -604,10 +404,10 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
     background: #131615;
   }
 
-  /* --- Dud blocks: inert lighter-grey raised surfaces, no neon and no slide.
-     They take a filled square, a 45deg diamond or a triangle, centred in the
-     cell with a hairline. #212423 is the site's muted raised-surface tone,
-     clearly lighter than the cards but still dark-theme. --- */
+  /* --- Dud blocks: inert raised surfaces, no neon and no slide. Filled square,
+     45deg diamond and triangle (stretched to fill the whole cell), a plain dark
+     back, a solid neon-green accent slab, and a large faint centred diamond
+     outline for the collage. --- */
   .dud {
     position: relative;
     z-index: 1;
@@ -618,13 +418,20 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
     inset: 0;
     position: absolute;
   }
+  .dud[data-shape='plain'] .dud-face,
+  .dud[data-shape='diamond-open'] .dud-face {
+    background: #131615;
+  }
+  .dud[data-shape='accent'] .dud-face {
+    background: var(--accent);
+    border-color: transparent;
+  }
   .dud-shape {
     height: 100%;
     inset: 0;
     position: absolute;
     width: 100%;
   }
-  .dud-shape rect,
   .dud-shape polygon {
     fill: #212423;
     stroke: var(--hairline-card);
@@ -632,57 +439,93 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
     stroke-width: 1;
     vector-effect: non-scaling-stroke;
   }
+  .dud-outline {
+    height: 100%;
+    inset: 0;
+    position: absolute;
+    width: 100%;
+  }
+  .dud-outline polygon {
+    fill: none;
+    stroke: rgba(244, 242, 238, 0.16);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
 
-  /* --- Copy: both sizes fill the block width and anchor to the bottom, so
-     the eyebrow and lead figure can never wrap tall enough to clip the top --- */
+  /* --- Copy: consistent anatomy across all variants. Anchored to the TOP so the
+     eyebrow/glyph, one-line title and description align at identical offsets on
+     every card; the description length may vary, links sit below. --- */
   .neon-copy {
-    bottom: 0;
     left: 0;
-    padding: 10px 18px 13px;
+    padding: 16px 18px;
     position: absolute;
     right: 0;
+    top: 0;
     z-index: 6;
   }
-  .neon-copy > span {
+  .neon-copy > .eyebrow {
     color: var(--text-4);
     display: block;
     font: var(--mono-8) / 1.3 var(--font-mono);
+    height: 12px;
     letter-spacing: 0.1em;
-    margin-bottom: 5px;
-    text-transform: uppercase;
-  }
-  .neon-copy > strong {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
     overflow: hidden;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .neon-copy > .glyph {
+    display: block;
+    height: 20px;
+    width: 20px;
+  }
+  .glyph-px {
+    fill: rgba(244, 242, 238, 0.34);
+  }
+  .glyph-on {
+    fill: var(--neon);
+  }
+  /* Title is a HARD single line: ellipsis when it does not fit, never two. */
+  .neon-copy > strong {
+    display: block;
+    margin-top: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .neon-slot[data-size='long'] .neon-copy > strong {
-    font: 300 clamp(24px, 2.4vw, 34px) / 1.04 var(--font-display);
+    font: 300 clamp(26px, 2.6vw, 36px) / 1.1 var(--font-display);
     letter-spacing: -0.02em;
-    -webkit-line-clamp: 2;
   }
   .neon-slot[data-size='short'] .neon-copy > strong {
-    font: 300 clamp(16px, 2vw, 18px) / 1.12 var(--font-display);
-    -webkit-line-clamp: 3;
+    font: 300 clamp(19px, 2vw, 23px) / 1.15 var(--font-display);
+    letter-spacing: -0.01em;
   }
   .neon-copy > p {
     color: var(--text-2);
     display: -webkit-box;
-    font-size: 12px;
-    line-height: 1.42;
-    margin: 8px 0 0;
+    font-size: 12.5px;
+    line-height: 1.45;
+    margin: 9px 0 0;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
     overflow: hidden;
   }
   .neon-slot[data-size='short'] .neon-copy > p {
-    display: none;
+    -webkit-line-clamp: 2;
+  }
+  .neon-copy > .footnote {
+    color: var(--accent);
+    display: block;
+    font: var(--mono-8) / 1.4 var(--font-mono);
+    letter-spacing: 0.12em;
+    margin-top: 14px;
+    text-transform: uppercase;
   }
   footer {
     display: flex;
     flex-wrap: wrap;
     gap: 4px 10px;
-    margin-top: 10px;
+    margin-top: 12px;
   }
   footer a {
     color: var(--accent);
@@ -691,32 +534,14 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
     text-transform: uppercase;
   }
 
-  /* --- Shared stage region: every SVG surface (isometric, cracks, circuit) is
-     boxed into the TOP-RIGHT corner at both card sizes, clear of the
-     bottom-anchored copy. Kept compact on purpose: effects are accents, not
-     full-card washes. --- */
-  .stage {
-    bottom: auto;
-    left: auto;
-    position: absolute;
-    right: 10px;
-    top: 8px;
-    z-index: 2;
-  }
-  .neon-slot[data-size='long'] .stage {
-    height: 88px;
-    width: 46%;
-  }
-  .neon-slot[data-size='short'] .stage {
-    height: 66px;
-    width: 64%;
-  }
-
-  /* --- V1 / V2 ghost numerals (cropped by the block edge) --- */
+  /* --- V1 / V2 ghost numerals (cropped by the block edge, capped to ~50% of the
+     card so a long label overflows the top-right but never spans wider) --- */
   .ghost-mark {
     color: rgba(244, 242, 238, 0.05);
     font: 300 100px/0.8 var(--font-display);
     letter-spacing: -0.08em;
+    max-width: 50%;
+    overflow: hidden;
     position: absolute;
     right: -0.02em;
     top: -0.1em;
@@ -741,275 +566,13 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
     transform-origin: left;
     z-index: 5;
   }
-  achievement-neon-rendition[data-variation='1'][data-entered='true'] .ghost-rule,
-  achievement-neon-rendition[data-variation='2'][data-entered='true'] .ghost-rule {
+  achievement-neon-rendition[data-entered='true'] .ghost-rule {
     animation: ghost-rule-in 460ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
     animation-delay: calc(var(--lego-order) * 60ms + 250ms);
   }
   @keyframes ghost-rule-in {
     to {
       transform: scaleX(1);
-    }
-  }
-
-  /* --- V2 isometric stages --- */
-  .iso-stage svg {
-    height: 100%;
-    width: 100%;
-  }
-  .iso-group {
-    transform-box: fill-box;
-    transform-origin: center;
-  }
-  .iso-face {
-    stroke: rgba(244, 242, 238, 0.16);
-    stroke-linejoin: round;
-    stroke-width: 1;
-    vector-effect: non-scaling-stroke;
-  }
-  .iso-top {
-    fill: #212423;
-  }
-  .iso-left {
-    fill: #161817;
-  }
-  .iso-right {
-    fill: #0e100f;
-  }
-  .iso-fill.iso-top {
-    fill: #2a2e2c;
-  }
-  .iso-link {
-    fill: none;
-    stroke: rgba(244, 242, 238, 0.22);
-    stroke-dasharray: 2 3;
-    stroke-width: 1;
-    vector-effect: non-scaling-stroke;
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    .iso-group {
-      animation: iso-breathe 6s ease-in-out infinite;
-    }
-    @keyframes iso-breathe {
-      0%,
-      100% {
-        transform: translateY(1px);
-      }
-      50% {
-        transform: translateY(-1px);
-      }
-    }
-  }
-  .iso-face,
-  .iso-link {
-    transition:
-      fill 260ms ease,
-      stroke 260ms ease;
-  }
-  .neon-slot:hover .iso-fill.iso-top,
-  .neon-slot[data-active='true'] .iso-fill.iso-top {
-    fill: color-mix(in srgb, var(--neon) 42%, #14100c);
-  }
-  .neon-slot:hover .iso-fill,
-  .neon-slot[data-active='true'] .iso-fill {
-    stroke: var(--neon);
-  }
-  .neon-slot:hover .iso-link,
-  .neon-slot[data-active='true'] .iso-link {
-    stroke: var(--neon);
-  }
-  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-    .neon-slot:hover .iso-group {
-      animation-duration: 2.4s;
-    }
-  }
-
-  /* --- V3 volcanic cracks --- */
-  .vc-svg {
-    height: 100%;
-    inset: 0;
-    position: absolute;
-    width: 100%;
-  }
-  .vc-hint {
-    fill: none;
-    opacity: 0.5;
-    stroke: rgba(244, 242, 238, 0.18);
-    stroke-width: 0.28;
-  }
-  .vc-crack {
-    fill: none;
-    stroke: var(--neon);
-    stroke-dasharray: 100;
-    stroke-dashoffset: 100;
-    stroke-linecap: round;
-    stroke-width: 0.4;
-    transition: stroke-dashoffset 640ms cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .vc-crack-branch {
-    stroke-width: 0.28;
-    transition-duration: 520ms;
-  }
-  .vc-glow-path {
-    fill: none;
-    filter: blur(3px);
-    opacity: 0;
-    stroke: var(--neon);
-    stroke-dasharray: 100;
-    stroke-dashoffset: 100;
-    stroke-linecap: round;
-    stroke-width: 0.9;
-    transition:
-      stroke-dashoffset 640ms cubic-bezier(0.4, 0, 0.2, 1),
-      opacity 300ms ease;
-  }
-  .vc-shimmer {
-    background: radial-gradient(circle, var(--neon), transparent 70%);
-    border-radius: 50%;
-    filter: blur(5px);
-    height: 34px;
-    margin: -17px 0 0 -17px;
-    opacity: 0;
-    position: absolute;
-    transition: opacity 320ms ease;
-    width: 34px;
-    z-index: 1;
-  }
-  .neon-slot:hover .vc-crack,
-  .neon-slot[data-active='true'] .vc-crack,
-  .neon-slot:hover .vc-glow-path,
-  .neon-slot[data-active='true'] .vc-glow-path {
-    stroke-dashoffset: 0;
-  }
-  .neon-slot:hover .vc-glow-path,
-  .neon-slot[data-active='true'] .vc-glow-path {
-    opacity: 0.85;
-  }
-  .neon-slot:hover .vc-shimmer,
-  .neon-slot[data-active='true'] .vc-shimmer {
-    opacity: 0.55;
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    .vc-crack-main {
-      animation: vc-ember 3.6s ease-in-out infinite;
-    }
-    @keyframes vc-ember {
-      0%,
-      100% {
-        opacity: 0.9;
-      }
-      50% {
-        opacity: 0.55;
-      }
-    }
-    .neon-slot:hover .vc-shimmer,
-    .neon-slot[data-active='true'] .vc-shimmer {
-      animation: vc-shimmer 1.6s ease-in-out infinite;
-    }
-    @keyframes vc-shimmer {
-      0%,
-      100% {
-        opacity: 0.5;
-        transform: scale(1);
-      }
-      50% {
-        opacity: 0.7;
-        transform: scale(1.18);
-      }
-    }
-  }
-
-  /* --- V4 circuit etch --- */
-  .ce-svg {
-    height: 100%;
-    inset: 0;
-    position: absolute;
-    width: 100%;
-  }
-  .ce-hint {
-    fill: none;
-    opacity: 0.55;
-    stroke: rgba(244, 242, 238, 0.2);
-    stroke-width: 0.28;
-  }
-  .ce-trace {
-    fill: none;
-    stroke: color-mix(in srgb, var(--neon) 78%, transparent);
-    stroke-dasharray: 100;
-    stroke-dashoffset: 100;
-    stroke-linecap: square;
-    stroke-linejoin: miter;
-    stroke-width: 0.34;
-    transition: stroke-dashoffset 620ms cubic-bezier(0.5, 0, 0.1, 1);
-  }
-  .ce-trace-branch {
-    stroke-width: 0.28;
-    transition-duration: 460ms;
-  }
-  .ce-pulse {
-    fill: none;
-    opacity: 0;
-    stroke: var(--neon);
-    stroke-dasharray: 5 95;
-    stroke-linecap: round;
-    stroke-width: 0.7;
-  }
-  .ce-pad,
-  .ce-via {
-    fill: #0c0e0d;
-    opacity: 0;
-    stroke: color-mix(in srgb, var(--neon) 78%, transparent);
-    stroke-width: 0.4;
-    transition: opacity 300ms ease;
-  }
-  .ce-via {
-    fill: var(--neon);
-    stroke: var(--neon);
-  }
-  .ce-figure {
-    color: var(--neon);
-    font: 300 20px/1 var(--font-display);
-    letter-spacing: -0.02em;
-    opacity: 0;
-    position: absolute;
-    transform: translate(-50%, -50%) scale(0.9);
-    transition:
-      opacity 260ms ease,
-      transform 260ms ease;
-    white-space: nowrap;
-    z-index: 3;
-  }
-  .neon-slot:hover .ce-trace,
-  .neon-slot[data-active='true'] .ce-trace {
-    stroke-dashoffset: 0;
-  }
-  .neon-slot:hover .ce-pad,
-  .neon-slot[data-active='true'] .ce-pad,
-  .neon-slot:hover .ce-via,
-  .neon-slot[data-active='true'] .ce-via {
-    opacity: 1;
-    transition-delay: 260ms;
-  }
-  .neon-slot:hover .ce-figure,
-  .neon-slot[data-active='true'] .ce-figure {
-    opacity: 1;
-    text-shadow: 0 0 12px var(--neon);
-    transform: translate(-50%, -50%) scale(1);
-    transition-delay: 520ms;
-  }
-  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-    .neon-slot:hover .ce-pulse,
-    .neon-slot[data-active='true'] .ce-pulse {
-      animation: ce-current 1.5s linear 0.35s infinite;
-      opacity: 0.95;
-    }
-    @keyframes ce-current {
-      from {
-        stroke-dashoffset: 100;
-      }
-      to {
-        stroke-dashoffset: 0;
-      }
     }
   }
 
@@ -1049,24 +612,26 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
     }
   }
 
-  /* --- Slide reveal (shared): on hover the CARD itself slides out of its cell
-     toward the adjacent open space and lifts above its neighbours, uncovering the
-     neon under-block within its original footprint; the opposite edge stays clean
-     because the under-block never extends past that footprint. --- */
+  /* --- Slide reveal (shared): on hover the CARD slides out of its cell toward the
+     open space (horizontally for the ghost variants, diagonally up-left for the
+     collage) and lifts above its neighbours, uncovering the neon under-block
+     within its original footprint. --- */
   @media (hover: hover) and (prefers-reduced-motion: no-preference) {
     .neon-slot:hover .neon-card {
-      transform: translate3d(var(--shift-x), 0, 0);
+      transform: translate3d(var(--shift-x), var(--shift-y), 0);
     }
   }
   @media (prefers-reduced-motion: no-preference) {
     .neon-slot[data-active='true'] .neon-card {
-      transform: translate3d(var(--shift-x), 0, 0);
+      transform: translate3d(var(--shift-x), var(--shift-y), 0);
     }
   }
 
-  /* --- Responsive: hold the stack to a tablet width, then a single column --- */
+  /* --- Responsive: hold the grid to a tablet width, then a single column --- */
   @media (max-width: 900px) {
-    .neon-canvas {
+    .neon-canvas,
+    [data-variation='2'] .neon-canvas,
+    [data-variation='3'] .neon-canvas {
       display: flex;
       flex-direction: column;
       gap: 14px;
@@ -1076,24 +641,6 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
     .neon-slot {
       grid-area: auto !important;
       height: 300px;
-    }
-    .neon-slot[data-size='long'] .neon-copy {
-      right: 0;
-    }
-    .neon-slot[data-size='long'] .stage,
-    .neon-slot .iso-stage {
-      bottom: auto;
-      height: 118px;
-      left: 0;
-      right: 0;
-      top: 0;
-      width: auto;
-    }
-    .neon-slot[data-size='short'] .stage {
-      height: 118px;
-    }
-    .neon-slot[data-size='short'] .neon-copy > p {
-      display: -webkit-box;
     }
     .dud {
       display: none;
@@ -1105,24 +652,18 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
     }
     .neon-slot {
       --shift-x: 52px !important;
+      --shift-y: 0px !important;
     }
   }
 
   /* --- Reduced motion: static settled stack, outline hover only --- */
   @media (prefers-reduced-motion: reduce) {
-    .lego-piece,
-    .iso-group,
-    .vc-crack-main,
-    .ce-pulse {
-      animation: none !important;
-    }
     .lego-piece {
+      animation: none !important;
       opacity: 1 !important;
       transform: none !important;
     }
-    .neon-underlay,
-    .vc-stage,
-    .ce-stage {
+    .neon-underlay {
       display: none;
     }
     .ghost-rule {
