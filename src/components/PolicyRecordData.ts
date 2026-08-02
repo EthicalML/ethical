@@ -121,9 +121,8 @@ export const products: PolicyRecordProduct[] = [
     track: 'eu-ai-act',
     href: 'https://www.acm.org/public-policy/europe-tpc/response-consultation-article-50-ai-act-06022026',
     slug: '04-response-consultation-article-50-ai-act-06022026',
-    unverified: true,
     summary:
-      'Response to the AI Act Article 50 transparency-guidelines consultation. Summary derived from title and instrument; the page is HTML and its text was not extracted.',
+      'Responds to the draft guidelines on Article 50 transparency obligations, recommending the Commission ground them in the technical feasibility of content marking and detection and assess marking and provenance mechanisms across realistic redistribution chains.',
     phrases: [],
   },
   {
@@ -212,9 +211,8 @@ export const products: PolicyRecordProduct[] = [
     track: 'eu-ai-act',
     href: 'https://www.acm.org/public-policy/europe-tpc/calibrating-oversight-agentic-frontier-models-04272026',
     slug: '09-calibrating-oversight-agentic-frontier-models-04272026',
-    unverified: true,
     summary:
-      'Applies the Institute’s continuous post-deployment oversight position to agentic frontier models. Summary derived from title and instrument; the page is HTML and its text was not extracted.',
+      'Argues that regulatory simplification for agentic frontier models must be paired with robust technical oversight, drawing on recent frontier-model disclosures and public evaluations by the UK AI Security Institute.',
     phrases: [],
   },
   {
@@ -223,9 +221,8 @@ export const products: PolicyRecordProduct[] = [
     track: 'eu-ai-act',
     href: 'https://www.acm.org/public-policy/europe-tpc/reflections-draft-pren-18282',
     slug: '10-reflections-draft-pren-18282',
-    unverified: true,
     summary:
-      'Reflections on the draft prEN 18282 AI standard. Summary derived from title and instrument; the page is HTML and its text was not extracted.',
+      'Welcomes draft prEN 18282, the European standard on cybersecurity specifications for AI systems, for covering security across the full AI lifecycle, and recommends strengthening it in six areas.',
     phrases: [],
   },
   {
@@ -528,9 +525,8 @@ export const products: PolicyRecordProduct[] = [
     track: 'sustainability',
     href: 'https://www.acm.org/public-policy/europe-tpc/acm-data-center-final-spanish',
     slug: '27-acm-data-center-final-spanish',
-    unverified: true,
     summary:
-      'Spanish-language edition of the data-centre policy brief. Summary derived from title and instrument; the page is HTML and its text was not extracted.',
+      'Spanish edition of the greener data-centres policy brief, proposing five recommendations for policymakers to steer Europe toward more ecological data centres.',
     phrases: [],
   },
 ];
