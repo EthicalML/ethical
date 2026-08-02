@@ -79,7 +79,7 @@ const TOWERS: District[] = [
   },
 ];
 
-const R = 4.7; // perimeter radius
+const R = 6.3; // perimeter radius: the outskirts sit well clear of the five-tower core
 
 // Outer ring in clockwise order so consecutive entries are joined by the perimeter conduit:
 // corner bastion, cardinal gate, corner bastion, gate, ... Gates are taller arch blocks, the
@@ -161,7 +161,7 @@ const OUTER: District[] = [
 
 // Low rampart plates walking each edge between a corner bastion and the neighbouring gate.
 const WALLS: { gx: number; gz: number }[] = [];
-for (const step of [-3.1, -1.55, 1.55, 3.1]) {
+for (const step of [-4.8, -3.2, -1.6, 1.6, 3.2, 4.8]) {
   WALLS.push({ gx: step, gz: -R }, { gx: step, gz: R }, { gx: -R, gz: step }, { gx: R, gz: step });
 }
 
@@ -250,8 +250,8 @@ export class PolicyHeroPolicyCircuit extends HTMLElement {
   private draw: CanvasDraw = (context, width, height, elapsed) => {
     context.clearRect(0, 0, width, height);
     const time = reducedMotion ? 7 : elapsed + 3;
-    const unit = Math.min(width, height) * 0.041;
-    const project = createIso(unit, width * 0.5, height * 0.47);
+    const unit = Math.min(width, height) * 0.0365;
+    const project = createIso(unit, width * 0.54, height * 0.5);
 
     this.pointer.x += (this.pointer.targetX - this.pointer.x) * 0.12;
     this.pointer.y += (this.pointer.targetY - this.pointer.y) * 0.12;
@@ -292,7 +292,7 @@ export class PolicyHeroPolicyCircuit extends HTMLElement {
       this.outerHeat[i] = h + (target - h) * ease;
     });
 
-    drawIsoGrid(context, project, 6, 'rgba(94,230,160,0.04)');
+    drawIsoGrid(context, project, 8, 'rgba(94,230,160,0.04)');
 
     // Layered ground plates give the district its stepped, fortified silhouette.
     drawIsoCube(context, project, 0, 0, 0, R + 0.9, 0.12, PLATE_STYLE);
