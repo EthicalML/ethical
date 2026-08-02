@@ -133,19 +133,47 @@ const stackLayout = {
   ],
 };
 
-// V2 FULL-WIDTH GRID: the uniform three-by-two grid from before the wave. Six
-// equal tiles, one card system, no duds.
+// V2 FULL-WIDTH COLLAGE: the live /policy/ composition, geometry lifted from its
+// tokens.css rules, rebuilt on the current card system. The adoption pair keeps
+// the slide reveal; the four supporting cards use the pick-up tilt, exactly like
+// the live section's two hover modes.
 const gridLayout = {
-  areas: ['A B C', 'D E F'],
+  areas: [],
+  freeform: 973,
   blocks: {
-    eu: { area: 'A', size: 'long' as const, dir: 1 },
-    uk: { area: 'B', size: 'long' as const, dir: -1 },
-    mlsecops: { area: 'C', size: 'long' as const, dir: 1 },
-    un: { area: 'D', size: 'long' as const, dir: -1 },
-    acm: { area: 'E', size: 'long' as const, dir: 1 },
-    'through-line': { area: 'F', size: 'long' as const, dir: -1 },
+    eu: { area: 'eu', size: 'long' as const, dir: 1, mode: 'slide' as const, rect: [22, 0, 50, 330] as [number, number, number, number] },
+    uk: { area: 'uk', size: 'long' as const, dir: -1, mode: 'slide' as const, rect: [36, 329, 44, 300] as [number, number, number, number] },
+    mlsecops: {
+      area: 'mlsecops',
+      size: 'long' as const,
+      dir: 1,
+      mode: 'tilt' as const,
+      tilt: -4.5,
+      rect: [2, 559, 31, 330] as [number, number, number, number],
+    },
+    un: { area: 'un', size: 'short' as const, dir: -1, mode: 'tilt' as const, tilt: 4.5, rect: [76, 189, 21, 370] as [number, number, number, number] },
+    acm: { area: 'acm', size: 'long' as const, dir: -1, mode: 'tilt' as const, tilt: 3.8, rect: [32.6, 623, 31, 330] as [number, number, number, number] },
+    'through-line': {
+      area: 'through-line',
+      size: 'long' as const,
+      dir: 1,
+      mode: 'tilt' as const,
+      tilt: -3.6,
+      rect: [63.2, 623, 35, 330] as [number, number, number, number],
+    },
   },
-  duds: [],
+  duds: [
+    { area: 'filler-west', shape: 'square' as const, rect: [4, 239, 18, 300] as [number, number, number, number] },
+    { area: 'filler-north', shape: 'plain' as const, rect: [14, 0, 8, 240] as [number, number, number, number] },
+    { area: 'filler-east', shape: 'square' as const, rect: [72, 329, 8, 300] as [number, number, number, number] },
+    { area: 'filler-centre', shape: 'square' as const, rect: [32, 409, 4, 220] as [number, number, number, number] },
+    { area: 'filler-south', shape: 'plain' as const, rect: [33, 913, 29, 60] as [number, number, number, number] },
+    { area: 'accent-eu', shape: 'accent' as const, rect: [69, 42, 7, 246] as [number, number, number, number] },
+    { area: 'accent-uk', shape: 'accent' as const, rect: [33, 370, 5, 220] as [number, number, number, number] },
+    { area: 'accent-static', shape: 'accent' as const, rect: [57, 573, 5, 56] as [number, number, number, number] },
+    { area: 'diamond-north', shape: 'diamond' as const, rect: [18, 172, 6.5, 77] as [number, number, number, number] },
+    { area: 'diamond-south', shape: 'diamond' as const, rect: [95, 884, 5, 59] as [number, number, number, number] },
+  ],
 };
 
 // V3 SET TABLE COLLAGE: the artifact grid. Tall lead card (E) left, 13/14 (U)
@@ -154,13 +182,15 @@ const gridLayout = {
 // bottom-right.
 const collageLayout = {
   areas: ['E E U U p g', 'E E M C F F', 'T T T D D D'],
+  // Lift directions vary per card: the lead keeps the artifact's up-left, others
+  // reveal right, left and down so the collage feels handled from every side.
   blocks: {
-    eu: { area: 'E', size: 'long' as const, dir: -1 },
-    uk: { area: 'U', size: 'long' as const, dir: -1 },
-    mlsecops: { area: 'M', size: 'short' as const, dir: -1 },
-    un: { area: 'C', size: 'short' as const, dir: -1 },
-    acm: { area: 'F', size: 'short' as const, dir: -1 },
-    'through-line': { area: 'T', size: 'long' as const, dir: -1 },
+    eu: { area: 'E', size: 'long' as const, dir: -1, lift: [-30, -30] as [number, number] },
+    uk: { area: 'U', size: 'long' as const, dir: -1, lift: [34, 0] as [number, number] },
+    mlsecops: { area: 'M', size: 'short' as const, dir: -1, lift: [-30, 0] as [number, number] },
+    un: { area: 'C', size: 'short' as const, dir: -1, lift: [0, 26] as [number, number] },
+    acm: { area: 'F', size: 'short' as const, dir: -1, lift: [30, 0] as [number, number] },
+    'through-line': { area: 'T', size: 'long' as const, dir: -1, lift: [0, 30] as [number, number] },
   },
   duds: [
     { area: 'p', shape: 'plain' as const },
@@ -182,11 +212,11 @@ const variations = [
   {
     value: 2 as const,
     label: 'V2 · GRID',
-    eyebrow: 'V2 · FULL-WIDTH GRID',
+    eyebrow: 'V2 · FULL-WIDTH COLLAGE',
     cards: baseCards,
     layout: gridLayout,
     description:
-      'The uniform full-width grid from before the wave: three by two equal tiles, the same card system, ghost numerals, lego entrance and the displacing neon reveal. No duds.',
+      'The live /policy/ collage shape rebuilt on the current system: the adoption pair slides onto its neon, the supporting cards pick up and tilt, and the accent slabs, fillers and diamonds land with the stack.',
   },
   {
     value: 3 as const,
@@ -195,7 +225,7 @@ const variations = [
     cards: collageCards,
     layout: collageLayout,
     description:
-      'The set-table collage: a tall lead card, a solid accent slab, pixel-cluster glyphs top-left and a diagonal card lift that uncovers a neon slab on the bottom and right edges. The large dud region carries a faint diamond outline.',
+      'The set-table collage with the ghost surface and isometric icons: the lead card lifts up-left while the others reveal right, left and down. The large dud region carries a faint diamond outline.',
   },
 ];
 ---
