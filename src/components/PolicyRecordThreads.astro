@@ -1,0 +1,404 @@
+---
+import type { PolicyPosition, PolicyRecordProduct } from './PolicyRecordData';
+
+interface Props {
+  products: PolicyRecordProduct[];
+  positions: PolicyPosition[];
+}
+
+const { products, positions } = Astro.props;
+
+// Chronological order for the timeline; undated records sort last under "n.d.".
+const yearOf = (date?: string) => {
+  const match = date?.match(/\d{4}/);
+  return match ? Number(match[0]) : 0;
+};
+const ordered = products.map((product, index) => ({ product, index, year: yearOf(product.date) })).sort((a, b) => (a.year || 9999) - (b.year || 9999));
+
+// Which positions each document carried (for the click-a-document direction).
+const positionsByDoc = new Map<number, string[]>();
+positions.forEach((position) => {
+  position.docs.forEach((doc) => {
+    positionsByDoc.set(doc, [...(positionsByDoc.get(doc) ?? []), position.id]);
+  });
+});
+---
+
+<policy-record-threads class="thr" data-reveal data-positions={JSON.stringify(positions)}>
+  <header class="thr-head">
+    <div>
+      <p class="eyebrow">POSITION THREADS</p>
+      <h2>Positions carried across the record</h2>
+      <p class="thr-lede">Select a position to light the documents that carried it from 2020 to 2026. Select a document to see the positions it carried.</p>
+    </div>
+    <p class="record-count"><strong>{positions.length}</strong> positions</p>
+  </header>
+
+  <div class="thr-split">
+    <div class="thr-rail" role="listbox" aria-label="Recurring positions">
+      {
+        positions.map((position, index) => (
+          <button
+            type="button"
+            class="thr-pos"
+            role="option"
+            data-id={position.id}
+            data-docs={position.docs.join(',')}
+            aria-selected={index === 0 ? 'true' : 'false'}
+          >
+            <span class="thr-pos-name">{position.name}</span>
+            <span class="thr-pos-count">{position.docs.length} docs</span>
+          </button>
+        ))
+      }
+    </div>
+
+    <div class="thr-timeline">
+      <p class="thr-desc" aria-live="polite" data-desc>{positions[0]?.description}</p>
+      <div class="thr-track">
+        <span class="thr-spine" aria-hidden="true"></span>
+        <span class="thr-thread" aria-hidden="true" data-thread></span>
+        <div class="thr-nodes">
+          {
+            ordered.map(({ product, index, year }) => (
+              <article class="thr-node" data-index={index} data-positions={(positionsByDoc.get(index) ?? []).join(',')} tabindex="0" role="button">
+                <span class="thr-dot" aria-hidden="true" />
+                <span class="thr-year">{year ? String(year) : 'n.d.'}</span>
+                <span class="thr-node-title">{product.title}</span>
+                <span class="instrument-tag">{product.instrument}</span>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</policy-record-threads>
+
+<script>
+  interface Position {
+    id: string;
+    name: string;
+    description: string;
+    docs: number[];
+  }
+
+  class PolicyRecordThreads extends HTMLElement {
+    private controller = new AbortController();
+    private positions = new Map<string, Position>();
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const raw = this.dataset.positions ?? '[]';
+      (JSON.parse(raw) as Position[]).forEach((position) => this.positions.set(position.id, position));
+
+      this.querySelectorAll<HTMLButtonElement>('.thr-pos').forEach((pos) => {
+        pos.addEventListener('click', () => this.selectPosition(pos.dataset.id ?? ''), { signal: this.controller.signal });
+      });
+      this.querySelectorAll<HTMLElement>('.thr-node').forEach((node) => {
+        const activate = () => this.selectDocument(Number(node.dataset.index));
+        node.addEventListener('click', activate, { signal: this.controller.signal });
+        node.addEventListener(
+          'keydown',
+          (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              activate();
+            }
+          },
+          { signal: this.controller.signal },
+        );
+      });
+
+      const firstPos = this.querySelector<HTMLButtonElement>('.thr-pos');
+      if (firstPos) this.selectPosition(firstPos.dataset.id ?? '');
+      window.addEventListener('resize', this.reflowThread, { signal: this.controller.signal });
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+    }
+
+    private selectPosition(id: string) {
+      const position = this.positions.get(id);
+      if (!position) return;
+      const docs = new Set(position.docs);
+      this.querySelectorAll<HTMLButtonElement>('.thr-pos').forEach((pos) => pos.setAttribute('aria-selected', String(pos.dataset.id === id)));
+      this.querySelectorAll<HTMLElement>('.thr-node').forEach((node) => {
+        node.classList.toggle('is-lit', docs.has(Number(node.dataset.index)));
+        node.classList.remove('is-carrier');
+      });
+      const desc = this.querySelector<HTMLElement>('[data-desc]');
+      if (desc) desc.textContent = position.description;
+      this.reflowThread();
+    }
+
+    private selectDocument(index: number) {
+      const carried = new Set((this.querySelector<HTMLElement>(`.thr-node[data-index="${index}"]`)?.dataset.positions ?? '').split(',').filter(Boolean));
+      this.querySelectorAll<HTMLButtonElement>('.thr-pos').forEach((pos) => pos.classList.toggle('is-carrier', carried.has(pos.dataset.id ?? '')));
+      this.querySelectorAll<HTMLElement>('.thr-node').forEach((node) => {
+        node.classList.toggle('is-lit', Number(node.dataset.index) === index);
+      });
+      this.querySelectorAll<HTMLButtonElement>('.thr-pos').forEach((pos) => pos.setAttribute('aria-selected', 'false'));
+      const names = Array.from(carried)
+        .map((id) => this.positions.get(id)?.name)
+        .filter(Boolean);
+      const desc = this.querySelector<HTMLElement>('[data-desc]');
+      if (desc) desc.textContent = names.length ? `Carried: ${names.join(' · ')}` : 'This document is not tagged to a recurring position.';
+      this.reflowThread();
+    }
+
+    // Position the accent thread span to span the lit nodes without a layout jump.
+    private reflowThread = () => {
+      const thread = this.querySelector<HTMLElement>('[data-thread]');
+      const track = this.querySelector<HTMLElement>('.thr-track');
+      const lit = Array.from(this.querySelectorAll<HTMLElement>('.thr-node.is-lit'));
+      if (!thread || !track) return;
+      if (lit.length < 1) {
+        thread.style.opacity = '0';
+        return;
+      }
+      const trackTop = track.getBoundingClientRect().top;
+      const dots = lit.map((node) => {
+        const dot = node.querySelector<HTMLElement>('.thr-dot');
+        const rect = (dot ?? node).getBoundingClientRect();
+        return rect.top - trackTop + rect.height / 2;
+      });
+      const top = Math.min(...dots);
+      const bottom = Math.max(...dots);
+      thread.style.top = `${top}px`;
+      thread.style.height = `${Math.max(2, bottom - top)}px`;
+      thread.style.opacity = lit.length > 1 ? '1' : '0';
+    };
+  }
+
+  if (!customElements.get('policy-record-threads')) {
+    customElements.define('policy-record-threads', PolicyRecordThreads);
+  }
+</script>
+
+<style>
+  .thr {
+    border-block: 1px solid var(--hairline);
+    display: block;
+    padding: 72px 48px 88px;
+  }
+
+  .thr-head {
+    align-items: end;
+    display: flex;
+    gap: 24px;
+    justify-content: space-between;
+  }
+
+  h2 {
+    font: 300 clamp(34px, 4.2vw, 54px) / 1.02 var(--font-display);
+    margin: 16px 0 0;
+    max-width: 18ch;
+  }
+
+  .thr-lede {
+    color: var(--text-3);
+    margin: 12px 0 0;
+    max-width: 52ch;
+  }
+
+  .record-count {
+    color: var(--text-4);
+    flex: none;
+    font: var(--mono-10) / 1 var(--font-mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .record-count strong {
+    color: var(--accent);
+    font-size: 22px;
+    font-weight: 400;
+    margin-right: 7px;
+  }
+
+  .thr-split {
+    display: grid;
+    gap: 40px;
+    grid-template-columns: minmax(280px, 0.8fr) 1.4fr;
+    margin-top: 44px;
+  }
+
+  .thr-rail {
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 24px;
+  }
+
+  .thr-pos {
+    background: transparent;
+    border: 0;
+    border-top: 1px solid var(--hairline);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    padding: 14px 8px 14px 16px;
+    position: relative;
+    text-align: left;
+    transition: background 200ms ease;
+  }
+
+  .thr-pos:hover {
+    background: rgba(255, 255, 255, 0.025);
+  }
+
+  .thr-pos[aria-selected='true'] {
+    background: var(--accent-wash-09);
+  }
+
+  .thr-pos[aria-selected='true']::before,
+  .thr-pos.is-carrier::before {
+    background: var(--accent);
+    content: '';
+    inset: 0 auto 0 0;
+    position: absolute;
+    width: 2px;
+  }
+
+  .thr-pos.is-carrier {
+    background: rgba(94, 230, 160, 0.05);
+  }
+
+  .thr-pos-name {
+    color: var(--text-1);
+    font: 400 15px/1.35 var(--font-body);
+  }
+
+  .thr-pos-count {
+    color: var(--text-4);
+    flex: none;
+    font: var(--mono-9) / 1 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .thr-desc {
+    color: var(--accent);
+    font: 400 18px/1.5 var(--font-display);
+    margin: 0 0 28px;
+    min-height: 54px;
+  }
+
+  .thr-track {
+    position: relative;
+  }
+
+  .thr-spine {
+    background: var(--hairline-card);
+    inset: 0 auto 0 0;
+    left: 5px;
+    position: absolute;
+    width: 1px;
+  }
+
+  .thr-thread {
+    background: var(--accent);
+    left: 5px;
+    opacity: 0;
+    position: absolute;
+    transition:
+      top 360ms ease,
+      height 360ms ease,
+      opacity 240ms ease;
+    width: 2px;
+  }
+
+  .thr-nodes {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .thr-node {
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    display: grid;
+    column-gap: 16px;
+    grid-template-columns: 12px 64px 1fr;
+    align-items: baseline;
+    opacity: 0.32;
+    padding: 13px 8px 13px 0;
+    position: relative;
+    text-align: left;
+    transition: opacity 320ms ease;
+  }
+
+  .thr-node.is-lit {
+    opacity: 1;
+  }
+
+  .thr-dot {
+    background: var(--bg-base);
+    border: 1px solid var(--text-4);
+    border-radius: 50%;
+    grid-column: 1;
+    height: 11px;
+    transform: translateY(3px);
+    transition:
+      background 280ms ease,
+      border-color 280ms ease;
+    width: 11px;
+    z-index: 1;
+  }
+
+  .thr-node.is-lit .thr-dot {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .thr-year {
+    color: var(--text-3);
+    font: var(--mono-10) / 1.4 var(--font-mono);
+    grid-column: 2;
+    letter-spacing: 0.06em;
+  }
+
+  .thr-node-title {
+    color: var(--text-1);
+    font: 400 15px/1.35 var(--font-body);
+    grid-column: 3;
+  }
+
+  .instrument-tag {
+    color: var(--text-4);
+    font: var(--mono-9) / 1.35 var(--font-mono);
+    grid-column: 3;
+    letter-spacing: 0.07em;
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .thr-node,
+    .thr-thread,
+    .thr-dot,
+    .thr-pos {
+      transition: none;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .thr {
+      padding: 56px 22px 64px;
+    }
+
+    .thr-split {
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+
+    .thr-rail {
+      position: static;
+    }
+  }
+</style>

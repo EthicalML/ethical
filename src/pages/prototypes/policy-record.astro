@@ -1,0 +1,173 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PolicyRecordPreview from '../../components/PolicyRecordPreview.astro';
+import PolicyRecordDiff from '../../components/PolicyRecordDiff.astro';
+import PolicyRecordThreads from '../../components/PolicyRecordThreads.astro';
+import PolicyRecordTerrain from '../../components/PolicyRecordTerrain.astro';
+import PolicyRecordStrip from '../../components/PolicyRecordStrip.astro';
+import { products, positions, pairs } from '../../components/PolicyRecordData';
+
+// Five studies for replacing the plain /policy/ record link list. The product data and its
+// curated enrichment live in ../../components/PolicyRecordData.ts (copied verbatim from
+// policy.mdx `products:` and enriched). WHEN A WINNER IS CHOSEN that data consolidates back into
+// the policy.mdx frontmatter and the live PolicyRecord component. The LIVE /policy/ page is
+// untouched by this prototype.
+
+const variants = [
+  { label: 'Reading room', value: 1 },
+  { label: 'Adoption diff', value: 2 },
+  { label: 'Position threads', value: 3 },
+  { label: 'Phrase terrain', value: 4 },
+  { label: 'Instrument strip', value: 5 },
+];
+
+const filters = [
+  { label: 'ALL', value: 'all' },
+  { label: 'EU AI ACT', value: 'eu-ai-act' },
+  { label: 'EU DIGITAL ACTS', value: 'eu-digital-acts' },
+  { label: 'UK', value: 'uk' },
+  { label: 'UN & GLOBAL', value: 'global' },
+  { label: 'SUSTAINABILITY', value: 'sustainability' },
+];
+
+const frontmatter = {
+  title: 'Policy record studies',
+  description: 'Five interactive directions for the policy record: preview rail, adoption diff, position threads, phrase terrain and instrument strip.',
+};
+---
+
+<BaseLayout {frontmatter}>
+  <policy-record-prototype>
+    <nav class="prototype-switcher" aria-label="Policy record variants">
+      <span>POLICY RECORD STUDIES</span>
+      {
+        variants.map((option) => (
+          <a href={`?v=${option.value}`} data-variant-link={option.value}>
+            <b>{option.value}</b>
+            {option.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <section data-variant="1" hidden>
+      <PolicyRecordPreview filters={filters} products={products} />
+    </section>
+    <section data-variant="2" hidden>
+      <PolicyRecordDiff products={products} pairs={pairs} />
+    </section>
+    <section data-variant="3" hidden>
+      <PolicyRecordThreads products={products} positions={positions} />
+    </section>
+    <section data-variant="4" hidden>
+      <PolicyRecordTerrain products={products} />
+    </section>
+    <section data-variant="5" hidden>
+      <PolicyRecordStrip products={products} />
+    </section>
+  </policy-record-prototype>
+</BaseLayout>
+
+<script>
+  class PolicyRecordPrototype extends HTMLElement {
+    private controller = new AbortController();
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      this.querySelectorAll<HTMLAnchorElement>('[data-variant-link]').forEach((link) => {
+        link.addEventListener('click', this.handleVariantClick, { signal: this.controller.signal });
+      });
+      window.addEventListener('popstate', this.handlePopState, { signal: this.controller.signal });
+      this.selectVariant(this.variantFromUrl());
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+    }
+
+    private variantFromUrl() {
+      const requested = Number.parseInt(new URL(window.location.href).searchParams.get('v') ?? '1', 10);
+      return this.querySelector(`section[data-variant="${requested}"]`) ? requested : 1;
+    }
+
+    private selectVariant(variant: number) {
+      this.querySelectorAll<HTMLElement>('section[data-variant]').forEach((section) => {
+        section.hidden = Number(section.dataset.variant) !== variant;
+      });
+      this.querySelectorAll<HTMLAnchorElement>('[data-variant-link]').forEach((link) => {
+        if (Number(link.dataset.variantLink) === variant) link.setAttribute('aria-current', 'page');
+        else link.removeAttribute('aria-current');
+      });
+    }
+
+    private handleVariantClick = (event: Event) => {
+      const link = event.currentTarget as HTMLAnchorElement;
+      const variant = Number(link.dataset.variantLink);
+      if (!Number.isInteger(variant)) return;
+      event.preventDefault();
+      history.pushState({}, '', link.href);
+      this.selectVariant(variant);
+    };
+
+    private handlePopState = () => this.selectVariant(this.variantFromUrl());
+  }
+
+  if (!customElements.get('policy-record-prototype')) {
+    customElements.define('policy-record-prototype', PolicyRecordPrototype);
+  }
+</script>
+
+<style>
+  .prototype-switcher {
+    align-items: center;
+    border-bottom: 1px solid var(--hairline);
+    display: flex;
+    gap: 4px;
+    min-height: 54px;
+    padding: 7px 48px;
+  }
+
+  .prototype-switcher > span {
+    color: var(--text-4);
+    font: var(--mono-9) / 1 var(--font-mono);
+    letter-spacing: 0.14em;
+    margin-right: 16px;
+  }
+
+  .prototype-switcher a {
+    align-items: center;
+    color: var(--text-3);
+    display: flex;
+    font-size: var(--body-13);
+    gap: 8px;
+    padding: 9px 11px;
+  }
+
+  .prototype-switcher a[aria-current='page'] {
+    background: var(--accent-wash-09);
+    color: var(--text-1);
+  }
+
+  .prototype-switcher b {
+    color: var(--accent);
+    font: 400 var(--mono-9) / 1 var(--font-mono);
+  }
+
+  @media (max-width: 950px) {
+    .prototype-switcher {
+      align-items: stretch;
+      gap: 0;
+      overflow-x: auto;
+      padding-inline: 18px;
+    }
+
+    .prototype-switcher > span {
+      display: none;
+    }
+
+    .prototype-switcher a {
+      flex: none;
+      min-height: 44px;
+    }
+  }
+</style>

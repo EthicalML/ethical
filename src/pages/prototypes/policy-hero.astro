@@ -35,8 +35,7 @@ const intro =
     </header>
 
     <template data-canvas-variant="1"
-      ><policy-hero-phrase-terrain class="policy-prototype-mount"><canvas class="hero-canvas" aria-hidden="true"></canvas></policy-hero-phrase-terrain
-      ></template
+      ><phrase-terrain class="policy-prototype-mount"><canvas class="hero-canvas" aria-hidden="true"></canvas></phrase-terrain></template
     >
     <template data-canvas-variant="2"
       ><policy-hero-policy-circuit class="policy-prototype-mount"><canvas class="hero-canvas" aria-hidden="true"></canvas></policy-hero-policy-circuit
@@ -46,7 +45,7 @@ const intro =
 </BaseLayout>
 
 <script>
-  import '../../shared/canvas/PolicyHeroPhraseTerrain';
+  import '../../shared/canvas/PhraseTerrain';
   import '../../shared/canvas/PolicyHeroPolicyCircuit';
 
   class PolicyHeroPrototype extends HTMLElement {
