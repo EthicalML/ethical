@@ -1,6 +1,4 @@
 ---
-import AchievementVisual from './AchievementVisual.astro';
-
 interface AchievementLink {
   href: string;
   label: string;
@@ -8,7 +6,6 @@ interface AchievementLink {
 
 interface AchievementCard {
   eyebrow: string;
-  glyph: 'eu-adoption' | 'uk-adoption' | 'citation-network' | 'un-chair' | 'acm-bridges' | 'policy-timeline';
   links: AchievementLink[];
   piece: string;
   summary: string;
@@ -21,33 +18,259 @@ interface Props {
 }
 
 const { cards, variant } = Astro.props;
-const neon = ['#5ee6a0', '#35d787', '#38bdf8', '#ff3b57', '#a855f7', '#ff5c1f'];
+
+// Card colour: green for the two adoption cards, then blue, purple, orange, red.
+const neon = ['#5ee6a0', '#35d787', '#38bdf8', '#a855f7', '#ff5c1f', '#ff3b57'];
 const ghostLabels = ['8/12', '13/14', 'CODE', 'UN', 'ACM', '2026'];
-const baseShifts = [
-  { x: -55, y: 0 },
-  { x: -45, y: 0 },
-  { x: 50, y: 0 },
-  { x: 42, y: -45 },
-  { x: -42, y: 42 },
-  { x: 42, y: 42 },
+const figureLabels = ['8 / 12', '13 / 14', 'CODE', 'UN', 'ACM', '2026'];
+// Reveal travel per card, alternating direction. Speed/travel are owner-approved.
+const shifts = [-58, 58, -58, 58, -58, 58];
+
+const round = (n: number) => Math.round(n * 100) / 100;
+const point = (p: number[]) => `${round(p[0])},${round(p[1])}`;
+
+// Small deterministic generator so build output is stable.
+function rng(seed: number) {
+  let s = (seed * 9301 + 49297) % 233280;
+  return () => {
+    s = (s * 9301 + 49297) % 233280;
+    return s / 233280;
+  };
+}
+
+// ---------------------------------------------------------------------------
+// V2 isometric structures (30-degree projection, three-face shading)
+// ---------------------------------------------------------------------------
+const ISO_A = 11;
+const ISO_FH = 13;
+const ISO_B = ISO_A / 2;
+function isoTop(x: number, y: number, z: number, ox: number, oy: number) {
+  return [ox + (x - y) * ISO_A, oy + (x + y) * ISO_B - z * ISO_FH];
+}
+function isoFaces(cubes: { x: number; y: number; z: number; fill?: boolean }[], ox: number, oy: number) {
+  const ordered = [...cubes].sort((a, b) => a.x + a.y - (b.x + b.y) || a.z - b.z);
+  const faces: { face: string; fill: boolean; d: string }[] = [];
+  for (const cube of ordered) {
+    const [cx, cy] = isoTop(cube.x, cube.y, cube.z, ox, oy);
+    const T = [cx, cy];
+    const R = [cx + ISO_A, cy + ISO_B];
+    const B = [cx, cy + 2 * ISO_B];
+    const L = [cx - ISO_A, cy + ISO_B];
+    const fill = Boolean(cube.fill);
+    faces.push({ face: 'top', fill, d: `M${point(T)} L${point(R)} L${point(B)} L${point(L)} Z` });
+    faces.push({ face: 'left', fill, d: `M${point(L)} L${point(B)} L${point([B[0], B[1] + ISO_FH])} L${point([L[0], L[1] + ISO_FH])} Z` });
+    faces.push({ face: 'right', fill, d: `M${point(B)} L${point(R)} L${point([R[0], R[1] + ISO_FH])} L${point([B[0], B[1] + ISO_FH])} Z` });
+  }
+  return faces;
+}
+const isoStructures = [
+  // eu: stacked adoption blocks, columns of 3, 2, 1
+  {
+    ox: 56,
+    oy: 30,
+    cubes: [
+      { x: 0, y: 0, z: 0, fill: true },
+      { x: 0, y: 0, z: 1, fill: true },
+      { x: 0, y: 0, z: 2, fill: true },
+      { x: 1, y: 0, z: 0, fill: true },
+      { x: 1, y: 0, z: 1, fill: true },
+      { x: 2, y: 0, z: 0 },
+    ],
+    links: [],
+  },
+  // uk: taller adoption tower, columns of 4 and 2
+  {
+    ox: 62,
+    oy: 24,
+    cubes: [
+      { x: 0, y: 0, z: 0, fill: true },
+      { x: 0, y: 0, z: 1, fill: true },
+      { x: 0, y: 0, z: 2, fill: true },
+      { x: 0, y: 0, z: 3, fill: true },
+      { x: 1, y: 0, z: 0, fill: true },
+      { x: 1, y: 0, z: 1 },
+    ],
+    links: [],
+  },
+  // mlsecops: a hub cube with four linked satellites (citation network)
+  {
+    ox: 56,
+    oy: 26,
+    cubes: [
+      { x: 1, y: 1, z: 0, fill: true },
+      { x: 0, y: 1, z: 0 },
+      { x: 2, y: 1, z: 0 },
+      { x: 1, y: 0, z: 0 },
+      { x: 1, y: 2, z: 0 },
+    ],
+    links: [
+      [1, 1, 0, 0, 1, 0],
+      [1, 1, 0, 2, 1, 0],
+      [1, 1, 0, 1, 0, 0],
+      [1, 1, 0, 1, 2, 0],
+    ],
+  },
+  // un: ringed council structure (square ring of blocks around an empty centre)
+  {
+    ox: 44,
+    oy: 12,
+    cubes: [
+      { x: 0, y: 0, z: 0 },
+      { x: 1, y: 0, z: 0 },
+      { x: 2, y: 0, z: 0, fill: true },
+      { x: 2, y: 1, z: 0 },
+      { x: 2, y: 2, z: 0 },
+      { x: 1, y: 2, z: 0 },
+      { x: 0, y: 2, z: 0 },
+      { x: 0, y: 1, z: 0 },
+    ],
+    links: [],
+  },
+  // acm: two-hub bridge, two platforms joined by a span
+  {
+    ox: 40,
+    oy: 24,
+    cubes: [
+      { x: 0, y: 0, z: 0, fill: true },
+      { x: 0, y: 1, z: 0, fill: true },
+      { x: 3, y: 0, z: 0, fill: true },
+      { x: 3, y: 1, z: 0, fill: true },
+    ],
+    links: [
+      [0, 0, 1, 3, 0, 1],
+      [0, 1, 1, 3, 1, 1],
+    ],
+  },
+  // through-line: linked chain receding along the diagonal
+  {
+    ox: 40,
+    oy: 6,
+    cubes: [
+      { x: 0, y: 0, z: 0, fill: true },
+      { x: 1, y: 1, z: 0, fill: true },
+      { x: 2, y: 2, z: 0, fill: true },
+      { x: 3, y: 3, z: 0, fill: true },
+    ],
+    links: [
+      [0, 0, 1, 1, 1, 1],
+      [1, 1, 1, 2, 2, 1],
+      [2, 2, 1, 3, 3, 1],
+    ],
+  },
 ];
-const cascadeShifts = [
-  { x: 55, y: -40 },
-  { x: 45, y: 40 },
-  { x: -50, y: 0 },
-  { x: 45, y: -40 },
-  { x: -42, y: 40 },
-  { x: 45, y: 40 },
+const isoByCard = isoStructures.map((s) => ({
+  faces: isoFaces(s.cubes, s.ox, s.oy),
+  links: s.links.map((l) => `M${point(isoTop(l[0], l[1], l[2], s.ox, s.oy))} L${point(isoTop(l[3], l[4], l[5], s.ox, s.oy))}`),
+}));
+
+// ---------------------------------------------------------------------------
+// V3 transformer plates (mix of hexagon, triangles and squares per card)
+// ---------------------------------------------------------------------------
+function transformerPanels(seed: number) {
+  const rand = rng(seed + 11);
+  const flip = seed % 2 === 0 ? 1 : -1;
+  const cx = 50;
+  const cy = 46;
+  const hr = 21 + Math.round(rand() * 6);
+  const hex: number[][] = [];
+  for (let i = 0; i < 6; i++) {
+    const ang = Math.PI / 6 + (i * Math.PI) / 3;
+    hex.push([round(cx + hr * Math.cos(ang)), round(cy + hr * Math.sin(ang))]);
+  }
+  const midTop = 40 + Math.round(rand() * 20);
+  const panels: { pts: string; tx: number; ty: number; rot: number; core?: boolean }[] = [];
+  panels.push({ pts: hex.map(point).join(' '), tx: 0, ty: 0, rot: 0, core: true });
+  panels.push({ pts: [point([0, 0]), point([midTop, 0]), point([0, cy])].join(' '), tx: -4 * flip, ty: -4, rot: -2 });
+  panels.push({ pts: [point([midTop, 0]), point([100, 0]), point([100, cy]), point([cx, 0])].join(' '), tx: 4, ty: -3, rot: 2 });
+  panels.push({ pts: [point([0, cy]), point([0, 100]), point([cx, 100])].join(' '), tx: -4, ty: 4, rot: 2 });
+  panels.push({ pts: [point([100, cy]), point([100, 100]), point([cx, 100])].join(' '), tx: 4 * flip, ty: 4, rot: -2 });
+  // a small extra plate that varies the mix per card
+  if (seed % 2 === 0) {
+    panels.push({ pts: [point([cx - 9, 84]), point([cx + 9, 84]), point([cx, 96])].join(' '), tx: 0, ty: 5, rot: 0 });
+  } else {
+    panels.push({ pts: [point([12, 8]), point([26, 8]), point([26, 22]), point([12, 22])].join(' '), tx: -5, ty: -5, rot: -3 });
+  }
+  return panels;
+}
+const transformerByCard = [0, 1, 2, 3, 4, 5].map((i) => transformerPanels(i));
+
+// ---------------------------------------------------------------------------
+// V4 volcanic cracks and V5 circuit etch share per-card origin corners
+// ---------------------------------------------------------------------------
+const origins = [
+  [8, 8],
+  [92, 10],
+  [10, 90],
+  [90, 90],
+  [50, 8],
+  [8, 52],
 ];
-const shifts = variant === 3 ? cascadeShifts : baseShifts;
+function crackSet(origin: number[], seed: number) {
+  const rand = rng(seed + 5);
+  const [sx, sy] = origin;
+  const tx = sx < 50 ? 96 : 4;
+  const ty = sy < 50 ? 92 : 8;
+  const steps = 6;
+  const pts: number[][] = [[sx, sy]];
+  const dxp = ty - sy;
+  const dyp = -(tx - sx);
+  const len = Math.hypot(dxp, dyp) || 1;
+  for (let i = 1; i <= steps; i++) {
+    const t = i / steps;
+    const bx = sx + (tx - sx) * t;
+    const by = sy + (ty - sy) * t;
+    const jitter = (rand() - 0.5) * 30;
+    pts.push([round(bx + (dxp / len) * jitter), round(by + (dyp / len) * jitter)]);
+  }
+  const main = 'M' + pts.map(point).join(' L');
+  const branch = (idx: number, dir: number) => {
+    const [ax, ay] = pts[idx];
+    const b1 = [round(ax + dir * (9 + rand() * 12)), round(ay + (rand() - 0.5) * 26)];
+    const b2 = [round(b1[0] + dir * (7 + rand() * 9)), round(b1[1] + (rand() - 0.5) * 22)];
+    return `M${point([ax, ay])} L${point(b1)} L${point(b2)}`;
+  };
+  return { main, branches: [branch(2, 1), branch(4, -1)], hint: `M${point([sx, sy])} L${point(pts[1])}`, origin };
+}
+const cracksByCard = origins.map((o, i) => crackSet(o, i));
+
+function circuitSet(origin: number[], seed: number) {
+  const rand = rng(seed + 3);
+  const [sx, sy] = origin;
+  const dirX = sx < 50 ? 1 : -1;
+  const dirY = sy < 50 ? 1 : -1;
+  const pts: number[][] = [[sx, sy]];
+  let px = sx + dirX * 6;
+  let py = sy + dirY * 6;
+  pts.push([round(px), round(py)]);
+  const pads: number[][] = [];
+  let horiz = true;
+  for (let i = 0; i < 5; i++) {
+    const step = 12 + rand() * 15;
+    if (horiz) px += dirX * step;
+    else py += dirY * step;
+    px = Math.max(8, Math.min(92, round(px)));
+    py = Math.max(8, Math.min(92, round(py)));
+    pts.push([px, py]);
+    if (rand() > 0.55) pads.push([px, py]);
+    horiz = !horiz;
+  }
+  const terminus = pts[pts.length - 1];
+  const main = 'M' + pts.map(point).join(' L');
+  const branches: string[] = [];
+  for (const idx of [2, 4]) {
+    const [ax, ay] = pts[idx];
+    const bx = Math.max(8, Math.min(92, round(ax + dirX * (10 + rand() * 8))));
+    const by = Math.max(8, Math.min(92, round(ay - dirY * (8 + rand() * 8))));
+    branches.push(`M${point([ax, ay])} L${point([bx, ay])} L${point([bx, by])}`);
+    pads.push([bx, by]);
+  }
+  return { main, branches, pads, terminus, hint: `M${point([sx, sy])} L${point(pts[1])}`, origin };
+}
+const circuitByCard = origins.map((o, i) => circuitSet(o, i));
 ---
 
 <achievement-neon-rendition class="achievement-neon-rendition" data-variation={variant}>
   <div class="neon-canvas">
-    <i class="lego-piece neon-filler neon-filler-west" data-lego-piece data-order="0" aria-hidden="true"></i>
-    <i class="lego-piece neon-filler neon-filler-east" data-lego-piece data-order="6" aria-hidden="true"></i>
-    {variant === 3 && <i class="lego-piece cascade-diamond cascade-diamond-north" data-lego-piece data-order="2" aria-hidden="true" />}
-    {variant === 3 && <i class="lego-piece cascade-diamond cascade-diamond-south" data-lego-piece data-order="7" aria-hidden="true" />}
     {
       cards.map((card, index) => (
         <div
@@ -56,50 +279,90 @@ const shifts = variant === 3 ? cascadeShifts : baseShifts;
           data-neon-slot
           data-order={index + 1}
           data-piece={card.piece}
-          style={`--neon:${neon[index]};--shift-x:${shifts[index].x}px;--shift-y:${shifts[index].y}px;--drop-rotation:${index % 2 ? -1.6 : 1.6}deg`}
+          style={`--neon:${neon[index]};--shift-x:${shifts[index]}px;--drop-rotation:${index % 2 ? -1.6 : 1.6}deg`}
         >
-          <div class="neon-reveal-clip" aria-hidden="true">
-            <i class="neon-underlay" data-neon-block />
-          </div>
+          <i class="neon-underlay" data-neon-block aria-hidden="true" />
           <article class="neon-card">
-            {variant <= 3 && <AchievementVisual variant={card.glyph} />}
-            {variant === 4 && (
+            {(variant === 1 || variant === 2) && (
               <span class="ghost-mark" aria-hidden="true">
                 {ghostLabels[index]}
               </span>
             )}
-            {variant === 4 && <i class="ghost-rule" aria-hidden="true" />}
-            {variant === 5 && index < 2 && (
-              <span class="micro-element micro-meter" aria-hidden="true">
-                {Array.from({ length: index === 0 ? 12 : 14 }, (_, segment) => (
-                  <i data-adopted={segment < (index === 0 ? 8 : 13) ? 'true' : undefined} style={`--micro-index:${segment}`} />
-                ))}
-              </span>
-            )}
-            {variant === 5 && index === 2 && (
-              <span class="micro-element micro-citation" aria-hidden="true">
-                <i />
-                <i />
-                <i />
-              </span>
-            )}
-            {variant === 5 && index === 3 && <span class="micro-element micro-ring" aria-hidden="true" />}
-            {variant === 5 && index === 4 && (
-              <span class="micro-element micro-arc" aria-hidden="true">
-                <svg viewBox="0 0 72 28">
-                  <path d="M5 22Q36-8 67 22" />
-                  <circle cx="5" cy="22" r="3" />
-                  <circle cx="67" cy="22" r="3" />
+            {(variant === 1 || variant === 2) && <i class="ghost-rule" aria-hidden="true" />}
+
+            {variant === 2 && (
+              <span class="iso-stage" aria-hidden="true">
+                <svg viewBox="0 0 120 96" preserveAspectRatio="xMidYMid meet">
+                  <g class="iso-group">
+                    {isoByCard[index].links.map((d) => (
+                      <path class="iso-link" d={d} />
+                    ))}
+                    {isoByCard[index].faces.map((face) => (
+                      <path class:list={['iso-face', `iso-${face.face}`, { 'iso-fill': face.fill }]} d={face.d} />
+                    ))}
+                  </g>
                 </svg>
               </span>
             )}
-            {variant === 5 && index === 5 && (
-              <span class="micro-element micro-rail" aria-hidden="true">
-                <i />
-                <i />
-                <i />
+
+            {variant === 3 && (
+              <span class="tf-stage" aria-hidden="true">
+                <i class="tf-glow" />
+                <svg class="tf-plates" viewBox="0 0 100 100" preserveAspectRatio="none">
+                  {transformerByCard[index].map((panel) => (
+                    <polygon
+                      class:list={['tf-panel', { 'tf-core': panel.core }]}
+                      points={panel.pts}
+                      style={`--tx:${panel.tx}px;--ty:${panel.ty}px;--rot:${panel.rot}deg`}
+                    />
+                  ))}
+                </svg>
               </span>
             )}
+
+            {variant === 4 && (
+              <span class="vc-stage" aria-hidden="true">
+                <span class="vc-shimmer" style={`left:${cracksByCard[index].origin[0]}%;top:${cracksByCard[index].origin[1]}%`} />
+                <svg class="vc-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                  <g class="vc-glow">
+                    <path class="vc-glow-path" d={cracksByCard[index].main} pathLength="100" />
+                    {cracksByCard[index].branches.map((d) => (
+                      <path class="vc-glow-path" d={d} pathLength="100" />
+                    ))}
+                  </g>
+                  <path class="vc-hint" d={cracksByCard[index].hint} />
+                  <path class="vc-crack vc-crack-main" d={cracksByCard[index].main} pathLength="100" />
+                  {cracksByCard[index].branches.map((d) => (
+                    <path class="vc-crack vc-crack-branch" d={d} pathLength="100" />
+                  ))}
+                </svg>
+              </span>
+            )}
+
+            {variant === 5 && (
+              <span class="ce-stage" aria-hidden="true">
+                <svg class="ce-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                  <path class="ce-hint" d={circuitByCard[index].hint} />
+                  <g class="ce-traces">
+                    <path class="ce-trace ce-trace-main" d={circuitByCard[index].main} pathLength="100" />
+                    {circuitByCard[index].branches.map((d) => (
+                      <path class="ce-trace ce-trace-branch" d={d} pathLength="100" />
+                    ))}
+                  </g>
+                  <path class="ce-pulse" d={circuitByCard[index].main} pathLength="100" />
+                  <g class="ce-pads">
+                    {circuitByCard[index].pads.map((p) => (
+                      <rect class="ce-pad" x={round(p[0] - 1.6)} y={round(p[1] - 1.6)} width="3.2" height="3.2" />
+                    ))}
+                    <circle class="ce-via" cx={circuitByCard[index].terminus[0]} cy={circuitByCard[index].terminus[1]} r="2.4" />
+                  </g>
+                </svg>
+                <span class="ce-figure" style={`left:${circuitByCard[index].terminus[0]}%;top:${circuitByCard[index].terminus[1]}%`}>
+                  {figureLabels[index]}
+                </span>
+              </span>
+            )}
+
             <div class="neon-copy">
               <span>{card.eyebrow}</span>
               <strong>{card.title}</strong>
@@ -231,73 +494,32 @@ const shifts = variant === 3 ? cascadeShifts : baseShifts;
 <style>
   .achievement-neon-rendition {
     display: block;
-    overflow: clip;
   }
+  /* Shared equal-tile grid: three columns, two rows, degrading to two then one. */
   .neon-canvas {
-    height: 850px;
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(3, 1fr);
     margin: 0 auto;
-    max-width: 1120px;
-    position: relative;
-  }
-  .lego-piece {
-    position: absolute;
-    transform-origin: center bottom;
+    max-width: 1152px;
   }
   .neon-slot {
+    height: 384px;
+    overflow: clip;
+    position: relative;
     z-index: 2;
   }
-  .neon-slot[data-piece='eu'] {
-    height: 220px;
-    left: 25%;
-    top: 0;
-    width: 46%;
-  }
-  .neon-slot[data-piece='uk'] {
-    height: 310px;
-    left: 25%;
-    top: 240px;
-    width: 20%;
-  }
-  .neon-slot[data-piece='mlsecops'] {
-    height: 310px;
-    left: 49%;
-    top: 240px;
-    width: 25%;
-  }
-  .neon-slot[data-piece='un'] {
-    height: 440px;
-    left: 79%;
-    top: 110px;
-    width: 16%;
-  }
-  .neon-slot[data-piece='acm'] {
-    height: 280px;
-    left: 6%;
-    top: 570px;
-    width: 36%;
-  }
-  .neon-slot[data-piece='through-line'] {
-    height: 280px;
-    left: 47%;
-    top: 570px;
-    width: 33%;
-  }
-  .neon-reveal-clip,
   .neon-underlay,
   .neon-card {
     inset: 0;
     position: absolute;
   }
-  .neon-reveal-clip {
-    overflow: hidden;
-    z-index: 1;
-  }
   .neon-underlay {
     background: var(--neon);
+    z-index: 0;
   }
   .neon-card {
-    background: #1a1c1b;
-    border: 0;
+    background: #171918;
     color: var(--text-1);
     overflow: hidden;
     transform: translate3d(0, 0, 0);
@@ -308,19 +530,18 @@ const shifts = variant === 3 ? cascadeShifts : baseShifts;
     z-index: 2;
   }
   .neon-slot:nth-of-type(even) .neon-card {
-    background: #181a19;
+    background: #131615;
   }
-  achievement-neon-rendition[data-variation='2'] .neon-card {
-    background: #000;
-  }
+
+  /* --- Copy (identical across variants) --- */
   .neon-copy {
-    bottom: auto;
+    bottom: 20px;
     left: 0;
-    padding: 18px 20px 19px;
+    padding: 0 22px;
     position: absolute;
     right: 0;
-    top: 76px;
-    z-index: 2;
+    top: 118px;
+    z-index: 6;
   }
   .neon-copy > span {
     color: var(--text-4);
@@ -331,22 +552,27 @@ const shifts = variant === 3 ? cascadeShifts : baseShifts;
     text-transform: uppercase;
   }
   .neon-copy > strong {
-    display: block;
-    font: 300 clamp(27px, 2.25vw, 38px) / 1.02 var(--font-display);
-    max-width: 16ch;
+    display: -webkit-box;
+    font: 300 clamp(26px, 2.15vw, 34px) / 1.04 var(--font-display);
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
   }
   .neon-copy > p {
     color: var(--text-2);
+    display: -webkit-box;
     font-size: 12px;
     line-height: 1.45;
     margin: 9px 0 0;
-    max-width: 48ch;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
   }
   footer {
     display: flex;
     flex-wrap: wrap;
     gap: 5px 10px;
-    margin-top: 10px;
+    margin-top: 12px;
   }
   footer a {
     color: var(--accent);
@@ -354,116 +580,15 @@ const shifts = variant === 3 ? cascadeShifts : baseShifts;
     letter-spacing: 0.05em;
     text-transform: uppercase;
   }
-  :global(.achievement-visual) {
-    height: 44px;
-    left: 18px;
-    top: 18px;
-    width: 44px;
-  }
-  :global(.achievement-visual svg) {
-    height: 34px;
-    width: 34px;
-  }
-  .neon-filler {
-    background: #151716;
-    z-index: 1;
-  }
-  .neon-filler-west {
-    height: 310px;
-    left: 6%;
-    top: 240px;
-    width: 14%;
-  }
-  .neon-filler-east {
-    height: 280px;
-    left: 86%;
-    top: 570px;
-    width: 10%;
-  }
-  achievement-neon-rendition[data-variation='3'] {
-    overflow: visible;
-  }
-  achievement-neon-rendition[data-variation='3'] .neon-canvas {
-    height: 860px;
-  }
-  achievement-neon-rendition[data-variation='3'] .neon-slot[data-piece='eu'] {
-    height: 210px;
-    left: 4%;
-    top: 50px;
-    width: 46%;
-  }
-  achievement-neon-rendition[data-variation='3'] .neon-slot[data-piece='uk'] {
-    height: 300px;
-    left: 60%;
-    top: -18px;
-    width: 20%;
-  }
-  achievement-neon-rendition[data-variation='3'] .neon-slot[data-piece='uk'] .neon-copy {
-    top: 64px;
-  }
-  achievement-neon-rendition[data-variation='3'] .neon-slot[data-piece='uk'] .neon-evidence {
-    font-size: 0.72rem;
-    letter-spacing: 0.04em;
-    line-height: 1.2;
-  }
-  achievement-neon-rendition[data-variation='3'] .neon-slot[data-piece='mlsecops'] {
-    height: 260px;
-    left: 22%;
-    top: 300px;
-    width: 32%;
-  }
-  achievement-neon-rendition[data-variation='3'] .neon-slot[data-piece='un'] {
-    height: 330px;
-    left: 61%;
-    top: 290px;
-    width: 17%;
-  }
-  achievement-neon-rendition[data-variation='3'] .neon-slot[data-piece='acm'] {
-    height: 280px;
-    left: 12%;
-    top: 580px;
-    width: 35%;
-  }
-  achievement-neon-rendition[data-variation='3'] .neon-slot[data-piece='through-line'] {
-    height: 240px;
-    left: 53%;
-    top: 620px;
-    width: 32%;
-  }
-  achievement-neon-rendition[data-variation='3'] .neon-filler-west {
-    height: 220px;
-    left: 0;
-    top: 300px;
-    width: 16%;
-  }
-  achievement-neon-rendition[data-variation='3'] .neon-filler-east {
-    height: 180px;
-    left: 84%;
-    top: 80px;
-    width: 10%;
-  }
-  .cascade-diamond {
-    background: #171918;
-    height: 42px;
-    transform: rotate(45deg);
-    width: 42px;
-    z-index: 1;
-  }
-  .cascade-diamond-north {
-    left: 84%;
-    top: 24px;
-  }
-  .cascade-diamond-south {
-    left: 89%;
-    top: 732px;
-  }
+
+  /* --- V1 / V2 ghost numerals --- */
   .ghost-mark {
-    color: rgba(244, 242, 238, 0.035);
-    font: 300 clamp(116px, 15vw, 190px) / 0.8 var(--font-display);
+    color: rgba(244, 242, 238, 0.05);
+    font: 300 clamp(96px, 12vw, 150px) / 0.8 var(--font-display);
     letter-spacing: -0.08em;
     position: absolute;
     right: -0.02em;
-    top: -0.08em;
+    top: -0.1em;
     white-space: nowrap;
     z-index: 1;
   }
@@ -476,9 +601,10 @@ const shifts = variant === 3 ? cascadeShifts : baseShifts;
     top: 0;
     transform: scaleX(0);
     transform-origin: left;
-    z-index: 3;
+    z-index: 5;
   }
-  achievement-neon-rendition[data-variation='4'][data-entered='true'] .ghost-rule {
+  achievement-neon-rendition[data-variation='1'][data-entered='true'] .ghost-rule,
+  achievement-neon-rendition[data-variation='2'][data-entered='true'] .ghost-rule {
     animation: ghost-rule-in 460ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
     animation-delay: calc(var(--lego-order) * 60ms + 250ms);
   }
@@ -487,192 +613,336 @@ const shifts = variant === 3 ? cascadeShifts : baseShifts;
       transform: scaleX(1);
     }
   }
-  .micro-element {
-    left: 50%;
-    opacity: 0.42;
+
+  /* --- V2 isometric stages (equal on every card) --- */
+  .iso-stage {
+    height: 118px;
+    left: 0;
     position: absolute;
-    right: auto;
-    top: 18px;
-    transform: translateX(-50%);
-    transition:
-      filter 300ms ease,
-      opacity 300ms ease,
-      transform 300ms ease;
-    z-index: 3;
+    right: 0;
+    top: 0;
+    z-index: 2;
   }
-  .neon-slot:hover .micro-element,
-  .neon-slot[data-active='true'] .micro-element {
-    filter: brightness(1.35);
-    opacity: 0.95;
-    transform: translateX(-50%) scale(1.12);
-  }
-  .micro-meter {
-    align-items: end;
-    display: flex;
-    gap: 2px;
-    height: 22px;
-  }
-  .micro-meter i {
-    background: rgba(244, 242, 238, 0.28);
-    display: block;
-    height: 9px;
-    opacity: 0.18;
-    transform: scaleY(0.2);
-    transform-origin: bottom;
-    width: 2px;
-  }
-  .micro-meter i[data-adopted='true'] {
-    background: var(--neon);
-    height: 18px;
-  }
-  achievement-neon-rendition[data-variation='5'][data-entered='true'] .micro-meter i {
-    animation: micro-fill 320ms ease-out both;
-    animation-delay: calc(var(--lego-order) * 60ms + var(--micro-index) * 22ms + 260ms);
-  }
-  @keyframes micro-fill {
-    to {
-      opacity: 0.9;
-      transform: scaleY(1);
-    }
-  }
-  .micro-citation {
-    height: 30px;
-    width: 64px;
-  }
-  .micro-citation::before {
-    background: rgba(244, 242, 238, 0.24);
-    content: '';
-    height: 1px;
-    left: 7px;
-    position: absolute;
-    top: 14px;
-    width: 50px;
-  }
-  .micro-citation i {
-    background: #0f100f;
-    border: 1px solid rgba(244, 242, 238, 0.4);
-    height: 7px;
-    position: absolute;
-    top: 11px;
-    width: 7px;
-  }
-  .micro-citation i:nth-child(1) {
-    left: 3px;
-  }
-  .micro-citation i:nth-child(2) {
-    background: var(--neon);
-    border-color: var(--neon);
-    left: 28px;
-  }
-  .micro-citation i:nth-child(3) {
-    right: 3px;
-  }
-  .micro-citation i:nth-child(2) {
-    animation: citation-ping 3.8s ease-out infinite;
-  }
-  @keyframes citation-ping {
-    0%,
-    12%,
-    100% {
-      box-shadow: 0 0 0 0 rgba(56, 189, 248, 0);
-    }
-    5% {
-      box-shadow: 0 0 0 7px rgba(56, 189, 248, 0.24);
-    }
-  }
-  .micro-ring {
-    border: 1px solid rgba(244, 242, 238, 0.2);
-    border-radius: 50%;
-    border-right-color: var(--neon);
-    border-top-color: var(--neon);
-    height: 34px;
-    width: 34px;
-    animation: ring-turn 12s linear infinite;
-  }
-  @keyframes ring-turn {
-    to {
-      transform: translateX(-50%) rotate(360deg);
-    }
-  }
-  .neon-slot:hover .micro-ring,
-  .neon-slot[data-active='true'] .micro-ring {
-    transform: translateX(-50%) scale(1.12);
-  }
-  .micro-arc {
-    height: 30px;
-    width: 72px;
-  }
-  .micro-arc svg {
+  .iso-stage svg {
     height: 100%;
-    overflow: visible;
     width: 100%;
   }
-  .micro-arc path {
-    animation: arc-redraw 5.2s ease-in-out infinite;
+  .iso-group {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .iso-face {
+    stroke: rgba(244, 242, 238, 0.16);
+    stroke-linejoin: round;
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+  .iso-top {
+    fill: #212423;
+  }
+  .iso-left {
+    fill: #161817;
+  }
+  .iso-right {
+    fill: #0e100f;
+  }
+  .iso-fill.iso-top {
+    fill: #2a2e2c;
+  }
+  .iso-link {
+    fill: none;
+    stroke: rgba(244, 242, 238, 0.22);
+    stroke-dasharray: 2 3;
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .iso-group {
+      animation: iso-breathe 6s ease-in-out infinite;
+    }
+    @keyframes iso-breathe {
+      0%,
+      100% {
+        transform: translateY(1px);
+      }
+      50% {
+        transform: translateY(-1px);
+      }
+    }
+  }
+  .iso-face,
+  .iso-link {
+    transition:
+      fill 260ms ease,
+      stroke 260ms ease;
+  }
+  .neon-slot:hover .iso-fill.iso-top,
+  .neon-slot[data-active='true'] .iso-fill.iso-top {
+    fill: color-mix(in srgb, var(--neon) 42%, #14100c);
+  }
+  .neon-slot:hover .iso-fill,
+  .neon-slot[data-active='true'] .iso-fill {
+    stroke: var(--neon);
+  }
+  .neon-slot:hover .iso-link,
+  .neon-slot[data-active='true'] .iso-link {
+    stroke: var(--neon);
+  }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .neon-slot:hover .iso-group {
+      animation-duration: 2.4s;
+    }
+  }
+
+  /* --- V3 transformer plates --- */
+  .tf-stage {
+    inset: 0;
+    position: absolute;
+    z-index: 2;
+  }
+  .tf-glow {
+    background: radial-gradient(circle at 50% 42%, var(--neon), transparent 62%);
+    inset: 0;
+    opacity: 0;
+    position: absolute;
+    transition: opacity 320ms ease;
+  }
+  .tf-plates {
+    height: 100%;
+    inset: 0;
+    position: absolute;
+    width: 100%;
+  }
+  .tf-panel {
+    fill: #141615;
+    stroke: rgba(244, 242, 238, 0.14);
+    stroke-width: 1;
+    transform: translate3d(0, 0, 0);
+    transform-box: fill-box;
+    transform-origin: center;
+    transition:
+      transform 340ms cubic-bezier(0.22, 1, 0.36, 1),
+      stroke 300ms ease;
+    vector-effect: non-scaling-stroke;
+  }
+  .tf-core {
+    fill: #191c1a;
+  }
+  .neon-slot:hover .tf-glow,
+  .neon-slot[data-active='true'] .tf-glow {
+    opacity: 0.5;
+  }
+  .neon-slot:hover .tf-panel,
+  .neon-slot[data-active='true'] .tf-panel {
+    stroke: color-mix(in srgb, var(--neon) 70%, transparent);
+    transform: translate3d(var(--tx), var(--ty), 0) rotate(var(--rot));
+  }
+  .neon-slot:hover .tf-core,
+  .neon-slot[data-active='true'] .tf-core {
+    fill: color-mix(in srgb, var(--neon) 22%, #16110c);
+    stroke: var(--neon);
+  }
+
+  /* --- V4 volcanic cracks --- */
+  .vc-stage {
+    inset: 0;
+    position: absolute;
+    z-index: 2;
+  }
+  .vc-svg {
+    height: 100%;
+    inset: 0;
+    position: absolute;
+    width: 100%;
+  }
+  .vc-hint {
+    fill: none;
+    opacity: 0.5;
+    stroke: rgba(244, 242, 238, 0.18);
+    stroke-width: 0.28;
+  }
+  .vc-crack {
     fill: none;
     stroke: var(--neon);
-    stroke-dasharray: 82;
-    stroke-width: 1;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    stroke-linecap: round;
+    stroke-width: 0.4;
+    transition: stroke-dashoffset 640ms cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .micro-arc circle {
+  .vc-crack-branch {
+    stroke-width: 0.28;
+    transition-duration: 520ms;
+  }
+  .vc-glow-path {
+    fill: none;
+    filter: blur(3px);
+    opacity: 0;
+    stroke: var(--neon);
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    stroke-linecap: round;
+    stroke-width: 0.9;
+    transition:
+      stroke-dashoffset 640ms cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 300ms ease;
+  }
+  .vc-shimmer {
+    background: radial-gradient(circle, var(--neon), transparent 70%);
+    border-radius: 50%;
+    filter: blur(5px);
+    height: 34px;
+    margin: -17px 0 0 -17px;
+    opacity: 0;
+    position: absolute;
+    transition: opacity 320ms ease;
+    width: 34px;
+    z-index: 1;
+  }
+  .neon-slot:hover .vc-crack,
+  .neon-slot[data-active='true'] .vc-crack,
+  .neon-slot:hover .vc-glow-path,
+  .neon-slot[data-active='true'] .vc-glow-path {
+    stroke-dashoffset: 0;
+  }
+  .neon-slot:hover .vc-glow-path,
+  .neon-slot[data-active='true'] .vc-glow-path {
+    opacity: 0.85;
+  }
+  .neon-slot:hover .vc-shimmer,
+  .neon-slot[data-active='true'] .vc-shimmer {
+    opacity: 0.55;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .vc-crack-main {
+      animation: vc-ember 3.6s ease-in-out infinite;
+    }
+    @keyframes vc-ember {
+      0%,
+      100% {
+        opacity: 0.9;
+      }
+      50% {
+        opacity: 0.55;
+      }
+    }
+    .neon-slot:hover .vc-shimmer,
+    .neon-slot[data-active='true'] .vc-shimmer {
+      animation: vc-shimmer 1.6s ease-in-out infinite;
+    }
+    @keyframes vc-shimmer {
+      0%,
+      100% {
+        opacity: 0.5;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.7;
+        transform: scale(1.18);
+      }
+    }
+  }
+
+  /* --- V5 circuit etch --- */
+  .ce-stage {
+    inset: 0;
+    position: absolute;
+    z-index: 2;
+  }
+  .ce-svg {
+    height: 100%;
+    inset: 0;
+    position: absolute;
+    width: 100%;
+  }
+  .ce-hint {
+    fill: none;
+    opacity: 0.55;
+    stroke: rgba(244, 242, 238, 0.2);
+    stroke-width: 0.28;
+  }
+  .ce-trace {
+    fill: none;
+    stroke: color-mix(in srgb, var(--neon) 78%, transparent);
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    stroke-linecap: square;
+    stroke-linejoin: miter;
+    stroke-width: 0.34;
+    transition: stroke-dashoffset 620ms cubic-bezier(0.5, 0, 0.1, 1);
+  }
+  .ce-trace-branch {
+    stroke-width: 0.28;
+    transition-duration: 460ms;
+  }
+  .ce-pulse {
+    fill: none;
+    opacity: 0;
+    stroke: var(--neon);
+    stroke-dasharray: 5 95;
+    stroke-linecap: round;
+    stroke-width: 0.7;
+  }
+  .ce-pad,
+  .ce-via {
+    fill: #0c0e0d;
+    opacity: 0;
+    stroke: color-mix(in srgb, var(--neon) 78%, transparent);
+    stroke-width: 0.4;
+    transition: opacity 300ms ease;
+  }
+  .ce-via {
     fill: var(--neon);
+    stroke: var(--neon);
   }
-  @keyframes arc-redraw {
-    0%,
-    18% {
-      stroke-dashoffset: 82;
-    }
-    34%,
-    100% {
-      stroke-dashoffset: 0;
-    }
-  }
-  .micro-rail {
-    background: rgba(244, 242, 238, 0.24);
-    height: 1px;
-    width: 72px;
-  }
-  .micro-rail i:nth-child(1),
-  .micro-rail i:nth-child(2) {
-    background: #0f100f;
-    border: 1px solid var(--neon);
-    border-radius: 50%;
-    height: 7px;
+  .ce-figure {
+    color: var(--neon);
+    font: 300 22px/1 var(--font-display);
+    letter-spacing: -0.02em;
+    opacity: 0;
     position: absolute;
-    top: -3px;
-    width: 7px;
+    transform: translate(-50%, -50%) scale(0.9);
+    transition:
+      opacity 260ms ease,
+      transform 260ms ease;
+    white-space: nowrap;
+    z-index: 3;
   }
-  .micro-rail i:nth-child(1) {
-    left: 0;
+  .neon-slot:hover .ce-trace,
+  .neon-slot[data-active='true'] .ce-trace {
+    stroke-dashoffset: 0;
   }
-  .micro-rail i:nth-child(2) {
-    right: 0;
+  .neon-slot:hover .ce-pad,
+  .neon-slot[data-active='true'] .ce-pad,
+  .neon-slot:hover .ce-via,
+  .neon-slot[data-active='true'] .ce-via {
+    opacity: 1;
+    transition-delay: 260ms;
   }
-  .micro-rail i:nth-child(3) {
-    animation: rail-blip 4s ease-in-out infinite;
-    background: var(--neon);
-    border-radius: 50%;
-    height: 5px;
-    left: 0;
-    position: absolute;
-    top: -2px;
-    width: 5px;
+  .neon-slot:hover .ce-figure,
+  .neon-slot[data-active='true'] .ce-figure {
+    opacity: 1;
+    text-shadow: 0 0 12px var(--neon);
+    transform: translate(-50%, -50%) scale(1);
+    transition-delay: 520ms;
   }
-  @keyframes rail-blip {
-    0%,
-    15%,
-    100% {
-      opacity: 0;
-      transform: translateX(0);
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .neon-slot:hover .ce-pulse,
+    .neon-slot[data-active='true'] .ce-pulse {
+      animation: ce-current 1.5s linear 0.35s infinite;
+      opacity: 0.95;
     }
-    4% {
-      opacity: 1;
-    }
-    14% {
-      opacity: 0;
-      transform: translateX(67px);
+    @keyframes ce-current {
+      from {
+        stroke-dashoffset: 100;
+      }
+      to {
+        stroke-dashoffset: 0;
+      }
     }
   }
+
+  /* --- Lego entrance (shared) --- */
   achievement-neon-rendition[data-motion-ready='true']:not([data-entered='true']) [data-lego-piece] {
     opacity: 0;
     transform: translate3d(0, -150px, 0) rotate(var(--drop-rotation, 1.6deg));
@@ -707,68 +977,67 @@ const shifts = variant === 3 ? cascadeShifts : baseShifts;
       transform: none;
     }
   }
+
+  /* --- Slide reveal (shared) --- */
   @media (hover: hover) and (prefers-reduced-motion: no-preference) {
     .neon-slot:hover .neon-card {
-      transform: translate3d(var(--shift-x), var(--shift-y), 0);
+      transform: translate3d(var(--shift-x), 0, 0);
     }
   }
   @media (prefers-reduced-motion: no-preference) {
     .neon-slot[data-active='true'] .neon-card {
-      transform: translate3d(var(--shift-x), var(--shift-y), 0);
+      transform: translate3d(var(--shift-x), 0, 0);
+    }
+  }
+
+  /* --- Responsive --- */
+  @media (max-width: 1180px) {
+    .neon-slot {
+      height: 400px;
     }
   }
   @media (max-width: 900px) {
-    .achievement-neon-rendition {
-      overflow: clip !important;
-    }
-    .neon-canvas,
-    achievement-neon-rendition[data-variation='3'] .neon-canvas {
-      display: grid;
-      gap: 58px;
-      height: auto;
+    .neon-canvas {
+      gap: 14px;
+      grid-template-columns: repeat(2, 1fr);
       padding-inline: 34px;
     }
-    .neon-filler,
-    .cascade-diamond {
-      display: none;
-    }
-    .neon-slot,
-    achievement-neon-rendition[data-variation='3'] .neon-slot {
-      --shift-x: 0px !important;
-      --shift-y: 44px !important;
-      height: auto !important;
-      left: auto !important;
-      min-height: 280px;
-      position: relative;
-      top: auto !important;
-      width: auto !important;
-    }
-    .neon-slot[data-piece='mlsecops'] {
-      min-height: 300px;
-    }
-    .neon-slot[data-piece='un'] {
-      min-height: 360px;
+    .neon-slot {
+      height: 384px;
     }
   }
   @media (max-width: 600px) {
-    .neon-canvas,
-    achievement-neon-rendition[data-variation='3'] .neon-canvas {
+    .neon-canvas {
+      grid-template-columns: 1fr;
       padding-inline: 24px;
     }
+    .neon-slot {
+      --shift-x: 52px !important;
+      height: 360px;
+    }
   }
+
+  /* --- Reduced motion: static settled collage, outline hover only --- */
   @media (prefers-reduced-motion: reduce) {
     .lego-piece,
-    .ghost-rule,
-    .micro-element,
-    .micro-element * {
+    .iso-group,
+    .vc-crack-main,
+    .ce-pulse {
       animation: none !important;
     }
     .lego-piece {
       opacity: 1 !important;
       transform: none !important;
     }
-    .neon-reveal-clip {
+    .neon-underlay,
+    .tf-glow,
+    .tf-plates,
+    .vc-stage,
+    .ce-stage {
       display: none;
+    }
+    .ghost-rule {
+      transform: scaleX(1);
     }
     .neon-card {
       transition: outline-color 180ms ease;
@@ -776,29 +1045,6 @@ const shifts = variant === 3 ? cascadeShifts : baseShifts;
     .neon-card:hover {
       outline: 1px solid var(--accent);
       outline-offset: -1px;
-    }
-    .ghost-rule {
-      transform: scaleX(1);
-    }
-    .micro-element {
-      opacity: 0.72;
-      transform: translateX(-50%);
-    }
-    .micro-meter i {
-      opacity: 0.42;
-      transform: scaleY(1);
-    }
-    .micro-meter i[data-adopted='true'] {
-      opacity: 0.9;
-    }
-    .micro-arc path {
-      stroke-dashoffset: 0;
-    }
-    .micro-rail i:nth-child(3) {
-      left: auto;
-      opacity: 1;
-      right: 1px;
-      transform: none;
     }
   }
 </style>
