@@ -322,6 +322,17 @@ export const products: PolicyRecordProduct[] = [
     summary:
       'Spanish edition of the greener data-centres policy brief, proposing five recommendations for policymakers to steer Europe toward more ecological data centres.',
   },
+  {
+    title: 'UN data governance principles: synthesis note',
+    instrument: 'UN CSTD WGDG',
+    date: 'MAR 2026',
+    track: 'global',
+    href: 'https://unctad.org/system/files/information-document/cstd-wgdg-synthesis-note-track-1_en.pdf',
+    slug: '28-un-wgdg-synthesis-note',
+    role: 'CO-FACILITATOR',
+    summary:
+      'Synthesis note of Track 1 of the UN CSTD Working Group on Data Governance: fundamental principles of data governance at all levels, consolidating seventy contributions from Member States, international organisations, civil society, academia and the private sector to a questionnaire designed by the track co-facilitators, the Institute among them.',
+  },
 ];
 
 // The second shelf: instruments and reports the Institute contributed to rather than
@@ -336,17 +347,6 @@ export const instrumentFilters = [
 ];
 
 export const instruments: PolicyRecordProduct[] = [
-  {
-    title: 'UN data governance principles synthesis note',
-    instrument: 'UN CSTD WGDG',
-    track: 'un',
-    href: 'https://unctad.org/system/files/information-document/cstd-wgdg-synthesis-note-track-1_en.pdf',
-    slug: 'i00-un-wgdg-synthesis-note',
-    role: 'CHAIR, PRINCIPLES COMMITTEE',
-    unverified: true,
-    summary:
-      'Synthesis note of Track 1 of the UN CSTD Working Group on Data Governance, whose Principles Committee the Institute chairs. Summary pending: the PDF is bot-gated and awaits manual retrieval.',
-  },
   {
     title: 'Governing AI for Humanity: final report',
     instrument: 'UN AI ADVISORY BODY',
