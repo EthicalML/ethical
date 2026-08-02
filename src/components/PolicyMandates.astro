@@ -1,6 +1,6 @@
 ---
 interface Mandate {
-  href?: string;
+  active?: boolean;
   role: string;
 }
 
@@ -25,11 +25,7 @@ const { groups } = Astro.props;
           {group.mandates.map((mandate) => (
             <p class="mandate-row">
               <span>{mandate.role}</span>
-              {mandate.href && (
-                <a href={mandate.href} target="_blank" rel="noopener noreferrer" aria-label={`Public record for ${mandate.role}`}>
-                  Record →
-                </a>
-              )}
+              {mandate.active && <i class="active-pill">ACTIVE</i>}
             </p>
           ))}
         </div>
@@ -72,11 +68,15 @@ const { groups } = Astro.props;
     padding: 15px 0;
   }
 
-  a {
+  .active-pill {
+    align-self: center;
+    border: 1px solid rgba(94, 230, 160, 0.4);
+    border-radius: var(--radius-pill);
     color: var(--accent);
-    font: var(--mono-9) / 1.4 var(--font-mono);
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
+    font: var(--mono-9) / 1 var(--font-mono);
+    font-style: normal;
+    letter-spacing: 0.1em;
+    padding: 5px 10px;
   }
 
   @media (max-width: 800px) {

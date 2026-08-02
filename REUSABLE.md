@@ -4,7 +4,7 @@ Documented reusable components for composed pages. An API change to a component 
 
 ## AchievementNeonRendition
 
-`src/components/AchievementNeonRendition.astro`. One card system, two layouts, for a set of headline achievements: each card carries a top-anchored eyebrow, a hard one-line title, a description, at most a primary and a secondary link, a dim oversized ghost identifier cropped by the block edge, and an isometric mini-structure ghosted into the bottom-right corner. On reveal (hover or tap) the card displaces out of its footprint, uncovering a neon under-block on the vacated side. Inert dud blocks fill the remaining cells. Live on `/policy/` as variant 2.
+`src/components/AchievementNeonRendition.astro`. One card system, two layouts, for a set of headline achievements: each card carries a top-anchored eyebrow, a fixed-scale title, a description, at most a primary and a secondary link rendered as buttons, a dim oversized ghost identifier cropped by the block edge, and an isometric mini-structure ghosted into the bottom-right corner. On reveal (hover or tap) the card displaces out of its footprint, uncovering a neon under-block on the vacated side. Inert dud blocks fill the remaining cells. Live on `/policy/` as variant 2.
 
 ### Variants
 
@@ -21,16 +21,16 @@ Documented reusable components for composed pages. An API change to a component 
 
 ### Card schema (`AchievementCard`)
 
-| Field      | Type                | Notes                                                                                                                                                                              |
-| ---------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `piece`    | `string`            | Key into `layout.blocks` and the iso-structure map (`eu`, `uk`, `mlsecops`, `un`, `acm`, `through-line`).                                                                          |
-| `eyebrow`  | `string`            | Top mono label.                                                                                                                                                                    |
-| `title`    | `string`            | Hard single line; ellipsis when it does not fit.                                                                                                                                   |
-| `summary`  | `string`            | Clamped to 3 lines (2 on short cards).                                                                                                                                             |
-| `links`    | `{ label, href }[]` | Variant 1 renders the first link as a button; variant 2 renders all links on long cards, the first on short cards. External links get `target="_blank" rel="noopener noreferrer"`. |
-| `neon`     | `string`            | Under-block colour revealed on displacement; also tints the ghost mark and iso structure on hover.                                                                                 |
-| `ghost`    | `string`            | Oversized dim identifier cropped at the top-right edge.                                                                                                                            |
-| `footnote` | `string?`           | Accent mono line under the summary; variant 2 only.                                                                                                                                |
+| Field      | Type                | Notes                                                                                                                                                                                                                |
+| ---------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `piece`    | `string`            | Key into `layout.blocks` and the iso-structure map (`eu`, `uk`, `mlsecops`, `un`, `acm`, `through-line`).                                                                                                            |
+| `eyebrow`  | `string`            | Top mono label.                                                                                                                                                                                                      |
+| `title`    | `string`            | One fixed size per variant; variant 2 titles may wrap, never ellipsize. In variant 1 the size-derived scale applies with a hard single line.                                                                         |
+| `summary`  | `string`            | Clamped to 3 lines (2 on short cards).                                                                                                                                                                               |
+| `links`    | `{ label, href }[]` | Rendered as primary buttons in both variants. Variant 1 and short variant-2 cards render the first link only; long variant-2 cards render all links. External links get `target="_blank" rel="noopener noreferrer"`. |
+| `neon`     | `string`            | Under-block colour revealed on displacement; also tints the ghost mark and iso structure on hover.                                                                                                                   |
+| `ghost`    | `string`            | Oversized dim identifier cropped at the top-right edge.                                                                                                                                                              |
+| `footnote` | `string?`           | Accent mono line under the summary; variant 2 only.                                                                                                                                                                  |
 
 The isometric structures are the six named shapes keyed by `piece` inside the component; a new `piece` value requires adding its structure there.
 
@@ -66,7 +66,7 @@ The isometric structures are the six named shapes keyed by `piece` inside the co
 
 ### Behaviours
 
-- **Entrance.** Scroll-triggered: pieces fall in as lego blocks, bottom row first (order derived from row occupancy in cell mode, rect bottoms in freeform mode), with a settle bounce, a neighbour nudge on each landing, and a neon rule wiping across each card top. The trigger fires at 75% scroll progress, or on visibility when the viewport cannot reach 75%.
+- **Entrance.** Scroll-triggered: pieces fall in as lego blocks, bottom row first (order derived from row occupancy in cell mode, rect bottoms in freeform mode), with a settle bounce, a neighbour nudge on each landing, and a neon rule wiping across each card top. The trigger fires at 50% scroll progress, or on visibility when the viewport cannot reach 50%.
 - **Reveal.** Hover (pointer devices) or tap (persisted via `data-active`, cleared by tapping again, tapping another card, or Escape). `slide` moves the card by the travel vector and exposes the neon within its original footprint; `tilt` lifts and rotates it. Stacking is static: each slot keeps one permanent layer, so a reveal never reorders cards.
 - **Reduced motion.** No entrance, no neon underlay, no displacement; the stack renders settled with an outline hover only.
 - **Mobile.** Cell mode stacks to a single column below 900px; freeform mode scales proportionally below its 1100px design width, then stacks below 640px. Duds are hidden in both stacks.

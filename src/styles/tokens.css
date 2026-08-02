@@ -1653,6 +1653,9 @@ main > .home-section:last-child { padding-bottom: 120px; }
 }
 .policy-section a,
 .policy-work a { color: var(--accent); }
+/* Clear air between the section intro and the set table: the cards' upward
+   entrance travel must not clash with the text above. */
+.policy-outcomes .achievement-neon-rendition { margin-top: 64px; }
 .bridge-grid {
   display: grid;
   gap: 14px;
@@ -1673,17 +1676,6 @@ main > .home-section:last-child { padding-bottom: 120px; }
   color: var(--text-2);
   font-size: 15px;
   line-height: 1.65;
-}
-.regulation-line,
-.mandate-note {
-  border-top: 1px solid var(--hairline);
-  color: var(--text-4);
-  font: var(--mono-10)/1.7 var(--font-mono);
-  letter-spacing: .06em;
-  margin: 34px 0 0;
-  max-width: 1100px;
-  padding-top: 20px;
-  text-transform: uppercase;
 }
 .bridge-grid h3 {
   font: 300 34px/1.12 var(--font-display);
@@ -1721,11 +1713,7 @@ main > .home-section:last-child { padding-bottom: 120px; }
   gap: 22px;
   margin-top: 34px;
 }
-.policy-work .policy-secondary {
-  font: var(--mono-10)/1 var(--font-mono);
-  letter-spacing: .08em;
-  text-transform: uppercase;
-}
+.policy-work a.button:not(.primary) { color: var(--text-1); }
 .footnote-band { align-items:start; border-top: 1px solid var(--hairline); display:grid; gap:44px; grid-template-columns:1.15fr .85fr 250px; padding:44px 48px 34px; }
 .footnote-band p { color:rgba(244,242,238,.62); font-size:14px; line-height:1.62; margin:0; max-width:520px; }
 .footnote-band .eyebrow { color:rgba(244,242,238,.4); font:9.5px/normal var(--font-mono); letter-spacing:.14em; }
