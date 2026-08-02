@@ -12,7 +12,7 @@ import {
 // sphere. Near-side phrases are brighter and larger, far-side phrases dimmer and smaller, so
 // depth reads as brightness and scale. Phrases render in the green accent by default (with the
 // depth fade). The cursor is a gravity field: phrases within a generous radius are pulled
-// toward it with a smooth falloff, enlarge, and resolve to white, easing back on leave. A faint
+// toward it with a smooth falloff, gently enlarge, and resolve to white, easing back on leave. A faint
 // signal-interference slice flickers a random phrase every few seconds and rides hovered ones.
 
 // Shorter fragments only, so each phrase stays a legible surface tag rather than a ribbon.
@@ -107,17 +107,18 @@ const drawPhrase = (
 export class PolicyHeroPhraseTerrain extends HTMLElement {
   private controller = new AbortController();
   private engine?: CanvasEngine;
+  private canvas?: HTMLCanvasElement;
   private pointer = { active: false, strength: 0, targetX: 0.5, targetY: 0.5, x: 0.5, y: 0.5 };
 
   connectedCallback() {
     this.controller = new AbortController();
     const canvas = this.querySelector('canvas');
     if (!canvas) return;
-    canvas.addEventListener('pointerenter', this.handlePointer, { signal: this.controller.signal });
-    canvas.addEventListener('pointermove', this.handlePointer, { signal: this.controller.signal });
-    canvas.addEventListener('pointerleave', this.handlePointerLeave, {
-      signal: this.controller.signal,
-    });
+    this.canvas = canvas;
+    // Track on window: the canvas sits behind the hero copy, which would otherwise swallow
+    // pointer events and make the hover flicker on and off as the cursor crosses text.
+    window.addEventListener('pointermove', this.handlePointer, { signal: this.controller.signal });
+    window.addEventListener('blur', this.handlePointerLeave, { signal: this.controller.signal });
     // Rebuild sprites once the mono webfont resolves so they are not stuck on a fallback.
     document.fonts?.ready.then(() => spriteCache.clear());
     this.engine = new CanvasEngine(canvas, this.draw);
@@ -129,12 +130,15 @@ export class PolicyHeroPhraseTerrain extends HTMLElement {
   }
 
   private handlePointer = (event: PointerEvent) => {
-    if (event.pointerType === 'touch') return;
-    const canvas = event.currentTarget as HTMLCanvasElement;
-    const bounds = canvas.getBoundingClientRect();
-    this.pointer.active = true;
-    this.pointer.targetX = (event.clientX - bounds.left) / bounds.width;
-    this.pointer.targetY = (event.clientY - bounds.top) / bounds.height;
+    if (event.pointerType === 'touch' || !this.canvas) return;
+    const bounds = this.canvas.getBoundingClientRect();
+    const nx = (event.clientX - bounds.left) / bounds.width;
+    const ny = (event.clientY - bounds.top) / bounds.height;
+    this.pointer.active = nx >= 0 && nx <= 1 && ny >= 0 && ny <= 1;
+    if (this.pointer.active) {
+      this.pointer.targetX = nx;
+      this.pointer.targetY = ny;
+    }
   };
 
   private handlePointerLeave = () => {
@@ -177,26 +181,31 @@ export class PolicyHeroPhraseTerrain extends HTMLElement {
     context.fillRect(0, 0, width, height);
 
     // Painter's order: far side first so near-side phrases sit on top.
-    const ordered = ANCHORS.map((anchor) => ({
-      anchor,
-      point: spherePoint(anchor, rotation),
-    })).sort((a, b) => a.point.z - b.point.z);
+    const ordered = ANCHORS.map((anchor) => {
+      const point = spherePoint(anchor, rotation);
+      return {
+        anchor,
+        point,
+        x: center.x + point.x * radiusX,
+        y: center.y - point.y * radiusY,
+      };
+    }).sort((a, b) => a.point.z - b.point.z);
 
-    ordered.forEach(({ anchor, point }) => {
+    ordered.forEach(({ anchor, point, x: baseX, y: baseY }) => {
       if (point.z < -0.55) return;
       const depthN = clamp((point.z + 1) / 2);
       const fade = smooth(clamp((point.z + 0.55) / 0.4));
       const surfaceX = point.x * 0.72 - point.y * 0.44;
       const band = Math.exp(-Math.pow((surfaceX - sweep) / 0.22, 2));
       const directional = clamp((-point.x * 0.5 + point.y * 0.68 + 0.46) / 1.42);
-      let x = center.x + point.x * radiusX;
-      let y = center.y - point.y * radiusY;
+      let x = baseX;
+      let y = baseY;
 
       let alpha = clamp(0.05 + depthN * 0.34 + directional * 0.24 + band * 0.42) * fade;
       let k = scale * anchor.size * (0.42 + depthN * 0.62);
 
-      // Gravity field: phrases inside a generous radius are pulled toward the cursor with a
-      // smooth falloff (nearest strongest), brighten, enlarge and resolve to white. The pull
+      // Gravity field: phrases inside the radius are pulled toward the cursor with a smooth
+      // falloff (nearest strongest), brighten, gently enlarge and resolve to white. The pull
       // scales with the eased pointer strength, so phrases drift back when the cursor leaves.
       let heat = 0;
       if (strength > 0.01) {
@@ -209,7 +218,7 @@ export class PolicyHeroPhraseTerrain extends HTMLElement {
           x += dx * pull;
           y += dy * pull;
           alpha = clamp(alpha + heat * 0.8);
-          k += heat * 0.55 * scale * anchor.size;
+          k += heat * 0.28 * scale * anchor.size;
           y -= heat * 3 * scale;
         }
       }

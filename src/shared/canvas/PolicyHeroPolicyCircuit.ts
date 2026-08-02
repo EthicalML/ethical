@@ -25,11 +25,13 @@ interface District {
   rise?: string;
 }
 
-// The five core towers, one per policy track from /policy/. Each has a rising beat phrase.
+// The five core towers, one per jurisdiction the Institute works across. Screen placement
+// from the iso projection: EU and UK on the two top towers, USA far left, LATAM right,
+// UN & Global on the bottom tower. Each has a rising beat phrase.
 const TOWERS: District[] = [
   {
     kind: 'tower',
-    label: 'EU AI ACT',
+    label: 'EU',
     gx: -3,
     gz: -1,
     base: 2,
@@ -39,23 +41,23 @@ const TOWERS: District[] = [
   },
   {
     kind: 'tower',
-    label: 'EU DIGITAL ACTS',
+    label: 'UK',
     gx: -1,
     gz: -3,
     base: 1,
     half: 0.5,
-    payload: 'provenance',
-    rise: 'dataset provenance',
+    payload: 'oversight',
+    rise: 'continuous oversight',
   },
   {
     kind: 'tower',
-    label: 'UK',
+    label: 'LATAM',
     gx: 3,
     gz: -2,
     base: 2,
     half: 0.5,
-    payload: 'oversight',
-    rise: 'continuous oversight',
+    payload: 'capacity',
+    rise: 'regional capacity building',
   },
   {
     kind: 'tower',
@@ -69,13 +71,13 @@ const TOWERS: District[] = [
   },
   {
     kind: 'tower',
-    label: 'SUSTAINABILITY',
+    label: 'USA',
     gx: -2.5,
     gz: 3,
     base: 2,
     half: 0.5,
-    payload: 'energy',
-    rise: 'inference-phase transparency',
+    payload: 'frameworks',
+    rise: 'sector-led guidance',
   },
 ];
 
@@ -217,15 +219,18 @@ export class PolicyHeroPolicyCircuit extends HTMLElement {
   private heights = TOWERS.map((tower) => tower.base);
   private towerHeat = TOWERS.map(() => 0);
   private outerHeat = OUTER.map(() => 0);
+  private canvas?: HTMLCanvasElement;
   private pointer = { active: false, targetX: 0.5, targetY: 0.5, x: 0.5, y: 0.5 };
 
   connectedCallback() {
     this.controller = new AbortController();
     const canvas = this.querySelector('canvas');
     if (!canvas) return;
-    canvas.addEventListener('pointerenter', this.handlePointer, { signal: this.controller.signal });
-    canvas.addEventListener('pointermove', this.handlePointer, { signal: this.controller.signal });
-    canvas.addEventListener('pointerleave', this.handleLeave, { signal: this.controller.signal });
+    this.canvas = canvas;
+    // Track on window: the canvas sits behind the hero copy, which would otherwise swallow
+    // pointer events and make the hover flicker on and off as the cursor crosses text.
+    window.addEventListener('pointermove', this.handlePointer, { signal: this.controller.signal });
+    window.addEventListener('blur', this.handleLeave, { signal: this.controller.signal });
     this.engine = new CanvasEngine(canvas, this.draw);
   }
 
@@ -235,12 +240,15 @@ export class PolicyHeroPolicyCircuit extends HTMLElement {
   }
 
   private handlePointer = (event: PointerEvent) => {
-    if (event.pointerType === 'touch') return;
-    const canvas = event.currentTarget as HTMLCanvasElement;
-    const bounds = canvas.getBoundingClientRect();
-    this.pointer.active = true;
-    this.pointer.targetX = (event.clientX - bounds.left) / bounds.width;
-    this.pointer.targetY = (event.clientY - bounds.top) / bounds.height;
+    if (event.pointerType === 'touch' || !this.canvas) return;
+    const bounds = this.canvas.getBoundingClientRect();
+    const nx = (event.clientX - bounds.left) / bounds.width;
+    const ny = (event.clientY - bounds.top) / bounds.height;
+    this.pointer.active = nx >= 0 && nx <= 1 && ny >= 0 && ny <= 1;
+    if (this.pointer.active) {
+      this.pointer.targetX = nx;
+      this.pointer.targetY = ny;
+    }
   };
 
   private handleLeave = () => {
@@ -267,11 +275,15 @@ export class PolicyHeroPolicyCircuit extends HTMLElement {
     let nearKind: 'none' | 'tower' | 'outer' = 'none';
     let nearIndex = -1;
     if (this.pointer.active) {
-      let best = unit * 3;
+      let best = unit * 5;
       const consider = (kind: 'tower' | 'outer', list: District[]) => {
         list.forEach((d, index) => {
+          // Measure to the district's vertical body (base-to-top segment), not just its
+          // ground point, so hovering anywhere on a tall tower counts.
           const [sx, sy] = project(d.gx, 0, d.gz);
-          const distance = Math.hypot(cursorX - sx, cursorY - sy);
+          const topY = project(d.gx, d.base, d.gz)[1];
+          const clampedY = Math.min(Math.max(cursorY, topY), sy);
+          const distance = Math.hypot(cursorX - sx, cursorY - clampedY);
           if (distance < best) {
             best = distance;
             nearKind = kind;
