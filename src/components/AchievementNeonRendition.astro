@@ -534,7 +534,15 @@ const circuitByCard = origins.map((o, i) => ({ long: circuitSet(o, i, 5, true), 
       const scrollReach = Math.min(bounds.height, innerHeight);
       const progress = Math.max(0, Math.min(1, (innerHeight - bounds.top) / scrollReach));
       this.dataset.entranceProgress = progress.toFixed(3);
-      if (progress < 0.75) return;
+      if (progress < 0.75) {
+        // A zoomed-out or very tall viewport can make 0.75 unreachable (no scroll distance
+        // left); fire once the section is visible rather than never entering.
+        const scroller = document.scrollingElement;
+        const remaining = scroller ? Math.max(0, scroller.scrollHeight - innerHeight - scroller.scrollTop) : 0;
+        const maxProgress = Math.max(0, Math.min(1, (innerHeight - (bounds.top - remaining)) / scrollReach));
+        const visible = bounds.top < innerHeight && bounds.bottom > 0;
+        if (maxProgress >= 0.75 || !visible) return;
+      }
       this.enterTriggered([...this.querySelectorAll<HTMLElement>('[data-lego-piece]')]);
     }
 
