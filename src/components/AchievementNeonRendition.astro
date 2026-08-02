@@ -348,6 +348,9 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
       const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       pieces.forEach((piece) => piece.style.setProperty('--lego-order', piece.dataset.order ?? '0'));
+      this.querySelectorAll<HTMLElement>('[data-neon-slot]').forEach((slot) => {
+        slot.addEventListener('pointerleave', this.handleReturn, { signal: this.controller.signal });
+      });
       this.addEventListener('click', this.handleTap, { signal: this.controller.signal });
       window.addEventListener('keydown', this.handleKey, { signal: this.controller.signal });
 
@@ -369,6 +372,13 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
       this.impactTimers.forEach((timer) => clearTimeout(timer));
       this.impactTimers = [];
     }
+
+    private handleReturn = (event: PointerEvent) => {
+      const slot = event.currentTarget as HTMLElement;
+      slot.dataset.returning = 'true';
+      const timer = window.setTimeout(() => delete slot.dataset.returning, 1050);
+      this.impactTimers.push(timer);
+    };
 
     private handleTap = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
@@ -491,6 +501,9 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
   }
   .neon-slot:hover,
   .neon-slot[data-active='true'] {
+    z-index: 12;
+  }
+  .neon-slot[data-returning='true'] {
     z-index: 10;
   }
   .neon-underlay,
@@ -504,12 +517,14 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
   .neon-underlay {
     background: var(--neon);
     opacity: 0;
-    transition: opacity 300ms ease;
+    transition: opacity 180ms ease 1000ms;
     z-index: 0;
   }
   .neon-slot:hover .neon-underlay,
   .neon-slot[data-active='true'] .neon-underlay {
     opacity: 1;
+    transition-delay: 0ms;
+    transition-duration: 0ms;
   }
   .neon-card {
     background: #171918;
@@ -723,13 +738,17 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
     color: rgba(244, 242, 238, 0.05);
     font: 300 100px/0.8 var(--font-display);
     letter-spacing: -0.08em;
-    max-width: 50%;
-    overflow: hidden;
     position: absolute;
     right: -0.02em;
     top: -0.1em;
     white-space: nowrap;
     z-index: 1;
+  }
+  /* The 50% cap applies to the collage only; in the set table the ghost and its
+     carbon must share identical geometry so the continuation aligns. */
+  [data-variation='1'] .ghost-mark {
+    max-width: 50%;
+    overflow: hidden;
   }
   .neon-slot[data-size='long'] .ghost-mark {
     font-size: clamp(86px, 9vw, 124px);
