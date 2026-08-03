@@ -269,6 +269,11 @@ const layout = {
 <AchievementNeonRendition variant={1} cards={cards} layout={layout} />
 ```
 
+## Embed modes
+
+- `SurveyExplorer` / `SurveyExplorerIsland` accept a default-off `compact` prop for half-width card embeds: the question dropdown replaces the tabs and the sort button, chrome is stripped, type and bars tighten to card scale, the N count is dropped, and the focus block becomes a name/share/YoY row. Currently unwired.
+- `PolicyRecordPreview` accepts a default-off `staged` prop that forces its sub-900px list/detail flow at any viewport (narrow embeds): filters+list first, a pick shows the pane with the back control. Currently unwired.
+
 ## PhraseTerrain
 
 `src/shared/canvas/PhraseTerrain.ts`. A shared canvas custom element (`<phrase-terrain>` wrapping a `.hero-canvas`) rendering a slowly rotating sphere of short text phrases with depth fade, a band sweep, and a cursor gravity field (window-level pointer tracking; nearby phrases pull toward the cursor, brighten and resolve to white). `setPhrases(list)` swaps the phrase set with a ~400ms crossfade; with no list it defaults to the policy corpus fragments (`utils/PolicyCorpus` via `PolicyHeroShared`). Honors the canvas mount contract (IntersectionObserver gating, reduced-motion static frame, teardown on disconnect).

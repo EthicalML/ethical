@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import { isExternalHref } from '../utils/external-links.mjs';
 import AnimationWindow from './AnimationWindow.astro';
 import KaosGraph from './KaosGraph.astro';
+import SurveyExplorerIsland from './SurveyExplorerIsland.astro';
 
 interface Action {
   label: string;
@@ -14,6 +15,12 @@ interface Projects {
   section: {
     eyebrow: string;
     title: string;
+    intro: string;
+  };
+  survey: {
+    title: string;
+    intro: string;
+    actions: Action[];
   };
   kompute: {
     figure: string;
@@ -54,6 +61,27 @@ interface Projects {
     panelEyebrow: string;
     panelStatus: string;
   };
+  governance: {
+    eyebrow: string;
+    previewEyebrow: string;
+    previewLabel: string;
+    previewTitle: string;
+    steps: Array<{ label: string; detail: string }>;
+    title: string;
+    text: string;
+    actions: Action[];
+  };
+  security: {
+    eyebrow: string;
+    leftHeading: string;
+    rightHeading: string;
+    rows: Array<{ owasp: string; mlsecops: string }>;
+    title: string;
+    text: string;
+    relatedIntro: string;
+    relatedLinks: Array<{ label: string; href: string }>;
+    actions: Action[];
+  };
 }
 
 interface Props {
@@ -71,6 +99,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
 <open-source-showcase id="opensource" class:list={['open-source-prototype', compact && 'compact', homepage && 'home-section']} data-reveal>
   <p class="eyebrow">{projects.section.eyebrow}</p>
   <h2>{projects.section.title}</h2>
+  <p class="section-intro">{projects.section.intro}</p>
 
   <article class="kompute-feature">
     <div class="oss-copy">
@@ -106,60 +135,6 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     </div>
     <div class="fixed-canvas cube-mount"><kompute-cube><canvas aria-label="Animated 27-cubie Rubik's cube"></canvas></kompute-cube></div>
   </article>
-
-  <div class="oss-pair">
-    <article class="oss-half">
-      <div class="oss-preview xai-preview">
-        <p class="figure-label"><span>{projects.xai.figure}</span></p>
-        <div class="xai-stages">
-          {
-            projects.xai.stages.map(({ title, detail }) => (
-              <div>
-                <>
-                  <p>
-                    <>
-                      <span>{title}</span>
-                      <small>{detail}</small>
-                    </>
-                  </p>
-                  <i>
-                    <b />
-                  </i>
-                </>
-              </div>
-            ))
-          }
-        </div>
-      </div>
-      <h3>{projects.xai.title}</h3>
-      <p>{projects.xai.text}</p>
-      <div class="oss-statline">{statline('xai').map((stat) => <span>{stat}</span>)}</div>
-      <div class="actions">
-        <a class="button primary" href={projects.xai.linkHref}>{projects.xai.linkLabel}</a>
-      </div>
-    </article>
-    <article class="oss-half">
-      <div class="oss-preview ecosystem-preview">
-        <p class="figure-label"><span>{projects.ecosystem.leftHeading}</span><span>{projects.ecosystem.rightHeading}</span></p>
-        <div>
-          {
-            projects.ecosystem.rows.map(({ title }) => (
-              <p>
-                <span>{title}</span>
-              </p>
-            ))
-          }
-        </div>
-      </div>
-      <h3>{projects.ecosystem.title}</h3>
-      <p>{projects.ecosystem.text}</p>
-      <div class="oss-statline">{statline('ecosystem').map((stat) => <span>{stat}</span>)}</div>
-      <div class="actions">
-        <a class="button primary" href={projects.ecosystem.linkHref} target="_blank" rel="noopener noreferrer">{projects.ecosystem.linkLabel}</a>
-        <a class="button" href={projects.ecosystem.guidelinesHref} target="_blank" rel="noopener noreferrer">{projects.ecosystem.guidelinesLabel}</a>
-      </div>
-    </article>
-  </div>
 
   <article class="kaos-feature">
     <div>
@@ -201,6 +176,171 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
       </AnimationWindow>
     </div>
   </article>
+
+  <div id="reports" class="survey-feature">
+    <header>
+      <div>
+        <h3 data-morph-source="survey-title">{projects.survey.title}</h3>
+        <p>{projects.survey.intro}</p>
+      </div>
+      <nav>
+        {
+          projects.survey.actions.map(({ label, href, kind }) => (
+            <a class:list={['button', kind]} href={href} data-morph-pair={href === '/data/survey-explorer/' ? 'survey-title' : undefined}>
+              {label}
+            </a>
+          ))
+        }
+      </nav>
+    </header>
+    <div class="home-survey-card"><SurveyExplorerIsland /></div>
+  </div>
+
+  {
+    /* Flagship initiative carousel: user-controlled only (prev/next scroll-snap,
+      no auto-rotation per the motion convention); stacked list below 900px. */
+  }
+  <div class="oss-carousel">
+    <div class="oss-carousel-track" data-carousel-track tabindex="-1">
+      <article class="oss-card">
+        <div class="oss-preview xai-preview">
+          <p class="figure-label"><span>{projects.xai.figure}</span></p>
+          <div class="xai-stages">
+            {
+              projects.xai.stages.map(({ title, detail }) => (
+                <div>
+                  <>
+                    <p>
+                      <>
+                        <span>{title}</span>
+                        <small>{detail}</small>
+                      </>
+                    </p>
+                    <i>
+                      <b />
+                    </i>
+                  </>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+        <h3>{projects.xai.title}</h3>
+        <p>{projects.xai.text}</p>
+        <div class="oss-statline">{statline('xai').map((stat) => <span>{stat}</span>)}</div>
+        <div class="actions">
+          <a class="button primary" href={projects.xai.linkHref}>{projects.xai.linkLabel}</a>
+        </div>
+      </article>
+      <article class="oss-card">
+        <div class="oss-preview ecosystem-preview">
+          <p class="figure-label"><span>{projects.ecosystem.leftHeading}</span><span>{projects.ecosystem.rightHeading}</span></p>
+          <div>
+            {
+              projects.ecosystem.rows.map(({ title }) => (
+                <p>
+                  <span>{title}</span>
+                </p>
+              ))
+            }
+          </div>
+        </div>
+        <h3>{projects.ecosystem.title}</h3>
+        <p>{projects.ecosystem.text}</p>
+        <div class="oss-statline">{statline('ecosystem').map((stat) => <span>{stat}</span>)}</div>
+        <div class="actions">
+          <a class="button primary" href={projects.ecosystem.linkHref} target="_blank" rel="noopener noreferrer">{projects.ecosystem.linkLabel}</a>
+          <a class="button" href={projects.ecosystem.guidelinesHref} target="_blank" rel="noopener noreferrer">{projects.ecosystem.guidelinesLabel}</a>
+        </div>
+      </article>
+      <article class="oss-card">
+        <div class="initiative-preview governance-preview">
+          <header><span>{projects.governance.previewEyebrow}</span><span>{projects.governance.previewLabel}</span></header>
+          <h4>{projects.governance.previewTitle}</h4>
+          {
+            projects.governance.steps.map(({ label, detail }, index) => (
+              <p>
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                {label}
+                <i>{detail}</i>
+              </p>
+            ))
+          }
+        </div>
+        <p class="eyebrow">{projects.governance.eyebrow}</p>
+        <h3>{projects.governance.title}</h3>
+        <p>{projects.governance.text}</p>
+        <div class="actions">
+          {
+            projects.governance.actions.map(({ label, href, kind }) => (
+              <a
+                class:list={['button', kind]}
+                href={href}
+                target={isExternalHref(href) ? '_blank' : undefined}
+                rel={isExternalHref(href) ? 'noopener noreferrer' : undefined}
+              >
+                {label}
+              </a>
+            ))
+          }
+        </div>
+      </article>
+      <article class="oss-card">
+        <div class="initiative-preview mlsecops-preview">
+          <header><span>{projects.security.leftHeading}</span><span>{projects.security.rightHeading}</span></header>
+          {
+            projects.security.rows.map(({ owasp, mlsecops }) => (
+              <p>
+                <>
+                  <span>{owasp}</span>
+                  <strong>{mlsecops}</strong>
+                </>
+              </p>
+            ))
+          }
+        </div>
+        <p class="eyebrow">{projects.security.eyebrow}</p>
+        <h3>{projects.security.title}</h3>
+        <p>{projects.security.text}</p>
+        <p>
+          {projects.security.relatedIntro}{' '}
+          {
+            projects.security.relatedLinks.map(({ label, href }, index) => (
+              <>
+                {index > 0 && (index === projects.security.relatedLinks.length - 1 ? ', and ' : ', ')}
+                <a
+                  class="text-link"
+                  href={href}
+                  target={isExternalHref(href) ? '_blank' : undefined}
+                  rel={isExternalHref(href) ? 'noopener noreferrer' : undefined}
+                >
+                  {label}
+                </a>
+              </>
+            ))
+          }.
+        </p>
+        <div class="actions">
+          {
+            projects.security.actions.map(({ label, href, kind }) => (
+              <a
+                class:list={['button', kind]}
+                href={href}
+                target={isExternalHref(href) ? '_blank' : undefined}
+                rel={isExternalHref(href) ? 'noopener noreferrer' : undefined}
+              >
+                {label}
+              </a>
+            ))
+          }
+        </div>
+      </article>
+    </div>
+    <div class="oss-carousel-controls">
+      <button type="button" data-carousel-prev aria-label="Previous cards">←</button>
+      <button type="button" data-carousel-next aria-label="Next cards">→</button>
+    </div>
+  </div>
 </open-source-showcase>
 
 <style>
@@ -216,6 +356,171 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     height: 430px;
     margin-top: 0;
   }
+
+  /* Survey block, moved in from the retired homepage reports section. */
+  .survey-feature {
+    margin-top: 96px;
+    scroll-margin-top: 124px;
+  }
+  .survey-feature header {
+    align-items: end;
+    display: grid;
+    gap: 56px;
+    grid-template-columns: 1fr 420px;
+  }
+  .survey-feature h3 {
+    font: 300 34px/1.1 var(--font-display);
+    letter-spacing: -0.015em;
+    margin: 0;
+  }
+  .survey-feature header p {
+    color: var(--text-2);
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 14px 0 0;
+    max-width: 640px;
+  }
+  .survey-feature nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: flex-end;
+  }
+
+  /* Flagship carousel: two cards per view, snap scrolling, prev/next controls. */
+  .oss-carousel {
+    margin-top: 72px;
+  }
+  .oss-carousel-track {
+    display: flex;
+    gap: 26px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .oss-carousel-track::-webkit-scrollbar {
+    display: none;
+  }
+  /* Card shell styles are global (.oss-card in tokens.css); the carousel only
+     adds the flex/snap geometry and the bottom-pinned actions row. */
+  .oss-card {
+    display: flex;
+    flex: 0 0 calc(50% - 13px);
+    flex-direction: column;
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+  .oss-card > .eyebrow {
+    margin-top: 24px;
+  }
+  .oss-card > .eyebrow + h3 {
+    margin-top: 8px;
+  }
+  .oss-card .actions {
+    margin-top: auto;
+    padding-top: 22px;
+  }
+  .oss-carousel-controls {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 18px;
+  }
+  .oss-carousel-controls button {
+    background: transparent;
+    border: 1px solid var(--hairline-card);
+    color: var(--text-2);
+    cursor: pointer;
+    font-size: 15px;
+    min-height: 38px;
+    min-width: 48px;
+  }
+  .oss-carousel-controls button:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .oss-carousel-controls button[disabled] {
+    color: var(--text-4);
+    cursor: default;
+  }
+
+  /* Initiative previews, restored from the retired reports section cards. */
+  .initiative-preview {
+    background: radial-gradient(70% 100% at 70% 0%, var(--accent-wash-16), var(--bg-inset) 70%);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: var(--radius-card);
+    padding: 22px;
+  }
+  .initiative-preview header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+  }
+  .initiative-preview header span {
+    color: var(--text-3);
+    font: var(--mono-10) / 1 var(--font-mono);
+    letter-spacing: 0.1em;
+  }
+  .initiative-preview h4 {
+    font-size: 19px;
+    font-weight: 400;
+    margin: 5px 0 20px;
+  }
+  .initiative-preview > p {
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    font-size: 13px;
+    gap: 10px;
+    margin: 0;
+    padding: 8px 0;
+  }
+  .initiative-preview > p span,
+  .initiative-preview > p i {
+    color: var(--text-3);
+    font: normal var(--mono-10) / 1 var(--font-mono);
+  }
+  .initiative-preview > p i {
+    margin-left: auto;
+  }
+  .mlsecops-preview {
+    background: var(--bg-inset);
+  }
+  .mlsecops-preview header {
+    border-bottom: 1px solid var(--hairline);
+    padding-bottom: 10px;
+  }
+  .mlsecops-preview > p {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+  }
+  .mlsecops-preview > p strong {
+    font-weight: 400;
+  }
+
+  @media (max-width: 900px) {
+    .survey-feature {
+      margin-top: 72px;
+    }
+    .survey-feature header {
+      grid-template-columns: 1fr;
+    }
+    .survey-feature nav {
+      justify-content: flex-start;
+    }
+    /* Stacked list on mobile: no track, no controls. */
+    .oss-carousel-track {
+      flex-direction: column;
+      overflow-x: visible;
+      scroll-snap-type: none;
+    }
+    .oss-card {
+      flex: none;
+    }
+    .oss-carousel-controls {
+      display: none;
+    }
+  }
 </style>
 
 <script>
@@ -228,6 +533,29 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     connectedCallback() {
       this.controller = new AbortController();
       bindMorphPairs(this, this.controller.signal);
+      this.wireCarousel();
+    }
+
+    // User-controlled only: prev/next scroll the snap track by one card; the
+    // buttons disable at the ends. No auto-rotation.
+    private wireCarousel() {
+      const track = this.querySelector<HTMLElement>('[data-carousel-track]');
+      const prev = this.querySelector<HTMLButtonElement>('[data-carousel-prev]');
+      const next = this.querySelector<HTMLButtonElement>('[data-carousel-next]');
+      if (!track || !prev || !next) return;
+      const signal = this.controller.signal;
+      const step = () => {
+        const card = track.querySelector<HTMLElement>('article');
+        return card ? card.offsetWidth + 26 : track.clientWidth;
+      };
+      const sync = () => {
+        prev.disabled = track.scrollLeft <= 4;
+        next.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 4;
+      };
+      prev.addEventListener('click', () => track.scrollBy({ left: -step(), behavior: 'smooth' }), { signal });
+      next.addEventListener('click', () => track.scrollBy({ left: step(), behavior: 'smooth' }), { signal });
+      track.addEventListener('scroll', sync, { signal, passive: true });
+      sync();
     }
 
     disconnectedCallback() {

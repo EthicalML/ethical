@@ -73,8 +73,10 @@ Reusable presentation components are documented in `REUSABLE.md`. An API change 
 | Content settle               | Every route → every route                                                                                                                                                                             | `BaseLayout`, `tokens.css`                                                            |
 | Header persistence           | Every route ↔ every route                                                                                                                                                                             | `SiteHeader`, `BaseLayout`                                                            |
 | Principle title morph        | Explorer detail → `/principles/NN/` h1                                                                                                                                                                | `MorphPairs`, `PrinciplesExplorer`, `PrincipleLayout`, `BaseLayout`                   |
-| Survey title morph           | Homepage report heading → survey explorer hero                                                                                                                                                        | `MorphPairs`, `ReportsSection`, `ArticleHero`                                         |
-| Homepage policy citadel      | Homepage 02 policy split block: the /policy/ iso citadel embedded as an open backdrop, hover heat and beat conduits preserved                                                                         | `PolicyHeroPolicyCircuit`, `CanvasEngine`, `ReportsSection`                           |
+| Survey title morph           | Homepage 04 survey heading → survey explorer hero                                                                                                                                                     | `MorphPairs`, `OpenSourceShowcase`, `ArticleHero`                                     |
+| Policy title morph           | Homepage 03 policy heading → `/policy/` hero h1                                                                                                                                                       | `MorphPairs`, `PolicySection`, `ArticleHero`                                          |
+| Homepage policy citadel      | Homepage 03 policy section: the /policy/ iso citadel spanning the right two-thirds as a background layer behind the copy under a legibility scrim, hover heat and beat conduits preserved             | `PolicyHeroPolicyCircuit`, `CanvasEngine`, `PolicySection`                            |
+| Flagship initiative carousel | Homepage 04 four-card carousel: user-controlled prev/next over a snap track, no auto-rotation, stacked list below 900px                                                                               | `OpenSourceShowcase`                                                                  |
 | Framework title morphs       | `/frameworks/` cards → five matching framework heroes                                                                                                                                                 | `MorphPairs`, `FrameworkCards`, `ArticleHero`, `BaseLayout`                           |
 | KAOS title morph             | Homepage KAOS card title → KAOS page hero h1                                                                                                                                                          | `MorphPairs`, `OpenSourceShowcase`, `ArticleHero`                                     |
 | Homepage KAOS agent graph    | Homepage showcase and principle feature                                                                                                                                                               | `KaosGraph`                                                                           |
@@ -132,18 +134,18 @@ MDX prose follows JSX parsing rules. Escape a bare `<` as `&lt;`, escape `{` as 
 
 ## Homepage source map
 
-| Concern                                                         | Authoring source                                                       |
-| --------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| Hero, evidence, phases, project copy, reports, and network copy | `src/pages/index.mdx`                                                  |
-| Principle content                                               | `src/content/principles/*.md`                                          |
-| Repository facts                                                | `src/content/repos-metrics.yaml`                                       |
-| Partner directory and affiliation logos                         | `src/content/partners.yaml`                                            |
-| Survey source rows                                              | `src/data/survey-2024.csv`, `src/data/survey-2025.csv`                 |
-| Derived survey questions                                        | `src/content/survey-questions.yaml`                                    |
-| Recent newsletter issue numbers                                 | `public/mle/*.html` filenames via `src/utils/RecentIssues.ts`          |
-| Header navigation and wordmark                                  | `src/components/SiteHeader.astro`                                      |
-| Footer and footnote chrome                                      | `src/components/SiteFooter.astro`, `src/components/FootnoteBand.astro` |
-| Form delivery endpoint                                          | `FORM_ENDPOINT` through `astro:env`                                    |
+| Concern                                                          | Authoring source                                                       |
+| ---------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Hero, evidence, phases, policy, project, survey and network copy | `src/pages/index.mdx`                                                  |
+| Principle content                                                | `src/content/principles/*.md`                                          |
+| Repository facts                                                 | `src/content/repos-metrics.yaml`                                       |
+| Partner directory and affiliation logos                          | `src/content/partners.yaml`                                            |
+| Survey source rows                                               | `src/data/survey-2024.csv`, `src/data/survey-2025.csv`                 |
+| Derived survey questions                                         | `src/content/survey-questions.yaml`                                    |
+| Recent newsletter issue numbers                                  | `public/mle/*.html` filenames via `src/utils/RecentIssues.ts`          |
+| Header navigation and wordmark                                   | `src/components/SiteHeader.astro`                                      |
+| Footer and footnote chrome                                       | `src/components/SiteFooter.astro`, `src/components/FootnoteBand.astro` |
+| Form delivery endpoint                                           | `FORM_ENDPOINT` through `astro:env`                                    |
 
 ## Definition of done
 

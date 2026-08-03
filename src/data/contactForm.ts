@@ -40,7 +40,7 @@ export interface FormSectionCopy {
 export const contactFormTitle = 'Contact us, Subscribe or Apply.';
 
 export const contactFormCopy: FormSectionCopy = {
-  homeEyebrow: '04 — NETWORK & NEWSLETTER',
+  homeEyebrow: '05 — NETWORK & NEWSLETTER',
   contactEyebrow: 'ONE FORM / MANY WAYS IN',
   intro:
     'Responsible technology requires changes to models and to the systems around them. Membership includes the Ethical AI Network and the Machine Learning Engineer newsletter.',
