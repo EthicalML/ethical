@@ -7,15 +7,24 @@ interface Props {
   heading: string;
   intro: string;
   homepage?: boolean;
+  /* Single-lane mode for card-width embeds: one lane, row click opens the detail
+     in place with a back control instead of navigating. Default off; the full
+     two-lane explorer is unchanged when absent. */
+  compact?: boolean;
 }
 
 const principles = (await getCollection('principles')).sort((a, b) => a.data.number.localeCompare(b.data.number));
-const { eyebrow, heading, intro, homepage = false } = Astro.props;
+const { eyebrow, heading, intro, homepage = false, compact = false } = Astro.props;
 ---
 
-<section id="principles" class:list={['principles-explorer', homepage && 'home-section']} data-principles data-reveal>
+<section
+  id={compact ? undefined : 'principles'}
+  class:list={['principles-explorer', homepage && 'home-section', compact && 'compact']}
+  data-principles
+  data-reveal
+>
   <p class="eyebrow">{eyebrow}</p>
-  <principles-explorer>
+  <principles-explorer data-compact={compact ? 'true' : undefined}>
     <div class="principles-explorer-grid">
       <div>
         <h2>{heading}</h2>
@@ -43,6 +52,13 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
         </div>
       </div>
       <div class="principle-detail-wrap">
+        {
+          compact && (
+            <button type="button" class="principle-back" data-principle-back>
+              All principles
+            </button>
+          )
+        }
         {
           principles.map(({ data }, index) => (
             <article class:list={['principle-detail', index === 0 && 'active']} data-principle-detail={index}>
@@ -85,7 +101,7 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
                   </a>
                 ))}
                 <a class="button primary" href={`/principles/${data.number}/`} data-morph-pair={`principle-${data.number}`}>
-                  Read principle →
+                  Read principle
                 </a>
               </div>
             </article>
@@ -132,14 +148,25 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
 
       bindMorphPairs(this, this.controller.signal);
 
+      const compact = this.dataset.compact === 'true';
+      this.querySelector('[data-principle-back]')?.addEventListener(
+        'click',
+        () => {
+          delete this.dataset.lane;
+        },
+        { signal: this.controller.signal },
+      );
+
       rows.forEach((row, index) => {
-        row.addEventListener(
-          'mouseenter',
-          () => {
-            select(index);
-          },
-          { signal: this.controller.signal },
-        );
+        if (!compact) {
+          row.addEventListener(
+            'mouseenter',
+            () => {
+              select(index);
+            },
+            { signal: this.controller.signal },
+          );
+        }
         row.addEventListener(
           'click',
           () => {
@@ -149,6 +176,12 @@ const { eyebrow, heading, intro, homepage = false } = Astro.props;
             // which erases the forward morph. Select without animating so the source is fully
             // opaque when snapshotted.
             select(index, false);
+            // Compact single-lane mode opens the detail in place; the detail's own
+            // Read principle button carries the navigation.
+            if (compact) {
+              this.dataset.lane = 'detail';
+              return;
+            }
             const href = row.dataset.principleHref;
             if (href) void navigate(href);
           },

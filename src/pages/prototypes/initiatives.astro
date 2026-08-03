@@ -1,0 +1,346 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PrototypeSwitcher from '../../components/PrototypeSwitcher.astro';
+import PrinciplesExplorer from '../../components/PrinciplesExplorer.astro';
+
+const frontmatter = {
+  title: 'Homepage section 02 prototypes',
+  description: 'Two structures for the REPORTS & INITIATIVES homepage section: principles lead or policy lead.',
+};
+
+// Prototype-owned copy, duplicated from src/pages/index.mdx (reports.policy and the
+// survey header). Consolidates back into index.mdx frontmatter on the winning variant.
+const policy = {
+  eyebrow: 'Policy & standards',
+  title: 'Policy written by practitioners.',
+  contributions: [
+    { value: '20+', text: 'recommendations adopted across the EU GPAI Code of Practice and the UK framework' },
+    { value: '11/11', text: 'major European digital instruments with technical responses' },
+    { value: '30+', text: 'published policy products since 2020' },
+  ],
+  stats: [
+    { value: '6', label: 'ACTIVE MANDATES' },
+    { value: '~10', label: 'ORGANISATIONAL PRINCIPLES' },
+    { value: '5', label: 'REGIONAL POLICY AREAS' },
+  ],
+  action: { label: 'Explore the policy record', href: '/policy/' },
+};
+const survey = {
+  eyebrow: 'Production ML survey',
+  title: 'The State of Production ML Survey',
+  intro:
+    'Two annual practitioner surveys — context, tools, scope and statistics. Choose a question, compare 2024 with 2025, and select any answer to read what it means for the principles.',
+  primary: { label: 'Read the 2025 report', href: '/data/survey-explorer/' },
+  secondary: { label: '2024 edition', href: '/data/survey-explorer/' },
+};
+const principles = {
+  heading: 'Nine Principles for AI Alignment and Safety.',
+  intro:
+    'Each principle specifies a commitment, the failure modes it addresses and the controls that implement it. We invite both individuals and organisations to pledge towards these principles.',
+};
+
+const variations = [
+  { value: '1', label: 'V1 · PRINCIPLES LEAD' },
+  { value: '2', label: 'V2 · POLICY LEAD' },
+];
+---
+
+<BaseLayout frontmatter={frontmatter}>
+  <header class="prototype-header">
+    <p class="eyebrow">PROTOTYPE · SECTION 02</p>
+    <h1>Two structures for Reports & Initiatives.</h1>
+    <p>
+      Both variants render the full section. V1 opens with the principles explorer and compresses policy and survey into a card pair; V2 leads with the policy
+      split and compresses the principles into a single-lane card beside the survey.
+    </p>
+  </header>
+
+  <PrototypeSwitcher options={variations}>
+    <section class="proto-section" data-prototype-variant="1">
+      <PrinciplesExplorer eyebrow="02 — REPORTS & INITIATIVES" heading={principles.heading} intro={principles.intro} />
+      <div class="duo-row">
+        <article class="proto-card policy-card">
+          <policy-hero-policy-circuit class="policy-card-canvas" aria-hidden="true">
+            <canvas></canvas>
+          </policy-hero-policy-circuit>
+          <i class="policy-card-scrim" aria-hidden="true"></i>
+          <div class="policy-card-copy">
+            <p class="eyebrow">{policy.eyebrow}</p>
+            <h3>{policy.title}</h3>
+            <ul class="policy-contributions">
+              {
+                policy.contributions.map(({ value, text }) => (
+                  <li>
+                    <strong>{value}</strong>
+                    <span>{text}</span>
+                  </li>
+                ))
+              }
+            </ul>
+            <div class="network-stats">
+              {
+                policy.stats.map(({ value, label }) => (
+                  <div>
+                    <strong>{value}</strong>
+                    <span>{label}</span>
+                  </div>
+                ))
+              }
+            </div>
+            <a class="button primary" href={policy.action.href}>{policy.action.label}</a>
+          </div>
+        </article>
+        <article class="proto-card survey-card">
+          <p class="eyebrow">{survey.eyebrow}</p>
+          <header>
+            <h3>{survey.title}</h3>
+            <a class="button primary" href={survey.primary.href}>{survey.primary.label}</a>
+          </header>
+          <p class="survey-intro">{survey.intro}</p>
+          <a class="button" href={survey.secondary.href}>{survey.secondary.label}</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="proto-section" data-prototype-variant="2" hidden>
+      <div class="policy-lead">
+        <div class="policy-lead-copy">
+          <p class="eyebrow">02 — REPORTS & INITIATIVES</p>
+          <h2>{policy.title}</h2>
+          <ul class="policy-contributions">
+            {
+              policy.contributions.map(({ value, text }) => (
+                <li>
+                  <strong>{value}</strong>
+                  <span>{text}</span>
+                </li>
+              ))
+            }
+          </ul>
+          <div class="network-stats">
+            {
+              policy.stats.map(({ value, label }) => (
+                <div>
+                  <strong>{value}</strong>
+                  <span>{label}</span>
+                </div>
+              ))
+            }
+          </div>
+          <a class="button primary" href={policy.action.href}>{policy.action.label}</a>
+        </div>
+        <policy-hero-policy-circuit class="policy-lead-canvas" aria-hidden="true">
+          <canvas></canvas>
+        </policy-hero-policy-circuit>
+      </div>
+      <div class="duo-row">
+        <article class="proto-card principles-card">
+          <PrinciplesExplorer compact eyebrow="PRINCIPLES" heading={principles.heading} intro={principles.intro} />
+        </article>
+        <article class="proto-card survey-card">
+          <p class="eyebrow">{survey.eyebrow}</p>
+          <header>
+            <h3>{survey.title}</h3>
+            <a class="button primary" href={survey.primary.href}>{survey.primary.label}</a>
+          </header>
+          <p class="survey-intro">{survey.intro}</p>
+          <a class="button" href={survey.secondary.href}>{survey.secondary.label}</a>
+        </article>
+      </div>
+    </section>
+  </PrototypeSwitcher>
+</BaseLayout>
+
+<script>
+  import '../../shared/canvas/PolicyHeroPolicyCircuit';
+</script>
+
+<style>
+  .prototype-header {
+    padding: 128px 48px 56px;
+  }
+  .prototype-header h1 {
+    font: 300 clamp(48px, 6.5vw, 84px) / 0.98 var(--font-display);
+    letter-spacing: -0.03em;
+    margin: 20px 0 22px;
+    max-width: 1000px;
+  }
+  .prototype-header > p:last-child {
+    color: var(--text-2);
+    font-size: var(--body-16);
+    line-height: 1.7;
+    margin: 0;
+    max-width: 760px;
+  }
+  .proto-section {
+    padding: 24px 48px 110px;
+  }
+  .proto-section > :global(.principles-explorer) {
+    padding: 0;
+  }
+  section[hidden] {
+    display: none;
+  }
+
+  /* V2 lead: the live homepage policy split shape. */
+  .policy-lead {
+    align-items: center;
+    display: grid;
+    gap: 56px;
+    grid-template-columns: 1fr 1.1fr;
+    margin-bottom: 40px;
+  }
+  .policy-lead h2 {
+    font: 300 44px/1.06 var(--font-display);
+    letter-spacing: -0.015em;
+    margin: 16px 0 28px;
+  }
+  .policy-lead-canvas {
+    display: block;
+    height: 100%;
+    min-height: 480px;
+    position: relative;
+  }
+  .policy-lead-canvas canvas {
+    height: 100%;
+    inset: 0;
+    position: absolute;
+    width: 100%;
+  }
+
+  /* Shared card pair. */
+  .duo-row {
+    align-items: stretch;
+    display: grid;
+    gap: 26px;
+    grid-template-columns: 1fr 1fr;
+    margin-top: 48px;
+  }
+  .proto-card {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent);
+    border: 1px solid var(--hairline-card);
+    border-radius: var(--radius-card-lg);
+    overflow: hidden;
+    padding: 30px;
+    position: relative;
+  }
+
+  /* V1 policy card: citadel as a top-right backdrop cropped by the card edges,
+     with a left-to-right scrim keeping the copy legible. Hover heat still works:
+     the circuit tracks the pointer on window and maps through the canvas rect. */
+  .policy-card-canvas {
+    display: block;
+    height: 78%;
+    pointer-events: none;
+    position: absolute;
+    right: -6%;
+    top: -8%;
+    width: 68%;
+    z-index: 1;
+  }
+  .policy-card-canvas canvas {
+    height: 100%;
+    inset: 0;
+    position: absolute;
+    width: 100%;
+  }
+  .policy-card-scrim {
+    background: linear-gradient(100deg, #131514 0%, #131514 34%, rgba(19, 21, 20, 0.82) 52%, rgba(19, 21, 20, 0.25) 72%, transparent 88%);
+    inset: 0;
+    pointer-events: none;
+    position: absolute;
+    z-index: 2;
+  }
+  .policy-card-copy {
+    position: relative;
+    z-index: 3;
+  }
+  .policy-card-copy h3,
+  .survey-card h3 {
+    font: 300 30px/1.1 var(--font-display);
+    letter-spacing: -0.015em;
+    margin: 12px 0 24px;
+    max-width: 15ch;
+  }
+  .policy-contributions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .policy-contributions li {
+    align-items: baseline;
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 58px 1fr;
+  }
+  .policy-contributions strong {
+    font: 300 24px/1 var(--font-display);
+    letter-spacing: -0.01em;
+  }
+  .policy-contributions span {
+    color: var(--text-2);
+    font-size: 13.5px;
+    line-height: 1.5;
+    max-width: 44ch;
+  }
+  .policy-card-copy > .button,
+  .policy-lead-copy > .button {
+    display: inline-block;
+    margin-top: 26px;
+  }
+
+  /* Survey card: header row with the primary action top-right. */
+  .survey-card {
+    display: flex;
+    flex-direction: column;
+  }
+  .survey-card header {
+    align-items: start;
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+  }
+  .survey-card header .button {
+    flex-shrink: 0;
+    margin-top: 12px;
+  }
+  .survey-intro {
+    color: var(--text-2);
+    font-size: 14.5px;
+    line-height: 1.6;
+    margin: 0 0 24px;
+    max-width: 52ch;
+  }
+  .survey-card > .button {
+    align-self: flex-start;
+    margin-top: auto;
+  }
+
+  .principles-card {
+    padding: 26px;
+  }
+
+  @media (max-width: 950px) {
+    .prototype-header {
+      padding: 104px 24px 44px;
+    }
+    .proto-section {
+      padding: 12px 24px 80px;
+    }
+    .policy-lead {
+      grid-template-columns: 1fr;
+    }
+    .policy-lead-canvas {
+      min-height: 380px;
+    }
+    .duo-row {
+      grid-template-columns: 1fr;
+    }
+    .policy-card {
+      min-height: 520px;
+    }
+  }
+</style>
