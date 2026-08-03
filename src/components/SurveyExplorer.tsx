@@ -16,6 +16,9 @@ interface SurveyQuestion {
 export type SurveyData = Record<string, SurveyQuestion>;
 
 type Category = string;
+
+// Short single-row pill labels for compact mode; ids double as labels otherwise.
+const COMPACT_LABELS: Record<string, string> = { frameworks: 'libraries' };
 type SurveyYear = 'year2024' | 'year2025' | 'both';
 type SortMode = 'value' | 'delta';
 
@@ -94,20 +97,25 @@ function Toolbar({
         </button>
       </div>
       {compact ? (
-        <select
-          class="survey-question-select"
-          aria-label="Survey question"
-          value={category}
-          onChange={(event) => onSelect((event.currentTarget as HTMLSelectElement).value)}
-        >
+        <div class="survey-tabs" role="tablist" aria-label="Survey question">
           {Object.keys(data).map((categoryKey) => (
-            <option value={categoryKey}>{data[categoryKey].label}</option>
+            <button
+              role="tab"
+              aria-selected={category === categoryKey}
+              onClick={() => onSelect(categoryKey)}
+            >
+              {COMPACT_LABELS[categoryKey] ?? categoryKey}
+            </button>
           ))}
-        </select>
+        </div>
       ) : (
         <button onClick={onSortChange}>{sortLabel}</button>
       )}
-      <span>{compact ? metadata : `${metadata} · N=${responseCount}`}</span>
+      {!compact && (
+        <span>
+          {metadata} · N={responseCount}
+        </span>
+      )}
     </div>
   );
 }
@@ -197,9 +205,10 @@ function FocusPanel({ selectedRow, compact }: FocusPanelProps) {
 
 interface Props {
   data: SurveyData;
-  /* Card mode for half-width embeds: the question dropdown replaces the tabs and
-     the sort button, chrome and type tighten to card scale, and the N count is
-     dropped. Default off; the full-width explorer is unchanged when absent. */
+  /* Card mode for card embeds: short question pills sit beside the year toggle
+     (replacing the full tabs, the sort button and the question meta), chrome and
+     type tighten to card scale, and the N count is dropped. Default off; the
+     full-width explorer is unchanged when absent. */
   compact?: boolean;
 }
 

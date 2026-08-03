@@ -258,8 +258,10 @@ export class PolicyHeroPolicyCircuit extends HTMLElement {
   private draw: CanvasDraw = (context, width, height, elapsed) => {
     context.clearRect(0, 0, width, height);
     const time = reducedMotion ? 7 : elapsed + 3;
-    const unit = Math.min(width, height) * 0.0295;
-    const project = createIso(unit, width * 0.54, height * 0.5);
+    // Per-embed tuning: data-scale multiplies the iso unit, data-center-x shifts
+    // the citadel horizontally (fraction of canvas width).
+    const unit = Math.min(width, height) * 0.0295 * Number(this.dataset.scale || 1);
+    const project = createIso(unit, width * Number(this.dataset.centerX || 0.54), height * 0.5);
 
     this.pointer.x += (this.pointer.targetX - this.pointer.x) * 0.12;
     this.pointer.y += (this.pointer.targetY - this.pointer.y) * 0.12;
