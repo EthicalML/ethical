@@ -1233,7 +1233,8 @@ kaos-graph, kaos-architecture { display: block; }
 .survey-island.compact .survey-tabs button { font: 9.5px/1 var(--font-mono); letter-spacing: .07em; padding: 6px 8px; text-transform: uppercase; }
 .survey-island.compact .survey-bars { gap: 1px; margin-top: 14px; }
 .survey-island.compact .survey-bars button { gap: 10px; grid-template-columns: 136px 1fr 44px 56px; padding: 6px 8px; }
-.survey-island.compact .survey-bars button > span { font: var(--mono-12,12px)/1.35 var(--font-mono); }
+/* Fixed two-line label boxes keep every bar row the same height, wrapped or not. */
+.survey-island.compact .survey-bars button > span { -webkit-box-orient: vertical; -webkit-line-clamp: 2; display: -webkit-box; font: var(--mono-12,12px)/1.35 var(--font-mono); min-height: 2.7em; overflow: hidden; }
 .survey-island.compact .survey-bars i { gap: 3px; }
 .survey-island.compact .survey-bars i b { height: 8px; }
 .survey-island.compact .survey-bars i em { height: 5px; }

@@ -92,6 +92,7 @@ interface Props {
 }
 
 const { projects, compact = false, homepage = false } = Astro.props;
+const carouselTitles = [projects.survey.title, projects.xai.title, projects.ecosystem.title, projects.governance.title, projects.security.title];
 const repoEntries = await getCollection('metrics');
 const repoMetrics = Object.fromEntries(repoEntries.map(({ id, data }) => [id, data.values]));
 const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value: string; label: string }) => (label ? `${value} ${label}` : value));
@@ -180,167 +181,179 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
 
   {
     /* Flagship carousel: enters at 50% visibility sliding in from the right on the
-      teaser card, auto-advances once to the survey card after 6s unless the user
-      interacts first, and is user-controlled from then on via the edge zones (no
-      further automatic movement). Horizontal at every width. */
+      static teaser lead-in, then one 4s auto-advance (counted down on the active
+      bubble, the next blade flashing pressed) unless the user interacts first.
+      Card-by-card navigation wraps seamlessly via edge clones; the bubbles above
+      the track travel and follow. Horizontal at every width. */
   }
   <div id="reports" class="oss-carousel">
-    <button class="oss-carousel-edge prev" type="button" data-carousel-prev aria-label="Previous cards">→</button>
-    <button class="oss-carousel-edge next" type="button" data-carousel-next aria-label="Next cards">→</button>
-    <div class="oss-carousel-track" data-carousel-track tabindex="-1">
-      <button class="oss-card teaser-card" type="button" data-carousel-teaser>
-        <span>{projects.survey.teaser}</span>
-        <i aria-hidden="true">→</i>
-      </button>
-      <article class="oss-card survey-card">
-        <div class="oss-preview survey-preview">
-          <SurveyExplorerIsland compact />
+    <div class="oss-carousel-bubbles" data-carousel-bubbles>
+      {
+        carouselTitles.map((title, index) => (
+          <button type="button" data-carousel-bubble={index} aria-label={`Go to ${title}`}>
+            <i aria-hidden="true" />
+          </button>
+        ))
+      }
+    </div>
+    <div class="oss-carousel-stage">
+      <button class="oss-carousel-edge prev" type="button" data-carousel-prev aria-label="Previous cards"><span>‹</span></button>
+      <button class="oss-carousel-edge next" type="button" data-carousel-next aria-label="Next cards"><span>›</span></button>
+      <div class="oss-carousel-track" data-carousel-track tabindex="-1">
+        <div class="oss-card teaser-card">
+          <span>{projects.survey.teaser}</span>
+          <i aria-hidden="true">→</i>
         </div>
-        <h3 data-morph-source="survey-title">{projects.survey.title}</h3>
-        <p>{projects.survey.text}</p>
-        <div class="actions">
-          {
-            projects.survey.actions.map(({ label, href, kind }) => (
-              <a class:list={['button', kind]} href={href} data-morph-pair={href === '/data/survey-explorer/' ? 'survey-title' : undefined}>
-                {label}
-              </a>
-            ))
-          }
-        </div>
-      </article>
-      <article class="oss-card">
-        <div class="oss-preview xai-preview">
-          <p class="figure-label"><span>{projects.xai.figure}</span></p>
-          <div class="xai-stages">
+        <article class="oss-card survey-card">
+          <div class="oss-preview survey-preview">
+            <SurveyExplorerIsland compact />
+          </div>
+          <h3 data-morph-source="survey-title">{projects.survey.title}</h3>
+          <p>{projects.survey.text}</p>
+          <div class="actions">
             {
-              projects.xai.stages.map(({ title, detail }) => (
-                <div>
-                  <>
-                    <p>
-                      <>
-                        <span>{title}</span>
-                        <small>{detail}</small>
-                      </>
-                    </p>
-                    <i>
-                      <b />
-                    </i>
-                  </>
-                </div>
+              projects.survey.actions.map(({ label, href, kind }) => (
+                <a class:list={['button', kind]} href={href} data-morph-pair={href === '/data/survey-explorer/' ? 'survey-title' : undefined}>
+                  {label}
+                </a>
               ))
             }
           </div>
-        </div>
-        <h3>{projects.xai.title}</h3>
-        <p>{projects.xai.text}</p>
-        <div class="oss-statline">{statline('xai').map((stat) => <span>{stat}</span>)}</div>
-        <div class="actions">
-          <a class="button primary" href={projects.xai.linkHref}>{projects.xai.linkLabel}</a>
-        </div>
-      </article>
-      <article class="oss-card">
-        <div class="oss-preview ecosystem-preview">
-          <p class="figure-label"><span>{projects.ecosystem.leftHeading}</span><span>{projects.ecosystem.rightHeading}</span></p>
-          <div>
+        </article>
+        <article class="oss-card">
+          <div class="oss-preview xai-preview">
+            <p class="figure-label"><span>{projects.xai.figure}</span></p>
+            <div class="xai-stages">
+              {
+                projects.xai.stages.map(({ title, detail }) => (
+                  <div>
+                    <>
+                      <p>
+                        <>
+                          <span>{title}</span>
+                          <small>{detail}</small>
+                        </>
+                      </p>
+                      <i>
+                        <b />
+                      </i>
+                    </>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+          <h3>{projects.xai.title}</h3>
+          <p>{projects.xai.text}</p>
+          <div class="oss-statline">{statline('xai').map((stat) => <span>{stat}</span>)}</div>
+          <div class="actions">
+            <a class="button primary" href={projects.xai.linkHref}>{projects.xai.linkLabel}</a>
+          </div>
+        </article>
+        <article class="oss-card">
+          <div class="oss-preview ecosystem-preview">
+            <p class="figure-label"><span>{projects.ecosystem.leftHeading}</span><span>{projects.ecosystem.rightHeading}</span></p>
+            <div>
+              {
+                projects.ecosystem.rows.map(({ title }) => (
+                  <p>
+                    <span>{title}</span>
+                  </p>
+                ))
+              }
+            </div>
+          </div>
+          <h3>{projects.ecosystem.title}</h3>
+          <p>{projects.ecosystem.text}</p>
+          <div class="oss-statline">{statline('ecosystem').map((stat) => <span>{stat}</span>)}</div>
+          <div class="actions">
+            <a class="button primary" href={projects.ecosystem.linkHref} target="_blank" rel="noopener noreferrer">{projects.ecosystem.linkLabel}</a>
+            <a class="button" href={projects.ecosystem.guidelinesHref} target="_blank" rel="noopener noreferrer">{projects.ecosystem.guidelinesLabel}</a>
+          </div>
+        </article>
+        <article class="oss-card">
+          <div class="initiative-preview governance-preview">
+            <header><span>{projects.governance.previewEyebrow}</span><span>{projects.governance.previewLabel}</span></header>
+            <h4>{projects.governance.previewTitle}</h4>
             {
-              projects.ecosystem.rows.map(({ title }) => (
+              projects.governance.steps.map(({ label, detail }, index) => (
                 <p>
-                  <span>{title}</span>
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  {label}
+                  <i>{detail}</i>
                 </p>
               ))
             }
           </div>
-        </div>
-        <h3>{projects.ecosystem.title}</h3>
-        <p>{projects.ecosystem.text}</p>
-        <div class="oss-statline">{statline('ecosystem').map((stat) => <span>{stat}</span>)}</div>
-        <div class="actions">
-          <a class="button primary" href={projects.ecosystem.linkHref} target="_blank" rel="noopener noreferrer">{projects.ecosystem.linkLabel}</a>
-          <a class="button" href={projects.ecosystem.guidelinesHref} target="_blank" rel="noopener noreferrer">{projects.ecosystem.guidelinesLabel}</a>
-        </div>
-      </article>
-      <article class="oss-card">
-        <div class="initiative-preview governance-preview">
-          <header><span>{projects.governance.previewEyebrow}</span><span>{projects.governance.previewLabel}</span></header>
-          <h4>{projects.governance.previewTitle}</h4>
-          {
-            projects.governance.steps.map(({ label, detail }, index) => (
-              <p>
-                <span>{String(index + 1).padStart(2, '0')}</span>
-                {label}
-                <i>{detail}</i>
-              </p>
-            ))
-          }
-        </div>
-        <p class="eyebrow">{projects.governance.eyebrow}</p>
-        <h3>{projects.governance.title}</h3>
-        <p>{projects.governance.text}</p>
-        <div class="actions">
-          {
-            projects.governance.actions.map(({ label, href, kind }) => (
-              <a
-                class:list={['button', kind]}
-                href={href}
-                target={isExternalHref(href) ? '_blank' : undefined}
-                rel={isExternalHref(href) ? 'noopener noreferrer' : undefined}
-              >
-                {label}
-              </a>
-            ))
-          }
-        </div>
-      </article>
-      <article class="oss-card">
-        <div class="initiative-preview mlsecops-preview">
-          <header><span>{projects.security.leftHeading}</span><span>{projects.security.rightHeading}</span></header>
-          {
-            projects.security.rows.map(({ owasp, mlsecops }) => (
-              <p>
-                <>
-                  <span>{owasp}</span>
-                  <strong>{mlsecops}</strong>
-                </>
-              </p>
-            ))
-          }
-        </div>
-        <p class="eyebrow">{projects.security.eyebrow}</p>
-        <h3>{projects.security.title}</h3>
-        <p>{projects.security.text}</p>
-        <p>
-          {projects.security.relatedIntro}{' '}
-          {
-            projects.security.relatedLinks.map(({ label, href }, index) => (
-              <>
-                {index > 0 && (index === projects.security.relatedLinks.length - 1 ? ', and ' : ', ')}
+          <p class="eyebrow">{projects.governance.eyebrow}</p>
+          <h3>{projects.governance.title}</h3>
+          <p>{projects.governance.text}</p>
+          <div class="actions">
+            {
+              projects.governance.actions.map(({ label, href, kind }) => (
                 <a
-                  class="text-link"
+                  class:list={['button', kind]}
                   href={href}
                   target={isExternalHref(href) ? '_blank' : undefined}
                   rel={isExternalHref(href) ? 'noopener noreferrer' : undefined}
                 >
                   {label}
                 </a>
-              </>
-            ))
-          }.
-        </p>
-        <div class="actions">
-          {
-            projects.security.actions.map(({ label, href, kind }) => (
-              <a
-                class:list={['button', kind]}
-                href={href}
-                target={isExternalHref(href) ? '_blank' : undefined}
-                rel={isExternalHref(href) ? 'noopener noreferrer' : undefined}
-              >
-                {label}
-              </a>
-            ))
-          }
-        </div>
-      </article>
+              ))
+            }
+          </div>
+        </article>
+        <article class="oss-card">
+          <div class="initiative-preview mlsecops-preview">
+            <header><span>{projects.security.leftHeading}</span><span>{projects.security.rightHeading}</span></header>
+            {
+              projects.security.rows.map(({ owasp, mlsecops }) => (
+                <p>
+                  <>
+                    <span>{owasp}</span>
+                    <strong>{mlsecops}</strong>
+                  </>
+                </p>
+              ))
+            }
+          </div>
+          <p class="eyebrow">{projects.security.eyebrow}</p>
+          <h3>{projects.security.title}</h3>
+          <p>{projects.security.text}</p>
+          <p>
+            {projects.security.relatedIntro}{' '}
+            {
+              projects.security.relatedLinks.map(({ label, href }, index) => (
+                <>
+                  {index > 0 && (index === projects.security.relatedLinks.length - 1 ? ', and ' : ', ')}
+                  <a
+                    class="text-link"
+                    href={href}
+                    target={isExternalHref(href) ? '_blank' : undefined}
+                    rel={isExternalHref(href) ? 'noopener noreferrer' : undefined}
+                  >
+                    {label}
+                  </a>
+                </>
+              ))
+            }.
+          </p>
+          <div class="actions">
+            {
+              projects.security.actions.map(({ label, href, kind }) => (
+                <a
+                  class:list={['button', kind]}
+                  href={href}
+                  target={isExternalHref(href) ? '_blank' : undefined}
+                  rel={isExternalHref(href) ? 'noopener noreferrer' : undefined}
+                >
+                  {label}
+                </a>
+              ))
+            }
+          </div>
+        </article>
+      </div>
     </div>
   </div>
 </open-source-showcase>
@@ -364,43 +377,133 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     max-width: 760px;
   }
 
-  /* Flagship carousel: snap scrolling; thin full-height prev/next zones sit in
-     the section's side padding, outside the track, so they never cover a card. */
+  /* Flagship carousel: bubbles above a snap track flanked by hairline blades. */
   .oss-carousel {
-    margin-top: 72px;
-    position: relative;
+    margin-top: 36px;
     scroll-margin-top: 124px;
   }
+  .oss-carousel-stage {
+    position: relative;
+  }
+  /* Position bubbles: one per real card, the active one stretched to a pill; the
+     inner bar fills left-to-right as the auto-advance countdown. */
+  .oss-carousel-bubbles {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .oss-carousel-bubbles button {
+    background: rgba(244, 242, 238, 0.22);
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+    height: 8px;
+    overflow: hidden;
+    padding: 0;
+    position: relative;
+    transition:
+      background 0.18s ease,
+      width 0.18s ease;
+    width: 8px;
+  }
+  .oss-carousel-bubbles button:hover {
+    background: rgba(244, 242, 238, 0.4);
+  }
+  .oss-carousel-bubbles button.active {
+    background: rgba(244, 242, 238, 0.34);
+    width: 30px;
+  }
+  .oss-carousel-bubbles button i {
+    background: rgba(244, 242, 238, 0.9);
+    border-radius: inherit;
+    display: block;
+    inset: 0;
+    position: absolute;
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  .oss-carousel-bubbles.counting button.active i {
+    animation: bubble-countdown 4s linear forwards;
+  }
+  @keyframes bubble-countdown {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+  /* Hairline blades: ultra-thin full-height zones in the section padding, a 1px
+     vertical hairline with a centred mono chevron. Hover brightens white-scale
+     and extends a short tick; press pulses bright. Never accent green. */
   .oss-carousel-edge {
-    align-items: center;
     background: transparent;
-    border: 1px solid var(--hairline-card);
+    border: 0;
     bottom: 0;
     color: var(--text-3);
     cursor: pointer;
-    display: flex;
-    font-size: 17px;
-    justify-content: center;
+    font: 12px/1 var(--font-mono);
+    padding: 0;
     position: absolute;
     top: 0;
-    width: 38px;
+    width: 26px;
     z-index: 2;
+  }
+  .oss-carousel-edge::before {
+    background: rgba(244, 242, 238, 0.22);
+    bottom: 0;
+    content: '';
+    left: 50%;
+    position: absolute;
+    top: 0;
+    transition: background 0.18s ease;
+    width: 1px;
+  }
+  .oss-carousel-edge::after {
+    background: rgba(244, 242, 238, 0.6);
+    content: '';
+    height: 1px;
+    position: absolute;
+    top: 50%;
+    transition: width 0.18s ease;
+    width: 0;
+  }
+  .oss-carousel-edge.prev::after {
+    left: 50%;
+  }
+  .oss-carousel-edge.next::after {
+    right: 50%;
+  }
+  .oss-carousel-edge span {
+    background: var(--bg-base);
+    left: 50%;
+    padding: 7px 1px;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
   }
   .oss-carousel-edge.prev {
     left: -46px;
-    transform: scaleX(-1);
   }
   .oss-carousel-edge.next {
     right: -46px;
   }
   .oss-carousel-edge:hover {
-    border-color: var(--accent);
-    color: var(--accent);
+    color: var(--text-1);
   }
-  .oss-carousel-edge[disabled] {
-    color: var(--text-4);
-    cursor: default;
-    opacity: 0.45;
+  .oss-carousel-edge:hover::before {
+    background: rgba(244, 242, 238, 0.55);
+  }
+  .oss-carousel-edge:hover::after {
+    width: 9px;
+  }
+  .oss-carousel-edge:active,
+  .oss-carousel-edge.pressed {
+    color: #fff;
+  }
+  .oss-carousel-edge:active::before,
+  .oss-carousel-edge.pressed::before {
+    background: #fff;
   }
   .oss-carousel-track {
     display: flex;
@@ -437,11 +540,11 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
   .oss-card > .eyebrow + h3 {
     margin-top: 8px;
   }
-  /* Teaser lead-in: a thin card with stacked display type and an arrow glyph. */
+  /* Teaser lead-in: a static thin card with stacked display type and a plain
+     arrow glyph; not a control, no hover state, no accent. */
   .oss-card.teaser-card {
     align-items: flex-start;
     color: var(--text-1);
-    cursor: pointer;
     flex-basis: calc(14% - 13px);
     justify-content: space-between;
     text-align: left;
@@ -451,12 +554,9 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     letter-spacing: -0.01em;
   }
   .teaser-card i {
-    color: var(--accent);
+    color: var(--text-3);
     font-size: 26px;
     font-style: normal;
-  }
-  .teaser-card:hover {
-    border-color: var(--accent);
   }
   /* Survey card: two thirds of the row so the next card peeks from the right; the
      interactive island sits in the inner panel with the siblings' top-right glow. */
@@ -536,13 +636,13 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
       flex-basis: 38%;
     }
     .oss-carousel-edge {
-      width: 22px;
+      width: 20px;
     }
     .oss-carousel-edge.prev {
-      left: -24px;
+      left: -23px;
     }
     .oss-carousel-edge.next {
-      right: -24px;
+      right: -23px;
     }
   }
   @media (max-width: 520px) {
@@ -554,6 +654,14 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     }
     .oss-carousel-edge.next {
       right: -18px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .oss-carousel-bubbles button {
+      transition: none;
+    }
+    .oss-carousel-bubbles.counting button.active i {
+      animation: none;
     }
   }
 </style>
@@ -571,45 +679,117 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
       this.wireCarousel();
     }
 
-    // Prev/next scroll the snap track by one card; the buttons disable at the
-    // ends. The only automatic movement is a single 10s nudge after the entrance,
-    // and any interaction cancels it.
+    // Card-by-card navigation over the snap track with a seamless two-clone wrap;
+    // the teaser is a lead-in, never a stop. The only automatic movement is one
+    // 4s advance after the entrance, counted down on the active bubble, flashed
+    // on the next blade, and cancelled by any interaction.
     private wireCarousel() {
       const carousel = this.querySelector<HTMLElement>('.oss-carousel');
       const track = this.querySelector<HTMLElement>('[data-carousel-track]');
       const prev = this.querySelector<HTMLButtonElement>('[data-carousel-prev]');
       const next = this.querySelector<HTMLButtonElement>('[data-carousel-next]');
-      if (!carousel || !track || !prev || !next) return;
+      const bubbleWrap = this.querySelector<HTMLElement>('[data-carousel-bubbles]');
+      const bubbles = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-carousel-bubble]'));
+      if (!carousel || !track || !prev || !next || !bubbleWrap) return;
       const signal = this.controller.signal;
-      // Navigate between card snap positions; the cards have unequal widths
-      // (teaser, two-thirds survey, halves), so fixed steps would drift.
-      const go = (direction: number) => {
-        const cards = Array.from(track.children) as HTMLElement[];
-        const base = cards[0]?.offsetLeft ?? 0;
-        const stops = cards.map((card) => card.offsetLeft - base);
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const behavior = reduced ? ('auto' as const) : ('smooth' as const);
+
+      // Wrap clones, a pair per edge so each wrap stop shows the same neighbour
+      // as its original: [last', first''] ... reals ... [first', second'] — the
+      // primed cards are stops, the fillers only complete the visible pair.
+      // Landing on a stop clone snaps invisibly to its original once settled.
+      const realCards = Array.from(track.querySelectorAll<HTMLElement>('.oss-card:not(.teaser-card)'));
+      const first = realCards[0];
+      const last = realCards[realCards.length - 1];
+      const makeClone = (card: HTMLElement, role: string) => {
+        const clone = card.cloneNode(true) as HTMLElement;
+        clone.dataset.carouselClone = role;
+        clone.setAttribute('aria-hidden', 'true');
+        clone.setAttribute('inert', '');
+        // Clones are transient wrap frames: no morph wiring, no live island.
+        clone.querySelectorAll('[data-morph-source], [data-morph-pair]').forEach((el) => {
+          el.removeAttribute('data-morph-source');
+          el.removeAttribute('data-morph-pair');
+        });
+        clone.querySelectorAll('astro-island').forEach((island) => {
+          const frame = document.createElement('div');
+          frame.innerHTML = island.innerHTML;
+          island.replaceWith(frame);
+        });
+        return clone;
+      };
+      if (!track.querySelector(':scope > [data-carousel-clone]')) {
+        track.prepend(makeClone(first, 'filler'));
+        track.prepend(makeClone(last, 'stop-last'));
+        track.append(makeClone(first, 'stop-first'));
+        track.append(makeClone(realCards[1] ?? first, 'filler'));
+      }
+      const wrapPrev = track.querySelector<HTMLElement>('[data-carousel-clone="stop-last"]') as HTMLElement;
+      const wrapNext = track.querySelector<HTMLElement>('[data-carousel-clone="stop-first"]') as HTMLElement;
+      const teaser = track.querySelector<HTMLElement>('.teaser-card');
+
+      const base = track.firstElementChild as HTMLElement;
+      const left = (el: HTMLElement) => el.offsetLeft - base.offsetLeft;
+      // Navigation stops are the real cards plus the wrap stop clones; never the
+      // teaser and never the fillers.
+      const stopEls = [wrapPrev, ...realCards, wrapNext];
+      const bubbleFor = (el: HTMLElement) => (el === wrapPrev ? realCards.length - 1 : el === wrapNext ? 0 : realCards.indexOf(el));
+
+      const syncBubbles = () => {
         const position = track.scrollLeft;
-        const target = direction > 0 ? stops.find((stop) => stop > position + 4) : [...stops].reverse().find((stop) => stop < position - 4);
-        if (target !== undefined) track.scrollTo({ left: target, behavior: 'smooth' });
+        let nearest = stopEls[0];
+        for (const el of stopEls) {
+          if (Math.abs(left(el) - position) < Math.abs(left(nearest) - position)) nearest = el;
+        }
+        const active = bubbleFor(nearest);
+        bubbles.forEach((bubble, index) => bubble.classList.toggle('active', index === active));
       };
-      const sync = () => {
-        prev.disabled = track.scrollLeft <= 4;
-        next.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 4;
+
+      const go = (direction: number) => {
+        const position = track.scrollLeft;
+        const target = direction > 0 ? stopEls.find((el) => left(el) > position + 4) : [...stopEls].reverse().find((el) => left(el) < position - 4);
+        if (target) track.scrollTo({ left: left(target), behavior });
       };
+
+      // Settle detection doubles as the wrap jump: resting on a clone teleports
+      // to the identical-looking original.
+      let settle: ReturnType<typeof setTimeout> | undefined;
+      const normalize = () => {
+        const position = track.scrollLeft;
+        if (Math.abs(position - left(wrapPrev)) < 8) track.scrollTo({ left: left(last), behavior: 'auto' });
+        else if (position > left(wrapNext) - 8) track.scrollTo({ left: left(first), behavior: 'auto' });
+      };
+      track.addEventListener(
+        'scroll',
+        () => {
+          syncBubbles();
+          if (settle !== undefined) clearTimeout(settle);
+          settle = setTimeout(normalize, 150);
+        },
+        { signal, passive: true },
+      );
+
       prev.addEventListener('click', () => go(-1), { signal });
       next.addEventListener('click', () => go(1), { signal });
-      this.querySelector('[data-carousel-teaser]')?.addEventListener('click', () => go(1), { signal });
-      track.addEventListener('scroll', sync, { signal, passive: true });
-      sync();
+      bubbles.forEach((bubble, index) => {
+        bubble.addEventListener('click', () => track.scrollTo({ left: left(realCards[index]), behavior }), { signal });
+      });
 
-      // Entrance at 50% visibility showing the teaser, then one 6s auto-advance
-      // from the teaser to the survey card. Desktop track only; reduced motion
-      // gets neither. The pending timer dies on any interaction.
-      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      // Open on the teaser lead-in: the prepended clone shifts the track origin.
+      requestAnimationFrame(() => {
+        if (teaser) track.scrollTo({ left: left(teaser), behavior: 'auto' });
+        syncBubbles();
+      });
+
+      // Entrance at 50% visibility, then the single counted-down advance.
+      // Desktop track only; reduced motion gets neither.
       if (reduced || !window.matchMedia('(min-width: 901px)').matches) return;
       let nudge: ReturnType<typeof setTimeout> | undefined;
       const cancelNudge = () => {
         if (nudge !== undefined) clearTimeout(nudge);
         nudge = undefined;
+        bubbleWrap.classList.remove('counting');
       };
       for (const type of ['pointerdown', 'wheel', 'touchstart', 'keydown']) {
         carousel.addEventListener(type, cancelNudge, { signal, passive: true });
@@ -623,10 +803,15 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
           if (!entries.some((entry) => entry.isIntersecting)) return;
           observer.disconnect();
           delete track.dataset.entrance;
+          bubbleWrap.classList.add('counting');
           nudge = setTimeout(() => {
             nudge = undefined;
+            bubbleWrap.classList.remove('counting');
+            // Flash the next blade so the movement reads as a visible press.
+            next.classList.add('pressed');
+            setTimeout(() => next.classList.remove('pressed'), 280);
             go(1);
-          }, 6000);
+          }, 4000);
         },
         { threshold },
       );
