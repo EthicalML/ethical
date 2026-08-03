@@ -14,6 +14,10 @@ interface Props {
   eyebrow?: string;
   title?: string;
   lede?: string;
+  /* Forces the sub-900px staged list/detail flow at any viewport (narrow embeds):
+     list first, a pick shows the pane with the back control. Default off; the
+     desktop split is unchanged when absent. */
+  staged?: boolean;
 }
 
 const {
@@ -22,6 +26,7 @@ const {
   eyebrow = 'READING ROOM',
   title = 'The policy record',
   lede = 'Select a product for its dossier facts, what it argued, and the document itself, page by page.',
+  staged = false,
 } = Astro.props;
 const trackLabel: Record<string, string> = Object.fromEntries(filters.map((f) => [f.value, f.label]));
 
@@ -43,7 +48,7 @@ const pageCount = (slug: string): number => {
 const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slug) }, (_, i) => `p${String(i + 1).padStart(2, '0')}.webp`);
 ---
 
-<policy-record-preview class="prv" data-reveal>
+<policy-record-preview class="prv" data-staged={staged ? 'true' : undefined} data-reveal>
   <header class="prv-head">
     <div>
       <p class="eyebrow">{eyebrow}</p>
@@ -227,7 +232,7 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
       this.rows.forEach((row) => row.setAttribute('aria-selected', String(Number(row.dataset.index) === index)));
       if (interactive) {
         this.rows[index]?.scrollIntoView({ block: 'nearest' });
-        if (window.matchMedia('(max-width: 900px)').matches) {
+        if (this.dataset.staged !== undefined || window.matchMedia('(max-width: 900px)').matches) {
           this.dataset.view = 'detail';
           this.scrollIntoView({ block: 'start' });
         }
@@ -477,7 +482,35 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
   }
 
   .prv-back {
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    color: var(--accent-on);
+    cursor: pointer;
     display: none;
+    font: var(--mono-9) / 1 var(--font-mono);
+    letter-spacing: 0.1em;
+    margin-bottom: 20px;
+    min-height: 38px;
+    padding: 0 14px;
+    text-transform: uppercase;
+  }
+
+  /* Staged mode: the sub-900px list/detail flow at any viewport, sharing the same
+     data-view mechanism as the media-query block below. */
+  .prv[data-staged] .prv-pane {
+    display: none;
+  }
+
+  .prv[data-staged] .prv-back {
+    display: inline-block;
+  }
+
+  .prv[data-staged][data-view='detail'] .prv-main {
+    display: none;
+  }
+
+  .prv[data-staged][data-view='detail'] .prv-pane {
+    display: block;
   }
 
   .prv-doc {
@@ -653,17 +686,7 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
     }
 
     .prv-back {
-      background: var(--accent);
-      border: 1px solid var(--accent);
-      color: var(--accent-on);
-      cursor: pointer;
       display: inline-block;
-      font: var(--mono-9) / 1 var(--font-mono);
-      letter-spacing: 0.1em;
-      margin-bottom: 20px;
-      min-height: 38px;
-      padding: 0 14px;
-      text-transform: uppercase;
     }
   }
 </style>

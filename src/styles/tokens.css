@@ -1231,6 +1231,27 @@ kaos-graph, kaos-architecture { display: block; }
 .survey-focus { align-items: baseline; border-top: 1px solid var(--hairline-card); display: flex; flex-wrap: wrap; gap: 26px; margin-top: 22px; padding-top: 16px; }
 .survey-focus div { display: flex; flex-direction: column; gap: 5px; }.survey-focus span { color: var(--text-3); font: var(--mono-10)/1 var(--font-mono); letter-spacing: .1em; }.survey-focus strong { font-size: 17px; font-weight: 400; }
 .survey-focus p { color: var(--text-2); flex: 1; font-size: 13.5px; line-height: 1.55; margin: 0; min-width: 260px; }
+/* Compact card mode (`compact` prop on SurveyExplorer): question dropdown replaces
+   tabs and the sort button, chrome stripped (the host card is the frame), type and
+   bars tightened to card scale. Default off; full-width embeds are unchanged. */
+.survey-island.compact { background: none; border: 0; border-radius: 0; min-height: 0; padding: 0; }
+.survey-island.compact .survey-toolbar { gap: 10px; margin-top: 0; }
+.survey-island.compact .survey-toolbar button { font-size: 11px; padding: 6px 10px; }
+.survey-island.compact .survey-question-select { appearance: none; background: transparent; border: 1px solid var(--hairline-card); border-radius: 0; color: var(--text-2); cursor: pointer; font: 11px/1 var(--font-mono); letter-spacing: .06em; padding: 7px 10px; text-transform: uppercase; }
+.survey-island.compact .survey-question-select:focus-visible { border-color: var(--accent); outline: none; }
+.survey-island.compact .survey-toolbar > span { font: var(--mono-9)/1 var(--font-mono); }
+.survey-island.compact .survey-bars { gap: 1px; margin-top: 14px; }
+.survey-island.compact .survey-bars button { gap: 10px; grid-template-columns: 136px 1fr 44px 56px; padding: 6px 8px; }
+.survey-island.compact .survey-bars button > span { font: var(--mono-12,12px)/1.35 var(--font-mono); }
+.survey-island.compact .survey-bars i { gap: 3px; }
+.survey-island.compact .survey-bars i b { height: 8px; }
+.survey-island.compact .survey-bars i em { height: 5px; }
+.survey-island.compact .survey-focus { display: grid; gap: 10px 16px; grid-template-columns: 2fr 1fr 1fr; margin-top: 16px; padding-top: 14px; }
+.survey-island.compact .survey-focus span { font: var(--mono-9)/1 var(--font-mono); }
+.survey-island.compact .survey-focus strong { font-size: 13px; }
+@media (max-width: 1240px) {
+  .survey-island.compact .survey-bars button { grid-template-columns: 116px 1fr 40px 52px; }
+}
 .home-section {
   padding: 120px 48px 0;
   scroll-margin-top: 124px;

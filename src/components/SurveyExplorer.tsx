@@ -54,19 +54,27 @@ function Tabs({ data, category, onSelect }: TabsProps) {
 }
 
 interface ToolbarProps {
+  compact: boolean;
+  data: SurveyData;
+  category: Category;
   year: SurveyYear;
   sortMode: SortMode;
   metadata: string;
   responseCount: number | string;
+  onSelect: (category: Category) => void;
   onYearChange: (year: SurveyYear) => void;
   onSortChange: () => void;
 }
 
 function Toolbar({
+  compact,
+  data,
+  category,
   year,
   sortMode,
   metadata,
   responseCount,
+  onSelect,
   onYearChange,
   onSortChange,
 }: ToolbarProps) {
@@ -85,10 +93,21 @@ function Toolbar({
           Compare
         </button>
       </div>
-      <button onClick={onSortChange}>{sortLabel}</button>
-      <span>
-        {metadata} · N={responseCount}
-      </span>
+      {compact ? (
+        <select
+          class="survey-question-select"
+          aria-label="Survey question"
+          value={category}
+          onChange={(event) => onSelect((event.currentTarget as HTMLSelectElement).value)}
+        >
+          {Object.keys(data).map((categoryKey) => (
+            <option value={categoryKey}>{data[categoryKey].label}</option>
+          ))}
+        </select>
+      ) : (
+        <button onClick={onSortChange}>{sortLabel}</button>
+      )}
+      <span>{compact ? metadata : `${metadata} · N=${responseCount}`}</span>
     </div>
   );
 }
@@ -128,9 +147,32 @@ function BarRow({ row, focusedIndex, year, maximumValue, onFocus }: BarRowProps)
 
 interface FocusPanelProps {
   selectedRow: SurveyRow;
+  compact: boolean;
 }
 
-function FocusPanel({ selectedRow }: FocusPanelProps) {
+function FocusPanel({ selectedRow, compact }: FocusPanelProps) {
+  if (compact) {
+    return (
+      <div class="survey-focus">
+        <div>
+          <span>SELECTED</span>
+          <strong>{selectedRow.label}</strong>
+        </div>
+        <div>
+          <span>SHARE</span>
+          <strong>{selectedRow.value}%</strong>
+        </div>
+        <div>
+          <span>YOY VS 2024</span>
+          <strong>
+            {selectedRow.delta > 0 ? '+' : ''}
+            {selectedRow.delta} pts
+          </strong>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div class="survey-focus">
       <div>
@@ -155,9 +197,13 @@ function FocusPanel({ selectedRow }: FocusPanelProps) {
 
 interface Props {
   data: SurveyData;
+  /* Card mode for half-width embeds: the question dropdown replaces the tabs and
+     the sort button, chrome and type tighten to card scale, and the N count is
+     dropped. Default off; the full-width explorer is unchanged when absent. */
+  compact?: boolean;
 }
 
-export default function SurveyExplorer({ data }: Props) {
+export default function SurveyExplorer({ data, compact = false }: Props) {
   const [category, setCategory] = useState<Category>('challenges');
   const [year, setYear] = useState<SurveyYear>('year2025');
   const [sortMode, setSortMode] = useState<SortMode>('value');
@@ -214,13 +260,17 @@ export default function SurveyExplorer({ data }: Props) {
   };
 
   return (
-    <div class="survey-island" data-survey-card>
-      <Tabs data={data} category={category} onSelect={selectCategory} />
+    <div class={compact ? 'survey-island compact' : 'survey-island'} data-survey-card>
+      {!compact && <Tabs data={data} category={category} onSelect={selectCategory} />}
       <Toolbar
+        compact={compact}
+        data={data}
+        category={category}
         year={year}
         sortMode={sortMode}
         metadata={selectedSurvey.meta}
         responseCount={responseCount}
+        onSelect={selectCategory}
         onYearChange={setYear}
         onSortChange={toggleSortMode}
       />
@@ -235,7 +285,7 @@ export default function SurveyExplorer({ data }: Props) {
           />
         ))}
       </div>
-      <FocusPanel selectedRow={selectedRow} />
+      <FocusPanel selectedRow={selectedRow} compact={compact} />
     </div>
   );
 }
