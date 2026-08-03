@@ -21,7 +21,7 @@ const { policy } = Astro.props;
     gating, reduced-motion static frame and teardown. */
 }
 <policy-section class="policy-standards home-section" data-reveal>
-  <policy-hero-policy-circuit class="policy-standards-canvas" aria-hidden="true">
+  <policy-hero-policy-circuit class="policy-standards-canvas" data-scale="1.12" data-center-x="0.62" aria-hidden="true">
     <canvas></canvas>
   </policy-hero-policy-circuit>
   <i class="policy-standards-scrim" aria-hidden="true"></i>
@@ -73,7 +73,7 @@ const { policy } = Astro.props;
     width: 100%;
   }
   .policy-standards-scrim {
-    background: linear-gradient(100deg, var(--bg-base) 0%, var(--bg-base) 38%, rgba(19, 20, 20, 0.82) 52%, rgba(19, 20, 20, 0.3) 68%, transparent 84%);
+    background: linear-gradient(100deg, var(--bg-base) 0%, var(--bg-base) 32%, rgba(19, 20, 20, 0.72) 44%, rgba(19, 20, 20, 0.18) 58%, transparent 72%);
     inset: 0;
     pointer-events: none;
     position: absolute;
@@ -125,6 +125,7 @@ const { policy } = Astro.props;
     max-width: 44ch;
   }
   .policy-standards-copy > .button {
+    align-self: flex-start;
     display: inline-block;
     margin-top: 30px;
   }
