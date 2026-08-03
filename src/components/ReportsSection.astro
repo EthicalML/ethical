@@ -1,6 +1,5 @@
 ---
 import SurveyExplorerIsland from './SurveyExplorerIsland.astro';
-import { isExternalHref } from '../utils/external-links.mjs';
 
 interface Action {
   label: string;
@@ -8,37 +7,17 @@ interface Action {
   kind: string;
 }
 
-interface TextLink {
-  label: string;
-  href: string;
-}
-
 interface Reports {
-  eyebrow: string;
+  policy: {
+    eyebrow: string;
+    title: string;
+    contributions: Array<{ value: string; text: string }>;
+    stats: Array<{ value: string; label: string }>;
+    action: { label: string; href: string };
+  };
   title: string;
   intro: string;
   actions: Action[];
-  governance: {
-    eyebrow: string;
-    previewEyebrow: string;
-    previewLabel: string;
-    previewTitle: string;
-    steps: Array<{ label: string; detail: string }>;
-    title: string;
-    text: string;
-    actions: Action[];
-  };
-  security: {
-    eyebrow: string;
-    leftHeading: string;
-    rightHeading: string;
-    rows: Array<{ owasp: string; mlsecops: string }>;
-    title: string;
-    text: string;
-    relatedIntro: string;
-    relatedLinks: TextLink[];
-    actions: Action[];
-  };
 }
 
 interface Props {
@@ -48,10 +27,39 @@ interface Props {
 const { reports } = Astro.props;
 ---
 
-<reports-section id="reports" class="reports-section home-section" data-reveal>
+<reports-section id="reports" class="reports-section" data-reveal>
+  <div class="policy-pulse">
+    <div class="policy-pulse-copy">
+      <p class="eyebrow">{reports.policy.eyebrow}</p>
+      <h2>{reports.policy.title}</h2>
+      <ul class="policy-contributions">
+        {
+          reports.policy.contributions.map(({ value, text }) => (
+            <li>
+              <strong>{value}</strong>
+              <span>{text}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="network-stats">
+        {
+          reports.policy.stats.map(({ value, label }) => (
+            <div>
+              <strong>{value}</strong>
+              <span>{label}</span>
+            </div>
+          ))
+        }
+      </div>
+      <a class="button primary" href={reports.policy.action.href}>{reports.policy.action.label}</a>
+    </div>
+    <policy-hero-policy-circuit class="policy-pulse-canvas" aria-hidden="true">
+      <canvas></canvas>
+    </policy-hero-policy-circuit>
+  </div>
   <header>
     <div>
-      <p class="eyebrow">{reports.eyebrow}</p>
       <h2 data-morph-source="survey-title">{reports.title}</h2>
       <p>{reports.intro}</p>
     </div>
@@ -66,102 +74,77 @@ const { reports } = Astro.props;
     </nav>
   </header>
   <div class="home-survey-card"><SurveyExplorerIsland /></div>
-  <div class="initiative-pair">
-    <article>
-      <div class="initiative-preview governance-preview">
-        <header><span>{reports.governance.previewEyebrow}</span><span>{reports.governance.previewLabel}</span></header>
-        <h4>{reports.governance.previewTitle}</h4>
-        {
-          reports.governance.steps.map(({ label, detail }, index) => (
-            <p>
-              <span>{String(index + 1).padStart(2, '0')}</span>
-              {label}
-              <i>{detail}</i>
-            </p>
-          ))
-        }
-      </div>
-      <p class="eyebrow">{reports.governance.eyebrow}</p>
-      <h3 data-morph-source="initiative-governance-title">{reports.governance.title}</h3>
-      <p>{reports.governance.text}</p>
-      <div class="initiative-actions">
-        {
-          reports.governance.actions.map(({ label, href, kind }) => (
-            <a
-              class:list={['button', kind]}
-              href={href}
-              target={isExternalHref(href) ? '_blank' : undefined}
-              rel={isExternalHref(href) ? 'noopener noreferrer' : undefined}
-              data-morph-pair={href === '/frameworks/maturity-model/' ? 'initiative-governance-title' : undefined}
-            >
-              {label}
-            </a>
-          ))
-        }
-      </div>
-    </article>
-    <article>
-      <div class="initiative-preview mlsecops-preview">
-        <header><span>{reports.security.leftHeading}</span><span>{reports.security.rightHeading}</span></header>
-        {
-          reports.security.rows.map(({ owasp, mlsecops }) => (
-            <p>
-              <>
-                <span>{owasp}</span>
-                <strong>{mlsecops}</strong>
-              </>
-            </p>
-          ))
-        }
-      </div>
-      <p class="eyebrow">{reports.security.eyebrow}</p>
-      <h3 data-morph-source="initiative-security-title">{reports.security.title}</h3>
-      <p>{reports.security.text}</p>
-      <p>
-        {reports.security.relatedIntro}{' '}
-        {
-          reports.security.relatedLinks.map(({ label, href }, index) => (
-            <>
-              {index > 0 && (index === reports.security.relatedLinks.length - 1 ? ', and ' : ', ')}
-              <a
-                class="text-link"
-                href={href}
-                target={isExternalHref(href) ? '_blank' : undefined}
-                rel={isExternalHref(href) ? 'noopener noreferrer' : undefined}
-              >
-                {label}
-              </a>
-            </>
-          ))
-        }.
-      </p>
-      <div class="initiative-actions">
-        {
-          reports.security.actions.map(({ label, href, kind }) => (
-            <a
-              class:list={['button', kind]}
-              href={href}
-              target={isExternalHref(href) ? '_blank' : undefined}
-              rel={isExternalHref(href) ? 'noopener noreferrer' : undefined}
-              data-morph-pair={href === '/frameworks/security/' ? 'initiative-security-title' : undefined}
-            >
-              {label}
-            </a>
-          ))
-        }
-      </div>
-    </article>
-  </div>
 </reports-section>
 
 <style>
   reports-section {
     display: block;
+    scroll-margin-top: 124px;
+  }
+  /* Sub-block 2 of the REPORTS & INITIATIVES section: policy narrative and metrics
+     on the left, the /policy/ iso citadel embedded as an open backdrop on the right
+     (no card framing; CanvasEngine supplies observer gating, the reduced-motion
+     static frame and teardown). */
+  .policy-pulse {
+    align-items: center;
+    display: grid;
+    gap: 56px;
+    grid-template-columns: 1fr 1.1fr;
+    margin-bottom: 96px;
+  }
+  .policy-contributions {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .policy-contributions li {
+    align-items: baseline;
+    display: grid;
+    gap: 18px;
+    grid-template-columns: 64px 1fr;
+  }
+  .policy-contributions strong {
+    font: 300 26px/1 var(--font-display);
+    letter-spacing: -0.01em;
+  }
+  .policy-contributions span {
+    color: var(--text-2);
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+  .policy-pulse-copy > .button {
+    display: inline-block;
+    margin-top: 30px;
+  }
+  .policy-pulse-canvas {
+    display: block;
+    height: 100%;
+    min-height: 480px;
+    position: relative;
+  }
+  .policy-pulse-canvas canvas {
+    height: 100%;
+    inset: 0;
+    position: absolute;
+    width: 100%;
+  }
+  @media (max-width: 950px) {
+    .policy-pulse {
+      grid-template-columns: 1fr;
+      margin-bottom: 72px;
+    }
+    .policy-pulse-canvas {
+      min-height: 380px;
+    }
   }
 </style>
 
 <script>
   import { bindMorphPairs } from '../shared/MorphPairs';
+  import '../shared/canvas/PolicyHeroPolicyCircuit';
 
   class ReportsSection extends HTMLElement {
     private controller = new AbortController();

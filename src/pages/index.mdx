@@ -63,7 +63,26 @@ phases:
       - Public frameworks and requirements.
       - International governance.
 reports:
-  eyebrow: 04 — REPORTS & INITIATIVES
+  policy:
+    eyebrow: Policy & standards
+    title: Policy written by practitioners.
+    contributions:
+      - value: '20+'
+        text: recommendations adopted across the EU GPAI Code of Practice and the UK framework
+      - value: 11/11
+        text: major European digital instruments with technical responses
+      - value: 30+
+        text: published policy products since 2020
+    stats:
+      - value: '6'
+        label: ACTIVE MANDATES
+      - value: '~10'
+        label: ORGANISATIONAL PRINCIPLES
+      - value: '5'
+        label: REGIONAL POLICY AREAS
+    action:
+      label: Explore the policy record
+      href: /policy/
   title: The State of Production ML Survey
   intro: Two annual practitioner surveys — context, tools, scope and statistics. Choose a question, compare 2024 with 2025, and select any answer to read what it means for the principles.
   actions:
@@ -73,60 +92,6 @@ reports:
     - label: 2024 edition
       href: /data/survey-explorer/
       kind: ''
-  governance:
-    eyebrow: Governance
-    previewEyebrow: AI-RFX
-    previewLabel: PROCUREMENT FRAMEWORK
-    previewTitle: From requirements to supplier evidence
-    steps:
-      - label: Define governance requirements
-        detail: RFP
-      - label: Set evaluation criteria
-        detail: SCORE
-      - label: Request supplier evidence
-        detail: EVIDENCE
-      - label: Compare and document responses
-        detail: REVIEW
-      - label: Carry obligations into delivery
-        detail: CONTROL
-    title: ML Maturity Model
-    text: Governance becomes measurable when organisations assess capability and request supplier evidence. The ML Maturity Model provides a four-level framework, while AI-RFX translates requirements into supplier questions, evaluation criteria and evidence requests.
-    actions:
-      - label: AI-RFX Procurement Framework →
-        href: /frameworks/ai-rfx/
-        kind: primary
-      - label: ML Maturity Model →
-        href: /frameworks/maturity-model/
-        kind: ''
-  security:
-    eyebrow: Security
-    leftHeading: OWASP CATEGORY
-    rightHeading: MLSECOPS EQUIVALENT
-    rows:
-      - owasp: Broken access control
-        mlsecops: Unrestricted model endpoints
-      - owasp: Cryptographic failures
-        mlsecops: Access to model artifacts
-      - owasp: Injection
-        mlsecops: Artifact exploit injection
-      - owasp: Insecure design
-        mlsecops: Insecure ML pipeline design
-      - owasp: Security misconfiguration
-        mlsecops: ML infrastructure misconfiguration
-      - owasp: Vulnerable components
-        mlsecops: Supply-chain vulnerabilities in ML code
-      - owasp: Logging & monitoring failures
-        mlsecops: Observability and lineage failures
-    title: Agentic & ML Security
-    text: The Institute's security programme spans the MLSecOps Top 10, partnership work with OpenSSF, and active review of OWASP guidance for agentic systems.
-    relatedIntro: 'Related work includes:'
-    relatedLinks:
-      - label: the Agentic & ML Security framework
-        href: /frameworks/security/
-    actions:
-      - label: Agentic & ML Security
-        href: /frameworks/security/
-        kind: primary
 projects:
   section:
     eyebrow: 03 — OPEN SOURCE & TOOLS
@@ -230,13 +195,13 @@ import { contactFormCopy, contactFormTitle, networkSectors, networkStats } from 
 
 <PrinciplesExplorer
   homepage
-  eyebrow="02 — PRINCIPLES FOR ALIGNED & SAFE AI"
+  eyebrow="02 — REPORTS & INITIATIVES"
   heading="Nine Principles for AI Alignment and Safety."
   intro="Each principle specifies a commitment, the failure modes it addresses and the controls that implement it. We invite both individuals and organisations to pledge towards these principles."
 />
 
-<OpenSourceShowcase projects={frontmatter.projects} homepage />
-
 <ReportsSection reports={frontmatter.reports} />
+
+<OpenSourceShowcase projects={frontmatter.projects} homepage />
 
 <FormSection variant="network-split" title={contactFormTitle} copy={contactFormCopy} sectors={networkSectors} stats={networkStats} homepage />

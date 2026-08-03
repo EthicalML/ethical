@@ -1211,25 +1211,6 @@ kaos-graph, kaos-architecture { display: block; }
 .reports-section > header nav { display: flex; flex-wrap: wrap; gap: 12px; justify-content: flex-end; }
 .home-survey-card { background: linear-gradient(180deg,rgba(255,255,255,.035),transparent); border: 1px solid var(--hairline-card); border-radius: 0; margin-top: 36px; padding: 30px 28px 40px; }
 .home-survey-card .survey-island { background: none; border: 0; min-height: 0; padding: 0; }
-.initiative-pair { display: grid; gap: 26px; grid-template-columns: 1fr 1fr; margin-top: 26px; }
-.initiative-pair > article { background: linear-gradient(180deg,rgba(255,255,255,.035),transparent); border: 1px solid var(--hairline-card); border-radius: var(--radius-card-lg); display: flex; flex-direction: column; padding: 26px; }
-.initiative-pair > article > .eyebrow { margin-top: 24px; }
-.initiative-pair > article > h3 { font-size: 21px; font-weight: 500; margin: 8px 0 0; }
-.initiative-pair > article > p:not(.eyebrow) { color: var(--text-2); font-size: 14.5px; line-height: 1.62; }
-.initiative-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; padding-top: 22px; }
-.initiative-actions .button { font-size: 13px; padding: 11px 15px; }
-.initiative-preview { background: radial-gradient(70% 100% at 70% 0%,var(--accent-wash-16),var(--bg-inset) 70%); border: 1px solid rgba(255,255,255,.09); border-radius: var(--radius-card); padding: 22px; }
-.initiative-preview header { align-items: center; display: flex; justify-content: space-between; }
-.initiative-preview header span { color: var(--text-3); font: var(--mono-10)/1 var(--font-mono); letter-spacing: .1em; }
-.initiative-preview header strong { font: 300 40px/1 var(--font-display); }.initiative-preview header small { color: var(--text-3); font-size: 20px; }
-.initiative-preview h4 { font-size: 19px; font-weight: 400; margin: 5px 0 20px; }
-.initiative-preview > p { align-items: center; border-bottom: 1px solid rgba(255,255,255,.06); display: flex; font-size: 13px; gap: 10px; margin: 0; padding: 8px 0; }
-.initiative-preview > p span, .initiative-preview > p i { color: var(--text-3); font: normal var(--mono-10)/1 var(--font-mono); }
-.initiative-preview > p i { margin-left: auto; }
-.mlsecops-preview { background: var(--bg-inset); }
-.mlsecops-preview header { border-bottom: 1px solid var(--hairline); padding-bottom: 10px; }
-.mlsecops-preview > p { display: grid; grid-template-columns: 1fr 1.2fr; }
-.mlsecops-preview > p strong { font-weight: 400; }
 
 .survey-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
 .survey-tabs button { background: transparent; border: 1px solid var(--hairline-card); border-radius: var(--radius-pill); color: var(--text-2); cursor: pointer; font-size: 12.5px; padding: 8px 14px; }
@@ -1264,7 +1245,7 @@ main > .home-section:last-child { padding-bottom: 120px; }
 .network-lists a b { color: var(--accent); margin-left: 0; }
 
 @media (max-width: 900px) {
-  .kompute-feature,.kaos-feature,.oss-pair,.initiative-pair,.reports-section > header { grid-template-columns: 1fr; }
+  .kompute-feature,.kaos-feature,.oss-pair,.reports-section > header { grid-template-columns: 1fr; }
   .oss-copy { padding: 32px; }
   .reports-section > header nav { justify-content: flex-start; }
 }
@@ -2034,7 +2015,6 @@ main > .home-section:last-child { padding-bottom: 120px; }
   .kompute-feature,
   .kaos-feature,
   .oss-pair,
-  .initiative-pair,
   .reports-section > header { grid-template-columns: 1fr; }
   .oss-copy { padding: 32px; }
   .oss-copy > .figure-label,
@@ -2119,7 +2099,6 @@ main > .home-section:last-child { padding-bottom: 120px; }
   .kompute-feature,
   .oss-half,
   .kaos-feature,
-  .initiative-pair > article,
   .home-survey-card { border-radius: var(--radius-card); }
   .oss-copy { padding: 26px 22px; }
   .figure-label {
@@ -2160,9 +2139,6 @@ main > .home-section:last-child { padding-bottom: 120px; }
   .survey-island .survey-bars strong { grid-column: 2; }
   .survey-focus { grid-template-columns: 1fr; }
   .survey-focus p { grid-column: 1; }
-  .initiative-pair > article { padding: 20px; }
-  .initiative-preview { padding: 18px 14px; }
-  .initiative-preview > p { font-size: 12px; }
   .join-section { padding-inline: 18px; }
   .join-section > .network-split { padding: 24px 20px; }
   .network-split h2 { font-size: 36px; }
