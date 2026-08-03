@@ -2,14 +2,18 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PrototypeSwitcher from '../../components/PrototypeSwitcher.astro';
 import PrinciplesExplorer from '../../components/PrinciplesExplorer.astro';
+import SurveyExplorerIsland from '../../components/SurveyExplorerIsland.astro';
+import PolicyRecordPreview from '../../components/PolicyRecordPreview.astro';
+import { products } from '../../components/PolicyRecordData';
 
 const frontmatter = {
   title: 'Homepage section 02 prototypes',
-  description: 'Two structures for the REPORTS & INITIATIVES homepage section: principles lead or policy lead.',
+  description: 'Three structures for the REPORTS & INITIATIVES homepage section: principles lead, policy lead, or record lead.',
 };
 
 // Prototype-owned copy, duplicated from src/pages/index.mdx (reports.policy and the
-// survey header). Consolidates back into index.mdx frontmatter on the winning variant.
+// survey header) and src/pages/policy.mdx (record filters). Consolidates back into
+// index.mdx frontmatter on the winning variant.
 const policy = {
   eyebrow: 'Policy & standards',
   title: 'Policy written by practitioners.',
@@ -28,30 +32,36 @@ const policy = {
 const survey = {
   eyebrow: 'Production ML survey',
   title: 'The State of Production ML Survey',
-  intro:
-    'Two annual practitioner surveys — context, tools, scope and statistics. Choose a question, compare 2024 with 2025, and select any answer to read what it means for the principles.',
   primary: { label: 'Read the 2025 report', href: '/data/survey-explorer/' },
-  secondary: { label: '2024 edition', href: '/data/survey-explorer/' },
 };
 const principles = {
   heading: 'Nine Principles for AI Alignment and Safety.',
   intro:
     'Each principle specifies a commitment, the failure modes it addresses and the controls that implement it. We invite both individuals and organisations to pledge towards these principles.',
 };
+const recordFilters = [
+  { label: 'ALL', value: 'all' },
+  { label: 'EU AI ACT', value: 'eu-ai-act' },
+  { label: 'EU DIGITAL ACTS', value: 'eu-digital-acts' },
+  { label: 'UK', value: 'uk' },
+  { label: 'UN & GLOBAL', value: 'global' },
+  { label: 'SUSTAINABILITY', value: 'sustainability' },
+];
 
 const variations = [
   { value: '1', label: 'V1 · PRINCIPLES LEAD' },
   { value: '2', label: 'V2 · POLICY LEAD' },
+  { value: '3', label: 'V3 · RECORD LEAD' },
 ];
 ---
 
 <BaseLayout frontmatter={frontmatter}>
   <header class="prototype-header">
     <p class="eyebrow">PROTOTYPE · SECTION 02</p>
-    <h1>Two structures for Reports & Initiatives.</h1>
+    <h1>Three structures for Reports & Initiatives.</h1>
     <p>
-      Both variants render the full section. V1 opens with the principles explorer and compresses policy and survey into a card pair; V2 leads with the policy
-      split and compresses the principles into a single-lane card beside the survey.
+      All variants render the full section. V1 opens with the principles explorer and compresses policy and survey into a card pair; V2 leads with the policy
+      split; V3 leads with the citadel beside the policy record reading room. Both V2 and V3 compress the principles into a single-lane card beside the survey.
     </p>
   </header>
 
@@ -96,8 +106,7 @@ const variations = [
             <h3>{survey.title}</h3>
             <a class="button primary" href={survey.primary.href}>{survey.primary.label}</a>
           </header>
-          <p class="survey-intro">{survey.intro}</p>
-          <a class="button" href={survey.secondary.href}>{survey.secondary.label}</a>
+          <div class="survey-embed"><SurveyExplorerIsland /></div>
         </article>
       </div>
     </section>
@@ -143,8 +152,56 @@ const variations = [
             <h3>{survey.title}</h3>
             <a class="button primary" href={survey.primary.href}>{survey.primary.label}</a>
           </header>
-          <p class="survey-intro">{survey.intro}</p>
-          <a class="button" href={survey.secondary.href}>{survey.secondary.label}</a>
+          <div class="survey-embed"><SurveyExplorerIsland /></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="proto-section" data-prototype-variant="3" hidden>
+      <div class="record-lead">
+        <div class="record-lead-left">
+          <p class="eyebrow">02 — REPORTS & INITIATIVES</p>
+          <h2>{policy.title}</h2>
+          <policy-hero-policy-circuit class="record-lead-canvas" aria-hidden="true">
+            <canvas></canvas>
+          </policy-hero-policy-circuit>
+          <ul class="policy-contributions">
+            {
+              policy.contributions.map(({ value, text }) => (
+                <li>
+                  <strong>{value}</strong>
+                  <span>{text}</span>
+                </li>
+              ))
+            }
+          </ul>
+          <div class="network-stats">
+            {
+              policy.stats.map(({ value, label }) => (
+                <div>
+                  <strong>{value}</strong>
+                  <span>{label}</span>
+                </div>
+              ))
+            }
+          </div>
+          <a class="button primary" href={policy.action.href}>{policy.action.label}</a>
+        </div>
+        <div class="record-embed">
+          <PolicyRecordPreview filters={recordFilters} products={products} />
+        </div>
+      </div>
+      <div class="duo-row">
+        <article class="proto-card principles-card">
+          <PrinciplesExplorer compact eyebrow="PRINCIPLES" heading={principles.heading} intro={principles.intro} />
+        </article>
+        <article class="proto-card survey-card">
+          <p class="eyebrow">{survey.eyebrow}</p>
+          <header>
+            <h3>{survey.title}</h3>
+            <a class="button primary" href={survey.primary.href}>{survey.primary.label}</a>
+          </header>
+          <div class="survey-embed"><SurveyExplorerIsland /></div>
         </article>
       </div>
     </section>
@@ -175,7 +232,10 @@ const variations = [
   .proto-section {
     padding: 24px 48px 110px;
   }
+  /* min-height 0 releases the live-homepage fidelity constant in layout.css
+     (862px), which otherwise leaves dead space under the explorer here. */
   .proto-section > :global(.principles-explorer) {
+    min-height: 0;
     padding: 0;
   }
   section[hidden] {
@@ -208,20 +268,86 @@ const variations = [
     width: 100%;
   }
 
+  /* V3 lead: citadel + narrative/metrics on the left, the policy record reading
+     room compacted into the right half. PolicyRecordPreview is reused read-only:
+     its list/detail flip is viewport-gated at 900px, so the half-width embed
+     stacks the list over the always-visible pane instead (page-scoped overrides
+     only; clicking a record still swaps the pane content). */
+  .record-lead {
+    align-items: start;
+    display: grid;
+    gap: 56px;
+    grid-template-columns: 1fr 1.15fr;
+  }
+  .record-lead h2 {
+    font: 300 40px/1.06 var(--font-display);
+    letter-spacing: -0.015em;
+    margin: 16px 0 8px;
+  }
+  .record-lead-canvas {
+    display: block;
+    margin: 4px 0 24px;
+    min-height: 400px;
+    position: relative;
+  }
+  .record-lead-canvas canvas {
+    height: 100%;
+    inset: 0;
+    position: absolute;
+    width: 100%;
+  }
+  .record-lead-left > .button {
+    display: inline-block;
+    margin-top: 26px;
+  }
+  .record-embed :global(.prv) {
+    border-block: 0;
+    padding: 0;
+  }
+  .record-embed :global(.prv-head h2) {
+    font: 300 30px/1.1 var(--font-display);
+    letter-spacing: -0.015em;
+  }
+  .record-embed :global(.prv-lede) {
+    font-size: 13.5px;
+  }
+  .record-embed :global(.prv-split) {
+    gap: 26px;
+    grid-template-columns: 1fr;
+    margin-top: 26px;
+  }
+  .record-embed :global(.prv-search) {
+    flex: 1 1 160px;
+    min-width: 160px;
+  }
+  .record-embed :global(.prv-list) {
+    border-bottom: 1px solid var(--hairline);
+    flex: none;
+    max-height: 320px;
+    min-height: 0;
+    overflow-y: auto;
+  }
+  .record-embed :global(.prv-doc-strip img) {
+    height: clamp(280px, 36vh, 400px);
+  }
+
   /* Shared card pair. */
   .duo-row {
     align-items: stretch;
     display: grid;
     gap: 26px;
     grid-template-columns: 1fr 1fr;
-    margin-top: 48px;
+    margin-top: 22px;
+  }
+  .record-lead + .duo-row {
+    margin-top: 40px;
   }
   .proto-card {
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent);
     border: 1px solid var(--hairline-card);
     border-radius: var(--radius-card-lg);
     overflow: hidden;
-    padding: 30px;
+    padding: 28px;
     position: relative;
   }
 
@@ -255,8 +381,7 @@ const variations = [
     position: relative;
     z-index: 3;
   }
-  .policy-card-copy h3,
-  .survey-card h3 {
+  .policy-card-copy h3 {
     font: 300 30px/1.1 var(--font-display);
     letter-spacing: -0.015em;
     margin: 12px 0 24px;
@@ -292,7 +417,9 @@ const variations = [
     margin-top: 26px;
   }
 
-  /* Survey card: header row with the primary action top-right. */
+  /* Survey card: header row with the primary action top-right, then the live
+     survey explorer island compacted to card width (chrome stripped: the card
+     is the frame). */
   .survey-card {
     display: flex;
     flex-direction: column;
@@ -303,24 +430,74 @@ const variations = [
     gap: 20px;
     justify-content: space-between;
   }
+  .survey-card h3 {
+    font: 300 28px/1.1 var(--font-display);
+    letter-spacing: -0.015em;
+    margin: 12px 0 20px;
+    max-width: 20ch;
+  }
   .survey-card header .button {
     flex-shrink: 0;
     margin-top: 12px;
   }
-  .survey-intro {
-    color: var(--text-2);
-    font-size: 14.5px;
-    line-height: 1.6;
-    margin: 0 0 24px;
-    max-width: 52ch;
+  .survey-embed {
+    margin-top: 4px;
   }
-  .survey-card > .button {
-    align-self: flex-start;
-    margin-top: auto;
+  .survey-embed :global(.survey-island) {
+    background: none;
+    border: 0;
+    border-radius: 0;
+    min-height: 0;
+    padding: 0;
+  }
+  .survey-embed :global(.survey-island .survey-tabs button) {
+    font-size: 11.5px;
+    padding: 6px 11px;
+  }
+  .survey-embed :global(.survey-island .survey-toolbar) {
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .survey-embed :global(.survey-island .survey-toolbar button) {
+    font-size: 11.5px;
+    padding: 6px 10px;
+  }
+  .survey-embed :global(.survey-island .survey-bars) {
+    margin-top: 16px;
+  }
+  .survey-embed :global(.survey-island .survey-bars button) {
+    gap: 10px;
+    grid-template-columns: 136px 1fr 44px 56px;
+    padding: 9px 10px;
+  }
+  .survey-embed :global(.survey-island .survey-focus) {
+    gap: 16px 22px;
+    margin-top: 16px;
+  }
+  .survey-embed :global(.survey-island .survey-focus strong) {
+    font-size: 15px;
   }
 
+  /* Principles card: kill the component's own section padding (96px 48px) so the
+     card shell provides the only frame. */
   .principles-card {
-    padding: 26px;
+    padding: 26px 28px;
+  }
+  .principles-card :global(.principles-explorer) {
+    min-height: 0;
+    padding: 0;
+  }
+
+  @media (max-width: 1240px) {
+    .survey-embed :global(.survey-island .survey-bars button) {
+      grid-template-columns: 116px 1fr 40px 52px;
+    }
+    .survey-card h3 {
+      font-size: 25px;
+    }
+    .policy-card-copy h3 {
+      font-size: 27px;
+    }
   }
 
   @media (max-width: 950px) {
@@ -330,11 +507,22 @@ const variations = [
     .proto-section {
       padding: 12px 24px 80px;
     }
-    .policy-lead {
+    .policy-lead,
+    .record-lead {
       grid-template-columns: 1fr;
     }
     .policy-lead-canvas {
       min-height: 380px;
+    }
+    .record-lead-canvas {
+      min-height: 340px;
+    }
+    /* Below 900px the component's own list-first mobile behaviour takes over:
+       the list must not clip, and the pane shows only on data-view=detail. */
+    .record-embed :global(.prv-list) {
+      border-bottom: 0;
+      max-height: none;
+      overflow-y: visible;
     }
     .duo-row {
       grid-template-columns: 1fr;
