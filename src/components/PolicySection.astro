@@ -63,7 +63,7 @@ const { policy } = Astro.props;
     inset: 0 0 0 auto;
     pointer-events: none;
     position: absolute;
-    width: 76%;
+    width: 86%;
     z-index: 1;
   }
   .policy-standards-canvas canvas {
@@ -79,11 +79,21 @@ const { policy } = Astro.props;
     position: absolute;
     z-index: 2;
   }
+  /* The circuit's iso unit scales with min(canvas width, canvas height), so the
+     copy column's min-height is the citadel's real size lever. */
   .policy-standards-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     max-width: 560px;
-    min-height: 560px;
+    min-height: 720px;
     position: relative;
     z-index: 3;
+  }
+  @media (min-width: 1700px) {
+    .policy-standards-copy {
+      min-height: 840px;
+    }
   }
   h2 {
     font: 300 44px/1.06 var(--font-display);

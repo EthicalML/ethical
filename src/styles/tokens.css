@@ -1203,8 +1203,6 @@ kaos-graph, kaos-architecture { display: block; }
 .oss-menu-preview .kaos-canvas-mount { height: 180px; min-height: 180px; }
 .embedded-widget.kaos-canvas-mount { height: 360px; }
 
-.home-survey-card { background: linear-gradient(180deg,rgba(255,255,255,.035),transparent); border: 1px solid var(--hairline-card); border-radius: 0; margin-top: 36px; padding: 30px 28px 40px; }
-.home-survey-card .survey-island { background: none; border: 0; min-height: 0; padding: 0; }
 
 .survey-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
 .survey-tabs button { background: transparent; border: 1px solid var(--hairline-card); border-radius: var(--radius-pill); color: var(--text-2); cursor: pointer; font-size: 12.5px; padding: 8px 14px; }
@@ -2059,7 +2057,6 @@ main > .home-section:last-child { padding-bottom: 120px; }
   .fixed-canvas { height: 320px; }
   .kaos-feature { padding: 30px; }
   .kaos-canvas-mount { height: 320px; }
-  .home-survey-card { padding: 24px 24px 34px; }
   .survey-tabs {
     flex-wrap: nowrap;
     max-width: 100%;
@@ -2131,8 +2128,7 @@ main > .home-section:last-child { padding-bottom: 120px; }
   .detail-split { grid-template-columns: 1fr; }
   .kompute-feature,
   .oss-card,
-  .kaos-feature,
-  .home-survey-card { border-radius: var(--radius-card); }
+  .kaos-feature { border-radius: var(--radius-card); }
   .oss-copy { padding: 26px 22px; }
   .figure-label {
     flex-wrap: wrap;
@@ -2145,10 +2141,6 @@ main > .home-section:last-child { padding-bottom: 120px; }
   .kaos-feature { padding: 22px; }
   .kaos-capabilities div { grid-template-columns: 1fr; }
   .kaos-canvas-mount { height: 260px; }
-  .home-survey-card {
-    margin-inline: -2px;
-    padding: 18px 14px 28px;
-  }
   .survey-island .survey-toolbar {
     align-items: stretch;
     flex-direction: column;

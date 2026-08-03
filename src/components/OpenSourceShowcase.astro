@@ -19,7 +19,6 @@ interface Projects {
   };
   survey: {
     title: string;
-    intro: string;
     actions: Action[];
   };
   kompute: {
@@ -177,31 +176,27 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     </div>
   </article>
 
-  <div id="reports" class="survey-feature">
-    <header>
-      <div>
-        <h3 data-morph-source="survey-title">{projects.survey.title}</h3>
-        <p>{projects.survey.intro}</p>
-      </div>
-      <nav>
-        {
-          projects.survey.actions.map(({ label, href, kind }) => (
-            <a class:list={['button', kind]} href={href} data-morph-pair={href === '/data/survey-explorer/' ? 'survey-title' : undefined}>
-              {label}
-            </a>
-          ))
-        }
-      </nav>
-    </header>
-    <div class="home-survey-card"><SurveyExplorerIsland /></div>
-  </div>
-
   {
-    /* Flagship initiative carousel: user-controlled only (prev/next scroll-snap,
-      no auto-rotation per the motion convention); stacked list below 900px. */
+    /* Flagship carousel: enters with the survey card sliding in from the right at
+      50% visibility, auto-advances one card once after 10s unless the user
+      interacts first, and is user-controlled from then on (prev/next scroll-snap,
+      no further automatic movement); stacked list below 900px. */
   }
-  <div class="oss-carousel">
+  <div id="reports" class="oss-carousel">
     <div class="oss-carousel-track" data-carousel-track tabindex="-1">
+      <article class="oss-card survey-card">
+        <h3 data-morph-source="survey-title">{projects.survey.title}</h3>
+        <div class="survey-embed"><SurveyExplorerIsland compact /></div>
+        <div class="actions">
+          {
+            projects.survey.actions.map(({ label, href, kind }) => (
+              <a class:list={['button', kind]} href={href} data-morph-pair={href === '/data/survey-explorer/' ? 'survey-title' : undefined}>
+                {label}
+              </a>
+            ))
+          }
+        </div>
+      </article>
       <article class="oss-card">
         <div class="oss-preview xai-preview">
           <p class="figure-label"><span>{projects.xai.figure}</span></p>
@@ -357,39 +352,15 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     margin-top: 0;
   }
 
-  /* Survey block, moved in from the retired homepage reports section. */
-  .survey-feature {
-    margin-top: 96px;
-    scroll-margin-top: 124px;
-  }
-  .survey-feature header {
-    align-items: end;
-    display: grid;
-    gap: 56px;
-    grid-template-columns: 1fr 420px;
-  }
-  .survey-feature h3 {
-    font: 300 34px/1.1 var(--font-display);
-    letter-spacing: -0.015em;
-    margin: 0;
-  }
-  .survey-feature header p {
-    color: var(--text-2);
-    font-size: 15px;
-    line-height: 1.6;
-    margin: 14px 0 0;
-    max-width: 640px;
-  }
-  .survey-feature nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    justify-content: flex-end;
+  /* The intro shares the title's measure so the section head reads as one block. */
+  .section-intro {
+    max-width: 760px;
   }
 
-  /* Flagship carousel: two cards per view, snap scrolling, prev/next controls. */
+  /* Flagship carousel: snap scrolling, prev/next controls. */
   .oss-carousel {
     margin-top: 72px;
+    scroll-margin-top: 124px;
   }
   .oss-carousel-track {
     display: flex;
@@ -397,6 +368,16 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
+    transition:
+      opacity 0.7s var(--ease-panel),
+      transform 0.7s var(--ease-panel);
+  }
+  /* Entrance: the track (survey card first) slides in from the right once the
+     carousel reaches 50% visibility; the pending state is only ever set by JS,
+     and never under reduced motion. */
+  .oss-carousel-track[data-entrance='pending'] {
+    opacity: 0;
+    transform: translateX(140px);
   }
   .oss-carousel-track::-webkit-scrollbar {
     display: none;
@@ -415,6 +396,20 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
   }
   .oss-card > .eyebrow + h3 {
     margin-top: 8px;
+  }
+  /* Survey card: two thirds of the row so the next card peeks from the right;
+     section-scale title, the compact island carries the question dropdown. */
+  .oss-card.survey-card {
+    flex-basis: calc(66.666% - 13px);
+  }
+  .survey-card > h3 {
+    font: 300 30px/1.1 var(--font-display);
+    letter-spacing: -0.015em;
+    margin: 0 0 20px;
+    max-width: 24ch;
+  }
+  .survey-card .survey-embed {
+    margin-bottom: 8px;
   }
   .oss-card .actions {
     margin-top: auto;
@@ -499,16 +494,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
   }
 
   @media (max-width: 900px) {
-    .survey-feature {
-      margin-top: 72px;
-    }
-    .survey-feature header {
-      grid-template-columns: 1fr;
-    }
-    .survey-feature nav {
-      justify-content: flex-start;
-    }
-    /* Stacked list on mobile: no track, no controls. */
+    /* Stacked list on mobile: no track, no controls, no entrance or nudge. */
     .oss-carousel-track {
       flex-direction: column;
       overflow-x: visible;
@@ -536,13 +522,15 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
       this.wireCarousel();
     }
 
-    // User-controlled only: prev/next scroll the snap track by one card; the
-    // buttons disable at the ends. No auto-rotation.
+    // Prev/next scroll the snap track by one card; the buttons disable at the
+    // ends. The only automatic movement is a single 10s nudge after the entrance,
+    // and any interaction cancels it.
     private wireCarousel() {
+      const carousel = this.querySelector<HTMLElement>('.oss-carousel');
       const track = this.querySelector<HTMLElement>('[data-carousel-track]');
       const prev = this.querySelector<HTMLButtonElement>('[data-carousel-prev]');
       const next = this.querySelector<HTMLButtonElement>('[data-carousel-next]');
-      if (!track || !prev || !next) return;
+      if (!carousel || !track || !prev || !next) return;
       const signal = this.controller.signal;
       const step = () => {
         const card = track.querySelector<HTMLElement>('article');
@@ -556,6 +544,37 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
       next.addEventListener('click', () => track.scrollBy({ left: step(), behavior: 'smooth' }), { signal });
       track.addEventListener('scroll', sync, { signal, passive: true });
       sync();
+
+      // Entrance at 50% visibility, then one 10s auto-nudge. Desktop track only;
+      // reduced motion gets neither. The pending timer dies on any interaction.
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduced || !window.matchMedia('(min-width: 901px)').matches) return;
+      let nudge: ReturnType<typeof setTimeout> | undefined;
+      const cancelNudge = () => {
+        if (nudge !== undefined) clearTimeout(nudge);
+        nudge = undefined;
+      };
+      for (const type of ['pointerdown', 'wheel', 'touchstart', 'keydown']) {
+        carousel.addEventListener(type, cancelNudge, { signal, passive: true });
+      }
+      signal.addEventListener('abort', cancelNudge);
+      track.dataset.entrance = 'pending';
+      // Cap the threshold so a track taller than half the viewport still enters.
+      const threshold = Math.min(0.5, (window.innerHeight * 0.6) / Math.max(1, track.offsetHeight));
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((entry) => entry.isIntersecting)) return;
+          observer.disconnect();
+          delete track.dataset.entrance;
+          nudge = setTimeout(() => {
+            nudge = undefined;
+            track.scrollBy({ left: step(), behavior: 'smooth' });
+          }, 10000);
+        },
+        { threshold },
+      );
+      observer.observe(carousel);
+      signal.addEventListener('abort', () => observer.disconnect());
     }
 
     disconnectedCallback() {
