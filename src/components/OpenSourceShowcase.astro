@@ -186,7 +186,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
       Card-by-card navigation wraps seamlessly via edge clones; the bubbles above
       the track travel and follow. Horizontal at every width. */
   }
-  <div id="reports" class="oss-carousel">
+  <div id="reports" class="oss-carousel" data-reveal="trigger">
     <div class="oss-carousel-bubbles" data-carousel-bubbles>
       {
         carouselTitles.map((title, index) => (
@@ -668,6 +668,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
 
 <script>
   import { bindMorphPairs } from '../shared/MorphPairs';
+  import { onRevealed } from '../shared/Reveal';
   import '../shared/canvas/KomputeCube';
 
   class OpenSourceShowcase extends HTMLElement {
@@ -782,8 +783,9 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
         syncBubbles();
       });
 
-      // Entrance at 50% visibility, then the single counted-down advance.
-      // Desktop track only; reduced motion gets neither.
+      // Entrance on the global reveal signal (50% visibility with the tall
+      // fallback, from the shared Reveal module), then the single counted-down
+      // advance. Desktop track only; reduced motion gets neither.
       if (reduced || !window.matchMedia('(min-width: 901px)').matches) return;
       let nudge: ReturnType<typeof setTimeout> | undefined;
       const cancelNudge = () => {
@@ -796,12 +798,9 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
       }
       signal.addEventListener('abort', cancelNudge);
       track.dataset.entrance = 'pending';
-      // Cap the threshold so a track taller than half the viewport still enters.
-      const threshold = Math.min(0.5, (window.innerHeight * 0.6) / Math.max(1, track.offsetHeight));
-      const observer = new IntersectionObserver(
-        (entries) => {
-          if (!entries.some((entry) => entry.isIntersecting)) return;
-          observer.disconnect();
+      onRevealed(
+        carousel,
+        () => {
           delete track.dataset.entrance;
           bubbleWrap.classList.add('counting');
           nudge = setTimeout(() => {
@@ -813,10 +812,8 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
             go(1);
           }, 4000);
         },
-        { threshold },
+        signal,
       );
-      observer.observe(carousel);
-      signal.addEventListener('abort', () => observer.disconnect());
     }
 
     disconnectedCallback() {

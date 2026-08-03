@@ -66,7 +66,7 @@ The isometric structures are the six named shapes keyed by `piece` inside the co
 
 ### Behaviours
 
-- **Entrance.** Scroll-triggered: pieces fall in as lego blocks, bottom row first (order derived from row occupancy in cell mode, rect bottoms in freeform mode), with a settle bounce, a neighbour nudge on each landing, and a neon rule wiping across each card top. The trigger fires at 50% scroll progress, or on visibility when the viewport cannot reach 50%.
+- **Entrance.** Scroll-triggered: pieces fall in as lego blocks, bottom row first (order derived from row occupancy in cell mode, rect bottoms in freeform mode), with a settle bounce, a neighbour nudge on each landing, and a neon rule wiping across each card top. The trigger is the global reveal signal (`src/shared/Reveal.ts`: 50% visibility with the shared tall-element fallback).
 - **Reveal.** Hover (pointer devices) or tap (persisted via `data-active`, cleared by tapping again, tapping another card, or Escape). `slide` moves the card by the travel vector and exposes the neon within its original footprint; `tilt` lifts and rotates it. Stacking is static: each slot keeps one permanent layer, so a reveal never reorders cards.
 - **Reduced motion.** No entrance, no neon underlay, no displacement; the stack renders settled with an outline hover only.
 - **Mobile.** Cell mode stacks to a single column below 900px; freeform mode scales proportionally below its 1100px design width, then stacks below 640px. Duds are hidden in both stacks.

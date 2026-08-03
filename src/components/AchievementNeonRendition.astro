@@ -244,7 +244,7 @@ const placed = cards.map((card) => {
 const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect: dud.rect, order: orderOf[dud.area] }));
 ---
 
-<achievement-neon-rendition class="achievement-neon-rendition" data-variation={variant}>
+<achievement-neon-rendition class="achievement-neon-rendition" data-variation={variant} data-reveal="trigger">
   <div
     class="neon-canvas"
     data-freeform={freeform ? 'true' : undefined}
@@ -335,9 +335,10 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
 </achievement-neon-rendition>
 
 <script>
+  import { onRevealed } from '../shared/Reveal';
+
   class AchievementNeonRenditionElement extends HTMLElement {
     private controller = new AbortController();
-    private frame?: number;
     private impactTimers: number[] = [];
 
     connectedCallback() {
@@ -356,9 +357,9 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
       }
 
       this.dataset.motionReady = 'true';
-      window.addEventListener('scroll', this.requestEntranceFrame, { passive: true, signal: this.controller.signal });
-      window.addEventListener('resize', this.requestEntranceFrame, { passive: true, signal: this.controller.signal });
-      this.requestEntranceFrame();
+      // The global reveal signal carries the 50%-visibility trigger and its
+      // tall-element fallback (shared Reveal module).
+      onRevealed(this, () => this.enterTriggered(pieces), this.controller.signal);
 
       // The freeform collage shrinks proportionally below its design width (the
       // stacked column takes over under 640px via CSS).
@@ -389,7 +390,6 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
 
     disconnectedCallback() {
       this.controller.abort();
-      if (this.frame) cancelAnimationFrame(this.frame);
       this.impactTimers.forEach((timer) => clearTimeout(timer));
       this.impactTimers = [];
     }
@@ -411,36 +411,9 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
       this.querySelectorAll<HTMLElement>('[data-neon-slot][data-active="true"]').forEach((slot) => delete slot.dataset.active);
     };
 
-    private requestEntranceFrame = () => {
-      if (this.frame || this.dataset.entered === 'true') return;
-      this.frame = requestAnimationFrame(() => {
-        this.frame = undefined;
-        this.updateEntranceProgress();
-      });
-    };
-
-    private updateEntranceProgress() {
-      if (this.offsetParent === null) return;
-      const bounds = this.getBoundingClientRect();
-      const scrollReach = Math.min(bounds.height, innerHeight);
-      const progress = Math.max(0, Math.min(1, (innerHeight - bounds.top) / scrollReach));
-      this.dataset.entranceProgress = progress.toFixed(3);
-      if (progress < 0.5) {
-        // A zoomed-out or very tall viewport can make 0.5 unreachable (no scroll distance
-        // left); fire once the section is visible rather than never entering.
-        const scroller = document.scrollingElement;
-        const remaining = scroller ? Math.max(0, scroller.scrollHeight - innerHeight - scroller.scrollTop) : 0;
-        const maxProgress = Math.max(0, Math.min(1, (innerHeight - (bounds.top - remaining)) / scrollReach));
-        const visible = bounds.top < innerHeight && bounds.bottom > 0;
-        if (maxProgress >= 0.5 || !visible) return;
-      }
-      this.enterTriggered([...this.querySelectorAll<HTMLElement>('[data-lego-piece]')]);
-    }
-
     private enterTriggered(pieces: HTMLElement[]) {
       if (this.dataset.entered === 'true') return;
       this.dataset.entered = 'true';
-      this.dataset.triggerProgress = this.dataset.entranceProgress ?? '0.500';
       pieces.forEach((piece) => {
         if (getComputedStyle(piece).display === 'none') {
           piece.dataset.settled = 'true';
