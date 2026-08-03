@@ -121,8 +121,7 @@ mandates:
         active: true
 ---
 
-import { AchievementNeonRendition, ArticleHero, PolicyMandates, PolicyRecordPreview } from '../components/prose/components.js';
-import { instrumentFilters, instruments, products } from '../components/PolicyRecordData';
+import { AchievementNeonRendition, ArticleHero, PolicyMandates, PolicyRecordShelves } from '../components/prose/components.js';
 import StatBand from '../components/StatBand.astro';
 
 <ArticleHero
@@ -144,15 +143,7 @@ import StatBand from '../components/StatBand.astro';
   <AchievementNeonRendition variant={2} cards={frontmatter.achievements} layout={frontmatter.achievementLayout} />
 </section>
 
-<PolicyRecordPreview filters={frontmatter.filters} products={products} />
-
-<PolicyRecordPreview
-  eyebrow="INSTRUMENTS & OUTCOMES"
-  title="Where the record landed."
-  lede="Instruments and reports the Institute contributed to rather than authored: chaired, reviewed, or carrying its adopted recommendations. Roles are labelled per document."
-  filters={instrumentFilters}
-  products={instruments}
-/>
+<PolicyRecordShelves policyFilters={frontmatter.filters} />
 
 <section className="policy-section policy-mandates" data-reveal aria-labelledby="mandates-heading">
   <header>

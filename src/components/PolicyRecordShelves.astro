@@ -1,0 +1,115 @@
+---
+import PolicyRecordPreview from './PolicyRecordPreview.astro';
+import { industryFilters, industryLibrary, policyLibrary } from './PolicyRecordData';
+
+interface Filter {
+  label: string;
+  value: string;
+}
+
+interface Props {
+  policyFilters: Filter[];
+}
+
+const { policyFilters } = Astro.props;
+---
+
+<policy-record-shelves data-active="policy">
+  <nav class="shelf-toggle" role="group" aria-label="Record views">
+    <button type="button" data-shelf="policy" aria-pressed="true">Policy</button>
+    <button type="button" data-shelf="industry" aria-pressed="false">Industry</button>
+  </nav>
+
+  <div class="shelf" data-shelf-panel="policy">
+    <PolicyRecordPreview
+      lede="Authored products and contributed policy documents, labelled by role: select one for its dossier facts, what it argued, and the document itself, page by page."
+      filters={policyFilters}
+      products={policyLibrary}
+    />
+  </div>
+
+  <div class="shelf" data-shelf-panel="industry" hidden>
+    <PolicyRecordPreview
+      eyebrow="READING ROOM"
+      title="The industry record"
+      lede="Industry-body publications the Institute co-created or reviewed, from foundation principles to the agentic security canon. Roles are labelled per document."
+      filters={industryFilters}
+      products={industryLibrary}
+    />
+  </div>
+</policy-record-shelves>
+
+<script>
+  class PolicyRecordShelves extends HTMLElement {
+    private controller = new AbortController();
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      this.querySelectorAll<HTMLButtonElement>('[data-shelf]').forEach((button) => {
+        button.addEventListener(
+          'click',
+          () => {
+            const shelf = button.dataset.shelf ?? 'policy';
+            this.dataset.active = shelf;
+            this.querySelectorAll<HTMLButtonElement>('[data-shelf]').forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
+            this.querySelectorAll<HTMLElement>('[data-shelf-panel]').forEach((panel) => {
+              panel.hidden = panel.dataset.shelfPanel !== shelf;
+            });
+          },
+          { signal: this.controller.signal },
+        );
+      });
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+    }
+  }
+
+  if (!customElements.get('policy-record-shelves')) {
+    customElements.define('policy-record-shelves', PolicyRecordShelves);
+  }
+</script>
+
+<style>
+  policy-record-shelves {
+    display: block;
+    position: relative;
+  }
+
+  .shelf-toggle {
+    display: flex;
+    gap: 0;
+    inset: 74px 48px auto auto;
+    position: absolute;
+    z-index: 3;
+  }
+
+  .shelf-toggle button {
+    background: transparent;
+    border: 1px solid var(--hairline-card);
+    color: var(--text-3);
+    cursor: pointer;
+    font: var(--mono-9) / 1 var(--font-mono);
+    letter-spacing: 0.1em;
+    min-height: 36px;
+    padding: 0 18px;
+    text-transform: uppercase;
+  }
+
+  .shelf-toggle button + button {
+    border-left: 0;
+  }
+
+  .shelf-toggle button[aria-pressed='true'] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-on);
+  }
+
+  @media (max-width: 900px) {
+    .shelf-toggle {
+      inset: 58px 22px auto auto;
+    }
+  }
+</style>

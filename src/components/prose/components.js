@@ -37,5 +37,5 @@ export { default as CriteriaMap } from '../CriteriaMap.astro';
 export { default as ProcurementFlow } from '../ProcurementFlow.astro';
 export { default as FrameworkLinkCards } from '../FrameworkLinkCards.astro';
 export { default as PolicyMandates } from '../PolicyMandates.astro';
-export { default as PolicyRecordPreview } from '../PolicyRecordPreview.astro';
+export { default as PolicyRecordShelves } from '../PolicyRecordShelves.astro';
 export { default as AchievementNeonRendition } from '../AchievementNeonRendition.astro';

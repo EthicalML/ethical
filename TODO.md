@@ -8,6 +8,11 @@ Convention added: no `Label →` links — inline text links or primary/secondar
 
 Approved layout: 01 phases → 02 Reports & Initiatives (principles explorer opener → one full-width policy split block: narrative + metrics + button left, embedded interactive iso citadel right → production ML survey) → 03 Open Source. Remove ML Maturity Model and Agentic & ML Security blocks; retire their title morphs. Content must derive from the reworked /policy/ achievement cards (20+, 11/11, 6 active mandates, ~10 org principles, 5 regions, 30+ products). Awaiting owner approval of final copy/metrics before dispatch.
 
+## Bug
+
+- In the homepage if you click the animation separator which cycles across the three 3d objects, and force the change of the annimation, the distortion stops. Let's actually not make the ability to change the 3d animation manually by not making it clickable.
+- When refreshing the home page and half of the metrics or the brands carousel is visible, there is an animation wwhere it apepars and then disappears. and then reappears when scrolling. The functionaliy should be that it doesnt appear at all unless it's in the visibility range.
+
 ## Recovered backlog (from pre-branch sessions; triage — some may be done)
 
 - #10 SEO redirects (legacy `.html` URLs → new routes; the security-slug decision goes into the redirect map)
@@ -19,28 +24,14 @@ Approved layout: 01 phases → 02 Reports & Initiatives (principles explorer ope
 - #27 RSS (later)
 - #29 Astro showcase (post-cutover)
 
-## Merge the instruments shelf into the policy record explorer as a tab
+## Policy/Industry library follow-ups
 
-Today `/policy/` renders two stacked `PolicyRecordPreview` explorers (the authored record and "Where the record landed"). Merge them into one explorer with shelf tabs, e.g. `RECORD (29) | INSTRUMENTS (9)`: one set of chrome (header, search, viewer), per-tab lede and filter set, the authored/contributed boundary carried by the tab labels and the per-document role chips. Data stays as the two arrays in `src/components/PolicyRecordData.ts`.
+The toggle library shipped (POLICY: 29 authored + 5 contributed; INDUSTRY: LF AI principles + 5 OWASP guides). Remaining:
 
-Relevant instruments to carry over (current shelf, with participation):
-
-| Document                                                                                    | Participation               |
-| ------------------------------------------------------------------------------------------- | --------------------------- |
-| Governing AI for Humanity: final report (UN AI Advisory Body, SEP 2024)                     | AI EXPERT                   |
-| GPAI Code of Practice: Transparency chapter (EU AI ACT, JUL 2025)                           | RECOMMENDATIONS ADOPTED     |
-| GPAI Code of Practice: Safety and Security chapter (EU AI ACT, JUL 2025)                    | RECOMMENDATIONS ADOPTED     |
-| Frontier AI expert findings: competitiveness, sovereignty and security (EU AI OFFICE, 2026) | FORUM MEMBER                |
-| OWASP Top 10 for Agentic Applications 2026 (DEC 2025)                                       | REVIEWER (verified in text) |
-| Agentic AI: threats and mitigations (OWASP, DEC 2025)                                       | REVIEWER (verified in text) |
-| Securing Agentic Applications Guide 1.0 (OWASP, JUL 2025)                                   | REVIEWER (verified in text) |
-| State of Agentic AI Security and Governance 2.01 (OWASP, JUN 2026)                          | REVIEWER (verified in text) |
-| Multi-Agentic system Threat Modeling Guide v1.0 (OWASP, APR 2025)                           | REVIEWER (verified in text) |
-
-Pending additions to the shelf when picked up:
-
-- WGDG Progress Report, Zero Draft (JUN 2026) — owner co-facilitates Track 1 whose principles form Chapter 2; the document itself is unattributed and unpublished (zero draft, not on the UNCTAD site), so it belongs on the shelf as CO-FACILITATOR linked to the 6th-meeting page (https://unctad.org/meeting/6th-meeting-un-cstd-multi-stakeholder-working-group-data-governance-all-levels); PDF at owner's Downloads (`WGDG Progress Report_Zero Draft_June 2026.pdf`). Promote to the authored record when the final Progress Report publishes with attribution.
-- Systemic Risks Associated with Agentic AI policy brief (ETPC) — owner is in the acknowledgments only; shelf candidate with an ACKNOWLEDGED CONTRIBUTOR chip if wanted.
+- Promote the WGDG Progress Report zero draft (POLICY, CO-FACILITATOR) to the authored record when the final report publishes with attribution.
+- Collect the remaining public organisational principles for the INDUSTRY view (the ~10 card names Linux Foundation and UN publicly; Zalando, Capital One, Deutsche Börse and one more are confidential; owner recalls "several others" public).
+- LF AI principles entry links an HTML page so it has a placeholder viewer; optionally print-to-PDF at build for a paginated preview.
+- Systemic Risks Associated with Agentic AI policy brief (ETPC) — owner is in the acknowledgments only; POLICY-view candidate with an ACKNOWLEDGED CONTRIBUTOR chip if wanted.
 
 ## Policy record: 30th product
 

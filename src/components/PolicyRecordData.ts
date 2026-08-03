@@ -30,6 +30,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'eu-ai-act',
     href: 'https://www.acm.org/binaries/content/assets/public-policy/europe-tpc-comments-euc-ai-white-paper.pdf',
     slug: '00-europe-tpc-comments-euc-ai-white-paper',
+    role: 'AUTHOR',
     pages: 29,
     summary:
       'ACM Europe TPC’s questionnaire response to the February 2020 AI White Paper, submitted alongside its "When Computers Decide" recommendations and its statement on algorithmic transparency and accountability.',
@@ -41,6 +42,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'eu-ai-act',
     href: 'https://www.acm.org/binaries/content/assets/public-policy/europe-tpc-comments-ai-consultation.pdf',
     slug: '01-europe-tpc-comments-ai-consultation',
+    role: 'AUTHOR',
     pages: 5,
     summary:
       'Backs the AI Act’s proportionate risk-based approach but argues the high-risk definition needs a more precise risk hierarchy (Articles 6 and 7) and that classification should follow the risk introduced by use.',
@@ -52,6 +54,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'eu-ai-act',
     href: 'https://www.acm.org/binaries/content/assets/public-policy/acm-consultation-submission-2024---guidelines-on-the-application-of-the-definition-of-an-ai-system.pdf',
     slug: '02-acm-consultation-submission-2024---guidelines-on-the-application-of-the-defin',
+    role: 'AUTHOR',
     pages: 32,
     summary:
       'Response to the call for evidence on guidelines applying the AI Act’s definition of an AI system and its prohibited practices, pressing for scope narrowness to be maintained rather than merely declared.',
@@ -63,6 +66,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'eu-ai-act',
     href: 'https://www.acm.org/public-policy/europe-tpc/consultation-on-regulation-on-eu-ai-act-eu-2024-1689-04082026',
     slug: '03-consultation-on-regulation-on-eu-ai-act-eu-2024-1689-04082026',
+    role: 'AUTHOR',
     summary:
       'Responds to the proposed implementing regulation on the conduct of Commission proceedings under the AI Act, including how unilateral interim measures interact with parallel proceedings and an encrypted shadow-logging mechanism to balance confidentiality with security.',
   },
@@ -73,6 +77,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'eu-ai-act',
     href: 'https://www.acm.org/public-policy/europe-tpc/response-consultation-article-50-ai-act-06022026',
     slug: '04-response-consultation-article-50-ai-act-06022026',
+    role: 'AUTHOR',
     summary:
       'Responds to the draft guidelines on Article 50 transparency obligations, recommending the Commission ground them in the technical feasibility of content marking and detection and assess marking and provenance mechanisms across realistic redistribution chains.',
   },
@@ -83,6 +88,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'eu-ai-act',
     href: 'https://www.acm.org/binaries/content/assets/public-policy/europe-tpc/acm-consultation-submission-2026---digital-omnibus-on-ai-regulation-proposal.pdf',
     slug: '05-acm-consultation-submission-2026---digital-omnibus-on-ai-regulation-proposal',
+    role: 'AUTHOR',
     pages: 5,
     summary:
       'Recommendations on eight articles of the Digital Omnibus proposal: synthetic-data bias limits (Article 4a), a workable definition of "narrow" for frontier models (Article 6(4)), simplified documentation without sacrificing auditability (Article 11) and watermark detectability (Article 50(7)).',
@@ -94,6 +100,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'eu-ai-act',
     href: 'https://www.acm.org/binaries/content/assets/public-policy/acm-europetpc-consultation-2024---general-purpose-ai-code-of-practice.pdf',
     slug: '06-acm-europetpc-consultation-2024---general-purpose-ai-code-of-practice',
+    role: 'AUTHOR',
     pages: 4,
     summary:
       'Twelve recommendations on the first draft Code, chiefly that it stay within the limits of its title and not extend model-provider obligations onto deployers, and that working-group representation be re-calibrated.',
@@ -105,6 +112,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'eu-ai-act',
     href: 'https://www.acm.org/binaries/content/assets/public-policy/acm-europetpc-consultation-2024---2nd-general-purpose-ai-code-of-practice-1.pdf',
     slug: '07-acm-europetpc-consultation-2024---2nd-general-purpose-ai-code-of-practice-1',
+    role: 'AUTHOR',
     pages: 5,
     summary:
       'Records that eight of twelve initial recommendations were integrated into the Second Draft main text, extends those eight and adds two net-new recommendations (13 and 14).',
@@ -116,6 +124,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'eu-ai-act',
     href: 'https://www.acm.org/binaries/content/assets/public-policy/europe-tpc-comments-ai-scientific-panel-of-independent-experts-111524.pdf',
     slug: '08-europe-tpc-comments-ai-scientific-panel-of-independent-experts-111524',
+    role: 'AUTHOR',
     pages: 2,
     summary:
       'Three recommendations on the implementing regulation establishing the AI Act’s scientific panel, chiefly that the Commission define the panel’s scope of work before capping the number of experts.',
@@ -127,6 +136,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'eu-ai-act',
     href: 'https://www.acm.org/public-policy/europe-tpc/calibrating-oversight-agentic-frontier-models-04272026',
     slug: '09-calibrating-oversight-agentic-frontier-models-04272026',
+    role: 'AUTHOR',
     summary:
       'Argues that regulatory simplification for agentic frontier models must be paired with robust technical oversight, drawing on recent frontier-model disclosures and public evaluations by the UK AI Security Institute.',
   },
@@ -136,6 +146,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'eu-ai-act',
     href: 'https://www.acm.org/public-policy/europe-tpc/reflections-draft-pren-18282',
     slug: '10-reflections-draft-pren-18282',
+    role: 'AUTHOR',
     summary:
       'Welcomes draft prEN 18282, the European standard on cybersecurity specifications for AI systems, for covering security across the full AI lifecycle, and recommends strengthening it in six areas.',
   },
@@ -145,6 +156,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'eu-digital-acts',
     href: 'https://www.acm.org/binaries/content/assets/public-policy/europetpc-digital-services-act-comments.pdf',
     slug: '11-europetpc-digital-services-act-comments',
+    role: 'AUTHOR',
     pages: 1,
     summary:
       'Early record submission on two points: automated content-moderation systems carry inherent limits and biases legislation must safeguard, and Article 31 "vetted researcher" rules must not exclude qualified researchers through overly restrictive data-access provisions.',
@@ -156,6 +168,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'eu-digital-acts',
     href: 'https://www.acm.org/binaries/content/assets/public-policy/acm-europe-tpc-delegated-regulation-dsa-draft-act-comments-2024.pdf',
     slug: '12-acm-europe-tpc-delegated-regulation-dsa-draft-act-comments-2024',
+    role: 'AUTHOR',
     pages: 6,
     summary:
       'Broadly endorses the draft delegated regulation on VLOP and VLOSE data access under Article 40, with recommendations on procedures and time constraints that let researchers study systemic risks in the Union.',
@@ -167,6 +180,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'eu-digital-acts',
     href: 'https://www.acm.org/binaries/content/assets/public-policy/acm-eur-tpc-data-act-comments-13may22a.pdf',
     slug: '13-acm-eur-tpc-data-act-comments-13may22a',
+    role: 'AUTHOR',
     pages: 4,
     summary:
       'Supports the Data Act’s intent on fair allocation of data value and recommends expanding scope to metadata needed for reasonable consumption and processing of underlying data (Articles 2 and 3).',
@@ -177,6 +191,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'eu-digital-acts',
     href: 'https://www.acm.org/binaries/content/assets/public-policy/europe-tpc-comments-cyber-resilience.pdf',
     slug: '14-europe-tpc-comments-cyber-resilience',
+    role: 'AUTHOR',
     pages: 3,
     summary:
       'Warns that excluding certain open-source software from the CRA risks vendors leaning on OSS to circumvent requirements, citing Log4J and SolarWinds, and urges the Commission to expand the Regulation’s scope.',
@@ -188,6 +203,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'eu-digital-acts',
     href: 'https://www.acm.org/binaries/content/assets/public-policy/europetpc-comments-digital-principles.pdf',
     slug: '15-europetpc-comments-digital-principles',
+    role: 'AUTHOR',
     pages: 4,
     summary:
       'Supplemental section-by-section comments on the European Digital Principles consultation, concurring that universal access to fast and reliable internet services is of paramount importance.',
@@ -199,6 +215,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'eu-ai-act',
     href: 'https://www.acm.org/public-policy/europe-tpc/etpc-response-targeted-ec-consultation',
     slug: '16-etpc-response-targeted-ec-consultation',
+    role: 'AUTHOR',
     summary:
       'Responds to the draft Commission guidelines on classifying high-risk AI systems, warning that the broad end-to-end mandate makes benign subcomponents inherit high-risk status and arguing for modular classification and a workable Article 6(3) filter.',
   },
@@ -209,6 +226,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'eu-digital-acts',
     href: 'https://www.acm.org/binaries/content/assets/public-policy/etpc-survey-responses.pdf',
     slug: '17-etpc-survey-responses',
+    role: 'AUTHOR',
     pages: 5,
     summary:
       'Response to the EC stakeholder survey on the draft G7 Guiding Principles for organizations developing advanced AI systems, building on the Hiroshima AI process and its associated code of conduct.',
@@ -220,6 +238,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'uk',
     href: 'https://www.acm.org/binaries/content/assets/public-policy/final-acm_etpc-uk-ai-paper-comments.pdf',
     slug: '18-final-acm_etpc-uk-ai-paper-comments',
+    role: 'AUTHOR',
     pages: 5,
     summary:
       'Reaffirms and builds on the 2022 UK comments, recording that three of four overarching recommendations (international compatibility, defined principles and a transparent process) were accepted.',
@@ -231,6 +250,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'uk',
     href: 'https://www.acm.org/binaries/content/assets/public-policy/europe-tpc-uk-ai-framework-comments.pdf',
     slug: '19-europe-tpc-uk-ai-framework-comments',
+    role: 'AUTHOR',
     pages: 5,
     summary:
       'Four general recommendations on the UK pro-innovation framework: environmental impacts explicitly addressed, international compatibility, clearly defined cross-sectoral principles and a highly transparent process.',
@@ -242,6 +262,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'uk',
     href: 'https://www.acm.org/binaries/content/assets/public-policy/europe-tpc-comments-uknds.pdf',
     slug: '20-europe-tpc-comments-uknds',
+    role: 'AUTHOR',
     pages: 10,
     summary:
       'Principal-authored response to the UK National Data Strategy consultation, providing technical input on the September 2020 strategy from a production-ML practitioner perspective.',
@@ -253,6 +274,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'global',
     href: 'https://www.acm.org/binaries/content/assets/public-policy/acm-europetpc-consultation-2025---independent-international-scientific-panel-on-ai---united-nations-office-for-digital-and-emerging-technologies-1.pdf',
     slug: '21-acm-europetpc-consultation-2025---independent-international-scientific-panel-',
+    role: 'AUTHOR',
     pages: 8,
     summary:
       'Response to the UN Office for Digital and Emerging Technologies on the establishment and functioning of the Independent International Scientific Panel on AI.',
@@ -264,6 +286,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'global',
     href: 'https://www.acm.org/binaries/content/assets/public-policy/acm-etpc-ttc-ai-taxonomy-112123.pdf',
     slug: '22-acm-etpc-ttc-ai-taxonomy-112123',
+    role: 'AUTHOR',
     pages: 3,
     summary:
       'Term-by-term recommendations on the first-edition TTC WG1 EU-US AI terminology and taxonomy, for example redefining "autonomy" around behavioural rather than intelligence-based capabilities.',
@@ -275,6 +298,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'global',
     href: 'https://www.acm.org/binaries/content/assets/public-policy/final-joint-ai-statement-update.pdf',
     slug: '23-final-joint-ai-statement-update',
+    role: 'AUTHOR',
     pages: 6,
     summary:
       'Statement on Principles for Responsible Algorithmic Systems, updating the 2017 joint transparency statement and warning that opaque algorithmic decisions can be biased or erroneous.',
@@ -286,6 +310,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'global',
     href: 'https://www.acm.org/binaries/content/assets/public-policy/principles-generative-ai.pdf',
     slug: '24-principles-generative-ai',
+    role: 'AUTHOR',
     pages: 3,
     summary:
       'ACM Technology Policy Council’s eight principles for generative AI, stating that existing mechanisms for avoiding AI harms will likely not suffice.',
@@ -297,6 +322,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'sustainability',
     href: 'https://www.acm.org/binaries/content/assets/public-policy/europe-tpc/acm_climate_disclosure_final.pdf',
     slug: '25-acm_climate_disclosure_final',
+    role: 'AUTHOR',
     pages: 7,
     summary:
       'Policy brief proposing five primary and four secondary recommendations for environmental accountability in the AI Act, including inference-phase energy disclosure in Annexes IV, XI and XII and a public registry for climate metrics.',
@@ -308,6 +334,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'sustainability',
     href: 'https://www.acm.org/binaries/content/assets/public-policy/europe-tpc/acm_data_center_final.pdf',
     slug: '26-acm_data_center_final',
+    role: 'AUTHOR',
     pages: 4,
     summary:
       'Policy brief with five recommendations for greener EU data centres, arguing that mandatory standards and customer-level reporting are both feasible and advantageous.',
@@ -318,6 +345,7 @@ export const products: PolicyRecordProduct[] = [
     track: 'sustainability',
     href: 'https://www.acm.org/public-policy/europe-tpc/acm-data-center-final-spanish',
     slug: '27-acm-data-center-final-spanish',
+    role: 'AUTHOR',
     summary:
       'Spanish edition of the greener data-centres policy brief, proposing five recommendations for policymakers to steer Europe toward more ecological data centres.',
   },
@@ -334,23 +362,14 @@ export const products: PolicyRecordProduct[] = [
   },
 ];
 
-// The second shelf: instruments and reports the Institute contributed to rather than
-// authored: chaired, reviewed, forum membership, or recommendations adopted. Kept separate
-// from `products` so the "28 policy products delivered" stat stays scoped to authored work.
-// Every OWASP reviewer credit is verified against the document's own text.
-export const instrumentFilters = [
-  { label: 'ALL', value: 'all' },
-  { label: 'UN', value: 'un' },
-  { label: 'EU', value: 'eu' },
-  { label: 'OWASP', value: 'owasp' },
-];
-
-export const instruments: PolicyRecordProduct[] = [
+// Documents in the policy arena the Institute contributed to rather than authored; they
+// join the authored products in the POLICY view of the library, differentiated by role chip.
+const policyContributions: PolicyRecordProduct[] = [
   {
     title: 'Governing AI for Humanity: final report',
     instrument: 'UN AI ADVISORY BODY',
     date: 'SEP 2024',
-    track: 'un',
+    track: 'global',
     href: 'https://www.un.org/sites/un2.un.org/files/governing_ai_for_humanity_final_report_en.pdf',
     slug: 'i01-governing-ai-for-humanity',
     role: 'AI EXPERT',
@@ -361,7 +380,7 @@ export const instruments: PolicyRecordProduct[] = [
     title: 'GPAI Code of Practice: Transparency chapter',
     instrument: 'EU AI ACT',
     date: 'JUL 2025',
-    track: 'eu',
+    track: 'eu-ai-act',
     href: 'https://ec.europa.eu/newsroom/dae/redirection/document/118120',
     slug: 'i02-gpai-code-transparency',
     role: 'RECOMMENDATIONS ADOPTED',
@@ -372,7 +391,7 @@ export const instruments: PolicyRecordProduct[] = [
     title: 'GPAI Code of Practice: Safety and Security chapter',
     instrument: 'EU AI ACT',
     date: 'JUL 2025',
-    track: 'eu',
+    track: 'eu-ai-act',
     href: 'https://ec.europa.eu/newsroom/dae/redirection/document/118119',
     slug: 'i03-gpai-code-safety-security',
     role: 'RECOMMENDATIONS ADOPTED',
@@ -383,7 +402,7 @@ export const instruments: PolicyRecordProduct[] = [
     title: 'Frontier AI expert findings: competitiveness, sovereignty and security',
     instrument: 'EU AI OFFICE',
     date: '2026',
-    track: 'eu',
+    track: 'eu-ai-act',
     href: 'https://digital-strategy.ec.europa.eu/en/library/ai-office-publishes-frontier-ai-expert-findings-eu-competitiveness-sovereignty-and-security',
     slug: 'i04-frontier-ai-expert-findings',
     role: 'FORUM MEMBER',
@@ -391,10 +410,45 @@ export const instruments: PolicyRecordProduct[] = [
       'Key insights from the first meeting of the European Expert Forum on Frontier AI, on enhancing the EU’s competitiveness, sovereignty and security in frontier AI. The Institute participates through its Frontier AI Forum membership.',
   },
   {
+    title: 'WGDG Progress Report: zero draft',
+    instrument: 'UN CSTD WGDG',
+    date: 'JUN 2026',
+    track: 'global',
+    href: 'https://unctad.org/meeting/6th-meeting-un-cstd-multi-stakeholder-working-group-data-governance-all-levels',
+    slug: 'i12-wgdg-progress-report-zero-draft',
+    role: 'CO-FACILITATOR',
+    summary:
+      'Zero draft of the progress report of the UN CSTD Working Group on Data Governance for its sixth meeting; Chapter 2 carries the Track 1 fundamental principles of data governance co-facilitated by the Institute. Interim draft, ahead of the final published report.',
+  },
+];
+
+// The POLICY view of the library: authored products plus policy contributions.
+export const policyLibrary: PolicyRecordProduct[] = [...products, ...policyContributions];
+
+// The INDUSTRY view: industry-body publications the Institute co-created or reviewed.
+export const industryFilters = [
+  { label: 'ALL', value: 'all' },
+  { label: 'PRINCIPLES', value: 'principles' },
+  { label: 'AGENTIC SECURITY', value: 'agentic-security' },
+];
+
+export const industryLibrary: PolicyRecordProduct[] = [
+  {
+    title: 'Principles for Trusted AI',
+    instrument: 'LF AI & DATA',
+    date: 'FEB 2021',
+    track: 'principles',
+    href: 'https://lfaidata.foundation/blog/2021/02/08/lf-ai-data-announces-principles-for-trusted-ai/',
+    slug: 'i13-lfai-principles-trusted-ai',
+    role: 'CO-CREATED',
+    summary:
+      'The Linux Foundation AI & Data Foundation’s eight Principles for Trusted AI ((R)REPEATS: reproducibility, robustness, equitability, privacy, explainability, accountability, transparency, security), developed over a year by the Trusted AI Principles working group with the Institute among its members and approved by the Technical Advisory Council.',
+  },
+  {
     title: 'OWASP Top 10 for Agentic Applications 2026',
     instrument: 'OWASP AGENTIC',
     date: 'DEC 2025',
-    track: 'owasp',
+    track: 'agentic-security',
     href: 'https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/',
     slug: 'i05-owasp-top10-agentic',
     role: 'REVIEWER',
@@ -405,7 +459,7 @@ export const instruments: PolicyRecordProduct[] = [
     title: 'Agentic AI: threats and mitigations',
     instrument: 'OWASP AGENTIC',
     date: 'DEC 2025',
-    track: 'owasp',
+    track: 'agentic-security',
     href: 'https://genai.owasp.org/resource/agentic-ai-threats-and-mitigations/',
     slug: 'i06-owasp-agentic-threats-mitigations',
     role: 'REVIEWER',
@@ -416,7 +470,7 @@ export const instruments: PolicyRecordProduct[] = [
     title: 'Securing Agentic Applications Guide 1.0',
     instrument: 'OWASP AGENTIC',
     date: 'JUL 2025',
-    track: 'owasp',
+    track: 'agentic-security',
     href: 'https://genai.owasp.org/resource/securing-agentic-applications-guide-1-0/',
     slug: 'i07-owasp-securing-agentic-apps',
     role: 'REVIEWER',
@@ -427,7 +481,7 @@ export const instruments: PolicyRecordProduct[] = [
     title: 'State of Agentic AI Security and Governance 2.01',
     instrument: 'OWASP AGENTIC',
     date: 'JUN 2026',
-    track: 'owasp',
+    track: 'agentic-security',
     href: 'https://genai.owasp.org/resource/state-of-agentic-ai-security-and-governance/',
     slug: 'i08-owasp-state-agentic-security',
     role: 'REVIEWER',
@@ -438,7 +492,7 @@ export const instruments: PolicyRecordProduct[] = [
     title: 'Multi-Agentic system Threat Modeling Guide v1.0',
     instrument: 'OWASP AGENTIC',
     date: 'APR 2025',
-    track: 'owasp',
+    track: 'agentic-security',
     href: 'https://genai.owasp.org/resource/multi-agentic-system-threat-modeling-guide-v1-0/',
     slug: 'i10-owasp-multi-agent-threat-modeling',
     role: 'REVIEWER',
