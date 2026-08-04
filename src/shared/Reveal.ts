@@ -1,12 +1,12 @@
-// Global reveal trigger: every [data-reveal] element fires once half of it is
-// visible; an element too tall for that (half of it would exceed the viewport
+// Global reveal trigger: every [data-reveal] element fires once REVEAL_RATIO of
+// it is visible; an element too tall for that (its share would exceed the viewport
 // share below) fires once TALL_REVEAL_VH of the viewport is filled by it. A
 // threshold that the remaining page can never reach fires while the element is
 // visible, so nothing at the foot of a short page stays hidden.
 // `data-reveal="trigger"` elements receive only the timing signal
 // (dataset.revealed plus a `reveal:visible` event) without the fade styling;
 // components with bespoke entrances consume the signal via `onRevealed`.
-const REVEAL_RATIO = 0.5;
+const REVEAL_RATIO = 0.25;
 const TALL_REVEAL_VH = 0.45;
 
 export const onRevealed = (element: HTMLElement, callback: () => void, signal: AbortSignal) => {
