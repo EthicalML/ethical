@@ -1,6 +1,12 @@
 const RESPONSE_TAB = 'Responses';
 const QUARANTINE_TAB = 'Quarantine';
 
+// One column per interest rather than one joined cell, so each is a real
+// boolean the sheet can filter, sort and COUNTIF. Order fixes the column order;
+// it has to match the interest values in src/data/contactForm.ts, and adding an
+// interest there means adding it here and inserting a column in both tabs.
+const INTERESTS = ['network', 'newsletter', 'frameworks'];
+
 function doPost(e) {
   const data = JSON.parse(e.postData.contents || '{}');
   if (data.website) return reply({ ok: true });
@@ -13,13 +19,9 @@ function doPost(e) {
   cache.put(clientKey, String(clientCount), 3600);
   cache.put(hourKey, String(volumeCount), 3600);
 
-  const fields = [
-    data.name,
-    data.email,
-    data.organisation,
-    data.furtherInformation,
-    (data.interests || []).join(', '),
-  ];
+  const fields = [data.name, data.email, data.organisation, data.furtherInformation];
+  const chosen = data.interests || [];
+  const interestFlags = INTERESTS.map((interest) => chosen.indexOf(interest) !== -1);
   // The page measures its own elapsed time; subtracting a browser-supplied
   // startedAt from the Apps Script clock would fold in clock skew and can go
   // negative on a browser running ahead, quarantining a genuine submission.
@@ -33,7 +35,14 @@ function doPost(e) {
     volumeCount > 100 ||
     fields.some((value) => String(value || '').length > 500);
   const sheet = SpreadsheetApp.getActive().getSheetByName(suspect ? QUARANTINE_TAB : RESPONSE_TAB);
-  sheet.appendRow([new Date(), ...fields, data.page || '', data.variant || '', elapsedMs]);
+  sheet.appendRow([
+    new Date(),
+    ...fields,
+    ...interestFlags,
+    data.page || '',
+    data.variant || '',
+    elapsedMs,
+  ]);
   return reply({ ok: true, quarantined: suspect });
 }
 
