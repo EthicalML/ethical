@@ -21,7 +21,7 @@ const { policy } = Astro.props;
     gating, reduced-motion static frame and teardown. */
 }
 <policy-section class="policy-standards home-section" data-reveal>
-  <policy-hero-policy-circuit class="policy-standards-canvas" data-scale="1.34" data-center-x="0.62" data-center-y="0.6" aria-hidden="true">
+  <policy-hero-policy-circuit class="policy-standards-canvas" data-scale="1.22" data-center-x="0.62" aria-hidden="true">
     <canvas></canvas>
   </policy-hero-policy-circuit>
   <i class="policy-standards-scrim" aria-hidden="true"></i>
@@ -58,11 +58,19 @@ const { policy } = Astro.props;
     overflow: hidden;
     position: relative;
   }
+  /* Fixed 650px canvas box, the same as the /policy/ hero mount, so the citadel
+     renders at an identical iso unit there and here (the engine derives it from
+     min(canvas width, height), and both are height-bound). Sizing the canvas
+     independently of the section means the copy column is free to be content
+     height: a citadel taller than the copy overflows and clips rather than
+     stretching the section. */
   .policy-standards-canvas {
     display: block;
-    inset: 0 0 0 auto;
+    height: 650px;
+    inset: 50% 0 auto auto;
     pointer-events: none;
     position: absolute;
+    transform: translateY(-50%);
     width: 86%;
     z-index: 1;
   }
@@ -79,23 +87,13 @@ const { policy } = Astro.props;
     position: absolute;
     z-index: 2;
   }
-  /* The circuit's iso unit scales with min(canvas width, canvas height), so the
-     copy column's min-height is the citadel's real size lever: data-scale on the
-     embed compensates whenever this height changes, keeping the citadel's pixel
-     size while the section sheds vertical slack around the centred copy. */
   .policy-standards-copy {
     display: flex;
     flex-direction: column;
     justify-content: center;
     max-width: 560px;
-    min-height: 470px;
     position: relative;
     z-index: 3;
-  }
-  @media (min-width: 1700px) {
-    .policy-standards-copy {
-      min-height: 570px;
-    }
   }
   h2 {
     font: 300 44px/1.06 var(--font-display);
@@ -135,6 +133,7 @@ const { policy } = Astro.props;
     .policy-standards-canvas {
       inset: auto 0 0 0;
       height: 420px;
+      transform: none;
       width: 100%;
     }
     .policy-standards-scrim {
@@ -142,7 +141,6 @@ const { policy } = Astro.props;
     }
     .policy-standards-copy {
       max-width: none;
-      min-height: 0;
       padding-bottom: 440px;
     }
   }
