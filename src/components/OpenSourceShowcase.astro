@@ -181,14 +181,14 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
   </article>
 
   {
-    /* Flagship carousel: enters on the global reveal signal sliding in from the
-      right on the teaser+survey bundle (the single first snap stop); everything
-      after is user-driven over a bounded snap track. Position bubbles sit in the
-      inter-card gap above the track (click travels, active stretches to a bar and
-      follows); full-height chevron compositions at the edges navigate and dim at
-      the ends. */
+    /* Flagship carousel: the whole component (bubbles, edges, track) enters as
+      one standard data-reveal element, opening on the teaser+survey bundle (the
+      single first snap stop); everything is user-driven over a bounded snap
+      track. Position bubbles sit in the inter-card gap above the track (click
+      travels, active stretches to a bar and follows); full-height chevron
+      compositions at the edges navigate and wrap past the ends. */
   }
-  <div id="reports" class="oss-carousel" data-reveal="trigger">
+  <div id="reports" class="oss-carousel" data-reveal>
     <div class="oss-carousel-bubbles" data-carousel-bubbles>
       {carouselTitles.map((title, index) => <button type="button" data-carousel-bubble={index} aria-label={`Go to ${title}`} />)}
     </div>
@@ -511,16 +511,6 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
-    transition:
-      opacity 0.7s var(--ease-panel),
-      transform 0.7s var(--ease-panel);
-  }
-  /* Entrance: the track (survey card first) slides in from the right once the
-     carousel reaches 50% visibility; the pending state is only ever set by JS,
-     and never under reduced motion. */
-  .oss-carousel-track[data-entrance='pending'] {
-    opacity: 0;
-    transform: translateX(140px);
   }
   .oss-carousel-track::-webkit-scrollbar {
     display: none;
@@ -687,7 +677,6 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
 
 <script>
   import { bindMorphPairs } from '../shared/MorphPairs';
-  import { onRevealed } from '../shared/Reveal';
   import '../shared/canvas/KomputeCube';
 
   class OpenSourceShowcase extends HTMLElement {
@@ -700,15 +689,14 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     }
 
     // Bounded card-by-card navigation over the snap track; the teaser is the
-    // static lead-in, never a stop. The only automatic motion is the entrance
-    // slide-in on the global reveal signal; everything after is user-driven.
+    // static lead-in, never a stop. The whole carousel enters through the
+    // standard data-reveal rise; everything is user-driven.
     private wireCarousel() {
-      const carousel = this.querySelector<HTMLElement>('.oss-carousel');
       const track = this.querySelector<HTMLElement>('[data-carousel-track]');
       const prev = this.querySelector<HTMLButtonElement>('[data-carousel-prev]');
       const next = this.querySelector<HTMLButtonElement>('[data-carousel-next]');
       const bubbles = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-carousel-bubble]'));
-      if (!carousel || !track || !prev || !next) return;
+      if (!track || !prev || !next) return;
       const signal = this.controller.signal;
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const behavior = reduced ? ('auto' as const) : ('smooth' as const);
@@ -799,12 +787,6 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
       ['wheel', 'touchstart', 'pointerdown'].forEach((type) => track.addEventListener(type, () => (intent = -1), { signal, passive: true }));
       track.addEventListener('scroll', () => syncBubbles(), { signal, passive: true });
       syncBubbles();
-
-      // Entrance slide-in on the global reveal signal (shared Reveal module).
-      // Desktop track only; reduced motion gets no slide.
-      if (reduced || !window.matchMedia('(min-width: 901px)').matches) return;
-      track.dataset.entrance = 'pending';
-      onRevealed(carousel, () => delete track.dataset.entrance, signal);
     }
 
     disconnectedCallback() {
