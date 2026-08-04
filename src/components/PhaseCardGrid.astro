@@ -12,15 +12,19 @@ interface Props {
 const { cards, eyebrow, heading } = Astro.props;
 ---
 
-{/* Head and each phase card are their own reveal roots (global reveal threshold). */}
+{
+  /* Head and the phase grid are their own reveal roots (global reveal threshold). The
+  grid reveals as one: its backdrop paints the hairline seams, so individually hidden
+  cards would leave it showing as a bare gray slab. */
+}
 <section id="strategy" class="strategy home-section" aria-labelledby="phases-heading">
   <p class="eyebrow" data-reveal>{eyebrow}</p>
   <h2 id="phases-heading" data-reveal>{heading}</h2>
   <phase-card-grid>
-    <div class="phase-grid">
+    <div class="phase-grid" data-reveal>
       {
         cards.map((card, index) => (
-          <article class:list={['phase-card', index === 0 && 'active']} data-reveal>
+          <article class:list={['phase-card', index === 0 && 'active']}>
             <p class="phase-label">{card.label}</p>
             <h3>{card.title}</h3>
             <div class="phase-details">
