@@ -183,9 +183,10 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
   {
     /* Flagship carousel: enters on the global reveal signal sliding in from the
       right on the teaser+survey bundle (the single first snap stop); everything
-      after is user-driven over a bounded snap track. Shade blocks fill the
-      inter-card gap above the track (click travels, active follows); vertical
-      chevron compositions at the edges navigate and dim at the ends. */
+      after is user-driven over a bounded snap track. Position bubbles sit in the
+      inter-card gap above the track (click travels, active stretches to a bar and
+      follows); full-height chevron compositions at the edges navigate and dim at
+      the ends. */
   }
   <div id="reports" class="oss-carousel" data-reveal="trigger">
     <div class="oss-carousel-bubbles" data-carousel-bubbles>
@@ -193,10 +194,10 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     </div>
     <div class="oss-carousel-stage">
       <button class="oss-carousel-edge prev" type="button" data-carousel-prev aria-label="Previous cards">
-        <i aria-hidden="true">‹</i><b aria-hidden="true"></b><i aria-hidden="true">‹</i>
+        <b aria-hidden="true"></b><i aria-hidden="true">‹</i><b aria-hidden="true"></b>
       </button>
       <button class="oss-carousel-edge next" type="button" data-carousel-next aria-label="Next cards">
-        <i aria-hidden="true">›</i><b aria-hidden="true"></b><i aria-hidden="true">›</i>
+        <b aria-hidden="true"></b><i aria-hidden="true">›</i><b aria-hidden="true"></b>
       </button>
       <div class="oss-carousel-track" data-carousel-track tabindex="-1">
         <div class="oss-card teaser-card">
@@ -376,8 +377,8 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     max-width: 760px;
   }
 
-  /* Flagship carousel: shade blocks in the inter-card gap above a snap track
-     flanked by vertical chevron compositions. */
+  /* Flagship carousel: position bubbles in the inter-card gap above a snap track
+     flanked by full-height chevron compositions. */
   .oss-carousel {
     margin-top: 0;
     scroll-margin-top: 124px;
@@ -385,52 +386,50 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
   .oss-carousel-stage {
     position: relative;
   }
-  /* Position shade blocks: soft translucent gradient segments filling the 26px
-     inter-card gap band, spanning the left half of the row; equal widths except
-     the active one, which stretches longer. Click travels, active follows. */
+  /* Position bubbles: round dots in the 26px inter-card gap band; only the
+     active one stretches into a longer bar. Click travels, active follows. */
   .oss-carousel-bubbles {
     align-items: center;
     display: flex;
-    gap: 6px;
+    gap: 12px;
     height: 26px;
-    width: 50%;
   }
   .oss-carousel-bubbles button {
-    background: linear-gradient(180deg, rgba(244, 242, 238, 0.14), rgba(244, 242, 238, 0.04));
+    background: rgba(244, 242, 238, 0.28);
     border: 0;
-    border-radius: 2px;
+    border-radius: 999px;
     cursor: pointer;
-    flex: 1 1 0;
-    height: 18px;
+    height: 8px;
     padding: 0;
     transition:
-      background 0.2s ease,
-      flex-grow 0.22s ease;
+      background 0.18s ease,
+      width 0.18s ease;
+    width: 8px;
   }
   .oss-carousel-bubbles button:hover {
-    background: linear-gradient(180deg, rgba(244, 242, 238, 0.26), rgba(244, 242, 238, 0.1));
+    background: rgba(244, 242, 238, 0.45);
   }
   .oss-carousel-bubbles button.active {
-    background: linear-gradient(180deg, rgba(244, 242, 238, 0.36), rgba(244, 242, 238, 0.14));
-    flex-grow: 2.4;
+    background: rgba(244, 242, 238, 0.65);
+    width: 48px;
   }
-  /* Vertical chevron compositions at the track edges: chevron, smooth gradient
-     line, chevron, in the strategy section's accent line colour; hover takes its
-     neon treatment, a press energises the line, the ends dim when disabled. */
+  /* Vertical chevron compositions at the track edges: a single chevron centred
+     between two gradient lines spanning the full track height, in the strategy
+     section's accent line colour; hover takes its neon treatment, a press
+     energises the lines, the ends dim when disabled. */
   .oss-carousel-edge {
     align-items: center;
     background: transparent;
     border: 0;
+    bottom: 0;
     color: rgba(94, 230, 160, 0.55);
     cursor: pointer;
     display: flex;
     flex-direction: column;
     font: 15px/1 var(--font-mono);
-    height: 150px;
     padding: 0;
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 0;
     transition:
       color 0.2s ease,
       opacity 0.2s ease,
@@ -440,11 +439,15 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
   .oss-carousel-edge b {
     background: linear-gradient(180deg, transparent, rgba(94, 230, 160, 0.5), transparent);
     flex: 1;
-    margin: 6px 0;
+    margin: 0;
     transition:
       background 0.2s ease,
       box-shadow 0.2s ease;
     width: 1px;
+  }
+  .oss-carousel-edge i {
+    font-style: normal;
+    padding: 8px 0;
   }
   .oss-carousel-edge.prev {
     left: -37px;
@@ -622,13 +625,9 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     .oss-card.teaser-card {
       flex-basis: 38%;
     }
-    .oss-carousel-bubbles {
-      width: 80%;
-    }
     /* The same chevron composition scaled into the mobile side padding. */
     .oss-carousel-edge {
       font-size: 12px;
-      height: 104px;
       width: 20px;
     }
     .oss-carousel-edge.prev {
@@ -695,15 +694,20 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
       const mobileTrack = window.matchMedia('(max-width: 900px)');
       const stops = () => (mobileTrack.matches ? [0, ...realCards.map(left)] : [0, ...realCards.slice(1).map(left)]);
 
+      // Cards near the track end share the clamped end position, so the nearest-
+      // stop rule alone cannot tell them apart there; a navigation records its
+      // intended card and wins the tie until the user scrolls by hand.
+      const maxScroll = () => track.scrollWidth - track.clientWidth;
+      const clamped = (card: HTMLElement) => Math.min(left(card), maxScroll());
+      let intent = -1;
       const syncBubbles = () => {
         const position = track.scrollLeft;
         let active = 0;
         realCards.forEach((card, index) => {
-          if (Math.abs(left(card) - position) < Math.abs(left(realCards[active]) - position)) active = index;
+          if (Math.abs(clamped(card) - position) < Math.abs(clamped(realCards[active]) - position)) active = index;
         });
-        // The last card's own stop clamps onto the end of the track; at the very
-        // end it is the destination that lights.
-        if (position >= track.scrollWidth - track.clientWidth - 4) active = realCards.length - 1;
+        if (position >= maxScroll() - 4) active = realCards.length - 1;
+        if (intent >= 0 && Math.abs(clamped(realCards[intent]) - position) <= 4) active = intent;
         bubbles.forEach((bubble, index) => bubble.classList.toggle('active', index === active));
       };
       const syncDisabled = () => {
@@ -715,7 +719,9 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
         const position = track.scrollLeft;
         const list = stops();
         const target = direction > 0 ? list.find((stop) => stop > position + 4) : [...list].reverse().find((stop) => stop < position - 4);
-        if (target !== undefined) track.scrollTo({ left: target, behavior });
+        if (target === undefined) return;
+        intent = -1;
+        track.scrollTo({ left: target, behavior });
       };
 
       // The pressed class replays the line-energise pulse on real presses.
@@ -729,10 +735,21 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
       prev.addEventListener('click', () => press(prev, -1), { signal });
       next.addEventListener('click', () => press(next, 1), { signal });
       bubbles.forEach((bubble, index) => {
-        // Block 0 is the bundle on desktop: it travels to the track start.
-        const target = () => (index === 0 && !mobileTrack.matches ? 0 : left(realCards[index]));
-        bubble.addEventListener('click', () => track.scrollTo({ left: target(), behavior }), { signal });
+        // Bubble 0 is the bundle on desktop: it travels to the track start.
+        const target = () => (index === 0 && !mobileTrack.matches ? 0 : clamped(realCards[index]));
+        bubble.addEventListener(
+          'click',
+          () => {
+            intent = index;
+            track.scrollTo({ left: target(), behavior });
+            // A shared end position may not move the track at all; sync now so
+            // the intended bubble lights even without a scroll event.
+            syncBubbles();
+          },
+          { signal },
+        );
       });
+      ['wheel', 'touchstart', 'pointerdown'].forEach((type) => track.addEventListener(type, () => (intent = -1), { signal, passive: true }));
       track.addEventListener(
         'scroll',
         () => {
