@@ -137,7 +137,6 @@ function BarRow({ row, focusedIndex, year, maximumValue, onFocus }: BarRowProps)
       class={row.originalIndex === focusedIndex ? 'focused' : ''}
       onMouseEnter={() => onFocus(row.originalIndex)}
       onFocus={() => onFocus(row.originalIndex)}
-      onClick={() => onFocus(row.originalIndex)}
     >
       <span>{row.label}</span>
       <i>
