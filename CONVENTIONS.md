@@ -22,7 +22,7 @@ The placement rule is: content lives with its owner; a separate file must be ear
 - Validated sets live under `src/content/` and have schemas in `src/content.config.ts`.
 - Page-local structured values live in page front matter.
 - Header, footer, and other chrome constants live in their owning component fences.
-- Build configuration comes from `astro:env`; `FORM_ENDPOINT` configures form delivery.
+- Build configuration comes from `astro:env`; `FORM_ENDPOINT` configures form delivery. It reaches the page base64-encoded in `data-token` and is decoded at submit: the URL cannot be secret on a static site, so this only costs a scraper its grep, and the receiver in `scripts/forms/apps-script.gs` carries the real defences. The receiver replies through a redirect chain that has taken 15 seconds and `mode: no-cors` makes the reply unreadable, so the form confirms after a 2.5 second settle window and relies on `keepalive` to finish delivery.
 - Derived facts are generated from their source. Recent newsletter issue numbers come from `public/mle/*.html` filenames; do not maintain a parallel issue list or parse the archive HTML.
 - Policy record documents: links stay canonical, previews are committed derivatives. Each `src/components/PolicyRecordData.ts` entry's `href` points at the remote publication (acm.org); the site never self-hosts the PDFs. The reading-room page images under `public/images/policy-record/pages/<slug>/` are build-time renders committed to the repo, regenerated with `scripts/fetch-policy-previews.mjs` (download + text extraction) and `scripts/render-policy-pages.mjs` (per-page webp). Cloudflare blocks automated retrieval of some documents; fetch those PDFs manually in a browser and place them in `tmp/pdfs-web/<slug>.pdf` before re-rendering.
 - Rows use named keys. Avoid positional tuples except where a component API is naturally tuple-shaped and typed.
@@ -146,7 +146,7 @@ MDX prose follows JSX parsing rules. Escape a bare `<` as `&lt;`, escape `{` as 
 | Recent newsletter issue numbers                                  | `public/mle/*.html` filenames via `src/utils/RecentIssues.ts`          |
 | Header navigation and wordmark                                   | `src/components/SiteHeader.astro`                                      |
 | Footer and footnote chrome                                       | `src/components/SiteFooter.astro`, `src/components/FootnoteBand.astro` |
-| Form delivery endpoint                                           | `FORM_ENDPOINT` through `astro:env`                                    |
+| Form delivery endpoint                                           | `FORM_ENDPOINT` through `astro:env`, base64 in `data-token`            |
 
 ## Definition of done
 

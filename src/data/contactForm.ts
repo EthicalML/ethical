@@ -30,6 +30,7 @@ export interface FormSectionCopy {
       checked: boolean;
     }>;
     button: string;
+    sending: string;
     disclaimer: string;
     confirmation: string;
     demoConfirmation: string;
@@ -98,6 +99,7 @@ export const contactFormCopy: FormSectionCopy = {
       },
     ],
     button: 'Send',
+    sending: 'Sending…',
     disclaimer:
       'We only use your details to reply and to send what you asked for. Unsubscribe any time.',
     confirmation: 'Thank you. Your details have been sent to the Institute.',
