@@ -12,7 +12,7 @@ interface Props {
 const { cards, eyebrow, heading } = Astro.props;
 ---
 
-{/* Head and each phase card are their own reveal roots (global 50% rule). */}
+{/* Head and each phase card are their own reveal roots (global reveal threshold). */}
 <section id="strategy" class="strategy home-section" aria-labelledby="phases-heading">
   <p class="eyebrow" data-reveal>{eyebrow}</p>
   <h2 id="phases-heading" data-reveal>{heading}</h2>
