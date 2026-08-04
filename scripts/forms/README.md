@@ -2,7 +2,7 @@
 
 The website is in demo mode until the build environment provides `FORM_ENDPOINT` with a deployed Apps Script `/exec` URL. No secret is stored in the repository.
 
-1. Open the response Google Sheet and add two tabs named `Responses` and `Quarantine`. The legacy Google Form keeps its own linked tab untouched: it owns that tab's header and inserts its own rows, so the receiver never writes there. Give each new tab the header row below and freeze it (**View → Freeze → 1 row**) so sorting cannot consume it.
+1. Open the response Google Sheet and add two tabs named `2026 Responses` and `2026 Quarantine`, matching `RESPONSE_TAB` and `QUARANTINE_TAB` at the top of the script exactly. The legacy Google Form keeps its own linked tab untouched: it owns that tab's header and inserts its own rows, so the receiver never writes there. Give each new tab the header row below and freeze it (**View → Freeze → 1 row**) so sorting cannot consume it.
 2. Choose **Extensions → Apps Script** from that spreadsheet, so the script is bound to it and `SpreadsheetApp.getActive()` resolves without an id.
 3. Replace the editor contents with `apps-script.gs` from this directory and save.
 4. Choose **Deploy → New deployment → Web app**. Set **Execute as** to yourself and **Who has access** to **Anyone**, then deploy and approve access.
