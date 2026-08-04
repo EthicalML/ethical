@@ -21,7 +21,7 @@ const { policy } = Astro.props;
     gating, reduced-motion static frame and teardown. */
 }
 <policy-section class="policy-standards home-section" data-reveal>
-  <policy-hero-policy-circuit class="policy-standards-canvas" data-scale="0.944" data-center-x="0.62" data-center-y="0.6" aria-hidden="true">
+  <policy-hero-policy-circuit class="policy-standards-canvas" data-scale="1.34" data-center-x="0.62" data-center-y="0.6" aria-hidden="true">
     <canvas></canvas>
   </policy-hero-policy-circuit>
   <i class="policy-standards-scrim" aria-hidden="true"></i>
@@ -80,19 +80,21 @@ const { policy } = Astro.props;
     z-index: 2;
   }
   /* The circuit's iso unit scales with min(canvas width, canvas height), so the
-     copy column's min-height is the citadel's real size lever. */
+     copy column's min-height is the citadel's real size lever: data-scale on the
+     embed compensates whenever this height changes, keeping the citadel's pixel
+     size while the section sheds vertical slack around the centred copy. */
   .policy-standards-copy {
     display: flex;
     flex-direction: column;
     justify-content: center;
     max-width: 560px;
-    min-height: 720px;
+    min-height: 470px;
     position: relative;
     z-index: 3;
   }
   @media (min-width: 1700px) {
     .policy-standards-copy {
-      min-height: 840px;
+      min-height: 570px;
     }
   }
   h2 {

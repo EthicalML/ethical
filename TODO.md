@@ -4,9 +4,9 @@
 
 Convention added: no `Label →` links — inline text links or primary/secondary buttons, never a trailing arrow. Do a full pass over pages and components (CTAs, card footers, ChannelLinks, AchievementNeonRendition buttons, FormSection, prose links with `→`, switchers) removing the arrows and, where a link was arrow-styled text, deciding inline-link vs button per context.
 
-## Homepage Reports & Initiatives reshuffle (proposal pending approval)
+## CSS spacing cleanup
 
-Approved layout: 01 phases → 02 Reports & Initiatives (principles explorer opener → one full-width policy split block: narrative + metrics + button left, embedded interactive iso citadel right → production ML survey) → 03 Open Source. Remove ML Maturity Model and Agentic & ML Security blocks; retire their title morphs. Content must derive from the reworked /policy/ achievement cards (20+, 11/11, 6 active mandates, ~10 org principles, 5 regions, 30+ products). Awaiting owner approval of final copy/metrics before dispatch.
+Retire `src/styles/layout.css` (prototype-fidelity pixel pins from round 4; the principles and open-source pins are already removed after one caused 43px of dead section space — verify the remaining join/footnote pins still earn their place, then delete the file). Introduce a single `--section-gap` rhythm token for the homepage inter-section distance instead of per-section one-offs.
 
 ## Bug
 
