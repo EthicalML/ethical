@@ -20,6 +20,11 @@ const isSupportedVariant = variant === 'network-split' || variant === 'contact-f
 const sectionClasses = ['join-section', variant === 'contact-full' && 'contact-full', homepage && 'home-section'];
 const issues = await getRecentIssueNumbers();
 const minimumSubmissionMs = 3000;
+// The receiver URL has to reach the browser to be posted to, so it can never be
+// secret. Base64 keeps it out of a scraper's grep for script.google.com, which
+// is the only realistic harvesting route; anyone reading the bundle still has
+// it, and the receiver's honeypot and throttles remain the actual defence.
+const endpointToken = FORM_ENDPOINT ? Buffer.from(FORM_ENDPOINT, 'utf8').toString('base64') : '';
 ---
 
 {
@@ -63,8 +68,9 @@ const minimumSubmissionMs = 3000;
             id="contact"
             data-institute-form
             data-variant={submissionVariant}
-            data-endpoint={FORM_ENDPOINT}
+            data-token={endpointToken}
             data-minimum-submission-ms={minimumSubmissionMs}
+            data-sending={copy.form.sending}
             data-confirmation={copy.form.confirmation}
             data-demo-confirmation={copy.form.demoConfirmation}
             data-error={copy.form.error}
@@ -183,7 +189,8 @@ const minimumSubmissionMs = 3000;
       if (!form.reportValidity()) return;
 
       const data = new FormData(form);
-      const endpoint = (form.dataset.endpoint ?? '').trim();
+      const token = (form.dataset.token ?? '').trim();
+      const endpoint = token ? atob(token) : '';
       const clientKey = localStorage.getItem('ethical-form-client') || crypto.randomUUID();
       localStorage.setItem('ethical-form-client', clientKey);
       const payload = {
@@ -201,18 +208,30 @@ const minimumSubmissionMs = 3000;
         variant: form.dataset.variant,
       };
 
+      // Apps Script answers through a redirect chain that routinely takes several
+      // seconds, and a disabled button alone reads as nothing having happened.
+      const buttonLabel = button.textContent ?? '';
       button.disabled = true;
+      button.textContent = form.dataset.sending || buttonLabel;
       message.hidden = true;
       form.dataset.state = 'submitting';
 
       try {
         if (endpoint) {
-          await fetch(endpoint, {
+          // The receiver answers through a redirect chain that has taken up to
+          // 15 seconds, and mode: no-cors makes its reply unreadable anyway, so
+          // waiting the whole way buys no information the confirmation could
+          // use. Stop waiting after a settle window instead: keepalive carries
+          // the request to completion even if the visitor leaves the page, and
+          // a rejection inside the window still surfaces as an error.
+          const sent = fetch(endpoint, {
             method: 'POST',
             mode: 'no-cors',
+            keepalive: true,
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(payload),
           });
+          await Promise.race([sent, new Promise((resolve) => window.setTimeout(resolve, 2500))]);
         }
         form.dataset.state = 'success';
         message.textContent = endpoint ? (form.dataset.confirmation ?? '') : (form.dataset.demoConfirmation ?? '');
@@ -223,6 +242,7 @@ const minimumSubmissionMs = 3000;
         message.hidden = false;
       } finally {
         button.disabled = false;
+        button.textContent = buttonLabel;
       }
     }
   }
@@ -233,6 +253,16 @@ const minimumSubmissionMs = 3000;
 </script>
 
 <style>
+  form[data-state='submitting'] button {
+    animation: form-sending 1300ms ease-in-out infinite;
+  }
+
+  @keyframes form-sending {
+    50% {
+      opacity: 0.42;
+    }
+  }
+
   fieldset input[type='checkbox'] {
     appearance: none;
     border: 1px solid rgba(255, 255, 255, 0.26);
@@ -302,6 +332,11 @@ const minimumSubmissionMs = 3000;
     fieldset input[type='checkbox'],
     fieldset input[type='checkbox']::before {
       transition: none;
+    }
+
+    form[data-state='submitting'] button {
+      animation: none;
+      opacity: 0.6;
     }
   }
 </style>
