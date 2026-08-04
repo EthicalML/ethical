@@ -194,10 +194,18 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     </div>
     <div class="oss-carousel-stage">
       <button class="oss-carousel-edge prev" type="button" data-carousel-prev aria-label="Previous cards">
-        <b aria-hidden="true"></b><i aria-hidden="true">‹</i><b aria-hidden="true"></b>
+        <b aria-hidden="true"></b><i aria-hidden="true"
+          ><svg viewBox="0 0 16 28" width="16" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            ><polyline points="11,4 5,14 11,24"></polyline></svg
+          ></i
+        ><b aria-hidden="true"></b>
       </button>
       <button class="oss-carousel-edge next" type="button" data-carousel-next aria-label="Next cards">
-        <b aria-hidden="true"></b><i aria-hidden="true">›</i><b aria-hidden="true"></b>
+        <b aria-hidden="true"></b><i aria-hidden="true"
+          ><svg viewBox="0 0 16 28" width="16" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            ><polyline points="5,4 11,14 5,24"></polyline></svg
+          ></i
+        ><b aria-hidden="true"></b>
       </button>
       <div class="oss-carousel-track" data-carousel-track tabindex="-1">
         <div class="oss-card teaser-card">
@@ -434,7 +442,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
       color 0.2s ease,
       opacity 0.2s ease,
       filter 0.2s ease;
-    width: 26px;
+    width: 44px;
   }
   .oss-carousel-edge b {
     background: linear-gradient(180deg, transparent, rgba(94, 230, 160, 0.5), transparent);
@@ -446,14 +454,18 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     width: 1px;
   }
   .oss-carousel-edge i {
+    display: flex;
     font-style: normal;
     padding: 8px 0;
   }
+  .oss-carousel-edge svg {
+    display: block;
+  }
   .oss-carousel-edge.prev {
-    left: -37px;
+    left: -46px;
   }
   .oss-carousel-edge.next {
-    right: -37px;
+    right: -46px;
   }
   .oss-carousel-edge:hover:not([disabled]) {
     color: var(--accent);
@@ -525,11 +537,11 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
   }
   /* Teaser lead-in: a static thin card with stacked display type and a plain
      arrow glyph; not a control, no hover state, no accent. It bundles with the
-     survey card into the single first snap stop (1/3 + 2/3 filling the row). */
+     survey card into the single first snap stop. */
   .oss-card.teaser-card {
     align-items: flex-start;
     color: var(--text-1);
-    flex-basis: calc(33.333% - 13px);
+    flex-basis: calc(14% - 13px);
     justify-content: space-between;
     text-align: left;
   }
@@ -627,22 +639,28 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     }
     /* The same chevron composition scaled into the mobile side padding. */
     .oss-carousel-edge {
-      font-size: 12px;
-      width: 20px;
+      width: 28px;
+    }
+    .oss-carousel-edge svg {
+      height: 22px;
+      width: 12px;
     }
     .oss-carousel-edge.prev {
-      left: -23px;
+      left: -27px;
     }
     .oss-carousel-edge.next {
-      right: -23px;
+      right: -27px;
     }
   }
   @media (max-width: 520px) {
+    .oss-carousel-edge {
+      width: 24px;
+    }
     .oss-carousel-edge.prev {
-      left: -18px;
+      left: -22px;
     }
     .oss-carousel-edge.next {
-      right: -18px;
+      right: -22px;
     }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -715,13 +733,23 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
         next.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 4;
       };
 
+      // Programmatic travel suspends scroll-snap for its duration: an in-flight
+      // smooth scroll otherwise fights the snap engine and jitters before moving.
+      let restoreSnap = 0;
+      const travel = (target: number) => {
+        track.style.scrollSnapType = 'none';
+        window.clearTimeout(restoreSnap);
+        track.scrollTo({ left: target, behavior });
+        restoreSnap = window.setTimeout(() => (track.style.scrollSnapType = ''), 1000);
+      };
+
       const go = (direction: number) => {
         const position = track.scrollLeft;
         const list = stops();
         const target = direction > 0 ? list.find((stop) => stop > position + 4) : [...list].reverse().find((stop) => stop < position - 4);
         if (target === undefined) return;
         intent = -1;
-        track.scrollTo({ left: target, behavior });
+        travel(target);
       };
 
       // The pressed class replays the line-energise pulse on real presses.
@@ -741,7 +769,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
           'click',
           () => {
             intent = index;
-            track.scrollTo({ left: target(), behavior });
+            travel(target());
             // A shared end position may not move the track at all; sync now so
             // the intended bubble lights even without a scroll event.
             syncBubbles();
