@@ -1,7 +1,7 @@
-/* Prototype-fidelity geometry shared by the Round 4+ implementation. */
+/* Prototype-fidelity geometry shared by the Round 4+ implementation. The
+   principles and open-source pins are gone: content has moved on and stale
+   pixel heights only added dead space below the sections. */
 @media (min-width: 951px) {
-  .principles-explorer { min-height: 862.03125px; }
-  .open-source-prototype { min-height: 2034.859375px; }
   .join-section > .network-split { min-height: 630px; }
   .footnote-band { min-height: 234px; }
 }
