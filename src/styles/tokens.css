@@ -1231,7 +1231,9 @@ kaos-graph, kaos-architecture { display: block; }
 .survey-island.compact .survey-tabs { gap: 4px; }
 .survey-island.compact .survey-toolbar button { font-size: 11px; padding: 6px 10px; }
 .survey-island.compact .survey-tabs button { font: 9.5px/1 var(--font-mono); letter-spacing: .07em; padding: 6px 8px; text-transform: uppercase; }
-.survey-island.compact .survey-bars { gap: 1px; margin-top: 14px; }
+/* Sized to the longest question (six rows) so switching to a five-row question
+   cannot change the card, and with it the carousel, height. */
+.survey-island.compact .survey-bars { align-content: start; gap: 1px; margin-top: 14px; min-height: 271px; }
 .survey-island.compact .survey-bars button { gap: 10px; grid-template-columns: 136px 1fr 44px 56px; padding: 6px 8px; }
 /* Fixed two-line label boxes keep every bar row the same height, wrapped or not. */
 .survey-island.compact .survey-bars button > span { -webkit-box-orient: vertical; -webkit-line-clamp: 2; display: -webkit-box; font: var(--mono-12,12px)/1.35 var(--font-mono); min-height: 2.7em; overflow: hidden; }
@@ -1240,9 +1242,17 @@ kaos-graph, kaos-architecture { display: block; }
 .survey-island.compact .survey-bars i em { height: 5px; }
 .survey-island.compact .survey-focus { display: grid; gap: 10px 16px; grid-template-columns: 2fr 1fr 1fr; margin-top: 16px; padding-top: 14px; }
 .survey-island.compact .survey-focus span { font: var(--mono-9)/1 var(--font-mono); }
-.survey-island.compact .survey-focus strong { font-size: 13px; }
+/* A fixed two-line SELECTED box: wrapping labels must not change the card height. */
+.survey-island.compact .survey-focus strong { display: block; font-size: 13px; min-height: 2.4em; }
 @media (max-width: 1240px) {
   .survey-island.compact .survey-bars button { grid-template-columns: 116px 1fr 40px 52px; }
+}
+/* Narrower breakpoints restyle the rows taller; re-reserve the six-row height. */
+@media (max-width: 950px) {
+  .survey-island.compact .survey-bars { min-height: 329px; }
+}
+@media (max-width: 600px) {
+  .survey-island.compact .survey-bars { min-height: 403px; }
 }
 .home-section {
   padding: 120px 48px 0;
