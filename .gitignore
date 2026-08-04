@@ -102,3 +102,8 @@ CLAUDE.md
 tmp2
 .obsidian/
 .github/.obsidian/
+
+# Local build environment (FORM_ENDPOINT etc.)
+.env
+.env.*
+!.env.example
