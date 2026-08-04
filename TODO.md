@@ -13,6 +13,10 @@ Retire `src/styles/layout.css` (prototype-fidelity pixel pins from round 4; the 
 - In the homepage if you click the animation separator which cycles across the three 3d objects, and force the change of the annimation, the distortion stops. Let's actually not make the ability to change the 3d animation manually by not making it clickable.
 - When refreshing the home page and half of the metrics or the brands carousel is visible, there is an animation wwhere it apepars and then disappears. and then reappears when scrolling. The functionaliy should be that it doesnt appear at all unless it's in the visibility range.
 
+## tokens.css breakup (post-cutover, pixel-perfect)
+
+Roughly 3/4 of tokens.css (~2,200 lines) is per-component styling; relocate it into the ~15-20 owning components, delete dead rules as they surface (likely 10-20%), and consolidate the five ad-hoc breakpoints (950/900/800/600/520) into 2-3 named ones. Zero visual change by construction: every batch gates on masked full-page screenshot parity for all 33 pages at 2-3 widths (definition of done #7). Run as a low-supervision worker campaign in 3-4 scoped rounds (survey+carousel → principles+hero → menus+cards+misc → breakpoints & sweep), ~30-45 min each; owner eye pass only where parity diffs flag. Deliberately deferred until after the redesign cutover so parity runs against a stable target. Standing guardrail effective now: no NEW component rules go into tokens.css — style in the owning component.
+
 ## Recovered backlog (from pre-branch sessions; triage — some may be done)
 
 - #10 SEO redirects (legacy `.html` URLs → new routes; the security-slug decision goes into the redirect map)
