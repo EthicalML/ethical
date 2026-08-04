@@ -20,6 +20,7 @@ const isSupportedVariant = variant === 'network-split' || variant === 'contact-f
 const sectionClasses = ['join-section', variant === 'contact-full' && 'contact-full', homepage && 'home-section'];
 const issues = await getRecentIssueNumbers();
 const minimumSubmissionMs = 3000;
+const settleMs = 2500;
 // The receiver URL has to reach the browser to be posted to, so it can never be
 // secret. Base64 keeps it out of a scraper's grep for script.google.com, which
 // is the only realistic harvesting route; anyone reading the bundle still has
@@ -69,8 +70,10 @@ const endpointToken = FORM_ENDPOINT ? Buffer.from(FORM_ENDPOINT, 'utf8').toStrin
             data-institute-form
             data-variant={submissionVariant}
             data-token={endpointToken}
+            data-settle-ms={settleMs}
             data-minimum-submission-ms={minimumSubmissionMs}
             data-sending={copy.form.sending}
+            style={`--settle: ${settleMs}ms`}
             data-confirmation={copy.form.confirmation}
             data-demo-confirmation={copy.form.demoConfirmation}
             data-error={copy.form.error}
@@ -88,7 +91,9 @@ const endpointToken = FORM_ENDPOINT ? Buffer.from(FORM_ENDPOINT, 'utf8').toStrin
                     autocomplete={field.autocomplete}
                     placeholder={field.placeholder}
                     required={field.name === 'name' || field.name === 'email'}
+                    aria-describedby={`field-note-${field.name}`}
                   />
+                  <small class="field-note" id={`field-note-${field.name}`} data-field-note hidden />
                 </label>
               ))}
             </div>
@@ -114,9 +119,35 @@ const endpointToken = FORM_ENDPOINT ? Buffer.from(FORM_ENDPOINT, 'utf8').toStrin
               Website <input name="website" type="text" autocomplete="off" tabindex="-1" />
             </label>
             <input name="startedAt" type="hidden" value="" />
-            <button type="submit">{copy.form.button}</button>
+            <button type="submit">
+              <span data-button-label>{copy.form.button}</span>
+              <svg class="button-trace" viewBox="0 0 100 44" preserveAspectRatio="none" aria-hidden="true" data-button-trace>
+                <rect x="0.5" y="0.5" width="99" height="43" rx="3" pathLength="100" vector-effect="non-scaling-stroke" />
+              </svg>
+            </button>
+            <i class="send-conduit" aria-hidden="true" />
+            <pre class="send-terminal" data-send-terminal aria-hidden="true" hidden />
+            <div class="send-overlay" data-send-overlay aria-hidden="true">
+              <form-send-iso data-send-iso>
+                <canvas />
+              </form-send-iso>
+            </div>
             <small>{copy.form.disclaimer}</small>
-            <p class="form-confirmation" data-form-confirmation role="status" hidden />
+            <p class="form-confirmation" data-form-confirmation role="status" hidden>
+              <svg
+                class="sent-check"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <polyline points="4,13 9,18 20,6" pathLength="100" />
+              </svg>
+              <span data-confirmation-text />
+            </p>
           </form>
         </institute-form>
       </div>
@@ -125,6 +156,8 @@ const endpointToken = FORM_ENDPOINT ? Buffer.from(FORM_ENDPOINT, 'utf8').toStrin
 }
 
 <script>
+  import '../shared/canvas/FormSendIso';
+
   class InstituteForm extends HTMLElement {
     private controller = new AbortController();
     private preselectionTimer?: number;
@@ -143,6 +176,24 @@ const endpointToken = FORM_ENDPOINT ? Buffer.from(FORM_ENDPOINT, 'utf8').toStrin
       if (!form || !startedAtInput || !message || !button) return;
 
       startedAtInput.value = String(this.startedAt);
+      // Set at mount, not at submit: while the form is natively validated the
+      // browser blocks the submit event outright, so the custom path would
+      // never get to run. A visitor without JS keeps the native behaviour.
+      form.noValidate = true;
+      // A field that has been corrected drops its note immediately, so the
+      // message never outlives the problem it describes.
+      form.addEventListener(
+        'input',
+        (event) => {
+          const input = event.target as HTMLInputElement;
+          const note = input.parentElement?.querySelector<HTMLElement>('[data-field-note]');
+          if (!note || note.hidden || !input.checkValidity()) return;
+          note.hidden = true;
+          note.textContent = '';
+          input.setAttribute('aria-invalid', 'false');
+        },
+        { signal: this.controller.signal },
+      );
       if (applicationInterest && applicationHelper) {
         const updateApplicationHelper = () => {
           applicationHelper.hidden = !applicationInterest.checked;
@@ -184,9 +235,30 @@ const endpointToken = FORM_ENDPOINT ? Buffer.from(FORM_ENDPOINT, 'utf8').toStrin
       if (this.preselectionTimer !== undefined) window.clearTimeout(this.preselectionTimer);
     }
 
+    /* The browser's own validation bubble is OS chrome: it cannot be styled, it
+       sits outside the page's type and colour, and it vanishes on the next
+       click. Validation is reported inline under the offending field instead.
+       noValidate is set from script so a no-JS visitor keeps the native path. */
+    private validate(form: HTMLFormElement) {
+      const inputs = Array.from(form.querySelectorAll<HTMLInputElement>('.form-fields input'));
+      let firstInvalid: HTMLInputElement | undefined;
+      inputs.forEach((input) => {
+        const note = input.parentElement?.querySelector<HTMLElement>('[data-field-note]');
+        const valid = input.checkValidity();
+        input.setAttribute('aria-invalid', String(!valid));
+        if (note) {
+          note.textContent = valid ? '' : input.validationMessage;
+          note.hidden = valid;
+        }
+        if (!valid && !firstInvalid) firstInvalid = input;
+      });
+      firstInvalid?.focus();
+      return !firstInvalid;
+    }
+
     private async submit(event: SubmitEvent, form: HTMLFormElement, message: HTMLElement, button: HTMLButtonElement) {
       event.preventDefault();
-      if (!form.reportValidity()) return;
+      if (!this.validate(form)) return;
 
       const data = new FormData(form);
       const token = (form.dataset.token ?? '').trim();
@@ -210,11 +282,40 @@ const endpointToken = FORM_ENDPOINT ? Buffer.from(FORM_ENDPOINT, 'utf8').toStrin
 
       // Apps Script answers through a redirect chain that routinely takes several
       // seconds, and a disabled button alone reads as nothing having happened.
-      const buttonLabel = button.textContent ?? '';
+      const label = form.querySelector<HTMLElement>('[data-button-label]');
+      const text = form.querySelector<HTMLElement>('[data-confirmation-text]');
+      const buttonLabel = label?.textContent ?? '';
+      const settleMs = Number(form.dataset.settleMs) || 2500;
       button.disabled = true;
-      button.textContent = form.dataset.sending || buttonLabel;
+      if (label) label.textContent = form.dataset.sending || buttonLabel;
       message.hidden = true;
       form.dataset.state = 'submitting';
+      // The terminal treatment narrates only what is actually true at this
+      // point. The receiver's reply is unreadable under mode: no-cors, so no
+      // line ever claims an acknowledgement.
+      // The isometric overlay is driven, not ambient: its packet position is the
+      // elapsed share of the settle window, so arrival and confirmation coincide.
+      const iso = form.querySelector<HTMLElement & { progress: number; settled: boolean }>('[data-send-iso]');
+      const startedSending = performance.now();
+      let isoFrame = 0;
+      if (iso) {
+        iso.settled = false;
+        const advance = () => {
+          iso.progress = Math.min(1, (performance.now() - startedSending) / settleMs);
+          if (iso.progress < 1) isoFrame = requestAnimationFrame(advance);
+        };
+        advance();
+      }
+
+      const terminal = form.querySelector<HTMLElement>('[data-send-terminal]');
+      if (terminal) {
+        const bytes = new TextEncoder().encode(JSON.stringify(payload)).length;
+        terminal.hidden = false;
+        terminal.textContent = '';
+        ['> encoding payload', '> opening channel', `> transmitting ${bytes} bytes`].forEach((line, index) => {
+          window.setTimeout(() => (terminal.textContent += (index ? '\n' : '') + line), index * (settleMs / 4));
+        });
+      }
 
       try {
         if (endpoint) {
@@ -231,18 +332,30 @@ const endpointToken = FORM_ENDPOINT ? Buffer.from(FORM_ENDPOINT, 'utf8').toStrin
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(payload),
           });
-          await Promise.race([sent, new Promise((resolve) => window.setTimeout(resolve, 2500))]);
+          await Promise.race([sent, new Promise((resolve) => window.setTimeout(resolve, settleMs))]);
         }
+        // The fields leave under their own staggered exit before the
+        // confirmation takes the space, so the swap is a handover rather than a
+        // cut. display: none cannot be animated, hence the interim state.
+        if (iso) {
+          iso.progress = 1;
+          iso.settled = true;
+        }
+        if (terminal) terminal.hidden = true;
+        form.dataset.state = 'exiting';
+        await new Promise((resolve) => window.setTimeout(resolve, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 460));
         form.dataset.state = 'success';
-        message.textContent = endpoint ? (form.dataset.confirmation ?? '') : (form.dataset.demoConfirmation ?? '');
+        if (text) text.textContent = endpoint ? (form.dataset.confirmation ?? '') : (form.dataset.demoConfirmation ?? '');
         message.hidden = false;
       } catch {
+        if (terminal) terminal.hidden = true;
         form.dataset.state = 'error';
-        message.textContent = form.dataset.error ?? '';
+        if (text) text.textContent = form.dataset.error ?? '';
         message.hidden = false;
       } finally {
+        cancelAnimationFrame(isoFrame);
         button.disabled = false;
-        button.textContent = buttonLabel;
+        if (label) label.textContent = buttonLabel;
       }
     }
   }
@@ -253,13 +366,252 @@ const endpointToken = FORM_ENDPOINT ? Buffer.from(FORM_ENDPOINT, 'utf8').toStrin
 </script>
 
 <style>
-  form[data-state='submitting'] button {
-    animation: form-sending 1300ms ease-in-out infinite;
+  /* Inline validation, replacing the browser's unstylable bubble. */
+  .field-note {
+    display: none;
   }
 
-  @keyframes form-sending {
+  /* display: block would defeat the hidden attribute, leaving a bare marker
+     under every optional field. The note also opts out of the label's uppercase
+     so a sentence-length message does not shout. */
+  .field-note:not([hidden]) {
+    color: var(--warn);
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.02em;
+    line-height: 1.5;
+    margin-top: 6px;
+    text-transform: none;
+  }
+
+  .field-note:not([hidden])::before {
+    content: '! ';
+    opacity: 0.75;
+  }
+
+  /* The browser's default focus ring is a blue that exists nowhere else here. */
+  .form-fields input:focus-visible {
+    border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+    outline: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    outline-offset: 1px;
+  }
+
+  .form-fields input[aria-invalid='true']:focus-visible {
+    border-color: var(--warn);
+    outline-color: color-mix(in srgb, var(--warn) 55%, transparent);
+  }
+
+  .form-fields input[aria-invalid='true'] {
+    border-color: color-mix(in srgb, var(--warn) 62%, transparent);
+  }
+
+  .form-fields input[aria-invalid='true']:focus {
+    border-color: var(--warn);
+  }
+
+  /* Submission motion: the perimeter trace, the conduit packet, the terminal
+     log and the isometric overlay all run together over the settle window. The
+     overlay dims the fields; the button, conduit and log stay above it. */
+  form {
+    position: relative;
+  }
+
+  button,
+  .send-conduit,
+  .send-terminal {
+    position: relative;
+    z-index: 3;
+  }
+
+  .send-overlay {
+    display: none;
+    inset: 0;
+    pointer-events: none;
+    position: absolute;
+    z-index: 2;
+  }
+
+  form[data-state='submitting'] .send-overlay,
+  form[data-state='exiting'] .send-overlay {
+    animation: overlay-in 300ms ease forwards;
+    display: block;
+  }
+
+  .send-overlay form-send-iso,
+  .send-overlay canvas {
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+
+  @keyframes overlay-in {
+    from {
+      background: rgba(12, 14, 13, 0);
+      opacity: 0;
+    }
+    to {
+      background: rgba(12, 14, 13, 0.72);
+      opacity: 1;
+    }
+  }
+
+  form[data-state='submitting'] button:disabled {
+    opacity: 1;
+  }
+
+  /* Perimeter trace: one lap of the button edge over the settle window, so the
+     travel maps to real elapsed time rather than looping decoratively. */
+  .button-trace {
+    height: 100%;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    width: 100%;
+  }
+
+  .button-trace rect {
+    fill: none;
+    stroke: var(--accent);
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    stroke-width: 1.5;
+  }
+
+  form[data-state='submitting'] .button-trace {
+    filter: drop-shadow(0 0 5px rgba(94, 230, 160, 0.65));
+    opacity: 1;
+  }
+
+  form[data-state='submitting'] .button-trace rect {
+    animation: trace-lap var(--settle) linear forwards;
+  }
+
+  @keyframes trace-lap {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  /* Conduit: the citadel's packet-along-a-route idiom, under the button. */
+  .send-conduit {
+    background: rgba(94, 230, 160, 0.16);
+    display: block;
+    height: 1px;
+    margin-top: 12px;
+    opacity: 0;
+    overflow: hidden;
+    position: relative;
+    transition: opacity 200ms ease;
+  }
+
+  form[data-state='submitting'] .send-conduit {
+    opacity: 1;
+  }
+
+  .send-conduit::after {
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    box-shadow: 0 0 12px var(--accent);
+    content: '';
+    inset: 0 auto 0 0;
+    position: absolute;
+    transform: translateX(-140%);
+    width: 26%;
+  }
+
+  form[data-state='submitting'] .send-conduit::after {
+    animation: conduit-run 820ms linear infinite;
+  }
+
+  @keyframes conduit-run {
+    to {
+      transform: translateX(520%);
+    }
+  }
+
+  form[data-state='success'] .form-confirmation {
+    animation: conduit-bloom 700ms var(--ease-panel);
+  }
+
+  @keyframes conduit-bloom {
+    from {
+      opacity: 0;
+      text-shadow: 0 0 26px var(--accent);
+      transform: scale(0.97);
+    }
+  }
+
+  /* Terminal: prints only facts available before the reply, which is unreadable. */
+  .send-terminal {
+    display: none;
+  }
+
+  .send-terminal:not([hidden]) {
+    color: var(--accent);
+    display: block;
+    font: 12px/1.75 var(--font-mono);
+    margin: 12px 0 0;
+    white-space: pre-wrap;
+  }
+
+  .send-terminal:not([hidden])::after {
+    animation: terminal-caret 900ms steps(1) infinite;
+    content: '▋';
+  }
+
+  @keyframes terminal-caret {
     50% {
-      opacity: 0.42;
+      opacity: 0;
+    }
+  }
+
+  /* Shared exit: fields hand the space over rather than being cut. */
+  form[data-state='exiting'] > *:not(.form-confirmation) {
+    animation: field-exit 420ms var(--ease-panel) forwards;
+  }
+
+  form[data-state='exiting'] > *:nth-child(2) {
+    animation-delay: 45ms;
+  }
+  form[data-state='exiting'] > *:nth-child(3) {
+    animation-delay: 90ms;
+  }
+  form[data-state='exiting'] > *:nth-child(4) {
+    animation-delay: 135ms;
+  }
+  form[data-state='exiting'] > *:nth-child(n + 5) {
+    animation-delay: 180ms;
+  }
+
+  @keyframes field-exit {
+    to {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+
+  .sent-check {
+    display: none;
+  }
+
+  form[data-state='success'] .sent-check {
+    color: var(--accent);
+    display: block;
+    height: 26px;
+    margin-bottom: 12px;
+    width: 26px;
+  }
+
+  form[data-state='success'] .sent-check polyline {
+    animation: check-draw 460ms 90ms var(--ease-panel) forwards;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+  }
+
+  @keyframes check-draw {
+    to {
+      stroke-dashoffset: 0;
     }
   }
 
@@ -334,8 +686,15 @@ const endpointToken = FORM_ENDPOINT ? Buffer.from(FORM_ENDPOINT, 'utf8').toStrin
       transition: none;
     }
 
-    form[data-state='submitting'] button {
+    .button-trace rect,
+    .send-conduit::after,
+    .sent-check polyline,
+    form[data-state='exiting'] > *:not(.form-confirmation),
+    form[data-state='success'] .form-confirmation {
       animation: none;
+    }
+
+    form[data-state='submitting'] button:disabled {
       opacity: 0.6;
     }
   }
