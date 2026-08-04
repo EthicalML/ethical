@@ -20,7 +20,12 @@ function doPost(e) {
     data.furtherInformation,
     (data.interests || []).join(', '),
   ];
-  const elapsedMs = Date.now() - Number(data.startedAt);
+  // The page measures its own elapsed time; subtracting a browser-supplied
+  // startedAt from the Apps Script clock would fold in clock skew and can go
+  // negative on a browser running ahead, quarantining a genuine submission.
+  // Both numbers are client-supplied either way, so nothing is lost by trusting
+  // the one that is internally consistent.
+  const elapsedMs = Number(data.elapsedMs);
   const suspect =
     !Number.isFinite(elapsedMs) ||
     elapsedMs < 3000 ||
