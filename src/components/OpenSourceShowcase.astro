@@ -423,8 +423,10 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
   }
   /* Vertical chevron compositions at the track edges: a single chevron centred
      between two gradient lines spanning the full track height, in the strategy
-     section's accent line colour; hover takes its neon treatment, a press
-     energises the lines, the ends dim when disabled. */
+     section's accent line colour; hover takes its neon treatment and a press
+     energises the lines. Always enabled: past either end the press wraps to the
+     opposite end. The invisible ::before widens the hover/click surface well
+     beyond the visible composition. */
   .oss-carousel-edge {
     align-items: center;
     background: transparent;
@@ -443,6 +445,19 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
       opacity 0.2s ease,
       filter 0.2s ease;
     width: 44px;
+    z-index: 1;
+  }
+  /* The outer side sits at the viewport edge, so the extra surface reaches
+     inward over the track edge. */
+  .oss-carousel-edge.prev::before {
+    content: '';
+    inset: 0 -36px 0 -8px;
+    position: absolute;
+  }
+  .oss-carousel-edge.next::before {
+    content: '';
+    inset: 0 -8px 0 -36px;
+    position: absolute;
   }
   .oss-carousel-edge b {
     background: linear-gradient(180deg, transparent, rgba(94, 230, 160, 0.5), transparent);
@@ -467,15 +482,15 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
   .oss-carousel-edge.next {
     right: -46px;
   }
-  .oss-carousel-edge:hover:not([disabled]) {
+  .oss-carousel-edge:hover {
     color: var(--accent);
   }
-  .oss-carousel-edge:hover:not([disabled]) b {
+  .oss-carousel-edge:hover b {
     background: linear-gradient(180deg, transparent, var(--accent), transparent);
     box-shadow: 0 0 14px rgba(94, 230, 160, 0.5);
   }
   .oss-carousel-edge.pressed b,
-  .oss-carousel-edge:active:not([disabled]) b {
+  .oss-carousel-edge:active b {
     animation: edge-energise 0.35s ease;
   }
   @keyframes edge-energise {
@@ -489,16 +504,6 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     100% {
       box-shadow: 0 0 14px rgba(94, 230, 160, 0.5);
     }
-  }
-  .oss-carousel-edge[disabled] {
-    color: rgba(244, 242, 238, 0.18);
-    cursor: default;
-    filter: saturate(0.2);
-    opacity: 0.5;
-    pointer-events: none;
-  }
-  .oss-carousel-edge[disabled] b {
-    background: linear-gradient(180deg, transparent, rgba(244, 242, 238, 0.18), transparent);
   }
   .oss-carousel-track {
     display: flex;
@@ -545,10 +550,15 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     justify-content: space-between;
     text-align: left;
   }
-  /* The survey card is part of the bundle, never its own desktop snap stop. */
+  /* The survey card is part of the bundle, never its own desktop snap stop. The
+     penultimate card snaps centered so its stop stays distinct from the track
+     end, where it and the last card would otherwise share one clamped position. */
   @media (min-width: 901px) {
     .oss-card.survey-card {
       scroll-snap-align: none;
+    }
+    .oss-carousel-track .oss-card:nth-last-child(2) {
+      scroll-snap-align: center;
     }
   }
   .teaser-card span {
@@ -710,27 +720,29 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
       // card, so one press from the bundle lands the next card. The mobile
       // track cannot fit the bundle, so the survey keeps its own stop there.
       const mobileTrack = window.matchMedia('(max-width: 900px)');
-      const stops = () => (mobileTrack.matches ? [0, ...realCards.map(left)] : [0, ...realCards.slice(1).map(left)]);
+      const stops = () => (mobileTrack.matches ? [0, ...realCards.map(left)] : [0, ...realCards.slice(1).map((card) => stopOf(card))]);
 
-      // Cards near the track end share the clamped end position, so the nearest-
-      // stop rule alone cannot tell them apart there; a navigation records its
-      // intended card and wins the tie until the user scrolls by hand.
+      // Each card's stop honours its own snap alignment (the penultimate card
+      // snaps centered on desktop so its stop stays distinct from the track end,
+      // where the last two cards would otherwise share the clamped position),
+      // clamped into the scrollable range. A navigation records its intended
+      // card to win any remaining tie until the user scrolls by hand.
       const maxScroll = () => track.scrollWidth - track.clientWidth;
-      const clamped = (card: HTMLElement) => Math.min(left(card), maxScroll());
+      const stopOf = (card: HTMLElement) => {
+        const centered = getComputedStyle(card).scrollSnapAlign.includes('center');
+        const raw = centered ? left(card) - (track.clientWidth - card.offsetWidth) / 2 : left(card);
+        return Math.max(0, Math.min(raw, maxScroll()));
+      };
       let intent = -1;
       const syncBubbles = () => {
         const position = track.scrollLeft;
         let active = 0;
         realCards.forEach((card, index) => {
-          if (Math.abs(clamped(card) - position) < Math.abs(clamped(realCards[active]) - position)) active = index;
+          if (Math.abs(stopOf(card) - position) < Math.abs(stopOf(realCards[active]) - position)) active = index;
         });
         if (position >= maxScroll() - 4) active = realCards.length - 1;
-        if (intent >= 0 && Math.abs(clamped(realCards[intent]) - position) <= 4) active = intent;
+        if (intent >= 0 && Math.abs(stopOf(realCards[intent]) - position) <= 4) active = intent;
         bubbles.forEach((bubble, index) => bubble.classList.toggle('active', index === active));
-      };
-      const syncDisabled = () => {
-        prev.disabled = track.scrollLeft <= 4;
-        next.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 4;
       };
 
       // Programmatic travel suspends scroll-snap for its duration: an in-flight
@@ -743,11 +755,18 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
         restoreSnap = window.setTimeout(() => (track.style.scrollSnapType = ''), 1000);
       };
 
+      // Bounded track, wrapping controls: past either end the press carries on
+      // to the opposite end, as if the far bubble had been clicked.
       const go = (direction: number) => {
         const position = track.scrollLeft;
         const list = stops();
         const target = direction > 0 ? list.find((stop) => stop > position + 4) : [...list].reverse().find((stop) => stop < position - 4);
-        if (target === undefined) return;
+        if (target === undefined) {
+          intent = direction > 0 ? -1 : realCards.length - 1;
+          travel(direction > 0 ? 0 : stopOf(realCards[realCards.length - 1]));
+          syncBubbles();
+          return;
+        }
         intent = -1;
         travel(target);
       };
@@ -764,7 +783,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
       next.addEventListener('click', () => press(next, 1), { signal });
       bubbles.forEach((bubble, index) => {
         // Bubble 0 is the bundle on desktop: it travels to the track start.
-        const target = () => (index === 0 && !mobileTrack.matches ? 0 : clamped(realCards[index]));
+        const target = () => (index === 0 && !mobileTrack.matches ? 0 : stopOf(realCards[index]));
         bubble.addEventListener(
           'click',
           () => {
@@ -778,16 +797,8 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
         );
       });
       ['wheel', 'touchstart', 'pointerdown'].forEach((type) => track.addEventListener(type, () => (intent = -1), { signal, passive: true }));
-      track.addEventListener(
-        'scroll',
-        () => {
-          syncBubbles();
-          syncDisabled();
-        },
-        { signal, passive: true },
-      );
+      track.addEventListener('scroll', () => syncBubbles(), { signal, passive: true });
       syncBubbles();
-      syncDisabled();
 
       // Entrance slide-in on the global reveal signal (shared Reveal module).
       // Desktop track only; reduced motion gets no slide.
