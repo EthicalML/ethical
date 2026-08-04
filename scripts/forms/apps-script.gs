@@ -1,5 +1,9 @@
-const RESPONSE_TAB = 'Responses';
-const QUARANTINE_TAB = 'Quarantine';
+// Year-scoped tabs, living alongside the legacy Google Form's own linked tab in
+// the same spreadsheet. Both names are matched exactly, so opening a tab pair
+// for a new year means editing these two constants and redeploying a new
+// version of the web app.
+const RESPONSE_TAB = '2026 Responses';
+const QUARANTINE_TAB = '2026 Quarantine';
 
 // One column per interest rather than one joined cell, so each is a real
 // boolean the sheet can filter, sort and COUNTIF. Order fixes the column order;
