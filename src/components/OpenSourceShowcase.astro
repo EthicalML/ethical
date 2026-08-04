@@ -98,12 +98,13 @@ const repoMetrics = Object.fromEntries(repoEntries.map(({ id, data }) => [id, da
 const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value: string; label: string }) => (label ? `${value} ${label}` : value));
 ---
 
-<open-source-showcase id="opensource" class:list={['open-source-prototype', compact && 'compact', homepage && 'home-section']} data-reveal>
-  <p class="eyebrow">{projects.section.eyebrow}</p>
-  <h2>{projects.section.title}</h2>
-  <p class="section-intro">{projects.section.intro}</p>
+{/* Each block is its own reveal root, entering as it reaches the global 50% rule. */}
+<open-source-showcase id="opensource" class:list={['open-source-prototype', compact && 'compact', homepage && 'home-section']}>
+  <p class="eyebrow" data-reveal>{projects.section.eyebrow}</p>
+  <h2 data-reveal>{projects.section.title}</h2>
+  <p class="section-intro" data-reveal>{projects.section.intro}</p>
 
-  <article class="kompute-feature">
+  <article class="kompute-feature" data-reveal>
     <div class="oss-copy">
       <p class="figure-label"><span>{projects.kompute.figure}</span><span>{projects.kompute.affiliation}</span></p>
       <h3>{projects.kompute.title}</h3>
@@ -138,7 +139,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     <div class="fixed-canvas cube-mount"><kompute-cube><canvas aria-label="Animated 27-cubie Rubik's cube"></canvas></kompute-cube></div>
   </article>
 
-  <article class="kaos-feature">
+  <article class="kaos-feature" data-reveal>
     <div>
       <p class="figure-label"><span>{projects.kaos.figure}</span></p>
       <h3 data-morph-source="kaos-title" data-morph-name="kaos-title">{projects.kaos.title}</h3>
@@ -180,21 +181,14 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
   </article>
 
   {
-    /* Flagship carousel: enters at 50% visibility sliding in from the right on the
-      static teaser lead-in, then one 4s auto-advance (counted down on the active
-      bubble, the next blade flashing pressed) unless the user interacts first.
-      Card-by-card navigation wraps seamlessly via edge clones; the bubbles above
-      the track travel and follow. Horizontal at every width. */
+    /* Flagship carousel: enters on the global reveal signal sliding in from the
+      right on the static teaser lead-in; everything after is user-driven over a
+      bounded snap track (glass-disc prev/next disabled at the ends, bubbles above
+      the track travel and follow). Horizontal at every width. */
   }
   <div id="reports" class="oss-carousel" data-reveal="trigger">
     <div class="oss-carousel-bubbles" data-carousel-bubbles>
-      {
-        carouselTitles.map((title, index) => (
-          <button type="button" data-carousel-bubble={index} aria-label={`Go to ${title}`}>
-            <i aria-hidden="true" />
-          </button>
-        ))
-      }
+      {carouselTitles.map((title, index) => <button type="button" data-carousel-bubble={index} aria-label={`Go to ${title}`} />)}
     </div>
     <div class="oss-carousel-stage">
       <button class="oss-carousel-edge prev" type="button" data-carousel-prev aria-label="Previous cards"><span>‹</span></button>
@@ -385,125 +379,76 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
   .oss-carousel-stage {
     position: relative;
   }
-  /* Position bubbles: one per real card, the active one stretched to a pill; the
-     inner bar fills left-to-right as the auto-advance countdown. */
+  /* Position bubbles: one per real card, stretched pills with room to breathe;
+     the active one stretches longer, click travels, active follows scroll. */
   .oss-carousel-bubbles {
     display: flex;
-    gap: 8px;
-    margin-bottom: 16px;
+    gap: 14px;
+    margin-bottom: 18px;
   }
   .oss-carousel-bubbles button {
     background: rgba(244, 242, 238, 0.22);
     border: 0;
-    border-radius: 4px;
+    border-radius: 3px;
     cursor: pointer;
-    height: 8px;
-    overflow: hidden;
+    height: 6px;
     padding: 0;
-    position: relative;
     transition:
       background 0.18s ease,
       width 0.18s ease;
-    width: 8px;
+    width: 26px;
   }
   .oss-carousel-bubbles button:hover {
     background: rgba(244, 242, 238, 0.4);
   }
   .oss-carousel-bubbles button.active {
-    background: rgba(244, 242, 238, 0.34);
-    width: 30px;
+    background: rgba(244, 242, 238, 0.6);
+    width: 56px;
   }
-  .oss-carousel-bubbles button i {
-    background: rgba(244, 242, 238, 0.9);
-    border-radius: inherit;
-    display: block;
-    inset: 0;
-    position: absolute;
-    transform: scaleX(0);
-    transform-origin: left;
-  }
-  .oss-carousel-bubbles.counting button.active i {
-    animation: bubble-countdown 4s linear forwards;
-  }
-  @keyframes bubble-countdown {
-    from {
-      transform: scaleX(0);
-    }
-    to {
-      transform: scaleX(1);
-    }
-  }
-  /* Hairline blades: ultra-thin full-height zones in the section padding, a 1px
-     vertical hairline with a centred mono chevron. Hover brightens white-scale
-     and extends a short tick; press pulses bright. Never accent green. */
+  /* Floating glass discs: circular prev/next hovering just outside the track
+     edges (never over card content at rest), blurred glass with a hairline
+     border and a small mono chevron. White-scale only; disabled discs dim. */
   .oss-carousel-edge {
-    background: transparent;
-    border: 0;
-    bottom: 0;
-    color: var(--text-3);
+    align-items: center;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    background: rgba(244, 242, 238, 0.05);
+    border: 1px solid var(--hairline-card);
+    border-radius: 50%;
+    color: var(--text-2);
     cursor: pointer;
-    font: 12px/1 var(--font-mono);
+    display: flex;
+    font: 13px/1 var(--font-mono);
+    height: 46px;
+    justify-content: center;
     padding: 0;
     position: absolute;
-    top: 0;
-    width: 26px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition:
+      background 0.18s ease,
+      color 0.18s ease,
+      opacity 0.18s ease,
+      transform 0.18s ease;
+    width: 46px;
     z-index: 2;
   }
-  .oss-carousel-edge::before {
-    background: rgba(244, 242, 238, 0.22);
-    bottom: 0;
-    content: '';
-    left: 50%;
-    position: absolute;
-    top: 0;
-    transition: background 0.18s ease;
-    width: 1px;
-  }
-  .oss-carousel-edge::after {
-    background: rgba(244, 242, 238, 0.6);
-    content: '';
-    height: 1px;
-    position: absolute;
-    top: 50%;
-    transition: width 0.18s ease;
-    width: 0;
-  }
-  .oss-carousel-edge.prev::after {
-    left: 50%;
-  }
-  .oss-carousel-edge.next::after {
-    right: 50%;
-  }
-  .oss-carousel-edge span {
-    background: var(--bg-base);
-    left: 50%;
-    padding: 7px 1px;
-    position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%);
-  }
   .oss-carousel-edge.prev {
-    left: -46px;
+    left: -47px;
   }
   .oss-carousel-edge.next {
-    right: -46px;
+    right: -47px;
   }
-  .oss-carousel-edge:hover {
+  .oss-carousel-edge:hover:not([disabled]) {
+    background: rgba(244, 242, 238, 0.12);
     color: var(--text-1);
+    transform: translateY(-50%) scale(1.06);
   }
-  .oss-carousel-edge:hover::before {
-    background: rgba(244, 242, 238, 0.55);
-  }
-  .oss-carousel-edge:hover::after {
-    width: 9px;
-  }
-  .oss-carousel-edge:active,
-  .oss-carousel-edge.pressed {
-    color: #fff;
-  }
-  .oss-carousel-edge:active::before,
-  .oss-carousel-edge.pressed::before {
-    background: #fff;
+  .oss-carousel-edge[disabled] {
+    color: var(--text-4);
+    cursor: default;
+    opacity: 0.4;
+    pointer-events: none;
   }
   .oss-carousel-track {
     display: flex;
@@ -635,19 +580,11 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     .oss-card.teaser-card {
       flex-basis: 38%;
     }
+    /* Smaller discs sitting within the mobile side padding. */
     .oss-carousel-edge {
-      width: 20px;
-    }
-    .oss-carousel-edge.prev {
-      left: -23px;
-    }
-    .oss-carousel-edge.next {
-      right: -23px;
-    }
-  }
-  @media (max-width: 520px) {
-    .oss-carousel-edge {
-      width: 16px;
+      font-size: 12px;
+      height: 36px;
+      width: 36px;
     }
     .oss-carousel-edge.prev {
       left: -18px;
@@ -660,8 +597,8 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     .oss-carousel-bubbles button {
       transition: none;
     }
-    .oss-carousel-bubbles.counting button.active i {
-      animation: none;
+    .oss-carousel-edge {
+      transition: none;
     }
   }
 </style>
@@ -680,140 +617,67 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
       this.wireCarousel();
     }
 
-    // Card-by-card navigation over the snap track with a seamless two-clone wrap;
-    // the teaser is a lead-in, never a stop. The only automatic movement is one
-    // 4s advance after the entrance, counted down on the active bubble, flashed
-    // on the next blade, and cancelled by any interaction.
+    // Bounded card-by-card navigation over the snap track; the teaser is the
+    // static lead-in, never a stop. The only automatic motion is the entrance
+    // slide-in on the global reveal signal; everything after is user-driven.
     private wireCarousel() {
       const carousel = this.querySelector<HTMLElement>('.oss-carousel');
       const track = this.querySelector<HTMLElement>('[data-carousel-track]');
       const prev = this.querySelector<HTMLButtonElement>('[data-carousel-prev]');
       const next = this.querySelector<HTMLButtonElement>('[data-carousel-next]');
-      const bubbleWrap = this.querySelector<HTMLElement>('[data-carousel-bubbles]');
       const bubbles = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-carousel-bubble]'));
-      if (!carousel || !track || !prev || !next || !bubbleWrap) return;
+      if (!carousel || !track || !prev || !next) return;
       const signal = this.controller.signal;
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const behavior = reduced ? ('auto' as const) : ('smooth' as const);
 
-      // Wrap clones, a pair per edge so each wrap stop shows the same neighbour
-      // as its original: [last', first''] ... reals ... [first', second'] — the
-      // primed cards are stops, the fillers only complete the visible pair.
-      // Landing on a stop clone snaps invisibly to its original once settled.
       const realCards = Array.from(track.querySelectorAll<HTMLElement>('.oss-card:not(.teaser-card)'));
-      const first = realCards[0];
-      const last = realCards[realCards.length - 1];
-      const makeClone = (card: HTMLElement, role: string) => {
-        const clone = card.cloneNode(true) as HTMLElement;
-        clone.dataset.carouselClone = role;
-        clone.setAttribute('aria-hidden', 'true');
-        clone.setAttribute('inert', '');
-        // Clones are transient wrap frames: no morph wiring, no live island.
-        clone.querySelectorAll('[data-morph-source], [data-morph-pair]').forEach((el) => {
-          el.removeAttribute('data-morph-source');
-          el.removeAttribute('data-morph-pair');
-        });
-        clone.querySelectorAll('astro-island').forEach((island) => {
-          const frame = document.createElement('div');
-          frame.innerHTML = island.innerHTML;
-          island.replaceWith(frame);
-        });
-        return clone;
-      };
-      if (!track.querySelector(':scope > [data-carousel-clone]')) {
-        track.prepend(makeClone(first, 'filler'));
-        track.prepend(makeClone(last, 'stop-last'));
-        track.append(makeClone(first, 'stop-first'));
-        track.append(makeClone(realCards[1] ?? first, 'filler'));
-      }
-      const wrapPrev = track.querySelector<HTMLElement>('[data-carousel-clone="stop-last"]') as HTMLElement;
-      const wrapNext = track.querySelector<HTMLElement>('[data-carousel-clone="stop-first"]') as HTMLElement;
-      const teaser = track.querySelector<HTMLElement>('.teaser-card');
-
       const base = track.firstElementChild as HTMLElement;
       const left = (el: HTMLElement) => el.offsetLeft - base.offsetLeft;
-      // Navigation stops are the real cards plus the wrap stop clones; never the
-      // teaser and never the fillers.
-      const stopEls = [wrapPrev, ...realCards, wrapNext];
-      const bubbleFor = (el: HTMLElement) => (el === wrapPrev ? realCards.length - 1 : el === wrapNext ? 0 : realCards.indexOf(el));
+      // Navigation stops: the track start (teaser in view) plus each real card.
+      const stops = () => [0, ...realCards.map(left)];
 
       const syncBubbles = () => {
         const position = track.scrollLeft;
-        let nearest = stopEls[0];
-        for (const el of stopEls) {
-          if (Math.abs(left(el) - position) < Math.abs(left(nearest) - position)) nearest = el;
-        }
-        const active = bubbleFor(nearest);
+        let active = 0;
+        realCards.forEach((card, index) => {
+          if (Math.abs(left(card) - position) < Math.abs(left(realCards[active]) - position)) active = index;
+        });
         bubbles.forEach((bubble, index) => bubble.classList.toggle('active', index === active));
+      };
+      const syncDisabled = () => {
+        prev.disabled = track.scrollLeft <= 4;
+        next.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 4;
       };
 
       const go = (direction: number) => {
         const position = track.scrollLeft;
-        const target = direction > 0 ? stopEls.find((el) => left(el) > position + 4) : [...stopEls].reverse().find((el) => left(el) < position - 4);
-        if (target) track.scrollTo({ left: left(target), behavior });
+        const list = stops();
+        const target = direction > 0 ? list.find((stop) => stop > position + 4) : [...list].reverse().find((stop) => stop < position - 4);
+        if (target !== undefined) track.scrollTo({ left: target, behavior });
       };
-
-      // Settle detection doubles as the wrap jump: resting on a clone teleports
-      // to the identical-looking original.
-      let settle: ReturnType<typeof setTimeout> | undefined;
-      const normalize = () => {
-        const position = track.scrollLeft;
-        if (Math.abs(position - left(wrapPrev)) < 8) track.scrollTo({ left: left(last), behavior: 'auto' });
-        else if (position > left(wrapNext) - 8) track.scrollTo({ left: left(first), behavior: 'auto' });
-      };
-      track.addEventListener(
-        'scroll',
-        () => {
-          syncBubbles();
-          if (settle !== undefined) clearTimeout(settle);
-          settle = setTimeout(normalize, 150);
-        },
-        { signal, passive: true },
-      );
 
       prev.addEventListener('click', () => go(-1), { signal });
       next.addEventListener('click', () => go(1), { signal });
       bubbles.forEach((bubble, index) => {
         bubble.addEventListener('click', () => track.scrollTo({ left: left(realCards[index]), behavior }), { signal });
       });
-
-      // Open on the teaser lead-in: the prepended clone shifts the track origin.
-      requestAnimationFrame(() => {
-        if (teaser) track.scrollTo({ left: left(teaser), behavior: 'auto' });
-        syncBubbles();
-      });
-
-      // Entrance on the global reveal signal (50% visibility with the tall
-      // fallback, from the shared Reveal module), then the single counted-down
-      // advance. Desktop track only; reduced motion gets neither.
-      if (reduced || !window.matchMedia('(min-width: 901px)').matches) return;
-      let nudge: ReturnType<typeof setTimeout> | undefined;
-      const cancelNudge = () => {
-        if (nudge !== undefined) clearTimeout(nudge);
-        nudge = undefined;
-        bubbleWrap.classList.remove('counting');
-      };
-      for (const type of ['pointerdown', 'wheel', 'touchstart', 'keydown']) {
-        carousel.addEventListener(type, cancelNudge, { signal, passive: true });
-      }
-      signal.addEventListener('abort', cancelNudge);
-      track.dataset.entrance = 'pending';
-      onRevealed(
-        carousel,
+      track.addEventListener(
+        'scroll',
         () => {
-          delete track.dataset.entrance;
-          bubbleWrap.classList.add('counting');
-          nudge = setTimeout(() => {
-            nudge = undefined;
-            bubbleWrap.classList.remove('counting');
-            // Flash the next blade so the movement reads as a visible press.
-            next.classList.add('pressed');
-            setTimeout(() => next.classList.remove('pressed'), 280);
-            go(1);
-          }, 4000);
+          syncBubbles();
+          syncDisabled();
         },
-        signal,
+        { signal, passive: true },
       );
+      syncBubbles();
+      syncDisabled();
+
+      // Entrance slide-in on the global reveal signal (shared Reveal module).
+      // Desktop track only; reduced motion gets no slide.
+      if (reduced || !window.matchMedia('(min-width: 901px)').matches) return;
+      track.dataset.entrance = 'pending';
+      onRevealed(carousel, () => delete track.dataset.entrance, signal);
     }
 
     disconnectedCallback() {
