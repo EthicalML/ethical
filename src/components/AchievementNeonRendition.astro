@@ -230,6 +230,11 @@ const orderOf = Object.fromEntries(
 );
 const rectStyle = (rect: [number, number, number, number]) => `left:${rect[0]}%;top:${rect[1]}px;width:${rect[2]}%;height:${rect[3]}px;`;
 
+// Irregular drop cadence: quick pairs separated by longer pauses, so the stack
+// lands like bricks placed by hand rather than on a metronome.
+const FALL_CADENCE = [0, 60, 150, 200, 290, 340, 430, 480, 550, 600];
+const fallDelay = (order: number) => FALL_CADENCE[order - 1] ?? (order - 1) * 70;
+
 const placed = cards.map((card) => {
   const block = layout.blocks[card.piece];
   const order = orderOf[block.area];
@@ -260,7 +265,7 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
           data-size={block.size}
           data-piece={card.piece}
           data-hover={mode}
-          style={`${freeform && block.rect ? rectStyle(block.rect) : `grid-area:${block.area};`}--neon:${card.neon};--slot-z:${block.layer ?? 2 + order};--shift-x:${shiftX}px;--shift-y:${shiftY}px;--pickup:${block.tilt ?? 4}deg;--drop-rotation:${order % 2 ? -1.6 : 1.6}deg;--fall-dur:${block.size === 'long' ? 440 : 320}ms`}
+          style={`${freeform && block.rect ? rectStyle(block.rect) : `grid-area:${block.area};`}--neon:${card.neon};--slot-z:${block.layer ?? 2 + order};--shift-x:${shiftX}px;--shift-y:${shiftY}px;--pickup:${block.tilt ?? 4}deg;--drop-rotation:${order % 2 ? -1.6 : 1.6}deg;--fall-dur:${block.size === 'long' ? 520 : 430}ms;--fall-delay:${fallDelay(order)}ms`}
         >
           <i class="neon-underlay" data-neon-block aria-hidden="true" />
           <article class="neon-card">
@@ -308,7 +313,7 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
           data-lego-piece
           data-order={dud.order}
           data-shape={dud.shape}
-          style={`${freeform && dud.rect ? rectStyle(dud.rect) : `grid-area:${dud.area};`}--drop-rotation:${dud.order % 2 ? -1.6 : 1.6}deg;--fall-dur:320ms`}
+          style={`${freeform && dud.rect ? rectStyle(dud.rect) : `grid-area:${dud.area};`}--drop-rotation:${dud.order % 2 ? -1.6 : 1.6}deg;--fall-dur:430ms;--fall-delay:${fallDelay(dud.order)}ms`}
         >
           {(dud.shape === 'square' || dud.shape === 'plain' || dud.shape === 'accent' || dud.shape === 'diamond-open') && (
             <span class="dud-face" aria-hidden="true" />
@@ -419,14 +424,16 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
           piece.dataset.settled = 'true';
           return;
         }
-        const order = Number(piece.dataset.order ?? 0);
         const onAnimationEnd = (event: AnimationEvent) => {
           if (event.target !== piece || event.animationName !== 'lego-click') return;
           piece.dataset.settled = 'true';
           piece.removeEventListener('animationend', onAnimationEnd);
         };
         piece.addEventListener('animationend', onAnimationEnd, { signal: this.controller.signal });
-        const timer = window.setTimeout(() => this.nudgeNeighbours(piece), order * 60 + 250);
+        // Fire the neighbour nudge at the keyframe's 52% impact moment.
+        const delay = Number.parseFloat(piece.style.getPropertyValue('--fall-delay')) || 0;
+        const duration = Number.parseFloat(piece.style.getPropertyValue('--fall-dur')) || 600;
+        const timer = window.setTimeout(() => this.nudgeNeighbours(piece), delay + duration * 0.52);
         this.impactTimers.push(timer);
       });
     }
@@ -785,7 +792,7 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
   }
   achievement-neon-rendition[data-entered='true'] .ghost-rule {
     animation: ghost-rule-in 460ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-    animation-delay: calc(var(--lego-order) * 60ms + 250ms);
+    animation-delay: calc(var(--fall-delay, 0ms) + 480ms);
   }
   @keyframes ghost-rule-in {
     to {
@@ -796,32 +803,53 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
   /* --- Lego entrance (shared; singles fall snappier than doubles) --- */
   achievement-neon-rendition[data-motion-ready='true']:not([data-entered='true']) [data-lego-piece] {
     opacity: 0;
-    transform: translate3d(0, -150px, 0) rotate(var(--drop-rotation, 1.6deg));
+    transform: translate3d(0, -105%, 0) rotate(var(--drop-rotation, 1.6deg));
   }
   achievement-neon-rendition[data-entered='true'] [data-lego-piece]:not([data-settled='true']) {
-    animation: lego-click var(--fall-dur, 360ms) cubic-bezier(0.18, 0.78, 0.22, 1) both;
-    animation-delay: calc(var(--lego-order) * 60ms);
+    animation: lego-click var(--fall-dur, 600ms) linear both;
+    animation-delay: var(--fall-delay, calc(var(--lego-order) * 60ms));
+    /* Squash compresses into the ground plane rather than around the centre. */
+    transform-origin: 50% 100%;
   }
   [data-lego-piece][data-neighbour-nudge='true'] {
     transform: translate3d(var(--impact-x), 0, 0);
     transition: transform 55ms ease-out;
   }
+  /* Gravity, not easing: each piece drops from a full shape-height above its
+     slot, fading in over the first ~30px of travel (a per-piece opacity veil
+     at the top, no canvas clip) so the whole remaining fall is visible, then
+     a hard squash on impact, one small rebound, a second touchdown and
+     settle. Impact sits at 52% (JS nudge keys off this). */
   @keyframes lego-click {
     0% {
+      animation-timing-function: cubic-bezier(0.45, 0, 0.75, 0.4);
       opacity: 0;
-      transform: translate3d(0, -150px, 0) rotate(var(--drop-rotation, 1.6deg));
+      transform: translate3d(0, -105%, 0) rotate(var(--drop-rotation, 1.6deg));
     }
-    72% {
+    18% {
+      animation-timing-function: cubic-bezier(0.4, 0, 0.85, 0.55);
       opacity: 1;
-      transform: translate3d(0, 0, 0) rotate(0deg) scaleY(1);
+      transform: translate3d(0, -92%, 0) rotate(var(--drop-rotation, 1.6deg));
     }
-    83% {
+    52% {
+      animation-timing-function: ease-out;
       opacity: 1;
-      transform: translate3d(0, 2px, 0) scale(1.006, 0.982);
+      transform: translate3d(0, 0, 0) rotate(0deg);
     }
-    92% {
+    62% {
+      animation-timing-function: ease-in-out;
       opacity: 1;
-      transform: translate3d(0, -1px, 0) scale(0.998, 1.004);
+      transform: translate3d(0, 2px, 0) scale(1.03, 0.95);
+    }
+    76% {
+      animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.55);
+      opacity: 1;
+      transform: translate3d(0, -6px, 0) scale(0.995, 1.01);
+    }
+    88% {
+      animation-timing-function: ease-out;
+      opacity: 1;
+      transform: translate3d(0, 1px, 0) scale(1.01, 0.99);
     }
     100% {
       opacity: 1;
