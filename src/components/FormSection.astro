@@ -130,8 +130,8 @@ const endpointToken = FORM_ENDPOINT ? Buffer.from(FORM_ENDPOINT, 'utf8').toStrin
               <form-send-iso data-send-iso>
                 <canvas />
               </form-send-iso>
-              <pre class="send-terminal" data-send-terminal hidden />
             </div>
+            <pre class="send-terminal" data-send-terminal aria-hidden="true" hidden />
             <small>{copy.form.disclaimer}</small>
             <p class="form-confirmation" data-form-confirmation role="status" hidden>
               <svg
@@ -309,6 +309,11 @@ const endpointToken = FORM_ENDPOINT ? Buffer.from(FORM_ENDPOINT, 'utf8').toStrin
 
       const terminal = form.querySelector<HTMLElement>('[data-send-terminal]');
       if (terminal) {
+        // left: 0 would resolve to the form's padding box, sitting 28px proud of
+        // the button; both offsets come from the button so the log stays flush
+        // with it whatever the padding is.
+        terminal.style.top = `${button.offsetTop + button.offsetHeight + 12}px`;
+        terminal.style.left = `${button.offsetLeft}px`;
         const bytes = new TextEncoder().encode(JSON.stringify(payload)).length;
         terminal.hidden = false;
         terminal.textContent = '';
@@ -546,24 +551,26 @@ const endpointToken = FORM_ENDPOINT ? Buffer.from(FORM_ENDPOINT, 'utf8').toStrin
     display: none;
   }
 
-  /* Absolutely placed inside the overlay, under the isometric scene. In flow it
-     grew the form line by line as it printed; out of flow the box never moves,
-     and the dimmed backdrop it sits on is already paid for. */
+  /* Sits under the button, where it reads best, but absolutely positioned: in
+     flow it grew the form line by line as it printed, and even a zero-height
+     flow wrapper collected one of the form's 16px flex gaps. The form is a
+     flex column, where an abspos child's static position resolves to the
+     container corner rather than to the button, so submit() sets top from the
+     button's measured offset. Left edge and width match the button. */
   .send-terminal:not([hidden]) {
     background: rgba(10, 12, 11, 0.66);
     border-left: 1px solid rgba(94, 230, 160, 0.45);
     color: var(--accent);
     display: block;
     font: 12px/1.75 var(--font-mono);
-    left: 50%;
+    left: 0;
     margin: 0;
     padding: 8px 14px;
     position: absolute;
     text-align: left;
-    top: 58%;
-    transform: translateX(-50%);
     white-space: pre;
     width: max-content;
+    z-index: 3;
   }
 
   .send-terminal:not([hidden])::after {
