@@ -259,60 +259,55 @@
 
 .chapterLayout {
   display: grid;
-  grid-template-columns: 88px minmax(0, 960px);
+  grid-template-columns: 56px minmax(0, 960px);
   max-width: 1280px;
   scroll-margin-top: 158px;
 }
 
 .questionRail {
   align-self: start;
-  padding-right: 20px;
+  padding-right: 16px;
   position: sticky;
   top: 158px;
 }
 
+/* Vertical progress treatment: a hairline spine with a sliding accent tick,
+   no chip boxes; Q numbers only so the column stays narrow. */
 .questionRail ol {
-  display: grid;
-  gap: 8px;
+  border-left: 1px solid var(--hairline);
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
 .questionRail a {
-  align-items: center;
-  border: 1px solid var(--hairline-card);
   color: var(--text-4);
-  display: flex;
+  display: block;
   font: var(--mono-9)/1 var(--font-mono);
-  height: 34px;
-  justify-content: center;
-  padding: 0 7px;
+  padding: 8px 0 8px 12px;
   position: relative;
   text-decoration: none;
 }
 
 .questionRail a::before {
   background: var(--accent);
-  bottom: -1px;
+  bottom: 6px;
   content: '';
-  left: 7px;
+  left: -1px;
   position: absolute;
-  right: 7px;
-  height: 2px;
-  transform: scaleX(0);
+  top: 6px;
+  transform: scaleY(0);
   transition: transform 0.2s ease;
+  width: 2px;
 }
 
 .questionRail a:hover,
 .questionRail .activeRailLink {
-  background: var(--accent-wash-07);
-  border-color: rgba(94, 230, 160, 0.34);
   color: var(--text-1);
 }
 
 .questionRail .activeRailLink::before {
-  transform: scaleX(1);
+  transform: scaleY(1);
 }
 
 .steps {
@@ -689,7 +684,7 @@
 
 @media (min-width: 1000px) {
   .enhanced .chapterLayout {
-    grid-template-columns: 88px minmax(350px, 0.82fr) minmax(470px, 1.18fr);
+    grid-template-columns: 56px minmax(350px, 0.82fr) minmax(470px, 1.18fr);
   }
 
   .enhanced .steps {
