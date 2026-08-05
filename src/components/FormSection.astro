@@ -126,11 +126,11 @@ const endpointToken = FORM_ENDPOINT ? Buffer.from(FORM_ENDPOINT, 'utf8').toStrin
               </svg>
             </button>
             <i class="send-conduit" aria-hidden="true" />
-            <pre class="send-terminal" data-send-terminal aria-hidden="true" hidden />
             <div class="send-overlay" data-send-overlay aria-hidden="true">
               <form-send-iso data-send-iso>
                 <canvas />
               </form-send-iso>
+              <pre class="send-terminal" data-send-terminal hidden />
             </div>
             <small>{copy.form.disclaimer}</small>
             <p class="form-confirmation" data-form-confirmation role="status" hidden>
@@ -418,8 +418,7 @@ const endpointToken = FORM_ENDPOINT ? Buffer.from(FORM_ENDPOINT, 'utf8').toStrin
   }
 
   button,
-  .send-conduit,
-  .send-terminal {
+  .send-conduit {
     position: relative;
     z-index: 3;
   }
@@ -547,12 +546,24 @@ const endpointToken = FORM_ENDPOINT ? Buffer.from(FORM_ENDPOINT, 'utf8').toStrin
     display: none;
   }
 
+  /* Absolutely placed inside the overlay, under the isometric scene. In flow it
+     grew the form line by line as it printed; out of flow the box never moves,
+     and the dimmed backdrop it sits on is already paid for. */
   .send-terminal:not([hidden]) {
+    background: rgba(10, 12, 11, 0.66);
+    border-left: 1px solid rgba(94, 230, 160, 0.45);
     color: var(--accent);
     display: block;
     font: 12px/1.75 var(--font-mono);
-    margin: 12px 0 0;
-    white-space: pre-wrap;
+    left: 50%;
+    margin: 0;
+    padding: 8px 14px;
+    position: absolute;
+    text-align: left;
+    top: 58%;
+    transform: translateX(-50%);
+    white-space: pre;
+    width: max-content;
   }
 
   .send-terminal:not([hidden])::after {
