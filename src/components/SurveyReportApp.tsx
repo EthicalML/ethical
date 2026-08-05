@@ -36,6 +36,7 @@ export interface SurveyMethodologyCopy {
 
 interface Props {
   report: SurveyReportData;
+  year: number;
   chapters: SurveyReportChapter[];
   findings: Record<string, SurveyReportFinding>;
   stats: SurveyReportStat[];
@@ -126,9 +127,11 @@ function InlineChart({
 function StageChart({
   question,
   compare,
+  year,
 }: {
   question: SurveyQuestionAggregate;
   compare: boolean;
+  year: number;
 }) {
   const [expanded, setExpanded] = useState(false);
   const options = expanded ? question.options : question.options.slice(0, 8);
@@ -150,12 +153,12 @@ function StageChart({
         <div class={`${styles.legend} ${!compare ? styles.legendSingle : ''}`}>
           <span>
             <i class={styles.legendCurrent} />
-            2025
+            {year}
           </span>
           {compare && (
             <span>
               <i class={styles.legendPrevious} />
-              2024
+              {year - 1}
             </span>
           )}
         </div>
@@ -171,10 +174,12 @@ function StageChart({
 
 function Methodology({
   report,
+  year,
   chapter,
   methodology,
 }: {
   report: SurveyReportData;
+  year: number;
   chapter: SurveyReportChapter;
   methodology: SurveyMethodologyCopy;
 }) {
@@ -194,13 +199,13 @@ function Methodology({
           <span>RESPONSES</span>
           <strong>{report.responseRows}</strong>
           <p>
-            Submitted rows in the 2025 source. Per-question nonblank respondent bases range from{' '}
+            Submitted rows in the {year} source. Per-question nonblank respondent bases range from{' '}
             {minimumResponses} to {maximumResponses}.
           </p>
         </article>
         <article>
           <span>COLLECTION</span>
-          <strong>2025</strong>
+          <strong>{year}</strong>
           <p>{methodology.collection}</p>
         </article>
       </div>
@@ -215,7 +220,14 @@ function Methodology({
   );
 }
 
-export default function SurveyReportApp({ report, chapters, findings, stats, methodology }: Props) {
+export default function SurveyReportApp({
+  report,
+  year,
+  chapters,
+  findings,
+  stats,
+  methodology,
+}: Props) {
   const firstChapter = chapters.find((chapter) => chapter.section)?.slug ?? 'context';
   const initialQuestions = Object.fromEntries(
     chapters
@@ -225,7 +237,8 @@ export default function SurveyReportApp({ report, chapters, findings, stats, met
   const [enhanced, setEnhanced] = useState(false);
   const [activeChapter, setActiveChapter] = useState(firstChapter);
   const [activeQuestions, setActiveQuestions] = useState<Record<string, number>>(initialQuestions);
-  const [compare, setCompare] = useState(true);
+  const comparisonAvailable = report.comparisonRows !== undefined;
+  const [compare, setCompare] = useState(comparisonAvailable);
   const [desktop, setDesktop] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const panelRef = useRef<HTMLElement>(null);
@@ -394,7 +407,7 @@ export default function SurveyReportApp({ report, chapters, findings, stats, met
             ))}
           </select>
         </label>
-        {activeChapter !== 'methodology' && (
+        {comparisonAvailable && activeChapter !== 'methodology' && (
           <button
             class={styles.compareToggle}
             type="button"
@@ -402,7 +415,7 @@ export default function SurveyReportApp({ report, chapters, findings, stats, met
             aria-checked={compare}
             onClick={() => setCompare((value) => !value)}
           >
-            <span>VS 2024</span>
+            <span>VS {year - 1}</span>
             <i class={styles.toggleTrack} aria-hidden="true">
               <b />
             </i>
@@ -416,7 +429,12 @@ export default function SurveyReportApp({ report, chapters, findings, stats, met
           if (!chapter.section)
             return (
               <div key={chapter.slug} hidden={enhanced && chapter.slug !== activeChapter}>
-                <Methodology report={report} chapter={chapter} methodology={methodology} />
+                <Methodology
+                  report={report}
+                  year={year}
+                  chapter={chapter}
+                  methodology={methodology}
+                />
               </div>
             );
           const questions = chapterQuestions(report, chapter);
@@ -495,7 +513,7 @@ export default function SurveyReportApp({ report, chapters, findings, stats, met
                 </article>
                 <aside class={styles.stageWrap} aria-label="Visual evidence">
                   {enhanced && activeQuestion && chapter.slug === activeChapter && (
-                    <StageChart question={activeQuestion} compare={compare} />
+                    <StageChart question={activeQuestion} compare={compare} year={year} />
                   )}
                 </aside>
               </div>

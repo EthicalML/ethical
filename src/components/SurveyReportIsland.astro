@@ -5,6 +5,7 @@ import type { SurveyMethodologyCopy, SurveyReportChapter, SurveyReportFinding, S
 
 interface Props {
   report: SurveyReportData;
+  year: number;
   chapters: SurveyReportChapter[];
   findings: Record<string, SurveyReportFinding>;
   stats: SurveyReportStat[];

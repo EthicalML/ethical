@@ -269,6 +269,45 @@ const layout = {
 <AchievementNeonRendition variant={1} cards={cards} layout={layout} />
 ```
 
+## SurveyReport
+
+`src/components/SurveyReportIsland.astro` is the typed Astro wrapper for the `src/components/SurveyReportApp.tsx` Preact island. It renders a survey report as owner-authored chapters with headline stats, finding copy, static CSS bar charts, desktop scrollytelling, mobile selects and a single methodology surface. Live on `/reports/state-of-ml-2024/` and `/reports/state-of-ml-2025/`.
+
+### Props
+
+| Prop          | Type                                  | Notes                                                                                                                                |
+| ------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `report`      | `SurveyReportData`                    | Build-time aggregate from `buildSurveyReport` or `buildSurveyComparison`. The latter enables comparison UI through `comparisonRows`. |
+| `year`        | `number`                              | Primary report year used by the chart legend and methodology.                                                                        |
+| `chapters`    | `SurveyReportChapter[]`               | Page-owned chapter labels, section mapping and deck copy; the methodology chapter has no section mapping.                            |
+| `findings`    | `Record<string, SurveyReportFinding>` | Page-owned headline and insight pair keyed by stable question ID.                                                                    |
+| `stats`       | `SurveyReportStat[]`                  | Page-owned hero callouts with eyebrow, value, label and report hash link.                                                            |
+| `methodology` | `SurveyMethodologyCopy`               | Page-owned methodology deck, collection and denominator notes, plus the other-year link.                                             |
+
+### Data modes
+
+- **Single year.** Pass `buildSurveyReport(csv)` output. The comparison switch, prior-year bars and delta chips are not rendered. Used by the 2024 baseline.
+- **Comparison.** Pass `buildSurveyComparison(currentCsv, previousCsv)` output. The default-on comparison switch controls the subordinate prior-year bars and delta chips. Used by the 2025 edition.
+
+The page imports `SurveyReport` from `src/components/prose/components.js`; all chapter, finding, stat and methodology copy stays in page frontmatter. Question definitions, aggregation, aliases and option alignment stay in `src/utils/SurveyReportData.ts`.
+
+```mdx
+import surveyCsv from '../../data/survey-2024.csv?raw';
+import { SurveyReport } from '../../components/prose/components.js';
+import { buildSurveyReport } from '../../utils/SurveyReportData';
+
+export const report = buildSurveyReport(surveyCsv);
+
+<SurveyReport
+  report={report}
+  year={2024}
+  chapters={frontmatter.chapters}
+  findings={frontmatter.findings}
+  stats={frontmatter.stats}
+  methodology={frontmatter.methodology}
+/>
+```
+
 ## Embed modes
 
 - `SurveyExplorer` / `SurveyExplorerIsland` accept a default-off `compact` prop for card embeds: short question pills sit beside the year toggle (replacing the full tabs, the sort button and the question meta), chrome is stripped, type and bars tighten to card scale, the N count is dropped, and the focus block becomes a name/share/YoY row. Wired on the homepage survey carousel card.
