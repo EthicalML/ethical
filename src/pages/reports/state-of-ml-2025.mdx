@@ -3,7 +3,6 @@ title: The State of Production ML in 2025
 description: Practitioner-reported production machine learning practices, tools, organisational context and demographics from the 2025 survey.
 composed: true
 layout: ../../layouts/ProseLayout.astro
-draftLabel: DRAFT INSIGHT · OWNER REVIEW
 chapters:
   - slug: context
     section: ml-context
@@ -27,8 +26,8 @@ chapters:
     deck: The role levels, ages, locations and identities represented in this survey.
   - slug: methodology
     eyebrow: 05 / METHODOLOGY
-    title: How to read this report
-    deck: A transparent account of the source, cleaning and denominators behind every chart.
+    title: Methodology
+    deck: A transparent account of the source and denominators behind every chart.
 stats:
   - eyebrow: TOP CHALLENGE
     value: 42%
@@ -44,7 +43,7 @@ stats:
     href: '#/operations/q20'
   - eyebrow: SURVEY RESPONSES
     value: '135'
-    label: submitted rows, with a per-question respondent base shown on every chart
+    label: submitted rows, with question bases varying by nonblank answers
     href: '#/methodology'
 findings:
   primary-ml-library:
@@ -129,9 +128,8 @@ findings:
     headline: The gender imbalance remains pronounced.
     insight: Ninety percent self-identify as male and 9% as female. The female share is two points higher than in 2024.
 methodology:
-  deck: This edition compares the 2025 answers with the same questions and answer labels from 2024. It keeps the respondent base visible so every percentage can be read in context.
+  deck: This edition compares the 2025 answers with the same questions and answer labels from 2024. Question-level response bases are summarised here so every percentage can be read in context.
   collection: Responses were collected through the State of Production ML survey. The report aggregates the supplied CSV at build time and publishes no raw-response table.
-  cleaning: Blank answers are excluded. A short exported alias map merges only unambiguous spelling, casing, punctuation and accepted-abbreviation variants of the same tool.
   denominator: Each percentage uses the number of nonblank respondents to that question, so N varies. For multiple-choice questions, a bar is the share of respondents selecting that answer and totals can exceed 100%.
   otherYearLabel: READ THE 2024 BASELINE
   otherYearHref: /reports/state-of-ml-2024/
@@ -150,11 +148,4 @@ export const report = buildSurveyComparison(survey2025Csv, survey2024Csv);
   intro="A field report on what practitioners build, the tools they trust and the operational realities behind production machine learning. Compare every answer with the 2024 baseline as you move through the chapters."
 />
 
-<SurveyReport
-  report={report}
-  chapters={frontmatter.chapters}
-  findings={frontmatter.findings}
-  stats={frontmatter.stats}
-  methodology={frontmatter.methodology}
-  draftLabel={frontmatter.draftLabel}
-/>
+<SurveyReport report={report} chapters={frontmatter.chapters} findings={frontmatter.findings} stats={frontmatter.stats} methodology={frontmatter.methodology} />

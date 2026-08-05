@@ -29,7 +29,6 @@ export interface SurveyReportStat {
 export interface SurveyMethodologyCopy {
   deck: string;
   collection: string;
-  cleaning: string;
   denominator: string;
   otherYearLabel: string;
   otherYearHref: string;
@@ -41,7 +40,6 @@ interface Props {
   findings: Record<string, SurveyReportFinding>;
   stats: SurveyReportStat[];
   methodology: SurveyMethodologyCopy;
-  draftLabel: string;
 }
 
 const formatShare = (share: number) => `${Math.round(share)}%`;
@@ -52,20 +50,12 @@ const chapterQuestions = (report: SurveyReportData, chapter: SurveyReportChapter
     ? report.questions.filter((question) => question.section === chapter.section)
     : [];
 
-function DeltaChip({
-  question,
-  delta,
-  compare,
-}: {
-  question: SurveyQuestionAggregate;
-  delta?: number;
-  compare: boolean;
-}) {
+function DeltaChip({ delta, compare }: { delta?: number; compare: boolean }) {
   if (!compare || delta === undefined) return null;
   return (
     <span
       class={`${styles.delta} ${delta < 0 ? styles.deltaDown : ''}`}
-      title={`Percentage-point change from ${question.previousResponseCount ?? 0} respondents in 2024`}
+      title="Percentage-point change from 2024"
     >
       {formatDelta(delta)}
     </span>
@@ -89,13 +79,16 @@ function BarRows({
             <span>{option.label}</span>
             <span class={styles.barReadout}>
               {formatShare(option.share)}
-              <DeltaChip question={question} delta={option.delta} compare={compare} />
+              <DeltaChip delta={option.delta} compare={compare} />
             </span>
           </div>
-          <div class={styles.barTrack} aria-hidden="true">
+          <div
+            class={`${styles.barTrack} ${compare ? styles.comparedTrack : ''}`}
+            aria-hidden="true"
+          >
             {compare && option.previousShare !== undefined && (
               <i
-                class={styles.ghostBar}
+                class={styles.previousBar}
                 style={{ width: `${Math.min(option.previousShare, 100)}%` }}
               />
             )}
@@ -118,10 +111,7 @@ function InlineChart({
   const remaining = question.options.slice(8);
   return (
     <figure class={styles.inlineChart} aria-label={question.label}>
-      <div class={styles.chartMeta}>
-        <span>N={question.responseCount}</span>
-        {question.multiChoice && <span>Multiple selections allowed</span>}
-      </div>
+      {question.multiChoice && <div class={styles.chartMeta}>Multiple selections allowed</div>}
       <BarRows question={question} compare={compare} options={topOptions} />
       {remaining.length > 0 && (
         <details class={styles.longTail}>
@@ -151,10 +141,6 @@ function StageChart({
         <div>
           <span>QUESTION {String(question.number).padStart(2, '0')}</span>
           <h3>{question.label}</h3>
-        </div>
-        <div class={styles.stageCount}>
-          RESPONDENTS
-          <strong>N={question.responseCount}</strong>
         </div>
       </header>
       <div class={`${styles.stageBars} ${expanded ? styles.stageBarsExpanded : ''}`}>
@@ -192,6 +178,10 @@ function Methodology({
   chapter: SurveyReportChapter;
   methodology: SurveyMethodologyCopy;
 }) {
+  const responseCounts = report.questions.map((question) => question.responseCount);
+  const minimumResponses = Math.min(...responseCounts);
+  const maximumResponses = Math.max(...responseCounts);
+
   return (
     <section class={styles.methodology} data-chapter-panel={chapter.slug} id="report-methodology">
       <header class={styles.chapterHead}>
@@ -204,19 +194,14 @@ function Methodology({
           <span>RESPONSES</span>
           <strong>{report.responseRows}</strong>
           <p>
-            Submitted rows in the 2025 source. Each question displays its own nonblank respondent
-            base.
+            Submitted rows in the 2025 source. Per-question nonblank respondent bases range from{' '}
+            {minimumResponses} to {maximumResponses}.
           </p>
         </article>
         <article>
           <span>COLLECTION</span>
           <strong>2025</strong>
           <p>{methodology.collection}</p>
-        </article>
-        <article>
-          <span>CLEANING</span>
-          <strong>ALIASES</strong>
-          <p>{methodology.cleaning}</p>
         </article>
       </div>
       <aside class={styles.methodNote}>
@@ -230,14 +215,7 @@ function Methodology({
   );
 }
 
-export default function SurveyReportApp({
-  report,
-  chapters,
-  findings,
-  stats,
-  methodology,
-  draftLabel,
-}: Props) {
+export default function SurveyReportApp({ report, chapters, findings, stats, methodology }: Props) {
   const firstChapter = chapters.find((chapter) => chapter.section)?.slug ?? 'context';
   const initialQuestions = Object.fromEntries(
     chapters
@@ -250,7 +228,6 @@ export default function SurveyReportApp({
   const [compare, setCompare] = useState(true);
   const [desktop, setDesktop] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
-  const appRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLElement>(null);
 
   const activeChapterData =
@@ -266,15 +243,17 @@ export default function SurveyReportApp({
 
   const showRoute = (slug: string, questionNumber?: number, scroll = true) => {
     const chapter = chapters.find((item) => item.slug === slug) ?? chapters[0];
+    const selectedQuestion = questionNumber ?? chapterQuestions(report, chapter)[0]?.number;
     setActiveChapter(chapter.slug);
-    if (questionNumber)
-      setActiveQuestions((current) => ({ ...current, [chapter.slug]: questionNumber }));
+    if (selectedQuestion)
+      setActiveQuestions((current) => ({ ...current, [chapter.slug]: selectedQuestion }));
     if (!scroll) return;
     requestAnimationFrame(() =>
       requestAnimationFrame(() => {
         const target = questionNumber
           ? document.getElementById(`report-q-${questionNumber}`)
-          : document.querySelector(`[data-chapter-panel="${chapter.slug}"]`);
+          : (document.querySelector(`[data-chapter-content="${chapter.slug}"]`) ??
+            document.querySelector(`[data-chapter-panel="${chapter.slug}"]`));
         target?.scrollIntoView({
           behavior: reducedMotion ? 'auto' : 'smooth',
           block: questionNumber && desktop ? 'center' : 'start',
@@ -316,33 +295,62 @@ export default function SurveyReportApp({
     if (!enhanced || !desktop || reducedMotion || !activeChapterData.section || !panelRef.current)
       return;
     const steps = [...panelRef.current.querySelectorAll<HTMLElement>('[data-report-step]')];
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((first, second) => second.intersectionRatio - first.intersectionRatio)[0];
-        if (!visible) return;
-        const number = Number((visible.target as HTMLElement).dataset.questionNumber);
-        setActiveQuestions((current) => ({ ...current, [activeChapter]: number }));
-        history.replaceState(null, '', `#/${activeChapter}/q${number}`);
-      },
-      { rootMargin: '-42% 0px -48% 0px', threshold: [0, 0.25, 0.6] },
-    );
-    steps.forEach((step) => observer.observe(step));
-    return () => observer.disconnect();
+    let frame = 0;
+    const updateActiveStep = () => {
+      frame = 0;
+      const activationLine = innerHeight * 0.45;
+      const nearest = steps.reduce(
+        (selection, step) => {
+          const bounds = step.getBoundingClientRect();
+          const distance =
+            activationLine < bounds.top
+              ? bounds.top - activationLine
+              : activationLine > bounds.bottom
+                ? activationLine - bounds.bottom
+                : 0;
+          return distance < selection.distance ? { step, distance } : selection;
+        },
+        { step: steps[0], distance: Number.POSITIVE_INFINITY },
+      ).step;
+      if (!nearest) return;
+      const number = Number(nearest.dataset.questionNumber);
+      setActiveQuestions((current) =>
+        current[activeChapter] === number ? current : { ...current, [activeChapter]: number },
+      );
+      const nextHash = `#/${activeChapter}/q${number}`;
+      if (location.hash !== nextHash) history.replaceState(null, '', nextHash);
+    };
+    const scheduleUpdate = () => {
+      if (!frame) frame = requestAnimationFrame(updateActiveStep);
+    };
+    addEventListener('scroll', scheduleUpdate, { passive: true });
+    addEventListener('resize', scheduleUpdate);
+    scheduleUpdate();
+    return () => {
+      removeEventListener('scroll', scheduleUpdate);
+      removeEventListener('resize', scheduleUpdate);
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, [activeChapter, activeChapterData.section, desktop, enhanced, reducedMotion]);
 
-  const navigate = (event: Event, href: string) => {
-    event.preventDefault();
+  const openRoute = (href: string) => {
     const [slug, questionPart] = href.replace(/^#\/?/, '').split('/').filter(Boolean);
     const number = questionPart?.match(/^q(\d+)$/)?.[1];
     if (location.hash !== href) history.pushState(null, '', href);
     showRoute(slug, number ? Number(number) : undefined);
   };
 
+  const navigate = (event: Event, href: string) => {
+    event.preventDefault();
+    openRoute(href);
+  };
+
+  const selectRoute = (event: Event) => {
+    openRoute((event.currentTarget as HTMLSelectElement).value);
+  };
+
   return (
     <div
-      ref={appRef}
       class={`${styles.app} ${enhanced ? styles.enhanced : ''} ${reducedMotion ? styles.reducedMotion : ''}`}
     >
       <section class={styles.heroStats} aria-label="Headline survey findings">
@@ -376,14 +384,29 @@ export default function SurveyReportApp({
             );
           })}
         </div>
+        <label class={styles.chapterSelectWrap}>
+          <span>Chapter</span>
+          <select value={`#/${activeChapter}`} onChange={selectRoute}>
+            {chapters.map((chapter, index) => (
+              <option key={chapter.slug} value={`#/${chapter.slug}`}>
+                {String(index + 1).padStart(2, '0')} · {chapter.title}
+              </option>
+            ))}
+          </select>
+        </label>
         {activeChapter !== 'methodology' && (
           <button
             class={styles.compareToggle}
             type="button"
-            aria-pressed={compare}
+            role="switch"
+            aria-checked={compare}
             onClick={() => setCompare((value) => !value)}
           >
-            VS 2024 <i>{compare ? 'ON' : 'OFF'}</i>
+            <span>VS 2024</span>
+            <i class={styles.toggleTrack} aria-hidden="true">
+              <b />
+            </i>
+            <strong>{compare ? 'ON' : 'OFF'}</strong>
           </button>
         )}
       </nav>
@@ -411,9 +434,8 @@ export default function SurveyReportApp({
                 <h2>{chapter.title}</h2>
                 <div>{chapter.deck}</div>
               </header>
-              <div class={styles.chapterLayout}>
+              <div class={styles.chapterLayout} data-chapter-content={chapter.slug}>
                 <nav class={styles.questionRail} aria-label={`${chapter.title} questions`}>
-                  <span>IN THIS CHAPTER</span>
                   <ol>
                     {questions.map((question) => {
                       const href = `#/${chapter.slug}/q${question.number}`;
@@ -428,13 +450,25 @@ export default function SurveyReportApp({
                             href={href}
                             onClick={(event) => navigate(event, href)}
                           >
-                            <i>{String(question.number).padStart(2, '0')}</i>
-                            {question.label}
+                            Q{question.number}
                           </a>
                         </li>
                       );
                     })}
                   </ol>
+                  <label class={styles.questionSelectWrap}>
+                    <span>Question</span>
+                    <select
+                      value={`#/${chapter.slug}/q${activeQuestions[chapter.slug]}`}
+                      onChange={selectRoute}
+                    >
+                      {questions.map((question) => (
+                        <option key={question.id} value={`#/${chapter.slug}/q${question.number}`}>
+                          Q{question.number} · {question.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
                 </nav>
                 <article class={styles.steps}>
                   {questions.map((question) => {
@@ -454,7 +488,6 @@ export default function SurveyReportApp({
                         </div>
                         <h3>{finding?.headline ?? question.label}</h3>
                         <p>{finding?.insight}</p>
-                        <span class={styles.draftTag}>{draftLabel}</span>
                         <InlineChart question={question} compare={compare} />
                       </section>
                     );

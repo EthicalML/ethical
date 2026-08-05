@@ -4,6 +4,29 @@
   position: relative;
 }
 
+.app * {
+  scrollbar-color: rgba(232, 180, 92, 0.58) rgba(244, 242, 238, 0.05);
+  scrollbar-width: thin;
+}
+
+.app *::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.app *::-webkit-scrollbar-track {
+  background: rgba(244, 242, 238, 0.05);
+}
+
+.app *::-webkit-scrollbar-thumb {
+  background: rgba(232, 180, 92, 0.58);
+  border-radius: 0;
+}
+
+.app *::-webkit-scrollbar-thumb:hover {
+  background: var(--report-amber);
+}
+
 .heroStats {
   border-bottom: 1px solid var(--hairline);
   border-top: 1px solid var(--hairline);
@@ -88,6 +111,11 @@
   min-width: 0;
 }
 
+.chapterSelectWrap,
+.questionSelectWrap {
+  display: none;
+}
+
 .chapterTabs a {
   align-items: center;
   color: var(--text-3);
@@ -129,29 +157,66 @@
 .compareToggle {
   align-self: center;
   background: transparent;
-  border: 1px solid var(--hairline-card);
+  border: 0;
   color: var(--text-2);
   cursor: pointer;
+  display: flex;
+  gap: 9px;
+  align-items: center;
   font: var(--mono-9)/1 var(--font-mono);
   letter-spacing: 0.06em;
-  min-height: 40px;
-  padding: 0 12px;
+  min-height: 44px;
+  padding: 0 4px 0 12px;
 }
 
-.compareToggle i {
+.compareToggle strong {
   color: var(--text-4);
-  font-style: normal;
-  margin-left: 7px;
+  font: inherit;
+  min-width: 19px;
 }
 
-.compareToggle[aria-pressed='true'] {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--accent-on);
+.toggleTrack {
+  background: rgba(232, 180, 92, 0.12);
+  border: 1px solid rgba(232, 180, 92, 0.48);
+  display: block;
+  height: 22px;
+  padding: 2px;
+  position: relative;
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+  width: 42px;
 }
 
-.compareToggle[aria-pressed='true'] i {
-  color: var(--accent-on);
+.toggleTrack b {
+  background: var(--text-3);
+  display: block;
+  height: 16px;
+  transform: translateX(0);
+  transition:
+    background 0.2s ease,
+    transform 0.22s var(--report-ease);
+  width: 16px;
+}
+
+.compareToggle[aria-checked='true'] {
+  color: var(--report-amber);
+}
+
+.compareToggle[aria-checked='true'] .toggleTrack {
+  background: rgba(232, 180, 92, 0.22);
+  border-color: var(--report-amber);
+  box-shadow: 0 0 15px rgba(232, 180, 92, 0.28);
+}
+
+.compareToggle[aria-checked='true'] .toggleTrack b {
+  background: var(--report-amber);
+  box-shadow: 0 0 9px rgba(232, 180, 92, 0.7);
+  transform: translateX(18px);
+}
+
+.compareToggle[aria-checked='true'] strong {
+  color: var(--report-amber);
 }
 
 .chapterViewport {
@@ -194,66 +259,60 @@
 
 .chapterLayout {
   display: grid;
-  grid-template-columns: 190px minmax(0, 860px);
+  grid-template-columns: 88px minmax(0, 960px);
   max-width: 1280px;
+  scroll-margin-top: 158px;
 }
 
 .questionRail {
   align-self: start;
-  padding-right: 28px;
+  padding-right: 20px;
   position: sticky;
   top: 158px;
 }
 
-.questionRail > span {
-  color: var(--text-3);
-  font: var(--mono-9)/1 var(--font-mono);
-  letter-spacing: 0.1em;
-}
-
 .questionRail ol {
-  border-left: 1px solid var(--hairline);
+  display: grid;
+  gap: 8px;
   list-style: none;
-  margin: 20px 0 0;
+  margin: 0;
   padding: 0;
 }
 
 .questionRail a {
+  align-items: center;
+  border: 1px solid var(--hairline-card);
   color: var(--text-4);
-  display: grid;
-  font-size: 10.5px;
-  gap: 8px;
-  grid-template-columns: 22px 1fr;
-  line-height: 1.3;
-  padding: 8px 0 8px 14px;
+  display: flex;
+  font: var(--mono-9)/1 var(--font-mono);
+  height: 34px;
+  justify-content: center;
+  padding: 0 7px;
   position: relative;
   text-decoration: none;
 }
 
 .questionRail a::before {
   background: var(--accent);
-  bottom: 7px;
+  bottom: -1px;
   content: '';
-  left: -1px;
+  left: 7px;
   position: absolute;
-  top: 7px;
-  transform: scaleY(0);
+  right: 7px;
+  height: 2px;
+  transform: scaleX(0);
   transition: transform 0.2s ease;
-  width: 2px;
 }
 
 .questionRail a:hover,
 .questionRail .activeRailLink {
+  background: var(--accent-wash-07);
+  border-color: rgba(94, 230, 160, 0.34);
   color: var(--text-1);
 }
 
 .questionRail .activeRailLink::before {
-  transform: scaleY(1);
-}
-
-.questionRail i {
-  color: var(--text-4);
-  font: normal var(--mono-9)/1.3 var(--font-mono);
+  transform: scaleX(1);
 }
 
 .steps {
@@ -268,8 +327,7 @@
   scroll-margin-top: 170px;
 }
 
-.stepIndex,
-.draftTag {
+.stepIndex {
   color: var(--report-amber);
   font: var(--mono-9)/1 var(--font-mono);
   letter-spacing: 0.12em;
@@ -277,7 +335,7 @@
 }
 
 .step h3 {
-  font: 300 clamp(31px, 3.8vw, 50px)/1.06 var(--font-display);
+  font: 300 clamp(36px, 4.2vw, 56px)/1.04 var(--font-display);
   letter-spacing: -0.035em;
   margin: 20px 0 22px;
   max-width: 660px;
@@ -289,11 +347,6 @@
   line-height: 1.62;
   margin: 0;
   max-width: 570px;
-}
-
-.draftTag {
-  display: block;
-  margin-top: 24px;
 }
 
 .inlineChart {
@@ -322,7 +375,14 @@
 }
 
 .barRows li {
+  margin: -6px;
   min-width: 0;
+  padding: 6px;
+  transition: background 0.18s ease;
+}
+
+.barRows li:hover {
+  background: var(--accent-wash-07);
 }
 
 .barLabel {
@@ -347,31 +407,49 @@
 
 .barTrack {
   background: rgba(244, 242, 238, 0.065);
-  height: 8px;
+  height: 6px;
   overflow: visible;
   position: relative;
 }
 
-.ghostBar,
+.comparedTrack {
+  background: linear-gradient(
+    to bottom,
+    rgba(244, 242, 238, 0.065) 0 6px,
+    transparent 6px 9px,
+    rgba(232, 180, 92, 0.08) 9px 12px
+  );
+  height: 12px;
+}
+
+.previousBar,
 .currentBar {
   box-sizing: border-box;
   left: 0;
   position: absolute;
   transition:
     width 0.62s var(--report-ease),
-    opacity 0.25s ease;
+    opacity 0.25s ease,
+    filter 0.18s ease,
+    transform 0.18s ease;
 }
 
-.ghostBar {
-  border: 1px solid rgba(232, 180, 92, 0.7);
-  height: 8px;
-  top: 0;
+.previousBar {
+  background: var(--report-amber);
+  height: 3px;
+  opacity: 0.82;
+  top: 9px;
 }
 
 .currentBar {
   background: linear-gradient(90deg, rgba(94, 230, 160, 0.48), var(--accent));
-  height: 5px;
-  top: 1.5px;
+  height: 6px;
+  top: 0;
+}
+
+.barRows li:hover .currentBar {
+  filter: brightness(1.2);
+  transform: scaleY(1.24);
 }
 
 .leadingBar .currentBar {
@@ -455,36 +533,21 @@
   border-bottom: 1px solid var(--hairline);
   display: flex;
   gap: 28px;
-  justify-content: space-between;
   min-height: 112px;
   padding: 24px 26px 20px;
 }
 
-.stageHead > div:first-child > span,
-.stageCount {
+.stageHead > div:first-child > span {
   color: var(--text-3);
   font: var(--mono-9)/1.3 var(--font-mono);
   letter-spacing: 0.09em;
 }
 
 .stageHead h3 {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.35;
-  margin: 8px 0 0;
-  max-width: 430px;
-}
-
-.stageCount {
-  text-align: right;
-}
-
-.stageCount strong {
-  color: var(--text-1);
-  display: block;
-  font-size: 15px;
-  font-weight: 400;
-  margin-top: 5px;
+  font: 300 20px/1.25 var(--font-display);
+  letter-spacing: -0.015em;
+  margin: 10px 0 0;
+  max-width: 560px;
 }
 
 .stageBars {
@@ -549,8 +612,8 @@
 }
 
 .legendPrevious {
-  border: 1px solid var(--report-amber);
-  height: 7px;
+  background: var(--report-amber);
+  height: 3px;
 }
 
 .legendSingle {
@@ -564,7 +627,7 @@
 .methodGrid {
   border-top: 1px solid var(--hairline);
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   max-width: 1080px;
 }
 
@@ -626,7 +689,7 @@
 
 @media (min-width: 1000px) {
   .enhanced .chapterLayout {
-    grid-template-columns: 190px minmax(330px, 0.78fr) minmax(470px, 1.22fr);
+    grid-template-columns: 88px minmax(350px, 0.82fr) minmax(470px, 1.18fr);
   }
 
   .enhanced .steps {
@@ -662,7 +725,7 @@
   }
 
   .enhanced.reducedMotion .chapterLayout {
-    grid-template-columns: 190px minmax(0, 860px);
+    grid-template-columns: 88px minmax(0, 960px);
   }
 
   .enhanced.reducedMotion .steps {
@@ -700,11 +763,11 @@
   }
 
   .enhanced .chapterLayout {
-    grid-template-columns: 155px minmax(300px, 0.8fr) minmax(430px, 1.2fr);
+    grid-template-columns: 76px minmax(310px, 0.82fr) minmax(430px, 1.18fr);
   }
 
   .questionRail {
-    padding-right: 20px;
+    padding-right: 14px;
   }
 
   .steps {
@@ -737,19 +800,57 @@
   }
 
   .chapterTabs {
-    overflow-x: auto;
-    overscroll-behavior-inline: contain;
-    scrollbar-width: thin;
+    display: none;
   }
 
-  .chapterTabs a {
-    min-height: 62px;
-    padding-inline: 13px;
+  .chapterSelectWrap,
+  .questionSelectWrap {
+    display: grid;
+    min-width: 0;
+    position: relative;
   }
 
-  .chapterTabs a::after {
-    left: 13px;
-    right: 13px;
+  .chapterSelectWrap > span,
+  .questionSelectWrap > span {
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    width: 1px;
+  }
+
+  .chapterSelectWrap::after,
+  .questionSelectWrap::after {
+    border-bottom: 1px solid var(--accent);
+    border-right: 1px solid var(--accent);
+    content: '';
+    height: 7px;
+    pointer-events: none;
+    position: absolute;
+    right: 16px;
+    top: calc(50% - 6px);
+    transform: rotate(45deg);
+    width: 7px;
+  }
+
+  .chapterSelectWrap select,
+  .questionSelectWrap select {
+    appearance: none;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid var(--hairline-card);
+    border-radius: 0;
+    color: var(--text-1);
+    font: var(--mono-9)/1.2 var(--font-mono);
+    min-height: 44px;
+    min-width: 0;
+    padding: 0 38px 0 13px;
+    text-overflow: ellipsis;
+    width: 100%;
+  }
+
+  .chapterSelectWrap select:focus,
+  .questionSelectWrap select:focus {
+    border-color: var(--accent);
+    outline: 1px solid rgba(94, 230, 160, 0.24);
   }
 
   .compareToggle {
@@ -775,47 +876,14 @@
     background: rgba(19, 20, 20, 0.94);
     border-bottom: 1px solid var(--hairline);
     margin: 0 -20px;
-    overflow-x: auto;
-    padding: 0 20px;
+    padding: 9px 20px;
     position: sticky;
     top: 132px;
     z-index: 15;
   }
 
-  .questionRail > span {
-    display: none;
-  }
-
   .questionRail ol {
-    border: 0;
-    display: flex;
-    margin: 0;
-  }
-
-  .questionRail li {
-    flex: none;
-    max-width: 210px;
-  }
-
-  .questionRail a {
-    align-items: center;
-    display: flex;
-    min-height: 48px;
-    padding: 8px 13px;
-  }
-
-  .questionRail a::before {
-    bottom: -1px;
-    height: 2px;
-    left: 13px;
-    right: 13px;
-    top: auto;
-    transform: scaleX(0);
-    width: auto;
-  }
-
-  .questionRail .activeRailLink::before {
-    transform: scaleX(1);
+    display: none;
   }
 
   .steps {
@@ -829,7 +897,7 @@
   }
 
   .step h3 {
-    font-size: clamp(32px, 8.5vw, 46px);
+    font-size: clamp(38px, 9.5vw, 50px);
   }
 
   .inlineChart {
@@ -868,18 +936,18 @@
     padding-right: 12px;
   }
 
-  .chapterTabs a {
+  .compareToggle {
+    gap: 6px;
+    padding-left: 8px;
+  }
+
+  .compareToggle > span {
     font-size: 0;
   }
 
-  .chapterTabs i {
+  .compareToggle > span::after {
+    content: 'VS 24';
     font-size: var(--mono-9);
-    margin: 0;
-    padding: 0 5px;
-  }
-
-  .compareToggle {
-    padding-inline: 9px;
   }
 
   .barLabel {
