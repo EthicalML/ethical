@@ -40,11 +40,18 @@ const { policyFilters } = Astro.props;
 </policy-record-shelves>
 
 <script>
+  import { onRevealed } from '../shared/Reveal';
+
   class PolicyRecordShelves extends HTMLElement {
     private controller = new AbortController();
 
     connectedCallback() {
       this.controller = new AbortController();
+      // The toggle fades in with the record section it controls: mirror the
+      // Reveal state of the first preview onto this host for the CSS below.
+      const preview = this.querySelector<HTMLElement>('policy-record-preview');
+      if (preview) onRevealed(preview, () => (this.dataset.revealed = '1'), this.controller.signal);
+      else this.dataset.revealed = '1';
       this.querySelectorAll<HTMLButtonElement>('[data-shelf]').forEach((button) => {
         button.addEventListener(
           'click',
@@ -83,6 +90,18 @@ const { policyFilters } = Astro.props;
     inset: 74px 48px auto auto;
     position: absolute;
     z-index: 3;
+    /* Follows the record section's reveal (Reveal marks the preview element)
+       so the toggle appears in the same moment as the section it controls. */
+    opacity: 0;
+    transform: translateY(26px);
+    transition:
+      opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1),
+      transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  policy-record-shelves[data-revealed='1'] .shelf-toggle {
+    opacity: 1;
+    transform: none;
   }
 
   .shelf-toggle button {
