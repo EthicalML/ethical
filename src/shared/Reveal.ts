@@ -6,7 +6,7 @@
 // `data-reveal="trigger"` elements receive only the timing signal
 // (dataset.revealed plus a `reveal:visible` event) without the fade styling;
 // components with bespoke entrances consume the signal via `onRevealed`.
-const REVEAL_RATIO = 0.25;
+const REVEAL_RATIO = 0.45;
 const TALL_REVEAL_VH = 0.45;
 
 export const onRevealed = (element: HTMLElement, callback: () => void, signal: AbortSignal) => {
