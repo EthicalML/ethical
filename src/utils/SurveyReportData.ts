@@ -5,6 +5,9 @@ export interface SurveyOptionAggregate {
   label: string;
   count: number;
   share: number;
+  previousCount?: number;
+  previousShare?: number;
+  delta?: number;
 }
 
 export interface SurveyQuestionAggregate {
@@ -14,11 +17,13 @@ export interface SurveyQuestionAggregate {
   label: string;
   multiChoice: boolean;
   responseCount: number;
+  previousResponseCount?: number;
   options: SurveyOptionAggregate[];
 }
 
 export interface SurveyReportData {
   responseRows: number;
+  comparisonRows?: number;
   questions: SurveyQuestionAggregate[];
 }
 
@@ -380,4 +385,39 @@ export function buildSurveyReport(csvText: string): SurveyReportData {
   });
 
   return { responseRows: rows.length, questions };
+}
+
+export function buildSurveyComparison(
+  currentCsvText: string,
+  previousCsvText: string,
+): SurveyReportData {
+  const current = buildSurveyReport(currentCsvText);
+  const previous = buildSurveyReport(previousCsvText);
+  const previousQuestions = new Map(previous.questions.map((question) => [question.id, question]));
+
+  return {
+    responseRows: current.responseRows,
+    comparisonRows: previous.responseRows,
+    questions: current.questions.map((question) => {
+      const previousQuestion = previousQuestions.get(question.id);
+      const previousOptions = new Map(
+        previousQuestion?.options.map((option) => [option.label, option]),
+      );
+
+      return {
+        ...question,
+        previousResponseCount: previousQuestion?.responseCount,
+        options: question.options.map((option) => {
+          const previousOption = previousOptions.get(option.label);
+          if (!previousOption) return option;
+          return {
+            ...option,
+            previousCount: previousOption.count,
+            previousShare: previousOption.share,
+            delta: option.share - previousOption.share,
+          };
+        }),
+      };
+    }),
+  };
 }

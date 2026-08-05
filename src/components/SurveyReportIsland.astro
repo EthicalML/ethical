@@ -1,0 +1,18 @@
+---
+import SurveyReportApp from './SurveyReportApp';
+import type { SurveyReportData } from '../utils/SurveyReportData';
+import type { SurveyMethodologyCopy, SurveyReportChapter, SurveyReportFinding, SurveyReportStat } from './SurveyReportApp';
+
+interface Props {
+  report: SurveyReportData;
+  chapters: SurveyReportChapter[];
+  findings: Record<string, SurveyReportFinding>;
+  stats: SurveyReportStat[];
+  methodology: SurveyMethodologyCopy;
+  draftLabel: string;
+}
+
+const props = Astro.props;
+---
+
+<SurveyReportApp {...props} client:load />
