@@ -1,0 +1,42 @@
+---
+title: The State of Production ML in 2025
+description: Practitioner-reported production machine learning practices, tools, organisational context and demographics from the 2025 survey.
+composed: true
+layout: ../../layouts/ProseLayout.astro
+sections:
+  - id: ml-context
+    eyebrow: 01 / ML CONTEXT
+    title: ML context
+    lede: The libraries, modalities, use cases, cloud platforms and production challenges shaping respondents' machine learning work.
+  - id: platforms-tools
+    eyebrow: 02 / PLATFORMS & TOOLS
+    title: Platforms & tools
+    lede: The tools respondents rely on across tracking, data, training, serving, monitoring and foundation model services.
+  - id: organisation-operations
+    eyebrow: 03 / ORGANISATION & OPERATIONS
+    title: Organisation & operations
+    lede: How production machine learning is organised, scaled and deployed across teams and infrastructure.
+  - id: respondent-profile
+    eyebrow: 04 / RESPONDENT PROFILE
+    title: Respondent profile
+    lede: The roles, experience and locations represented in the 2025 survey responses.
+reportCopy:
+  readingTitle: Percentages use each question's respondents.
+  readingBody: Each chart uses only the respondents who answered that question. Blank answers are excluded, so N varies. For questions allowing several selections, each bar is the share of respondents selecting that answer and the percentages may total more than 100%.
+  methodologyTitle: Built directly from the survey source.
+  methodologyBody: These figures are aggregated from the 2025 survey CSV during the site build. Obvious spelling and casing variants of the same tool are merged through a small audited alias list. Individual responses and identity-adjacent fields are not published.
+---
+
+import surveyCsv from '../../data/survey-2025.csv?raw';
+import { ArticleHero, SurveyReport } from '../../components/prose/components.js';
+import { buildSurveyReport } from '../../utils/SurveyReportData';
+
+export const report = buildSurveyReport(surveyCsv);
+
+<ArticleHero
+  eyebrow="REPORTS & DATA · 2025"
+  title={frontmatter.title}
+  intro="The State of Production ML Survey collects insight from practitioners across the production machine learning ecosystem, mapping common practices, tooling preferences and the challenges teams face when deploying models to production."
+/>
+
+<SurveyReport questions={report.questions} sections={frontmatter.sections} copy={frontmatter.reportCopy} />
