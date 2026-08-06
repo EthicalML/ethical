@@ -12,7 +12,7 @@ The ratified decisions in `~/Programming/agentic/kaos-ai-docs/ethical-institute-
 - `composed: true` means the MDX owns its full-width composition. Otherwise `ProseLayout.astro` supplies the standard article shell.
 - External HTTP(S) links outside `ethical.institute` and its subdomains open in a new tab with `target="_blank" rel="noopener noreferrer"`; internal, relative, anchor, and `mailto:` links do not. Markdown links are enforced by `src/plugins/rehype-external-links.mjs`; component-authored anchors must apply the same attributes.
 - No ASCII-arrow link text (`Label →`). A link is either an inline text link in prose or a primary/secondary button — in both cases the label carries no trailing arrow.
-- The legacy live site is preserved on the `master` branch as root-level HTML pages (`rfx.html`, `rfp.html`, `mlmm.html`, `security.html`, `state-of-ml-*.html`, …). Those pages are the content source of truth when rebuilding a legacy page — read them with `git show master:<file>` rather than assuming the prototype MDX carried the content over correctly.
+- The legacy live site is preserved at the `legacy-jekyll` tag (master's final Jekyll commit before the Astro cutover) as root-level HTML pages (`rfx.html`, `rfp.html`, `mlmm.html`, `security.html`, `state-of-ml-*.html`, …). Those pages are the content source of truth when rebuilding a legacy page — read them with `git show legacy-jekyll:<file>` rather than assuming the prototype MDX carried the content over correctly.
 
 The placement rule is: content lives with its owner; a separate file must be earned by two unrelated consumers, a validated set, or a genuinely large dataset.
 
