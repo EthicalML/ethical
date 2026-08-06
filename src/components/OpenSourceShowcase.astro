@@ -404,11 +404,14 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
   }
   .oss-carousel-bubbles button {
     background: rgba(244, 242, 238, 0.28);
+    background-clip: content-box;
     border: 0;
     border-radius: 999px;
+    box-sizing: content-box;
     cursor: pointer;
     height: 8px;
-    padding: 0;
+    margin: -18px;
+    padding: 18px;
     transition:
       background 0.18s ease,
       width 0.18s ease;
@@ -639,28 +642,28 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     }
     /* The same chevron composition scaled into the mobile side padding. */
     .oss-carousel-edge {
-      width: 28px;
+      width: 44px;
     }
     .oss-carousel-edge svg {
       height: 22px;
       width: 12px;
     }
     .oss-carousel-edge.prev {
-      left: -27px;
+      left: -35px;
     }
     .oss-carousel-edge.next {
-      right: -27px;
+      right: -35px;
     }
   }
   @media (max-width: 520px) {
     .oss-carousel-edge {
-      width: 24px;
+      width: 44px;
     }
     .oss-carousel-edge.prev {
-      left: -22px;
+      left: -32px;
     }
     .oss-carousel-edge.next {
-      right: -22px;
+      right: -32px;
     }
   }
   @media (prefers-reduced-motion: reduce) {

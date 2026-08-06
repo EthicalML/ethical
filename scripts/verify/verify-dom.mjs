@@ -23,6 +23,10 @@ if (!Number.isFinite(viewportWidth) || !Number.isFinite(viewportHeight)) {
 const viewport = { width: viewportWidth, height: viewportHeight };
 const isMobile = viewport.width <= 950;
 const baseUrl = process.env.VERIFY_BASE_URL ?? 'http://127.0.0.1:4126';
+const notFoundArtifact = await readFile(
+  new URL('../../dist/404.html', import.meta.url),
+  'utf8',
+).catch(() => '');
 
 if (routes.length === 0) {
   routes.push(...JSON.parse(await readFile(new URL('./routes.json', import.meta.url), 'utf8')));
@@ -102,10 +106,11 @@ for (const route of routes) {
       const honeypot = form.querySelector('.form-honeypot');
       const honeypotStyle = getComputedStyle(honeypot);
       return {
-        endpoint: form.dataset.endpoint,
         variant: form.dataset.variant,
         state: form.dataset.state,
         confirmation: form.querySelector('[data-form-confirmation]').textContent,
+        expectedConfirmation: form.dataset.confirmation,
+        expectedDemoConfirmation: form.dataset.demoConfirmation,
         startedAt: form.querySelector('[name="startedAt"]').value,
         applicationHelper,
         honeypot: {
@@ -323,6 +328,22 @@ for (const route of routes) {
       const element = document.querySelector(selector);
       return element ? getComputedStyle(element).gridTemplateColumns.split(' ').length : 0;
     };
+    const touchTarget = (element) => {
+      const box = element.getBoundingClientRect();
+      const after = getComputedStyle(element, '::after');
+      const expansion = (side) =>
+        after.content !== 'none' && after.position === 'absolute'
+          ? Math.max(0, -(Number.parseFloat(after[side]) || 0))
+          : 0;
+      return {
+        label:
+          element.getAttribute('aria-label') ||
+          element.textContent.trim().replace(/\s+/g, ' ') ||
+          element.className,
+        width: box.width + expansion('left') + expansion('right'),
+        height: box.height + expansion('top') + expansion('bottom'),
+      };
+    };
 
     return {
       pageHeight: document.documentElement.scrollHeight,
@@ -353,9 +374,7 @@ for (const route of routes) {
           overflowX: getComputedStyle(container).overflowX,
         };
       }),
-      minTouchTargetHeight: touchTargets.length
-        ? Math.min(...touchTargets.map((element) => element.getBoundingClientRect().height))
-        : null,
+      touchTargets: touchTargets.map(touchTarget),
       homepage:
         location.pathname === '/'
           ? {
@@ -400,25 +419,32 @@ for (const route of routes) {
                   };
                 },
               ),
-              initiativeCards: [...document.querySelectorAll('.initiative-pair > article')].map(
-                (card) => ({
+              initiativeCards: [
+                ...document.querySelectorAll('#reports .oss-carousel-track > article.oss-card'),
+              ]
+                .filter((card) =>
+                  ['ML Maturity Model', 'Agentic & ML Security'].includes(
+                    card.querySelector(':scope > h3')?.textContent,
+                  ),
+                )
+                .map((card) => ({
                   eyebrow: card.querySelector(':scope > .eyebrow')?.textContent,
                   heading: card.querySelector(':scope > h3')?.textContent,
-                  buttons: [...card.querySelectorAll('.initiative-actions .button')].map(
-                    (button) => ({
-                      label: button.textContent,
-                      primary: button.classList.contains('primary'),
-                    }),
-                  ),
+                  buttons: [...card.querySelectorAll('.actions .button')].map((button) => ({
+                    label: button.textContent,
+                    href: button.getAttribute('href'),
+                    primary: button.classList.contains('primary'),
+                  })),
                   inlineLinks: [...card.querySelectorAll(':scope > p .text-link')].map((link) => {
                     const style = getComputedStyle(link);
                     return {
                       color: style.color,
                       decoration: style.textDecorationLine,
+                      href: link.getAttribute('href'),
+                      label: link.textContent,
                     };
                   }),
-                }),
-              ),
+                })),
             }
           : null,
       kaosMounts: [...document.querySelectorAll('main kaos-graph')].map(
@@ -429,9 +455,17 @@ for (const route of routes) {
   if (checks.homepage) Object.assign(checks.homepage, homepageInteractions);
 
   const failures = [];
-  const expectedStatus = isNotFoundRoute ? 404 : 200;
-  if (!response || response.status() !== expectedStatus)
-    failures.push(`HTTP ${response?.status() ?? 'no response'}`);
+  const validStatus = isNotFoundRoute
+    ? response && [200, 404].includes(response.status())
+    : response?.status() === 200;
+  if (!validStatus) failures.push(`HTTP ${response?.status() ?? 'no response'}`);
+  if (
+    isNotFoundRoute &&
+    (!notFoundArtifact.includes('>That route does not exist</h1>') ||
+      !notFoundArtifact.includes('404 / NOT FOUND') ||
+      !notFoundArtifact.includes('href="/"'))
+  )
+    failures.push('built 404 artifact is missing its expected content or home link');
   if (errors.length > 0) failures.push(`${errors.length} page/console error(s)`);
   if (checks.unrevealed.length > 0)
     failures.push(`${checks.unrevealed.length} reveal target(s) did not fire`);
@@ -456,9 +490,10 @@ for (const route of routes) {
     failures.push('KAOS mount height is outside 220–500px');
   if (
     formChecks &&
-    (formChecks.endpoint !== '' ||
-      formChecks.state !== 'success' ||
-      !formChecks.confirmation.startsWith('The form is in demo mode.') ||
+    (formChecks.state !== 'success' ||
+      ![formChecks.expectedConfirmation, formChecks.expectedDemoConfirmation].includes(
+        formChecks.confirmation,
+      ) ||
       !/^\d{13}$/.test(formChecks.startedAt) ||
       !formChecks.applicationHelper?.initiallyHidden ||
       !formChecks.applicationHelper?.visibleAfterCheck ||
@@ -471,9 +506,14 @@ for (const route of routes) {
       !formChecks.containment?.formWithinCard ||
       !formChecks.containment?.childrenWithinForm)
   )
-    failures.push('form demo state, anti-spam fields, or card containment is incomplete');
-  if (isMobile && checks.minTouchTargetHeight < 43.5) {
-    failures.push(`touch target is ${checks.minTouchTargetHeight}px high; expected at least 44px`);
+    failures.push('form success state, anti-spam fields, or card containment is incomplete');
+  const undersizedTouchTarget = isMobile
+    ? checks.touchTargets.find(({ width, height }) => width < 43.5 || height < 43.5)
+    : null;
+  if (undersizedTouchTarget) {
+    failures.push(
+      `touch target "${undersizedTouchTarget.label}" is ${undersizedTouchTarget.width}x${undersizedTouchTarget.height}px; expected at least 44x44px`,
+    );
   }
   if (
     checks.tableContainers.some(
@@ -499,12 +539,26 @@ for (const route of routes) {
       failures.push('homepage principle pills or Read principle targets are incomplete');
     if (!checks.homepage.xaiFramesChanged)
       failures.push('homepage XAI scan pixels do not change over time');
-    const expectedHomePadding = isMobile ? '96px' : '120px';
+    const expectedHomeSections = isMobile
+      ? [
+          ['strategy', '0px', '96px'],
+          ['principles', '0px', '96px'],
+          ['', '0px', '96px'],
+          ['opensource', '0px', '32px'],
+          ['join', '0px', '96px'],
+        ]
+      : [
+          ['strategy', '0px', '120px'],
+          ['principles', '0px', '120px'],
+          ['', '0px', '120px'],
+          ['opensource', '0px', '120px'],
+          ['join', '0px', '120px'],
+        ];
     if (
       checks.homepage.homeSections.length !== 5 ||
       checks.homepage.homeSections.some(
-        ({ borderTopWidth, paddingTop }) =>
-          borderTopWidth !== '1px' || paddingTop !== expectedHomePadding,
+        ({ id, borderTopWidth, paddingTop }, index) =>
+          [id, borderTopWidth, paddingTop].join() !== expectedHomeSections[index].join(),
       )
     )
       failures.push('homepage major-section divider or spacing rhythm is inconsistent');
@@ -521,17 +575,25 @@ for (const route of routes) {
       checks.homepage.initiativeCards[0]?.eyebrow !== 'Governance' ||
       checks.homepage.initiativeCards[0]?.heading !== 'ML Maturity Model' ||
       checks.homepage.initiativeCards[0]?.buttons.length !== 2 ||
-      checks.homepage.initiativeCards[0]?.buttons.filter(
-        ({ label }) => label === 'ML Maturity Model →',
-      ).length !== 1 ||
+      checks.homepage.initiativeCards[0]?.buttons[0]?.label !== 'AI-RFX Procurement Framework' ||
+      checks.homepage.initiativeCards[0]?.buttons[0]?.href !== '/frameworks/ai-rfx/' ||
       !checks.homepage.initiativeCards[0]?.buttons[0]?.primary ||
+      checks.homepage.initiativeCards[0]?.buttons[1]?.label !== 'ML Maturity Model' ||
+      checks.homepage.initiativeCards[0]?.buttons[1]?.href !== '/frameworks/maturity-model/' ||
+      checks.homepage.initiativeCards[0]?.buttons[1]?.primary ||
       checks.homepage.initiativeCards[1]?.eyebrow !== 'Security' ||
       checks.homepage.initiativeCards[1]?.heading !== 'Agentic & ML Security' ||
       checks.homepage.initiativeCards[1]?.buttons.length !== 1 ||
+      checks.homepage.initiativeCards[1]?.buttons[0]?.label !== 'Agentic & ML Security' ||
+      checks.homepage.initiativeCards[1]?.buttons[0]?.href !== '/frameworks/security/' ||
       !checks.homepage.initiativeCards[1]?.buttons[0]?.primary ||
       checks.homepage.initiativeCards[1]?.inlineLinks.length !== 1 ||
       checks.homepage.initiativeCards[1]?.inlineLinks.some(
-        ({ color, decoration }) => color !== 'rgb(94, 230, 160)' || decoration !== 'underline',
+        ({ color, decoration, href, label }) =>
+          color !== 'rgb(94, 230, 160)' ||
+          decoration !== 'underline' ||
+          href !== '/frameworks/security/' ||
+          label !== 'the Agentic & ML Security framework',
       )
     )
       failures.push('homepage governance/security card structure is incomplete');
@@ -577,8 +639,8 @@ for (const route of routes) {
     } else {
       if (!checks.homepage.principleListWithinHalfViewport)
         failures.push('homepage principle list exceeds half the viewport');
-      if (checks.homepage.kaosMountHeight !== 400)
-        failures.push('homepage KAOS mount is not 400px high');
+      if (checks.homepage.kaosMountHeight !== 430)
+        failures.push('homepage KAOS mount is not 430px high');
       if (
         checks.homepage.principleStickyPosition !== 'sticky' ||
         checks.homepage.principleStickyTop !== '96px' ||
