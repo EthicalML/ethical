@@ -12,6 +12,7 @@ Retire `src/styles/layout.css` (prototype-fidelity pixel pins from round 4; the 
 
 - In the homepage if you click the animation separator which cycles across the three 3d objects, and force the change of the annimation, the distortion stops. Let's actually not make the ability to change the 3d animation manually by not making it clickable.
 - When refreshing the home page and half of the metrics or the brands carousel is visible, there is an animation wwhere it apepars and then disappears. and then reappears when scrolling. The functionaliy should be that it doesnt appear at all unless it's in the visibility range.
+- In the principles page, when clicking "next principle", or going to a principle specific principle page without clicking the external link, the header seems to stay put whilst the text seems to drop from above. I would be keen to ensure that even titles iwth animation are also consistent with the page transition animations when there's nothing clicking for transition. We need to be careful with this fix as it may break other things.
 
 ## tokens.css breakup (post-cutover, pixel-perfect)
 
@@ -40,3 +41,8 @@ The toggle library shipped (POLICY: 29 authored + 5 contributed; INDUSTRY: LF AI
 ## Policy record: 30th product
 
 The achievements card and StatBand print "30+" per owner instruction; the record currently holds 29 verified entries. Owner is identifying the 30th authored product (candidate: the AI & Product Liability consultation response, unsigned so it rests on owner confirmation). Add it to `PolicyRecordData.ts` with a rendered preview when named.
+
+## LLM-based survey
+
+I want to follow on from the State of Production ML 2025, but now for 2026. Instead of asking respondents, I want to do a slight twist on this: collect, through research, the ML stack from various companies from their public blog posts, etc. We would be able to build a report based on all of that. Right now, this could be a more meaningful approach as opposed to what could be a biassed survey response.
+
