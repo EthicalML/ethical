@@ -65,12 +65,18 @@ export const contactFormCopy: FormSectionCopy = {
         autocomplete: 'email',
       },
       {
-        label: 'Organisation & role',
+        label: 'Organisation',
         name: 'organisation',
         type: 'text',
-        placeholder: 'Institution — role',
+        placeholder: 'Institution or company',
+        autocomplete: 'organization',
+      },
+      {
+        label: 'Role',
+        name: 'role',
+        type: 'text',
+        placeholder: 'Your position',
         autocomplete: 'organization-title',
-        wide: true,
       },
       {
         label: 'Further information',
