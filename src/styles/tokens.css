@@ -287,11 +287,13 @@ button.nav-trigger {
   right: 0;
   top: 0;
   width: 66%;
+  will-change: transform;
 }
 .hero-copy {
   max-width: 660px;
   padding: 92px 0;
   position: relative;
+  will-change: transform, opacity;
   z-index: 2;
 }
 .status-pill {
