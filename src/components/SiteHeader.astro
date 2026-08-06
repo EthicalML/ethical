@@ -198,6 +198,7 @@ const join = {
   href: '/contact/?interest=newsletter#contact',
 };
 const initialProject = menus.oss.items![0]!;
+import CommandPalette from './CommandPalette.astro';
 ---
 
 <site-header transition:persist="site-header">
@@ -222,6 +223,9 @@ const initialProject = menus.oss.items![0]!;
         }
       </nav>
       <div class="nav-right">
+        <button class="search-trigger" type="button" data-command-palette-open aria-label="Search the site">
+          <span aria-hidden="true">⌘K</span>
+        </button>
         <button class="nav-trigger" type="button" aria-expanded="false" data-menu-trigger="about" data-menu-width={menus.about.width}>
           {menus.about.label}<span class="caret" aria-hidden="true">▾</span>
         </button>
@@ -417,11 +421,35 @@ const initialProject = menus.oss.items![0]!;
       </nav>
     </div>
   </header>
+  <CommandPalette />
 </site-header>
 
 <style>
   .oss-menu-list.standalone {
     border-right: 0;
+  }
+  .search-trigger {
+    background: none;
+    border: 1px solid var(--hairline);
+    border-radius: 4px;
+    color: var(--text-2);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    padding: 5px 8px;
+    transition:
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+  .search-trigger:hover {
+    border-color: rgba(94, 230, 160, 0.45);
+    color: var(--accent);
+  }
+  @media (max-width: 950px) {
+    .search-trigger {
+      display: none;
+    }
   }
 </style>
 

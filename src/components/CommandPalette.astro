@@ -1,0 +1,334 @@
+---
+// Site-wide Cmd/Ctrl+K search palette over the Pagefind index generated at
+// build time (postbuild: pagefind --site dist). Results are split into Pages
+// and Newsletter groups so the 400-issue archive never crowds out the site's
+// own pages. The index only exists on built output; in dev the palette opens
+// with a note instead of results.
+const NEWSLETTER_PREFIX = '/newsletter/';
+---
+
+<command-palette data-newsletter-prefix={NEWSLETTER_PREFIX}>
+  <div class="palette-overlay" data-palette-overlay hidden>
+    <div class="palette-panel" role="dialog" aria-modal="true" aria-label="Site search">
+      <div class="palette-input-row">
+        <span class="palette-glyph" aria-hidden="true">›</span>
+        <input data-palette-input type="search" placeholder="Search the Institute…" autocomplete="off" spellcheck="false" aria-label="Search query" />
+        <span class="palette-hint" aria-hidden="true">ESC</span>
+      </div>
+      <div class="palette-results" data-palette-results hidden>
+        <div class="palette-group" data-palette-group="pages" hidden>
+          <p class="palette-eyebrow">PAGES</p>
+          <div data-palette-list="pages"></div>
+        </div>
+        <div class="palette-group" data-palette-group="newsletter" hidden>
+          <p class="palette-eyebrow">THE ML ENGINEER — NEWSLETTER</p>
+          <div data-palette-list="newsletter"></div>
+        </div>
+      </div>
+      <p class="palette-status" data-palette-status hidden></p>
+    </div>
+  </div>
+</command-palette>
+
+<style>
+  .palette-overlay {
+    align-items: flex-start;
+    backdrop-filter: blur(4px);
+    background: rgba(5, 7, 6, 0.62);
+    display: flex;
+    inset: 0;
+    justify-content: center;
+    padding: 16vh 16px 16px;
+    position: fixed;
+    z-index: 60;
+  }
+  .palette-overlay[hidden] {
+    display: none;
+  }
+  .palette-panel {
+    background: var(--bg-inset);
+    border: 1px solid var(--hairline-card);
+    border-radius: 10px;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+    max-height: 62vh;
+    overflow: hidden auto;
+    width: min(640px, 100%);
+  }
+  .palette-input-row {
+    align-items: center;
+    border-bottom: 1px solid var(--hairline);
+    display: flex;
+    gap: 12px;
+    padding: 14px 16px;
+    position: sticky;
+    top: 0;
+    background: var(--bg-inset);
+  }
+  .palette-glyph {
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 14px;
+  }
+  .palette-input-row input {
+    background: none;
+    border: 0;
+    color: var(--text-1);
+    flex: 1;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 0.03em;
+    outline: none;
+    padding: 0;
+  }
+  .palette-input-row input::placeholder {
+    color: rgba(244, 242, 238, 0.35);
+  }
+  .palette-hint {
+    border: 1px solid var(--hairline);
+    border-radius: 4px;
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    padding: 3px 6px;
+  }
+  .palette-results {
+    padding: 6px 0 10px;
+  }
+  .palette-eyebrow {
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: var(--mono-10);
+    letter-spacing: 0.14em;
+    margin: 12px 16px 6px;
+  }
+  .palette-results :global(a.palette-result) {
+    border-left: 2px solid transparent;
+    display: block;
+    padding: 9px 16px 9px 14px;
+  }
+  .palette-results :global(a.palette-result:hover),
+  .palette-results :global(a.palette-result[data-active='1']) {
+    background: rgba(94, 230, 160, 0.06);
+    border-left-color: var(--accent);
+    opacity: 1;
+  }
+  .palette-results :global(a.palette-result strong) {
+    color: var(--text-1);
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .palette-results :global(a.palette-result span) {
+    color: var(--text-2);
+    display: block;
+    font-size: 12.5px;
+    line-height: 1.55;
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .palette-results :global(a.palette-result mark) {
+    background: none;
+    color: var(--accent);
+  }
+  .palette-status {
+    color: var(--text-2);
+    font-family: var(--font-mono);
+    font-size: var(--mono-11);
+    letter-spacing: 0.06em;
+    margin: 0;
+    padding: 16px;
+  }
+</style>
+
+<script>
+  type PagefindResult = { data: () => Promise<{ url: string; excerpt: string; meta?: { title?: string } }> };
+  type Pagefind = { search: (query: string) => Promise<{ results: PagefindResult[] }> };
+
+  const PAGE_LIMIT = 6;
+  const NEWSLETTER_LIMIT = 5;
+
+  class CommandPalette extends HTMLElement {
+    private controller = new AbortController();
+    private pagefind?: Pagefind;
+    private pagefindFailed = false;
+    private debounce?: number;
+    private searchId = 0;
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const { signal } = this.controller;
+      const overlay = this.querySelector<HTMLElement>('[data-palette-overlay]');
+      const input = this.querySelector<HTMLInputElement>('[data-palette-input]');
+      if (!overlay || !input) return;
+
+      document.addEventListener(
+        'keydown',
+        (event) => {
+          if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+            event.preventDefault();
+            if (overlay.hidden) this.open();
+            else this.close();
+          } else if (event.key === 'Escape' && !overlay.hidden) {
+            this.close();
+          } else if (!overlay.hidden && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
+            event.preventDefault();
+            this.move(event.key === 'ArrowDown' ? 1 : -1);
+          } else if (!overlay.hidden && event.key === 'Enter') {
+            const active = this.querySelector<HTMLAnchorElement>('[data-active="1"]');
+            if (active) {
+              event.preventDefault();
+              this.close();
+              active.click();
+            }
+          }
+        },
+        { signal },
+      );
+      document.addEventListener(
+        'click',
+        (event) => {
+          const target = event.target as HTMLElement;
+          if (target.closest('[data-command-palette-open]')) {
+            event.preventDefault();
+            this.open();
+          } else if (!overlay.hidden && !target.closest('.palette-panel')) {
+            this.close();
+          }
+        },
+        { signal },
+      );
+      input.addEventListener(
+        'input',
+        () => {
+          window.clearTimeout(this.debounce);
+          this.debounce = window.setTimeout(() => void this.search(input.value.trim()), 140);
+        },
+        { signal },
+      );
+      document.addEventListener('astro:before-swap', () => this.close(), { signal });
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+      window.clearTimeout(this.debounce);
+    }
+
+    private open() {
+      const overlay = this.querySelector<HTMLElement>('[data-palette-overlay]');
+      const input = this.querySelector<HTMLInputElement>('[data-palette-input]');
+      if (!overlay || !input) return;
+      overlay.hidden = false;
+      input.value = '';
+      this.render([], []);
+      this.status('');
+      input.focus();
+      void this.loadPagefind();
+    }
+
+    private close() {
+      const overlay = this.querySelector<HTMLElement>('[data-palette-overlay]');
+      if (overlay) overlay.hidden = true;
+    }
+
+    private async loadPagefind() {
+      if (this.pagefind || this.pagefindFailed) return;
+      try {
+        // Generated by the postbuild pagefind step; present only on built output.
+        // The specifier goes through a variable so neither Vite nor the type
+        // checker tries to resolve it as a module at build time.
+        const indexUrl = '/pagefind/pagefind.js';
+        this.pagefind = (await import(/* @vite-ignore */ indexUrl)) as Pagefind;
+      } catch {
+        this.pagefindFailed = true;
+        this.status('Search index unavailable — it is generated on the production build.');
+      }
+    }
+
+    private status(text: string) {
+      const status = this.querySelector<HTMLElement>('[data-palette-status]');
+      if (!status) return;
+      status.textContent = text;
+      status.hidden = !text;
+    }
+
+    private async search(query: string) {
+      const results = this.querySelector<HTMLElement>('[data-palette-results]');
+      if (!results) return;
+      if (!query) {
+        this.render([], []);
+        this.status('');
+        return;
+      }
+      await this.loadPagefind();
+      if (!this.pagefind) return;
+      const id = ++this.searchId;
+      const response = await this.pagefind.search(query);
+      if (id !== this.searchId) return;
+      const prefix = this.dataset.newsletterPrefix ?? '/newsletter/';
+      const pages: { url: string; title: string; excerpt: string }[] = [];
+      const issues: { url: string; title: string; excerpt: string }[] = [];
+      for (const result of response.results) {
+        if (pages.length >= PAGE_LIMIT && issues.length >= NEWSLETTER_LIMIT) break;
+        const data = await result.data();
+        const url = data.url.replace(/index\.html$/, '');
+        const entry = { url, title: data.meta?.title || url, excerpt: data.excerpt };
+        if (url.startsWith(prefix)) {
+          if (issues.length < NEWSLETTER_LIMIT) issues.push(entry);
+        } else if (pages.length < PAGE_LIMIT) {
+          pages.push(entry);
+        }
+      }
+      this.render(pages, issues);
+      this.status(pages.length || issues.length ? '' : `No results for “${query}”.`);
+    }
+
+    private render(pages: { url: string; title: string; excerpt: string }[], issues: { url: string; title: string; excerpt: string }[]) {
+      const results = this.querySelector<HTMLElement>('[data-palette-results]');
+      if (!results) return;
+      results.hidden = !pages.length && !issues.length;
+      for (const [key, entries] of [
+        ['pages', pages],
+        ['newsletter', issues],
+      ] as const) {
+        const group = this.querySelector<HTMLElement>(`[data-palette-group="${key}"]`);
+        const list = this.querySelector<HTMLElement>(`[data-palette-list="${key}"]`);
+        if (!group || !list) continue;
+        group.hidden = !entries.length;
+        list.textContent = '';
+        for (const entry of entries) {
+          const link = document.createElement('a');
+          link.className = 'palette-result';
+          link.href = entry.url;
+          const title = document.createElement('strong');
+          title.textContent = entry.title;
+          const excerpt = document.createElement('span');
+          // Pagefind excerpts carry only <mark> highlights; rendered as HTML so
+          // matches read highlighted rather than as literal tags.
+          excerpt.innerHTML = entry.excerpt;
+          link.append(title, excerpt);
+          link.addEventListener('click', () => this.close(), { signal: this.controller.signal });
+          list.append(link);
+        }
+      }
+      const first = this.querySelector<HTMLAnchorElement>('a.palette-result');
+      if (first) first.dataset.active = '1';
+    }
+
+    private move(delta: number) {
+      const links = Array.from(this.querySelectorAll<HTMLAnchorElement>('a.palette-result'));
+      if (!links.length) return;
+      const current = links.findIndex((link) => link.dataset.active === '1');
+      if (current >= 0) delete links[current].dataset.active;
+      const next = ((current < 0 ? (delta > 0 ? -1 : 0) : current) + delta + links.length) % links.length;
+      links[next].dataset.active = '1';
+      links[next].scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  if (!customElements.get('command-palette')) {
+    customElements.define('command-palette', CommandPalette);
+  }
+</script>

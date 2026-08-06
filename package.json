@@ -16,7 +16,8 @@
     "verify:dom:all": "npm run verify:dom -- --viewport 1440x1000 && npm run verify:dom -- --viewport 420x900",
     "verify:shots": "node scripts/verify/verify-shots.mjs",
     "verify:shots:all": "npm run verify:shots -- --viewport 1440x1000 && npm run verify:shots -- --viewport 420x900",
-    "verify:typewriter": "node scripts/verify/verify-typewriter.mjs"
+    "verify:typewriter": "node scripts/verify/verify-typewriter.mjs",
+    "postbuild": "pagefind --site dist"
   },
   "dependencies": {
     "@astrojs/mdx": "7.0.3",
@@ -33,6 +34,7 @@
     "eslint": "10.8.0",
     "eslint-plugin-astro": "1.7.0",
     "globals": "17.8.0",
+    "pagefind": "^1.5.2",
     "prettier": "3.9.6",
     "prettier-plugin-astro": "0.14.1",
     "typescript": "6.0.3",

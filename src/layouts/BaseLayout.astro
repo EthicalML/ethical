@@ -119,7 +119,11 @@ const socialImage = new URL(frontmatter.image ?? ogImage, Astro.site);
   </head>
   <body>
     <SiteHeader />
-    <main>
+    {
+      /* data-pagefind-body scopes the search index to real page content: any dist
+        HTML without it (raw legacy /mle archive, redirect stubs) stays unindexed. */
+    }
+    <main data-pagefind-body data-pagefind-meta={`title:${title}`}>
       {
         frontmatter.eyebrow && (
           <header class="prose-header" data-reveal>
