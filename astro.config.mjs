@@ -36,6 +36,8 @@ export default defineConfig({
     '/contact.html': '/contact/',
     '/mle.html': '/network/',
     '/privacypolicy.html': '/privacy/',
+    '/state-of-ml-2024.html': '/reports/state-of-ml-2024/',
+    '/state-of-ml-2025.html': '/reports/state-of-ml-2025/',
   },
   markdown: {
     processor: unified({ rehypePlugins: [rehypeExternalLinks, rehypeSectionize] }),

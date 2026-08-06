@@ -1,0 +1,157 @@
+---
+title: The State of Production ML in 2024
+description: Practitioner-reported production machine learning practices, tools, organisational context and demographics from the 2024 survey.
+composed: true
+layout: ../../layouts/ProseLayout.astro
+chapters:
+  - slug: context
+    section: ml-context
+    eyebrow: 01 / ML CONTEXT
+    title: ML context
+    deck: What teams built, where they ran it and what slowed the route from experiment to production.
+  - slug: tools
+    section: platforms-tools
+    eyebrow: 02 / PLATFORMS & TOOLS
+    title: Platforms & tools
+    deck: The systems practitioners chose across tracking, data, training, serving, monitoring and foundation models.
+  - slug: operations
+    section: organisation-operations
+    eyebrow: 03 / ORGANISATION & OPERATIONS
+    title: Organisation & operations
+    deck: How production ML was organised, scaled and deployed across teams and infrastructure.
+  - slug: profile
+    section: respondent-profile
+    eyebrow: 04 / RESPONDENT PROFILE
+    title: Respondent profile
+    deck: The role levels, ages, locations and identities represented in this survey.
+  - slug: methodology
+    eyebrow: 05 / METHODOLOGY
+    title: Methodology
+    deck: A transparent account of the source and denominators behind every chart.
+stats:
+  - eyebrow: TOP CHALLENGE
+    value: 45%
+    label: selected monitoring and observability as a production challenge
+    href: '#/context/q6'
+  - eyebrow: LEADING LIBRARY
+    value: 36%
+    label: primarily used PyTorch, Lightning or Fast.ai
+    href: '#/context/q1'
+  - eyebrow: DEPLOYMENT FOUNDATION
+    value: 69%
+    label: reported CI/CD support for machine learning deployment
+    href: '#/operations/q22'
+  - eyebrow: SURVEY RESPONSES
+    value: '177'
+    label: submitted rows, with question bases varying by nonblank answers
+    href: '#/methodology'
+findings:
+  primary-ml-library:
+    headline: PyTorch led a divided library field.
+    insight: PyTorch, Lightning and Fast.ai accounted for 36% of answers. Scikit-learn followed at 31%.
+  modalities:
+    headline: LLMs became the leading reported modality.
+    insight: LLM work reached 47%, with time series at 42% and tabular machine learning at 39%.
+  use-cases:
+    headline: Recommenders led a broad use-case mix.
+    insight: Recommender systems were selected by 39% of respondents. Demand forecasting followed at 32%.
+  time-to-production:
+    headline: Most production cycles stayed below six months.
+    insight: Thirty-one percent reported one to three months, while 26% took three to six months and 24% less than a month.
+  cloud-platform:
+    headline: AWS held a clear cloud lead.
+    insight: Amazon Web Services accounted for 54% of answers. Azure followed at 21% and Google Cloud Platform at 16%.
+  production-challenges:
+    headline: Monitoring was the defining production challenge.
+    insight: Monitoring and observability was selected by 45%. Tooling gaps and access to training data followed at roughly one third.
+  experiment-tracking:
+    headline: MLflow set the pace for experiment tracking.
+    insight: MLflow represented 48% of respondents using a tracking or registry tool. In-house systems followed at 16%.
+  feature-store:
+    headline: Feature stores were predominantly built in-house.
+    insight: In-house systems accounted for 62% of feature-store answers. FEAST was the leading packaged option at 10%.
+  vector-database:
+    headline: Vector database choices remained fragmented.
+    insight: Pinecone led at 14%, narrowly ahead of Milvus at 12%. No option held a dominant share.
+  workflow-orchestrator:
+    headline: Airflow was the default workflow orchestrator.
+    insight: Airflow accounted for 41% of answers. In-house systems followed at 17% and Argo Workflows at 11%.
+  training-platform:
+    headline: In-house platforms led model training.
+    insight: In-house systems represented 34%, followed by Databricks at 23% and Amazon SageMaker at 17%.
+  real-time-serving:
+    headline: Python web frameworks dominated real-time serving.
+    insight: FastAPI and Flask wrappers accounted for 47%. In-house systems followed at 16% and SageMaker at 12%.
+  model-monitoring:
+    headline: Most monitoring stacks were built internally.
+    insight: In-house systems represented 52% of answers. Evidently was the leading packaged tool at 19%.
+  central-data-platform:
+    headline: Data platforms had no runaway winner.
+    insight: Delta Lake led at 22%, followed by AWS Lake Formation at 18% and Snowflake at 17%.
+  managed-foundation-model:
+    headline: OpenAI led managed foundation model services.
+    insight: OpenAI accounted for 40% of answers. Azure AI followed at 21% and Amazon Bedrock at 13%.
+  industry:
+    headline: Technology and finance anchored the sample.
+    insight: Technology represented 21% of respondents and financial services 17%, with the remainder spread across many sectors.
+  organisation-size:
+    headline: The sample spanned organisations of every scale.
+    insight: Organisations with 50 to 250 employees were the largest group at 20%, followed by 250 to 1,000 at 18%.
+  models-in-production:
+    headline: Production fleets were usually measured in tens.
+    insight: Two to five models was the largest group at 24%. Ten to twenty and twenty-one to one hundred followed at 20% and 19%.
+  models-planned:
+    headline: Planned fleets pointed toward continued expansion.
+    insight: Twenty-five percent planned for 21 to 100 models. Five to nine followed at 20%, with ten to twenty at 18%.
+  organisation-setup:
+    headline: Central ML and data platforms were the operating core.
+    insight: Central ML teams and data platform organisations were each reported by about 65% of respondents.
+  real-time-inference:
+    headline: Batch remained central to inference workloads.
+    insight: Thirty-five percent said fewer than one in ten models ran real-time inference. Twenty-two percent reported more than nine in ten.
+  deployment-methods:
+    headline: CI/CD underpinned most deployment workflows.
+    insight: Sixty-nine percent reported CI/CD support, while 58% had separate development, staging and production environments.
+  job-family:
+    headline: ML engineers formed the largest practitioner group.
+    insight: Machine learning engineers accounted for 44%, followed by data scientists at 23% and MLOps engineers at 19%.
+  role-level:
+    headline: Individual contributors dominated the sample.
+    insight: Junior to senior individual contributors represented 38%, with staff-level contributors at 31% and managers at 18%.
+  age:
+    headline: Respondents clustered in their early thirties.
+    insight: Ages 30 to 34 represented 35% of answers. Ages 35 to 39 followed at 22%.
+  country:
+    headline: Responses came from a distributed international community.
+    insight: The USA was the largest consistently labelled group at 18%, followed by the Netherlands at 9% and the United Kingdom at 8%.
+  self-identification:
+    headline: The gender imbalance was pronounced.
+    insight: Ninety-three percent self-identified as male and 7% as female, with one non-binary response.
+methodology:
+  deck: This baseline edition reports the 2024 answers without a prior-year comparison. Question-level response bases are summarised here so every percentage can be read in context.
+  collection: Responses were collected through the State of Production ML survey. The report aggregates the supplied CSV at build time and publishes no raw-response table.
+  denominator: Each percentage uses the number of nonblank respondents to that question, so N varies. For multiple-choice questions, a bar is the share of respondents selecting that answer and totals can exceed 100%.
+  otherYearLabel: 2025 EDITION AVAILABLE
+  otherYearHref: /reports/state-of-ml-2025/
+---
+
+import survey2024Csv from '../../data/survey-2024.csv?raw';
+import { ArticleHero, SurveyReport } from '../../components/prose/components.js';
+import { buildSurveyReport } from '../../utils/SurveyReportData';
+
+export const report = buildSurveyReport(survey2024Csv);
+
+<ArticleHero
+  eyebrow="STATE OF PRODUCTION ML · 2024"
+  title={frontmatter.title}
+  intro="What 177 practitioners reported from production: CI/CD supported 69% of deployment workflows, AWS served more than half of cloud users, monitoring was the top challenge at 45%, and PyTorch led the library field at 36%."
+/>
+
+<SurveyReport
+  report={report}
+  year={2024}
+  chapters={frontmatter.chapters}
+  findings={frontmatter.findings}
+  stats={frontmatter.stats}
+  methodology={frontmatter.methodology}
+/>
