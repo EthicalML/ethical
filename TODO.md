@@ -1,5 +1,13 @@
 # TODO
 
+## Newsletter pass (next up)
+
+Owner has ideas for the newsletter beyond the carried-over archive (396 issues live under /mle/, recent-issues rail derives from the filenames, /mle.html redirects to /network/). Scope to be defined by owner.
+
+## PR #12 decision — hero-parallax exploration
+
+Six homepage scroll-effect variants sit in the open PR #12, paused for owner decision: pick a variant to land or close the PR.
+
 ## CSS spacing cleanup
 
 Retire `src/styles/layout.css` (prototype-fidelity pixel pins from round 4; the principles and open-source pins are already removed after one caused 43px of dead section space — verify the remaining join/footnote pins still earn their place, then delete the file). Introduce a single `--section-gap` rhythm token for the homepage inter-section distance instead of per-section one-offs.
@@ -8,11 +16,11 @@ Retire `src/styles/layout.css` (prototype-fidelity pixel pins from round 4; the 
 
 Roughly 3/4 of tokens.css (~2,200 lines) is per-component styling; relocate it into the ~15-20 owning components, delete dead rules as they surface (likely 10-20%), and consolidate the five ad-hoc breakpoints (950/900/800/600/520) into 2-3 named ones. Zero visual change by construction: every batch gates on masked full-page screenshot parity for all 33 pages at 2-3 widths (definition of done #7). Run as a low-supervision worker campaign in 3-4 scoped rounds (survey+carousel → principles+hero → menus+cards+misc → breakpoints & sweep), ~30-45 min each; owner eye pass only where parity diffs flag. Deliberately deferred until after the redesign cutover so parity runs against a stable target. Standing guardrail effective now: no NEW component rules go into tokens.css — style in the owning component.
 
-## Recovered backlog (from pre-branch sessions; triage — some may be done)
+## Deferred
 
-- #25 Anti-LLM style pass (was waiting on owner sheets)
-- #27 RSS (later)
-- #29 Astro showcase (post-cutover)
+- Anti-LLM style pass — needs owner to supply the style guidance it was waiting on, or downgrade to a plain owner-led copy review
+- RSS (later)
+- Astro showcase (later)
 
 ## Policy/Industry library follow-ups
 
@@ -21,7 +29,7 @@ The toggle library shipped (POLICY: 29 authored + 5 contributed; INDUSTRY: LF AI
 - Promote the WGDG Progress Report zero draft (POLICY, CO-FACILITATOR) to the authored record when the final report publishes with attribution.
 - Collect the remaining public organisational principles for the INDUSTRY view (the ~10 card names Linux Foundation and UN publicly; Zalando, Capital One, Deutsche Börse and one more are confidential; owner recalls "several others" public).
 - LF AI principles entry links an HTML page so it has a placeholder viewer; optionally print-to-PDF at build for a paginated preview.
-- Systemic Risks Associated with Agentic AI policy brief (ETPC) — owner is in the acknowledgments only; POLICY-view candidate with an ACKNOWLEDGED CONTRIBUTOR chip if wanted.
+- Systemic Risks Associated with Agentic AI policy brief (ETPC) — owner is in the acknowledgments only; POLICY-view candidate with an ACKNOWLEDGED CONTRIBUTOR chip if wanted. Its page previews are already rendered and sitting UNTRACKED at `public/images/policy-record/pages/28-systemic-risks-agentic-ai-policy-brief/` — wire the entry or delete the folder.
 
 ## Policy record: 30th product
 
