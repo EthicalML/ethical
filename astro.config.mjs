@@ -34,6 +34,7 @@ export default defineConfig({
     '/mlmm.html': '/frameworks/maturity-model/',
     '/network.html': '/network/',
     '/initiatives/': '/policy/',
+    '/data/survey-explorer/': '/reports/state-of-ml-2025/',
     '/contact.html': '/contact/',
     '/mle.html': '/network/',
     '/privacypolicy.html': '/privacy/',

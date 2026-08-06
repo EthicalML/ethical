@@ -40,12 +40,44 @@ const menus: Record<string, Menu> = {
     items: [
       { number: '01', title: 'Four-phase strategy', href: '/#strategy' },
       { number: '02', title: 'Nine principles', href: '/#principles' },
-      { number: '03', title: 'Open source & tools', href: '/#open-source' },
+      { number: '03', title: 'Open source & tools', href: '/#opensource' },
       { number: '04', title: 'Reports & data', href: '/#reports' },
       { number: '05', title: 'Network & newsletter', href: '/#join' },
       { number: '06', title: 'Talks & keynotes', href: '/talks/' },
       { number: '07', title: 'Contact the Institute', href: '/contact/' },
     ],
+  },
+  policy: {
+    label: 'Policy & Frameworks',
+    width: 440,
+    primary: true,
+    items: [
+      {
+        eyebrow: 'INSTITUTIONAL RECORD',
+        title: 'Policy contributions',
+        description: 'Public policy work, standards engagements and the published record.',
+        href: '/policy/',
+      },
+      {
+        eyebrow: 'FOUNDATION',
+        title: 'The nine principles',
+        description: 'Commitments, failure modes and the controls that implement them.',
+        href: '/principles/',
+      },
+      {
+        eyebrow: 'PROCUREMENT FRAMEWORK',
+        title: 'AI-RFX Procurement',
+        description: 'Open RFP and RFI templates for machine learning systems.',
+        href: '/frameworks/ai-rfx/',
+      },
+      {
+        eyebrow: 'ANNUAL SURVEY',
+        title: 'State of Production ML',
+        description: 'The annual practitioner survey, compared year on year.',
+        href: '/reports/state-of-ml-2025/',
+      },
+    ],
+    footerLinks: [{ label: 'All initiatives', href: '/frameworks/' }],
   },
   oss: {
     label: 'Open source',
@@ -64,24 +96,24 @@ const menus: Record<string, Menu> = {
         eyebrow: 'GPU ACCELERATION',
         title: 'Kompute',
         description: 'Cross-vendor GPU compute, portable across hardware, in Linux Foundation AI & Data.',
-        href: '/open-source/',
+        href: '/open-source/kompute/',
       },
       {
         key: 'xai',
         eyebrow: 'EXPLAINABILITY',
         title: 'XAI Framework',
         description: 'Data analysis, model evaluation and production monitoring for bias and explainability.',
-        href: '/open-source/',
+        href: '/open-source/xai/',
       },
       {
         key: 'list',
         eyebrow: 'ECOSYSTEM',
         title: 'Production ML list',
         description: 'Community catalogue of production ML and MLOps tooling, curated weekly.',
-        href: '/open-source/',
+        href: '/open-source/production-ml-list/',
       },
     ],
-    footerLinks: [{ label: 'All projects →', href: '/open-source/' }],
+    footerLinks: [{ label: 'All projects', href: '/open-source/' }],
   },
   initiatives: {
     label: 'Initiatives',
@@ -106,9 +138,8 @@ const menus: Record<string, Menu> = {
         title: 'Reports & data',
         note: 'PUBLISHED EVIDENCE',
         items: [
-          { label: 'State of Production ML 2025', description: 'Practitioner survey, tools and statistics', href: '/#reports' },
-          { label: '2024 edition', description: 'Previous annual survey', href: '/#reports' },
-          { label: 'Survey explorer', description: 'Compare answers across years', href: '/data/survey-explorer/' },
+          { label: 'State of Production ML 2025', description: 'Practitioner survey, tools and statistics', href: '/reports/state-of-ml-2025/' },
+          { label: '2024 edition', description: 'Previous annual survey', href: '/reports/state-of-ml-2024/' },
           { label: 'Methodology & dataset', description: 'How the survey is run, raw data', href: '/#reports' },
         ],
       },
@@ -181,7 +212,7 @@ const initialProject = menus.oss.items![0]!;
           Object.entries(menus)
             .filter(([, menu]) => menu.primary)
             .map(([id, menu]) => (
-              <button class="nav-trigger" type="button" aria-expanded="false" data-menu-trigger={id}>
+              <button class="nav-trigger" type="button" aria-expanded="false" data-menu-trigger={id} data-menu-width={menu.width}>
                 {menu.label}
                 <span class="caret" aria-hidden="true">
                   ▾
@@ -191,7 +222,7 @@ const initialProject = menus.oss.items![0]!;
         }
       </nav>
       <div class="nav-right">
-        <button class="nav-trigger" type="button" aria-expanded="false" data-menu-trigger="about">
+        <button class="nav-trigger" type="button" aria-expanded="false" data-menu-trigger="about" data-menu-width={menus.about.width}>
           {menus.about.label}<span class="caret" aria-hidden="true">▾</span>
         </button>
         <a class="join-pill" href={join.href}>{join.label}</a>
@@ -248,6 +279,23 @@ const initialProject = menus.oss.items![0]!;
                       </div>
                     ))}
                   </div>
+                </div>
+              ) : id === 'policy' ? (
+                <div class="oss-menu-list standalone">
+                  {menu.items!.map(({ eyebrow, title, description, href }) => (
+                    <a href={href}>
+                      <span>{eyebrow}</span>
+                      <strong>{title}</strong>
+                      <small>{description}</small>
+                    </a>
+                  ))}
+                  <footer>
+                    {menu.footerLinks!.map(({ label, href }) => (
+                      <a class="button primary" href={href}>
+                        {label}
+                      </a>
+                    ))}
+                  </footer>
                 </div>
               ) : id === 'oss' ? (
                 <div class="oss-menu">
@@ -371,6 +419,12 @@ const initialProject = menus.oss.items![0]!;
   </header>
 </site-header>
 
+<style>
+  .oss-menu-list.standalone {
+    border-right: 0;
+  }
+</style>
+
 <script>
   import '../shared/canvas/NavPreview';
 
@@ -397,20 +451,13 @@ const initialProject = menus.oss.items![0]!;
       const headerRow = header?.querySelector<HTMLElement>('.header-row');
       if (!header || !panel || !headerRow || !triggers.length) return;
 
-      const widths: Record<string, number> = {
-        overview: 380,
-        oss: 860,
-        initiatives: 880,
-        network: 640,
-        about: 340,
-      };
       let active: string | null = null;
       const signal = this.controller.signal;
 
-      const measure = (trigger: HTMLElement, id: string) => {
+      const measure = (trigger: HTMLElement) => {
         const rowBounds = headerRow.getBoundingClientRect();
         const triggerBounds = trigger.getBoundingClientRect();
-        const width = Math.min(widths[id], rowBounds.width - 80);
+        const width = Math.min(Number(trigger.dataset.menuWidth), rowBounds.width - 80);
         const left = Math.max(40, Math.min(triggerBounds.left - rowBounds.left, rowBounds.width - width - 40));
         panel.style.setProperty('--panel-left', `${left}px`);
         panel.style.setProperty('--panel-width', `${width}px`);
@@ -425,8 +472,8 @@ const initialProject = menus.oss.items![0]!;
       const open = (trigger: HTMLElement) => {
         if (this.closeTimer !== undefined) window.clearTimeout(this.closeTimer);
         const id = trigger.dataset.menuTrigger;
-        if (!id) return;
-        measure(trigger, id);
+        if (!id || id === active) return;
+        measure(trigger);
         triggers.forEach((item) => {
           item.setAttribute('aria-expanded', String(item === trigger));
         });
@@ -479,6 +526,7 @@ const initialProject = menus.oss.items![0]!;
       const previewDescription = panel.querySelector<HTMLElement>('[data-oss-preview-description]');
       panel.querySelectorAll<HTMLElement>('[data-oss-index]').forEach((row) => {
         const select = () => {
+          if (row.classList.contains('active')) return;
           panel.querySelectorAll('[data-oss-index]').forEach((item) => {
             item.classList.toggle('active', item === row);
           });
@@ -532,7 +580,7 @@ const initialProject = menus.oss.items![0]!;
         'resize',
         () => {
           const trigger = triggers.find((item) => item.dataset.menuTrigger === active);
-          if (trigger && active) measure(trigger, active);
+          if (trigger && active) measure(trigger);
         },
         { signal },
       );

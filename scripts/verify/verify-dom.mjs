@@ -224,6 +224,28 @@ for (const route of routes) {
       }
       await page.keyboard.press('Escape');
 
+      await page.locator('[data-menu-trigger="policy"]').hover();
+      await page.waitForTimeout(400);
+      homepageInteractions.policyGeometry = await page
+        .locator('[data-menu-body="policy"]')
+        .evaluate((body) => {
+          const list = body.querySelector('.oss-menu-list.standalone');
+          const metrics = (element) => {
+            const box = element.getBoundingClientRect();
+            return {
+              box: [box.left, box.right, box.width, box.height],
+              client: [element.clientWidth, element.clientHeight],
+              scroll: [element.scrollWidth, element.scrollHeight],
+            };
+          };
+          return {
+            body: metrics(body),
+            list: metrics(list),
+            links: body.querySelectorAll('a').length,
+          };
+        });
+      await page.keyboard.press('Escape');
+
       await page.locator('[data-menu-trigger="initiatives"]').hover();
       await page.waitForTimeout(400);
       homepageInteractions.initiativesGeometry = await page
@@ -368,8 +390,6 @@ for (const route of routes) {
                   };
                 },
               ),
-              surveyPaddingBottom: getComputedStyle(document.querySelector('.home-survey-card'))
-                .paddingBottom,
               footnoteStandards: [...document.querySelectorAll('.footnote-band .standards a')].map(
                 (link) => {
                   const style = getComputedStyle(link);
@@ -489,12 +509,6 @@ for (const route of routes) {
     )
       failures.push('homepage major-section divider or spacing rhythm is inconsistent');
     if (
-      checks.homepage.surveyPaddingBottom !==
-      (viewport.width <= 600 ? '28px' : isMobile ? '34px' : '40px')
-    ) {
-      failures.push('homepage survey card bottom padding is incorrect');
-    }
-    if (
       checks.homepage.footnoteStandards.some(
         ({ color, fontFamily, fontSize }) =>
           color !== 'rgba(244, 242, 238, 0.42)' ||
@@ -533,7 +547,7 @@ for (const route of routes) {
       const nav = checks.homepage.mobileNav;
       if (
         !nav ||
-        nav.accordionCount !== 5 ||
+        nav.accordionCount !== 6 ||
         !nav.drawerOpen ||
         !nav.firstPanelOpen ||
         !nav.joinVisible ||
@@ -578,6 +592,16 @@ for (const route of routes) {
           .some(({ bottomOpaquePixels }) => bottomOpaquePixels !== 0)
       )
         failures.push('homepage open-source dropdown composites multiple previews');
+      const policy = checks.homepage.policyGeometry;
+      if (
+        policy.links !== 5 ||
+        [policy.body, policy.list].some(
+          ({ client, scroll }) => scroll[0] > client[0] || scroll[1] > client[1],
+        ) ||
+        policy.list.box[0] < policy.body.box[0] ||
+        policy.list.box[1] > policy.body.box[1]
+      )
+        failures.push('homepage policy menu link count or overflow is wrong');
       const initiatives = checks.homepage.initiativesGeometry;
       if (
         initiatives.rail.box[2] !== 230 ||

@@ -216,12 +216,12 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
           <div class="oss-preview survey-preview">
             <SurveyExplorerIsland compact />
           </div>
-          <h3 data-morph-source="survey-title">{projects.survey.title}</h3>
+          <h3>{projects.survey.title}</h3>
           <p>{projects.survey.text}</p>
           <div class="actions">
             {
               projects.survey.actions.map(({ label, href, kind }) => (
-                <a class:list={['button', kind]} href={href} data-morph-pair={href === '/data/survey-explorer/' ? 'survey-title' : undefined}>
+                <a class:list={['button', kind]} href={href}>
                   {label}
                 </a>
               ))
