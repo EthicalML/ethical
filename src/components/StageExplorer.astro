@@ -27,7 +27,7 @@ const { stages } = Astro.props;
           <>
             <span>{stage.number}</span>
             <strong>{stage.title}</strong>
-            <i>{index === 0 ? '●' : '→'}</i>
+            <i>{index === 0 ? '●' : ''}</i>
           </>
         </button>
       ))
@@ -73,7 +73,7 @@ const { stages } = Astro.props;
           const active = tabIndex === index;
           tab.setAttribute('aria-selected', String(active));
           const marker = tab.querySelector('i');
-          if (marker) marker.textContent = active ? '●' : '→';
+          if (marker) marker.textContent = active ? '●' : '';
         });
         panels.forEach((panel, panelIndex) => panel.classList.toggle('active', panelIndex === index));
       };

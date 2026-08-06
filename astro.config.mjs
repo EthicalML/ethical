@@ -21,15 +21,15 @@ export default defineConfig({
   prefetch: true,
   vite: {
     define: { __FORM_TOKEN__: JSON.stringify(formToken) },
-    server: { allowedHosts: ['*'] },
-    preview: { allowedHosts: ['*'] },
+    server: { allowedHosts: ['ethical.institute', 'localhost', '127.0.0.1'] },
+    preview: { allowedHosts: ['ethical.institute', 'localhost', '127.0.0.1'] },
   },
   redirects: {
     '/principles.html': '/principles/',
     '/security.html': '/frameworks/security/',
     '/rfx.html': '/frameworks/ai-rfx/',
     '/rfp.html': '/frameworks/ai-rfx/',
-    '/xai.html': '/open-source/',
+    '/xai.html': '/open-source/xai/',
     '/eal.html': '/open-source/',
     '/mlmm.html': '/frameworks/maturity-model/',
     '/network.html': '/network/',

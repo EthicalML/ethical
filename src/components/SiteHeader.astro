@@ -260,7 +260,7 @@ const initialProject = menus.oss.items![0]!;
                       <button type="button" class:list={{ active: index === 0 }} data-initiative-index={index}>
                         <strong>{title}</strong>
                         <span>{note}</span>
-                        <i>→</i>
+                        <i />
                       </button>
                     ))}
                   </div>
@@ -340,7 +340,7 @@ const initialProject = menus.oss.items![0]!;
                     <a href={item.href} style={`--row-index:${index}`}>
                       {(id === 'overview' || id === 'about') && <span>{item.number}</span>}
                       <strong>{item.title}</strong>
-                      <span aria-hidden="true">→</span>
+                      <span aria-hidden="true" />
                     </a>
                   ))}
                 </div>
