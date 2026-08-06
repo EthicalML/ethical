@@ -1,0 +1,78 @@
+---
+import type { ImageMetadata } from 'astro';
+import { getCollection } from 'astro:content';
+
+const eyebrow = 'MEMBERSHIPS, ADVISORY ROLES & STANDARDS COLLABORATIONS';
+const logos = import.meta.glob('../assets/logos/*', {
+  eager: true,
+  import: 'default',
+}) as Record<string, ImageMetadata>;
+const partnerOrder = ['united-nations', 'european-commission', 'acm', 'linux-foundation', 'owasp', 'ieee', 'iso-iec', 'numfocus', 'tum'];
+const partners = (await getCollection('partners')).sort((first, second) => partnerOrder.indexOf(first.id) - partnerOrder.indexOf(second.id));
+const items = partners.map(({ data: partner }) => ({
+  ...partner,
+  logo: logos[`../assets/logos/${partner.logo}`],
+}));
+---
+
+<affiliation-marquee>
+  <section class="affiliations" data-reveal data-marquee>
+    <p class="eyebrow">{eyebrow}</p>
+    <div class="marquee-mask">
+      <div class="marquee-track">
+        {
+          [false, true].map((duplicate) => (
+            <div class="marquee-set" aria-hidden={duplicate ? 'true' : undefined}>
+              {items.map((item) => (
+                <a
+                  class="marquee-item"
+                  href={`/partners/#${item.slug}`}
+                  tabindex={duplicate ? -1 : undefined}
+                  data-marquee-item={duplicate ? undefined : ''}
+                  data-partner-logo={item.slug}
+                  data-morph-source={`partner-${item.slug}-${duplicate ? 'duplicate' : 'primary'}`}
+                  data-morph-name={`partner-logo-${item.slug}`}
+                  data-morph-pair={`partner-${item.slug}-${duplicate ? 'duplicate' : 'primary'}`}
+                  data-morph-one-way
+                  aria-label={duplicate ? undefined : item.role ? `${item.name}: ${item.role}` : item.name}
+                >
+                  <span class="marquee-logo-frame" style={`--logo-mask: url("${item.logo.src}"); --logo-ratio: ${item.logo.width / item.logo.height}`}>
+                    <span class="marquee-logo" />
+                  </span>
+                  {item.role && <span class="marquee-role">{item.role}</span>}
+                </a>
+              ))}
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</affiliation-marquee>
+
+<style>
+  affiliation-marquee {
+    display: contents;
+  }
+</style>
+
+<script>
+  import { bindMorphPairs } from '../shared/MorphPairs';
+
+  class AffiliationMarquee extends HTMLElement {
+    private controller = new AbortController();
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      bindMorphPairs(this, this.controller.signal);
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+    }
+  }
+
+  if (!customElements.get('affiliation-marquee')) {
+    customElements.define('affiliation-marquee', AffiliationMarquee);
+  }
+</script>

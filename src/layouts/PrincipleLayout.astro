@@ -1,0 +1,45 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import SplitList from '../components/SplitList.astro';
+import KaosGraph from '../components/KaosGraph.astro';
+
+const { data, Content } = Astro.props;
+const frontmatter = {
+  title: `${data.number}. ${data.title}`,
+  description: data.description,
+  eyebrow: `PRINCIPLE ${data.number} — COMMITMENT`,
+  transitionName: `principle-title-${data.number}`,
+};
+const number = Number(data.number);
+const previous = number > 1 ? String(number - 1).padStart(2, '0') : undefined;
+const next = number < 9 ? String(number + 1).padStart(2, '0') : undefined;
+---
+
+<BaseLayout frontmatter={frontmatter}>
+  <article class="principle-prose" data-reveal transition:name="principle-page">
+    {data.failure_modes && <p class="commitment">{data.commitment}</p>}
+    <Content />
+  </article>
+  {
+    data.failure_modes && data.controls && (
+      <SplitList left={{ title: 'FAILURE MODES', items: data.failure_modes }} right={{ title: 'PRACTICAL CONTROLS', items: data.controls }} />
+    )
+  }
+  {data.number === '09' && <KaosGraph />}
+  <nav class="principle-pagination" aria-label="Adjacent principles">
+    {
+      previous && (
+        <a href={`/principles/${previous}/`} data-transition-direction="back">
+          ← Previous principle
+        </a>
+      )
+    }
+    {
+      next && (
+        <a href={`/principles/${next}/`} data-transition-direction="forward">
+          Next principle →
+        </a>
+      )
+    }
+  </nav>
+</BaseLayout>

@@ -1,0 +1,201 @@
+---
+import { getCollection } from 'astro:content';
+import { isExternalHref } from '../utils/external-links.mjs';
+
+interface Props {
+  eyebrow: string;
+  heading: string;
+  intro: string;
+  homepage?: boolean;
+  /* Single-lane mode for card-width embeds: one lane, row click opens the detail
+     in place with a back control instead of navigating. Default off; the full
+     two-lane explorer is unchanged when absent. */
+  compact?: boolean;
+}
+
+const principles = (await getCollection('principles')).sort((a, b) => a.data.number.localeCompare(b.data.number));
+const { eyebrow, heading, intro, homepage = false, compact = false } = Astro.props;
+---
+
+<section
+  id={compact ? undefined : 'principles'}
+  class:list={['principles-explorer', homepage && 'home-section', compact && 'compact']}
+  data-principles
+  data-reveal
+>
+  <p class="eyebrow">{eyebrow}</p>
+  <principles-explorer data-compact={compact ? 'true' : undefined}>
+    <div class="principles-explorer-grid">
+      <div>
+        <h2>{heading}</h2>
+        <p class="section-intro">{intro}</p>
+        <div class="principle-rows">
+          {
+            principles.map(({ data }, index) => (
+              <button
+                type="button"
+                class:list={{ active: index === 0 }}
+                data-principle-row={index}
+                data-principle-number={data.number}
+                data-principle-href={`/principles/${data.number}/`}
+                data-morph-pair={`principle-${data.number}`}
+                data-morph-href={`/principles/${data.number}/`}
+              >
+                <>
+                  <span>{data.number}</span>
+                  <strong>{data.title}</strong>
+                  <i>{index === 0 ? '●' : ''}</i>
+                </>
+              </button>
+            ))
+          }
+        </div>
+      </div>
+      <div class="principle-detail-wrap">
+        {
+          compact && (
+            <button type="button" class="principle-back" data-principle-back>
+              All principles
+            </button>
+          )
+        }
+        {
+          principles.map(({ data }, index) => (
+            <article class:list={['principle-detail', index === 0 && 'active']} data-principle-detail={index}>
+              <p class="eyebrow">PRINCIPLE {data.number} — COMMITMENT</p>
+              <h3 data-principle-title={data.number} data-morph-source={`principle-${data.number}`} data-morph-name={`principle-title-${data.number}`}>
+                {data.title}
+              </h3>
+              <p class="commitment">{data.commitment}</p>
+              <div class="detail-split">
+                <div>
+                  <>
+                    <h4>FAILURE MODES</h4>
+                    <ul>
+                      {data.failure_modes?.map((item) => (
+                        <li>{item}</li>
+                      ))}
+                    </ul>
+                  </>
+                </div>
+                <div>
+                  <>
+                    <h4>PRACTICAL CONTROLS</h4>
+                    <ul>
+                      {data.controls?.map((item) => (
+                        <li>{item}</li>
+                      ))}
+                    </ul>
+                  </>
+                </div>
+              </div>
+              <div class="principle-links">
+                {data.related_links.map(({ label, href }) => (
+                  <a
+                    class="button"
+                    href={href}
+                    target={isExternalHref(href) ? '_blank' : undefined}
+                    rel={isExternalHref(href) ? 'noopener noreferrer' : undefined}
+                  >
+                    {label}
+                  </a>
+                ))}
+                <a class="button primary" href={`/principles/${data.number}/`} data-morph-pair={`principle-${data.number}`}>
+                  Read principle
+                </a>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </principles-explorer>
+</section>
+<script>
+  import { navigate } from 'astro:transitions/client';
+  import { bindMorphPairs } from '../shared/MorphPairs';
+
+  class PrinciplesExplorer extends HTMLElement {
+    private controller = new AbortController();
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const rows = Array.from(this.querySelectorAll<HTMLElement>('[data-principle-row]'));
+      const details = Array.from(this.querySelectorAll<HTMLElement>('[data-principle-detail]'));
+      const titles = Array.from(this.querySelectorAll<HTMLElement>('[data-principle-title]'));
+      if (!rows.length || !details.length) return;
+
+      const select = (index: number, animate = true) => {
+        rows.forEach((row, rowIndex) => {
+          row.classList.toggle('active', rowIndex === index);
+          const marker = row.querySelector<HTMLElement>('i');
+          if (marker) marker.textContent = rowIndex === index ? '●' : '';
+        });
+        details.forEach((detail, detailIndex) => {
+          detail.classList.toggle('active', detailIndex === index);
+          if (detailIndex === index) {
+            detail.style.animation = 'none';
+            if (animate) {
+              requestAnimationFrame(() => {
+                detail.style.animation = 'principle-in .45s ease';
+              });
+            }
+          }
+        });
+      };
+      const restoredIndex = titles.findIndex((title) => title.hasAttribute('data-morph-restored'));
+      if (restoredIndex >= 0) select(restoredIndex, false);
+
+      bindMorphPairs(this, this.controller.signal);
+
+      const compact = this.dataset.compact === 'true';
+      this.querySelector('[data-principle-back]')?.addEventListener(
+        'click',
+        () => {
+          delete this.dataset.lane;
+        },
+        { signal: this.controller.signal },
+      );
+
+      rows.forEach((row, index) => {
+        if (!compact) {
+          row.addEventListener(
+            'mouseenter',
+            () => {
+              select(index);
+            },
+            { signal: this.controller.signal },
+          );
+        }
+        row.addEventListener(
+          'click',
+          () => {
+            // Do not replay the `principle-in` entrance fade here: this click triggers the
+            // outgoing navigation, and the view-transition snapshot of the morph source (the
+            // detail title) is captured while that fade still holds the detail near opacity 0,
+            // which erases the forward morph. Select without animating so the source is fully
+            // opaque when snapshotted.
+            select(index, false);
+            // Compact single-lane mode opens the detail in place; the detail's own
+            // Read principle button carries the navigation.
+            if (compact) {
+              this.dataset.lane = 'detail';
+              return;
+            }
+            const href = row.dataset.principleHref;
+            if (href) void navigate(href);
+          },
+          { signal: this.controller.signal },
+        );
+      });
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+    }
+  }
+
+  if (!customElements.get('principles-explorer')) {
+    customElements.define('principles-explorer', PrinciplesExplorer);
+  }
+</script>

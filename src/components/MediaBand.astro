@@ -1,0 +1,99 @@
+---
+interface MediaItem {
+  alt: string;
+  caption: string;
+  href: string;
+  poster: string;
+  src: string;
+}
+interface Props {
+  items: MediaItem[];
+}
+const { items }: Props = Astro.props;
+---
+
+<media-band>
+  {
+    items.map(({ alt, caption, href, poster, src }) => (
+      <figure>
+        <img src={poster} data-animated-src={src} alt={alt} loading="lazy" decoding="async" />
+        <figcaption>
+          <a href={href} target="_blank" rel="noopener noreferrer">
+            {caption}
+          </a>
+        </figcaption>
+      </figure>
+    ))
+  }
+</media-band>
+
+<script>
+  class MediaBand extends HTMLElement {
+    private observer?: IntersectionObserver;
+
+    connectedCallback() {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const images = Array.from(this.querySelectorAll<HTMLImageElement>('[data-animated-src]'));
+      if (!images.length) return;
+      if (!('IntersectionObserver' in window)) {
+        images.forEach((image) => {
+          image.src = image.dataset.animatedSrc ?? image.src;
+        });
+        return;
+      }
+      this.observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) return;
+          images.forEach((image) => {
+            image.src = image.dataset.animatedSrc ?? image.src;
+          });
+          this.observer?.disconnect();
+        },
+        { rootMargin: '180px' },
+      );
+      this.observer.observe(this);
+    }
+
+    disconnectedCallback() {
+      this.observer?.disconnect();
+    }
+  }
+  if (!customElements.get('media-band')) customElements.define('media-band', MediaBand);
+</script>
+
+<style>
+  media-band {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 38px;
+  }
+  figure {
+    background: var(--bg-inset);
+    border: 1px solid var(--hairline-card);
+    margin: 0;
+    min-width: 0;
+  }
+  img {
+    aspect-ratio: 16 / 9;
+    background: var(--bg-inset);
+    display: block;
+    object-fit: cover;
+    width: 100%;
+  }
+  figcaption {
+    border-top: 1px solid var(--hairline-card);
+    color: var(--text-2);
+    font-family: var(--font-mono);
+    font-size: var(--mono-10);
+    padding: 16px 18px;
+  }
+  figcaption a {
+    color: var(--accent);
+  }
+  @media (max-width: 760px) {
+    media-band {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

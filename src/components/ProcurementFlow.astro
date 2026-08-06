@@ -1,0 +1,78 @@
+---
+interface Props {
+  steps: Array<{ label: string; detail: string }>;
+}
+
+const { steps } = Astro.props;
+---
+
+<div class="procurement-flow prose-block" data-reveal>
+  {
+    steps.map((step, index) => (
+      <div>
+        <span>{String(index + 1).padStart(2, '0')}</span>
+        <strong>{step.label}</strong>
+        <i>{step.detail}</i>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .procurement-flow {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .procurement-flow > div {
+    border: 1px solid var(--hairline-card);
+    border-right: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 180px;
+    padding: 20px;
+  }
+
+  .procurement-flow > div:last-child {
+    border-right: 1px solid var(--hairline-card);
+  }
+
+  span,
+  i {
+    color: var(--text-4);
+    font: normal var(--mono-9)/1 var(--font-mono);
+    letter-spacing: 0.08em;
+  }
+
+  strong {
+    font-size: 15px;
+    font-weight: 450;
+    line-height: 1.45;
+    margin: 24px 0;
+  }
+
+  i {
+    color: var(--accent);
+    margin-top: auto;
+  }
+
+  @media (max-width: 900px) {
+    .procurement-flow {
+      grid-template-columns: 1fr;
+    }
+
+    .procurement-flow > div {
+      border-bottom: 0;
+      border-right: 1px solid var(--hairline-card);
+      min-height: 0;
+    }
+
+    .procurement-flow > div:last-child {
+      border-bottom: 1px solid var(--hairline-card);
+    }
+
+    strong {
+      margin: 12px 0;
+    }
+  }
+</style>

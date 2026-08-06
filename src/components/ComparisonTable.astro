@@ -1,0 +1,42 @@
+---
+interface Column {
+  key: string;
+  label: string;
+}
+
+interface Props {
+  rows: Array<Record<string, string>>;
+  columns?: Column[];
+}
+
+const {
+  rows,
+  columns = [
+    { key: 'owasp', label: 'OWASP risk' },
+    { key: 'mlsecops', label: 'MLSecOps control' },
+  ],
+} = Astro.props;
+---
+
+<div class="comparison-table-block prose-block" data-reveal>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          {columns.map((column) => <th scope="col">{column.label}</th>)}
+        </tr>
+      </thead>
+      <tbody>
+        {
+          rows.map((row) => (
+            <tr>
+              {columns.map((column) => (
+                <td>{row[column.key]}</td>
+              ))}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

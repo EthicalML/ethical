@@ -1,0 +1,41 @@
+{
+  "name": "ethical-institute-site",
+  "description": "Website for The Institute for Ethical AI Alignment & Safety",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "check:ratchet": "node scripts/verify/verify-check.mjs",
+    "lint": "eslint .",
+    "format": "prettier --write src scripts astro.config.mjs eslint.config.mjs prettier.config.mjs package.json tsconfig.json CONVENTIONS.md README.md",
+    "format:check": "prettier --check src scripts astro.config.mjs eslint.config.mjs prettier.config.mjs package.json tsconfig.json CONVENTIONS.md README.md",
+    "verify:dom": "node scripts/verify/verify-dom.mjs",
+    "verify:dom:all": "npm run verify:dom -- --viewport 1440x1000 && npm run verify:dom -- --viewport 420x900",
+    "verify:shots": "node scripts/verify/verify-shots.mjs",
+    "verify:shots:all": "npm run verify:shots -- --viewport 1440x1000 && npm run verify:shots -- --viewport 420x900",
+    "verify:typewriter": "node scripts/verify/verify-typewriter.mjs"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "7.0.3",
+    "@astrojs/preact": "^6.0.1",
+    "@astrojs/sitemap": "3.7.3",
+    "astro": "7.1.3",
+    "preact": "^10.29.7"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@eslint/js": "10.0.1",
+    "@typescript-eslint/eslint-plugin": "8.65.0",
+    "@typescript-eslint/parser": "8.65.0",
+    "eslint": "10.8.0",
+    "eslint-plugin-astro": "1.7.0",
+    "globals": "17.8.0",
+    "prettier": "3.9.6",
+    "prettier-plugin-astro": "0.14.1",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.65.0"
+  }
+}

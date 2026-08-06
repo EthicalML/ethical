@@ -1,0 +1,220 @@
+---
+interface FunctionRow {
+  name: string;
+  purpose: string;
+  image?: string;
+  imageAlt?: string;
+}
+
+interface Stage {
+  number: string;
+  title: string;
+  functions: FunctionRow[];
+}
+
+interface Props {
+  stages: Stage[];
+}
+
+const { stages } = Astro.props;
+---
+
+<stage-explorer class="stage-explorer prose-block" data-reveal>
+  <div class="stage-selector" role="tablist" aria-label="XAI API stages">
+    {
+      stages.map((stage, index) => (
+        <button type="button" role="tab" aria-selected={index === 0} aria-controls={`xai-stage-${stage.number}`} data-stage={index}>
+          <>
+            <span>{stage.number}</span>
+            <strong>{stage.title}</strong>
+            <i>{index === 0 ? '●' : ''}</i>
+          </>
+        </button>
+      ))
+    }
+  </div>
+  <div class="stage-panels">
+    {
+      stages.map((stage, index) => (
+        <section id={`xai-stage-${stage.number}`} role="tabpanel" class:list={{ active: index === 0 }} data-stage-panel={index}>
+          <p class="eyebrow">STAGE {stage.number} — PUBLIC API</p>
+          <h3>{stage.title}</h3>
+          <div class="function-rows">
+            {stage.functions.map((item, itemIndex) => (
+              <details open={itemIndex === 0}>
+                <summary>
+                  <code>{item.name}</code>
+                  <span>+</span>
+                </summary>
+                <div>
+                  <p>{item.purpose}</p>
+                  {item.image && <img src={item.image} alt={item.imageAlt ?? ''} loading="lazy" />}
+                </div>
+              </details>
+            ))}
+          </div>
+        </section>
+      ))
+    }
+  </div>
+</stage-explorer>
+
+<script>
+  class StageExplorer extends HTMLElement {
+    private controller = new AbortController();
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const tabs = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-stage]'));
+      const panels = Array.from(this.querySelectorAll<HTMLElement>('[data-stage-panel]'));
+
+      const select = (index: number) => {
+        tabs.forEach((tab, tabIndex) => {
+          const active = tabIndex === index;
+          tab.setAttribute('aria-selected', String(active));
+          const marker = tab.querySelector('i');
+          if (marker) marker.textContent = active ? '●' : '';
+        });
+        panels.forEach((panel, panelIndex) => panel.classList.toggle('active', panelIndex === index));
+      };
+
+      tabs.forEach((tab, index) => tab.addEventListener('click', () => select(index), { signal: this.controller.signal }));
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+    }
+  }
+
+  if (!customElements.get('stage-explorer')) customElements.define('stage-explorer', StageExplorer);
+</script>
+
+<style>
+  stage-explorer {
+    display: grid;
+    grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1.3fr);
+    margin-top: 34px;
+    overflow: hidden;
+  }
+  .stage-selector {
+    border-right: 1px solid var(--hairline);
+    padding: 22px;
+  }
+  .stage-selector button {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    border-top: 1px solid var(--hairline);
+    color: var(--text-2);
+    cursor: pointer;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: 32px 1fr auto;
+    padding: 18px 12px;
+    text-align: left;
+    width: 100%;
+  }
+  .stage-selector button[aria-selected='true'] {
+    background: var(--accent-wash-09);
+  }
+  .stage-selector span {
+    color: var(--text-4);
+    font: 9px var(--font-mono);
+  }
+  .stage-selector strong {
+    font-size: 15px;
+    font-weight: 400;
+  }
+  .stage-selector i {
+    color: var(--accent);
+    font-style: normal;
+  }
+  .stage-panels {
+    min-width: 0;
+    padding: 30px;
+  }
+  .stage-panels section {
+    display: none;
+  }
+  .stage-panels section.active {
+    display: block;
+  }
+  h3 {
+    font: 300 34px/1.12 var(--font-display);
+    margin: 16px 0 22px;
+  }
+  details {
+    border-top: 1px solid var(--hairline);
+  }
+  summary {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    list-style: none;
+    padding: 16px 4px;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary code {
+    color: var(--accent);
+    font: 12px var(--font-mono);
+  }
+  summary span {
+    color: var(--text-4);
+  }
+  details[open] summary span {
+    transform: rotate(45deg);
+  }
+  details > div {
+    padding: 0 4px 20px;
+  }
+  details p {
+    color: var(--text-2);
+    line-height: 1.6;
+    margin: 0;
+  }
+  details img {
+    background: #fff;
+    display: block;
+    height: auto;
+    margin-top: 18px;
+    width: 100%;
+  }
+  @media (max-width: 760px) {
+    stage-explorer {
+      grid-template-columns: 1fr;
+    }
+    .stage-selector {
+      border-bottom: 1px solid var(--hairline);
+      border-right: 0;
+    }
+    .stage-panels {
+      padding: 24px 20px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .stage-selector {
+      display: none;
+    }
+    stage-explorer {
+      grid-template-columns: 1fr;
+    }
+    .stage-panels section {
+      border-bottom: 1px solid var(--hairline);
+      display: block;
+      padding: 28px 0;
+    }
+    .stage-panels section:first-child {
+      padding-top: 0;
+    }
+    .stage-panels section:last-child {
+      border: 0;
+      padding-bottom: 0;
+    }
+    details[open] summary span {
+      transform: none;
+    }
+  }
+</style>

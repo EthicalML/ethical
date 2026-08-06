@@ -1,0 +1,17 @@
+---
+import { getRecentIssueNumbers } from '../utils/RecentIssues';
+
+const { limit = 6 } = Astro.props;
+const issues = await getRecentIssueNumbers(limit);
+---
+
+<div class="recent-issues-rail" aria-label="Recent ML Engineer newsletter issues">
+  {
+    issues.map((number) => (
+      <a href={`/mle/${number}.html`}>
+        <strong>#{number}</strong>
+        <span>Read issue</span>
+      </a>
+    ))
+  }
+</div>

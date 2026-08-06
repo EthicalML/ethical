@@ -1,0 +1,169 @@
+---
+title: Policy & standards
+description: Practitioner evidence, public-policy products and standards participation across European, UK, UN and US processes.
+composed: true
+layout: ../layouts/ProseLayout.astro
+impact:
+  - value: '13'
+    label: MANDATES ACROSS EC, UN, ACM, IEEE AND ISO/IEC
+  - value: 30+
+    label: POLICY PRODUCTS DELIVERED
+  - value: 2020–2026
+    label: CONTINUOUS DELIVERED RECORD
+  - value: EU · UK · US · LATAM · UN
+    label: REGIONAL POLICY AREAS ENGAGED
+filters:
+  - label: ALL
+    value: all
+  - label: EU AI ACT
+    value: eu-ai-act
+  - label: EU DIGITAL ACTS
+    value: eu-digital-acts
+  - label: UK
+    value: uk
+  - label: UN & GLOBAL
+    value: global
+  - label: SUSTAINABILITY
+    value: sustainability
+achievements:
+  - piece: eu
+    eyebrow: EU & UK · ADOPTED
+    title: '20+'
+    summary: Recommendations adopted across the EU GPAI Code of Practice and the UK's AI regulatory framework.
+    footnote: ACM Europe TPC / Verbatim
+    neon: '#5ee6a0'
+    ghost: '20+'
+    links:
+      - label: GPAI Code response
+        href: https://www.acm.org/binaries/content/assets/public-policy/acm-europetpc-consultation-2024---2nd-general-purpose-ai-code-of-practice-1.pdf
+      - label: UK framework comments
+        href: https://www.acm.org/binaries/content/assets/public-policy/europe-tpc-uk-ai-framework-comments.pdf
+  - piece: uk
+    eyebrow: EVERY MAJOR EUROPEAN DIGITAL INSTRUMENT
+    title: '11/11'
+    summary: Technical responses on all eleven, from the AI White Paper, AI Act and GPAI Code to the DSA, Cyber Resilience Act, Digital Omnibus and the UK's AI framework and data strategy.
+    neon: '#35d787'
+    ghost: '11/11'
+    links: []
+  - piece: mlsecops
+    eyebrow: ACTIVE MANDATES
+    title: '6'
+    summary: Six active mandates across the EC, UN, ACM and OWASP; thirteen held since 2020.
+    neon: '#38bdf8'
+    ghost: '6'
+    links:
+      - label: See the mandates
+        href: '#mandates-heading'
+  - piece: un
+    eyebrow: ORGANISATIONAL PRINCIPLES
+    title: '~10'
+    summary: Responsible AI principles co-created with around ten organisations, from the Linux Foundation and the UN to confidential enterprise engagements.
+    neon: '#a855f7'
+    ghost: '~10'
+    links: []
+  - piece: acm
+    eyebrow: REGIONAL POLICY AREAS
+    title: '5'
+    summary: EU, UK, US, LATAM and the UN global track; LATAM added in 2026.
+    neon: '#ff5c1f'
+    ghost: '5'
+    links: []
+  - piece: through-line
+    eyebrow: PUBLISHED POLICY PRODUCTS
+    title: '30+'
+    summary: Published policy products since 2020, consultation responses, technical comments and policy briefs across the EU, UK, US and UN, browsable in the record below.
+    neon: '#ff3b57'
+    ghost: '30+'
+    links: []
+achievementLayout:
+  areas:
+    - E E U U p g
+    - E E M C F F
+    - T T T D D D
+  blocks:
+    eu: { area: E, size: long, dir: -1, lift: [-30, -30] }
+    uk: { area: U, size: long, dir: -1, lift: [34, 0] }
+    mlsecops: { area: M, size: short, dir: -1, lift: [-30, 0] }
+    un: { area: C, size: short, dir: -1, lift: [0, 26] }
+    acm: { area: F, size: short, dir: -1, lift: [30, 0] }
+    through-line: { area: T, size: long, dir: -1, lift: [0, 30] }
+  duds:
+    - { area: p, shape: plain }
+    - { area: g, shape: accent }
+    - { area: D, shape: diamond-open }
+mandates:
+  - body: EUROPEAN COMMISSION
+    mandates:
+      - role: Member, High-Level Expert Group on AI Reserve
+      - role: Member, Frontier AI Forum
+        active: true
+      - role: Member, European AI Alliance
+        active: true
+      - role: Member, Code of Practice for General-Purpose Models with Systemic Risk
+  - body: UNITED NATIONS
+    mandates:
+      - role: 'Chair, Principles Committee: Data Governance Guidelines, UN CSTD'
+        active: true
+      - role: AI Expert, UN AI Advisory Committee
+  - body: ACM
+    mandates:
+      - role: Founding Chair, ACM AI Policy Committee in Europe (Europe TPC)
+      - role: Founding Committee Member, ACM LATAM AI Policy Committee
+      - role: Governing Board Member - Member at Large
+        active: true
+      - role: Committee Member - AI ACM Policy
+        active: true
+  - body: STANDARDS
+    mandates:
+      - role: Early member, IEEE P700x standards series
+      - role: Early member, ISO/IEC 42001 (AI management systems)
+      - role: OWASP Agentic Systems - Reviewer
+        active: true
+---
+
+import { AchievementNeonRendition, ArticleHero, PolicyMandates, PolicyRecordShelves } from '../components/prose/components.js';
+import StatBand from '../components/StatBand.astro';
+
+<ArticleHero
+  canvas="policy"
+  eyebrow="POLICY & STANDARDS"
+  title="Policy written by practitioners."
+  transitionName="policy-title"
+  intro="The Institute has contributed to the planning, creation and execution of the AI Act, Data Act, DSA, Cyber Resilience Act and the UK's regulatory proposal. Its consultation work draws on open-source software and production-ML practice."
+/>
+
+<StatBand stats={frontmatter.impact} />
+
+<section className="policy-section policy-outcomes" aria-labelledby="outcomes-heading">
+  <header data-reveal>
+    <p className="eyebrow">ACHIEVEMENTS</p>
+    <h2 id="outcomes-heading">Highlight achievements</h2>
+    <p>Selected outcomes, appointments and technical positions from the delivered record.</p>
+  </header>
+  <AchievementNeonRendition variant={2} cards={frontmatter.achievements} layout={frontmatter.achievementLayout} />
+</section>
+
+<PolicyRecordShelves policyFilters={frontmatter.filters} />
+
+<section className="policy-section policy-mandates" data-reveal aria-labelledby="mandates-heading">
+  <header>
+    <p className="eyebrow">INSTITUTIONAL CONTRIBUTION</p>
+    <h2 id="mandates-heading">Mandates</h2>
+    <p>Current and past roles & memberships across public institutions, professional policy work and standards development.</p>
+  </header>
+  <PolicyMandates groups={frontmatter.mandates} />
+</section>
+
+<section className="policy-work" data-reveal aria-labelledby="work-heading">
+  <p className="eyebrow">WORK WITH US</p>
+  <h2 id="work-heading">Bring practitioner evidence into the instrument.</h2>
+  <p>Work with the Institute on technical review of draft instruments, practitioner evidence for consultations, and participation in standards development.</p>
+  <div>
+    <a className="button primary" href="/contact/#contact">
+      {'Engage the Institute'}
+    </a>
+    <a className="button" href="/partners/">
+      {'Explore institutional partnerships'}
+    </a>
+  </div>
+</section>

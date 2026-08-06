@@ -1,0 +1,50 @@
+kompute:
+  values:
+    - value: 2.5K
+      label: STARS
+    - value: '197'
+      label: FORKS
+    - value: '42'
+      label: CONTRIBUTORS
+xai:
+  values:
+    - value: 1.3K
+      label: STARS
+    - value: '185'
+      label: FORKS
+    - value: '3'
+      label: CONTRIBUTORS
+    - value: MIT
+      label: LICENSE
+ecosystem:
+  values:
+    - value: 20.8K
+      label: STARS
+    - value: 2.6K
+      label: FORKS
+    - value: '211'
+      label: CONTRIBUTORS
+    - value: 550+
+      label: LIBRARIES
+    - value: '24'
+      label: CATEGORIES
+ai-guidelines:
+  values:
+    - value: 1.4K
+      label: STARS
+    - value: '210'
+      label: FORKS
+    - value: '37'
+      label: CONTRIBUTORS
+    - value: '15'
+      label: ECONOMIC AREAS
+kaos:
+  values:
+    - value: '268'
+      label: STARS
+    - value: '18'
+      label: FORKS
+    - value: '5'
+      label: CONTRIBUTORS
+    - value: APACHE-2.0
+      label: LICENSE

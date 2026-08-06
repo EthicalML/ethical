@@ -1,0 +1,147 @@
+---
+import '../styles/tokens.css';
+import '../styles/prose.css';
+import '../styles/layout.css';
+import { ClientRouter } from 'astro:transitions';
+import SiteHeader from '../components/SiteHeader.astro';
+import FootnoteBand from '../components/FootnoteBand.astro';
+
+const metaDescription = 'An independent research institute working to ensure that frontier AI is safe, aligned and accountable to people and society.';
+const ogImage = '/images/banner.jpg';
+const { frontmatter = {} } = Astro.props;
+const title = frontmatter.title ?? 'The Institute for Ethical AI Alignment & Safety';
+const description = frontmatter.description ?? metaDescription;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const socialImage = new URL(frontmatter.image ?? ogImage, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="google-site-verification" content="9rfgBQEvfnZ7HS_kBzINrlrJ-_sJcyJxqEUltqvP9Og" />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="The Institute for Ethical AI Alignment & Safety" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImage} />
+    <script is:inline>
+      // The router keeps history.scrollRestoration = 'manual', so on reload the browser
+      // paints the top of the page before any script can restore the position — a
+      // flicker no post-paint code can beat. When a deep restore is pending, keep the
+      // body invisible (background only) from before first paint until the document is
+      // tall enough to jump, capped at 800ms so it can never stick. Runs only on real
+      // page loads; the router marks inline scripts executed across view transitions.
+      (() => {
+        const stored = history.state;
+        const top = (stored && stored.scrollY) || 0;
+        if (!top) return;
+        const veil = document.createElement('style');
+        veil.textContent = 'body { visibility: hidden }';
+        document.head.appendChild(veil);
+        const deadline = performance.now() + 800;
+        const tick = () => {
+          if (Math.abs(scrollY - top) < 2 || performance.now() > deadline) {
+            veil.remove();
+            return;
+          }
+          if (document.body && document.documentElement.scrollHeight > top) {
+            scrollTo({ left: stored.scrollX || 0, top, behavior: 'instant' });
+            veil.remove();
+            return;
+          }
+          requestAnimationFrame(tick);
+        };
+        tick();
+      })();
+    </script>
+    <ClientRouter />
+    <style is:inline>
+      [data-reveal]:not([data-reveal='trigger']):not([data-revealed='1']) {
+        opacity: 0;
+        transform: translateY(26px);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        [data-reveal]:not([data-reveal='trigger']):not([data-revealed='1']) {
+          opacity: 1;
+          transform: none;
+        }
+        ::view-transition-group(*),
+        ::view-transition-image-pair(*) {
+          animation: revert !important;
+        }
+        ::view-transition-old(*) {
+          animation: content-fade-out 0.22s ease both !important;
+        }
+        ::view-transition-new(*) {
+          animation: content-fade-in 0.22s ease both !important;
+        }
+        ::view-transition-old(root) {
+          animation: content-fade-out 0.22s ease both !important;
+        }
+        ::view-transition-new(root) {
+          animation: content-settle 0.22s ease both !important;
+        }
+      }
+    </style>
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=UA-89407852-2"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        // eslint-disable-next-line prefer-rest-params
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'UA-89407852-2');
+      let initialPageLoad = true;
+      document.addEventListener('astro:page-load', () => {
+        if (initialPageLoad) {
+          initialPageLoad = false;
+          return;
+        }
+        gtag('config', 'UA-89407852-2', {
+          page_path: location.pathname + location.search,
+          page_title: document.title,
+        });
+      });
+    </script>
+    <title>{title}</title>
+  </head>
+  <body>
+    <SiteHeader />
+    <main>
+      {
+        frontmatter.eyebrow && (
+          <header class="prose-header" data-reveal>
+            <p class="eyebrow">{frontmatter.eyebrow}</p>
+            <h1
+              transition:name={frontmatter.transitionName}
+              style={frontmatter.transitionName ? `view-transition-name: ${frontmatter.transitionName}` : undefined}
+              data-principle-transition-title={frontmatter.transitionName?.startsWith('principle-title-') ? '' : undefined}
+            >
+              {frontmatter.title}
+            </h1>
+          </header>
+        )
+      }
+      <slot />
+    </main>
+    <FootnoteBand />
+    <script>
+      import '../shared/MorphPairs';
+      import '../shared/Motion';
+      import '../shared/Reveal';
+      import '../shared/ScrollRestoration';
+    </script>
+  </body>
+</html>

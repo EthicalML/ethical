@@ -1,0 +1,418 @@
+---
+import AnimationWindow from './AnimationWindow.astro';
+
+const stages = [
+  { number: '01', name: 'Manager', detail: 'owns the device', action: 'CREATE' },
+  { number: '02', name: 'Tensor', detail: 'owns the data', action: 'LOAD' },
+  { number: '03', name: 'Algorithm', detail: 'wraps shader logic', action: 'BIND' },
+  { number: '04', name: 'Sequence', detail: 'records operations', action: 'RECORD' },
+  { number: '05', name: 'GPU', detail: 'executes the batch', action: 'DISPATCH' },
+];
+---
+
+<AnimationWindow class="sequence-window" title="kompute.sequence">
+  <sequence-pipeline data-stage="0">
+    <div class="pipeline-heading">
+      <div>
+        <p class="eyebrow">THE KOMPUTE MENTAL MODEL</p>
+        <h3>One tensor, from host data to GPU results</h3>
+      </div>
+      <p class="sequence-state" aria-live="polite"><span aria-hidden="true"></span><b data-state>Manager creates the device context</b></p>
+    </div>
+
+    <div class="stage-flow" aria-label="Manager to Tensor to Algorithm to Sequence to GPU">
+      <div class="tensor-packet" aria-hidden="true"><i></i><span>DATA</span></div>
+      {
+        stages.map(({ number, name, detail, action }, index) => (
+          <>
+            <article data-pipeline-stage={index}>
+              <span class="stage-number">{number}</span>
+              <small>{action}</small>
+              <strong>{name}</strong>
+              <p>{detail}</p>
+            </article>
+            {index < stages.length - 1 && (
+              <i class="flow-arrow" aria-hidden="true">
+                →
+              </i>
+            )}
+          </>
+        ))
+      }
+    </div>
+
+    <div class="sequence-operations" aria-label="Kompute sequence operation order">
+      <span class="operation-label">SEQUENCE</span>
+      <div data-operation="record"><b>01</b><span>record</span><small>OpSyncDevice</small></div>
+      <i aria-hidden="true">→</i>
+      <div data-operation="dispatch"><b>02</b><span>dispatch</span><small>OpAlgoDispatch</small></div>
+      <i aria-hidden="true">→</i>
+      <div data-operation="sync"><b>03</b><span>sync back</span><small>results on host</small></div>
+    </div>
+
+    <div class="result-row">
+      <span>HOST TENSOR</span>
+      <i aria-hidden="true"></i>
+      <b data-result>Waiting for sequence</b>
+    </div>
+  </sequence-pipeline>
+</AnimationWindow>
+
+<script>
+  const pipelineStates = [
+    'Manager creates the device context',
+    'Tensor carries host data',
+    'Algorithm binds tensor data to shader logic',
+    'Sequence records the operation batch',
+    'GPU dispatches work and synchronises results',
+  ];
+
+  class SequencePipeline extends HTMLElement {
+    private controller = new AbortController();
+    private timer = 0;
+    private stage = 0;
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const windowElement = this.closest<HTMLElement>('animation-window');
+      if (!windowElement) return;
+      windowElement.addEventListener('animationwindow:play', () => this.play(), { signal: this.controller.signal });
+      windowElement.addEventListener('animationwindow:pause', () => this.pause(), { signal: this.controller.signal });
+      this.render();
+      if (windowElement.dataset.playing === 'true') this.play();
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+      window.clearTimeout(this.timer);
+    }
+
+    private play() {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (this.stage >= 4) this.stage = 0;
+      this.render();
+      this.scheduleNext();
+    }
+
+    private pause() {
+      window.clearTimeout(this.timer);
+    }
+
+    private scheduleNext() {
+      window.clearTimeout(this.timer);
+      this.timer = window.setTimeout(() => {
+        this.stage = this.stage >= 4 ? 0 : this.stage + 1;
+        this.render();
+        this.scheduleNext();
+      }, 1050);
+    }
+
+    private render() {
+      this.dataset.stage = String(this.stage);
+      const state = this.querySelector<HTMLElement>('[data-state]');
+      const result = this.querySelector<HTMLElement>('[data-result]');
+      if (state) state.textContent = pipelineStates[this.stage];
+      if (result) result.textContent = this.stage >= 4 ? 'RESULTS SYNCHRONISED' : 'Waiting for sequence';
+      this.querySelectorAll<HTMLElement>('[data-pipeline-stage]').forEach((item) => {
+        const index = Number(item.dataset.pipelineStage);
+        item.classList.toggle('passed', index < this.stage);
+        item.classList.toggle('current', index === this.stage);
+      });
+      this.querySelectorAll<HTMLElement>('[data-operation]').forEach((item, index) => {
+        const activeAt = [3, 4, 4][index];
+        item.classList.toggle('active', this.stage >= activeAt);
+      });
+    }
+  }
+
+  if (!customElements.get('sequence-pipeline')) customElements.define('sequence-pipeline', SequencePipeline);
+</script>
+
+<style>
+  :global(.sequence-window) {
+    --accent: #4ac7ff;
+    --accent-wash-09: rgba(74, 199, 255, 0.09);
+    border-color: rgba(74, 199, 255, 0.25);
+    margin-top: 34px;
+  }
+  sequence-pipeline {
+    display: block;
+    padding: 28px;
+  }
+  .pipeline-heading {
+    align-items: end;
+    display: flex;
+    gap: 28px;
+    justify-content: space-between;
+  }
+  .pipeline-heading h3 {
+    font: 300 30px/1.15 var(--font-display);
+    margin: 11px 0 0;
+  }
+  .sequence-state {
+    align-items: center;
+    color: var(--text-3);
+    display: flex;
+    font: var(--mono-9)/1.45 var(--font-mono);
+    gap: 8px;
+    margin: 0;
+    max-width: 250px;
+  }
+  .sequence-state span {
+    background: var(--accent);
+    border-radius: 50%;
+    flex: 0 0 auto;
+    height: 6px;
+    width: 6px;
+  }
+  .sequence-state b {
+    font-weight: 400;
+  }
+  .stage-flow {
+    align-items: stretch;
+    display: grid;
+    gap: 8px;
+    grid-template-columns: 1.1fr auto 1fr auto 1.1fr auto 1.1fr auto 1fr;
+    margin-top: 34px;
+    padding-top: 28px;
+    position: relative;
+  }
+  .stage-flow article {
+    background: rgba(255, 255, 255, 0.018);
+    border: 1px solid var(--hairline-card);
+    min-height: 154px;
+    opacity: 0.35;
+    padding: 16px 14px;
+    position: relative;
+    transition:
+      background 0.25s ease,
+      border-color 0.25s ease,
+      opacity 0.25s ease,
+      transform 0.25s ease;
+  }
+  .stage-flow article.passed,
+  .stage-flow article.current {
+    opacity: 1;
+  }
+  .stage-flow article.passed {
+    border-color: rgba(94, 230, 160, 0.25);
+  }
+  .stage-flow article.current {
+    background: rgba(94, 230, 160, 0.07);
+    border-color: var(--accent);
+    transform: translateY(-5px);
+  }
+  .stage-number,
+  .stage-flow small,
+  .stage-flow p {
+    font-family: var(--font-mono);
+  }
+  .stage-number {
+    color: var(--accent);
+    font-size: var(--mono-9);
+  }
+  .stage-flow small {
+    color: var(--text-4);
+    float: right;
+    font-size: var(--mono-9);
+  }
+  .stage-flow strong {
+    display: block;
+    font: 400 var(--body-18)/1.1 var(--font-display);
+    margin-top: 40px;
+  }
+  .stage-flow p {
+    color: var(--text-3);
+    font-size: var(--mono-9);
+    line-height: 1.45;
+    margin: 7px 0 0;
+  }
+  .flow-arrow {
+    align-self: center;
+    color: var(--text-4);
+    font-style: normal;
+  }
+  .tensor-packet {
+    align-items: center;
+    color: var(--accent);
+    display: flex;
+    font: 700 8px/1 var(--font-mono);
+    gap: 5px;
+    left: 2%;
+    position: absolute;
+    top: 0;
+    transition: left 0.8s ease;
+  }
+  .tensor-packet i {
+    background: var(--accent);
+    box-shadow: 0 0 14px rgba(94, 230, 160, 0.7);
+    height: 7px;
+    transform: rotate(45deg);
+    width: 7px;
+  }
+  [data-stage='1'] .tensor-packet {
+    left: 22%;
+  }
+  [data-stage='2'] .tensor-packet {
+    left: 43%;
+  }
+  [data-stage='3'] .tensor-packet {
+    left: 64%;
+  }
+  [data-stage='4'] .tensor-packet {
+    left: 87%;
+  }
+  .sequence-operations {
+    align-items: stretch;
+    background: rgba(255, 255, 255, 0.018);
+    border: 1px solid var(--hairline-card);
+    display: grid;
+    gap: 12px;
+    grid-template-columns: auto 1fr auto 1fr auto 1fr;
+    margin-top: 20px;
+    padding: 16px;
+  }
+  .operation-label {
+    align-self: center;
+    color: var(--text-4);
+    font: var(--mono-9)/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    writing-mode: vertical-rl;
+  }
+  .sequence-operations > div {
+    border-left: 2px solid var(--hairline-card);
+    opacity: 0.38;
+    padding: 8px 12px;
+    transition:
+      border-color 0.25s ease,
+      opacity 0.25s ease;
+  }
+  .sequence-operations > div.active {
+    border-color: var(--accent);
+    opacity: 1;
+  }
+  .sequence-operations b,
+  .sequence-operations span,
+  .sequence-operations small {
+    display: block;
+    font-family: var(--font-mono);
+  }
+  .sequence-operations b {
+    color: var(--accent);
+    font-size: var(--mono-9);
+  }
+  .sequence-operations span {
+    color: var(--text-1);
+    font-size: var(--mono-10);
+    margin: 8px 0 3px;
+  }
+  .sequence-operations small {
+    color: var(--text-3);
+    font-size: var(--mono-9);
+  }
+  .sequence-operations > i {
+    align-self: center;
+    color: var(--text-4);
+    font-style: normal;
+  }
+  .result-row {
+    align-items: center;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: auto 1fr auto;
+    margin-top: 18px;
+  }
+  .result-row span,
+  .result-row b {
+    font: var(--mono-9)/1 var(--font-mono);
+  }
+  .result-row span {
+    color: var(--text-4);
+  }
+  .result-row i {
+    border-top: 1px solid var(--hairline-card);
+  }
+  .result-row b {
+    color: var(--accent);
+    font-weight: 400;
+  }
+  @media (max-width: 800px) {
+    sequence-pipeline {
+      padding: 22px 18px;
+    }
+    .pipeline-heading {
+      align-items: start;
+      flex-direction: column;
+    }
+    .stage-flow {
+      grid-template-columns: 1fr;
+      padding-top: 0;
+    }
+    .flow-arrow {
+      text-align: center;
+      transform: rotate(90deg);
+    }
+    .tensor-packet {
+      display: none;
+    }
+    .sequence-operations {
+      grid-template-columns: 1fr;
+    }
+    .operation-label {
+      writing-mode: initial;
+    }
+    .sequence-operations > i {
+      text-align: center;
+      transform: rotate(90deg);
+    }
+  }
+  @media (max-width: 799px) {
+    :global(.sequence-window .window-content) {
+      container-type: inline-size;
+      overflow: hidden;
+    }
+    sequence-pipeline {
+      box-sizing: border-box;
+      width: 1340px;
+      zoom: calc(100cqw / 1340px);
+    }
+    .pipeline-heading {
+      align-items: end;
+      flex-direction: row;
+    }
+    .stage-flow {
+      grid-template-columns: 1.1fr auto 1fr auto 1.1fr auto 1.1fr auto 1fr;
+      padding-top: 28px;
+    }
+    .flow-arrow,
+    .sequence-operations > i {
+      transform: none;
+    }
+    .tensor-packet {
+      display: flex;
+    }
+    .sequence-operations {
+      grid-template-columns: auto 1fr auto 1fr auto 1fr;
+    }
+    .operation-label {
+      writing-mode: vertical-rl;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .stage-flow article,
+    .sequence-operations > div,
+    .tensor-packet {
+      transition: none;
+    }
+    .stage-flow article,
+    .sequence-operations > div {
+      opacity: 1;
+    }
+    .stage-flow article.current {
+      transform: none;
+    }
+    .tensor-packet {
+      left: 87%;
+    }
+  }
+</style>

@@ -1,0 +1,184 @@
+---
+interface FrameworkCard {
+  title: string;
+  description: string;
+  href: string;
+  status: 'ACTIVE' | 'PLACEHOLDER';
+  principles: string[];
+  morphName: string;
+}
+
+interface FrameworkGroup {
+  label: string;
+  cards: FrameworkCard[];
+}
+
+interface Props {
+  groups: FrameworkGroup[];
+}
+
+const { groups } = Astro.props;
+---
+
+<framework-cards class="framework-cards" data-reveal>
+  {
+    groups.map((group) => (
+      <section aria-labelledby={`framework-group-${group.label.toLowerCase().replaceAll(' ', '-')}`}>
+        <p id={`framework-group-${group.label.toLowerCase().replaceAll(' ', '-')}`} class="group-label">
+          {group.label}
+        </p>
+        <div class="card-grid">
+          {group.cards.map((card) => (
+            <article>
+              <div class="card-meta">
+                <span class:list={['status-pill', card.status === 'PLACEHOLDER' && 'muted']}>{card.status}</span>
+                <div class="principle-chips" aria-label="Related principles">
+                  {card.principles.map((principle) => (
+                    <span>{principle}</span>
+                  ))}
+                </div>
+              </div>
+              <h2 data-morph-source={card.morphName} data-morph-name={card.morphName}>
+                {card.title}
+              </h2>
+              <p>{card.description}</p>
+              <a href={card.href} data-morph-pair={card.morphName}>
+                Explore framework
+              </a>
+            </article>
+          ))}
+        </div>
+      </section>
+    ))
+  }
+</framework-cards>
+
+<style>
+  .framework-cards {
+    border-bottom: 1px solid var(--hairline);
+    display: block;
+    padding: 72px 48px 96px;
+  }
+
+  .framework-cards section + section {
+    margin-top: 64px;
+  }
+
+  .group-label {
+    color: var(--text-3);
+    font: var(--mono-10)/1 var(--font-mono);
+    letter-spacing: 0.14em;
+    margin: 0 0 18px;
+  }
+
+  .card-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  article {
+    border: 1px solid var(--hairline-card);
+    display: flex;
+    flex-direction: column;
+    min-height: 330px;
+    padding: 28px;
+  }
+
+  .card-meta {
+    align-items: flex-start;
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+  }
+
+  .status-pill,
+  .principle-chips span {
+    border: 1px solid rgba(94, 230, 160, 0.36);
+    border-radius: var(--radius-pill);
+    color: var(--accent);
+    font: var(--mono-9)/1 var(--font-mono);
+    letter-spacing: 0.08em;
+    padding: 7px 9px;
+  }
+
+  .status-pill.muted {
+    border-color: var(--hairline-card);
+    color: var(--text-3);
+  }
+
+  .principle-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: flex-end;
+  }
+
+  .principle-chips span {
+    border-color: var(--hairline-card);
+    color: var(--text-3);
+    padding: 6px 7px;
+  }
+
+  h2 {
+    font: 300 clamp(30px, 3vw, 44px)/1.02 var(--font-display);
+    letter-spacing: -0.02em;
+    margin: 42px 0 16px;
+  }
+
+  article > p {
+    color: var(--text-2);
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 0 0 30px;
+  }
+
+  article > a {
+    color: var(--accent);
+    font: var(--mono-10-5)/1 var(--font-mono);
+    letter-spacing: 0.08em;
+    margin-top: auto;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 1000px) {
+    .card-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 680px) {
+    .framework-cards {
+      padding: 48px 18px 72px;
+    }
+
+    .card-grid {
+      grid-template-columns: 1fr;
+    }
+
+    article {
+      min-height: 280px;
+    }
+  }
+</style>
+
+<script>
+  import { bindMorphPairs } from '../shared/MorphPairs';
+
+  class FrameworkCards extends HTMLElement {
+    private controller = new AbortController();
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      bindMorphPairs(this, this.controller.signal);
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+    }
+  }
+
+  if (!customElements.get('framework-cards')) {
+    customElements.define('framework-cards', FrameworkCards);
+  }
+</script>

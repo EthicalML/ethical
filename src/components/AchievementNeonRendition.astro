@@ -1,0 +1,976 @@
+---
+interface AchievementLink {
+  href: string;
+  label: string;
+}
+
+interface AchievementCard {
+  eyebrow: string;
+  footnote?: string;
+  /* Ghost surface: the oversized dim identifier cropped by the block edge. */
+  ghost: string;
+  links: AchievementLink[];
+  /* Neon under-block colour revealed when the card displaces. */
+  neon: string;
+  piece: string;
+  summary: string;
+  title: string;
+}
+
+interface Block {
+  area: string;
+  dir: number;
+  size: 'long' | 'short';
+  /* slide displaces the card revealing the neon beneath; tilt picks the card up. */
+  mode?: 'slide' | 'tilt';
+  tilt?: number;
+  /* Explicit reveal direction in px; falls back to dir-derived horizontal travel. */
+  lift?: [number, number];
+  /* Freeform geometry: [left %, top px, width %, height px]. */
+  rect?: [number, number, number, number];
+  /* Optional explicit stacking layer, overriding the entrance-order default. */
+  layer?: number;
+}
+
+interface Dud {
+  area: string;
+  shape: 'square' | 'diamond' | 'triangle' | 'plain' | 'accent' | 'diamond-open';
+  rect?: [number, number, number, number];
+}
+
+interface Layout {
+  areas: string[];
+  blocks: Record<string, Block>;
+  duds: Dud[];
+  /* When set, the canvas is a freeform absolute composition of this height (px)
+     using each piece's rect, replicating the live /policy/ collage. */
+  freeform?: number;
+}
+
+interface Props {
+  cards: AchievementCard[];
+  layout: Layout;
+  variant: 1 | 2;
+}
+
+const { cards, layout, variant } = Astro.props;
+
+// Card displacement on reveal. The ghost variants slide horizontally out of the
+// cell (sign from the block); the collage lifts diagonally up-left, uncovering a
+// neon slab on the bottom and right edges as in the artifact.
+const ghostLongTravel = 58;
+const ghostShortTravel = 46;
+const collageTravel = 30;
+const isCollage = variant === 2;
+
+const round = (n: number) => Math.round(n * 100) / 100;
+const point = (p: number[]) => `${round(p[0])},${round(p[1])}`;
+
+// ---------------------------------------------------------------------------
+// V3 icons: the isometric mini-structures (recovered), one themed per card,
+// rendered at icon scale in the copy header and colourised on hover.
+// ---------------------------------------------------------------------------
+const ISO_A = 11;
+const ISO_FH = 13;
+const ISO_B = ISO_A / 2;
+function isoTop(x: number, y: number, z: number, ox: number, oy: number) {
+  return [ox + (x - y) * ISO_A, oy + (x + y) * ISO_B - z * ISO_FH];
+}
+function isoFaces(cubes: { x: number; y: number; z: number; fill?: boolean }[], ox: number, oy: number) {
+  const ordered = [...cubes].sort((a, b) => a.x + a.y - (b.x + b.y) || a.z - b.z);
+  const faces: { face: string; fill: boolean; d: string }[] = [];
+  for (const cube of ordered) {
+    const [cx, cy] = isoTop(cube.x, cube.y, cube.z, ox, oy);
+    const T = [cx, cy];
+    const R = [cx + ISO_A, cy + ISO_B];
+    const B = [cx, cy + 2 * ISO_B];
+    const L = [cx - ISO_A, cy + ISO_B];
+    const fill = Boolean(cube.fill);
+    faces.push({ face: 'top', fill, d: `M${point(T)} L${point(R)} L${point(B)} L${point(L)} Z` });
+    faces.push({ face: 'left', fill, d: `M${point(L)} L${point(B)} L${point([B[0], B[1] + ISO_FH])} L${point([L[0], L[1] + ISO_FH])} Z` });
+    faces.push({ face: 'right', fill, d: `M${point(B)} L${point(R)} L${point([R[0], R[1] + ISO_FH])} L${point([B[0], B[1] + ISO_FH])} Z` });
+  }
+  return faces;
+}
+const isoStructures: Record<string, { ox: number; oy: number; cubes: { x: number; y: number; z: number; fill?: boolean }[]; links: number[][] }> = {
+  // eu: stacked adoption blocks, columns of 3, 2, 1
+  eu: {
+    ox: 56,
+    oy: 30,
+    cubes: [
+      { x: 0, y: 0, z: 0, fill: true },
+      { x: 0, y: 0, z: 1, fill: true },
+      { x: 0, y: 0, z: 2, fill: true },
+      { x: 1, y: 0, z: 0, fill: true },
+      { x: 1, y: 0, z: 1, fill: true },
+      { x: 2, y: 0, z: 0 },
+    ],
+    links: [],
+  },
+  // uk: taller adoption tower, columns of 4 and 2
+  uk: {
+    ox: 62,
+    oy: 46,
+    cubes: [
+      { x: 0, y: 0, z: 0, fill: true },
+      { x: 0, y: 0, z: 1, fill: true },
+      { x: 0, y: 0, z: 2, fill: true },
+      { x: 0, y: 0, z: 3, fill: true },
+      { x: 1, y: 0, z: 0, fill: true },
+      { x: 1, y: 0, z: 1 },
+    ],
+    links: [],
+  },
+  // mlsecops: a hub cube with four linked satellites (citation network)
+  mlsecops: {
+    ox: 56,
+    oy: 26,
+    cubes: [
+      { x: 1, y: 1, z: 0, fill: true },
+      { x: 0, y: 1, z: 0 },
+      { x: 2, y: 1, z: 0 },
+      { x: 1, y: 0, z: 0 },
+      { x: 1, y: 2, z: 0 },
+    ],
+    links: [
+      [1, 1, 0, 0, 1, 0],
+      [1, 1, 0, 2, 1, 0],
+      [1, 1, 0, 1, 0, 0],
+      [1, 1, 0, 1, 2, 0],
+    ],
+  },
+  // un: ringed council structure (square ring of blocks around an empty centre)
+  un: {
+    ox: 44,
+    oy: 12,
+    cubes: [
+      { x: 0, y: 0, z: 0 },
+      { x: 1, y: 0, z: 0 },
+      { x: 2, y: 0, z: 0, fill: true },
+      { x: 2, y: 1, z: 0 },
+      { x: 2, y: 2, z: 0 },
+      { x: 1, y: 2, z: 0 },
+      { x: 0, y: 2, z: 0 },
+      { x: 0, y: 1, z: 0 },
+    ],
+    links: [],
+  },
+  // acm: two-hub bridge, two platforms joined by a span
+  acm: {
+    ox: 40,
+    oy: 24,
+    cubes: [
+      { x: 0, y: 0, z: 0, fill: true },
+      { x: 0, y: 1, z: 0, fill: true },
+      { x: 3, y: 0, z: 0, fill: true },
+      { x: 3, y: 1, z: 0, fill: true },
+    ],
+    links: [
+      [0, 0, 1, 3, 0, 1],
+      [0, 1, 1, 3, 1, 1],
+    ],
+  },
+  // through-line: linked chain running horizontally
+  'through-line': {
+    ox: 26,
+    oy: 40,
+    cubes: [
+      { x: 0, y: 0, z: 0, fill: true },
+      { x: 1, y: 0, z: 0, fill: true },
+      { x: 2, y: 0, z: 0, fill: true },
+      { x: 3, y: 0, z: 0, fill: true },
+    ],
+    links: [
+      [0, 0, 1, 1, 0, 1],
+      [1, 0, 1, 2, 0, 1],
+      [2, 0, 1, 3, 0, 1],
+    ],
+  },
+};
+function isoRender(cubes: { x: number; y: number; z: number; fill?: boolean }[], links: number[][], ox: number, oy: number) {
+  return { faces: isoFaces(cubes, ox, oy), links: links.map((l) => `M${point(isoTop(l[0], l[1], l[2], ox, oy))} L${point(isoTop(l[3], l[4], l[5], ox, oy))}`) };
+}
+const isoIcons = Object.fromEntries(Object.entries(isoStructures).map(([piece, s]) => [piece, isoRender(s.cubes, s.links, s.ox, s.oy)]));
+
+// ---------------------------------------------------------------------------
+// Placement derived from the layout map so a new block is a data change. Entrance
+// order is bottom-up (blocks stack from the floor) so lower rows land first.
+// ---------------------------------------------------------------------------
+const freeform = layout.freeform;
+const grid = layout.areas.map((row) => row.trim().split(/\s+/));
+const columns = grid[0]?.length ?? 1;
+const templateAreas = grid.map((row) => `"${row.join(' ')}"`).join(' ');
+// Entrance order is bottom-up so lower pieces land first: from row occupancy in
+// cell mode, from rect bottoms in freeform mode.
+const placement: Record<string, { col: number; rowBottom: number }> = {};
+if (freeform) {
+  const register = (area: string, rect?: [number, number, number, number]) => {
+    if (!rect) return;
+    placement[area] = { col: rect[0], rowBottom: rect[1] + rect[3] };
+  };
+  Object.values(layout.blocks).forEach((block) => register(block.area, block.rect));
+  layout.duds.forEach((dud) => register(dud.area, dud.rect));
+} else {
+  grid.forEach((row, r) =>
+    row.forEach((token, c) => {
+      if (token === '.') return;
+      const seen = placement[token];
+      if (!seen) placement[token] = { col: c, rowBottom: r };
+      else {
+        seen.col = Math.min(seen.col, c);
+        seen.rowBottom = Math.max(seen.rowBottom, r);
+      }
+    }),
+  );
+}
+const orderOf = Object.fromEntries(
+  Object.keys(placement)
+    .sort((a, b) => placement[b].rowBottom - placement[a].rowBottom || placement[a].col - placement[b].col)
+    .map((token, index) => [token, index + 1]),
+);
+const rectStyle = (rect: [number, number, number, number]) => `left:${rect[0]}%;top:${rect[1]}px;width:${rect[2]}%;height:${rect[3]}px;`;
+
+// Irregular drop cadence: quick pairs separated by longer pauses, so the stack
+// lands like bricks placed by hand rather than on a metronome.
+const FALL_CADENCE = [0, 60, 150, 200, 290, 340, 430, 480, 550, 600];
+const fallDelay = (order: number) => FALL_CADENCE[order - 1] ?? (order - 1) * 70;
+
+const placed = cards.map((card) => {
+  const block = layout.blocks[card.piece];
+  const order = orderOf[block.area];
+  const base = block.size === 'long' ? ghostLongTravel : ghostShortTravel;
+  const shiftX = block.lift ? block.lift[0] : isCollage ? -collageTravel : block.dir * base;
+  const shiftY = block.lift ? block.lift[1] : isCollage ? -collageTravel : 0;
+  const mode = block.mode ?? 'slide';
+  return { card, block, order, shiftX, shiftY, mode };
+});
+// Duds are inert: a raised surface, no neon and no slide. They land with the
+// stack (order) but never reveal or move on hover.
+const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect: dud.rect, order: orderOf[dud.area] }));
+---
+
+<achievement-neon-rendition class="achievement-neon-rendition" data-variation={variant} data-reveal="trigger">
+  <div
+    class="neon-canvas"
+    data-freeform={freeform ? 'true' : undefined}
+    style={freeform ? `--freeform-h:${freeform}px` : `--columns:${columns};--rows:${grid.length};grid-template-areas:${templateAreas}`}
+  >
+    {
+      placed.map(({ card, block, order, shiftX, shiftY, mode }) => (
+        <div
+          class="lego-piece neon-slot"
+          data-lego-piece
+          data-neon-slot
+          data-order={order}
+          data-size={block.size}
+          data-piece={card.piece}
+          data-hover={mode}
+          style={`${freeform && block.rect ? rectStyle(block.rect) : `grid-area:${block.area};`}--neon:${card.neon};--slot-z:${block.layer ?? 2 + order};--shift-x:${shiftX}px;--shift-y:${shiftY}px;--pickup:${block.tilt ?? 4}deg;--drop-rotation:${order % 2 ? -1.6 : 1.6}deg;--fall-dur:${block.size === 'long' ? 520 : 430}ms;--fall-delay:${fallDelay(order)}ms`}
+        >
+          <i class="neon-underlay" data-neon-block aria-hidden="true" />
+          <article class="neon-card">
+            <span class="ghost-mark" aria-hidden="true">
+              {card.ghost}
+            </span>
+            <i class="ghost-rule" aria-hidden="true" />
+
+            {
+              <svg class="iso-ghost" viewBox="0 0 120 96" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                <g class="iso-group">
+                  {isoIcons[card.piece].links.map((d) => (
+                    <path class="iso-link" d={d} />
+                  ))}
+                  {isoIcons[card.piece].faces.map((face) => (
+                    <path class:list={['iso-face', `iso-${face.face}`, { 'iso-fill': face.fill }]} d={face.d} />
+                  ))}
+                </g>
+              </svg>
+            }
+            <div class="neon-copy">
+              <span class="eyebrow">{card.eyebrow}</span>
+              <strong>{card.title}</strong>
+              <p>{card.summary}</p>
+              {isCollage && card.footnote && <span class="footnote">{card.footnote}</span>}
+              <footer>
+                {(variant === 1 || block.size !== 'long' ? card.links.slice(0, 1) : card.links).map((link) => {
+                  const external = link.href.startsWith('http');
+                  return (
+                    <a class="button primary" href={link.href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
+                      {link.label}
+                    </a>
+                  );
+                })}
+              </footer>
+            </div>
+          </article>
+        </div>
+      ))
+    }
+    {
+      duds.map((dud) => (
+        <div
+          class="lego-piece dud"
+          data-lego-piece
+          data-order={dud.order}
+          data-shape={dud.shape}
+          style={`${freeform && dud.rect ? rectStyle(dud.rect) : `grid-area:${dud.area};`}--drop-rotation:${dud.order % 2 ? -1.6 : 1.6}deg;--fall-dur:430ms;--fall-delay:${fallDelay(dud.order)}ms`}
+        >
+          {(dud.shape === 'square' || dud.shape === 'plain' || dud.shape === 'accent' || dud.shape === 'diamond-open') && (
+            <span class="dud-face" aria-hidden="true" />
+          )}
+          {dud.shape === 'diamond' && (
+            <svg class="dud-shape" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              <polygon points="50,0 100,50 50,100 0,50" />
+            </svg>
+          )}
+          {dud.shape === 'triangle' && (
+            <svg class="dud-shape" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              <polygon points="50,0 100,100 0,100" />
+            </svg>
+          )}
+          {dud.shape === 'diamond-open' && (
+            <svg class="dud-outline" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <polygon points="50,6 94,50 50,94 6,50" />
+            </svg>
+          )}
+        </div>
+      ))
+    }
+  </div>
+</achievement-neon-rendition>
+
+<script>
+  import { onRevealed } from '../shared/Reveal';
+
+  class AchievementNeonRenditionElement extends HTMLElement {
+    private controller = new AbortController();
+    private impactTimers: number[] = [];
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const pieces = [...this.querySelectorAll<HTMLElement>('[data-lego-piece]')];
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      pieces.forEach((piece) => piece.style.setProperty('--lego-order', piece.dataset.order ?? '0'));
+      this.addEventListener('click', this.handleTap, { signal: this.controller.signal });
+      window.addEventListener('keydown', this.handleKey, { signal: this.controller.signal });
+
+      if (reduced) {
+        this.dataset.entered = 'true';
+        pieces.forEach((piece) => (piece.dataset.settled = 'true'));
+        return;
+      }
+
+      this.dataset.motionReady = 'true';
+      // The global reveal signal carries the 50%-visibility trigger and its
+      // tall-element fallback (shared Reveal module).
+      onRevealed(this, () => this.enterTriggered(pieces), this.controller.signal);
+
+      // The freeform collage shrinks proportionally below its design width (the
+      // stacked column takes over under 640px via CSS).
+      const freeformCanvas = this.querySelector<HTMLElement>('.neon-canvas[data-freeform]');
+      if (freeformCanvas) {
+        const design = 1100;
+        const naturalHeight = Number.parseFloat(getComputedStyle(freeformCanvas).getPropertyValue('--freeform-h')) || 973;
+        const applyScale = () => {
+          const width = this.clientWidth;
+          if (window.innerWidth <= 640 || width >= design) {
+            delete this.dataset.scaled;
+            freeformCanvas.style.transform = '';
+            freeformCanvas.style.width = '';
+            freeformCanvas.style.marginBottom = '';
+            return;
+          }
+          const scale = width / design;
+          this.dataset.scaled = 'true';
+          freeformCanvas.style.width = `${design}px`;
+          freeformCanvas.style.transformOrigin = 'top left';
+          freeformCanvas.style.transform = `scale(${scale})`;
+          freeformCanvas.style.marginBottom = `${-naturalHeight * (1 - scale)}px`;
+        };
+        applyScale();
+        window.addEventListener('resize', applyScale, { passive: true, signal: this.controller.signal });
+      }
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+      this.impactTimers.forEach((timer) => clearTimeout(timer));
+      this.impactTimers = [];
+    }
+
+    private handleTap = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (target.closest('a') || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const slot = target.closest<HTMLElement>('[data-neon-slot]');
+      this.querySelectorAll<HTMLElement>('[data-neon-slot][data-active="true"]').forEach((active) => {
+        if (active !== slot) delete active.dataset.active;
+      });
+      if (!slot) return;
+      if (slot.dataset.active === 'true') delete slot.dataset.active;
+      else slot.dataset.active = 'true';
+    };
+
+    private handleKey = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      this.querySelectorAll<HTMLElement>('[data-neon-slot][data-active="true"]').forEach((slot) => delete slot.dataset.active);
+    };
+
+    private enterTriggered(pieces: HTMLElement[]) {
+      if (this.dataset.entered === 'true') return;
+      this.dataset.entered = 'true';
+      pieces.forEach((piece) => {
+        if (getComputedStyle(piece).display === 'none') {
+          piece.dataset.settled = 'true';
+          return;
+        }
+        const onAnimationEnd = (event: AnimationEvent) => {
+          if (event.target !== piece || event.animationName !== 'lego-click') return;
+          piece.dataset.settled = 'true';
+          piece.removeEventListener('animationend', onAnimationEnd);
+        };
+        piece.addEventListener('animationend', onAnimationEnd, { signal: this.controller.signal });
+        // Fire the neighbour nudge at the keyframe's 52% impact moment.
+        const delay = Number.parseFloat(piece.style.getPropertyValue('--fall-delay')) || 0;
+        const duration = Number.parseFloat(piece.style.getPropertyValue('--fall-dur')) || 600;
+        const timer = window.setTimeout(() => this.nudgeNeighbours(piece), delay + duration * 0.52);
+        this.impactTimers.push(timer);
+      });
+    }
+
+    private nudgeNeighbours(landingPiece: HTMLElement) {
+      this.querySelectorAll<HTMLElement>('[data-lego-piece][data-settled="true"]').forEach((piece) => {
+        if (piece === landingPiece) return;
+        piece.dataset.neighbourNudge = 'true';
+        piece.style.setProperty('--impact-x', Number(piece.dataset.order ?? 0) % 2 ? '1.5px' : '-1.5px');
+        const timer = window.setTimeout(() => delete piece.dataset.neighbourNudge, 58);
+        this.impactTimers.push(timer);
+      });
+    }
+  }
+
+  if (!customElements.get('achievement-neon-rendition')) {
+    customElements.define('achievement-neon-rendition', AchievementNeonRenditionElement);
+  }
+</script>
+
+<style>
+  .achievement-neon-rendition {
+    display: block;
+  }
+  .achievement-neon-rendition[data-scaled='true'] {
+    overflow-x: clip;
+  }
+  /* A fixed cell grid driven by grid-template-areas from the layout map. Long
+     blocks span two cells; duds fill the gaps. Row height and canvas width are
+     per-variant so the stack, the full-width grid and the collage each read
+     correctly while clearing the sticky navs inside a 900px viewport. */
+  .neon-canvas {
+    --row-h: 180px;
+    display: grid;
+    gap: 0;
+    grid-template-columns: repeat(var(--columns), 1fr);
+    grid-template-rows: repeat(var(--rows), var(--row-h));
+    margin: 0 auto;
+    max-width: 1000px;
+  }
+  [data-variation='2'] .neon-canvas {
+    --row-h: 230px;
+    max-width: 1180px;
+  }
+  /* Freeform mode replicates the live /policy/ collage: an absolute composition
+     of percent-positioned pieces on a fixed-height full-width canvas. */
+  .neon-canvas[data-freeform] {
+    display: block;
+    height: var(--freeform-h);
+    margin: 0;
+    max-width: none;
+    position: relative;
+  }
+  .neon-canvas[data-freeform] .lego-piece {
+    position: absolute;
+  }
+  /* The slot is NOT clipped: on reveal the card physically slides out of its own
+     cell (see the slide rule), so a hovered card is lifted above its neighbours. */
+  /* Stacking is STATIC: each slot keeps one permanent layer derived from its
+     entrance order, so hovering never reorders cards and nothing ever pops in
+     front of or behind a neighbour mid-interaction. */
+  .neon-slot {
+    position: relative;
+    z-index: var(--slot-z, 2);
+  }
+  .neon-underlay,
+  .neon-card {
+    inset: 0;
+    position: absolute;
+  }
+  /* The neon under-block sits only within the card's original footprint, so when
+     the card slides off it the colour is revealed on the vacated side only. It
+     stays transparent at rest and fades in while revealing. */
+  .neon-underlay {
+    background: var(--neon);
+    opacity: 0;
+    transition: opacity 180ms ease 1000ms;
+    z-index: 0;
+  }
+  .neon-slot:hover .neon-underlay,
+  .neon-slot[data-active='true'] .neon-underlay {
+    opacity: 1;
+    transition-delay: 0ms;
+    transition-duration: 0ms;
+  }
+  .neon-card {
+    background: #171918;
+    border: 1px solid var(--hairline-card);
+    color: var(--text-1);
+    overflow: hidden;
+    transform: translate3d(0, 0, 0);
+    transition:
+      outline-color 180ms ease,
+      transform 1000ms cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 2;
+  }
+  .neon-slot[data-size='long'] .neon-card {
+    background: #131615;
+  }
+
+  /* --- Dud blocks: inert raised surfaces, no neon and no slide. Filled square,
+     45deg diamond and triangle (stretched to fill the whole cell), a plain dark
+     back, a solid neon-green accent slab, and a large faint centred diamond
+     outline for the collage. --- */
+  .dud {
+    position: relative;
+    z-index: 1;
+  }
+  .dud-face {
+    background: #212423;
+    border: 1px solid var(--hairline-card);
+    inset: 0;
+    position: absolute;
+  }
+  .dud[data-shape='plain'] .dud-face,
+  .dud[data-shape='diamond-open'] .dud-face {
+    background: #131615;
+  }
+  .dud[data-shape='accent'] .dud-face {
+    background: var(--accent);
+    border-color: transparent;
+  }
+  .dud-shape {
+    height: 100%;
+    inset: 0;
+    position: absolute;
+    width: 100%;
+  }
+  .dud-shape polygon {
+    fill: #212423;
+    stroke: var(--hairline-card);
+    stroke-linejoin: round;
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+  .dud-outline {
+    height: 100%;
+    inset: 0;
+    position: absolute;
+    width: 100%;
+  }
+  .dud-outline polygon {
+    fill: none;
+    stroke: rgba(244, 242, 238, 0.16);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* --- Copy: consistent anatomy across all variants. Anchored to the TOP so the
+     eyebrow/glyph, one-line title and description align at identical offsets on
+     every card; the description length may vary, links sit below. --- */
+  .neon-copy {
+    left: 0;
+    padding: 16px 18px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 6;
+  }
+  .neon-copy > .eyebrow {
+    color: var(--text-4);
+    display: block;
+    font: var(--mono-8) / 1.4 var(--font-mono);
+    letter-spacing: 0.1em;
+    min-height: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  [data-variation='1'] .neon-copy > .eyebrow {
+    font-size: 11px;
+  }
+  [data-variation='1'] .neon-slot .neon-copy > strong {
+    font: 300 30px/1.12 var(--font-display);
+    letter-spacing: -0.02em;
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+  }
+  [data-variation='1'] footer a.button {
+    font-size: 11px;
+    padding: 9px 14px;
+  }
+  [data-variation='2'] .neon-copy > .eyebrow {
+    font-size: 10.5px;
+  }
+  [data-variation='2'] footer a.button {
+    font-size: 10px;
+    padding: 8px 12px;
+  }
+  /* The isometric structure takes the ghost treatment: oversized, dim, anchored
+     to the bottom-right with part of it cropped past the corner. */
+  .iso-ghost {
+    bottom: -12%;
+    height: 62%;
+    opacity: 0.6;
+    position: absolute;
+    right: -8%;
+    width: 58%;
+    z-index: 1;
+  }
+  /* The narrow right-column collage card gets a fixed larger stage so its
+     structure matches the neighbours instead of scaling down with the card. */
+  [data-variation='1'] .neon-slot[data-piece='un'] .iso-ghost {
+    height: 170px;
+    width: 215px;
+  }
+  .iso-group {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .iso-face {
+    stroke: rgba(244, 242, 238, 0.16);
+    stroke-linejoin: round;
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+  .iso-top {
+    fill: #212423;
+  }
+  .iso-left {
+    fill: #161817;
+  }
+  .iso-right {
+    fill: #0e100f;
+  }
+  .iso-fill.iso-top {
+    fill: #2a2e2c;
+  }
+  .iso-link {
+    fill: none;
+    stroke: rgba(244, 242, 238, 0.22);
+    stroke-dasharray: 2 3;
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .iso-group {
+      animation: iso-breathe 6s ease-in-out infinite;
+    }
+    @keyframes iso-breathe {
+      0%,
+      100% {
+        transform: translateY(1px);
+      }
+      50% {
+        transform: translateY(-1px);
+      }
+    }
+  }
+  .iso-face,
+  .iso-link {
+    transition:
+      fill 260ms ease,
+      stroke 260ms ease;
+  }
+  .neon-slot:hover .iso-fill.iso-top,
+  .neon-slot[data-active='true'] .iso-fill.iso-top {
+    fill: color-mix(in srgb, var(--neon) 42%, #14100c);
+  }
+  .neon-slot:hover .iso-fill,
+  .neon-slot[data-active='true'] .iso-fill {
+    stroke: var(--neon);
+  }
+  /* Title is a HARD single line: ellipsis when it does not fit, never two. */
+  .neon-copy > strong {
+    display: block;
+    margin-top: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .neon-slot[data-size='long'] .neon-copy > strong {
+    font: 300 clamp(26px, 2.6vw, 36px) / 1.1 var(--font-display);
+    letter-spacing: -0.02em;
+  }
+  .neon-slot[data-size='short'] .neon-copy > strong {
+    font: 300 clamp(19px, 2vw, 23px) / 1.15 var(--font-display);
+    letter-spacing: -0.01em;
+  }
+  /* The set table takes one fixed title scale across every card, sized to its
+     cells: titles may wrap, never ellipsize (mirrors the collage's fixed scale). */
+  [data-variation='2'] .neon-slot .neon-copy > strong {
+    font: 300 26px/1.12 var(--font-display);
+    letter-spacing: -0.02em;
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+  }
+  .neon-copy > p {
+    color: var(--text-2);
+    display: -webkit-box;
+    font-size: 12.5px;
+    line-height: 1.45;
+    margin: 9px 0 0;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+  .neon-slot[data-size='short'] .neon-copy > p {
+    -webkit-line-clamp: 2;
+  }
+  .neon-copy > .footnote {
+    color: var(--accent);
+    display: block;
+    font: var(--mono-8) / 1.4 var(--font-mono);
+    letter-spacing: 0.12em;
+    margin-top: 14px;
+    text-transform: uppercase;
+  }
+  footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    margin-top: 12px;
+  }
+  footer a {
+    color: var(--accent);
+    font: var(--mono-8) / 1.3 var(--font-mono);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* --- V1 / V2 ghost numerals (cropped by the block edge, capped to ~50% of the
+     card so a long label overflows the top-right but never spans wider) --- */
+  .ghost-mark {
+    color: rgba(244, 242, 238, 0.05);
+    font: 300 100px/0.8 var(--font-display);
+    letter-spacing: -0.08em;
+    max-width: 50%;
+    overflow: hidden;
+    position: absolute;
+    right: -0.02em;
+    top: -0.1em;
+    white-space: nowrap;
+    z-index: 1;
+  }
+  .neon-slot[data-size='long'] .ghost-mark {
+    font-size: clamp(86px, 9vw, 124px);
+  }
+  .neon-slot[data-size='short'] .ghost-mark {
+    font-size: clamp(56px, 8vw, 78px);
+    right: -0.04em;
+  }
+  .ghost-rule {
+    background: var(--neon);
+    height: 1px;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transform: scaleX(0);
+    transform-origin: left;
+    z-index: 5;
+  }
+  achievement-neon-rendition[data-entered='true'] .ghost-rule {
+    animation: ghost-rule-in 460ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-delay: calc(var(--fall-delay, 0ms) + 480ms);
+  }
+  @keyframes ghost-rule-in {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  /* --- Lego entrance (shared; singles fall snappier than doubles) --- */
+  achievement-neon-rendition[data-motion-ready='true']:not([data-entered='true']) [data-lego-piece] {
+    opacity: 0;
+    transform: translate3d(0, -105%, 0) rotate(var(--drop-rotation, 1.6deg));
+  }
+  achievement-neon-rendition[data-entered='true'] [data-lego-piece]:not([data-settled='true']) {
+    animation: lego-click var(--fall-dur, 600ms) linear both;
+    animation-delay: var(--fall-delay, calc(var(--lego-order) * 60ms));
+    /* Squash compresses into the ground plane rather than around the centre. */
+    transform-origin: 50% 100%;
+  }
+  [data-lego-piece][data-neighbour-nudge='true'] {
+    transform: translate3d(var(--impact-x), 0, 0);
+    transition: transform 55ms ease-out;
+  }
+  /* Gravity, not easing: each piece drops from a full shape-height above its
+     slot, fading in over the first ~30px of travel (a per-piece opacity veil
+     at the top, no canvas clip) so the whole remaining fall is visible, then
+     a hard squash on impact, one small rebound, a second touchdown and
+     settle. Impact sits at 52% (JS nudge keys off this). */
+  @keyframes lego-click {
+    0% {
+      animation-timing-function: cubic-bezier(0.45, 0, 0.75, 0.4);
+      opacity: 0;
+      transform: translate3d(0, -105%, 0) rotate(var(--drop-rotation, 1.6deg));
+    }
+    18% {
+      animation-timing-function: cubic-bezier(0.4, 0, 0.85, 0.55);
+      opacity: 1;
+      transform: translate3d(0, -92%, 0) rotate(var(--drop-rotation, 1.6deg));
+    }
+    52% {
+      animation-timing-function: ease-out;
+      opacity: 1;
+      transform: translate3d(0, 0, 0) rotate(0deg);
+    }
+    62% {
+      animation-timing-function: ease-in-out;
+      opacity: 1;
+      transform: translate3d(0, 2px, 0) scale(1.03, 0.95);
+    }
+    76% {
+      animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.55);
+      opacity: 1;
+      transform: translate3d(0, -6px, 0) scale(0.995, 1.01);
+    }
+    88% {
+      animation-timing-function: ease-out;
+      opacity: 1;
+      transform: translate3d(0, 1px, 0) scale(1.01, 0.99);
+    }
+    100% {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* --- Slide reveal (shared): on hover the CARD slides out of its cell toward the
+     open space (horizontally for the ghost variants, diagonally up-left for the
+     collage) and lifts above its neighbours, uncovering the neon under-block
+     within its original footprint. --- */
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .neon-slot[data-hover='slide']:hover .neon-card {
+      transform: translate3d(var(--shift-x), var(--shift-y), 0);
+    }
+    .neon-slot[data-hover='tilt']:hover .neon-card {
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
+      transform: translate3d(0, -12px, 0) rotate(var(--pickup, 4deg));
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .neon-slot[data-hover='slide'][data-active='true'] .neon-card {
+      transform: translate3d(var(--shift-x), var(--shift-y), 0);
+    }
+    .neon-slot[data-hover='tilt'][data-active='true'] .neon-card {
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
+      transform: translate3d(0, -12px, 0) rotate(var(--pickup, 4deg));
+    }
+  }
+  .ghost-mark,
+  .ghost-rule {
+    transition:
+      color 300ms ease,
+      opacity 220ms ease;
+  }
+  .neon-slot:hover .ghost-mark,
+  .neon-slot[data-active='true'] .ghost-mark {
+    color: color-mix(in srgb, var(--neon) 26%, rgba(244, 242, 238, 0.03));
+  }
+  /* During a slide reveal the top accent rule would read as a seam between the
+     revealed neon and the card edge; fade it out while displaced. */
+  .neon-slot[data-hover='slide']:hover .ghost-rule,
+  .neon-slot[data-hover='slide'][data-active='true'] .ghost-rule {
+    opacity: 0;
+  }
+
+  /* --- Responsive: hold the grid to a tablet width, then a single column --- */
+  @media (max-width: 900px) {
+    .neon-canvas:not([data-freeform]),
+    [data-variation='2'] .neon-canvas:not([data-freeform]) {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      height: auto;
+      max-width: none;
+      padding-inline: 34px;
+    }
+    .neon-canvas:not([data-freeform]) .neon-slot {
+      grid-area: auto !important;
+      height: 300px !important;
+      left: auto !important;
+      position: relative;
+      top: auto !important;
+      width: auto !important;
+    }
+    .neon-canvas:not([data-freeform]) .dud {
+      display: none;
+    }
+  }
+  @media (max-width: 640px) {
+    .neon-canvas[data-freeform] {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      height: auto !important;
+      margin-bottom: 0 !important;
+      max-width: none;
+      padding-inline: 34px;
+      transform: none !important;
+      width: auto !important;
+    }
+    .neon-canvas[data-freeform] .neon-slot {
+      height: 300px !important;
+      left: auto !important;
+      position: relative;
+      top: auto !important;
+      width: auto !important;
+    }
+    .neon-canvas[data-freeform] .dud {
+      display: none;
+    }
+  }
+  @media (max-width: 600px) {
+    .neon-canvas {
+      padding-inline: 24px;
+    }
+    .neon-slot {
+      --shift-x: 52px !important;
+      --shift-y: 0px !important;
+    }
+  }
+
+  /* --- Reduced motion: static settled stack, outline hover only --- */
+  @media (prefers-reduced-motion: reduce) {
+    .lego-piece {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    .neon-underlay {
+      display: none;
+    }
+    .ghost-rule {
+      transform: scaleX(1);
+    }
+    .neon-card {
+      transition: outline-color 180ms ease;
+    }
+    .neon-card:hover {
+      outline: 1px solid var(--accent);
+      outline-offset: -1px;
+    }
+  }
+</style>

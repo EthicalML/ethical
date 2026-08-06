@@ -1,0 +1,85 @@
+---
+import { isExternalHref } from '../utils/external-links.mjs';
+
+interface LinkCard {
+  eyebrow: string;
+  title: string;
+  description: string;
+  href: string;
+}
+
+interface Props {
+  cards: LinkCard[];
+}
+
+const { cards } = Astro.props;
+---
+
+<div class="framework-link-cards prose-block" data-reveal>
+  {
+    cards.map((card) => {
+      const external = isExternalHref(card.href);
+      return (
+        <a href={card.href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
+          <span>{card.eyebrow}</span>
+          <strong>{card.title}</strong>
+          <p>{card.description}</p>
+          <i>Read more</i>
+        </a>
+      );
+    })
+  }
+</div>
+
+<style>
+  .framework-link-cards {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  a {
+    border: 1px solid var(--hairline-card);
+    display: flex;
+    flex-direction: column;
+    min-height: 260px;
+    padding: 24px;
+  }
+
+  span,
+  i {
+    color: var(--text-4);
+    font: normal var(--mono-9)/1.2 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  strong {
+    color: var(--text-1);
+    font-size: 20px;
+    font-weight: 450;
+    line-height: 1.25;
+    margin-top: 24px;
+  }
+
+  p {
+    color: var(--text-2);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  i {
+    color: var(--accent);
+    margin-top: auto;
+  }
+
+  @media (max-width: 800px) {
+    .framework-link-cards {
+      grid-template-columns: 1fr;
+    }
+
+    a {
+      min-height: 220px;
+    }
+  }
+</style>

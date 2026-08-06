@@ -1,0 +1,169 @@
+---
+interface Props {
+  policy: {
+    eyebrow: string;
+    title: string;
+    contributions: Array<{ value: string; text: string }>;
+    stats: Array<{ value: string; label: string }>;
+    action: { label: string; href: string };
+  };
+}
+
+const { policy } = Astro.props;
+---
+
+{
+  /* Homepage 03 — POLICY & STANDARDS. The /policy/ iso citadel spans the right two
+    thirds of the section as a background layer, its left edge reaching behind the
+    copy column under a left-to-right scrim that keeps the text legible. The canvas
+    is pointer-events: none; hover heat still works because PolicyHeroPolicyCircuit
+    tracks the pointer at window level, and CanvasEngine supplies the observer
+    gating, reduced-motion static frame and teardown. */
+}
+<policy-section class="policy-standards home-section" data-reveal>
+  <policy-hero-policy-circuit class="policy-standards-canvas" data-scale="1.22" data-center-x="0.62" aria-hidden="true">
+    <canvas></canvas>
+  </policy-hero-policy-circuit>
+  <i class="policy-standards-scrim" aria-hidden="true"></i>
+  <div class="policy-standards-copy">
+    <p class="eyebrow">{policy.eyebrow}</p>
+    <h2 data-morph-source="policy-title">{policy.title}</h2>
+    <ul class="policy-contributions">
+      {
+        policy.contributions.map(({ value, text }) => (
+          <li>
+            <strong>{value}</strong>
+            <span>{text}</span>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="network-stats">
+      {
+        policy.stats.map(({ value, label }) => (
+          <div>
+            <strong>{value}</strong>
+            <span>{label}</span>
+          </div>
+        ))
+      }
+    </div>
+    <a class="button primary" href={policy.action.href} data-morph-pair="policy-title">{policy.action.label}</a>
+  </div>
+</policy-section>
+
+<style>
+  policy-section {
+    display: block;
+    overflow: hidden;
+    position: relative;
+  }
+  /* Fixed 650px canvas box, the same as the /policy/ hero mount, so the citadel
+     renders at an identical iso unit there and here (the engine derives it from
+     min(canvas width, height), and both are height-bound). Sizing the canvas
+     independently of the section means the copy column is free to be content
+     height: a citadel taller than the copy overflows and clips rather than
+     stretching the section. */
+  .policy-standards-canvas {
+    display: block;
+    height: 650px;
+    inset: 50% 0 auto auto;
+    pointer-events: none;
+    position: absolute;
+    transform: translateY(-40%);
+    width: 86%;
+    z-index: 1;
+  }
+  .policy-standards-canvas canvas {
+    height: 100%;
+    inset: 0;
+    position: absolute;
+    width: 100%;
+  }
+  .policy-standards-scrim {
+    background: linear-gradient(100deg, var(--bg-base) 0%, var(--bg-base) 32%, rgba(19, 20, 20, 0.72) 44%, rgba(19, 20, 20, 0.18) 58%, transparent 72%);
+    inset: 0;
+    pointer-events: none;
+    position: absolute;
+    z-index: 2;
+  }
+  .policy-standards-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 560px;
+    position: relative;
+    z-index: 3;
+  }
+  h2 {
+    font: 300 44px/1.06 var(--font-display);
+    letter-spacing: -0.015em;
+    margin: 16px 0 28px;
+  }
+  .policy-contributions {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .policy-contributions li {
+    align-items: baseline;
+    display: grid;
+    gap: 18px;
+    grid-template-columns: 64px 1fr;
+  }
+  .policy-contributions strong {
+    font: 300 26px/1 var(--font-display);
+    letter-spacing: -0.01em;
+  }
+  .policy-contributions span {
+    color: var(--text-2);
+    font-size: 14.5px;
+    line-height: 1.55;
+    max-width: 44ch;
+  }
+  .policy-standards-copy > .button {
+    align-self: flex-start;
+    display: inline-block;
+    margin-top: 30px;
+  }
+  @media (max-width: 950px) {
+    .policy-standards-canvas {
+      inset: auto 0 0 0;
+      height: 420px;
+      transform: none;
+      width: 100%;
+    }
+    .policy-standards-scrim {
+      background: linear-gradient(180deg, var(--bg-base) 0%, var(--bg-base) 30%, rgba(19, 20, 20, 0.65) 48%, transparent 72%);
+    }
+    .policy-standards-copy {
+      max-width: none;
+      padding-bottom: 440px;
+    }
+  }
+</style>
+
+<script>
+  import { bindMorphPairs } from '../shared/MorphPairs';
+  import '../shared/canvas/PolicyHeroPolicyCircuit';
+
+  class PolicySection extends HTMLElement {
+    private controller = new AbortController();
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      bindMorphPairs(this, this.controller.signal);
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+    }
+  }
+
+  if (!customElements.get('policy-section')) {
+    customElements.define('policy-section', PolicySection);
+  }
+</script>

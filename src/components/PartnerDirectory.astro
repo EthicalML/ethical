@@ -1,0 +1,107 @@
+---
+import type { ImageMetadata } from 'astro';
+import { getCollection } from 'astro:content';
+
+const logos = import.meta.glob('../assets/logos/*', {
+  eager: true,
+  import: 'default',
+}) as Record<string, ImageMetadata>;
+const partnerOrder = ['united-nations', 'european-commission', 'acm', 'linux-foundation', 'owasp', 'ieee', 'iso-iec', 'numfocus', 'tum'];
+const partners = (await getCollection('partners')).sort((first, second) => partnerOrder.indexOf(first.id) - partnerOrder.indexOf(second.id));
+const entries = partners.map(({ data: partner }) => ({
+  ...partner,
+  logo: logos[`../assets/logos/${partner.logo}`],
+}));
+---
+
+<div class="partner-directory">
+  {
+    entries.map((partner) => (
+      <section class="partner-entry" id={partner.slug}>
+        <span
+          class="partner-logo"
+          role="img"
+          aria-label={`${partner.name} logo`}
+          transition:name={`partner-logo-${partner.slug}`}
+          style={`--logo-mask: url("${partner.logo.src}"); --logo-ratio: ${partner.logo.width / partner.logo.height}; view-transition-name: partner-logo-${partner.slug}`}
+        />
+        <h2>{partner.name}</h2>
+        {partner.role && (
+          <p class="partner-role">
+            <strong>Role:</strong> {partner.role}
+          </p>
+        )}
+        <p>{partner.detail}</p>
+        {partner.links.length > 0 && (
+          <p class="partner-links">
+            {partner.links.map((link) => (
+              <a href={link.url} target="_blank" rel="noopener noreferrer">
+                {link.label}
+              </a>
+            ))}
+          </p>
+        )}
+      </section>
+    ))
+  }
+</div>
+
+<style>
+  .partner-directory {
+    margin: 0 auto;
+    max-width: 820px;
+    padding: 52px 48px 32px;
+  }
+  .partner-entry {
+    border-top: 1px solid var(--hairline-card);
+    padding: 44px 0;
+  }
+  .partner-logo {
+    background: #fff;
+    display: block;
+    height: 38px;
+    margin-bottom: 20px;
+    mask-image: var(--logo-mask);
+    mask-mode: alpha;
+    mask-position: left center;
+    mask-repeat: no-repeat;
+    mask-size: contain;
+    width: clamp(64px, calc(var(--logo-ratio) * 38px), 180px);
+  }
+  .partner-entry h2 {
+    font: 300 38px/1.12 var(--font-display);
+    margin: 0 0 14px;
+  }
+  .partner-entry > p:not(.partner-role, .partner-links) {
+    color: var(--text-2);
+    line-height: 1.7;
+  }
+  .partner-role {
+    color: var(--text-4);
+    font: var(--mono-10)/1.5 var(--font-mono);
+    letter-spacing: 0.1em;
+  }
+  .partner-role strong {
+    color: var(--accent);
+  }
+  .partner-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .partner-links a {
+    border: 1px solid rgba(94, 230, 160, 0.35);
+    border-radius: var(--radius-pill);
+    color: var(--accent);
+    font: var(--mono-10)/1 var(--font-mono);
+    letter-spacing: 0.08em;
+    padding: 8px 12px;
+  }
+
+  @media (max-width: 950px) {
+    .partner-directory {
+      padding-inline: 24px;
+    }
+  }
+</style>

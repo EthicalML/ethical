@@ -1,0 +1,58 @@
+---
+title: Ethical AI Network
+description: The ML Engineer newsletter and Ethical AI Network connect practitioners working across engineering, research, policy and standards.
+composed: true
+layout: ../layouts/ProseLayout.astro
+---
+
+import { ArticleHero, FormSection, NetworkDirectory, RecentIssuesRail } from '../components/prose/components.js';
+import { contactFormCopy, networkSectors, networkStats } from '../data/contactForm';
+
+<ArticleHero
+  eyebrow="NETWORK & NEWSLETTER"
+  title="A network of aligned humans"
+  intro="Responsible technology takes more than changes to models — it takes a network of accountable people across engineering, research, policy and standards. It starts with the ML Engineer newsletter and runs through the Ethical AI Network."
+/>
+
+<section className="cluster-section newsletter-section" data-reveal>
+  <p className="eyebrow">ML ENGINEER NEWSLETTER</p>
+  <h2>Weekly production ML reading for 70k+ practitioners</h2>
+  <p>
+    Weekly, curated, technical — the Machine Learning Engineer newsletter reaches 70k+ practitioners with hand-picked material on production ML, security,
+    monitoring and the open-source tools that keep systems running.
+  </p>
+  <p className="theme-line">Production ML · MLOps · monitoring · ML security · explainability · GPU acceleration · LLMs · AI policy</p>
+  <RecentIssuesRail limit={6} />
+  <a className="button primary" href="/contact/?interest=newsletter#contact">
+    Subscribe
+  </a>
+</section>
+
+<section className="cluster-section network-section" data-reveal>
+  <p className="eyebrow">ETHICAL AI NETWORK</p>
+  <h2>1,034 members across engineering, research, policy and standards</h2>
+  <p>Practitioners, researchers and institutions share the difficult work of responsible AI.</p>
+  <NetworkDirectory
+    sectorEyebrow="WHO IS HERE"
+    sectorHeading="Participating sectors"
+    memberEyebrow="MEMBER NETWORK"
+    memberHeading="Participating organisations"
+    members={['ACM', 'OWASP', 'Linux Foundation', 'NumFocus', 'IEEE', 'UN CSTD']}
+    sectors={networkSectors}
+  />
+</section>
+
+<section className="cluster-section join-intro" data-reveal>
+  <p className="eyebrow">MEMBERSHIP</p>
+  <p>
+    Membership is contribution: principles, frameworks, open source, events and reviews. <a href="/membership/">See how membership works</a>
+  </p>
+</section>
+
+<FormSection
+  variant="network-split"
+  title="Join the working network"
+  copy={contactFormCopy}
+  sectors={networkSectors}
+  stats={networkStats.filter((stat) => stat.label === 'NETWORK MEMBERS')}
+/>

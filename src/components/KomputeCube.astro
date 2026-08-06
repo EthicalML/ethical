@@ -1,0 +1,39 @@
+---
+interface Props {
+  embedded?: boolean;
+  backdrop?: boolean;
+}
+
+const { embedded = false, backdrop = false } = Astro.props;
+---
+
+{
+  embedded ? (
+    <kompute-cube class:list={['kompute-canvas-mount', !backdrop && 'widget embedded-widget']}>
+      <canvas aria-label="Animated Kompute cube" />
+    </kompute-cube>
+  ) : (
+    <section aria-labelledby="kompute-cube-heading" data-reveal>
+      <p class="eyebrow">CUSTOM WIDGET</p>
+      <h2 id="kompute-cube-heading">Kompute cube</h2>
+      <kompute-cube class="widget kompute-canvas-mount">
+        <canvas aria-label="Animated Kompute cube" />
+      </kompute-cube>
+    </section>
+  )
+}
+
+<script>
+  import '../shared/canvas/KomputeCube';
+</script>
+
+<style>
+  kompute-cube {
+    display: block;
+  }
+  canvas {
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+</style>

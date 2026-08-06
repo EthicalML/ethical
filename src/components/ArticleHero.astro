@@ -1,0 +1,17 @@
+---
+import ArticleHeroCanvas from './ArticleHeroCanvas.astro';
+import KaosArchitecture from './KaosArchitecture.astro';
+import KomputeCube from './KomputeCube.astro';
+import PolicyHeroCanvas from './PolicyHeroCanvas.astro';
+
+const { eyebrow, title, intro, canvas = false, transitionName } = Astro.props;
+---
+
+<header class:list={['article-hero', canvas && 'canvas-variant', canvas === 'kompute' && 'kompute-variant']} data-reveal>
+  {canvas === 'kaos' ? <KaosArchitecture embedded backdrop /> : canvas === true && <ArticleHeroCanvas />}
+  {canvas === 'kompute' && <KomputeCube embedded backdrop />}
+  {canvas === 'policy' && <PolicyHeroCanvas />}
+  <p class="eyebrow">{eyebrow}</p>
+  <h1 transition:name={transitionName} style={transitionName ? `view-transition-name: ${transitionName}` : undefined}>{title}</h1>
+  {intro && <p>{intro}</p>}
+</header>

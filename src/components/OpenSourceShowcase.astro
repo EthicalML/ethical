@@ -1,0 +1,803 @@
+---
+import { getCollection } from 'astro:content';
+import { isExternalHref } from '../utils/external-links.mjs';
+import AnimationWindow from './AnimationWindow.astro';
+import KaosGraph from './KaosGraph.astro';
+import SurveyExplorerIsland from './SurveyExplorerIsland.astro';
+
+interface Action {
+  label: string;
+  href: string;
+  kind: string;
+}
+
+interface Projects {
+  section: {
+    eyebrow: string;
+    title: string;
+    intro: string;
+  };
+  survey: {
+    title: string;
+    text: string;
+    teaser: string;
+    actions: Action[];
+  };
+  kompute: {
+    figure: string;
+    affiliation: string;
+    title: string;
+    text: string;
+    donationText: string;
+    donationLinkText: string;
+    donationHref: string;
+    tags: string[];
+    actions: Action[];
+  };
+  xai: {
+    figure: string;
+    stages: Array<{ title: string; detail: string }>;
+    title: string;
+    text: string;
+    linkLabel: string;
+    linkHref: string;
+  };
+  ecosystem: {
+    leftHeading: string;
+    rightHeading: string;
+    rows: Array<{ title: string }>;
+    title: string;
+    text: string;
+    linkLabel: string;
+    linkHref: string;
+    guidelinesLabel: string;
+    guidelinesHref: string;
+  };
+  kaos: {
+    figure: string;
+    title: string;
+    text: string;
+    capabilities: Array<{ name: string; detail: string }>;
+    actions: Action[];
+    panelEyebrow: string;
+    panelStatus: string;
+  };
+  governance: {
+    eyebrow: string;
+    previewEyebrow: string;
+    previewLabel: string;
+    previewTitle: string;
+    steps: Array<{ label: string; detail: string }>;
+    title: string;
+    text: string;
+    actions: Action[];
+  };
+  security: {
+    eyebrow: string;
+    leftHeading: string;
+    rightHeading: string;
+    rows: Array<{ owasp: string; mlsecops: string }>;
+    title: string;
+    text: string;
+    relatedIntro: string;
+    relatedLinks: Array<{ label: string; href: string }>;
+    actions: Action[];
+  };
+}
+
+interface Props {
+  projects: Projects;
+  compact?: boolean;
+  homepage?: boolean;
+}
+
+const { projects, compact = false, homepage = false } = Astro.props;
+const carouselTitles = [projects.survey.title, projects.xai.title, projects.ecosystem.title, projects.governance.title, projects.security.title];
+const repoEntries = await getCollection('metrics');
+const repoMetrics = Object.fromEntries(repoEntries.map(({ id, data }) => [id, data.values]));
+const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value: string; label: string }) => (label ? `${value} ${label}` : value));
+---
+
+{/* Each block is its own reveal root, entering as it reaches the global reveal threshold. */}
+<open-source-showcase id="opensource" class:list={['open-source-prototype', compact && 'compact', homepage && 'home-section']}>
+  <p class="eyebrow" data-reveal>{projects.section.eyebrow}</p>
+  <h2 data-reveal>{projects.section.title}</h2>
+  <p class="section-intro" data-reveal>{projects.section.intro}</p>
+
+  <article class="kompute-feature" data-reveal>
+    <div class="oss-copy">
+      <p class="figure-label"><span>{projects.kompute.figure}</span><span>{projects.kompute.affiliation}</span></p>
+      <h3>{projects.kompute.title}</h3>
+      <p>{projects.kompute.text}</p>
+      <p>
+        {projects.kompute.donationText}{' '}
+        <a class="text-link" href={projects.kompute.donationHref} target="_blank" rel="noopener noreferrer">{projects.kompute.donationLinkText}</a>.
+      </p>
+      <div class="oss-metrics">
+        {
+          repoMetrics.kompute.map(({ value, label }: { value: string; label: string }) => (
+            <div>
+              <>
+                <strong>{value}</strong>
+                <span>{label}</span>
+              </>
+            </div>
+          ))
+        }
+      </div>
+      <div class="oss-tags">{projects.kompute.tags.map((tag) => <span>{tag}</span>)}</div>
+      <div class="actions">
+        {
+          projects.kompute.actions.map(({ label, href, kind }) => (
+            <a class:list={['button', kind]} href={href} target="_blank" rel="noopener noreferrer">
+              {label}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+    <div class="fixed-canvas cube-mount"><kompute-cube><canvas aria-label="Animated 27-cubie Rubik's cube"></canvas></kompute-cube></div>
+  </article>
+
+  <article class="kaos-feature" data-reveal>
+    <div>
+      <p class="figure-label"><span>{projects.kaos.figure}</span></p>
+      <h3 data-morph-source="kaos-title" data-morph-name="kaos-title">{projects.kaos.title}</h3>
+      <p>{projects.kaos.text}</p>
+      <div class="kaos-capabilities">
+        {
+          projects.kaos.capabilities.map(({ name, detail }) => (
+            <div>
+              <>
+                <span>{name}</span>
+                <strong>{detail}</strong>
+              </>
+            </div>
+          ))
+        }
+      </div>
+      <div class="oss-statline">{statline('kaos').map((stat) => <span>{stat}</span>)}</div>
+      <div class="actions">
+        {
+          projects.kaos.actions.map(({ label, href, kind }) => (
+            <a
+              class:list={['button', kind]}
+              href={href}
+              target={isExternalHref(href) ? '_blank' : undefined}
+              rel={isExternalHref(href) ? 'noopener noreferrer' : undefined}
+              data-morph-pair={href === '/open-source/kaos/' ? 'kaos-title' : undefined}
+            >
+              {label}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+    <div class="kaos-panel windowed">
+      <AnimationWindow title={projects.kaos.panelEyebrow.toLowerCase()} class="kaos-showcase-window" chromeOnly>
+        <KaosGraph panel />
+      </AnimationWindow>
+    </div>
+  </article>
+
+  {
+    /* Flagship carousel: the whole component (bubbles, edges, track) enters as
+      one standard data-reveal element, opening on the teaser+survey bundle (the
+      single first snap stop); everything is user-driven over a bounded snap
+      track. Position bubbles sit in the inter-card gap above the track (click
+      travels, active stretches to a bar and follows); full-height chevron
+      compositions at the edges navigate and wrap past the ends. */
+  }
+  <div id="reports" class="oss-carousel" data-reveal>
+    <div class="oss-carousel-bubbles" data-carousel-bubbles>
+      {carouselTitles.map((title, index) => <button type="button" data-carousel-bubble={index} aria-label={`Go to ${title}`} />)}
+    </div>
+    <div class="oss-carousel-stage">
+      <button class="oss-carousel-edge prev" type="button" data-carousel-prev aria-label="Previous cards">
+        <b aria-hidden="true"></b><i aria-hidden="true"
+          ><svg viewBox="0 0 16 28" width="16" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            ><polyline points="11,4 5,14 11,24"></polyline></svg
+          ></i
+        ><b aria-hidden="true"></b>
+      </button>
+      <button class="oss-carousel-edge next" type="button" data-carousel-next aria-label="Next cards">
+        <b aria-hidden="true"></b><i aria-hidden="true"
+          ><svg viewBox="0 0 16 28" width="16" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            ><polyline points="5,4 11,14 5,24"></polyline></svg
+          ></i
+        ><b aria-hidden="true"></b>
+      </button>
+      <div class="oss-carousel-track" data-carousel-track tabindex="-1">
+        <div class="oss-card teaser-card">
+          <span>{projects.survey.teaser}</span>
+          <i aria-hidden="true">→</i>
+        </div>
+        <article class="oss-card survey-card">
+          <div class="oss-preview survey-preview">
+            <SurveyExplorerIsland compact />
+          </div>
+          <h3>{projects.survey.title}</h3>
+          <p>{projects.survey.text}</p>
+          <div class="actions">
+            {
+              projects.survey.actions.map(({ label, href, kind }) => (
+                <a class:list={['button', kind]} href={href}>
+                  {label}
+                </a>
+              ))
+            }
+          </div>
+        </article>
+        <article class="oss-card">
+          <div class="oss-preview xai-preview">
+            <p class="figure-label"><span>{projects.xai.figure}</span></p>
+            <div class="xai-stages">
+              {
+                projects.xai.stages.map(({ title, detail }) => (
+                  <div>
+                    <>
+                      <p>
+                        <>
+                          <span>{title}</span>
+                          <small>{detail}</small>
+                        </>
+                      </p>
+                      <i>
+                        <b />
+                      </i>
+                    </>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+          <h3>{projects.xai.title}</h3>
+          <p>{projects.xai.text}</p>
+          <div class="oss-statline">{statline('xai').map((stat) => <span>{stat}</span>)}</div>
+          <div class="actions">
+            <a class="button primary" href={projects.xai.linkHref}>{projects.xai.linkLabel}</a>
+          </div>
+        </article>
+        <article class="oss-card">
+          <div class="oss-preview ecosystem-preview">
+            <p class="figure-label"><span>{projects.ecosystem.leftHeading}</span><span>{projects.ecosystem.rightHeading}</span></p>
+            <div>
+              {
+                projects.ecosystem.rows.map(({ title }) => (
+                  <p>
+                    <span>{title}</span>
+                  </p>
+                ))
+              }
+            </div>
+          </div>
+          <h3>{projects.ecosystem.title}</h3>
+          <p>{projects.ecosystem.text}</p>
+          <div class="oss-statline">{statline('ecosystem').map((stat) => <span>{stat}</span>)}</div>
+          <div class="actions">
+            <a class="button primary" href={projects.ecosystem.linkHref} target="_blank" rel="noopener noreferrer">{projects.ecosystem.linkLabel}</a>
+            <a class="button" href={projects.ecosystem.guidelinesHref} target="_blank" rel="noopener noreferrer">{projects.ecosystem.guidelinesLabel}</a>
+          </div>
+        </article>
+        <article class="oss-card">
+          <div class="initiative-preview governance-preview">
+            <header><span>{projects.governance.previewEyebrow}</span><span>{projects.governance.previewLabel}</span></header>
+            <h4>{projects.governance.previewTitle}</h4>
+            {
+              projects.governance.steps.map(({ label, detail }, index) => (
+                <p>
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  {label}
+                  <i>{detail}</i>
+                </p>
+              ))
+            }
+          </div>
+          <p class="eyebrow">{projects.governance.eyebrow}</p>
+          <h3>{projects.governance.title}</h3>
+          <p>{projects.governance.text}</p>
+          <div class="actions">
+            {
+              projects.governance.actions.map(({ label, href, kind }) => (
+                <a
+                  class:list={['button', kind]}
+                  href={href}
+                  target={isExternalHref(href) ? '_blank' : undefined}
+                  rel={isExternalHref(href) ? 'noopener noreferrer' : undefined}
+                >
+                  {label}
+                </a>
+              ))
+            }
+          </div>
+        </article>
+        <article class="oss-card">
+          <div class="initiative-preview mlsecops-preview">
+            <header><span>{projects.security.leftHeading}</span><span>{projects.security.rightHeading}</span></header>
+            {
+              projects.security.rows.map(({ owasp, mlsecops }) => (
+                <p>
+                  <>
+                    <span>{owasp}</span>
+                    <strong>{mlsecops}</strong>
+                  </>
+                </p>
+              ))
+            }
+          </div>
+          <p class="eyebrow">{projects.security.eyebrow}</p>
+          <h3>{projects.security.title}</h3>
+          <p>{projects.security.text}</p>
+          <p>
+            {projects.security.relatedIntro}{' '}
+            {
+              projects.security.relatedLinks.map(({ label, href }, index) => (
+                <>
+                  {index > 0 && (index === projects.security.relatedLinks.length - 1 ? ', and ' : ', ')}
+                  <a
+                    class="text-link"
+                    href={href}
+                    target={isExternalHref(href) ? '_blank' : undefined}
+                    rel={isExternalHref(href) ? 'noopener noreferrer' : undefined}
+                  >
+                    {label}
+                  </a>
+                </>
+              ))
+            }.
+          </p>
+          <div class="actions">
+            {
+              projects.security.actions.map(({ label, href, kind }) => (
+                <a
+                  class:list={['button', kind]}
+                  href={href}
+                  target={isExternalHref(href) ? '_blank' : undefined}
+                  rel={isExternalHref(href) ? 'noopener noreferrer' : undefined}
+                >
+                  {label}
+                </a>
+              ))
+            }
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</open-source-showcase>
+
+<style>
+  open-source-showcase {
+    display: block;
+  }
+  .kaos-panel.windowed {
+    background: transparent;
+    border: 0;
+    padding: 0;
+  }
+  :global(.kaos-showcase-window .kaos-canvas-mount) {
+    height: 430px;
+    margin-top: 0;
+  }
+
+  /* The intro shares the title's measure so the section head reads as one block. */
+  .section-intro {
+    max-width: 760px;
+  }
+
+  /* Flagship carousel: position bubbles in the inter-card gap above a snap track
+     flanked by full-height chevron compositions. */
+  .oss-carousel {
+    margin-top: 0;
+    scroll-margin-top: 124px;
+  }
+  .oss-carousel-stage {
+    position: relative;
+  }
+  /* Position bubbles: round dots in the 26px inter-card gap band; only the
+     active one stretches into a longer bar. Click travels, active follows. */
+  .oss-carousel-bubbles {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+    height: 26px;
+  }
+  .oss-carousel-bubbles button {
+    background: rgba(244, 242, 238, 0.28);
+    background-clip: content-box;
+    border: 0;
+    border-radius: 999px;
+    box-sizing: content-box;
+    cursor: pointer;
+    height: 8px;
+    margin: -18px;
+    padding: 18px;
+    transition:
+      background 0.18s ease,
+      width 0.18s ease;
+    width: 8px;
+  }
+  .oss-carousel-bubbles button:hover {
+    background: rgba(244, 242, 238, 0.45);
+  }
+  .oss-carousel-bubbles button.active {
+    background: rgba(244, 242, 238, 0.65);
+    width: 48px;
+  }
+  /* Vertical chevron compositions at the track edges: a single chevron centred
+     between two gradient lines spanning the full track height, in the strategy
+     section's accent line colour; hover takes its neon treatment and a press
+     energises the lines. Always enabled: past either end the press wraps to the
+     opposite end. The invisible ::before widens the hover/click surface well
+     beyond the visible composition. */
+  .oss-carousel-edge {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    bottom: 0;
+    color: rgba(94, 230, 160, 0.55);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    font: 15px/1 var(--font-mono);
+    padding: 0;
+    position: absolute;
+    top: 0;
+    transition:
+      color 0.2s ease,
+      opacity 0.2s ease,
+      filter 0.2s ease;
+    width: 44px;
+    z-index: 1;
+  }
+  /* The outer side sits at the viewport edge, so the extra surface reaches
+     inward over the track edge. */
+  .oss-carousel-edge.prev::before {
+    content: '';
+    inset: 0 -36px 0 -8px;
+    position: absolute;
+  }
+  .oss-carousel-edge.next::before {
+    content: '';
+    inset: 0 -8px 0 -36px;
+    position: absolute;
+  }
+  .oss-carousel-edge b {
+    background: linear-gradient(180deg, transparent, rgba(94, 230, 160, 0.5), transparent);
+    flex: 1;
+    margin: 0;
+    transition:
+      background 0.2s ease,
+      box-shadow 0.2s ease;
+    width: 1px;
+  }
+  .oss-carousel-edge i {
+    display: flex;
+    font-style: normal;
+    padding: 8px 0;
+  }
+  .oss-carousel-edge svg {
+    display: block;
+  }
+  .oss-carousel-edge.prev {
+    left: -46px;
+  }
+  .oss-carousel-edge.next {
+    right: -46px;
+  }
+  .oss-carousel-edge:hover {
+    color: var(--accent);
+  }
+  .oss-carousel-edge:hover b {
+    background: linear-gradient(180deg, transparent, var(--accent), transparent);
+    box-shadow: 0 0 14px rgba(94, 230, 160, 0.5);
+  }
+  .oss-carousel-edge.pressed b,
+  .oss-carousel-edge:active b {
+    animation: edge-energise 0.35s ease;
+  }
+  @keyframes edge-energise {
+    0% {
+      box-shadow: 0 0 0 rgba(94, 230, 160, 0);
+    }
+    50% {
+      background: linear-gradient(180deg, transparent, #8bf5c0, transparent);
+      box-shadow: 0 0 20px rgba(94, 230, 160, 0.85);
+    }
+    100% {
+      box-shadow: 0 0 14px rgba(94, 230, 160, 0.5);
+    }
+  }
+  .oss-carousel-track {
+    display: flex;
+    gap: 26px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .oss-carousel-track::-webkit-scrollbar {
+    display: none;
+  }
+  /* Card shell styles are global (.oss-card in tokens.css); the carousel only
+     adds the flex/snap geometry and the bottom-pinned actions row. */
+  .oss-card {
+    display: flex;
+    flex: 0 0 calc(50% - 13px);
+    flex-direction: column;
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+  .oss-card > .eyebrow {
+    margin-top: 24px;
+  }
+  .oss-card > .eyebrow + h3 {
+    margin-top: 8px;
+  }
+  /* Teaser lead-in: a static thin card with stacked display type and a plain
+     arrow glyph; not a control, no hover state, no accent. It bundles with the
+     survey card into the single first snap stop. */
+  .oss-card.teaser-card {
+    align-items: flex-start;
+    color: var(--text-1);
+    flex-basis: calc(14% - 13px);
+    justify-content: space-between;
+    text-align: left;
+  }
+  /* The survey card is part of the bundle, never its own desktop snap stop. The
+     penultimate card snaps centered so its stop stays distinct from the track
+     end, where it and the last card would otherwise share one clamped position. */
+  @media (min-width: 901px) {
+    .oss-card.survey-card {
+      scroll-snap-align: none;
+    }
+    .oss-carousel-track .oss-card:nth-last-child(2) {
+      scroll-snap-align: center;
+    }
+  }
+  .teaser-card span {
+    font: 300 24px/1.2 var(--font-display);
+    letter-spacing: -0.01em;
+  }
+  .teaser-card i {
+    color: var(--text-3);
+    font-size: 26px;
+    font-style: normal;
+  }
+  /* Survey card: two thirds of the row so the next card peeks from the right; the
+     interactive island sits in the inner panel with the siblings' top-right glow. */
+  .oss-card.survey-card {
+    flex-basis: calc(66.666% - 13px);
+  }
+  .survey-preview {
+    background: radial-gradient(70% 100% at 85% 0%, var(--accent-wash-16), var(--bg-inset) 70%);
+  }
+  .oss-card .actions {
+    margin-top: auto;
+    padding-top: 22px;
+  }
+
+  /* Initiative previews, restored from the retired reports section cards. */
+  .initiative-preview {
+    background: radial-gradient(70% 100% at 70% 0%, var(--accent-wash-16), var(--bg-inset) 70%);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: var(--radius-card);
+    padding: 22px;
+  }
+  .initiative-preview header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+  }
+  .initiative-preview header span {
+    color: var(--text-3);
+    font: var(--mono-10) / 1 var(--font-mono);
+    letter-spacing: 0.1em;
+  }
+  .initiative-preview h4 {
+    font-size: 19px;
+    font-weight: 400;
+    margin: 5px 0 20px;
+  }
+  .initiative-preview > p {
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    font-size: 13px;
+    gap: 10px;
+    margin: 0;
+    padding: 8px 0;
+  }
+  .initiative-preview > p span,
+  .initiative-preview > p i {
+    color: var(--text-3);
+    font: normal var(--mono-10) / 1 var(--font-mono);
+  }
+  .initiative-preview > p i {
+    margin-left: auto;
+  }
+  .mlsecops-preview {
+    background: var(--bg-inset);
+  }
+  .mlsecops-preview header {
+    border-bottom: 1px solid var(--hairline);
+    padding-bottom: 10px;
+  }
+  .mlsecops-preview > p {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+  }
+  .mlsecops-preview > p strong {
+    font-weight: 400;
+  }
+
+  /* Mobile stays a carousel: near-full-width cards with the next edge peeking;
+     the edge zones shrink into the section's own side padding. */
+  @media (max-width: 900px) {
+    .oss-card,
+    .oss-card.survey-card {
+      flex-basis: 86%;
+    }
+    .oss-card.teaser-card {
+      flex-basis: 38%;
+    }
+    /* The same chevron composition scaled into the mobile side padding. */
+    .oss-carousel-edge {
+      width: 44px;
+    }
+    .oss-carousel-edge svg {
+      height: 22px;
+      width: 12px;
+    }
+    .oss-carousel-edge.prev {
+      left: -35px;
+    }
+    .oss-carousel-edge.next {
+      right: -35px;
+    }
+  }
+  @media (max-width: 520px) {
+    .oss-carousel-edge {
+      width: 44px;
+    }
+    .oss-carousel-edge.prev {
+      left: -32px;
+    }
+    .oss-carousel-edge.next {
+      right: -32px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .oss-carousel-bubbles button {
+      transition: none;
+    }
+    .oss-carousel-edge,
+    .oss-carousel-edge b {
+      animation: none;
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { bindMorphPairs } from '../shared/MorphPairs';
+  import '../shared/canvas/KomputeCube';
+
+  class OpenSourceShowcase extends HTMLElement {
+    private controller = new AbortController();
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      bindMorphPairs(this, this.controller.signal);
+      this.wireCarousel();
+    }
+
+    // Bounded card-by-card navigation over the snap track; the teaser is the
+    // static lead-in, never a stop. The whole carousel enters through the
+    // standard data-reveal rise; everything is user-driven.
+    private wireCarousel() {
+      const track = this.querySelector<HTMLElement>('[data-carousel-track]');
+      const prev = this.querySelector<HTMLButtonElement>('[data-carousel-prev]');
+      const next = this.querySelector<HTMLButtonElement>('[data-carousel-next]');
+      const bubbles = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-carousel-bubble]'));
+      if (!track || !prev || !next) return;
+      const signal = this.controller.signal;
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const behavior = reduced ? ('auto' as const) : ('smooth' as const);
+
+      const realCards = Array.from(track.querySelectorAll<HTMLElement>('.oss-card:not(.teaser-card)'));
+      const base = track.firstElementChild as HTMLElement;
+      const left = (el: HTMLElement) => el.offsetLeft - base.offsetLeft;
+      // Desktop stops: the teaser+survey bundle (track start) then each later
+      // card, so one press from the bundle lands the next card. The mobile
+      // track cannot fit the bundle, so the survey keeps its own stop there.
+      const mobileTrack = window.matchMedia('(max-width: 900px)');
+      const stops = () => (mobileTrack.matches ? [0, ...realCards.map(left)] : [0, ...realCards.slice(1).map((card) => stopOf(card))]);
+
+      // Each card's stop honours its own snap alignment (the penultimate card
+      // snaps centered on desktop so its stop stays distinct from the track end,
+      // where the last two cards would otherwise share the clamped position),
+      // clamped into the scrollable range. A navigation records its intended
+      // card to win any remaining tie until the user scrolls by hand.
+      const maxScroll = () => track.scrollWidth - track.clientWidth;
+      const stopOf = (card: HTMLElement) => {
+        const centered = getComputedStyle(card).scrollSnapAlign.includes('center');
+        const raw = centered ? left(card) - (track.clientWidth - card.offsetWidth) / 2 : left(card);
+        return Math.max(0, Math.min(raw, maxScroll()));
+      };
+      let intent = -1;
+      const syncBubbles = () => {
+        const position = track.scrollLeft;
+        let active = 0;
+        realCards.forEach((card, index) => {
+          if (Math.abs(stopOf(card) - position) < Math.abs(stopOf(realCards[active]) - position)) active = index;
+        });
+        if (position >= maxScroll() - 4) active = realCards.length - 1;
+        if (intent >= 0 && Math.abs(stopOf(realCards[intent]) - position) <= 4) active = intent;
+        bubbles.forEach((bubble, index) => bubble.classList.toggle('active', index === active));
+      };
+
+      // Programmatic travel suspends scroll-snap for its duration: an in-flight
+      // smooth scroll otherwise fights the snap engine and jitters before moving.
+      let restoreSnap = 0;
+      const travel = (target: number) => {
+        track.style.scrollSnapType = 'none';
+        window.clearTimeout(restoreSnap);
+        track.scrollTo({ left: target, behavior });
+        restoreSnap = window.setTimeout(() => (track.style.scrollSnapType = ''), 1000);
+      };
+
+      // Bounded track, wrapping controls: past either end the press carries on
+      // to the opposite end, as if the far bubble had been clicked.
+      const go = (direction: number) => {
+        const position = track.scrollLeft;
+        const list = stops();
+        const target = direction > 0 ? list.find((stop) => stop > position + 4) : [...list].reverse().find((stop) => stop < position - 4);
+        if (target === undefined) {
+          intent = direction > 0 ? -1 : realCards.length - 1;
+          travel(direction > 0 ? 0 : stopOf(realCards[realCards.length - 1]));
+          syncBubbles();
+          return;
+        }
+        intent = -1;
+        travel(target);
+      };
+
+      // The pressed class replays the line-energise pulse on real presses.
+      const press = (edge: HTMLButtonElement, direction: number) => {
+        edge.classList.remove('pressed');
+        void edge.offsetWidth;
+        edge.classList.add('pressed');
+        setTimeout(() => edge.classList.remove('pressed'), 380);
+        go(direction);
+      };
+      prev.addEventListener('click', () => press(prev, -1), { signal });
+      next.addEventListener('click', () => press(next, 1), { signal });
+      bubbles.forEach((bubble, index) => {
+        // Bubble 0 is the bundle on desktop: it travels to the track start.
+        const target = () => (index === 0 && !mobileTrack.matches ? 0 : stopOf(realCards[index]));
+        bubble.addEventListener(
+          'click',
+          () => {
+            intent = index;
+            travel(target());
+            // A shared end position may not move the track at all; sync now so
+            // the intended bubble lights even without a scroll event.
+            syncBubbles();
+          },
+          { signal },
+        );
+      });
+      ['wheel', 'touchstart', 'pointerdown'].forEach((type) => track.addEventListener(type, () => (intent = -1), { signal, passive: true }));
+      track.addEventListener('scroll', () => syncBubbles(), { signal, passive: true });
+      syncBubbles();
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+    }
+  }
+
+  if (!customElements.get('open-source-showcase')) {
+    customElements.define('open-source-showcase', OpenSourceShowcase);
+  }
+</script>

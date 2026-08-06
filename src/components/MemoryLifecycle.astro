@@ -1,0 +1,621 @@
+---
+import AnimationWindow from './AnimationWindow.astro';
+
+interface Props {
+  storage: string;
+}
+
+const { storage }: Props = Astro.props;
+const scopes = [
+  {
+    id: 'session',
+    oldFact: 'Risk review starts at 15:00',
+    fact: 'Risk review starts at 15:30',
+    support: 'Session 42 covers the Q3 risk register',
+  },
+  {
+    id: 'agent',
+    oldFact: 'Agent sends reports immediately',
+    fact: 'Agent requests approval before sending reports',
+    support: 'Agent formats findings as action items',
+  },
+  {
+    id: 'user',
+    oldFact: 'User prefers detailed reports',
+    fact: 'User prefers concise reports',
+    support: 'User tends to review before approving',
+  },
+  {
+    id: 'store',
+    oldFact: 'Some members review on Fridays',
+    fact: 'Team reviews happen every Friday',
+    support: 'Review owners rotate across the team',
+  },
+];
+---
+
+<AnimationWindow class="memory-lifecycle-window" title="memory.lifecycle">
+  <memory-lifecycle data-stage="0" data-scope="session">
+    <div class="lifecycle-head">
+      <div class="lifecycle-title"><span>ONE CONVERSATION</span><strong>Watch memory change form</strong></div>
+      <div class="scope-picker" role="group" aria-label="Select long-term memory scope">
+        <span>RECALL SCOPE</span>
+        {
+          scopes.map(({ id }, index) => (
+            <button type="button" class:list={{ active: index === 0 }} aria-pressed={index === 0 ? 'true' : 'false'} data-scope-button={id}>
+              {id}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="identity-band">
+      <span>authenticated agent/research</span><i aria-hidden="true">→</i><b>server derives scope · never model arguments</b><i aria-hidden="true">→</i><span
+        >MemoryStore</span
+      >
+    </div>
+
+    <div class="lifecycle-track">
+      <section class="turn-source" data-lifecycle-step="0">
+        <small>REMOTE CLIENT</small><strong>Agent pod</strong>
+        <blockquote>“Remember that the risk review is every Friday.”</blockquote>
+        <span>write(turn)</span>
+      </section>
+      <i aria-hidden="true">→</i>
+      <section class="short" data-lifecycle-step="1">
+        <header><b>01</b><div><strong>Short-term</strong><small>VERBATIM · RELATIONAL</small></div></header>
+        <div class="rows"><span>turn 17</span><span>turn 18</span><span class="new-row">turn 19</span></div>
+        <p><b>3,842 / 4,000 tokens</b><i><span></span></i></p>
+      </section>
+      <i aria-hidden="true">→</i>
+      <section class="medium" data-lifecycle-step="2">
+        <header><b>02</b><div><strong>Medium-term</strong><small>ROLLING · APPEND-ONLY</small></div></header>
+        <div class="summary"><small>SESSION/42 · WINDOW 07</small><p>Risk review cadence and owners agreed…</p></div>
+        <span class="append">+ APPEND SUMMARY</span>
+      </section>
+      <i aria-hidden="true">→</i>
+      <div class="scope-plane" data-lifecycle-step="3">
+        <div class="scope-plane-label"><span>SERVER-DERIVED SCOPE</span><strong data-active-scope>SESSION</strong></div>
+        <section class="long">
+          <header><b>03</b><div><strong>Long-term</strong><small>MEM0 · VECTOR</small></div></header>
+          {
+            scopes.map(({ id, oldFact, fact, support }, index) => (
+              <div class="scope-facts" class:list={{ active: index === 0 }} data-scope-facts={id} aria-hidden={index === 0 ? 'false' : 'true'}>
+                <div class="fact correction">
+                  <p class="old-fact">{oldFact}</p>
+                  <p class="new-fact">
+                    <i aria-hidden="true" />
+                    {fact}
+                  </p>
+                  <small class="old-meta">EXTRACTED · 0.87</small>
+                  <small class="new-meta">DEDUPED · CORRECTED</small>
+                </div>
+                <div class="fact supporting">
+                  <>
+                    <p>{support}</p>
+                    <small>RECALL · 0.91</small>
+                  </>
+                </div>
+              </div>
+            ))
+          }
+          <span class="extract">FACT EXTRACTED</span>
+          <span class="forget">forget(old) · SUPERSEDED</span>
+        </section>
+      </div>
+    </div>
+
+    <div class="lifecycle-status">
+      <p><span></span><b data-lifecycle-status>New turn leaves the agent pod</b></p>
+      <p class="storage-fact"><span>STORAGE</span>{storage}</p>
+    </div>
+  </memory-lifecycle>
+</AnimationWindow>
+
+<script>
+  const lifecycleStatuses = [
+    'New turn leaves the agent pod',
+    'Verbatim turn enters the token-budgeted window',
+    'Older context is appended to the session summary',
+    'Mem0 extracts and deduplicates a durable fact',
+    'forget supersedes the stale fact with its correction',
+  ];
+
+  class MemoryLifecycle extends HTMLElement {
+    private controller = new AbortController();
+    private timer = 0;
+    private stage = 0;
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const windowElement = this.closest<HTMLElement>('animation-window');
+      const scopeButtons = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-scope-button]'));
+      if (!windowElement) return;
+
+      scopeButtons.forEach((button) => {
+        button.addEventListener('click', () => this.selectScope(button, scopeButtons), { signal: this.controller.signal });
+      });
+      windowElement.addEventListener('animationwindow:play', () => this.play(), { signal: this.controller.signal });
+      windowElement.addEventListener('animationwindow:pause', () => this.pause(), { signal: this.controller.signal });
+      this.render();
+      if (windowElement.dataset.playing === 'true') this.play();
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+      this.pause();
+    }
+
+    private selectScope(button: HTMLButtonElement, buttons: HTMLButtonElement[]) {
+      const scope = button.dataset.scopeButton ?? 'session';
+      this.dataset.scope = scope;
+      buttons.forEach((item) => {
+        const active = item === button;
+        item.classList.toggle('active', active);
+        item.setAttribute('aria-pressed', String(active));
+      });
+      const activeScope = this.querySelector<HTMLElement>('[data-active-scope]');
+      if (activeScope) activeScope.textContent = scope.toUpperCase();
+      this.querySelectorAll<HTMLElement>('[data-scope-facts]').forEach((facts) => {
+        const active = facts.dataset.scopeFacts === scope;
+        facts.classList.toggle('active', active);
+        facts.setAttribute('aria-hidden', String(!active));
+      });
+    }
+
+    private play() {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      this.pause();
+      this.timer = window.setTimeout(() => {
+        this.stage = (this.stage + 1) % lifecycleStatuses.length;
+        this.render();
+        this.play();
+      }, 1450);
+    }
+
+    private pause() {
+      window.clearTimeout(this.timer);
+    }
+
+    private render() {
+      const stage = matchMedia('(prefers-reduced-motion: reduce)').matches ? 4 : this.stage;
+      this.dataset.stage = String(stage);
+      const status = this.querySelector<HTMLElement>('[data-lifecycle-status]');
+      if (status) status.textContent = lifecycleStatuses[stage];
+      this.querySelectorAll<HTMLElement>('[data-lifecycle-step]').forEach((step) => {
+        const index = Number(step.dataset.lifecycleStep);
+        step.classList.toggle('passed', index < stage);
+        step.classList.toggle('current', index === stage || (index === 3 && stage === 4));
+      });
+    }
+  }
+
+  if (!customElements.get('memory-lifecycle')) customElements.define('memory-lifecycle', MemoryLifecycle);
+</script>
+
+<style>
+  :global(.memory-lifecycle-window) {
+    --memory: #b694ff;
+    border-color: rgba(182, 148, 255, 0.28);
+    margin-top: 38px;
+  }
+  memory-lifecycle {
+    display: block;
+    min-height: 520px;
+  }
+  .lifecycle-head {
+    align-items: center;
+    border-bottom: 1px solid var(--hairline-card);
+    display: flex;
+    gap: 24px;
+    justify-content: space-between;
+    padding: 12px 18px;
+  }
+  .lifecycle-title span,
+  .lifecycle-title strong {
+    display: block;
+  }
+  .lifecycle-title span,
+  .scope-picker > span {
+    color: var(--text-4);
+    font: var(--mono-8-5)/1 var(--font-mono);
+    letter-spacing: 0.12em;
+  }
+  .lifecycle-title strong {
+    font: 400 var(--body-18)/1.2 var(--font-display);
+    margin-top: 6px;
+  }
+  .scope-picker {
+    align-items: center;
+    display: flex;
+  }
+  .scope-picker > span {
+    margin-right: 10px;
+  }
+  .scope-picker button {
+    background: transparent;
+    border: 1px solid var(--hairline-card);
+    border-right: 0;
+    color: var(--text-3);
+    cursor: pointer;
+    font: var(--mono-8-5)/1 var(--font-mono);
+    padding: 9px 10px;
+    position: relative;
+    text-transform: uppercase;
+  }
+  .scope-picker button::after {
+    content: '';
+    inset: -8px 0;
+    position: absolute;
+  }
+  .scope-picker button:last-child {
+    border-right: 1px solid var(--hairline-card);
+  }
+  .scope-picker button.active {
+    background: rgba(182, 148, 255, 0.09);
+    box-shadow: inset 0 -2px var(--memory);
+    color: var(--memory);
+  }
+  .scope-picker button:focus-visible {
+    outline: 1px solid var(--memory);
+    outline-offset: 2px;
+  }
+  .identity-band {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.014);
+    border-bottom: 1px solid var(--hairline-card);
+    color: var(--text-3);
+    display: flex;
+    font: var(--mono-9)/1 var(--font-mono);
+    gap: 12px;
+    justify-content: center;
+    padding: 12px 18px;
+  }
+  .identity-band b {
+    color: var(--memory);
+    font-weight: 400;
+  }
+  .identity-band i {
+    color: var(--text-4);
+    font-style: normal;
+  }
+  .lifecycle-track {
+    align-items: center;
+    display: grid;
+    gap: 9px;
+    grid-template-columns: 0.8fr auto 0.9fr auto 0.95fr auto 1.25fr;
+    min-height: 385px;
+    padding: 28px 18px;
+  }
+  .lifecycle-track > i {
+    color: var(--text-4);
+    font-style: normal;
+  }
+  .lifecycle-track section,
+  .scope-plane {
+    min-height: 260px;
+    transition:
+      border-color 0.25s ease,
+      opacity 0.25s ease,
+      transform 0.25s ease;
+  }
+  .lifecycle-track > section {
+    border: 1px solid var(--hairline-card);
+    opacity: 0.3;
+    padding: 16px;
+  }
+  .lifecycle-track > section.current,
+  .lifecycle-track > section.passed,
+  .scope-plane.current,
+  .scope-plane.passed {
+    opacity: 1;
+  }
+  .lifecycle-track > section.current,
+  .scope-plane.current {
+    transform: translateY(-5px);
+  }
+  .lifecycle-track > section.current {
+    border-color: var(--memory);
+    box-shadow: 0 0 24px rgba(182, 148, 255, 0.07);
+  }
+  .turn-source {
+    background: rgba(74, 199, 255, 0.025);
+  }
+  .turn-source > small {
+    color: #4ac7ff;
+    font: var(--mono-8-5)/1 var(--font-mono);
+    letter-spacing: 0.1em;
+  }
+  .turn-source > strong {
+    display: block;
+    font: 400 var(--body-18)/1.2 var(--font-display);
+    margin-top: 13px;
+  }
+  blockquote {
+    border-left: 2px solid #4ac7ff;
+    color: var(--text-2);
+    font-size: var(--body-13);
+    line-height: 1.45;
+    margin: 22px 0;
+    padding-left: 10px;
+  }
+  .turn-source > span {
+    color: #4ac7ff;
+    font: var(--mono-9)/1 var(--font-mono);
+  }
+  section header {
+    align-items: center;
+    border-bottom: 1px solid var(--hairline-card);
+    display: flex;
+    gap: 10px;
+    padding-bottom: 12px;
+  }
+  section header > b {
+    color: var(--memory);
+    font: 400 var(--mono-9)/1 var(--font-mono);
+  }
+  section header strong,
+  section header small {
+    display: block;
+  }
+  section header strong {
+    font-size: var(--body-13);
+  }
+  section header small {
+    color: var(--text-4);
+    font: var(--mono-8-5)/1.3 var(--font-mono);
+    margin-top: 3px;
+  }
+  .rows {
+    display: grid;
+    gap: 5px;
+    margin-top: 18px;
+  }
+  .rows span {
+    background: rgba(255, 255, 255, 0.025);
+    color: var(--text-3);
+    font: var(--mono-9)/1 var(--font-mono);
+    padding: 8px;
+  }
+  .rows .new-row {
+    color: var(--memory);
+  }
+  .short > p {
+    color: var(--text-4);
+    font: var(--mono-8-5)/1 var(--font-mono);
+    margin: 16px 0 0;
+  }
+  .short > p b {
+    font-weight: 400;
+  }
+  .short > p i {
+    background: rgba(255, 255, 255, 0.05);
+    display: block;
+    height: 3px;
+    margin-top: 6px;
+  }
+  .short > p i span {
+    background: var(--memory);
+    display: block;
+    height: 100%;
+    width: 96%;
+  }
+  .summary,
+  .fact {
+    background: rgba(182, 148, 255, 0.04);
+    border: 1px solid rgba(182, 148, 255, 0.18);
+    margin-top: 20px;
+    padding: 12px;
+  }
+  .summary small,
+  .fact small {
+    color: var(--text-4);
+    font: var(--mono-8-5)/1 var(--font-mono);
+  }
+  .summary p,
+  .fact p {
+    color: var(--text-2);
+    font-size: var(--body-13);
+    line-height: 1.4;
+    margin: 8px 0 0;
+  }
+  .append,
+  .extract,
+  .forget {
+    color: var(--memory);
+    display: block;
+    font: var(--mono-8-5)/1 var(--font-mono);
+    margin-top: 18px;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  [data-stage='2'] .append,
+  [data-stage='3'] .append,
+  [data-stage='4'] .append,
+  [data-stage='3'] .extract {
+    opacity: 1;
+  }
+  .scope-plane {
+    border: 1px solid rgba(182, 148, 255, 0.2);
+    opacity: 0.3;
+    padding: 8px 8px 8px 0;
+    position: relative;
+  }
+  .scope-plane.current {
+    border-color: rgba(182, 148, 255, 0.55);
+    box-shadow: 0 0 28px rgba(182, 148, 255, 0.07);
+  }
+  .scope-plane-label {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 4px 8px 12px;
+  }
+  .scope-plane-label span,
+  .scope-plane-label strong {
+    font: var(--mono-8-5)/1 var(--font-mono);
+    letter-spacing: 0.08em;
+  }
+  .scope-plane-label span {
+    color: var(--text-4);
+  }
+  .scope-plane-label strong {
+    color: var(--memory);
+    font-weight: 400;
+  }
+  .long {
+    background: rgba(182, 148, 255, 0.025);
+    border: 1px solid var(--hairline-card);
+    min-height: 230px;
+    padding: 14px;
+  }
+  .scope-facts {
+    display: none;
+  }
+  .scope-facts.active {
+    display: block;
+  }
+  .fact {
+    margin-top: 10px;
+    padding: 9px 10px;
+  }
+  .fact p:first-child {
+    margin-top: 0;
+  }
+  .fact small {
+    display: block;
+    margin-top: 8px;
+  }
+  .new-fact {
+    display: none;
+  }
+  .new-meta {
+    display: none !important;
+  }
+  .new-fact i {
+    background: var(--memory);
+    border-radius: 50%;
+    display: inline-block;
+    height: 6px;
+    margin-right: 7px;
+    width: 6px;
+  }
+  .supporting {
+    display: none;
+  }
+  [data-stage='4'] .old-fact {
+    color: var(--text-4);
+    opacity: 0.5;
+    text-decoration: line-through;
+  }
+  [data-stage='4'] .new-fact,
+  [data-stage='4'] .supporting {
+    display: block;
+  }
+  [data-stage='4'] .old-meta {
+    display: none;
+  }
+  [data-stage='4'] .new-meta {
+    display: block !important;
+  }
+  [data-stage='4'] .extract {
+    display: none;
+  }
+  [data-stage='4'] .forget {
+    opacity: 1;
+  }
+  .storage-fact {
+    color: var(--text-4);
+    font: 8px/1.3 var(--font-mono);
+    margin: 0;
+    text-align: right;
+  }
+  .storage-fact span {
+    color: var(--memory);
+    margin-right: 7px;
+  }
+  .lifecycle-status {
+    align-items: center;
+    border-top: 1px solid var(--hairline-card);
+    display: flex;
+    justify-content: space-between;
+    min-height: 56px;
+    padding: 0 18px;
+  }
+  .lifecycle-status > p:first-child {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+    margin: 0;
+  }
+  .lifecycle-status > p:first-child > span {
+    background: var(--memory);
+    border-radius: 50%;
+    height: 6px;
+    width: 6px;
+  }
+  .lifecycle-status > p:first-child b {
+    color: var(--text-2);
+    font: 400 var(--mono-9)/1.3 var(--font-mono);
+  }
+  @media (max-width: 1000px) {
+    .lifecycle-track {
+      align-items: stretch;
+      grid-template-columns: 1fr;
+    }
+    .lifecycle-track > i {
+      text-align: center;
+      transform: rotate(90deg);
+    }
+    .lifecycle-track section,
+    .scope-plane {
+      min-height: 200px;
+    }
+  }
+  @media (max-width: 650px) {
+    .lifecycle-head,
+    .lifecycle-status {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 14px;
+      padding-block: 14px;
+    }
+    .scope-picker {
+      align-items: stretch;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      width: 100%;
+    }
+    .scope-picker > span {
+      grid-column: 1 / -1;
+      margin: 0 0 7px;
+    }
+    .scope-picker button {
+      padding-inline: 7px;
+    }
+    .identity-band {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+    .identity-band i {
+      display: none;
+    }
+    .storage-fact {
+      text-align: left;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lifecycle-track section,
+    .scope-plane,
+    .append,
+    .extract,
+    .forget {
+      transition: none;
+    }
+    .lifecycle-track > section.current,
+    .scope-plane.current {
+      transform: none;
+    }
+  }
+</style>

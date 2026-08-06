@@ -1,0 +1,255 @@
+---
+interface Category {
+  name: string;
+  emoji: string;
+  count: number;
+  anchor: string;
+}
+
+interface Props {
+  categories: Category[];
+  repository: string;
+}
+
+const { categories, repository } = Astro.props;
+const maximum = Math.max(...categories.map(({ count }) => count));
+---
+
+<category-atlas class="category-atlas" data-reveal>
+  <div class="atlas-field" aria-label="Production machine learning categories">
+    {
+      categories.map(({ name, emoji, count, anchor }, index) => {
+        const size = 104 + Math.round((count / maximum) * 94);
+        const span = count >= 39 ? 2 : 1;
+        return (
+          <a
+            class="atlas-tile"
+            href={`${repository}${anchor}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={`--atlas-size: ${size}px; --atlas-span: ${span}; --atlas-delay: ${(index % 8) * -0.42}s`}
+          >
+            <span class="atlas-emoji" aria-hidden="true">
+              {emoji}
+            </span>
+            <strong>{name}</strong>
+            <b>{count}</b>
+            <small>Browse {count} entries in this section.</small>
+          </a>
+        );
+      })
+    }
+  </div>
+
+  <div class="atlas-table" aria-label="Production machine learning category counts">
+    <div class="atlas-table-head"><strong>Category</strong><strong>Count</strong></div>
+    {
+      categories.map(({ name, count }) => (
+        <div>
+          <>
+            <span>{name}</span>
+            <strong>{count}</strong>
+          </>
+        </div>
+      ))
+    }
+  </div>
+</category-atlas>
+
+<script>
+  class CategoryAtlas extends HTMLElement {
+    private controller = new AbortController();
+    private observer?: IntersectionObserver;
+
+    connectedCallback() {
+      this.controller.abort();
+      this.controller = new AbortController();
+
+      const field = this.querySelector<HTMLElement>('.atlas-field');
+      const tiles = Array.from(this.querySelectorAll<HTMLAnchorElement>('.atlas-tile'));
+      if (!field) return;
+
+      if ('IntersectionObserver' in window) {
+        this.observer = new IntersectionObserver(
+          ([entry]) => {
+            this.toggleAttribute('data-visible', entry.isIntersecting);
+          },
+          { rootMargin: '120px 0px' },
+        );
+        this.observer.observe(field);
+      } else {
+        this.setAttribute('data-visible', '');
+      }
+
+      tiles.forEach((tile) => {
+        tile.addEventListener(
+          'click',
+          (event) => {
+            if (!window.matchMedia('(hover: none)').matches || tile.hasAttribute('data-active')) return;
+            event.preventDefault();
+            tiles.forEach((item) => item.removeAttribute('data-active'));
+            tile.setAttribute('data-active', '');
+          },
+          { signal: this.controller.signal },
+        );
+      });
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+      this.observer?.disconnect();
+    }
+  }
+
+  if (!customElements.get('category-atlas')) customElements.define('category-atlas', CategoryAtlas);
+</script>
+
+<style>
+  .category-atlas {
+    display: block;
+    margin-top: 34px;
+  }
+  .atlas-field {
+    display: grid;
+    gap: 10px;
+    grid-auto-flow: dense;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .atlas-tile {
+    background: linear-gradient(150deg, rgba(94, 230, 160, 0.1), rgba(255, 255, 255, 0.025) 60%);
+    border: 1px solid var(--hairline-card);
+    border-radius: var(--radius-card);
+    color: var(--text-1);
+    display: grid;
+    grid-column: span var(--atlas-span);
+    grid-template-columns: 1fr auto;
+    min-height: var(--atlas-size);
+    overflow: hidden;
+    padding: 18px;
+    position: relative;
+    transform: translateY(0);
+    transition:
+      border-color 0.22s ease,
+      box-shadow 0.22s ease,
+      transform 0.22s ease;
+  }
+  .atlas-tile:hover,
+  .atlas-tile:focus-visible,
+  .atlas-tile[data-active] {
+    border-color: rgba(94, 230, 160, 0.55);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+    outline: none;
+    transform: translateY(-6px);
+  }
+  .atlas-emoji {
+    font-size: 24px;
+  }
+  .atlas-tile > strong {
+    align-self: end;
+    font: 400 clamp(16px, 1.5vw, 21px)/1.15 var(--font-display);
+    grid-column: 1;
+    max-width: 280px;
+  }
+  .atlas-tile > b {
+    color: var(--accent);
+    font: 400 20px/1 var(--font-mono);
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .atlas-tile > small {
+    color: var(--text-2);
+    font: var(--mono-10)/1.5 var(--font-mono);
+    grid-column: 1 / -1;
+    margin-top: 12px;
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(6px);
+    transition:
+      max-height 0.22s ease,
+      opacity 0.22s ease,
+      transform 0.22s ease;
+  }
+  .atlas-tile:hover > small,
+  .atlas-tile:focus-visible > small,
+  .atlas-tile[data-active] > small {
+    max-height: 48px;
+    opacity: 1;
+    transform: none;
+  }
+  .atlas-table {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    category-atlas[data-visible] .atlas-tile {
+      animation: atlas-drift 4.8s ease-in-out var(--atlas-delay) infinite alternate;
+    }
+    category-atlas[data-visible] .atlas-tile:hover,
+    category-atlas[data-visible] .atlas-tile:focus-visible,
+    category-atlas[data-visible] .atlas-tile[data-active] {
+      animation-play-state: paused;
+    }
+  }
+
+  @keyframes atlas-drift {
+    from {
+      translate: 0 0;
+    }
+    to {
+      translate: 0 -5px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .atlas-field {
+      display: none;
+    }
+    .atlas-table {
+      border: 1px solid var(--hairline-card);
+      border-radius: var(--radius-card);
+      display: block;
+      overflow: hidden;
+    }
+    .atlas-table > div {
+      border-bottom: 1px solid var(--hairline);
+      display: grid;
+      gap: 20px;
+      grid-template-columns: 1fr auto;
+      padding: 13px 16px;
+    }
+    .atlas-table > div:last-child {
+      border-bottom: 0;
+    }
+    .atlas-table-head {
+      background: var(--bg-inset);
+      color: var(--text-3);
+      font: var(--mono-10)/1 var(--font-mono);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .atlas-table > div > strong:last-child {
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-weight: 400;
+    }
+  }
+
+  @media (max-width: 800px) {
+    .atlas-field {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .atlas-tile {
+      grid-column: span 1;
+      min-height: max(132px, calc(var(--atlas-size) * 0.8));
+    }
+  }
+
+  @media (max-width: 480px) {
+    .atlas-field {
+      grid-template-columns: 1fr;
+    }
+    .atlas-tile {
+      min-height: 126px;
+    }
+  }
+</style>

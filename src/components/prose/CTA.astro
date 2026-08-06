@@ -1,0 +1,24 @@
+---
+import { isExternalHref } from '../../utils/external-links.mjs';
+
+const { href, label } = Astro.props;
+const hasBody = Astro.slots.has('default');
+const external = isExternalHref(href);
+---
+
+<aside class:list={['cta-block', 'prose-block', !hasBody && 'cta-only']} data-reveal>
+  {
+    hasBody && (
+      <div class="block-body">
+        <slot />
+      </div>
+    )
+  }
+  <a href={href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>{label}</a>
+</aside>
+
+<style>
+  .cta-only {
+    justify-content: flex-end;
+  }
+</style>

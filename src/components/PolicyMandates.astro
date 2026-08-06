@@ -1,0 +1,95 @@
+---
+interface Mandate {
+  active?: boolean;
+  role: string;
+}
+
+interface MandateGroup {
+  body: string;
+  mandates: Mandate[];
+}
+
+interface Props {
+  groups: MandateGroup[];
+}
+
+const { groups } = Astro.props;
+---
+
+<div class="mandate-grid">
+  {
+    groups.map((group) => (
+      <article>
+        <p>{group.body}</p>
+        <div>
+          {group.mandates.map((mandate) => (
+            <p class="mandate-row">
+              <span>{mandate.role}</span>
+              {mandate.active && <i class="active-pill">ACTIVE</i>}
+            </p>
+          ))}
+        </div>
+      </article>
+    ))
+  }
+</div>
+
+<style>
+  .mandate-grid {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 38px;
+  }
+
+  article {
+    border: 1px solid var(--hairline-card);
+    min-height: 250px;
+    padding: 28px;
+  }
+
+  article > p {
+    color: var(--accent);
+    font: var(--mono-10) / 1 var(--font-mono);
+    letter-spacing: 0.12em;
+    margin-bottom: 28px;
+    text-transform: uppercase;
+  }
+
+  .mandate-row {
+    border-top: 1px solid var(--hairline);
+    color: var(--text-2);
+    display: grid;
+    font-size: 14px;
+    gap: 18px;
+    grid-template-columns: 1fr auto;
+    line-height: 1.55;
+    margin: 0;
+    padding: 15px 0;
+  }
+
+  .active-pill {
+    align-self: center;
+    background: var(--accent);
+    border-radius: var(--radius-pill);
+    color: #0f100f;
+    font: 600 var(--mono-9) / 1 var(--font-mono);
+    font-style: normal;
+    justify-self: end;
+    letter-spacing: 0.12em;
+    padding: 6px 12px;
+  }
+
+  @media (max-width: 800px) {
+    .mandate-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    article {
+      min-height: auto;
+      padding: 22px;
+    }
+  }
+</style>

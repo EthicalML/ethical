@@ -1,0 +1,146 @@
+---
+import { Code } from 'astro:components';
+import AnimationWindow from './AnimationWindow.astro';
+
+interface Props {
+  python: string;
+  cpp: string;
+}
+
+const { python, cpp } = Astro.props;
+---
+
+<code-tabs class="code-tabs prose-block" data-reveal>
+  <AnimationWindow title="kompute.py" chromeOnly>
+    <button slot="controls" type="button" class="copy-button" data-copy>Copy Python</button>
+    <div class="code-toolbar" role="tablist" aria-label="Kompute language examples">
+      <button type="button" role="tab" aria-selected="true" aria-controls="kompute-python" data-language="python">Python</button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="kompute-cpp" data-language="cpp">C++</button>
+    </div>
+    <div id="kompute-python" role="tabpanel" data-code-panel="python"><Code code={python} lang="python" theme="github-dark" tabindex="0" /></div>
+    <div id="kompute-cpp" role="tabpanel" data-code-panel="cpp" hidden><Code code={cpp} lang="cpp" theme="github-dark" tabindex="0" /></div>
+  </AnimationWindow>
+</code-tabs>
+
+<script>
+  class CodeTabs extends HTMLElement {
+    private controller = new AbortController();
+    private resetTimer = 0;
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const tabs = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-language]'));
+      const panels = Array.from(this.querySelectorAll<HTMLElement>('[data-code-panel]'));
+      const copy = this.querySelector<HTMLButtonElement>('[data-copy]');
+      const title = this.querySelector<HTMLElement>('[data-window-title]');
+      let active = 'python';
+
+      const select = (language: string) => {
+        active = language;
+        tabs.forEach((tab) => tab.setAttribute('aria-selected', String(tab.dataset.language === language)));
+        panels.forEach((panel) => {
+          panel.hidden = panel.dataset.codePanel !== language;
+        });
+        if (copy) copy.textContent = `Copy ${language === 'cpp' ? 'C++' : 'Python'}`;
+        if (title) title.textContent = language === 'cpp' ? 'kompute.cpp' : 'kompute.py';
+      };
+
+      tabs.forEach((tab) => tab.addEventListener('click', () => select(tab.dataset.language ?? 'python'), { signal: this.controller.signal }));
+      copy?.addEventListener(
+        'click',
+        async () => {
+          const code = this.querySelector<HTMLElement>(`[data-code-panel="${active}"] code`)?.textContent ?? '';
+          await navigator.clipboard.writeText(code);
+          copy.textContent = 'Copied';
+          this.resetTimer = window.setTimeout(() => {
+            if (copy.isConnected) copy.textContent = `Copy ${active === 'cpp' ? 'C++' : 'Python'}`;
+          }, 1400);
+        },
+        { signal: this.controller.signal },
+      );
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+      window.clearTimeout(this.resetTimer);
+    }
+  }
+
+  if (!customElements.get('code-tabs')) customElements.define('code-tabs', CodeTabs);
+</script>
+
+<style>
+  code-tabs {
+    display: block;
+    margin-top: 34px;
+  }
+  .code-toolbar {
+    align-items: center;
+    border-bottom: 1px solid var(--hairline);
+    display: flex;
+    padding: 0 16px;
+  }
+  button {
+    background: transparent;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    border-radius: var(--radius-control);
+    color: var(--text-4);
+    cursor: pointer;
+    font: 11px var(--font-mono);
+    min-height: 44px;
+    padding: 16px 14px 14px;
+    position: relative;
+  }
+  button::after {
+    content: '';
+    inset: 0 -4px;
+    position: absolute;
+  }
+  button[aria-selected='true'] {
+    border-bottom-color: var(--accent);
+    color: var(--accent);
+  }
+  .copy-button {
+    border-left: 1px solid var(--hairline-card);
+    color: var(--text-2);
+    min-width: 100px;
+    padding: 0 12px;
+  }
+  .copy-button:hover,
+  .copy-button:focus-visible {
+    background: var(--accent-wash-09);
+    color: var(--accent);
+    outline: none;
+  }
+  [data-code-panel] :global(.astro-code) {
+    background: #0d1117 !important;
+    font: 12px/1.65 var(--font-mono);
+    margin: 0;
+    max-height: 620px;
+    overflow: auto;
+    padding: 24px;
+    tab-size: 4;
+  }
+  [data-code-panel] :global(code) {
+    font: inherit;
+  }
+  [hidden] {
+    display: none;
+  }
+  @media (max-width: 520px) {
+    .code-toolbar {
+      padding-inline: 8px;
+    }
+    button {
+      padding-inline: 9px;
+    }
+    .copy-button {
+      min-width: auto;
+    }
+    [data-code-panel] :global(.astro-code) {
+      font-size: 11px;
+      padding: 18px;
+    }
+  }
+</style>

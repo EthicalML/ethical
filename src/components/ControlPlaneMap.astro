@@ -1,0 +1,417 @@
+---
+import AnimationWindow from './AnimationWindow.astro';
+
+const resources = [
+  {
+    id: 'agent',
+    name: 'Agent',
+    color: '#5ee6a0',
+    description: 'A Kubernetes resource for a running agent and its model, tools, peers and memory binding.',
+    why: 'Use it when you want one deployable agent endpoint with its dependencies declared together.',
+    example: 'kaos agent deploy my-agent --modelapi my-api --model "smollm2:135m"',
+    docs: 'https://axsaucedo.github.io/kaos/dev/operator/agent-crd.html',
+  },
+  {
+    id: 'model',
+    name: 'ModelAPI',
+    color: '#4ac7ff',
+    description: 'The LLM access layer, either proxied through LiteLLM or hosted in-cluster with Ollama.',
+    why: 'Use it to give agents a named model endpoint without coupling them to provider infrastructure.',
+    example: 'kaos modelapi deploy my-api --mode Hosted --model "smollm2:135m"',
+    docs: 'https://axsaucedo.github.io/kaos/dev/operator/modelapi-crd.html',
+  },
+  {
+    id: 'mcp',
+    name: 'MCPServer',
+    color: '#e8b45c',
+    description: 'A deployable tool server that speaks the Model Context Protocol.',
+    why: 'Use it to make tools available to agents as a declared, operator-managed dependency.',
+    example: 'kind: MCPServer\nspec:\n  runtime: python-string',
+    docs: 'https://axsaucedo.github.io/kaos/dev/operator/mcpserver-crd.html',
+  },
+  {
+    id: 'memory',
+    name: 'MemoryStore',
+    color: '#b694ff',
+    description: 'A central memory service that agents can bind to for durable recall across sessions.',
+    why: 'Use it when an agent needs shared, scoped memory beyond its local conversation window.',
+    example: 'kaos memorystore create support-memory --modelapi support-modelapi',
+    docs: 'https://axsaucedo.github.io/kaos/dev/operator/memory-architecture.html#control-plane',
+  },
+  {
+    id: 'access',
+    name: 'AccessGrant',
+    color: '#e8b45c',
+    description: 'A declarative binding between a user, group or agent and the resources it may reach.',
+    why: 'Use it to make entry and internal movement explicit when authorization is enabled.',
+    example: 'kaos auth grant create --group researchers --resource agent/researcher',
+    docs: 'https://axsaucedo.github.io/kaos/dev/security/authorization.html#data-kaos-user-grants',
+  },
+];
+---
+
+<control-plane-map>
+  <AnimationWindow title="kaos control plane" class="control-plane-window" chromeOnly>
+    <div class="map-shell">
+      <div class="map-stage">
+        <kaos-architecture variant="interactive" aria-label="Interactive KAOS control plane architecture; select a custom resource to inspect it">
+          <canvas aria-hidden="true"></canvas>
+        </kaos-architecture>
+        <p class="map-hint"><span aria-hidden="true">↗</span> Select a resource node</p>
+        <div class="map-legend" aria-hidden="true"><span><i></i>CRD</span><span><i></i>RECONCILED RUNTIME</span></div>
+      </div>
+
+      <div class="map-detail">
+        <div class="resource-picker">
+          <p>SELECT A RESOURCE</p>
+          <div role="tablist" aria-label="KAOS custom resources">
+            {
+              resources.map(({ id, name, color }, index) => (
+                <button
+                  type="button"
+                  role="tab"
+                  id={`resource-tab-${id}`}
+                  aria-controls={`resource-panel-${id}`}
+                  aria-selected={index === 0 ? 'true' : 'false'}
+                  tabindex={index === 0 ? 0 : -1}
+                  data-resource={id}
+                  style={`--resource-color: ${color}`}
+                >
+                  <>
+                    <i aria-hidden="true" />
+                    <span>{name}</span>
+                    <small>SELECT</small>
+                  </>
+                </button>
+              ))
+            }
+          </div>
+        </div>
+
+        <div class="resource-panels">
+          {
+            resources.map(({ id, name, description, why, example, docs }, index) => (
+              <article role="tabpanel" id={`resource-panel-${id}`} aria-labelledby={`resource-tab-${id}`} data-resource-panel={id} hidden={index !== 0}>
+                <p class="eyebrow">KIND · {name}</p>
+                <h3>{name}</h3>
+                <p class="description">{description}</p>
+                <div class="use-case">
+                  <h4>Why use it</h4>
+                  <p>{why}</p>
+                </div>
+                <div class="example">
+                  <h4>Try it</h4>
+                  <pre>
+                    <code>{example}</code>
+                  </pre>
+                </div>
+                <a href={docs} target="_blank" rel="noopener noreferrer">
+                  Read the docs
+                </a>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </AnimationWindow>
+</control-plane-map>
+
+<script>
+  import '../shared/canvas/KaosArchitecture';
+
+  interface InteractiveKaosGraph extends HTMLElement {
+    selectResource(id: string): void;
+  }
+
+  class ControlPlaneMap extends HTMLElement {
+    private controller = new AbortController();
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const graph = this.querySelector<InteractiveKaosGraph>('kaos-architecture');
+      const tabs = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-resource]'));
+      const panels = Array.from(this.querySelectorAll<HTMLElement>('[data-resource-panel]'));
+      if (!graph || !tabs.length || !panels.length) return;
+
+      const select = (id: string, focus = false) => {
+        tabs.forEach((tab) => {
+          const active = tab.dataset.resource === id;
+          tab.setAttribute('aria-selected', String(active));
+          tab.tabIndex = active ? 0 : -1;
+          if (active && focus) tab.focus();
+        });
+        panels.forEach((panel) => (panel.hidden = panel.dataset.resourcePanel !== id));
+        graph.selectResource(id);
+      };
+
+      tabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => select(tab.dataset.resource!), { signal: this.controller.signal });
+        tab.addEventListener(
+          'keydown',
+          (event) => {
+            if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+            event.preventDefault();
+            const offset = event.key === 'ArrowRight' ? 1 : -1;
+            const next = tabs[(index + offset + tabs.length) % tabs.length];
+            select(next.dataset.resource!, true);
+          },
+          { signal: this.controller.signal },
+        );
+      });
+      graph.addEventListener('kaosarchitecture:select', (event) => select((event as CustomEvent<{ id: string }>).detail.id), {
+        signal: this.controller.signal,
+      });
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+    }
+  }
+
+  if (!customElements.get('control-plane-map')) customElements.define('control-plane-map', ControlPlaneMap);
+</script>
+
+<style>
+  control-plane-map {
+    display: block;
+    margin-top: 38px;
+  }
+  .control-plane-window {
+    min-height: 620px;
+  }
+  .map-shell {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(330px, 0.78fr);
+    min-height: 576px;
+  }
+  .map-stage {
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px), var(--bg-inset);
+    background-size: 40px 40px;
+    min-height: 576px;
+    overflow: hidden;
+    position: relative;
+  }
+  kaos-architecture,
+  canvas {
+    height: 100%;
+    inset: 0;
+    position: absolute;
+    width: 100%;
+  }
+  .map-hint {
+    align-items: center;
+    color: var(--text-2);
+    display: flex;
+    font: var(--mono-10)/1 var(--font-mono);
+    gap: 8px;
+    left: 20px;
+    letter-spacing: 0.08em;
+    margin: 0;
+    position: absolute;
+    top: 20px;
+  }
+  .map-hint span {
+    color: var(--accent);
+    font-size: 15px;
+  }
+  .map-legend {
+    bottom: 18px;
+    display: flex;
+    font: var(--mono-9)/1 var(--font-mono);
+    gap: 20px;
+    left: 20px;
+    letter-spacing: 0.08em;
+    position: absolute;
+  }
+  .map-legend span {
+    align-items: center;
+    color: var(--text-3);
+    display: flex;
+    gap: 7px;
+  }
+  .map-legend i {
+    border: 1px solid var(--accent);
+    display: block;
+    height: 7px;
+    transform: rotate(45deg);
+    width: 7px;
+  }
+  .map-legend span:first-child i {
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+    transform: none;
+  }
+  .map-detail {
+    border-left: 1px solid var(--hairline-card);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .resource-picker {
+    border-bottom: 1px solid var(--hairline-card);
+    padding: 16px;
+  }
+  .resource-picker > p {
+    color: var(--text-4);
+    font: var(--mono-9)/1 var(--font-mono);
+    letter-spacing: 0.13em;
+    margin: 0 0 10px;
+  }
+  .resource-picker [role='tablist'] {
+    display: grid;
+    gap: 6px;
+    grid-template-columns: 1fr 1fr;
+  }
+  .resource-picker button {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.018);
+    border: 1px solid var(--hairline-card);
+    color: var(--text-2);
+    cursor: pointer;
+    display: grid;
+    font-family: var(--font-mono);
+    font-size: var(--mono-9);
+    gap: 7px;
+    grid-template-columns: 9px 1fr;
+    min-width: 0;
+    padding: 10px;
+    text-align: left;
+    transition:
+      background var(--duration-2),
+      border-color var(--duration-2),
+      color var(--duration-2);
+  }
+  .resource-picker button:last-child {
+    grid-column: 1 / -1;
+  }
+  .resource-picker button i {
+    background: var(--resource-color);
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+    height: 8px;
+    opacity: 0.7;
+    width: 8px;
+  }
+  .resource-picker button small {
+    color: var(--resource-color);
+    font-size: 7.5px;
+    grid-column: 2;
+    letter-spacing: 0.08em;
+    opacity: 0;
+  }
+  .resource-picker button:hover,
+  .resource-picker button:focus-visible,
+  .resource-picker button[aria-selected='true'] {
+    background: color-mix(in srgb, var(--resource-color) 9%, transparent);
+    border-color: color-mix(in srgb, var(--resource-color) 55%, transparent);
+    color: var(--text-1);
+    outline: none;
+  }
+  .resource-picker button:hover small,
+  .resource-picker button:focus-visible small,
+  .resource-picker button[aria-selected='true'] small {
+    opacity: 1;
+  }
+  .resource-panels {
+    flex: 1;
+  }
+  article {
+    animation: panel-in 0.28s var(--ease-panel);
+    padding: 25px 24px 22px;
+  }
+  article[hidden] {
+    display: none;
+  }
+  article h3 {
+    font: 400 var(--display-34)/1 var(--font-display);
+    margin: 10px 0 12px;
+  }
+  article .description,
+  .use-case p {
+    color: var(--text-2);
+    font-size: var(--body-14);
+    line-height: 1.55;
+    margin: 0;
+  }
+  article h4 {
+    color: var(--text-4);
+    font: var(--mono-9)/1 var(--font-mono);
+    letter-spacing: 0.1em;
+    margin: 0 0 7px;
+    text-transform: uppercase;
+  }
+  .use-case,
+  .example {
+    border-top: 1px solid var(--hairline);
+    margin-top: 17px;
+    padding-top: 14px;
+  }
+  pre {
+    background: rgba(0, 0, 0, 0.22);
+    border: 1px solid var(--hairline-card);
+    color: var(--text-1);
+    font: var(--mono-9)/1.5 var(--font-mono);
+    margin: 0;
+    overflow-x: auto;
+    padding: 10px 12px;
+    white-space: pre-wrap;
+  }
+  pre code {
+    direction: ltr;
+    display: block;
+    text-align: left;
+    unicode-bidi: plaintext;
+  }
+  article > a {
+    color: var(--accent);
+    display: inline-block;
+    font-size: var(--body-13);
+    margin-top: 16px;
+  }
+  @keyframes panel-in {
+    from {
+      opacity: 0;
+      transform: translateX(8px);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    article {
+      animation: none;
+    }
+  }
+  @media (max-width: 900px) {
+    .map-shell {
+      grid-template-columns: 1fr;
+    }
+    .map-stage {
+      min-height: 460px;
+    }
+    .map-detail {
+      border-left: 0;
+      border-top: 1px solid var(--hairline-card);
+    }
+    .resource-picker [role='tablist'] {
+      grid-template-columns: repeat(5, 1fr);
+    }
+    .resource-picker button:last-child {
+      grid-column: auto;
+    }
+  }
+  @media (max-width: 620px) {
+    .map-stage {
+      min-height: 390px;
+    }
+    .resource-picker [role='tablist'] {
+      grid-template-columns: 1fr 1fr;
+    }
+    .resource-picker button:last-child {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (max-width: 799px) {
+    .map-stage {
+      aspect-ratio: 1.55;
+      min-height: 0;
+    }
+  }
+</style>

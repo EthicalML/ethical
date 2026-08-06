@@ -1,0 +1,17 @@
+---
+import { getCollection, render } from 'astro:content';
+import PrincipleLayout from '../../layouts/PrincipleLayout.astro';
+
+export async function getStaticPaths() {
+  const principles = await getCollection('principles');
+  return principles.map((principle) => ({
+    params: { number: principle.data.number },
+    props: { principle },
+  }));
+}
+
+const { principle } = Astro.props;
+const { Content } = await render(principle);
+---
+
+<PrincipleLayout data={principle.data} Content={Content} />

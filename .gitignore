@@ -74,8 +74,18 @@ bower_components
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release
 
-# Dependency directories
+# Dependency directories. Both forms: the trailing-slash pattern does not match
+# the node_modules symlink a git worktree carries, which is how one was once
+# committed and clobbered the main tree's real directory on merge.
 node_modules/
+node_modules
+
+# Astro build output and generated metadata
+dist/
+.astro/
+
+# Local verification captures
+scripts/verify/out/
 
 # Tags
 tags
@@ -92,3 +102,11 @@ tmp/
 
 .claude
 CLAUDE.md
+tmp2
+.obsidian/
+.github/.obsidian/
+
+# Local build environment (FORM_ENDPOINT etc.)
+.env
+.env.*
+!.env.example

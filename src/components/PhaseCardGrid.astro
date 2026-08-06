@@ -1,0 +1,71 @@
+---
+interface Props {
+  cards: Array<{
+    label: string;
+    title: string;
+    details: string[];
+  }>;
+  eyebrow: string;
+  heading: string;
+}
+
+const { cards, eyebrow, heading } = Astro.props;
+---
+
+{
+  /* Head and the phase grid are their own reveal roots (global reveal threshold). The
+  grid reveals as one: its backdrop paints the hairline seams, so individually hidden
+  cards would leave it showing as a bare gray slab. */
+}
+<section id="strategy" class="strategy home-section" aria-labelledby="phases-heading">
+  <p class="eyebrow" data-reveal>{eyebrow}</p>
+  <h2 id="phases-heading" data-reveal>{heading}</h2>
+  <phase-card-grid>
+    <div class="phase-grid" data-reveal>
+      {
+        cards.map((card, index) => (
+          <article class:list={['phase-card', index === 0 && 'active']}>
+            <p class="phase-label">{card.label}</p>
+            <h3>{card.title}</h3>
+            <div class="phase-details">
+              {card.details.map((detail) => (
+                <span>{detail}</span>
+              ))}
+            </div>
+            <div class="phase-rule" style={`--rule-opacity:${[0.35, 0.55, 0.75, 1][index]}`} />
+          </article>
+        ))
+      }
+    </div>
+  </phase-card-grid>
+</section>
+<script>
+  class PhaseCardGrid extends HTMLElement {
+    private controller = new AbortController();
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const cards = Array.from(this.querySelectorAll<HTMLElement>('.phase-card'));
+      if (!cards.length) return;
+
+      const select = (index: number) => {
+        cards.forEach((card, cardIndex) => {
+          card.classList.toggle('active', cardIndex === index);
+        });
+      };
+      cards.forEach((card, index) => {
+        card.addEventListener('mouseenter', () => select(index), {
+          signal: this.controller.signal,
+        });
+      });
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+    }
+  }
+
+  if (!customElements.get('phase-card-grid')) {
+    customElements.define('phase-card-grid', PhaseCardGrid);
+  }
+</script>

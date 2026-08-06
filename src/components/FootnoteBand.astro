@@ -1,0 +1,51 @@
+---
+import AffiliationMarquee from './AffiliationMarquee.astro';
+
+const footer = {
+  about: {
+    eyebrow: 'ABOUT THE INSTITUTE',
+    text: 'An independent research institute working to ensure that frontier AI is safe, aligned and accountable to people and society.',
+  },
+  talksEyebrow: 'TALKS & KEYNOTES',
+  elsewhere: {
+    eyebrow: 'ELSEWHERE',
+    links: [
+      { label: 'GitHub ↗', href: '/open-source/' },
+      { label: 'LinkedIn ↗', href: '/network/' },
+      { label: 'YouTube ↗', href: '/talks/' },
+      { label: 'Contact the Institute ↗', href: '/contact/' },
+    ],
+  },
+};
+const talks = [
+  { kind: 'TALK', title: 'NeurIPS 2023 Workshop Keynote' },
+  { kind: 'TALK', title: 'KubeCon Europe Keynote' },
+];
+---
+
+<aside class="footnote-band" data-reveal>
+  <div class="footnote-about">
+    <p class="eyebrow">{footer.about.eyebrow}</p><p>{footer.about.text}</p>
+    <AffiliationMarquee />
+  </div>
+  <div class="footnote-talks">
+    <p class="eyebrow">{footer.talksEyebrow}</p>{
+      talks.map((talk) => (
+        <a href="/talks/">
+          <>
+            <small>{talk.kind}</small>
+            <span>{talk.title}</span>
+            <b>↗</b>
+          </>
+        </a>
+      ))
+    }
+    <a class="footnote-all-talks" href="/talks/">All talks</a>
+  </div>
+  <div class="footnote-elsewhere">
+    <p class="eyebrow">{footer.elsewhere.eyebrow}</p><div class="footnote-links">
+      {footer.elsewhere.links.map(({ label, href }) => <a href={href}>{label}</a>)}
+    </div>
+  </div>
+  <p class="footnote-legal">© {new Date().getFullYear()} The Institute for Ethical AI Alignment & Safety</p>
+</aside>

@@ -1,0 +1,418 @@
+---
+import KaosArchitecture from './KaosArchitecture.astro';
+import KomputeCube from './KomputeCube.astro';
+
+interface Project {
+  pills: string[];
+  title: string;
+  rail?: string;
+  subtitle: string;
+  visual: 'kaos' | 'kompute' | 'xai' | 'production-ml';
+  href: string;
+}
+
+interface Props {
+  projects: Project[];
+}
+
+const { projects } = Astro.props;
+const panelId = (title: string) => `project-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+// Each panel title morphs into its destination hero h1. The name matches the hero's
+// transition:name on the detail page; kaos-title is shared with the homepage source.
+const morphName = (visual: string) => `${visual}-title`;
+---
+
+<project-portal class="project-portal">
+  <nav class="portal-rail" aria-label="Open-source projects">
+    <span>PROJECTS</span>
+    <div class="portal-rail-list">
+      <span class="portal-rail-thumb" aria-hidden="true"></span>
+      {
+        projects.map((project, index) => (
+          <a href={`#${panelId(project.title)}`} class:list={{ active: index === 0 }} aria-current={index === 0 ? 'true' : undefined}>
+            <i>{String(index + 1).padStart(2, '0')}</i>
+            {project.rail ?? project.title}
+          </a>
+        ))
+      }
+    </div>
+    <span class="portal-rail-hint" aria-hidden="true">SCROLL ↓</span>
+  </nav>
+
+  <div class="portal-panels">
+    {
+      projects.map((project) => (
+        <article id={panelId(project.title)} class={`portal-panel visual-${project.visual}`} data-project-panel data-reveal>
+          <div class="portal-visual" aria-hidden="true">
+            {project.visual === 'kaos' && <KaosArchitecture panel />}
+            {project.visual === 'kompute' && <KomputeCube embedded backdrop />}
+            {project.visual === 'xai' && (
+              <svg viewBox="0 0 640 420" role="presentation">
+                <g class="plot-grid">
+                  <path d="M92 52V350H590" />
+                  <path d="M92 126H590M92 201H590M92 276H590" />
+                </g>
+                <g class="plot-bars">
+                  <rect x="145" y="102" width="74" height="248" />
+                  <rect x="279" y="226" width="74" height="124" />
+                  <rect x="413" y="302" width="74" height="48" />
+                </g>
+                <g class="plot-labels">
+                  <text x="182" y="378">
+                    CLASS A
+                  </text>
+                  <text x="316" y="378">
+                    CLASS B
+                  </text>
+                  <text x="450" y="378">
+                    CLASS C
+                  </text>
+                </g>
+              </svg>
+            )}
+            {project.visual === 'production-ml' && (
+              <category-constellation>
+                <canvas />
+              </category-constellation>
+            )}
+          </div>
+
+          <div class="portal-copy">
+            <div class="portal-pills">
+              {project.pills.map((pill) => (
+                <span>{pill}</span>
+              ))}
+            </div>
+            <h2 data-morph-source={morphName(project.visual)} data-morph-name={morphName(project.visual)}>
+              {project.title}
+            </h2>
+            <p>{project.subtitle}</p>
+            <a class="portal-enter" href={project.href} data-morph-pair={morphName(project.visual)}>
+              Enter
+            </a>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</project-portal>
+
+<style>
+  .project-portal {
+    border-bottom: 1px solid var(--hairline);
+    display: grid;
+    grid-template-columns: 190px minmax(0, 1fr);
+    padding: 48px 48px 96px;
+  }
+
+  .portal-rail {
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    padding: 28px 24px 0 0;
+    position: sticky;
+    top: 88px;
+    z-index: 3;
+  }
+
+  .portal-rail > span {
+    color: var(--text-4);
+    font: var(--mono-9)/1 var(--font-mono);
+    letter-spacing: 0.14em;
+    margin-bottom: 18px;
+  }
+
+  /* The list is a continuous vertical track; a single accent thumb slides along it to the
+     active project, sized and positioned from JS. This reads as a scroll position rather
+     than a set of tabs, and only one indicator ever moves so there is nothing to jitter. */
+  .portal-rail-list {
+    border-left: 1px solid var(--hairline-card);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .portal-rail-thumb {
+    background: var(--accent);
+    height: var(--thumb-height, 0);
+    left: -1px;
+    position: absolute;
+    top: var(--thumb-top, 0);
+    transition:
+      top var(--duration-3) ease,
+      height var(--duration-3) ease;
+    width: 2px;
+  }
+
+  .portal-rail a {
+    color: var(--text-3);
+    font-size: 13px;
+    line-height: 1.3;
+    padding: 10px 0 10px 14px;
+    transition: color var(--duration-3);
+  }
+
+  .portal-rail a i {
+    color: var(--text-4);
+    display: block;
+    font: var(--mono-8-5)/1 var(--font-mono);
+    margin-bottom: 5px;
+    transition: color var(--duration-3);
+  }
+
+  .portal-rail a.active,
+  .portal-rail a.active i {
+    color: var(--text-1);
+  }
+
+  .portal-rail-hint {
+    color: var(--text-4);
+    font: var(--mono-9)/1 var(--font-mono);
+    letter-spacing: 0.14em;
+    margin-top: 18px;
+    opacity: 0.7;
+  }
+
+  .portal-panels {
+    display: grid;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .portal-panel {
+    align-items: end;
+    border: 1px solid var(--hairline-card);
+    display: grid;
+    min-height: min(76vh, 760px);
+    overflow: hidden;
+    padding: 48px;
+    position: relative;
+    scroll-margin-top: 88px;
+  }
+
+  .portal-panel::after {
+    background: linear-gradient(90deg, rgba(15, 16, 15, 0.97) 0%, rgba(15, 16, 15, 0.78) 42%, rgba(15, 16, 15, 0.08) 78%);
+    content: '';
+    inset: 0;
+    pointer-events: none;
+    position: absolute;
+  }
+
+  .portal-visual {
+    inset: 0 0 0 38%;
+    opacity: 0.82;
+    position: absolute;
+  }
+
+  .portal-visual :global(.kaos-architecture-mount),
+  .portal-visual :global(.kompute-canvas-mount),
+  .portal-visual :global(category-constellation),
+  .portal-visual canvas,
+  .portal-visual svg {
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+
+  .portal-copy {
+    max-width: 620px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .visual-kaos .portal-visual :global(.kaos-architecture-mount) {
+    height: min(500px, 100%);
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .portal-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  .portal-pills span {
+    border: 1px solid rgba(94, 230, 160, 0.32);
+    border-radius: var(--radius-pill);
+    color: var(--accent);
+    font: var(--mono-9)/1 var(--font-mono);
+    letter-spacing: 0.08em;
+    padding: 7px 9px;
+  }
+
+  .portal-copy h2 {
+    font: 300 clamp(52px, 7vw, 94px)/0.95 var(--font-display);
+    letter-spacing: -0.03em;
+    margin: 28px 0 18px;
+  }
+
+  .portal-copy p {
+    color: var(--text-2);
+    font-size: 17px;
+    line-height: 1.55;
+    margin: 0;
+    max-width: 560px;
+  }
+
+  .portal-enter {
+    border-bottom: 1px solid var(--accent);
+    color: var(--accent);
+    display: inline-block;
+    font: var(--mono-10-5)/1 var(--font-mono);
+    letter-spacing: 0.1em;
+    margin-top: 34px;
+    padding-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .visual-kompute .portal-visual {
+    opacity: 0.7;
+  }
+
+  .plot-grid {
+    fill: none;
+    stroke: rgba(244, 242, 238, 0.14);
+    stroke-width: 1;
+  }
+
+  .plot-bars {
+    fill: rgba(94, 230, 160, 0.28);
+    stroke: var(--accent);
+    stroke-width: 1;
+  }
+
+  .plot-labels {
+    fill: rgba(244, 242, 238, 0.5);
+    font: 10px var(--font-mono);
+    text-anchor: middle;
+  }
+
+  @media (max-width: 800px) {
+    .project-portal {
+      display: block;
+      padding: 32px 18px 72px;
+    }
+
+    .portal-rail {
+      background: rgba(19, 20, 20, 0.94);
+      border-bottom: 1px solid var(--hairline);
+      gap: 0;
+      margin: 0 -18px;
+      padding: 0 18px;
+      top: 68px;
+    }
+
+    .portal-rail > span,
+    .portal-rail-hint,
+    .portal-rail-thumb {
+      display: none;
+    }
+
+    .portal-rail-list {
+      border-left: 0;
+      flex-direction: row;
+      overflow-x: auto;
+    }
+
+    .portal-rail a {
+      border-bottom: 1px solid transparent;
+      flex: none;
+      padding: 12px 14px;
+    }
+
+    .portal-rail a.active {
+      border-bottom-color: var(--accent);
+    }
+
+    .portal-panel {
+      min-height: 620px;
+      padding: 28px 24px;
+      scroll-margin-top: 124px;
+    }
+
+    .portal-panel::after {
+      background: linear-gradient(0deg, rgba(15, 16, 15, 0.98) 0%, rgba(15, 16, 15, 0.78) 48%, rgba(15, 16, 15, 0.16) 100%);
+    }
+
+    .portal-visual {
+      inset: 0 0 32%;
+    }
+
+    .portal-copy h2 {
+      font-size: clamp(48px, 14vw, 68px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .portal-rail a,
+    .portal-rail-thumb {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import '../shared/canvas/CategoryConstellation';
+  import { bindMorphPairs } from '../shared/MorphPairs';
+
+  class ProjectPortal extends HTMLElement {
+    private controller = new AbortController();
+    private observer?: IntersectionObserver;
+    private activeIndex = -1;
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const panels = Array.from(this.querySelectorAll<HTMLElement>('[data-project-panel]'));
+      const links = Array.from(this.querySelectorAll<HTMLAnchorElement>('.portal-rail a'));
+      const list = this.querySelector<HTMLElement>('.portal-rail-list');
+      if (!panels.length || panels.length !== links.length) return;
+
+      const select = (index: number) => {
+        if (index < 0 || index === this.activeIndex) return;
+        this.activeIndex = index;
+        links.forEach((link, linkIndex) => {
+          const active = index === linkIndex;
+          link.classList.toggle('active', active);
+          if (active) link.setAttribute('aria-current', 'true');
+          else link.removeAttribute('aria-current');
+        });
+        const target = links[index];
+        // Slide the accent thumb to the active rail item; it reads as a scroll position.
+        list?.style.setProperty('--thumb-top', `${target.offsetTop}px`);
+        list?.style.setProperty('--thumb-height', `${target.offsetHeight}px`);
+      };
+
+      // A zero-height detection line at 48% of the viewport: exactly one contiguous panel
+      // ever crosses it, so the active item never flickers between neighbours at a border.
+      this.observer = new IntersectionObserver(
+        (entries) => {
+          const inLine = entries
+            .filter((entry) => entry.isIntersecting)
+            .map((entry) => panels.indexOf(entry.target as HTMLElement))
+            .sort((a, b) => a - b);
+          if (inLine.length) select(inLine[0]);
+        },
+        { rootMargin: '-48% 0px -52% 0px', threshold: [0] },
+      );
+      panels.forEach((panel) => this.observer?.observe(panel));
+
+      links.forEach((link, index) => {
+        link.addEventListener('click', () => select(index), { signal: this.controller.signal });
+      });
+
+      bindMorphPairs(this, this.controller.signal);
+      select(0);
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+      this.observer?.disconnect();
+    }
+  }
+
+  if (!customElements.get('project-portal')) {
+    customElements.define('project-portal', ProjectPortal);
+  }
+</script>

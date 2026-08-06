@@ -1,0 +1,114 @@
+---
+title: XAI — an eXplainability toolbox for machine learning
+description: 'XAI is a Machine Learning library that is designed with AI explainability in its core. It implements the three steps of explainable machine learning: data analysis, model evaluation and production monitoring, tools and process together.'
+composed: true
+layout: ../../layouts/ProseLayout.astro
+---
+
+import { getEntry } from 'astro:content';
+import { ArticleHero, Metrics, ProjectLinks, StageExplorer, TalkCard, XaiProcess } from '../../components/prose/components.js';
+
+export const stages = [
+  {
+    number: '01',
+    title: 'Data analysis',
+    functions: [
+      {
+        name: 'imbalance_plot',
+        purpose: 'Plot class imbalances across one or more columns.',
+        image: '/images/oss/xai-imbalance.jpg',
+        imageAlt: 'XAI class-imbalance plots split by gender and loan outcome',
+      },
+      { name: 'balance', purpose: 'Correct class imbalances with up-sampling or down-sampling.' },
+      { name: 'correlations', purpose: 'Visualise correlations as a matrix or hierarchical dendogram.' },
+      { name: 'group_by_columns', purpose: 'Group a dataset by one or more categorical columns for custom operations.' },
+      { name: 'balanced_train_test_split', purpose: 'Create train and test splits balanced across protected attributes.' },
+    ],
+  },
+  {
+    number: '02',
+    title: 'Model evaluation',
+    functions: [
+      { name: 'feature_importance', purpose: 'Calculate permutation-based feature importance.' },
+      {
+        name: 'metrics_plot',
+        purpose: 'Compare metric imbalances overall and across protected columns.',
+        image: '/images/oss/xai-metrics.jpg',
+        imageAlt: 'XAI model metrics compared across gender and ethnicity groups',
+      },
+      { name: 'roc_plot', purpose: 'Plot ROC curves overall or per group, such as gender, ethnicity, or age.' },
+      { name: 'confusion_matrix_plot', purpose: 'Render a confusion matrix for model predictions.' },
+    ],
+  },
+  {
+    number: '03',
+    title: 'Production monitoring',
+    functions: [
+      {
+        name: 'smile_imbalance',
+        purpose: 'Bucket accuracy and statistical metrics by prediction probability to visualise benefits of adding manual review on probability thresholds.',
+        image: '/images/oss/xai-monitoring.png',
+        imageAlt: 'XAI probability buckets showing a manual review threshold',
+      },
+    ],
+  },
+];
+
+export const processSteps = [
+  {
+    number: '01',
+    title: 'Data analysis',
+    checkpoint: 'Surface imbalance across data and protected attributes, then correct it before training.',
+  },
+  {
+    number: '02',
+    title: 'Model evaluation',
+    checkpoint: 'Explain model behaviour and compare outcomes across protected groups.',
+  },
+  {
+    number: '03',
+    title: 'Production monitoring',
+    checkpoint: 'Monitor predictions, surface bias and feed findings back into mitigation.',
+  },
+];
+
+export const links = [
+  { label: 'Open the framework', href: 'https://github.com/EthicalML/xai' },
+  { label: 'Read the docs', href: 'https://ethicalml.github.io/xai' },
+];
+
+export const metricEntry = await getEntry('metrics', 'xai');
+
+<ArticleHero
+  eyebrow="OPEN SOURCE · ALPHA · MIT"
+  title={frontmatter.title}
+  intro={
+    '"XAI is a Machine Learning library that is designed with AI explainability in its core." It implements the three steps of explainable machine learning: data analysis, model evaluation and production monitoring, tools and process together.'
+  }
+  transitionName="xai-title"
+/>
+
+## The process, by checkpoint
+
+XAI converts the Responsible AI Principles into a practical **tool + process** approach. The process carries explainability and bias mitigation through the full responsible-ML workflow, rather than treating them as a one-off report after training.
+
+<XaiProcess steps={processSteps} />
+
+## The toolbox, by stage
+
+The library ships with a census dataset for experimentation (`xai.data.load_census()`), and installs from PyPI. The protected-attribute lens runs through every stage: the same gender or ethnicity split that shapes the train/test split reappears in the metric and ROC comparisons.
+
+<StageExplorer stages={stages} />
+
+## Talk and worked example
+
+The approach was presented at PyData London, covering how to identify and mitigate undesired bias with the toolbox.
+
+<TalkCard
+  href="https://www.youtube.com/watch?v=vq8mDiDODhc"
+  image="/images/oss/xai-pydata-talk.jpg"
+  title="Explainable AI and bias mitigation with the XAI Library"
+/>
+
+<Metrics values={metricEntry.data.values} />
+<ProjectLinks links={links} />

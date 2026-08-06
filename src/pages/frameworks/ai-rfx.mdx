@@ -1,0 +1,95 @@
+---
+title: The AI-RFX Procurement Framework
+description: Open-source templates that convert the nine Responsible AI Principles into a procurement checklist for organisations buying, building or deploying AI systems.
+composed: true
+layout: ../../layouts/ProseLayout.astro
+criteria:
+  - number: '01'
+    name: Practical benchmarks
+    description: Suppliers provide task-relevant measures beyond simple accuracy, including processing time, training time and resources, and the computational requirements for operating the system. The measures must reflect the use case and the consequences of different errors.
+    principle: P06 · Evaluation by Observability
+    principleHref: /principles/06/
+  - number: '02'
+    name: Explainability by justification
+    description: Suppliers show how the end-to-end system can provide a justifiable account of its outputs, proportionate to the use case. Evidence includes human-readable audit trails, input or feature importance where relevant, and the involvement of domain experts.
+    principle: P03 · Explainability by Justification
+    principleHref: /principles/03/
+  - number: '03'
+    name: Infrastructure for reproducible operations
+    description: Suppliers demonstrate that models and operations can be versioned, rolled back, diagnosed and redeployed. Development and production-serving workflows must be separated, documented and able to scale for the intended use.
+    principle: P04 · Provenance by Reproducibility
+    principleHref: /principles/04/
+  - number: '04'
+    name: Data and model assessment processes
+    description: Suppliers document processes for identifying and mitigating unwanted bias in data and model behaviour. The assessment combines statistical practice with domain knowledge and accounts for changes between development data and production conditions.
+    principle: P02 · Fairness by Calibration
+    principleHref: /principles/02/
+  - number: '05'
+    name: Privacy-enforcing capabilities
+    description: Suppliers show how personal data is separated and protected across the system, how consent affects its use, and how privacy decisions are communicated. Where anonymisation is used, the evidence must address re-identification risk.
+    principle: P07 · Trust by Privacy
+    principleHref: /principles/07/
+  - number: '06'
+    name: Operational process design
+    description: Suppliers map the full process around the system, including fail-safe steps and human review. The evidence must show how incorrect outputs are detected, contained and escalated in proportion to their impact.
+    principle: P01 · Human Augmentation by Oversight
+    principleHref: /principles/01/
+  - number: '07'
+    name: Change-management capabilities
+    description: Suppliers provide a rollout, training and handover plan for the people affected by the system. The plan addresses changes to work, support for relevant stakeholders and how time released by automation will be allocated.
+    principle: P05 · Reskilling by Design
+    principleHref: /principles/05/
+  - number: '08'
+    name: Security risk mitigations
+    description: Suppliers explain how data, models and supporting infrastructure are secured, including access controls and protection in transit and at rest. The evidence also covers the processes and education provided to people operating the system.
+    principle: P08 · Safety by Security
+    principleHref: /principles/08/
+steps:
+  - label: Define governance requirements
+    detail: RFP
+  - label: Set evaluation criteria
+    detail: SCORE
+  - label: Request supplier evidence
+    detail: EVIDENCE
+  - label: Compare and document responses
+    detail: REVIEW
+  - label: Carry obligations into delivery
+    detail: CONTROL
+---
+
+import { ArticleHero, CriteriaMap, ProcurementFlow, CTA } from '../../components/prose/components.js';
+
+<ArticleHero
+  eyebrow="FRAMEWORK / PROCUREMENT"
+  title="The AI-RFX Procurement Framework"
+  intro="Open-source templates that convert the nine Responsible AI Principles into a procurement checklist — for organisations buying, building or deploying AI systems."
+  transitionName="ai-rfx-title"
+/>
+
+## Beyond the model itself
+
+AI-RFX evaluates the maturity of the technical infrastructure and processes around a system, not just its algorithms. Underneath it sits the [Machine Learning Maturity Model](/frameworks/maturity-model/), which turns each criterion into levels of organisational capability.
+
+<CriteriaMap criteria={frontmatter.criteria} />
+
+## From requirements to supplier evidence
+
+The procurement flow carries governance requirements from the initial request through supplier comparison and into delivery controls.
+
+<ProcurementFlow steps={frontmatter.steps} />
+
+## The ninth principle
+
+The framework predates the ninth principle, [Human Alignment by Intent](/principles/09/), and its eight criteria do not yet cover it. Alignment criteria are agentic by nature: they concern what a system is pursuing, not just how it is built. These criteria are being drafted as part of the [Agentic RFX Framework](/frameworks/agentic-rfx/).
+
+## RFP and RFI templates
+
+AI-RFX supports two stages of procurement. A Request for Information surveys the supplier landscape and tests what the market can provide. A Request for Proposal runs the procurement against defined requirements, evaluation criteria and supplier evidence. The templates are guides rather than one-size-fits-all documents, so teams can adapt their level of detail to the system and procurement.
+
+The framework and templates are published under the MIT licence, allowing organisations and suppliers to reuse, modify and contribute to them.
+
+<CTA href="/contact/?interest=frameworks#contact" label="Request the templates">
+
+The templates remain contact-form gated so the Institute can provide the appropriate set and discuss its use.
+
+</CTA>

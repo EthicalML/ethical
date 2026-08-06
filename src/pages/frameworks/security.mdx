@@ -1,0 +1,102 @@
+---
+title: Agentic & ML Security
+description: Security guidance for the machine-learning lifecycle and agentic systems with delegated authority, tools and memory.
+composed: true
+layout: ../../layouts/ProseLayout.astro
+risks:
+  - owasp: Broken access control
+    mlsecops: Unrestricted model endpoints
+  - owasp: Cryptographic failures
+    mlsecops: Access to model artifacts
+  - owasp: Injection
+    mlsecops: Artifact exploit injection
+  - owasp: Insecure design
+    mlsecops: Insecure ML systems and pipeline design
+  - owasp: Security misconfigurations
+    mlsecops: Data and ML infrastructure misconfigurations
+  - owasp: Vulnerable and outdated components
+    mlsecops: Supply-chain vulnerabilities in ML code
+  - owasp: Identification and authentication failures
+    mlsecops: IAM and RBAC failures for ML services
+  - owasp: Software and data integrity failures
+    mlsecops: ML infrastructure, ETL and CI/CD integrity failures
+  - owasp: Logging and monitoring failures
+    mlsecops: Observability, reproducibility and lineage failures
+  - owasp: Server-side request forgery
+    mlsecops: ML server-side request forgery
+agenticRisks:
+  - risk: ASI01 · Agent Goal Hijack
+    framing: Constrain mandates, separate external content from instructions, and gate consequential actions under P01 and P09.
+  - risk: ASI03 · Identity & Privilege Abuse
+    framing: Give each agent a distinct identity, least-privilege credentials and fail-closed policy gateways.
+  - risk: ASI04 · Agentic Supply Chain Vulnerabilities
+    framing: Verify models, tools and dependencies, record provenance and restrict which components agents may load.
+  - risk: ASI06 · Memory & Context Poisoning
+    framing: Derive memory scope from authenticated identity, separate tenants and retain provenance for stored context.
+  - risk: ASI08 · Cascading Failures
+    framing: Bound delegation, cap retries and cost, expose action traces and contain failure at each agent boundary.
+fieldLinks:
+  - eyebrow: COMMUNITY
+    title: ML Security Committee at LF AI & Data
+    description: Cross-functional security work developed through the committee, including collaboration with OpenSSF.
+    href: https://lfaidata.foundation/groups/security-compliance-work-group/
+  - eyebrow: PUBLICATION
+    title: Machine-learning security risks and best practices
+    description: The Linux Foundation publication on risks and practical controls across machine-learning systems.
+    href: https://lfaidata.foundation/blog/2023/06/15/machine-learning-system-security-risks-best-practices/
+  - eyebrow: OWASP
+    title: Top 10 for Agentic Applications
+    description: The agentic application benchmark and the published work for which the Institute's chief scientist served as an official reviewer.
+    href: https://genai.owasp.org/2025/12/09/owasp-top-10-for-agentic-applications-the-benchmark-for-agentic-security-in-the-age-of-autonomous-ai/
+---
+
+import { ArticleHero, ComparisonTable, FrameworkLinkCards, CTA } from '../../components/prose/components.js';
+
+<ArticleHero
+  eyebrow="FRAMEWORK / SECURITY"
+  title="Agentic & ML Security"
+  intro="The Institute's security programme spans the MLSecOps Top 10 for the machine-learning lifecycle, collaboration with the Linux Foundation and OpenSSF on ML security practice, and active review of OWASP guidance for agentic systems — machine-learning security doesn't stop being relevant when the system starts calling tools."
+  transitionName="initiative-security-title"
+/>
+
+## The MLSecOps Top 10
+
+MLSecOps connects common machine-learning security failures to controls that teams can apply across data, model, deployment and monitoring workflows.
+
+<ComparisonTable
+  rows={frontmatter.risks}
+  columns={[
+    { key: 'owasp', label: 'OWASP vulnerability' },
+    { key: 'mlsecops', label: 'MLSecOps equivalent' },
+  ]}
+/>
+
+Code and worked examples are maintained in the open-source [fml-security repository](https://github.com/EthicalML/fml-security).
+
+## The agentic frontier
+
+The MLSecOps taxonomy covers the lifecycle around models. Agentic systems add delegated authority, tools and memory to the attack surface. The OWASP Top 10 for Agentic Applications names these risks through the ASI taxonomy; the selected mappings below position them against principle-led controls without reproducing the full OWASP list.
+
+<ComparisonTable
+  rows={frontmatter.agenticRisks}
+  columns={[
+    { key: 'risk', label: 'Selected OWASP ASI category' },
+    { key: 'framing', label: 'Principle and control framing' },
+  ]}
+/>
+
+The Institute's chief scientist is an official reviewer of the OWASP Top 10 for Agentic Applications and is named in the published documents. Until the reviewer-credit documents are linked directly, see the [OWASP announcement](https://genai.owasp.org/2025/12/09/owasp-top-10-for-agentic-applications-the-benchmark-for-agentic-security-in-the-age-of-autonomous-ai/).
+
+## Built with the field
+
+<FrameworkLinkCards cards={frontmatter.fieldLinks} />
+
+## Principle anchor
+
+This programme implements [P08 Safety by Security](/principles/08/). Agent mandates and alignment risks also connect it to [P01 Human Augmentation by Oversight](/principles/01/) and [P09 Human Alignment by Intent](/principles/09/).
+
+<CTA href="/contact/#contact" label="Discuss implementation">
+
+Apply the taxonomy in proportion to the system's exposure, authority and potential impact.
+
+</CTA>

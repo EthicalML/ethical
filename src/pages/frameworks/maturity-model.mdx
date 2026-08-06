@@ -1,0 +1,102 @@
+---
+title: Machine Learning Maturity Model
+description: Make responsible ML repeatable through a practical path from isolated good intentions to adaptive organisational capability.
+composed: true
+layout: ../../layouts/ProseLayout.astro
+maturity:
+  checklistColumns:
+    - key: criterion
+      label: Assessment area
+    - key: evidence
+      label: Minimum supplier evidence
+  phases:
+    - label: 01 / EMPOWERING INDIVIDUALS
+      title: By Principle.
+      details:
+        - Best practices.
+        - Applied principles.
+        - Personal and professional commitments.
+    - label: 02 / EMPOWERING ORGANISATIONS
+      title: By Process.
+      details:
+        - Practical industry frameworks.
+        - Applied guides.
+        - Principles translated into implementation.
+    - label: 03 / EMPOWERING INDUSTRIES
+      title: By Standards.
+      details:
+        - Technical and industry standards.
+        - Standards bodies engagement.
+        - Cross-industry initiatives.
+    - label: 04 / EMPOWERING NATIONS
+      title: By Regulation.
+      details:
+        - Policy and regulatory work.
+        - Public frameworks and requirements.
+        - International governance.
+  checklist:
+    - criterion: Practical benchmarks
+      evidence: Use-case measures beyond accuracy, with processing time, training resources and operating requirements
+    - criterion: Explainability by justification
+      evidence: A proportionate account of system outputs, supported by audit trails and domain expertise
+    - criterion: Data and model assessment
+      evidence: Processes for identifying, documenting and mitigating unwanted bias under production conditions
+    - criterion: Reproducible operations
+      evidence: Model versioning, rollback, diagnosis, redeployment and separated development and serving workflows
+    - criterion: Privacy-enforcing infrastructure
+      evidence: Personal-data controls, consent handling, privacy documentation and re-identification safeguards
+    - criterion: Operational process design
+      evidence: Fail-safe steps, human review and escalation based on the impact of incorrect outputs
+    - criterion: Change-management capabilities
+      evidence: Rollout, workforce impact, training and handover plans for affected stakeholders
+    - criterion: Security risk processes
+      evidence: Access control, data protection, secured infrastructure and operator education
+  capabilities:
+    - capability: Benchmarking
+      detail: Measures reflect the use case, error costs, time and resource requirements.
+    - capability: Justification
+      detail: Operators can inspect an appropriate account of how outputs were produced.
+    - capability: Assessment
+      detail: Data and model behaviour are evaluated for unwanted bias and production change.
+    - capability: Reproducibility
+      detail: Models and operations can be versioned, repeated, diagnosed and rolled back.
+    - capability: Privacy
+      detail: Personal data is separated, protected and governed according to consent.
+    - capability: Operations
+      detail: Human review and fail-safe steps are designed around the impact of errors.
+    - capability: Change management
+      detail: Rollout, training and handover account for the people affected by automation.
+    - capability: Security
+      detail: Models, data, infrastructure and operating processes are protected together.
+---
+
+import { ArticleHero, MaturityModelContent, CTA } from '../../components/prose/components.js';
+
+<ArticleHero
+  eyebrow="FRAMEWORK / MATURITY MODEL"
+  title="Machine Learning Maturity Model"
+  intro="Make responsible ML repeatable — a practical path from isolated good intentions to adaptive organisational capability."
+  transitionName="initiative-governance-title"
+/>
+
+<MaturityModelContent
+  maturity={frontmatter.maturity}
+  phaseEyebrow="THE FOUR-PHASE RESPONSIBLE AI STRATEGY"
+  phaseHeading="From individual practice to national regulation."
+  checklistEyebrow="DELIVERY CHECKLIST"
+  checklistHeading="Evidence suppliers should provide"
+  capabilityEyebrow="CAPABILITIES"
+  capabilityHeading="The system around the model"
+/>
+
+## How the frameworks connect
+
+The maturity model is what [AI-RFX](/frameworks/ai-rfx/) scores against: each procurement criterion asks where the organisation sits on the model's capability levels. Both inherit their targets from the [nine Responsible AI Principles](/principles/).
+
+Agent identity, mandate boundaries and action observability are being drafted as part of the [Agentic Maturity Model](/frameworks/agentic-maturity-model/).
+
+<CTA href="/contact/?interest=frameworks#contact" label="Assess your organisation">
+
+Use the model as a conversation and evidence tool. It does not provide certification.
+
+</CTA>

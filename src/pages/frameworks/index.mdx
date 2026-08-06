@@ -1,0 +1,58 @@
+---
+title: Frameworks
+description: Procurement, maturity and security frameworks that translate the nine Responsible AI Principles into practice.
+composed: true
+layout: ../../layouts/ProseLayout.astro
+groups:
+  - label: ESTABLISHED
+    cards:
+      - title: The AI-RFX Procurement Framework
+        description: Open-source templates that convert the nine Responsible AI Principles into a procurement checklist.
+        href: /frameworks/ai-rfx/
+        status: ACTIVE
+        principles: [P01–P08]
+        morphName: ai-rfx-title
+      - title: Machine Learning Maturity Model
+        description: A practical path from isolated good intentions to adaptive organisational capability.
+        href: /frameworks/maturity-model/
+        status: ACTIVE
+        principles: [P01–P08]
+        morphName: initiative-governance-title
+      - title: Agentic & ML Security
+        description: Security guidance for the machine-learning lifecycle and systems with delegated authority, tools and memory.
+        href: /frameworks/security/
+        status: ACTIVE
+        principles: [P08, P01, P09]
+        morphName: initiative-security-title
+  - label: IN DEVELOPMENT
+    cards:
+      - title: The Agentic RFX Framework
+        description: Procurement criteria for systems that act through tools, memory and delegated authority.
+        href: /frameworks/agentic-rfx/
+        status: PLACEHOLDER
+        principles: [P01, P08, P09]
+        morphName: agentic-rfx-title
+      - title: Agentic Maturity Model
+        description: Organisational capability for operating agentic systems within explicit boundaries.
+        href: /frameworks/agentic-maturity-model/
+        status: PLACEHOLDER
+        principles: [P01, P04, P06, P08, P09]
+        morphName: agentic-maturity-title
+---
+
+import { ArticleHero, CenteredCTA, FrameworkCards } from '../../components/prose/components.js';
+
+<ArticleHero
+  eyebrow="FRAMEWORKS"
+  title="Principles you can procure and audit against."
+  intro="The frameworks translate the nine Responsible AI Principles into checklists, taxonomies and templates: procurement criteria for buying AI systems, a maturity model for the organisation running them, and a security taxonomy for the systems themselves — each now extending from ML to agentic systems."
+/>
+
+<FrameworkCards groups={frontmatter.groups} />
+
+<CenteredCTA
+  eyebrow="PRINCIPLE ANCHOR"
+  heading="Every framework anchors to the nine Responsible AI Principles."
+  href="/principles/"
+  label="Explore the principles"
+/>

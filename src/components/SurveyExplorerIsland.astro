@@ -1,0 +1,16 @@
+---
+import { getCollection } from 'astro:content';
+import SurveyExplorer from './SurveyExplorer';
+import type { SurveyData } from './SurveyExplorer';
+
+interface Props {
+  compact?: boolean;
+}
+
+const questionOrder = ['frameworks', 'modalities', 'cloud', 'challenges', 'tracking', 'deployment'];
+const questions = (await getCollection('survey')).sort((first, second) => questionOrder.indexOf(first.id) - questionOrder.indexOf(second.id));
+const survey = Object.fromEntries(questions.map(({ id, data }) => [id, data])) as SurveyData;
+const { compact = false } = Astro.props;
+---
+
+<SurveyExplorer data={survey} compact={compact} client:visible />

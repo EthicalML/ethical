@@ -1,0 +1,7 @@
+/* Prototype-fidelity geometry shared by the Round 4+ implementation. The
+   principles and open-source pins are gone: content has moved on and stale
+   pixel heights only added dead space below the sections. */
+@media (min-width: 951px) {
+  .join-section > .network-split { min-height: 630px; }
+  .footnote-band { min-height: 234px; }
+}

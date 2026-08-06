@@ -1,0 +1,191 @@
+---
+import { Code } from 'astro:components';
+import AnimationWindow from './AnimationWindow.astro';
+
+interface TerminalLine {
+  command: string;
+  output?: string;
+}
+
+interface Props {
+  cli: TerminalLine[];
+}
+
+const { cli }: Props = Astro.props;
+---
+
+<AnimationWindow class="quickstart-window" title="kaos-cli" finite>
+  <quickstart-terminal>
+    <div class="terminal-body" role="region" aria-label="KAOS CLI quickstart">
+      {
+        cli.map(({ command, output }) => (
+          <div class="terminal-step" data-terminal-step>
+            <div class="terminal-command">
+              <>
+                <span class="terminal-prompt">$ </span>
+                <Code code={command} lang="shellscript" theme="github-dark" inline />
+              </>
+            </div>
+            {output && (
+              <div class="terminal-output" data-terminal-output>
+                {output}
+              </div>
+            )}
+          </div>
+        ))
+      }
+    </div>
+  </quickstart-terminal>
+</AnimationWindow>
+
+<script>
+  interface AnimationOperation {
+    delay: number;
+    run: () => void;
+  }
+
+  class QuickstartTerminal extends HTMLElement {
+    private controller = new AbortController();
+    private operations: AnimationOperation[] = [];
+    private operationIndex = 0;
+    private timer = 0;
+    private started = false;
+    private complete = false;
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const windowElement = this.closest<HTMLElement>('animation-window');
+      if (!windowElement) return;
+
+      this.prepareOperations();
+      windowElement.addEventListener('animationwindow:play', () => this.play(), { signal: this.controller.signal });
+      windowElement.addEventListener('animationwindow:pause', () => this.pause(), { signal: this.controller.signal });
+      if (windowElement.dataset.playing === 'true') this.play();
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+      window.clearTimeout(this.timer);
+    }
+
+    private prepareOperations() {
+      const steps = Array.from(this.querySelectorAll<HTMLElement>('[data-terminal-step]'));
+      steps.forEach((step) => {
+        const command = step.querySelector<HTMLElement>('.terminal-command');
+        const output = step.querySelector<HTMLElement>('[data-terminal-output]');
+        if (!command) return;
+
+        const textNodes: Text[] = [];
+        const walker = document.createTreeWalker(command, NodeFilter.SHOW_TEXT);
+        let textNode = walker.nextNode();
+        while (textNode) {
+          textNodes.push(textNode as Text);
+          textNode = walker.nextNode();
+        }
+        textNodes.forEach((node) => {
+          const fragment = document.createDocumentFragment();
+          Array.from(node.data).forEach((character) => {
+            const span = document.createElement('span');
+            span.className = 'terminal-character';
+            span.textContent = character;
+            fragment.append(span);
+            this.operations.push({ delay: character === ' ' ? 18 : 28, run: () => span.classList.add('is-visible') });
+          });
+          node.replaceWith(fragment);
+        });
+        if (output) this.operations.push({ delay: 320, run: () => output.classList.add('is-visible') });
+      });
+    }
+
+    private play() {
+      if (this.complete) this.reset();
+      if (!this.started) {
+        this.started = true;
+        this.classList.add('is-animating');
+      }
+      this.runNext();
+    }
+
+    private pause() {
+      window.clearTimeout(this.timer);
+    }
+
+    private reset() {
+      this.operationIndex = 0;
+      this.complete = false;
+      this.querySelectorAll('.is-visible').forEach((element) => element.classList.remove('is-visible'));
+    }
+
+    private runNext() {
+      window.clearTimeout(this.timer);
+      const operation = this.operations[this.operationIndex];
+      if (!operation) {
+        this.complete = true;
+        this.dispatchEvent(new CustomEvent('animationwindow:complete', { bubbles: true }));
+        return;
+      }
+      this.timer = window.setTimeout(() => {
+        operation.run();
+        this.operationIndex += 1;
+        this.runNext();
+      }, operation.delay);
+    }
+  }
+
+  if (!customElements.get('quickstart-terminal')) customElements.define('quickstart-terminal', QuickstartTerminal);
+</script>
+
+<style>
+  .quickstart-window {
+    margin-top: 38px;
+  }
+  quickstart-terminal {
+    display: block;
+    min-height: 385px;
+  }
+  .terminal-body {
+    color: var(--text-1);
+    font-family: var(--font-mono);
+    font-size: clamp(12px, 1.35vw, 14px);
+    line-height: 1.8;
+    margin: 0;
+    min-height: 385px;
+    overflow: auto;
+    padding: 28px;
+  }
+  .terminal-command,
+  .terminal-output,
+  :global(code) {
+    font: inherit;
+    white-space: pre-wrap;
+  }
+  .terminal-prompt {
+    color: var(--accent);
+  }
+  .terminal-command :global(.astro-code) {
+    background-color: transparent !important;
+  }
+  .terminal-output {
+    color: var(--text-3);
+  }
+  .terminal-step + .terminal-step {
+    margin-top: 28px;
+  }
+  quickstart-terminal.is-animating :global(.terminal-character),
+  quickstart-terminal.is-animating .terminal-output {
+    visibility: hidden;
+  }
+  quickstart-terminal.is-animating :global(.terminal-character.is-visible),
+  quickstart-terminal.is-animating .terminal-output.is-visible {
+    visibility: visible;
+  }
+  @media (max-width: 600px) {
+    quickstart-terminal,
+    .terminal-body {
+      min-height: 345px;
+    }
+    .terminal-body {
+      padding: 20px 16px;
+    }
+  }
+</style>

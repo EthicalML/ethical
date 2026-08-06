@@ -1,0 +1,31 @@
+---
+title: Contact the Institute
+description: A single route into the network, frameworks, research and institutional partnerships.
+composed: true
+layout: ../layouts/ProseLayout.astro
+---
+
+import { ArticleHero, ChannelLinks, FormSection } from '../components/prose/components.js';
+import { contactFormCopy, contactFormTitle, networkSectors, networkStats } from '../data/contactForm';
+
+<ArticleHero eyebrow="CONTACT" title="Contact the Institute" intro="A single route into the network, frameworks, research and institutional partnerships." />
+
+<FormSection
+  variant="network-split"
+  title={contactFormTitle}
+  copy={contactFormCopy}
+  sectors={networkSectors}
+  stats={networkStats}
+  eyebrow={contactFormCopy.contactEyebrow}
+  submissionVariant="contact-full"
+/>
+
+<ChannelLinks
+  eyebrow="CHANNELS"
+  heading="Other ways to follow"
+  items={[
+    ['Email', 'hello@ethical.institute', 'mailto:hello@ethical.institute'],
+    ['Open source', 'Build with us', '/open-source/'],
+    ['Newsletter', 'Follow the field', '/network/'],
+  ]}
+/>

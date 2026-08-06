@@ -1,0 +1,698 @@
+---
+import { readdirSync } from 'node:fs';
+import path from 'node:path';
+import type { PolicyRecordProduct } from './PolicyRecordData';
+
+interface Filter {
+  label: string;
+  value: string;
+}
+
+interface Props {
+  filters: Filter[];
+  products: PolicyRecordProduct[];
+  eyebrow?: string;
+  title?: string;
+  lede?: string;
+  /* Forces the sub-900px staged list/detail flow at any viewport (narrow embeds):
+     list first, a pick shows the pane with the back control. Default off; the
+     desktop split is unchanged when absent. */
+  staged?: boolean;
+}
+
+const {
+  filters,
+  products: rawProducts,
+  eyebrow = 'READING ROOM',
+  title = 'The policy record',
+  lede = 'Select a product for its dossier facts, what it argued, and the document itself, page by page.',
+  staged = false,
+} = Astro.props;
+const trackLabel: Record<string, string> = Object.fromEntries(filters.map((f) => [f.value, f.label]));
+
+// Newest first; dates like "19 JUN 2020" and "DEC 2024" both parse, undated sorts last.
+const dateValue = (date?: string): number => {
+  const parsed = Date.parse(date ?? '');
+  return Number.isNaN(parsed) ? -Infinity : parsed;
+};
+const products = [...rawProducts].sort((a, b) => dateValue(b.date) - dateValue(a.date));
+
+// Page renders produced by scripts/render-policy-pages.mjs; 0 pages = placeholder doc.
+const pageCount = (slug: string): number => {
+  try {
+    return readdirSync(path.resolve('public', 'images', 'policy-record', 'pages', slug)).filter((f) => f.endsWith('.webp')).length;
+  } catch {
+    return 0;
+  }
+};
+const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slug) }, (_, i) => `p${String(i + 1).padStart(2, '0')}.webp`);
+---
+
+<policy-record-preview class="prv" data-staged={staged ? 'true' : undefined} data-reveal>
+  <header class="prv-head">
+    <div>
+      <p class="eyebrow">{eyebrow}</p>
+      <h2>{title}</h2>
+      <p class="prv-lede">{lede}</p>
+    </div>
+    <p class="record-count" aria-live="polite"><strong>{products.length}</strong> / {products.length} records</p>
+  </header>
+
+  <div class="prv-split">
+    <div class="prv-main">
+      <div class="prv-controls">
+        <div class="prv-filters" role="group" aria-label="Filter policy products">
+          {
+            filters.map((filter, index) => (
+              <button type="button" data-filter={filter.value} aria-pressed={index === 0 ? 'true' : 'false'}>
+                {filter.label}
+              </button>
+            ))
+          }
+        </div>
+        <input class="prv-search" type="search" placeholder="SEARCH THE RECORD" aria-label="Search policy products by title or instrument" data-search />
+      </div>
+      <div class="prv-list" role="listbox" aria-label="Policy products" tabindex="-1">
+        {
+          products.map((product, index) => (
+            <button
+              type="button"
+              class="prv-row"
+              role="option"
+              data-index={index}
+              data-track={product.track}
+              data-search={`${product.title} ${product.instrument}`.toLowerCase()}
+              aria-selected={index === 0 ? 'true' : 'false'}
+            >
+              <span class="prv-row-title">{product.title}</span>
+              <span class="prv-row-meta">
+                <span class="instrument-tag">{product.instrument}</span>
+                {product.date && <time>{product.date}</time>}
+                {product.role && <span class="role-tag">{product.role}</span>}
+              </span>
+            </button>
+          ))
+        }
+      </div>
+    </div>
+
+    <aside class="prv-pane" aria-live="polite">
+      <button type="button" class="prv-back" data-back>← All documents</button>
+      {
+        products.map((product, index) => (
+          <template data-pane={index}>
+            <div class="prv-facts">
+              <p class="eyebrow">
+                {trackLabel[product.track] ?? product.track}
+                {product.role && <span class="role-tag">{product.role}</span>}
+              </p>
+              <h3>{product.title}</h3>
+              <dl>
+                <div>
+                  <dt>Instrument</dt>
+                  <dd>{product.instrument}</dd>
+                </div>
+                <div>
+                  <dt>Date</dt>
+                  <dd>{product.date ?? 'Undated'}</dd>
+                </div>
+                <div>
+                  <dt>Pages</dt>
+                  <dd>{pageCount(product.slug) || '—'}</dd>
+                </div>
+              </dl>
+              <p class="prv-argued">
+                {product.unverified && <span class="pending-tag">UNVERIFIED</span>}
+                {product.summary}
+              </p>
+              <a class="prv-cta" href={product.href} target="_blank" rel="noopener noreferrer">
+                Open PDF ↗
+              </a>
+            </div>
+            {pageCount(product.slug) > 0 ? (
+              <figure class="prv-doc">
+                <div class="prv-doc-strip" data-strip tabindex="0" aria-label={`Pages of ${product.title}`}>
+                  {pageNames(product.slug).map((page, p) => (
+                    <img
+                      src={`/images/policy-record/pages/${product.slug}/${page}`}
+                      alt={`Page ${p + 1} of ${product.title}`}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ))}
+                </div>
+                <figcaption class="prv-doc-bar">
+                  <button type="button" data-page-prev aria-label="Previous page">
+                    ←
+                  </button>
+                  <span data-page-counter>1 / {pageCount(product.slug)}</span>
+                  <button type="button" data-page-next aria-label="Next page">
+                    →
+                  </button>
+                </figcaption>
+              </figure>
+            ) : (
+              <div class="prv-placeholder">
+                <span>{product.instrument}</span>
+                <p>Web publication. Read it at the source link above.</p>
+              </div>
+            )}
+          </template>
+        ))
+      }
+      <div class="prv-pane-mount" data-mount></div>
+    </aside>
+  </div>
+</policy-record-preview>
+
+<script>
+  class PolicyRecordPreview extends HTMLElement {
+    private controller = new AbortController();
+    private rows: HTMLButtonElement[] = [];
+    private track = 'all';
+    private query = '';
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      this.rows = Array.from(this.querySelectorAll<HTMLButtonElement>('.prv-row'));
+      this.rows.forEach((row) => {
+        row.addEventListener('click', () => this.select(Number(row.dataset.index)), { signal: this.controller.signal });
+        row.addEventListener('keydown', this.handleKey, { signal: this.controller.signal });
+      });
+      this.querySelectorAll<HTMLButtonElement>('[data-filter]').forEach((button) => {
+        button.addEventListener('click', () => this.filter(button), { signal: this.controller.signal });
+      });
+      this.querySelector<HTMLInputElement>('[data-search]')?.addEventListener(
+        'input',
+        (event) => {
+          this.query = (event.currentTarget as HTMLInputElement).value.trim().toLowerCase();
+          this.applyFilters();
+        },
+        { signal: this.controller.signal },
+      );
+      this.querySelector('[data-back]')?.addEventListener(
+        'click',
+        () => {
+          delete this.dataset.view;
+          this.scrollIntoView({ block: 'start' });
+        },
+        { signal: this.controller.signal },
+      );
+      this.select(0, false);
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+    }
+
+    private visibleRows() {
+      return this.rows.filter((row) => !row.hidden);
+    }
+
+    private handleKey = (event: KeyboardEvent) => {
+      if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+      event.preventDefault();
+      const visible = this.visibleRows();
+      const current = event.currentTarget as HTMLButtonElement;
+      const at = visible.indexOf(current);
+      const next = event.key === 'ArrowDown' ? visible[at + 1] : visible[at - 1];
+      if (!next) return;
+      this.select(Number(next.dataset.index));
+      next.focus();
+    };
+
+    // interactive = a user pick (click or arrow key), as opposed to the initial or
+    // post-filter reselect; only user picks flip the mobile list/detail view.
+    private select(index: number, interactive = true) {
+      const template = this.querySelector<HTMLTemplateElement>(`template[data-pane="${index}"]`);
+      const mount = this.querySelector<HTMLElement>('[data-mount]');
+      if (!template || !mount) return;
+      mount.replaceChildren(template.content.cloneNode(true));
+      this.wireViewer(mount);
+      this.rows.forEach((row) => row.setAttribute('aria-selected', String(Number(row.dataset.index) === index)));
+      if (interactive) {
+        this.rows[index]?.scrollIntoView({ block: 'nearest' });
+        if (this.dataset.staged !== undefined || window.matchMedia('(max-width: 900px)').matches) {
+          this.dataset.view = 'detail';
+          this.scrollIntoView({ block: 'start' });
+        }
+      }
+    }
+
+    // The paginated document viewer: prev/next page one page-width at a time, counter
+    // follows manual scrolling too. Wired per mount because the pane is cloned per select.
+    private wireViewer(mount: HTMLElement) {
+      const strip = mount.querySelector<HTMLElement>('[data-strip]');
+      const counter = mount.querySelector<HTMLElement>('[data-page-counter]');
+      if (!strip || !counter) return;
+      const total = strip.children.length;
+      const pageAt = () => {
+        const step = strip.scrollWidth / total;
+        return Math.min(total - 1, Math.max(0, Math.round(strip.scrollLeft / step)));
+      };
+      const go = (delta: number) => {
+        const step = strip.scrollWidth / total;
+        strip.scrollTo({ left: (pageAt() + delta) * step, behavior: 'smooth' });
+      };
+      const signal = this.controller.signal;
+      mount.querySelector('[data-page-prev]')?.addEventListener('click', () => go(-1), { signal });
+      mount.querySelector('[data-page-next]')?.addEventListener('click', () => go(1), { signal });
+      strip.addEventListener('scroll', () => (counter.textContent = `${pageAt() + 1} / ${total}`), {
+        signal,
+        passive: true,
+      });
+    }
+
+    private filter(activeButton: HTMLButtonElement) {
+      this.track = activeButton.dataset.filter ?? 'all';
+      this.querySelectorAll<HTMLButtonElement>('[data-filter]').forEach((button) => {
+        button.setAttribute('aria-pressed', String(button === activeButton));
+      });
+      this.applyFilters();
+    }
+
+    private applyFilters() {
+      let first = -1;
+      this.rows.forEach((row) => {
+        const trackHit = this.track === 'all' || row.dataset.track === this.track;
+        const queryHit = !this.query || (row.dataset.search ?? '').includes(this.query);
+        const show = trackHit && queryHit;
+        row.hidden = !show;
+        if (show && first === -1) first = Number(row.dataset.index);
+      });
+      const count = this.querySelector<HTMLElement>('.record-count strong');
+      if (count) count.textContent = String(this.visibleRows().length);
+      if (first !== -1) this.select(first, false);
+    }
+  }
+
+  if (!customElements.get('policy-record-preview')) {
+    customElements.define('policy-record-preview', PolicyRecordPreview);
+  }
+</script>
+
+<style>
+  .prv {
+    border-block: 1px solid var(--hairline);
+    display: block;
+    padding: 72px 48px 88px;
+  }
+
+  .prv-head {
+    align-items: end;
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  h2 {
+    font: 300 clamp(38px, 4.6vw, 60px) / 1 var(--font-display);
+    margin: 16px 0 0;
+  }
+
+  .prv-lede {
+    color: var(--text-3);
+    margin: 12px 0 0;
+  }
+
+  .record-count {
+    color: var(--text-4);
+    flex: none;
+    font: var(--mono-10) / 1 var(--font-mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .record-count strong {
+    color: var(--accent);
+    font-size: 22px;
+    font-weight: 400;
+    margin-right: 7px;
+  }
+
+  .prv-controls {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+    justify-content: space-between;
+    margin: 0 0 22px;
+  }
+
+  .prv-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .prv-search {
+    background: transparent;
+    border: 1px solid var(--hairline-card);
+    color: var(--text-2);
+    font: var(--mono-9) / 1 var(--font-mono);
+    letter-spacing: 0.1em;
+    min-height: 36px;
+    min-width: 240px;
+    padding: 0 14px;
+  }
+
+  .prv-search::placeholder {
+    color: var(--text-4);
+  }
+
+  .prv-search:focus-visible {
+    border-color: var(--accent);
+    outline: none;
+  }
+
+  .prv-filters button {
+    background: transparent;
+    border: 1px solid var(--hairline-card);
+    color: var(--text-3);
+    cursor: pointer;
+    font: var(--mono-9) / 1 var(--font-mono);
+    letter-spacing: 0.1em;
+    min-height: 36px;
+    padding: 0 14px;
+    position: relative;
+  }
+
+  .prv-filters button::after {
+    content: '';
+    inset: -4px;
+    position: absolute;
+  }
+
+  .prv-filters button[aria-pressed='true'] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-on);
+  }
+
+  .prv-split {
+    align-items: stretch;
+    display: grid;
+    gap: 32px;
+    grid-template-columns: 1fr minmax(360px, 45%);
+    margin-top: 34px;
+  }
+
+  /* The pane's natural height (facts + document viewer) defines the row; the list
+     fills the left column to the same bottom edge and scrolls internally. */
+  .prv-main {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .prv-list {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    min-height: 320px;
+    overflow-y: auto;
+  }
+
+  .prv-row {
+    background: transparent;
+    border: 0;
+    border-top: 1px solid var(--hairline);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 16px 16px 20px;
+    position: relative;
+    text-align: left;
+  }
+
+  .prv-row[hidden] {
+    display: none;
+  }
+
+  .prv-row:hover {
+    background: rgba(255, 255, 255, 0.025);
+  }
+
+  .prv-row[aria-selected='true'] {
+    background: var(--accent-wash-09);
+  }
+
+  .prv-row[aria-selected='true']::before {
+    background: var(--accent);
+    content: '';
+    inset: 0 auto 0 0;
+    position: absolute;
+    width: 2px;
+  }
+
+  .prv-row-title {
+    color: var(--text-1);
+    font: 400 15px/1.35 var(--font-body);
+  }
+
+  .prv-row-meta {
+    align-items: center;
+    display: flex;
+    gap: 14px;
+  }
+
+  .instrument-tag,
+  time {
+    color: var(--text-4);
+    font: var(--mono-9) / 1.35 var(--font-mono);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .instrument-tag {
+    color: var(--text-3);
+  }
+
+  .role-tag {
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font: var(--mono-9) / 1 var(--font-mono);
+    letter-spacing: 0.08em;
+    padding: 3px 7px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .prv-facts .eyebrow .role-tag {
+    margin-left: 10px;
+  }
+
+  .prv-pane {
+    min-width: 0;
+  }
+
+  .prv-back {
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    color: var(--accent-on);
+    cursor: pointer;
+    display: none;
+    font: var(--mono-9) / 1 var(--font-mono);
+    letter-spacing: 0.1em;
+    margin-bottom: 20px;
+    min-height: 38px;
+    padding: 0 14px;
+    text-transform: uppercase;
+  }
+
+  /* Staged mode: the sub-900px list/detail flow at any viewport, sharing the same
+     data-view mechanism as the media-query block below. */
+  .prv[data-staged] .prv-pane {
+    display: none;
+  }
+
+  .prv[data-staged] .prv-back {
+    display: inline-block;
+  }
+
+  .prv[data-staged][data-view='detail'] .prv-main {
+    display: none;
+  }
+
+  .prv[data-staged][data-view='detail'] .prv-pane {
+    display: block;
+  }
+
+  .prv-doc {
+    margin: 24px 0 0;
+  }
+
+  .prv-doc-strip {
+    background: var(--bg-inset);
+    border: 1px solid var(--hairline-card);
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 16px;
+    scroll-snap-type: x mandatory;
+  }
+
+  .prv-doc-strip img {
+    background: #fff;
+    border: 1px solid var(--hairline);
+    flex: none;
+    height: clamp(320px, 46vh, 520px);
+    scroll-snap-align: start;
+    width: auto;
+  }
+
+  .prv-doc-bar {
+    align-items: center;
+    border: 1px solid var(--hairline-card);
+    border-top: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 8px;
+  }
+
+  .prv-doc-bar button {
+    background: transparent;
+    border: 0;
+    color: var(--text-2);
+    cursor: pointer;
+    font-size: 15px;
+    min-height: 34px;
+    min-width: 44px;
+  }
+
+  .prv-doc-bar button:hover {
+    color: var(--accent);
+  }
+
+  .prv-doc-bar span {
+    color: var(--text-4);
+    font: var(--mono-9) / 1 var(--font-mono);
+    letter-spacing: 0.1em;
+  }
+
+  .prv-placeholder {
+    align-items: center;
+    border: 1px dashed var(--hairline-card);
+    color: var(--text-4);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+    min-height: 220px;
+    padding: 24px;
+    text-align: center;
+  }
+
+  .prv-placeholder span {
+    color: var(--text-2);
+    font: var(--mono-10) / 1 var(--font-mono);
+    letter-spacing: 0.12em;
+  }
+
+  .prv-placeholder p {
+    font-size: 13px;
+    margin: 0;
+  }
+
+  .prv-facts {
+    padding-top: 0;
+  }
+
+  .prv-facts h3 {
+    font: 300 24px/1.2 var(--font-display);
+    margin: 8px 0 16px;
+  }
+
+  .prv-facts dl {
+    border-top: 1px solid var(--hairline);
+    display: grid;
+    gap: 0;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 0 0 20px;
+  }
+
+  .prv-facts dl div {
+    border-bottom: 1px solid var(--hairline);
+    padding: 12px 0;
+  }
+
+  .prv-facts dt {
+    color: var(--text-4);
+    font: var(--mono-9) / 1 var(--font-mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .prv-facts dd {
+    color: var(--text-2);
+    font: var(--mono-10) / 1.3 var(--font-mono);
+    letter-spacing: 0.04em;
+    margin: 8px 0 0;
+    text-transform: uppercase;
+  }
+
+  .prv-argued {
+    color: var(--text-2);
+    line-height: 1.55;
+    margin: 0 0 24px;
+  }
+
+  .pending-tag {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-3);
+    font: var(--mono-9) / 1 var(--font-mono);
+    letter-spacing: 0.1em;
+    margin-right: 8px;
+    padding: 3px 6px;
+    vertical-align: 1px;
+  }
+
+  .prv-cta {
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    display: inline-block;
+    font: var(--mono-10) / 1 var(--font-mono);
+    letter-spacing: 0.1em;
+    padding: 12px 18px;
+    text-transform: uppercase;
+  }
+
+  .prv-cta:hover {
+    background: var(--accent);
+    color: var(--accent-on);
+  }
+
+  @media (max-width: 900px) {
+    .prv {
+      padding: 56px 22px 64px;
+    }
+
+    .prv-split {
+      grid-template-columns: 1fr;
+    }
+
+    /* List-first: the pane only shows once a document is picked; the back button returns. */
+    .prv-list {
+      flex: none;
+      overflow: visible;
+    }
+
+    .prv-pane {
+      display: none;
+    }
+
+    .prv[data-view='detail'] .prv-main {
+      display: none;
+    }
+
+    .prv[data-view='detail'] .prv-pane {
+      display: block;
+    }
+
+    .prv-back {
+      display: inline-block;
+    }
+  }
+</style>

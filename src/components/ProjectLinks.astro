@@ -1,0 +1,37 @@
+---
+interface Link {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  links: Link[];
+}
+
+const { links } = Astro.props;
+---
+
+<nav class="project-links" aria-label="Project links" data-reveal>
+  {
+    links.map(({ label, href }, index) => (
+      <a class:list={['button', index === 0 && 'primary']} href={href} target="_blank" rel="noopener noreferrer">
+        {label}
+      </a>
+    ))
+  }
+</nav>
+
+<style>
+  .project-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 34px;
+  }
+  @media (max-width: 520px) {
+    .project-links a {
+      text-align: center;
+      width: 100%;
+    }
+  }
+</style>

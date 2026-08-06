@@ -1,0 +1,158 @@
+---
+title: The State of Production ML in 2025
+description: Practitioner-reported production machine learning practices, tools, organisational context and demographics from the 2025 survey.
+composed: true
+layout: ../../layouts/ProseLayout.astro
+chapters:
+  - slug: context
+    section: ml-context
+    eyebrow: 01 / ML CONTEXT
+    title: ML context
+    deck: What teams build, where they run it and what slows the route from experiment to production.
+  - slug: tools
+    section: platforms-tools
+    eyebrow: 02 / PLATFORMS & TOOLS
+    title: Platforms & tools
+    deck: The systems practitioners choose across tracking, data, training, serving, monitoring and foundation models.
+  - slug: operations
+    section: organisation-operations
+    eyebrow: 03 / ORGANISATION & OPERATIONS
+    title: Organisation & operations
+    deck: How production ML is organised, scaled and deployed across teams and infrastructure.
+  - slug: profile
+    section: respondent-profile
+    eyebrow: 04 / RESPONDENT PROFILE
+    title: Respondent profile
+    deck: The role levels, ages, locations and identities represented in this survey.
+  - slug: methodology
+    eyebrow: 05 / METHODOLOGY
+    title: Methodology
+    deck: A transparent account of the source and denominators behind every chart.
+stats:
+  - eyebrow: TOP CHALLENGE
+    value: 42%
+    label: selected monitoring model performance as a production challenge
+    href: '#/context/q6'
+  - eyebrow: LEADING LIBRARY
+    value: 35%
+    label: primarily use PyTorch, Lightning or Fast.ai
+    href: '#/context/q1'
+  - eyebrow: BIG MOVER
+    value: +21 pts
+    label: year-on-year growth in AI risk and governance teams
+    href: '#/operations/q20'
+  - eyebrow: SURVEY RESPONSES
+    value: '135'
+    label: submitted rows, with question bases varying by nonblank answers
+    href: '#/methodology'
+findings:
+  primary-ml-library:
+    headline: PyTorch leads, but the library field remains split.
+    insight: PyTorch, Lightning and Fast.ai account for 35% of answers. Scikit-learn follows at 33%, two points higher than in 2024.
+  modalities:
+    headline: LLM work and time series both moved sharply upward.
+    insight: LLMs reached 59%, up 12 points year on year. Time series rose even faster to 58%, a 16-point gain.
+  use-cases:
+    headline: Demand forecasting became the dominant reported use case.
+    insight: It was selected by 52% of respondents, up 20 points from 2024. Recommenders follow at 38%, close to last year's share.
+  time-to-production:
+    headline: Production cycles shifted toward the three-month mark.
+    insight: Forty-one percent report taking one to three months, ten points more than in 2024. The three-to-six-month group fell by 12 points.
+  cloud-platform:
+    headline: AWS still leads, while Azure and GCP gained ground.
+    insight: AWS remains first at 32%, but its share is 22 points below 2024. Azure also has 32%, while GCP reaches 26%.
+  production-challenges:
+    headline: Monitoring is the most common production challenge.
+    insight: Forty-two percent selected monitoring model performance. Access to training data and robust data pipelines follow at 37% and 34%.
+  experiment-tracking:
+    headline: MLflow has consolidated its lead in experiment tracking.
+    insight: Two thirds of respondents who use a tracking or registry tool chose MLflow. Its share is 18 points higher than in 2024.
+  feature-store:
+    headline: Most feature-store users still rely on in-house systems.
+    insight: In-house tooling leads at 55%, though seven points below 2024. FEAST doubled its share to 20%.
+  vector-database:
+    headline: Vector database choices remain notably fragmented.
+    insight: Pinecone leads at 21%, followed by in-house systems at 18%. Both gained roughly seven to eight points year on year.
+  workflow-orchestrator:
+    headline: Airflow remains the default orchestrator.
+    insight: Airflow leads at 47%, six points above 2024. Databricks is a distant second at 16%, but gained 12 points.
+  training-platform:
+    headline: Databricks moved to the front of training platforms.
+    insight: Databricks leads at 28%, with SageMaker and Azure ML Studio both at 16%. Azure ML Studio doubled its 2024 share.
+  real-time-serving:
+    headline: Serving choices spread beyond Python web frameworks.
+    insight: FastAPI and Flask still lead at 38%, but fell ten points. Databricks rose to 18%, a gain of 12 points.
+  model-monitoring:
+    headline: In-house monitoring leads, but packaged tools are gaining.
+    insight: In-house systems account for 41%, 11 points below 2024. Evidently rose eight points to 27%.
+  central-data-platform:
+    headline: The central data platform market has no runaway leader.
+    insight: Delta Lake leads at 20%, closely followed by Azure Data Lake at 19% and Snowflake at 17%. Azure gained 11 points.
+  managed-foundation-model:
+    headline: OpenAI leads a rapidly diversifying service market.
+    insight: OpenAI accounts for 30%, down ten points. Azure AI follows at 22%, while Gemini tripled its share to 19%.
+  industry:
+    headline: Technology and finance anchor the respondent base.
+    insight: Technology represents 21% and financial services 15%. The overall industry mix remains broad, with no single sector near a majority.
+  organisation-size:
+    headline: Respondents span both enterprises and small teams.
+    insight: Organisations with 5,000 to 50,000 employees are the largest group at 22%. Those with 1,000 to 5,000 follow at 21%.
+  models-in-production:
+    headline: Most fleets are measured in tens, not thousands.
+    insight: Two to five models and ten to twenty models are the two largest groups, each near 24%. Only 8% report more than 1,000.
+  models-planned:
+    headline: Teams expect their production fleets to keep expanding.
+    insight: The largest plan is ten to twenty models at 29%, up 11 points. Plans for two to five models also rose nine points.
+  organisation-setup:
+    headline: Governance is becoming an operating function.
+    insight: AI risk and governance teams reached 41%, up 21 points. Central ML platforms remain most common at 66%.
+  real-time-inference:
+    headline: Batch remains the dominant inference mode.
+    insight: Forty-three percent say fewer than one in ten models run real-time inference, nine points more than in 2024.
+  deployment-methods:
+    headline: CI/CD is now close to universal among respondents.
+    insight: Eighty-four percent report CI/CD support, up 15 points. Separate development, staging and production environments reached 66%.
+  job-family:
+    headline: ML engineers remain the largest practitioner group.
+    insight: ML engineers account for 42% of answers. MLOps engineers follow at 22%, with data scientists close behind at 21%.
+  role-level:
+    headline: Individual contributors form the centre of the sample.
+    insight: Junior to senior individual contributors make up 43%, five points above 2024. Staff-level and above represent 23%.
+  age:
+    headline: The age profile broadened beyond the early thirties.
+    insight: Ages 35 to 39 are the largest group at 24%. Ages 30 to 34 fell by 13 points, while ages 40 to 44 gained seven.
+  country:
+    headline: Responses reflect a widely distributed community.
+    insight: Germany and India are the largest consistently labelled groups at 11% each. Free-text country naming means small variants remain visible separately.
+  self-identification:
+    headline: The gender imbalance remains pronounced.
+    insight: Ninety percent self-identify as male and 9% as female. The female share is two points higher than in 2024.
+methodology:
+  deck: This edition compares the 2025 answers with the same questions and answer labels from 2024. Question-level response bases are summarised here so every percentage can be read in context.
+  collection: Responses were collected through the State of Production ML survey. The report aggregates the supplied CSV at build time and publishes no raw-response table.
+  denominator: Each percentage uses the number of nonblank respondents to that question, so N varies. For multiple-choice questions, a bar is the share of respondents selecting that answer and totals can exceed 100%.
+  otherYearLabel: READ THE 2024 BASELINE
+  otherYearHref: /reports/state-of-ml-2024/
+---
+
+import survey2024Csv from '../../data/survey-2024.csv?raw';
+import survey2025Csv from '../../data/survey-2025.csv?raw';
+import { ArticleHero, SurveyReport } from '../../components/prose/components.js';
+import { buildSurveyComparison } from '../../utils/SurveyReportData';
+
+export const report = buildSurveyComparison(survey2025Csv, survey2024Csv);
+
+<ArticleHero
+  eyebrow="STATE OF PRODUCTION ML · 2025"
+  title={frontmatter.title}
+  intro="What 135 practitioners report from production: LLM and time series work surged, monitoring remains the top challenge at 42%, PyTorch edged ahead of scikit-learn, and AI risk and governance functions doubled year on year. Every answer compares against the 2024 baseline as you move through the chapters."
+/>
+
+<SurveyReport
+  report={report}
+  year={2025}
+  chapters={frontmatter.chapters}
+  findings={frontmatter.findings}
+  stats={frontmatter.stats}
+  methodology={frontmatter.methodology}
+/>
