@@ -1,18 +1,8 @@
 # TODO
 
-## Remove ASCII-arrow link text site-wide
-
-Convention added: no `Label →` links — inline text links or primary/secondary buttons, never a trailing arrow. Do a full pass over pages and components (CTAs, card footers, ChannelLinks, AchievementNeonRendition buttons, FormSection, prose links with `→`, switchers) removing the arrows and, where a link was arrow-styled text, deciding inline-link vs button per context.
-
 ## CSS spacing cleanup
 
 Retire `src/styles/layout.css` (prototype-fidelity pixel pins from round 4; the principles and open-source pins are already removed after one caused 43px of dead section space — verify the remaining join/footnote pins still earn their place, then delete the file). Introduce a single `--section-gap` rhythm token for the homepage inter-section distance instead of per-section one-offs.
-
-## Bug
-
-- In the homepage if you click the animation separator which cycles across the three 3d objects, and force the change of the annimation, the distortion stops. Let's actually not make the ability to change the 3d animation manually by not making it clickable.
-- When refreshing the home page and half of the metrics or the brands carousel is visible, there is an animation wwhere it apepars and then disappears. and then reappears when scrolling. The functionaliy should be that it doesnt appear at all unless it's in the visibility range.
-- In the principles page, when clicking "next principle", or going to a principle specific principle page without clicking the external link, the header seems to stay put whilst the text seems to drop from above. I would be keen to ensure that even titles iwth animation are also consistent with the page transition animations when there's nothing clicking for transition. We need to be careful with this fix as it may break other things.
 
 ## tokens.css breakup (post-cutover, pixel-perfect)
 
@@ -20,11 +10,6 @@ Roughly 3/4 of tokens.css (~2,200 lines) is per-component styling; relocate it i
 
 ## Recovered backlog (from pre-branch sessions; triage — some may be done)
 
-- #10 SEO redirects (legacy `.html` URLs → new routes; the security-slug decision goes into the redirect map)
-- #21 Partners logos / EC link
-- #22 Tighten vite `allowedHosts`
-- #23 Mobile polish pass
-- #24 Network-members
 - #25 Anti-LLM style pass (was waiting on owner sheets)
 - #27 RSS (later)
 - #29 Astro showcase (post-cutover)
