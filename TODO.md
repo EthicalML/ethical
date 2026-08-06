@@ -29,7 +29,6 @@ The toggle library shipped (POLICY: 29 authored + 5 contributed; INDUSTRY: LF AI
 - Promote the WGDG Progress Report zero draft (POLICY, CO-FACILITATOR) to the authored record when the final report publishes with attribution.
 - Collect the remaining public organisational principles for the INDUSTRY view (the ~10 card names Linux Foundation and UN publicly; Zalando, Capital One, Deutsche Börse and one more are confidential; owner recalls "several others" public).
 - LF AI principles entry links an HTML page so it has a placeholder viewer; optionally print-to-PDF at build for a paginated preview.
-- Systemic Risks Associated with Agentic AI policy brief (ETPC) — owner is in the acknowledgments only; POLICY-view candidate with an ACKNOWLEDGED CONTRIBUTOR chip if wanted. Its page previews are already rendered and sitting UNTRACKED at `public/images/policy-record/pages/28-systemic-risks-agentic-ai-policy-brief/` — wire the entry or delete the folder.
 
 ## Policy record: 30th product
 
