@@ -1,0 +1,318 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import NewsletterSubscribe from '../../components/NewsletterSubscribe.astro';
+
+const frontmatter = {
+  title: 'The ML Engineer — Newsletter archive',
+  description:
+    'The Machine Learning Engineer newsletter archive: weekly curated articles, tutorials and insights from experienced machine learning professionals since 2018.',
+};
+const issues = (await getCollection('newsletter')).sort(
+  (first, second) => (second.data.date?.getTime() ?? 0) - (first.data.date?.getTime() ?? 0) || second.data.issue - first.data.issue,
+);
+const latest = issues[0];
+const latestDate = latest?.data.date?.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+const years = [...new Set(issues.map((entry) => entry.data.date?.getFullYear()).filter((year): year is number => year !== undefined))].sort(
+  (first, second) => second - first,
+);
+const shortDate = (date?: Date) => date?.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) ?? '';
+---
+
+<BaseLayout frontmatter={frontmatter}>
+  <article class="newsletter-archive">
+    <Hero
+      status="THE ML ENGINEER — WEEKLY NEWSLETTER"
+      title={['The Machine', 'Learning Engineer', 'Archive']}
+      subtitle_lines={['Join 70k+ AI professionals receiving weekly curated', 'articles, tutorials and blog posts on']}
+      beneficiaries={['production machine learning.', 'MLOps at scale.', 'agentic systems.', 'ML security.', 'AI safety.']}
+    >
+      <NewsletterSubscribe slot="actions" />
+    </Hero>
+
+    {
+      latest && (
+        <a class="latest-card" href={`/newsletter/${latest.data.issue}/`} data-reveal>
+          <div>
+            <p class="eyebrow">LATEST ISSUE</p>
+            <p class="latest-title">Issue #{latest.data.issue}</p>
+            {latestDate && <p class="latest-date">{latestDate}</p>}
+            {latest.data.summary && <p class="latest-summary">{latest.data.summary}</p>}
+          </div>
+          <span class="latest-action">Read issue</span>
+        </a>
+      )
+    }
+
+    <issue-finder>
+      <div class="finder-controls" data-reveal>
+        <input data-finder-input type="search" inputmode="numeric" placeholder="Jump to issue — number or year" aria-label="Filter issues by number or year" />
+        <div class="year-rail" role="tablist" aria-label="Browse by year">
+          <button type="button" data-finder-year="all">ALL</button>
+          {
+            years.map((year, index) => (
+              <button type="button" data-finder-year={String(year)} class:list={[index === 0 && 'active']}>
+                {year}
+              </button>
+            ))
+          }
+        </div>
+        <p class="finder-hint">Full-text search lives in <button type="button" class="finder-palette" data-command-palette-open>⌘K</button></p>
+      </div>
+      <div class="issue-grid" data-reveal>
+        {
+          issues.map((entry) => (
+            <a
+              class="issue-cell"
+              href={`/newsletter/${entry.data.issue}/`}
+              data-issue={String(entry.data.issue)}
+              data-year={String(entry.data.date?.getFullYear() ?? '')}
+            >
+              <strong>#{entry.data.issue}</strong>
+              <span>{shortDate(entry.data.date)}</span>
+            </a>
+          ))
+        }
+      </div>
+      <p class="finder-empty" data-finder-empty hidden>No issues match.</p>
+    </issue-finder>
+  </article>
+</BaseLayout>
+
+<style>
+  .latest-card {
+    align-items: center;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent);
+    border: 1px solid rgba(94, 230, 160, 0.28);
+    border-radius: var(--radius-card);
+    display: flex;
+    justify-content: space-between;
+    margin: 34px auto 0;
+    max-width: 860px;
+    padding: 26px 30px;
+    width: calc(100% - 48px);
+  }
+  .latest-card:hover {
+    border-color: var(--accent);
+    opacity: 1;
+  }
+  .latest-title {
+    font: 300 var(--display-38) / 1.1 var(--font-display);
+    margin: 8px 0 4px;
+  }
+  .latest-date {
+    color: var(--text-2);
+    font-family: var(--font-mono);
+    font-size: var(--mono-11);
+    letter-spacing: 0.1em;
+    margin: 0;
+    text-transform: uppercase;
+  }
+  .latest-summary {
+    color: var(--text-2);
+    font-size: var(--body-14);
+    line-height: 1.6;
+    margin: 10px 0 0;
+    max-width: 560px;
+  }
+  .latest-action {
+    border: 1px solid rgba(94, 230, 160, 0.45);
+    border-radius: var(--radius-control);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: var(--body-14);
+    padding: 12px 20px;
+    white-space: nowrap;
+  }
+  issue-finder {
+    display: block;
+    margin: 0 auto;
+    max-width: 860px;
+    padding: 26px 24px 96px;
+  }
+  .finder-controls {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 12px 0 22px;
+  }
+  .finder-controls input {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--hairline);
+    border-radius: 4px;
+    color: var(--text-1);
+    flex: 1;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    min-width: 220px;
+    padding: 11px 14px;
+  }
+  .finder-controls input:focus {
+    border-color: var(--accent);
+    outline: none;
+  }
+  .finder-controls input::placeholder {
+    color: rgba(244, 242, 238, 0.35);
+  }
+  .year-rail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .year-rail button {
+    background: none;
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-pill);
+    color: var(--text-2);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: var(--mono-10);
+    letter-spacing: 0.1em;
+    padding: 7px 12px;
+    transition:
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+  .year-rail button:hover {
+    color: var(--text-1);
+  }
+  .year-rail button.active {
+    border-color: rgba(94, 230, 160, 0.5);
+    color: var(--accent);
+  }
+  .finder-hint {
+    color: var(--text-3);
+    flex-basis: 100%;
+    font-family: var(--font-mono);
+    font-size: var(--mono-10);
+    letter-spacing: 0.1em;
+    margin: 0;
+  }
+  .finder-palette {
+    background: none;
+    border: 1px solid var(--hairline);
+    border-radius: 4px;
+    color: var(--text-2);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    padding: 3px 7px;
+  }
+  .finder-palette:hover {
+    border-color: rgba(94, 230, 160, 0.45);
+    color: var(--accent);
+  }
+  .issue-grid {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  }
+  .issue-cell {
+    border: 1px solid var(--hairline-card);
+    border-radius: 6px;
+    padding: 12px 12px 10px;
+    transition:
+      border-color 0.2s ease,
+      transform 0.2s ease;
+  }
+  .issue-cell:hover {
+    border-color: rgba(94, 230, 160, 0.55);
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+  .issue-cell[hidden] {
+    display: none;
+  }
+  .issue-cell strong {
+    color: var(--text-1);
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .issue-cell span {
+    color: var(--text-3);
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+    margin-top: 5px;
+    text-transform: uppercase;
+  }
+  .finder-empty {
+    color: var(--text-2);
+    font-family: var(--font-mono);
+    font-size: var(--mono-11);
+    letter-spacing: 0.06em;
+    padding: 18px 0;
+  }
+  @media (max-width: 600px) {
+    .latest-card {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 16px;
+    }
+  }
+</style>
+
+<script>
+  class IssueFinder extends HTMLElement {
+    private controller = new AbortController();
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const { signal } = this.controller;
+      const input = this.querySelector<HTMLInputElement>('[data-finder-input]');
+      const yearButtons = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-finder-year]'));
+      const cells = Array.from(this.querySelectorAll<HTMLAnchorElement>('.issue-cell'));
+      const empty = this.querySelector<HTMLElement>('[data-finder-empty]');
+      if (!input || !cells.length) return;
+
+      // Default view: the newest year's issues, so the grid starts short.
+      let activeYear = yearButtons.find((button) => button.classList.contains('active'))?.dataset.finderYear ?? 'all';
+
+      const apply = () => {
+        const query = input.value.trim();
+        let visible = 0;
+        for (const cell of cells) {
+          const issue = cell.dataset.issue ?? '';
+          const year = cell.dataset.year ?? '';
+          const matchesQuery = !query || issue.startsWith(query.replace(/^#/, '')) || year === query;
+          const matchesYear = query ? true : activeYear === 'all' || year === activeYear;
+          const show = matchesQuery && matchesYear;
+          cell.hidden = !show;
+          if (show) visible += 1;
+        }
+        if (empty) empty.hidden = visible > 0;
+      };
+
+      input.addEventListener('input', apply, { signal });
+      yearButtons.forEach((button) =>
+        button.addEventListener(
+          'click',
+          () => {
+            activeYear = button.dataset.finderYear ?? 'all';
+            yearButtons.forEach((other) => other.classList.toggle('active', other === button));
+            input.value = '';
+            apply();
+          },
+          { signal },
+        ),
+      );
+      apply();
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+    }
+  }
+
+  if (!customElements.get('issue-finder')) {
+    customElements.define('issue-finder', IssueFinder);
+  }
+</script>

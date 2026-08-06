@@ -1,0 +1,419 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import NewsletterSubscribe from '../../components/NewsletterSubscribe.astro';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('newsletter');
+  const numbers = entries.map((entry) => entry.data.issue).sort((first, second) => first - second);
+  return entries.map((entry) => ({ params: { issue: String(entry.data.issue) }, props: { entry, numbers } }));
+}
+
+const { entry, numbers } = Astro.props;
+const { Content } = await render(entry);
+const issue = entry.data.issue;
+const published = entry.data.date?.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+const position = numbers.indexOf(issue);
+const previous = position > 0 ? numbers[position - 1] : undefined;
+const next = position < numbers.length - 1 ? numbers[position + 1] : undefined;
+const frontmatter = {
+  title: `The ML Engineer — Issue #${issue}`,
+  description:
+    entry.data.summary ?? 'The Machine Learning Engineer newsletter: curated articles, tutorials and insights from experienced machine learning professionals.',
+};
+---
+
+<BaseLayout frontmatter={frontmatter}>
+  <article class="newsletter-issue">
+    <Hero
+      status="THE ML ENGINEER — WEEKLY NEWSLETTER"
+      title={['The Machine', 'Learning Engineer', `Issue #${issue}`]}
+      subtitle_lines={['Join 70k+ AI professionals receiving weekly curated', 'articles, tutorials and blog posts on']}
+      beneficiaries={['production machine learning.', 'MLOps at scale.', 'agentic systems.', 'ML security.', 'AI safety.']}
+    >
+      <NewsletterSubscribe slot="actions" />
+    </Hero>
+    <newsletter-meta-bar>
+      <div data-meta-sentinel aria-hidden="true"></div>
+      <div class="issue-meta" data-reveal>
+        <span class="issue-chip">ISSUE {String(issue).padStart(3, '0')}</span>
+        {published && <span class="issue-chip">PUBLISHED {published.toUpperCase()}</span>}
+        <span class="issue-chip archive">ARCHIVE RECORD — PRESERVED AS SENT</span>
+      </div>
+      {
+        entry.data.summary && (
+          <p class="issue-lede" data-reveal>
+            {entry.data.summary}
+          </p>
+        )
+      }
+      {
+        entry.data.tags?.length && (
+          <div class="issue-tags" data-reveal>
+            {entry.data.tags.map((tag) => (
+              <span class="issue-tag">{tag}</span>
+            ))}
+          </div>
+        )
+      }
+      <nav class="issue-side-nav" aria-label="Adjacent issues">
+        {
+          previous && (
+            <a class="side-link side-previous" href={`/newsletter/${previous}/`} data-transition-direction="back">
+              <i aria-hidden="true">‹</i>
+              <span>#{previous}</span>
+            </a>
+          )
+        }
+        {
+          next && (
+            <a class="side-link side-next" href={`/newsletter/${next}/`} data-transition-direction="forward">
+              <i aria-hidden="true">›</i>
+              <span>#{next}</span>
+            </a>
+          )
+        }
+      </nav>
+      <div class="issue-body">
+        <Content />
+      </div>
+      <nav class="issue-pagination" aria-label="Adjacent issues">
+        {
+          previous && (
+            <a href={`/newsletter/${previous}/`} data-transition-direction="back">
+              ← Issue #{previous}
+            </a>
+          )
+        }
+        {
+          next && (
+            <a href={`/newsletter/${next}/`} data-transition-direction="forward">
+              Issue #{next} →
+            </a>
+          )
+        }
+      </nav>
+    </newsletter-meta-bar>
+  </article>
+</BaseLayout>
+
+<style>
+  newsletter-meta-bar {
+    display: block;
+  }
+  .issue-meta {
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    padding: 34px 24px 0;
+    position: sticky;
+    top: var(--meta-stuck-top, 62px);
+    transition:
+      background 0.3s ease,
+      border-color 0.3s ease,
+      padding 0.3s ease,
+      backdrop-filter 0.3s ease;
+    z-index: 40;
+  }
+  newsletter-meta-bar.is-stuck .issue-meta {
+    backdrop-filter: blur(14px);
+    background: var(--bg-header);
+    border-bottom-color: var(--hairline);
+    padding: 10px 24px;
+  }
+  .issue-chip {
+    transition:
+      font-size 0.3s ease,
+      padding 0.3s ease;
+  }
+  newsletter-meta-bar.is-stuck .issue-chip {
+    padding: 6px 11px;
+  }
+  .issue-lede {
+    color: var(--text-2);
+    font-size: var(--body-16-5);
+    line-height: 1.7;
+    margin: 26px auto 0;
+    max-width: 645px;
+    padding: 0 24px;
+    text-align: center;
+  }
+  .issue-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin: 16px auto 0;
+    max-width: 645px;
+    padding: 0 24px;
+  }
+  .issue-tag {
+    border: 1px solid var(--hairline-card);
+    border-radius: var(--radius-pill);
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: var(--mono-9);
+    letter-spacing: 0.12em;
+    padding: 5px 11px;
+    text-transform: uppercase;
+  }
+  .issue-side-nav .side-link {
+    align-items: center;
+    border: 1px solid var(--hairline-card);
+    border-radius: 999px;
+    color: var(--text-2);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    justify-content: center;
+    height: 64px;
+    opacity: 0;
+    pointer-events: none;
+    position: fixed;
+    top: 50vh;
+    transform: translateY(-50%);
+    transition:
+      opacity 0.35s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+    width: 64px;
+    z-index: 30;
+  }
+  newsletter-meta-bar.is-stuck .side-link {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .side-previous {
+    left: 22px;
+  }
+  .side-next {
+    right: 22px;
+  }
+  .issue-side-nav .side-link:hover {
+    border-color: rgba(94, 230, 160, 0.55);
+    color: var(--accent);
+    opacity: 1;
+  }
+  .side-link i {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-style: normal;
+    line-height: 1;
+  }
+  .side-link span {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+  }
+  .issue-chip {
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-pill);
+    color: var(--text-2);
+    font-family: var(--font-mono);
+    font-size: var(--mono-10);
+    letter-spacing: 0.12em;
+    padding: 8px 14px;
+  }
+  .issue-chip.archive {
+    border-color: rgba(94, 230, 160, 0.35);
+    color: var(--accent);
+  }
+  .issue-body {
+    padding: 48px 24px 56px;
+  }
+  .issue-body :global(.issue-section) {
+    padding: 0;
+  }
+  .issue-body :global(.issue-section) > :global(*) {
+    margin-inline: auto;
+    max-width: 645px;
+  }
+  .issue-body :global(p) {
+    color: var(--text-2);
+    font-size: var(--body-16-5);
+    line-height: 1.75;
+    margin-block: 0 18px;
+  }
+  .issue-body :global(h2) {
+    border-top: 1px solid var(--hairline);
+    font: 300 var(--display-30) / 1.15 var(--font-display);
+    letter-spacing: -0.01em;
+    margin-block: 40px 18px;
+    padding-top: 36px;
+  }
+  .issue-body :global(h3) {
+    color: var(--text-1);
+    font-family: var(--font-mono);
+    font-size: var(--mono-11);
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    margin-block: 30px 14px;
+    text-transform: uppercase;
+  }
+  .issue-body :global(ul) {
+    list-style: none;
+    margin-block: 0 20px;
+    padding: 0;
+  }
+  .issue-body :global(li) {
+    color: var(--text-2);
+    font-size: var(--body-16);
+    line-height: 1.65;
+    margin: 0 0 10px;
+    padding-left: 20px;
+    position: relative;
+  }
+  .issue-body :global(li)::before {
+    background: var(--accent);
+    content: '';
+    height: 1px;
+    left: 0;
+    position: absolute;
+    top: 0.75em;
+    width: 9px;
+  }
+  .issue-body :global(a) {
+    border-bottom: 1px solid rgba(94, 230, 160, 0.35);
+    color: var(--accent);
+    transition:
+      border-color 0.2s ease,
+      text-shadow 0.2s ease;
+  }
+  .issue-body :global(a:hover) {
+    border-bottom-color: var(--accent);
+    opacity: 1;
+    text-shadow: 0 0 18px rgba(94, 230, 160, 0.55);
+  }
+  .issue-body :global(h2 a),
+  .issue-body :global(h3 a) {
+    border-bottom: none;
+    color: inherit;
+  }
+  .issue-body :global(h2 a:hover),
+  .issue-body :global(h3 a:hover) {
+    color: var(--accent);
+  }
+  .issue-body :global(img) {
+    border: 1px solid var(--hairline-card);
+    border-radius: var(--radius-card);
+    height: auto;
+    max-width: 100%;
+  }
+  .issue-body :global(img:not([width])) {
+    width: 100%;
+  }
+  /* Markdown code fences wear the AnimationWindow chrome: inset card, 30px
+     bar with traffic lights, the language as the centred window title. */
+  .issue-body :global(pre.astro-code) {
+    background: var(--bg-inset) !important;
+    border: 1px solid var(--hairline-card);
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.75;
+    margin-block: 0 20px;
+    overflow-x: auto;
+    padding: 46px 18px 18px;
+    position: relative;
+  }
+  .issue-body :global(pre.astro-code)::before {
+    background:
+      radial-gradient(circle at 16px 15px, var(--glitch-red) 3.5px, transparent 4.5px),
+      radial-gradient(circle at 29px 15px, var(--warn) 3.5px, transparent 4.5px), radial-gradient(circle at 42px 15px, var(--accent) 3.5px, transparent 4.5px),
+      rgba(255, 255, 255, 0.025);
+    border-bottom: 1px solid var(--hairline-card);
+    content: '';
+    height: 30px;
+    inset: 0 0 auto;
+    position: absolute;
+  }
+  .issue-body :global(pre.astro-code)::after {
+    color: var(--text-3);
+    content: attr(data-language);
+    font: var(--mono-9) / 30px var(--font-mono);
+    inset: 0 0 auto;
+    letter-spacing: 0.08em;
+    position: absolute;
+    text-align: center;
+  }
+  .issue-body :global(pre.astro-code code) {
+    font-family: var(--font-mono);
+  }
+  .issue-pagination {
+    border-top: 1px solid var(--hairline);
+    display: flex;
+    justify-content: space-between;
+    margin: 0 auto;
+    max-width: 645px;
+    padding: 28px 24px 88px;
+  }
+  .issue-pagination a {
+    color: var(--text-2);
+    font-family: var(--font-mono);
+    font-size: var(--mono-11);
+    letter-spacing: 0.1em;
+  }
+  .issue-pagination a:hover {
+    color: var(--accent);
+  }
+  .issue-pagination a:only-child[data-transition-direction='forward'] {
+    margin-left: auto;
+  }
+  @media (min-width: 1000px) {
+    .issue-pagination {
+      display: none;
+    }
+  }
+  @media (max-width: 999px) {
+    .issue-side-nav {
+      display: none;
+    }
+  }
+  @media (max-width: 950px) {
+    .issue-body {
+      padding: 36px 24px 48px;
+    }
+  }
+</style>
+
+<script>
+  // Sticky meta bar: past its natural position the chip row docks under the
+  // site header and gains the header's bar chrome; the fixed side prev/next
+  // arrows fade in on the same signal. The sticky offset is measured from the
+  // real header height rather than hardcoded per breakpoint.
+  class NewsletterMetaBar extends HTMLElement {
+    private controller = new AbortController();
+    private observer?: IntersectionObserver;
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const sentinel = this.querySelector<HTMLElement>('[data-meta-sentinel]');
+      const meta = this.querySelector<HTMLElement>('.issue-meta');
+      if (!sentinel || !meta) return;
+
+      const setOffset = () => {
+        const header = document.querySelector<HTMLElement>('.site-header');
+        meta.style.setProperty('--meta-stuck-top', `${header?.offsetHeight ?? 62}px`);
+      };
+      setOffset();
+      addEventListener('resize', setOffset, { signal: this.controller.signal });
+
+      this.observer = new IntersectionObserver(([entry]) => this.classList.toggle('is-stuck', !entry.isIntersecting && entry.boundingClientRect.top < 0), {
+        rootMargin: '-80px 0px 0px 0px',
+      });
+      this.observer.observe(sentinel);
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+      this.observer?.disconnect();
+    }
+  }
+
+  if (!customElements.get('newsletter-meta-bar')) {
+    customElements.define('newsletter-meta-bar', NewsletterMetaBar);
+  }
+</script>

@@ -11,17 +11,18 @@ interface Props {
   subtitle_lines: string[];
   beneficiaries?: string[];
   typewriter_underline?: boolean;
-  primary_button: HeroButton;
-  secondary_button: HeroButton;
+  primary_button?: HeroButton;
+  secondary_button?: HeroButton;
 }
 
 const { status, status_href, title, subtitle_lines, beneficiaries = [], typewriter_underline = false, primary_button, secondary_button }: Props = Astro.props;
+const hasActionsSlot = Astro.slots.has('actions');
 const initialBeneficiary = beneficiaries[0];
 const [missionLine1, missionLine2] = subtitle_lines;
 const ariaSentence = [...subtitle_lines, initialBeneficiary].filter(Boolean).join(' ');
 ---
 
-<header class="hero" data-reveal>
+<header class="hero" data-reveal data-pagefind-ignore>
   <hero-cycle><canvas class="hero-canvas" aria-hidden="true"></canvas></hero-cycle>
   <div class="hero-copy">
     {
@@ -65,10 +66,25 @@ const ariaSentence = [...subtitle_lines, initialBeneficiary].filter(Boolean).joi
         </span>
       </p>
     </type-writer>
-    <nav class="actions" aria-label="Primary actions">
-      <a class="button primary" href={primary_button.href}>{primary_button.label}</a>
-      <a class="button" href={secondary_button.href}>{secondary_button.label}</a>
-    </nav>
+    {
+      hasActionsSlot ? (
+        <div class="actions">
+          <slot name="actions" />
+        </div>
+      ) : (
+        primary_button &&
+        secondary_button && (
+          <nav class="actions" aria-label="Primary actions">
+            <a class="button primary" href={primary_button.href}>
+              {primary_button.label}
+            </a>
+            <a class="button" href={secondary_button.href}>
+              {secondary_button.label}
+            </a>
+          </nav>
+        )
+      )
+    }
     <div class="graph-switcher" aria-hidden="true">
       <span class="active" data-hero-mode="planes"></span>
       <span data-hero-mode="sphere"></span>

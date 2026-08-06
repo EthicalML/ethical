@@ -1,4 +1,6 @@
 import { defineConfig } from 'astro/config';
+import { existsSync, globSync } from 'node:fs';
+import { basename, resolve } from 'node:path';
 import { loadEnv } from 'vite';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
@@ -15,6 +17,17 @@ import rehypeSectionize from './src/plugins/rehype-sectionize.mjs';
 // rendered page entirely.
 const { FORM_ENDPOINT = '' } = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), '');
 const formToken = FORM_ENDPOINT ? Buffer.from(FORM_ENDPOINT, 'utf8').toString('base64') : '';
+const newsletterRedirects = Object.fromEntries(
+  globSync('src/content/newsletter/*.md')
+    .map((filename) => basename(filename, '.md'))
+    .filter((issue) => /^\d+$/.test(issue))
+    // Astro copies public/ before generating redirect pages. An existing
+    // public/mle/N.html therefore blocks the redirect's N.html directory and
+    // makes the build fail with ENOTDIR. Enable each redirect automatically as
+    // its passthrough file is retired.
+    .filter((issue) => !existsSync(resolve(`public/mle/${issue}.html`)))
+    .map((issue) => [`/mle/${issue}.html`, `/newsletter/${issue}/`]),
+);
 
 export default defineConfig({
   site: 'https://ethical.institute',
@@ -36,7 +49,8 @@ export default defineConfig({
     '/initiatives/': '/policy/',
     '/data/survey-explorer/': '/reports/state-of-ml-2025/',
     '/contact.html': '/contact/',
-    '/mle.html': '/network/',
+    '/mle.html': '/newsletter/',
+    ...newsletterRedirects,
     '/privacypolicy.html': '/privacy/',
     '/state-of-ml-2024.html': '/reports/state-of-ml-2024/',
     '/state-of-ml-2025.html': '/reports/state-of-ml-2025/',
