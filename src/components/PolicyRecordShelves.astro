@@ -113,7 +113,14 @@ const { policyFilters } = Astro.props;
     letter-spacing: 0.1em;
     min-height: 36px;
     padding: 0 18px;
+    position: relative;
     text-transform: uppercase;
+  }
+
+  .shelf-toggle button::after {
+    content: '';
+    inset: -4px;
+    position: absolute;
   }
 
   .shelf-toggle button + button {

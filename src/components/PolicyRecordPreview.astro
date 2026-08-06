@@ -374,6 +374,13 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
     letter-spacing: 0.1em;
     min-height: 36px;
     padding: 0 14px;
+    position: relative;
+  }
+
+  .prv-filters button::after {
+    content: '';
+    inset: -4px;
+    position: absolute;
   }
 
   .prv-filters button[aria-pressed='true'] {

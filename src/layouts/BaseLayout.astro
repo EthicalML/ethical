@@ -67,7 +67,15 @@ const socialImage = new URL(frontmatter.image ?? ogImage, Astro.site);
     </script>
     <ClientRouter />
     <style is:inline>
+      [data-reveal]:not([data-reveal='trigger']):not([data-revealed='1']) {
+        opacity: 0;
+        transform: translateY(26px);
+      }
       @media (prefers-reduced-motion: reduce) {
+        [data-reveal]:not([data-reveal='trigger']):not([data-revealed='1']) {
+          opacity: 1;
+          transform: none;
+        }
         ::view-transition-group(*),
         ::view-transition-image-pair(*) {
           animation: revert !important;
@@ -119,6 +127,7 @@ const socialImage = new URL(frontmatter.image ?? ogImage, Astro.site);
             <h1
               transition:name={frontmatter.transitionName}
               style={frontmatter.transitionName ? `view-transition-name: ${frontmatter.transitionName}` : undefined}
+              data-principle-transition-title={frontmatter.transitionName?.startsWith('principle-title-') ? '' : undefined}
             >
               {frontmatter.title}
             </h1>

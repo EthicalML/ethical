@@ -169,6 +169,13 @@ const { title, chromeOnly = false, finite = false, class: className }: Props = A
     min-height: 30px;
     min-width: 30px;
     padding: 0;
+    position: relative;
+    z-index: 1;
+  }
+  .play-toggle::after {
+    content: '';
+    inset: -7px;
+    position: absolute;
   }
   .play-toggle:hover,
   .play-toggle:focus-visible {
@@ -197,17 +204,6 @@ const { title, chromeOnly = false, finite = false, class: className }: Props = A
     }
     .traffic-lights {
       padding-left: 10px;
-    }
-  }
-  @media (pointer: coarse) {
-    .play-toggle {
-      position: relative;
-      z-index: 1;
-    }
-    .play-toggle::after {
-      content: '';
-      inset: -7px;
-      position: absolute;
     }
   }
 </style>

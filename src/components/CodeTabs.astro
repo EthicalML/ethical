@@ -90,6 +90,12 @@ const { python, cpp } = Astro.props;
     font: 11px var(--font-mono);
     min-height: 44px;
     padding: 16px 14px 14px;
+    position: relative;
+  }
+  button::after {
+    content: '';
+    inset: 0 -4px;
+    position: absolute;
   }
   button[aria-selected='true'] {
     border-bottom-color: var(--accent);

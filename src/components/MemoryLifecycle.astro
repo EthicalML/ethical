@@ -241,7 +241,13 @@ const scopes = [
     cursor: pointer;
     font: var(--mono-8-5)/1 var(--font-mono);
     padding: 9px 10px;
+    position: relative;
     text-transform: uppercase;
+  }
+  .scope-picker button::after {
+    content: '';
+    inset: -8px 0;
+    position: absolute;
   }
   .scope-picker button:last-child {
     border-right: 1px solid var(--hairline-card);

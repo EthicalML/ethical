@@ -296,7 +296,7 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
                   const external = link.href.startsWith('http');
                   return (
                     <a class="button primary" href={link.href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
-                      {link.label} →
+                      {link.label}
                     </a>
                   );
                 })}

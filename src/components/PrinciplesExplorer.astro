@@ -44,7 +44,7 @@ const { eyebrow, heading, intro, homepage = false, compact = false } = Astro.pro
                 <>
                   <span>{data.number}</span>
                   <strong>{data.title}</strong>
-                  <i>{index === 0 ? '●' : '→'}</i>
+                  <i>{index === 0 ? '●' : ''}</i>
                 </>
               </button>
             ))
@@ -129,7 +129,7 @@ const { eyebrow, heading, intro, homepage = false, compact = false } = Astro.pro
         rows.forEach((row, rowIndex) => {
           row.classList.toggle('active', rowIndex === index);
           const marker = row.querySelector<HTMLElement>('i');
-          if (marker) marker.textContent = rowIndex === index ? '●' : '→';
+          if (marker) marker.textContent = rowIndex === index ? '●' : '';
         });
         details.forEach((detail, detailIndex) => {
           detail.classList.toggle('active', detailIndex === index);
