@@ -1,6 +1,6 @@
 # Astro authoring conventions
 
-The ratified decisions in `.github/memory/2026-07-rebrand/` are authoritative. ADR-009 defines the client architecture and data-placement rules summarised here.
+The ratified decisions in `~/Programming/agentic/kaos-ai-docs/ethical-institute-rebrand/` (moved out of the repo from `.github/memory/2026-07-rebrand/`) are authoritative. ADR-009 defines the client architecture and data-placement rules summarised here.
 
 ## Pages and content
 

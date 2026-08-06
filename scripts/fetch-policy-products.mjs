@@ -14,7 +14,7 @@ import { parse } from 'yaml';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const sheetPath = path.join(
   root,
-  '.github/memory/2026-07-rebrand/research/content-proposals/17-sheet-standards-policy.md',
+  '/Users/asaucedo/Programming/agentic/kaos-ai-docs/ethical-institute-rebrand/research/content-proposals/17-sheet-standards-policy.md',
 );
 const pagePath = path.join(root, 'src/pages/policy.mdx');
 const downloadDirectory = path.join(root, 'tmp/policy-pdfs');
