@@ -162,5 +162,6 @@ Every change must satisfy:
 6. The DOM gate passes for all affected routes at desktop and mobile widths.
 7. Zero-change work has masked full-page screenshot parity; intentional visual changes have documented before/after evidence.
 8. Any added or changed animation updates the Motion table in the same change.
+9. The change lands on `master` through a pull request with green CI; direct pushes are blocked. The workflow is described in `AGENTS.md`.
 
 For a new route, add the MDX page, title, description, and explicit layout; add required component imports; add redirects for replaced legacy URLs; then run the full definition of done. For a new principle or validated data entry, satisfy the relevant collection schema.
