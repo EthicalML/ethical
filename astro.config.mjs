@@ -1,4 +1,5 @@
-import { defineConfig, envField } from 'astro/config';
+import { defineConfig } from 'astro/config';
+import { loadEnv } from 'vite';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { unified } from '@astrojs/markdown-remark';
@@ -6,20 +7,20 @@ import preact from '@astrojs/preact';
 import rehypeExternalLinks from './src/plugins/rehype-external-links.mjs';
 import rehypeSectionize from './src/plugins/rehype-sectionize.mjs';
 
+// The form receiver's URL is read at build and inlined into the client bundle
+// base64-encoded, never into the markup. It cannot be secret: the browser has
+// to post to it. Keeping it out of the HTML denies a scraper the one surface it
+// reliably crawls, and the receiver's own honeypot and throttles are the actual
+// defence. Encoding here rather than in a component is what keeps it out of the
+// rendered page entirely.
+const { FORM_ENDPOINT = '' } = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), '');
+const formToken = FORM_ENDPOINT ? Buffer.from(FORM_ENDPOINT, 'utf8').toString('base64') : '';
+
 export default defineConfig({
   site: 'https://ethical.institute',
   prefetch: true,
-  env: {
-    schema: {
-      FORM_ENDPOINT: envField.string({
-        context: 'server',
-        access: 'secret',
-        optional: true,
-        default: '',
-      }),
-    },
-  },
   vite: {
+    define: { __FORM_TOKEN__: JSON.stringify(formToken) },
     server: { allowedHosts: ['*'] },
     preview: { allowedHosts: ['*'] },
   },
