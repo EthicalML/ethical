@@ -25,7 +25,6 @@ interface ProjectedNode extends GraphNode {
 
 interface HeroState {
   armed: boolean;
-  auto: boolean;
   current: HeroMode;
   last: number;
   mix: number;
@@ -48,13 +47,13 @@ const LABELS = [
 export class HeroCycle extends HTMLElement {
   private animationFrame = 0;
   private buffer?: HTMLCanvasElement;
-  private buttons: HTMLButtonElement[] = [];
   private canvas?: HTMLCanvasElement;
   private context?: CanvasRenderingContext2D;
   private controller = new AbortController();
   private graph?: { nodes: GraphNode[]; edges: GraphEdge[] };
   private height = 0;
   private host?: HTMLElement;
+  private indicators: HTMLElement[] = [];
   private lastPointer?: { x: number; y: number };
   private pointer = { x: 0.5, y: 0.5 };
   private pointerTarget = { x: 0.5, y: 0.5 };
@@ -66,7 +65,6 @@ export class HeroCycle extends HTMLElement {
     current: 'planes',
     next: null,
     mix: 0,
-    auto: true,
     last: 0,
     spin: 0,
     armed: true,
@@ -85,10 +83,7 @@ export class HeroCycle extends HTMLElement {
     this.context = this.canvas?.getContext('2d') ?? undefined;
     if (!this.canvas || !this.context || !this.host) return;
 
-    this.buttons = Array.from(this.host.querySelectorAll<HTMLButtonElement>('[data-hero-mode]'));
-    this.buttons.forEach((button) =>
-      button.addEventListener('click', this.handleModeClick, { signal: this.controller.signal }),
-    );
+    this.indicators = Array.from(this.host.querySelectorAll<HTMLElement>('[data-hero-mode]'));
     this.host.addEventListener('pointerenter', this.handlePointerEnter, {
       signal: this.controller.signal,
     });
@@ -123,15 +118,13 @@ export class HeroCycle extends HTMLElement {
     const phase = elapsed % 9;
     const inTear = phase >= 6.4 && phase < 7.4;
 
-    if (this.state.auto) {
-      this.state.tear = inTear ? phase - 6.4 : 0;
-      if (!inTear && phase >= 7.4 && !this.state.next && this.state.armed) {
-        this.state.armed = false;
-        this.state.next = modes[(modes.indexOf(this.state.current) + 1) % modes.length];
-        this.state.mix = 0;
-      }
-      if (phase < 6.4) this.state.armed = true;
+    this.state.tear = inTear ? phase - 6.4 : 0;
+    if (!inTear && phase >= 7.4 && !this.state.next && this.state.armed) {
+      this.state.armed = false;
+      this.state.next = modes[(modes.indexOf(this.state.current) + 1) % modes.length];
+      this.state.mix = 0;
     }
+    if (phase < 6.4) this.state.armed = true;
 
     if (this.state.next) {
       this.state.mix += delta / 1.25;
@@ -139,8 +132,8 @@ export class HeroCycle extends HTMLElement {
         this.state.current = this.state.next;
         this.state.next = null;
         this.state.mix = 0;
-        this.buttons.forEach((button) => {
-          button.classList.toggle('active', button.dataset.heroMode === this.state.current);
+        this.indicators.forEach((indicator) => {
+          indicator.classList.toggle('active', indicator.dataset.heroMode === this.state.current);
         });
       }
     }
@@ -427,21 +420,6 @@ export class HeroCycle extends HTMLElement {
     this.canvas!.height = Math.max(1, Math.round(this.height * density));
     this.context!.setTransform(density, 0, 0, density, 0, 0);
   }
-
-  private handleModeClick = (event: Event) => {
-    const button = event.currentTarget as HTMLButtonElement;
-    const mode = button.dataset.heroMode as HeroMode;
-    this.state.auto = false;
-    this.state.tear = 0;
-    this.state.armed = false;
-    if (mode !== this.state.current) {
-      this.state.next = mode;
-      this.state.mix = 0;
-    } else {
-      this.state.next = null;
-    }
-    this.buttons.forEach((item) => item.classList.toggle('active', item === button));
-  };
 
   private handlePointerEnter = (event: PointerEvent) => {
     this.lastPointer = { x: event.clientX, y: event.clientY };

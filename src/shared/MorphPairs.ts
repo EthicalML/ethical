@@ -32,6 +32,24 @@ const clearPair = () => {
   sessionStorage.removeItem(STORAGE_KEY);
 };
 
+const navigationUsesPair = (
+  pair: StoredMorphPair | undefined,
+  event: { direction: string; from: URL; to: URL },
+) =>
+  Boolean(
+    pair &&
+    ((event.from.pathname === pair.sourcePath && event.to.pathname === pair.destinationPath) ||
+      (event.direction === 'back' &&
+        event.from.pathname === pair.destinationPath &&
+        event.to.pathname === pair.sourcePath)),
+  );
+
+const silenceUnpairedPrincipleTitle = (root: ParentNode) => {
+  root
+    .querySelector<HTMLElement>('[data-principle-transition-title]')
+    ?.style.setProperty('view-transition-name', 'none');
+};
+
 export const bindMorphPairs = (root: ParentNode, signal: AbortSignal) => {
   root.querySelectorAll<HTMLElement>('[data-morph-pair]').forEach((trigger) => {
     const sourceId = trigger.dataset.morphPair;
@@ -115,6 +133,7 @@ document.addEventListener('astro:page-load', () => {
 
 document.addEventListener('astro:before-preparation', (event) => {
   const pair = readPair();
+  if (!navigationUsesPair(pair, event)) silenceUnpairedPrincipleTitle(document);
   if (
     pair &&
     event.from.pathname === pair.sourcePath &&
@@ -126,6 +145,7 @@ document.addEventListener('astro:before-preparation', (event) => {
 
 document.addEventListener('astro:before-swap', (event) => {
   const pair = readPair();
+  if (!navigationUsesPair(pair, event)) silenceUnpairedPrincipleTitle(event.newDocument);
   if (!pair || event.direction !== 'back' || event.to.pathname !== pair.sourcePath) return;
 
   if (pair.oneWay) {

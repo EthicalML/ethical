@@ -1129,17 +1129,6 @@ html[data-astro-transition="back"]::view-transition-new(principle-page) {
 }
 
 /* Round 5 prototype corrections */
-.graph-switcher button {
-  background: rgba(244,242,238,.18);
-  border: 0;
-  cursor: pointer;
-  height: 2px;
-  padding: 0;
-  transition: background .3s;
-  width: 92px;
-}
-.graph-switcher button.active { background: var(--accent); }
-
 .open-source-prototype { padding: 0 48px 96px; }
 .open-source-prototype > h2 { font: 300 44px/1.08 var(--font-display); margin: 16px 0 34px; max-width: 780px; }
 .kompute-feature, .kaos-feature {
@@ -2038,20 +2027,20 @@ main > .home-section:nth-last-child(1 of .home-section) { padding-bottom: 120px;
     gap: 4px;
     margin-top: 24px;
   }
-  .graph-switcher button {
+  .graph-switcher span {
     background: transparent;
     height: 44px;
     position: relative;
   }
-  .graph-switcher button::after {
+  .graph-switcher span::after {
     background: rgba(244,242,238,.18);
     content: "";
     height: 2px;
     inset: 21px 0 auto;
     position: absolute;
   }
-  .graph-switcher button.active { background: transparent; }
-  .graph-switcher button.active::after { background: var(--accent); }
+  .graph-switcher span.active { background: transparent; }
+  .graph-switcher span.active::after { background: var(--accent); }
   .stat-band { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .stat {
     border-bottom: 1px solid var(--hairline);

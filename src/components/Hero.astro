@@ -69,10 +69,10 @@ const ariaSentence = [...subtitle_lines, initialBeneficiary].filter(Boolean).joi
       <a class="button primary" href={primary_button.href}>{primary_button.label}</a>
       <a class="button" href={secondary_button.href}>{secondary_button.label}</a>
     </nav>
-    <div class="graph-switcher" aria-label="Hero visual">
-      <button class="active" type="button" data-hero-mode="planes" title="Layered planes"></button>
-      <button type="button" data-hero-mode="sphere" title="Alignment sphere"></button>
-      <button type="button" data-hero-mode="contour" title="Contour field"></button>
+    <div class="graph-switcher" aria-hidden="true">
+      <span class="active" data-hero-mode="planes"></span>
+      <span data-hero-mode="sphere"></span>
+      <span data-hero-mode="contour"></span>
     </div>
   </div>
 </header>
