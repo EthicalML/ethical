@@ -1,0 +1,303 @@
+---
+// Email-only subscribe form sharing the contact form's receiver contract and
+// send language: same payload shape, honeypot and elapsed-time defence, the
+// button perimeter trace lap over the settle window, the conduit packet line,
+// the mono terminal log and the confirmation bloom.
+const settleMs = 2500;
+---
+
+<newsletter-subscribe>
+  <form data-subscribe-form data-settle-ms={settleMs} style={`--settle: ${settleMs}ms`} novalidate>
+    <label class="subscribe-field">
+      <span class="visually-hidden">Email address</span>
+      <input name="email" type="email" autocomplete="email" placeholder="you@example.com" required aria-describedby="subscribe-note" />
+    </label>
+    <label class="form-honeypot" aria-hidden="true">
+      Website <input name="website" type="text" autocomplete="off" tabindex="-1" />
+    </label>
+    <button type="submit" class="button primary">
+      <span data-subscribe-label>Subscribe</span>
+      <svg class="button-trace" viewBox="0 0 100 44" preserveAspectRatio="none" aria-hidden="true">
+        <rect x="0.5" y="0.5" width="99" height="43" rx="3" pathLength="100" vector-effect="non-scaling-stroke"></rect>
+      </svg>
+    </button>
+  </form>
+  <span class="send-conduit" aria-hidden="true"></span>
+  <p class="send-terminal" data-send-terminal aria-hidden="true" hidden></p>
+  <p class="subscribe-note" id="subscribe-note" data-subscribe-note hidden></p>
+</newsletter-subscribe>
+
+<style>
+  newsletter-subscribe {
+    display: block;
+    min-height: 46px;
+    position: relative;
+    width: min(460px, 100%);
+  }
+  form {
+    align-items: stretch;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    padding: 0;
+    width: 100%;
+  }
+  .subscribe-field {
+    flex: 1;
+  }
+  .subscribe-field input {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--hairline);
+    border-radius: 4px;
+    color: var(--text-1);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    height: 100%;
+    letter-spacing: 0.04em;
+    padding: 12px 14px;
+    width: 100%;
+  }
+  .subscribe-field input:focus {
+    border-color: var(--accent);
+    outline: none;
+  }
+  .subscribe-field input::placeholder {
+    color: rgba(244, 242, 238, 0.35);
+  }
+  button {
+    position: relative;
+  }
+  form[data-state='submitting'] button:disabled {
+    opacity: 1;
+  }
+  .button-trace {
+    height: 100%;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    width: 100%;
+  }
+  .button-trace rect {
+    fill: none;
+    stroke: var(--accent);
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    stroke-width: 1.5;
+  }
+  form[data-state='submitting'] .button-trace {
+    filter: drop-shadow(0 0 5px rgba(94, 230, 160, 0.65));
+    opacity: 1;
+  }
+  form[data-state='submitting'] .button-trace rect {
+    animation: subscribe-trace-lap var(--settle) linear forwards;
+  }
+  @keyframes subscribe-trace-lap {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  .send-conduit {
+    background: rgba(94, 230, 160, 0.16);
+    display: block;
+    height: 1px;
+    margin-top: 12px;
+    opacity: 0;
+    overflow: hidden;
+    position: relative;
+    transition: opacity 200ms ease;
+  }
+  form[data-state='submitting'] + .send-conduit {
+    opacity: 1;
+  }
+  .send-conduit::after {
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    box-shadow: 0 0 12px var(--accent);
+    content: '';
+    inset: 0 auto 0 0;
+    position: absolute;
+    transform: translateX(-140%);
+    width: 26%;
+  }
+  form[data-state='submitting'] + .send-conduit::after {
+    animation: subscribe-conduit-run 820ms linear infinite;
+  }
+  @keyframes subscribe-conduit-run {
+    to {
+      transform: translateX(520%);
+    }
+  }
+  .send-terminal {
+    display: none;
+  }
+  .send-terminal:not([hidden]) {
+    border-left: 1px solid rgba(94, 230, 160, 0.45);
+    color: var(--accent);
+    display: block;
+    font: 12px/1.75 var(--font-mono);
+    margin: 12px 0 0;
+    padding: 4px 14px;
+    text-align: left;
+    white-space: pre;
+  }
+  .send-terminal:not([hidden])::after {
+    animation: subscribe-terminal-caret 900ms steps(1) infinite;
+    content: '▋';
+  }
+  @keyframes subscribe-terminal-caret {
+    50% {
+      opacity: 0;
+    }
+  }
+  .form-honeypot {
+    display: none;
+  }
+  .visually-hidden {
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+  .subscribe-note {
+    color: var(--text-2);
+    font-family: var(--font-mono);
+    font-size: var(--mono-11);
+    letter-spacing: 0.08em;
+    margin: 12px 0 0;
+  }
+  .subscribe-note[data-state='success'] {
+    animation: subscribe-bloom 700ms var(--ease-panel);
+    color: var(--accent);
+  }
+  @keyframes subscribe-bloom {
+    from {
+      opacity: 0;
+      text-shadow: 0 0 26px var(--accent);
+      transform: scale(0.97);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .button-trace rect,
+    .send-conduit::after,
+    .subscribe-note[data-state='success'],
+    .send-terminal:not([hidden])::after {
+      animation: none;
+    }
+  }
+  @media (max-width: 600px) {
+    form {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<script>
+  class NewsletterSubscribe extends HTMLElement {
+    private startedAt = 0;
+    private timers: number[] = [];
+
+    connectedCallback() {
+      this.startedAt = Date.now();
+      const form = this.querySelector<HTMLFormElement>('[data-subscribe-form]');
+      const note = this.querySelector<HTMLElement>('[data-subscribe-note]');
+      const terminal = this.querySelector<HTMLElement>('[data-send-terminal]');
+      const button = this.querySelector<HTMLButtonElement>('button[type="submit"]');
+      const label = this.querySelector<HTMLElement>('[data-subscribe-label]');
+      if (!form || !note || !terminal || !button || !label) return;
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(form);
+        const email = form.querySelector<HTMLInputElement>('input[name="email"]');
+        if (!email?.checkValidity()) {
+          note.dataset.state = 'error';
+          note.textContent = email?.validationMessage || 'Please enter a valid email address.';
+          note.hidden = false;
+          email?.focus();
+          return;
+        }
+
+        const endpoint = __FORM_TOKEN__ ? atob(__FORM_TOKEN__) : '';
+        const clientKey = localStorage.getItem('ethical-form-client') || crypto.randomUUID();
+        localStorage.setItem('ethical-form-client', clientKey);
+        const payload = {
+          name: '',
+          email: data.get('email'),
+          organisation: '',
+          furtherInformation: '',
+          interests: ['newsletter'],
+          website: data.get('website'),
+          startedAt: this.startedAt,
+          elapsedMs: Date.now() - this.startedAt,
+          minimumSubmissionMs: 3000,
+          clientKey,
+          page: location.pathname,
+          variant: 'newsletter-subscribe',
+        };
+
+        const settleMs = Number(form.dataset.settleMs) || 2500;
+        const restoreLabel = label.textContent ?? 'Subscribe';
+        button.disabled = true;
+        label.textContent = 'Subscribing…';
+        note.hidden = true;
+        form.dataset.state = 'submitting';
+        // The terminal narrates only facts available before the reply, which
+        // mode: no-cors makes unreadable either way.
+        const bytes = new TextEncoder().encode(JSON.stringify(payload)).length;
+        terminal.hidden = false;
+        terminal.textContent = '';
+        ['> encoding payload', '> opening channel', `> transmitting ${bytes} bytes`].forEach((line, index) => {
+          this.timers.push(window.setTimeout(() => (terminal.textContent += (index ? '\n' : '') + line), index * (settleMs / 4)));
+        });
+
+        try {
+          if (endpoint) {
+            const sent = fetch(endpoint, {
+              method: 'POST',
+              mode: 'no-cors',
+              keepalive: true,
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify(payload),
+            });
+            await Promise.race([sent, new Promise((resolve) => window.setTimeout(resolve, settleMs))]);
+          } else {
+            await new Promise((resolve) => window.setTimeout(resolve, settleMs));
+          }
+          terminal.hidden = true;
+          form.dataset.state = 'success';
+          note.dataset.state = 'success';
+          note.textContent = endpoint
+            ? "You're on the list. Weekly curated ML engineering, every week."
+            : 'Demo mode: no delivery endpoint is configured in this build.';
+          form.reset();
+        } catch {
+          terminal.hidden = true;
+          form.dataset.state = 'error';
+          note.dataset.state = 'error';
+          note.textContent = 'Something went wrong sending your subscription — please try again.';
+        } finally {
+          this.timers.forEach((timer) => window.clearTimeout(timer));
+          this.timers = [];
+          note.hidden = false;
+          button.disabled = false;
+          label.textContent = restoreLabel;
+        }
+      });
+    }
+
+    disconnectedCallback() {
+      this.timers.forEach((timer) => window.clearTimeout(timer));
+      this.timers = [];
+    }
+  }
+
+  if (!customElements.get('newsletter-subscribe')) {
+    customElements.define('newsletter-subscribe', NewsletterSubscribe);
+  }
+</script>

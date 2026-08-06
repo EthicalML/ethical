@@ -59,7 +59,7 @@ The placement rule is: content lives with its owner; a separate file must be ear
 - Page-local structured values live in page front matter.
 - Header, footer, and other chrome constants live in their owning component fences.
 - Build configuration is read in `astro.config.mjs` with Vite's `loadEnv`; `FORM_ENDPOINT` configures form delivery. The URL is base64-encoded at build and inlined into the form's client bundle through a Vite define (`__FORM_TOKEN__`), never into the rendered HTML: it cannot be secret on a static site, so this only costs a scraper its grep, and the receiver in `scripts/forms/apps-script.gs` carries the real defences. The receiver replies through a redirect chain that has taken 15 seconds and `mode: no-cors` makes the reply unreadable, so the form confirms after a 2.5 second settle window and relies on `keepalive` to finish delivery.
-- Derived facts are generated from their source. Recent newsletter issue numbers come from `public/mle/*.html` filenames; do not maintain a parallel issue list or parse the archive HTML.
+- Derived facts are generated from their source. Recent newsletter issue numbers come from the `newsletter` content collection; do not maintain a parallel issue list or parse the legacy archive HTML.
 - Policy record documents: links stay canonical, previews are committed derivatives. Each `src/components/PolicyRecordData.ts` entry's `href` points at the remote publication (acm.org); the site never self-hosts the PDFs. The reading-room page images under `public/images/policy-record/pages/<slug>/` are build-time renders committed to the repo, regenerated with `scripts/fetch-policy-previews.mjs` (download + text extraction) and `scripts/render-policy-pages.mjs` (per-page webp). Cloudflare blocks automated retrieval of some documents; fetch those PDFs manually in a browser and place them in `tmp/pdfs-web/<slug>.pdf` before re-rendering.
 - Rows use named keys. Avoid positional tuples except where a component API is naturally tuple-shaped and typed.
 
@@ -181,7 +181,7 @@ MDX prose follows JSX parsing rules. Escape a bare `<` as `&lt;`, escape `{` as 
 | Partner directory and affiliation logos                          | `src/content/partners.yaml`                                            |
 | Survey source rows                                               | `src/data/survey-2024.csv`, `src/data/survey-2025.csv`                 |
 | Derived survey questions                                         | `src/content/survey-questions.yaml`                                    |
-| Recent newsletter issue numbers                                  | `public/mle/*.html` filenames via `src/utils/RecentIssues.ts`          |
+| Recent newsletter issue numbers                                  | `newsletter` content collection via `src/utils/RecentIssues.ts`        |
 | Header navigation and wordmark                                   | `src/components/SiteHeader.astro`                                      |
 | Footer and footnote chrome                                       | `src/components/SiteFooter.astro`, `src/components/FootnoteBand.astro` |
 | Form delivery endpoint                                           | `FORM_ENDPOINT` through `loadEnv`, base64 Vite define in the JS bundle |

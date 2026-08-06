@@ -3,9 +3,43 @@ function textContent(node) {
   return (node.children ?? []).map(textContent).join('');
 }
 
+// Newsletter issues are archive records with their own editorial treatment:
+// each h2 section (and the leading intro block) is wrapped in a bare
+// reveal-carrying section, without the numbered prose-page chrome.
+function sectionizeBare(tree) {
+  const output = [];
+  let section;
+  const wrap = (node) => ({
+    type: 'element',
+    tagName: 'section',
+    properties: { className: ['issue-section'], dataReveal: '' },
+    children: [node],
+  });
+
+  for (const node of tree.children) {
+    if (node.type === 'element' && node.tagName === 'h2') {
+      section = wrap(node);
+      output.push(section);
+    } else if (section) {
+      section.children.push(node);
+    } else if (node.type === 'element') {
+      section = wrap(node);
+      output.push(section);
+    } else {
+      output.push(node);
+    }
+  }
+
+  tree.children = output;
+}
+
 export default function rehypeSectionize() {
-  return (tree) => {
+  return (tree, file) => {
     if (tree.type !== 'root') return;
+    if (String(file?.path ?? '').includes('/content/newsletter/')) {
+      sectionizeBare(tree);
+      return;
+    }
     const output = [];
     let section;
     let number = 0;

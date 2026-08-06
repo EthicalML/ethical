@@ -70,6 +70,37 @@ const metrics = defineCollection({
   }),
 });
 
+export const NEWSLETTER_TAGS = [
+  'ai-agents',
+  'ai-ethics',
+  'ai-policy',
+  'computer-vision',
+  'data-engineering',
+  'explainability',
+  'forecasting',
+  'generative-ai',
+  'gpu-compute',
+  'llms',
+  'ml-education',
+  'ml-research',
+  'ml-security',
+  'mlops',
+  'nlp',
+  'privacy',
+  'recommender-systems',
+  'reinforcement-learning',
+] as const;
+
+const newsletter = defineCollection({
+  loader: glob({ pattern: '*.md', base: './src/content/newsletter' }),
+  schema: z.object({
+    issue: z.number().int().positive(),
+    date: z.date().optional(),
+    summary: z.string().optional(),
+    tags: z.array(z.enum(NEWSLETTER_TAGS)).max(3).optional(),
+  }),
+});
+
 const policyProducts = defineCollection({
   loader: glob({ pattern: '*.md', base: './src/content/policy-products' }),
   schema: z.object({
@@ -80,4 +111,4 @@ const policyProducts = defineCollection({
   }),
 });
 
-export const collections = { metrics, partners, policyProducts, principles, survey };
+export const collections = { metrics, newsletter, partners, policyProducts, principles, survey };

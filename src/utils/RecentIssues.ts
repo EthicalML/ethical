@@ -1,16 +1,10 @@
-import { readdir } from 'node:fs/promises';
-import { resolve } from 'node:path';
-
-const ARCHIVE_DIRECTORY = resolve('public/mle');
-const ISSUE_FILE = /^(\d+)\.html$/;
+import { getCollection } from 'astro:content';
 
 export async function getRecentIssueNumbers(limit = 4) {
-  const filenames = await readdir(ARCHIVE_DIRECTORY);
+  const issues = await getCollection('newsletter');
 
-  return filenames
-    .map((filename) => ISSUE_FILE.exec(filename)?.[1])
-    .filter((number): number is string => number !== undefined)
-    .map(Number)
+  return issues
+    .map((entry) => entry.data.issue)
     .sort((first, second) => second - first)
     .slice(0, limit);
 }

@@ -51,7 +51,7 @@ const settleMs = 2500;
             <div>
               <p class="eyebrow">{copy.issuesEyebrow}</p>
               {issues.map((number) => (
-                <a href="/network/">
+                <a href={`/newsletter/${number}/`}>
                   <b>#{number}</b>
                 </a>
               ))}
