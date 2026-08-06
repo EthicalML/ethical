@@ -1,5 +1,4 @@
 ---
-import { FORM_ENDPOINT } from 'astro:env/server';
 import { getRecentIssueNumbers } from '../utils/RecentIssues';
 import type { FormSectionCopy, FormSectionSector, FormSectionStat } from '../data/contactForm';
 
@@ -21,11 +20,6 @@ const sectionClasses = ['join-section', variant === 'contact-full' && 'contact-f
 const issues = await getRecentIssueNumbers();
 const minimumSubmissionMs = 3000;
 const settleMs = 2500;
-// The receiver URL has to reach the browser to be posted to, so it can never be
-// secret. Base64 keeps it out of a scraper's grep for script.google.com, which
-// is the only realistic harvesting route; anyone reading the bundle still has
-// it, and the receiver's honeypot and throttles remain the actual defence.
-const endpointToken = FORM_ENDPOINT ? Buffer.from(FORM_ENDPOINT, 'utf8').toString('base64') : '';
 ---
 
 {
@@ -69,7 +63,6 @@ const endpointToken = FORM_ENDPOINT ? Buffer.from(FORM_ENDPOINT, 'utf8').toStrin
             id="contact"
             data-institute-form
             data-variant={submissionVariant}
-            data-token={endpointToken}
             data-settle-ms={settleMs}
             data-minimum-submission-ms={minimumSubmissionMs}
             data-sending={copy.form.sending}
@@ -261,8 +254,9 @@ const endpointToken = FORM_ENDPOINT ? Buffer.from(FORM_ENDPOINT, 'utf8').toStrin
       if (!this.validate(form)) return;
 
       const data = new FormData(form);
-      const token = (form.dataset.token ?? '').trim();
-      const endpoint = token ? atob(token) : '';
+      // __FORM_TOKEN__ is replaced at build with the base64 receiver URL, so it
+      // lives in this bundle and never in the rendered HTML.
+      const endpoint = __FORM_TOKEN__ ? atob(__FORM_TOKEN__) : '';
       const clientKey = localStorage.getItem('ethical-form-client') || crypto.randomUUID();
       localStorage.setItem('ethical-form-client', clientKey);
       const payload = {
