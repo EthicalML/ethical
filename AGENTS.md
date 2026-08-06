@@ -1,3 +1,39 @@
+# Agent guide
+
+The website for The Institute for Ethical AI Alignment & Safety (`ethical.institute`). An Astro static site deployed to GitHub Pages by `.github/workflows/deploy.yml` on every push to `master`. The legacy Jekyll site is preserved at the `legacy-jekyll` tag and is the content source of truth when rebuilding a legacy page. This document is the single agent entry point: the change workflow first, then the authoring conventions it enforces.
+
+## Change workflow
+
+All changes land on `master` through a pull request; direct pushes are blocked by a branch ruleset.
+
+1. Branch from `master` (agents work in their own git worktree so parallel tracks never share a dirty checkout).
+2. Commit with comprehensive messages. Do not append session URLs to commit messages or PR bodies.
+3. Push the branch and open a PR with `gh pr create`.
+4. CI (`.github/workflows/ci.yml`) runs three required checks: `lint` (ESLint and Prettier), `typecheck` (the `astro check` ratchet), and `build` (the production build, in demo mode without `FORM_ENDPOINT`).
+5. Merge once CI is green. The merge landing on `master` triggers the production deploy.
+
+CI does not yet run the Playwright DOM gate, so `npm run verify:dom -- <route> --viewport 1440x1000` (and `420x900`) for affected routes remains a local pre-PR responsibility, as does the rest of the definition of done below.
+
+## Companion documents
+
+| Document                       | Read it when                                                                                                                                                                                                                                                                                                   |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `REUSABLE.md`                  | Before using or changing a documented reusable presentation component; API changes update the entry in the same change.                                                                                                                                                                                        |
+| `scripts/verify/README.md`     | Before running or editing the verification harness (DOM gate, screenshots, ratchet).                                                                                                                                                                                                                           |
+| `scripts/forms/apps-script.gs` | Before changing the contact form or its delivery. This file is the receiver's source of truth, deployed manually in the Google Apps Script editor; form field changes must stay aligned across `src/data/contactForm.ts`, `src/components/FormSection.astro`, this script, and the spreadsheet's column order. |
+
+There are currently no path-scoped instruction files (`.github/instructions/`); if any are added, list them here with their globs and when to read them.
+
+## Local commands
+
+Node version is pinned in `.tool-versions`. `npm run dev` for the dev server, `npm run build && npm run preview` for the production build. Temporary files go under `./tmp`, never `/tmp`.
+
+## Editorial rules
+
+- Markdown prose does not hard-wrap; let lines overflow.
+- No em dashes in site prose.
+- Organisation name: The Institute for Ethical AI Alignment & Safety. Network: Ethical AI Network. Principles: The 9 Responsible AI Principles.
+
 # Astro authoring conventions
 
 The ratified decisions in `~/Programming/agentic/kaos-ai-docs/ethical-institute-rebrand/` (moved out of the repo from `.github/memory/2026-07-rebrand/`) are authoritative. ADR-009 defines the client architecture and data-placement rules summarised here.
@@ -162,5 +198,6 @@ Every change must satisfy:
 6. The DOM gate passes for all affected routes at desktop and mobile widths.
 7. Zero-change work has masked full-page screenshot parity; intentional visual changes have documented before/after evidence.
 8. Any added or changed animation updates the Motion table in the same change.
+9. The change lands on `master` through a pull request with green CI; direct pushes are blocked. The workflow is described at the top of this document.
 
 For a new route, add the MDX page, title, description, and explicit layout; add required component imports; add redirects for replaced legacy URLs; then run the full definition of done. For a new principle or validated data entry, satisfy the relevant collection schema.

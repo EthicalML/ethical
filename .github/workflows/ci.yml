@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+          cache: npm
+      - run: npm ci
+      - run: npm run check:ratchet
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+          cache: npm
+      - run: npm ci
+      # No FORM_ENDPOINT here on purpose: PR builds run in demo mode so the
+      # receiver URL never reaches fork-triggered runs. The deploy workflow
+      # injects the secret for the production build.
+      - run: npm run build
