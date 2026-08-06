@@ -37,6 +37,12 @@ const page = await browser.newPage({
   viewport,
   deviceScaleFactor: 1,
 });
+// The form check below submits for real, and a build made with FORM_ENDPOINT
+// configured carries the live receiver in its bundle, so without this stub
+// every gate run appends a Chrome Gate row to the production spreadsheet.
+await page.route('https://script.google.com/**', (route) =>
+  route.fulfill({ status: 200, body: '' }),
+);
 const results = [];
 
 for (const route of routes) {
