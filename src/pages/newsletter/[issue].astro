@@ -7,13 +7,26 @@ import NewsletterSubscribe from '../../components/NewsletterSubscribe.astro';
 export async function getStaticPaths() {
   const entries = await getCollection('newsletter');
   const numbers = entries.map((entry) => entry.data.issue).sort((first, second) => first - second);
-  return entries.map((entry) => ({ params: { issue: String(entry.data.issue) }, props: { entry, numbers } }));
+  // Related issues: nearest neighbours sharing at least one tag, closest first.
+  const related = (of: (typeof entries)[number]) =>
+    entries
+      .filter((other) => other.data.issue !== of.data.issue && other.data.tags?.some((tag) => of.data.tags?.includes(tag)))
+      .sort((first, second) => Math.abs(first.data.issue - of.data.issue) - Math.abs(second.data.issue - of.data.issue))
+      .slice(0, 4)
+      .map((other) => ({
+        issue: other.data.issue,
+        date: other.data.date,
+        tags: (other.data.tags ?? []).filter((tag) => of.data.tags?.includes(tag)),
+      }));
+  return entries.map((entry) => ({ params: { issue: String(entry.data.issue) }, props: { entry, numbers, related: related(entry) } }));
 }
 
-const { entry, numbers } = Astro.props;
+const { entry, numbers, related } = Astro.props;
 const { Content } = await render(entry);
 const issue = entry.data.issue;
-const published = entry.data.date?.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+const barDate = entry.data.date
+  ? [entry.data.date.getDate(), entry.data.date.getMonth() + 1, entry.data.date.getFullYear() % 100].map((part) => String(part).padStart(2, '0')).join('/')
+  : undefined;
 const position = numbers.indexOf(issue);
 const previous = position > 0 ? numbers[position - 1] : undefined;
 const next = position < numbers.length - 1 ? numbers[position + 1] : undefined;
@@ -36,64 +49,69 @@ const frontmatter = {
     </Hero>
     <newsletter-meta-bar>
       <div data-meta-sentinel aria-hidden="true"></div>
-      <div class="issue-meta" data-reveal>
-        <span class="issue-chip">ISSUE {String(issue).padStart(3, '0')}</span>
-        {published && <span class="issue-chip">PUBLISHED {published.toUpperCase()}</span>}
-        <span class="issue-chip archive">ARCHIVE RECORD — PRESERVED AS SENT</span>
-      </div>
-      {
-        entry.data.summary && (
-          <p class="issue-lede" data-reveal>
-            {entry.data.summary}
-          </p>
-        )
-      }
-      {
-        entry.data.tags?.length && (
-          <div class="issue-tags" data-reveal>
-            {entry.data.tags.map((tag) => (
-              <span class="issue-tag">{tag}</span>
-            ))}
-          </div>
-        )
-      }
-      <nav class="issue-side-nav" aria-label="Adjacent issues">
+      <div class="issue-meta" data-reveal transition:name="newsletter-bar">
         {
-          previous && (
-            <a class="side-link side-previous" href={`/newsletter/${previous}/`} data-transition-direction="back">
+          previous ? (
+            <a class="issue-step" href={`/newsletter/${previous}/#issue`} data-transition-direction="back" aria-label={`Previous issue, #${previous}`}>
               <i aria-hidden="true">‹</i>
               <span>#{previous}</span>
             </a>
+          ) : (
+            <span class="issue-step" aria-hidden="true" />
           )
         }
+        <div class="issue-chips">
+          <span class="issue-chip issue-number">Issue #{issue}</span>
+          {barDate && <span class="issue-chip">{barDate}</span>}
+          {entry.data.tags?.length ? <span class="chip-rule" aria-hidden="true" /> : null}
+          {
+            entry.data.tags?.map((tag) => (
+              <a class="issue-tag" href={`/newsletter/?tag=${tag}`}>
+                {tag}
+              </a>
+            ))
+          }
+        </div>
         {
-          next && (
-            <a class="side-link side-next" href={`/newsletter/${next}/`} data-transition-direction="forward">
-              <i aria-hidden="true">›</i>
+          next ? (
+            <a class="issue-step" href={`/newsletter/${next}/#issue`} data-transition-direction="forward" aria-label={`Next issue, #${next}`}>
               <span>#{next}</span>
+              <i aria-hidden="true">›</i>
             </a>
+          ) : (
+            <span class="issue-step" aria-hidden="true" />
           )
         }
-      </nav>
-      <div class="issue-body">
-        <Content />
       </div>
-      <nav class="issue-pagination" aria-label="Adjacent issues">
+      <div class="issue-anchor" id="issue" data-scroll-align="start" aria-hidden="true"></div>
+      <div class="issue-article" transition:name="newsletter-page">
         {
-          previous && (
-            <a href={`/newsletter/${previous}/`} data-transition-direction="back">
-              ← Issue #{previous}
-            </a>
+          entry.data.summary && (
+            <blockquote class="prose-quote issue-lede" data-reveal>
+              Issue #{issue} 🤖 - {entry.data.summary}
+            </blockquote>
           )
         }
-        {
-          next && (
-            <a href={`/newsletter/${next}/`} data-transition-direction="forward">
-              Issue #{next} →
-            </a>
-          )
-        }
-      </nav>
+        <div class="issue-body">
+          <Content />
+        </div>
+      </div>
+      {
+        related.length > 0 && (
+          <aside class="issue-related" data-reveal>
+            <p class="eyebrow">MORE ON THESE TOPICS</p>
+            <div class="related-grid">
+              {related.map((item) => (
+                <a href={`/newsletter/${item.issue}/`}>
+                  <strong>#{item.issue}</strong>
+                  <span>{item.date?.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) ?? ''}</span>
+                  <small>{item.tags.join(' · ')}</small>
+                </a>
+              ))}
+            </div>
+          </aside>
+        )
+      }
     </newsletter-meta-bar>
   </article>
 </BaseLayout>
@@ -102,28 +120,82 @@ const frontmatter = {
   newsletter-meta-bar {
     display: block;
   }
+  /* Landing anchor for issue-to-issue navigation: zero-height, sitting between
+     the docked bar and the deck, reserving header + bar height so the text
+     starts just under the chrome. */
+  .issue-anchor {
+    height: 0;
+    scroll-margin-top: calc(var(--meta-stuck-top, 62px) + var(--meta-bar-height, 58px));
+  }
   .issue-meta {
-    background: transparent;
-    border-bottom: 1px solid transparent;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    padding: 34px 24px 0;
+    align-items: center;
+    background: var(--bg-inset);
+    border-block: 1px solid var(--hairline);
+    display: grid;
+    gap: 12px;
+    grid-template-columns: minmax(72px, 1fr) auto minmax(72px, 1fr);
+    margin-top: 34px;
+    padding: 16px 24px;
     position: sticky;
     top: var(--meta-stuck-top, 62px);
     transition:
       background 0.3s ease,
       border-color 0.3s ease,
-      padding 0.3s ease,
-      backdrop-filter 0.3s ease;
+      padding 0.3s ease;
     z-index: 40;
   }
   newsletter-meta-bar.is-stuck .issue-meta {
-    backdrop-filter: blur(14px);
-    background: var(--bg-header);
-    border-bottom-color: var(--hairline);
-    padding: 10px 24px;
+    animation: meta-lock 0.4s var(--ease-panel, cubic-bezier(0.16, 1, 0.3, 1));
+    background: var(--bg-panel);
+    border-top-color: transparent;
+    border-bottom-color: rgba(94, 230, 160, 0.22);
+    padding: 8px 24px;
+  }
+  /* Lock-in: the bar arrives slightly oversized and compresses as it docks,
+     with a brief accent flash on the seam. */
+  @keyframes meta-lock {
+    from {
+      border-bottom-color: rgba(94, 230, 160, 0.65);
+      transform: translateY(-8px) scaleY(1.12);
+    }
+    60% {
+      transform: translateY(1px) scaleY(0.98);
+    }
+    to {
+      transform: none;
+    }
+  }
+  .issue-chips {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+  .issue-step {
+    align-items: center;
+    color: var(--text-2);
+    display: inline-flex;
+    font-family: var(--font-mono);
+    font-size: var(--mono-11);
+    gap: 7px;
+    justify-self: start;
+    letter-spacing: 0.08em;
+    padding: 6px 2px;
+    transition: color 0.2s ease;
+  }
+  .issue-step:last-child {
+    justify-self: end;
+  }
+  a.issue-step:hover {
+    color: var(--accent);
+    opacity: 1;
+  }
+  .issue-step i {
+    font-family: var(--font-display);
+    font-size: 19px;
+    font-style: normal;
+    line-height: 1;
   }
   .issue-chip {
     transition:
@@ -133,23 +205,29 @@ const frontmatter = {
   newsletter-meta-bar.is-stuck .issue-chip {
     padding: 6px 11px;
   }
-  .issue-lede {
-    color: var(--text-2);
-    font-size: var(--body-16-5);
-    line-height: 1.7;
-    margin: 26px auto 0;
-    max-width: 645px;
-    padding: 0 24px;
-    text-align: center;
+  .issue-chip.issue-number {
+    border-color: rgba(94, 230, 160, 0.4);
+    color: var(--accent);
   }
-  .issue-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-    margin: 16px auto 0;
-    max-width: 645px;
-    padding: 0 24px;
+  .chip-rule {
+    align-self: center;
+    background: rgba(244, 242, 238, 0.22);
+    flex: none;
+    height: 22px;
+    margin: 0 3px;
+    width: 1px;
+  }
+  .issue-chip,
+  .issue-tag {
+    flex: none;
+    white-space: nowrap;
+  }
+  /* The deck is the shared pull-quote treatment (see .prose-quote in
+     tokens.css), plus a rule separating it from the issue body. */
+  .issue-lede {
+    border-bottom: 1px solid var(--hairline);
+    margin: 34px auto 0;
+    padding-bottom: 30px;
   }
   .issue-tag {
     border: 1px solid var(--hairline-card);
@@ -158,56 +236,66 @@ const frontmatter = {
     font-family: var(--font-mono);
     font-size: var(--mono-9);
     letter-spacing: 0.12em;
-    padding: 5px 11px;
+    padding: 7px 11px;
     text-transform: uppercase;
-  }
-  .issue-side-nav .side-link {
-    align-items: center;
-    border: 1px solid var(--hairline-card);
-    border-radius: 999px;
-    color: var(--text-2);
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    justify-content: center;
-    height: 64px;
-    opacity: 0;
-    pointer-events: none;
-    position: fixed;
-    top: 50vh;
-    transform: translateY(-50%);
     transition:
-      opacity 0.35s ease,
       border-color 0.2s ease,
       color 0.2s ease;
-    width: 64px;
-    z-index: 30;
   }
-  newsletter-meta-bar.is-stuck .side-link {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  .side-previous {
-    left: 22px;
-  }
-  .side-next {
-    right: 22px;
-  }
-  .issue-side-nav .side-link:hover {
-    border-color: rgba(94, 230, 160, 0.55);
+  a.issue-tag:hover {
+    border-color: rgba(94, 230, 160, 0.5);
     color: var(--accent);
     opacity: 1;
   }
-  .side-link i {
-    font-family: var(--font-display);
-    font-size: 22px;
-    font-style: normal;
-    line-height: 1;
+  .issue-related {
+    margin: 0 auto;
+    max-width: 645px;
+    padding: 0 24px 88px;
   }
-  .side-link span {
+  .issue-related .eyebrow {
+    margin-bottom: 14px;
+  }
+  .related-grid {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  }
+  .related-grid a {
+    border: 1px solid var(--hairline-card);
+    border-radius: 6px;
+    display: grid;
+    gap: 4px;
+    padding: 12px 12px 10px;
+    transition:
+      border-color 0.2s ease,
+      transform 0.2s ease;
+  }
+  .related-grid a:hover {
+    border-color: rgba(94, 230, 160, 0.55);
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+  .related-grid strong {
+    color: var(--text-1);
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .related-grid span {
+    color: var(--text-3);
     font-family: var(--font-mono);
     font-size: 9.5px;
     letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .related-grid small {
+    color: var(--text-4);
+    font-family: var(--font-mono);
+    font-size: 8.5px;
+    letter-spacing: 0.08em;
+    margin-top: 3px;
+    text-transform: uppercase;
   }
   .issue-chip {
     border: 1px solid var(--hairline);
@@ -290,12 +378,14 @@ const frontmatter = {
   }
   .issue-body :global(h2 a),
   .issue-body :global(h3 a) {
-    border-bottom: none;
-    color: inherit;
+    border-bottom: 1px solid rgba(94, 230, 160, 0.35);
+    color: var(--accent);
   }
   .issue-body :global(h2 a:hover),
   .issue-body :global(h3 a:hover) {
-    color: var(--accent);
+    border-bottom-color: var(--accent);
+    opacity: 1;
+    text-shadow: 0 0 22px rgba(94, 230, 160, 0.45);
   }
   .issue-body :global(img) {
     border: 1px solid var(--hairline-card);
@@ -342,48 +432,34 @@ const frontmatter = {
   .issue-body :global(pre.astro-code code) {
     font-family: var(--font-mono);
   }
-  .issue-pagination {
-    border-top: 1px solid var(--hairline);
-    display: flex;
-    justify-content: space-between;
-    margin: 0 auto;
-    max-width: 645px;
-    padding: 28px 24px 88px;
-  }
-  .issue-pagination a {
-    color: var(--text-2);
-    font-family: var(--font-mono);
-    font-size: var(--mono-11);
-    letter-spacing: 0.1em;
-  }
-  .issue-pagination a:hover {
-    color: var(--accent);
-  }
-  .issue-pagination a:only-child[data-transition-direction='forward'] {
-    margin-left: auto;
-  }
-  @media (min-width: 1000px) {
-    .issue-pagination {
-      display: none;
-    }
-  }
-  @media (max-width: 999px) {
-    .issue-side-nav {
-      display: none;
-    }
-  }
   @media (max-width: 950px) {
     .issue-body {
       padding: 36px 24px 48px;
     }
   }
+  @media (max-width: 700px) {
+    .issue-step span {
+      display: none;
+    }
+    .issue-meta {
+      grid-template-columns: auto 1fr auto;
+    }
+    .issue-chips {
+      gap: 7px;
+    }
+    /* The tag row wraps onto its own line at this width, which separates the
+       groups on its own; the rule would just dangle at the end of row one. */
+    .chip-rule {
+      display: none;
+    }
+  }
 </style>
 
 <script>
-  // Sticky meta bar: past its natural position the chip row docks under the
-  // site header and gains the header's bar chrome; the fixed side prev/next
-  // arrows fade in on the same signal. The sticky offset is measured from the
-  // real header height rather than hardcoded per breakpoint.
+  // Sticky meta bar: past its natural position the chip row (prev/next steps,
+  // issue, date, tags) docks under the site header and gains the header's bar
+  // chrome. The sticky offset is measured from the real header height rather
+  // than hardcoded per breakpoint.
   class NewsletterMetaBar extends HTMLElement {
     private controller = new AbortController();
     private observer?: IntersectionObserver;
@@ -396,7 +472,12 @@ const frontmatter = {
 
       const setOffset = () => {
         const header = document.querySelector<HTMLElement>('.site-header');
-        meta.style.setProperty('--meta-stuck-top', `${header?.offsetHeight ?? 62}px`);
+        // Exact (fractional) header height, overlapped by 1px so no seam ever
+        // opens between the header and the docked bar. Set on the element so
+        // the sticky top, the anchor scroll-margin and the bar height all read it.
+        const height = header?.getBoundingClientRect().height ?? 62;
+        this.style.setProperty('--meta-stuck-top', `${height - 1}px`);
+        this.style.setProperty('--meta-bar-height', `${meta.getBoundingClientRect().height}px`);
       };
       setOffset();
       addEventListener('resize', setOffset, { signal: this.controller.signal });
