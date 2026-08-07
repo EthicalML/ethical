@@ -35,6 +35,7 @@
   --bg-panel: #171818;
   --bg-inset: #0f100f;
   --bg-header: rgba(19, 20, 20, 0.9);
+  --bg-header-solid: #131414;
   --text-1: #f4f2ee;
   --text-2: rgba(244, 242, 238, 0.66);
   --text-3: rgba(244, 242, 238, 0.45);
@@ -651,6 +652,48 @@ dd { margin: 6px 0 0; }
 }
 .prose-section > ul { padding-left: 20px; }
 .prose-section > ul li { margin-bottom: 8px; }
+/* Pull quote: every markdown `>` blockquote and the newsletter deck. Serif
+   italic with an oversized quote mark hanging in the left margin; the right
+   padding mirrors the left so the measure stays optically centred. */
+.prose-quote,
+.prose-section blockquote,
+.prose-body blockquote,
+.issue-body blockquote {
+  border: 0;
+  color: var(--text-2);
+  font: italic 300 21px/1.65 var(--font-display);
+  letter-spacing: .005em;
+  margin-inline: auto;
+  max-width: 780px;
+  padding: 0 58px;
+  position: relative;
+  text-align: left;
+}
+.prose-quote::before,
+.prose-section blockquote::before,
+.prose-body blockquote::before,
+.issue-body blockquote::before {
+  color: rgba(94, 230, 160, .55);
+  content: '\201C';
+  font: 400 64px/1 var(--font-display);
+  left: 16px;
+  position: absolute;
+  top: -6px;
+}
+.prose-quote > p:last-child,
+.prose-section blockquote > p:last-child,
+.prose-body blockquote > p:last-child,
+.issue-body blockquote > p:last-child { margin-bottom: 0; }
+@media (max-width: 600px) {
+  .prose-quote,
+  .prose-section blockquote,
+  .prose-body blockquote,
+  .issue-body blockquote { font-size: 18px; padding: 0 34px; }
+  .prose-quote::before,
+  .prose-section blockquote::before,
+  .prose-body blockquote::before,
+  .issue-body blockquote::before { font-size: 48px; left: 4px; }
+}
 .prose-block {
   background: linear-gradient(180deg, rgba(255, 255, 255, .035), transparent);
   border: 1px solid var(--hairline-card);
@@ -1003,6 +1046,44 @@ html[data-astro-transition="back"]::view-transition-old(principle-page) {
   animation: principle-slide-out-right .22s ease both !important;
 }
 html[data-astro-transition="back"]::view-transition-new(principle-page) {
+  animation: principle-slide-in-left .22s ease both !important;
+}
+/* The sliding article is lifted out of the root snapshot, so the sticky meta
+   bar needs its own group to stay above it; both endpoints have the bar docked
+   in the same place, so it holds still while the text travels under it. */
+/* The header is the one element that never refreshes: it is persisted across
+   navigations and must not animate on either side of one. The name is declared
+   here rather than with `transition:name` because Astro scopes that directive
+   per page, and a persisted node keeps the *previous* page's scope attribute —
+   so the new document's scoped rule stops matching it, the header falls back
+   into the root snapshot, and it fades in with the rest of the page. A plain
+   class selector matches in both documents and survives the swap. */
+.site-header { view-transition-name: site-header; }
+::view-transition-group(site-header) { animation: none !important; z-index: 60; }
+::view-transition-group(newsletter-bar) { z-index: 50; }
+::view-transition-group(newsletter-page) { z-index: 1; }
+/* Chrome, not content: it holds still while the article travels under it. The
+   outgoing snapshot is dropped rather than faded — stacking two opaque copies
+   of the same chrome doubles its text for the length of the transition. The
+   `:only-child` variant is spelled out because the generic settle rule carries
+   that pseudo-class and would otherwise outrank a plain named selector. */
+::view-transition-old(site-header),
+::view-transition-old(newsletter-bar) { display: none; }
+::view-transition-new(site-header),
+::view-transition-new(site-header):only-child,
+::view-transition-new(newsletter-bar),
+::view-transition-new(newsletter-bar):only-child { animation: none !important; }
+html.is-transitioning .site-header { backdrop-filter: none; background: var(--bg-header-solid); }
+html[data-astro-transition="forward"]::view-transition-old(newsletter-page) {
+  animation: principle-slide-out-left .22s ease both !important;
+}
+html[data-astro-transition="forward"]::view-transition-new(newsletter-page) {
+  animation: principle-slide-in-right .22s ease both !important;
+}
+html[data-astro-transition="back"]::view-transition-old(newsletter-page) {
+  animation: principle-slide-out-right .22s ease both !important;
+}
+html[data-astro-transition="back"]::view-transition-new(newsletter-page) {
   animation: principle-slide-in-left .22s ease both !important;
 }
 @keyframes typewriter-tear-a {
@@ -1505,7 +1586,7 @@ main > .home-section:nth-last-child(1 of .home-section) { padding-bottom: 120px;
   mask-size: contain;
   width: clamp(58px, calc(var(--logo-ratio) * 34px), 154px);
 }
-.marquee-role { color: var(--text-4); font: 9px/1 var(--font-mono); letter-spacing: .12em; transition: color .3s ease; white-space: nowrap; }
+.marquee-role { color: var(--text-4); font: 9px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; transition: color .3s ease; white-space: nowrap; }
 .marquee-item:hover .marquee-role { color: var(--accent); }
 .marquee-item:hover .marquee-logo { background: var(--accent); }
 @keyframes om-marquee { to { transform: translateX(-50%); } }
