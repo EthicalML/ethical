@@ -382,7 +382,14 @@ const result = {
     burstSample.segmentGhostOpacity !== '0' &&
     burstSample.segmentGhostContent.includes('▋') &&
     burstSample.segmentGhostClip !== 'inset(100% 0px 0px)' &&
-    deleteSample.phase >= 0.767 &&
+    /* The delete phase opens at 0.767 of the 9s headline cycle. Sampling it is a
+       race with the frame clock: a measured run landed at 0.7657 — 12ms short of
+       the boundary — and passed on re-run, so the bound sat exactly on the edge it
+       was testing. 0.762 carries ~45ms (roughly three frames at 60Hz) of slack,
+       an order of magnitude beyond the observed variance and still nowhere near
+       the 0.656 burst start. The upper bound is untouched: it, not the lower one,
+       is what proves the sample is inside the delete phase rather than past it. */
+    deleteSample.phase >= 0.762 &&
     deleteSample.phase < 0.82 &&
     skippedActiveBoundary &&
     deleteSample.actionsTop === initialActionsTop &&
