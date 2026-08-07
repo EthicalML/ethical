@@ -46,7 +46,7 @@ fieldLinks:
     href: https://lfaidata.foundation/blog/2023/06/15/machine-learning-system-security-risks-best-practices/
   - eyebrow: OWASP
     title: Top 10 for Agentic Applications
-    description: The agentic application benchmark and the published work for which the Institute's chief scientist served as an official reviewer.
+    description: The agentic application benchmark and the published work for which the Institute's founder served as an official reviewer.
     href: https://genai.owasp.org/2025/12/09/owasp-top-10-for-agentic-applications-the-benchmark-for-agentic-security-in-the-age-of-autonomous-ai/
 ---
 
@@ -61,7 +61,7 @@ import { ArticleHero, ComparisonTable, FrameworkLinkCards, CTA } from '../../com
 
 ## The MLSecOps Top 10
 
-MLSecOps is the application of security practices across the machine-learning lifecycle, connecting risks in data, model artifacts, pipelines, deployment and monitoring to practical controls. The Top 10 maps common machine-learning security failures to controls that teams can apply across those workflows.
+MLSecOps is the application of security practices across the machine-learning lifecycle, connecting risks in data, model artifacts, pipelines, deployment and monitoring to practical controls. The Top 10 maps common machine-learning security failures to controls that teams can apply across those workflows, with code and worked examples maintained in the open-source [fml-security repository](https://github.com/EthicalML/fml-security).
 
 <ComparisonTable
   rows={frontmatter.risks}
@@ -71,11 +71,9 @@ MLSecOps is the application of security practices across the machine-learning li
   ]}
 />
 
-Code and worked examples are maintained in the open-source [fml-security repository](https://github.com/EthicalML/fml-security).
-
 ## The agentic frontier
 
-The MLSecOps taxonomy covers the lifecycle around models. Agentic systems add delegated authority, tools and memory to the attack surface. The OWASP Top 10 for Agentic Applications names these risks through the ASI taxonomy; the selected mappings below position them against principle-led controls without reproducing the full OWASP list.
+The MLSecOps taxonomy covers the lifecycle around models. Agentic systems add delegated authority, tools and memory to the attack surface. The OWASP Top 10 for Agentic Applications names these risks through the ASI taxonomy, and the Institute's founder is an official reviewer of it, named in the published documents; until those reviewer-credit documents are linked directly, see the [OWASP announcement](https://genai.owasp.org/2025/12/09/owasp-top-10-for-agentic-applications-the-benchmark-for-agentic-security-in-the-age-of-autonomous-ai/). The selected mappings below position these risks against principle-led controls without reproducing the full OWASP list.
 
 <ComparisonTable
   rows={frontmatter.agenticRisks}
@@ -84,8 +82,6 @@ The MLSecOps taxonomy covers the lifecycle around models. Agentic systems add de
     { key: 'framing', label: 'Principle and control framing' },
   ]}
 />
-
-The Institute's chief scientist is an official reviewer of the OWASP Top 10 for Agentic Applications and is named in the published documents. Until the reviewer-credit documents are linked directly, see the [OWASP announcement](https://genai.owasp.org/2025/12/09/owasp-top-10-for-agentic-applications-the-benchmark-for-agentic-security-in-the-age-of-autonomous-ai/).
 
 ## Built with the field
 
