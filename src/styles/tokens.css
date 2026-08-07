@@ -70,6 +70,7 @@
   --space-48: 48px;
   --space-56: 56px;
   --space-96: 96px;
+  --section-gap: 120px;
   --section-padding: 96px 48px;
   --font-display: "Newsreader", Georgia, serif;
   --font-body: "Geist", Helvetica, Arial, sans-serif;
@@ -1335,11 +1336,11 @@ kaos-graph, kaos-architecture { display: block; }
   .survey-island.compact .survey-bars { min-height: 403px; }
 }
 .home-section {
-  padding: 120px 48px 0;
+  padding: var(--section-gap) 48px 0;
   scroll-margin-top: 124px;
 }
 /* Trailing hydration scripts are main's real last children, so plain :last-child never matches the closing section. */
-main > .home-section:nth-last-child(1 of .home-section) { padding-bottom: 120px; }
+main > .home-section:nth-last-child(1 of .home-section) { padding-bottom: var(--section-gap); }
 .network-lists { display: grid; gap: 26px; grid-template-columns: 1fr 1fr; margin-top: 24px; }
 .network-lists > div { display: flex; flex-direction: column; gap: 8px; }
 .network-lists .eyebrow { color: rgba(244,242,238,.4); font-size: var(--mono-10); letter-spacing: .1em; margin-bottom: 4px; }
@@ -2089,6 +2090,7 @@ main > .home-section:nth-last-child(1 of .home-section) { padding-bottom: 120px;
 }
 
 @media (max-width: 950px) {
+  :root { --section-gap: 96px; }
   .hero {
     display: block;
     min-height: 700px;
@@ -2141,8 +2143,8 @@ main > .home-section:nth-last-child(1 of .home-section) { padding-bottom: 120px;
   .affiliations > .eyebrow { padding-inline: 24px; }
   .marquee-mask { mask-image: linear-gradient(90deg, transparent, #000 40px, #000 calc(100% - 40px), transparent); }
   .marquee-item { padding-inline: 28px; }
-  .home-section { padding: 96px 24px 0; }
-  main > .home-section:nth-last-child(1 of .home-section) { padding-bottom: 96px; }
+  .home-section { padding: var(--section-gap) 24px 0; }
+  main > .home-section:nth-last-child(1 of .home-section) { padding-bottom: var(--section-gap); }
   .phase-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .phase-card { min-height: 220px; }
   .principles-explorer-grid { gap: 32px; }
