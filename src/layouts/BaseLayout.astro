@@ -13,6 +13,27 @@ const title = frontmatter.title ?? 'The Institute for Ethical AI Alignment & Saf
 const description = frontmatter.description ?? metaDescription;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const socialImage = new URL(frontmatter.image ?? ogImage, Astro.site);
+const organization = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'The Institute for Ethical AI Alignment & Safety',
+  url: 'https://ethical.institute/',
+  logo: new URL('/favicon.png', Astro.site).href,
+  sameAs: ['https://github.com/EthicalML'],
+};
+const article = frontmatter.article
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: frontmatter.articleHeadline ?? title,
+      ...(frontmatter.datePublished ? { datePublished: frontmatter.datePublished } : {}),
+      author: {
+        '@type': 'Organization',
+        name: organization.name,
+        url: organization.url,
+      },
+    }
+  : undefined;
 ---
 
 <!doctype html>
@@ -22,7 +43,8 @@ const socialImage = new URL(frontmatter.image ?? ogImage, Astro.site);
     <meta name="viewport" content="width=device-width" />
     <meta name="google-site-verification" content="9rfgBQEvfnZ7HS_kBzINrlrJ-_sJcyJxqEUltqvP9Og" />
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {frontmatter.noindex && <meta name="robots" content="noindex" />}
+    {!frontmatter.noCanonical && <link rel="canonical" href={canonical} />}
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" href="/favicon.png" type="image/png" />
     <meta property="og:type" content="website" />
@@ -35,6 +57,8 @@ const socialImage = new URL(frontmatter.image ?? ogImage, Astro.site);
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={socialImage} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(organization)} />
+    {article && <script is:inline type="application/ld+json" set:html={JSON.stringify(article)} />}
     <script is:inline>
       // The router keeps history.scrollRestoration = 'manual', so on reload the browser
       // paints the top of the page before any script can restore the position — a
