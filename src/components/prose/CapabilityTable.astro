@@ -19,3 +19,38 @@ const { items } = Astro.props;
     ))
   }
 </div>
+
+<style is:global>
+.capability-table {
+  margin-top: 34px;
+  overflow: hidden;
+}
+
+.capability-table > div {
+  align-items: baseline;
+  border-bottom: 1px solid var(--hairline);
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 180px 1fr;
+  padding: 18px 22px;
+}
+
+.capability-table > div:last-child { border-bottom: 0; }
+
+.capability-table strong {
+  font-family: var(--font-mono);
+  font-size: var(--mono-10);
+  font-weight: 400;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.capability-table span {
+  color: var(--text-2);
+  line-height: 1.6;
+}
+
+@media (max-width: 800px) {
+  .capability-table > div { grid-template-columns: 1fr; }
+}
+</style>

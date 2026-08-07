@@ -26,3 +26,19 @@ const { left, right } = Astro.props;
     ))
   }
 </section>
+
+<style is:global>
+.split-list ul {
+  color: var(--text-2);
+  line-height: 1.8;
+  padding-left: 18px;
+}
+
+@media (max-width: 600px) {
+  .split-list { padding-inline: 18px; }
+}
+
+@media (max-width: 600px) {
+  .split-list > div { padding: 24px 20px; }
+}
+</style>

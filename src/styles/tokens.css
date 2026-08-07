@@ -255,20 +255,13 @@ section > h2 {
   border-radius: var(--radius-card);
   padding: 30px;
 }
-.principle-card h3,
-.feature-card h3 {
-  font-size: var(--display-30);
-  margin: 12px 0;
-}
-.principle-card p,
-.feature-card p,
+.principle-card a,
+.feature-card .action { color: var(--accent); }
 dd,
 td {
   color: var(--text-2);
   line-height: 1.6;
 }
-.principle-card a,
-.feature-card .action { color: var(--accent); }
 dl { margin: 0; }
 dl div {
   border-top: 1px solid var(--hairline);
@@ -297,15 +290,6 @@ dd { margin: 6px 0 0; }
   min-height: 220px;
   padding: 0;
 }
-
-.prose-content > p {
-  color: var(--text-2);
-  font-size: var(--body-18);
-  line-height: 1.7;
-  margin: 0;
-  max-width: 840px;
-  padding: 0 48px 72px;
-}
 .prose-section {
   padding: 88px 48px 96px;
   scroll-margin-top: 96px;
@@ -317,10 +301,6 @@ dd { margin: 6px 0 0; }
    `.text-link`: prose links carry no class of their own, so without this they
    inherit the body colour and cannot be told apart from the text. */
 .prose-section > .prose-section-eyebrow { color: var(--accent); }
-.prose-section > p a,
-.prose-section > ul a,
-.prose-content p a,
-.prose-content ul a { color: var(--accent); }
 .prose-section-title {
   font-size: var(--display-44);
   line-height: 1.08;
@@ -383,19 +363,6 @@ dd { margin: 6px 0 0; }
   border: 1px solid var(--hairline-card);
   border-radius: var(--radius-card);
 }
-.feature-block {
-  display: grid;
-  gap: 44px;
-  grid-template-columns: 1.05fr .95fr;
-  margin: 0 48px 96px;
-  overflow: hidden;
-  padding: 38px;
-}
-.feature-block h2 {
-  font-size: var(--display-38);
-  line-height: 1.1;
-  margin: 12px 0 18px;
-}
 .block-body {
   color: var(--text-2);
   font-size: var(--body-16);
@@ -407,88 +374,11 @@ dd { margin: 6px 0 0; }
   background: var(--bg-inset);
   min-height: 300px;
 }
-.capability-table {
-  margin-top: 34px;
-  overflow: hidden;
-}
-.capability-table > div {
-  align-items: baseline;
-  border-bottom: 1px solid var(--hairline);
-  display: grid;
-  gap: 24px;
-  grid-template-columns: 180px 1fr;
-  padding: 18px 22px;
-}
-.capability-table > div:last-child { border-bottom: 0; }
-.capability-table strong {
-  font-family: var(--font-mono);
-  font-size: var(--mono-10);
-  font-weight: 400;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-}
-.capability-table span {
-  color: var(--text-2);
-  line-height: 1.6;
-}
-.metrics-block {
-  display: grid;
-  grid-template-columns: repeat(var(--metric-count, 3), 1fr);
-  margin-top: 20px;
-}
-.metrics-block div {
-  border-right: 1px solid var(--hairline);
-  display: grid;
-  gap: 8px;
-  padding: 24px;
-}
-.metrics-block div:last-child { border-right: 0; }
-.metrics-block strong {
-  color: var(--accent);
-  font-family: var(--font-display);
-  font-size: var(--display-34);
-  font-weight: 300;
-}
-.metrics-block span {
-  color: var(--text-3);
-  font-family: var(--font-mono);
-  font-size: var(--mono-10);
-  letter-spacing: .1em;
-}
-.cta-block {
-  align-items: center;
-  display: flex;
-  gap: 34px;
-  justify-content: space-between;
-  margin-top: 34px;
-  padding: 26px 30px;
-}
 .cta-block .block-body { max-width: 680px; }
-.cta-block a {
-  background: transparent;
-  border: 1px solid rgba(94, 230, 160, .45);
-  border-radius: var(--radius-control);
-  color: var(--accent);
-  flex: none;
-  font-size: var(--body-14);
-  font-family: var(--font-mono);
-  font-weight: 500;
-  padding: 13px 20px;
-}
-.comparison-table-block { margin-top: 34px; }
 .commitment {
   color: var(--text-1);
   font-family: var(--font-display);
   font-size: var(--display-26);
-}
-.split-list ul {
-  color: var(--text-2);
-  line-height: 1.8;
-  padding-left: 18px;
-}
-.table-wrap {
-  margin-top: 34px;
-  overflow-x: auto;
 }
 table {
   border-collapse: collapse;
@@ -714,25 +604,7 @@ html[data-astro-transition="back"]::view-transition-new(newsletter-page) {
   .split-list,
   .network-split,
   .feature-block { grid-template-columns: 1fr; }
-  .prose-content > p {
-    padding-left: 24px;
-    padding-right: 24px;
-  }
   .prose-section { padding: 64px 24px; }
-  .feature-block {
-    margin: 0 24px 64px;
-    padding: 28px;
-  }
-  .capability-table > div { grid-template-columns: 1fr; }
-  .metrics-block { grid-template-columns: 1fr; }
-  .metrics-block div {
-    border-bottom: 1px solid var(--hairline);
-    border-right: 0;
-  }
-  .cta-block {
-    align-items: flex-start;
-    flex-direction: column;
-  }
   .network-stats { grid-template-columns: 1fr; }
   .network-stats div {
     border-bottom: 1px solid var(--hairline);
@@ -888,18 +760,7 @@ main > .home-section:nth-last-child(1 of .home-section) { padding-bottom: 120px;
     width: 100%;
   }
   .prose-section { padding: 68px 24px 72px; }
-  .prose-content > p { padding: 0 24px 64px; }
-  .feature-block {
-    grid-template-columns: 1fr;
-    margin: 0 24px 72px;
-  }
   .embedded-widget.kaos-canvas-mount { height: 300px; }
-  .table-wrap {
-    max-width: 100%;
-    overscroll-behavior-inline: contain;
-    -webkit-overflow-scrolling: touch;
-  }
-  .table-wrap table { min-width: 640px; }
   .cluster-section,
   .engagement-band { padding: 68px 24px 72px; }
   .button,
@@ -914,28 +775,10 @@ main > .home-section:nth-last-child(1 of .home-section) { padding-bottom: 120px;
 }
 
 @media (max-width: 600px) {
-  .prose-content > p {
-    font-size: 16px;
-    padding: 0 18px 54px;
-  }
   .prose-section { padding: 56px 18px 60px; }
   .prose-section-title { font-size: 36px; }
   .prose-section > p,
   .prose-section > ul { font-size: 15.5px; }
-  .feature-block {
-    gap: 28px;
-    margin: 0 18px 60px;
-    padding: 24px 20px;
-  }
-  .feature-block h2 { font-size: 34px; }
-  .split-list { padding-inline: 18px; }
-  .split-list > div { padding: 24px 20px; }
-  .metrics-block { margin-inline: 18px; }
-  .cta-block {
-    margin-inline: 18px;
-    padding: 22px 20px;
-  }
-  .cta-block a { width: 100%; }
   .survey-shell { padding-inline: 18px; }
   .cluster-section,
   .engagement-band { padding: 56px 18px 60px; }
