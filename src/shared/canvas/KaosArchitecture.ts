@@ -1,4 +1,38 @@
-import { CanvasEngine, type CanvasPointer } from './CanvasEngine';
+import {
+  CanvasEngine,
+  type CanvasPalette,
+  type CanvasPointer,
+  rgba,
+  rgbCss,
+  type Rgb,
+} from './CanvasEngine';
+
+/* Per-CRD identity colours stay identity across themes, but at full saturation
+   they carry no contrast on a pale surface (the accent green sits at ~1.4:1 on
+   white). Under light each is darkened toward the ink while keeping its hue, so
+   the CRD stays recognisable and the label stays readable. The return value is
+   still `#rrggbb` because call sites append a two-digit alpha suffix to it. */
+const themed = (hex: string, palette: CanvasPalette) => {
+  if (!palette.light) return hex;
+  const channels = [1, 3, 5].map((index) => Number.parseInt(hex.slice(index, index + 2), 16));
+  return `#${channels
+    .map((value) =>
+      Math.round(value * 0.42)
+        .toString(16)
+        .padStart(2, '0'),
+    )
+    .join('')}`;
+};
+
+// Backdrop glow fades to the surface it sits on; the RGB of a zero-alpha stop
+// still drives gradient interpolation, so it is not interchangeable with any
+// other transparent value.
+const BACKDROP_FADE_DARK: Rgb = [15, 16, 15];
+// Node interiors: the operator gets a green-tinted well, the rest the inset face.
+const OPERATOR_FILL_DARK: Rgb = [19, 37, 28];
+const NODE_FILL_DARK: Rgb = [17, 19, 19];
+const OPERATOR_FILL_LIGHT: Rgb = [226, 245, 236];
+const NODE_FILL_LIGHT: Rgb = [252, 252, 250];
 
 type NodeType = 'crd' | 'runtime';
 
@@ -114,6 +148,7 @@ const drawBackdrop = (
   elapsed: number,
   parallaxX: number,
   parallaxY: number,
+  palette: CanvasPalette,
 ) => {
   const glow = context.createRadialGradient(
     center.x,
@@ -123,9 +158,10 @@ const drawBackdrop = (
     center.y,
     radiusX * 1.35,
   );
-  glow.addColorStop(0, 'rgba(94,230,160,.09)');
+  glow.addColorStop(0, rgba(palette.accent, 0.09));
+  // The blue stop is the MCP/runtime identity hue; it reads on both surfaces.
   glow.addColorStop(0.45, 'rgba(74,199,255,.03)');
-  glow.addColorStop(1, 'rgba(15,16,15,0)');
+  glow.addColorStop(1, rgba(palette.light ? palette.base : BACKDROP_FADE_DARK, 0));
   context.fillStyle = glow;
   context.fillRect(0, 0, width, height);
 
@@ -144,7 +180,7 @@ const drawBackdrop = (
     );
     context.setLineDash(ring ? [2, 8] : [3, 6]);
     context.lineDashOffset = ring ? elapsed * 2 : -elapsed * 1.2;
-    context.strokeStyle = ring ? 'rgba(244,242,238,.075)' : 'rgba(94,230,160,.16)';
+    context.strokeStyle = ring ? rgba(palette.ink, 0.075) : rgba(palette.accentInk, 0.16);
     context.lineWidth = 1;
     context.stroke();
   }
@@ -159,16 +195,17 @@ const drawEdge = (
   index: number,
   elapsed: number,
   state: GalaxyState,
+  palette: CanvasPalette,
 ) => {
   const active = state.interactive && (end.id === state.selected || start.id === state.selected);
   const opacity = active ? 0.64 : Math.max(0.09, Math.min(0.34, 0.15 + end.depth * 0.09));
   const controlX = (start.x + end.x) * 0.5;
   const controlY = (start.y + end.y) * 0.5 - Math.abs(end.x - start.x) * 0.06;
   const gradient = context.createLinearGradient(start.x, start.y, end.x, end.y);
-  gradient.addColorStop(0, `rgba(94,230,160,${opacity})`);
+  gradient.addColorStop(0, rgba(palette.accentInk, opacity));
   gradient.addColorStop(
     1,
-    `${end.color}${Math.round(opacity * 255)
+    `${themed(end.color, palette)}${Math.round(opacity * 255)
       .toString(16)
       .padStart(2, '0')}`,
   );
@@ -190,7 +227,7 @@ const drawEdge = (
       0,
       Math.PI * 2,
     );
-    context.fillStyle = end.color;
+    context.fillStyle = themed(end.color, palette);
     context.globalAlpha = Math.sin(progress * Math.PI) * 0.62;
     context.fill();
     context.globalAlpha = 1;
@@ -203,8 +240,10 @@ const drawNode = (
   elapsed: number,
   state: GalaxyState,
   labels: boolean,
+  palette: CanvasPalette,
 ) => {
   const operator = node.id === 'operator';
+  const color = themed(node.color, palette);
   const selected = state.interactive && node.id === state.selected;
   const radius = node.radius;
   const pulse = operator ? 1 + Math.sin(elapsed * 1.1) * 0.035 : 1;
@@ -217,7 +256,7 @@ const drawNode = (
     0,
     Math.PI * 2,
   );
-  context.fillStyle = selected ? `${node.color}22` : `${node.color}0c`;
+  context.fillStyle = selected ? `${color}22` : `${color}0c`;
   context.fill();
   context.save();
   context.translate(node.x, node.y);
@@ -235,16 +274,24 @@ const drawNode = (
     }
     context.closePath();
   }
-  context.fillStyle = operator ? '#13251c' : '#111313';
+  context.fillStyle = rgbCss(
+    palette.light
+      ? operator
+        ? OPERATOR_FILL_LIGHT
+        : NODE_FILL_LIGHT
+      : operator
+        ? OPERATOR_FILL_DARK
+        : NODE_FILL_DARK,
+  );
   context.fill();
-  context.strokeStyle = node.color;
+  context.strokeStyle = color;
   context.lineWidth = selected ? 2.2 : operator ? 1.8 : 1.15;
   context.stroke();
   context.restore();
   if (operator) {
     context.beginPath();
     context.arc(node.x, node.y, radius * 0.36, 0, Math.PI * 2);
-    context.fillStyle = node.color;
+    context.fillStyle = color;
     context.fill();
   }
 
@@ -252,11 +299,11 @@ const drawNode = (
   if (showLabel) {
     context.globalAlpha = Math.max(state.interactive ? 0.68 : 0.38, node.opacity);
     context.font = `${operator ? 11 : node.type === 'runtime' ? 9 : 10}px Geist Mono, monospace`;
-    context.fillStyle = operator ? '#f4f2ee' : node.color;
+    context.fillStyle = operator ? rgbCss(palette.ink) : color;
     context.textAlign = 'center';
     context.fillText(node.label, node.x, node.y + radius + (operator ? 25 : 19));
     if (state.interactive && node.type === 'runtime') {
-      context.fillStyle = 'rgba(244,242,238,.34)';
+      context.fillStyle = rgba(palette.ink, 0.34);
       context.font = '8px Geist Mono, monospace';
       context.fillText('RUNTIME', node.x, node.y + radius + 31);
     }
@@ -276,6 +323,7 @@ export function createGalaxyDrawer(options: GalaxyDrawerOptions = {}) {
     height: number,
     elapsed: number,
     pointer: CanvasPointer,
+    palette: CanvasPalette,
   ) => {
     const state = readState();
     context.clearRect(0, 0, width, height);
@@ -323,15 +371,26 @@ export function createGalaxyDrawer(options: GalaxyDrawerOptions = {}) {
     const lookup = new Map(nodes.map((node) => [node.id, node]));
     lookup.set('operator', operator);
 
-    drawBackdrop(context, width, height, center, radiusX, radiusY, elapsed, parallaxX, parallaxY);
+    drawBackdrop(
+      context,
+      width,
+      height,
+      center,
+      radiusX,
+      radiusY,
+      elapsed,
+      parallaxX,
+      parallaxY,
+      palette,
+    );
     [...CONNECTIONS]
       .sort((a, b) => (lookup.get(a[1])?.depth ?? 0) - (lookup.get(b[1])?.depth ?? 0))
       .forEach(([from, to], index) =>
-        drawEdge(context, lookup.get(from)!, lookup.get(to)!, index, elapsed, state),
+        drawEdge(context, lookup.get(from)!, lookup.get(to)!, index, elapsed, state, palette),
       );
     [...nodes, operator]
       .sort((a, b) => a.depth - b.depth)
-      .forEach((node) => drawNode(context, node, elapsed, state, labels));
+      .forEach((node) => drawNode(context, node, elapsed, state, labels, palette));
     context.textAlign = 'left';
   };
 

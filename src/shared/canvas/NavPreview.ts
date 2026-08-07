@@ -1,4 +1,4 @@
-import { CanvasEngine, type CanvasPointer } from './CanvasEngine';
+import { CanvasEngine, type CanvasPalette, type CanvasPointer, rgba, rgbCss } from './CanvasEngine';
 import { createCubeDrawer } from './KomputeCube';
 import { createGalaxyDrawer } from './KaosArchitecture';
 
@@ -13,6 +13,7 @@ const drawXai = (
   width: number,
   height: number,
   elapsed: number,
+  palette: CanvasPalette,
 ) => {
   const pad = 26;
   const gap = 24;
@@ -29,37 +30,37 @@ const drawXai = (
     const passed = packetX > centerX;
     const near = Math.abs(packetX - centerX) < cardWidth * 0.55;
 
-    context.strokeStyle = near ? 'rgba(94,230,160,.75)' : 'rgba(244,242,238,.16)';
+    context.strokeStyle = near ? rgba(palette.accentInk, 0.75) : rgba(palette.ink, 0.16);
     context.lineWidth = near ? 1.4 : 1;
     context.strokeRect(x, cardY, cardWidth, cardHeight);
-    context.fillStyle = near ? 'rgba(94,230,160,.05)' : 'rgba(255,255,255,.015)';
+    context.fillStyle = near ? rgba(palette.accent, 0.05) : rgba(palette.wash, 0.015);
     context.fillRect(x, cardY, cardWidth, cardHeight);
 
     context.textAlign = 'left';
     context.font = "9px 'Geist Mono',monospace";
-    context.fillStyle = 'rgba(94,230,160,.8)';
+    context.fillStyle = rgba(palette.accentInk, 0.8);
     context.fillText(number, x + 14, cardY + 24);
-    context.fillStyle = 'rgba(244,242,238,.4)';
+    context.fillStyle = rgba(palette.ink, 0.4);
     context.font = "7.5px 'Geist Mono',monospace";
     context.fillText('CHECKPOINT', x + 34, cardY + 24);
     context.font = "13px 'Geist',sans-serif";
-    context.fillStyle = 'rgba(244,242,238,.9)';
+    context.fillStyle = rgba(palette.ink, 0.9);
     context.fillText(title, x + 14, cardY + 52, cardWidth - 28);
     context.font = "7.5px 'Geist Mono',monospace";
-    context.fillStyle = 'rgba(244,242,238,.42)';
+    context.fillStyle = rgba(palette.ink, 0.42);
     context.fillText(note, x + 14, cardY + 72, cardWidth - 28);
 
     if (passed) {
       const stamp = Math.min(1, (packetX - centerX) / 40);
       context.globalAlpha = stamp;
       context.font = "8.5px 'Geist Mono',monospace";
-      context.fillStyle = '#5ee6a0';
+      context.fillStyle = rgbCss(palette.accentInk);
       context.fillText('CHECKED ✓', x + 14, cardY + cardHeight - 16);
       context.globalAlpha = 1;
     }
 
     if (index < XAI_STEPS.length - 1) {
-      context.strokeStyle = 'rgba(244,242,238,.25)';
+      context.strokeStyle = rgba(palette.ink, 0.25);
       context.lineWidth = 1;
       context.beginPath();
       context.moveTo(x + cardWidth + 5, laneY);
@@ -70,7 +71,7 @@ const drawXai = (
 
   const loopY = cardY + cardHeight + 34;
   context.setLineDash([2, 6]);
-  context.strokeStyle = 'rgba(94,230,160,.28)';
+  context.strokeStyle = rgba(palette.accentInk, 0.28);
   context.beginPath();
   context.moveTo(width - pad, loopY);
   context.lineTo(pad, loopY);
@@ -79,10 +80,10 @@ const drawXai = (
   const loopProgress = 1 - ((elapsed * 0.18) % 1);
   context.beginPath();
   context.arc(pad + loopProgress * (width - pad * 2), loopY, 2.2, 0, Math.PI * 2);
-  context.fillStyle = 'rgba(94,230,160,.7)';
+  context.fillStyle = rgba(palette.accentInk, 0.7);
   context.fill();
   context.font = "7.5px 'Geist Mono',monospace";
-  context.fillStyle = 'rgba(244,242,238,.38)';
+  context.fillStyle = rgba(palette.ink, 0.38);
   context.fillText('RESPONSIBLE AI PRINCIPLES · FEEDBACK', pad, loopY + 16);
 };
 
@@ -174,6 +175,7 @@ const drawEcosystem = (
   width: number,
   height: number,
   elapsed: number,
+  palette: CanvasPalette,
 ) => {
   const pad = 22;
   const gap = 7;
@@ -194,10 +196,10 @@ const drawEcosystem = (
     context.globalAlpha = entrance;
     context.save();
     context.translate(0, (1 - entrance) * 10);
-    context.fillStyle = `rgba(94,230,160,${0.015 + twinkle * 0.055})`;
+    context.fillStyle = rgba(palette.accent, 0.015 + twinkle * 0.055);
     context.fillRect(x, y, tileWidth, tileHeight);
     context.strokeStyle =
-      twinkle > 0.08 ? `rgba(94,230,160,${0.13 + twinkle * 0.6})` : 'rgba(244,242,238,.13)';
+      twinkle > 0.08 ? rgba(palette.accentInk, 0.13 + twinkle * 0.6) : rgba(palette.ink, 0.13);
     context.lineWidth = 1 + twinkle * 0.4;
     context.strokeRect(x, y, tileWidth, tileHeight);
 
@@ -205,12 +207,12 @@ const drawEcosystem = (
     context.font = `${Math.min(17, tileHeight * 0.24)}px 'Geist',sans-serif`;
     context.fillText(tile.emoji, x + 10, y + 24);
     context.font = "10px 'Geist Mono',monospace";
-    context.fillStyle = `rgba(94,230,160,${0.5 + twinkle * 0.5})`;
+    context.fillStyle = rgba(palette.accentInk, 0.5 + twinkle * 0.5);
     context.textAlign = 'right';
     context.fillText(String(tile.count), x + tileWidth - 10, y + 22);
     context.textAlign = 'left';
     context.font = "9.5px 'Geist',sans-serif";
-    context.fillStyle = `rgba(244,242,238,${0.55 + twinkle * 0.4})`;
+    context.fillStyle = rgba(palette.ink, 0.55 + twinkle * 0.4);
     context.fillText(tile.name, x + 10, y + tileHeight - 12, tileWidth - 20);
     context.restore();
     context.globalAlpha = 1;
@@ -240,6 +242,7 @@ export class NavPreview extends HTMLElement {
         height: number,
         elapsed: number,
         pointer: CanvasPointer,
+        palette: CanvasPalette,
       ) => {
         const mode = this.getAttribute('mode');
         context.clearRect(0, 0, width, height);
@@ -248,11 +251,11 @@ export class NavPreview extends HTMLElement {
           context.translate(width * 0.5, height * 0.43);
           context.scale(0.85, 0.85);
           context.translate(width * -0.5, height * -0.43);
-          this.cube(context, width, height * 0.86, elapsed, pointer);
+          this.cube(context, width, height * 0.86, elapsed, pointer, palette);
           context.restore();
-        } else if (mode === 'xai') drawXai(context, width, height * 0.72, elapsed);
-        else if (mode === 'list') drawEcosystem(context, width, height * 0.72, elapsed);
-        else this.galaxy.draw(context, width, height * 0.86, elapsed, pointer);
+        } else if (mode === 'xai') drawXai(context, width, height * 0.72, elapsed, palette);
+        else if (mode === 'list') drawEcosystem(context, width, height * 0.72, elapsed, palette);
+        else this.galaxy.draw(context, width, height * 0.86, elapsed, pointer, palette);
       },
     );
   }
