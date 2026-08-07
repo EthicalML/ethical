@@ -1,6 +1,9 @@
 import playwright from '/Users/asaucedo/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/index.js';
 
+import { applyTheme, parseThemeArgs, readTokenColors } from './theme.mjs';
+
 const { chromium } = playwright;
+const { theme } = parseThemeArgs(process.argv.slice(2));
 const baseUrl = process.env.VERIFY_BASE_URL ?? 'http://127.0.0.1:4126';
 const expectedLines = [
   'We are an independent research institute with a mission to',
@@ -22,7 +25,13 @@ const browser = await chromium.launch({ headless: true });
 const errors = [];
 
 const openPage = async (viewport, reducedMotion = 'no-preference') => {
-  const context = await browser.newContext({ viewport, deviceScaleFactor: 1, reducedMotion });
+  const context = await browser.newContext({
+    viewport,
+    deviceScaleFactor: 1,
+    reducedMotion,
+    colorScheme: theme,
+  });
+  await applyTheme(context, theme);
   const page = await context.newPage();
   page.on('pageerror', (error) => errors.push(`page: ${error.message}`));
   page.on('console', (message) => {
@@ -34,6 +43,19 @@ const openPage = async (viewport, reducedMotion = 'no-preference') => {
 };
 
 const normal = await openPage({ width: 1440, height: 1000 });
+// Colour expectations name their token and resolve it from the page, so the
+// same assertions hold in either theme.
+const tokens = await readTokenColors(normal.page, [
+  '--typewriter-cursor',
+  '--text-2',
+  '--accent',
+  '--accent-ink',
+]);
+const expectedColors = {
+  cursor: tokens['--typewriter-cursor'],
+  lede: tokens['--text-2'],
+  dynamic: tokens['--accent-ink'] ?? tokens['--accent'],
+};
 const lede = normal.page.locator('type-writer .hero-subtitle');
 const lineMetrics = await lede.evaluate((element) => {
   const pillStyle = getComputedStyle(document.querySelector('.status-pill'));
@@ -338,7 +360,7 @@ const result = {
     thirdLineSample[2].length > 0 &&
     JSON.stringify(initialComplete.lines) === JSON.stringify(expectedLines) &&
     initialComplete.cursorLine === 2 &&
-    initialComplete.cursor.backgroundColor === 'rgb(255, 255, 255)' &&
+    initialComplete.cursor.backgroundColor === expectedColors.cursor &&
     Math.abs(initialComplete.cursor.height - expectedCursorGeometry.height) <=
       cursorGeometryTolerance.height &&
     initialComplete.cursor.text === '' &&
@@ -352,8 +374,8 @@ const result = {
     lineMetrics.lineOverflow.every((overflow) => overflow <= 0) &&
     lineMetrics.underline === 'false' &&
     lineMetrics.lede.textTransform === 'uppercase' &&
-    lineMetrics.lede.color === 'rgba(244, 242, 238, 0.66)' &&
-    lineMetrics.dynamic.color === 'rgb(94, 230, 160)' &&
+    lineMetrics.lede.color === expectedColors.lede &&
+    lineMetrics.dynamic.color === expectedColors.dynamic &&
     initialComplete.cursorBlinkDuration === '1s' &&
     phaseDifference < 0.005 &&
     burstSample.headlineGhostOpacity !== '0' &&
