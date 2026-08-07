@@ -637,6 +637,16 @@ dd { margin: 6px 0 0; }
   scroll-margin-top: 96px;
 }
 .prose-section-eyebrow { margin-bottom: 16px; }
+/* The eyebrow is a `.prose-section > p`, so the section's own paragraph colour
+   was overriding the shared `.eyebrow` accent. Restore it, and give
+   markdown-authored links the same accent that components get from
+   `.text-link`: prose links carry no class of their own, so without this they
+   inherit the body colour and cannot be told apart from the text. */
+.prose-section > .prose-section-eyebrow { color: var(--accent); }
+.prose-section > p a,
+.prose-section > ul a,
+.prose-content p a,
+.prose-content ul a { color: var(--accent); }
 .prose-section-title {
   font-size: var(--display-44);
   line-height: 1.08;
