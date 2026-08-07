@@ -67,6 +67,9 @@ import { join, menus, wordmark } from '../data/navigation';
           </section>
         ))
       }
+      <button class="theme-toggle mobile-theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label="Light mode">
+        <span aria-hidden="true">LIGHT MODE</span>
+      </button>
     </nav>
   </div>
 </mobile-drawer>
@@ -406,5 +409,50 @@ import { join, menus, wordmark } from '../data/navigation';
     .mobile-nav {
       padding-inline: 14px;
     }
+  }
+
+  /* Accent text and strokes take --accent-ink, never --accent: the bright mint is
+     1.41:1 on paper. The control reads its pressed state from the live data-theme
+     attribute (see shared/Theme.ts), so the pill can never show the wrong theme.
+     The desktop twin lives in SiteHeader; below the drawer breakpoint the header
+     row has no space for it, so this one takes a full 44px target instead. */
+  .theme-toggle {
+    align-items: center;
+    background: none;
+    border: 1px solid var(--hairline);
+    border-radius: 4px;
+    color: var(--text-2);
+    cursor: pointer;
+    display: inline-flex;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    justify-content: center;
+    letter-spacing: 0.08em;
+    padding: 5px 8px;
+    transition:
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .theme-toggle:hover,
+  .theme-toggle[aria-pressed='true'] {
+    border-color: var(--accent-edge);
+    color: var(--accent-ink);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .theme-toggle {
+      transition: none;
+    }
+  }
+
+  .mobile-theme-toggle {
+    border-radius: var(--radius-pill);
+    letter-spacing: 0.14em;
+    margin-top: 22px;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0 16px;
+    width: 100%;
   }
 </style>
