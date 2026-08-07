@@ -227,6 +227,9 @@ import CommandPalette from './CommandPalette.astro';
         <button class="search-trigger" type="button" data-command-palette-open aria-label="Search the site">
           <span aria-hidden="true">⌘K</span>
         </button>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label="Light mode">
+          <span aria-hidden="true">LIGHT</span>
+        </button>
         <button class="nav-trigger" type="button" aria-expanded="false" data-menu-trigger="about" data-menu-width={menus.about.width}>
           {menus.about.label}<span class="caret" aria-hidden="true">▾</span>
         </button>
@@ -419,6 +422,9 @@ import CommandPalette from './CommandPalette.astro';
             </section>
           ))
         }
+        <button class="theme-toggle mobile-theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label="Light mode">
+          <span aria-hidden="true">LIGHT MODE</span>
+        </button>
       </nav>
     </div>
   </header>
@@ -451,6 +457,53 @@ import CommandPalette from './CommandPalette.astro';
     .search-trigger {
       display: none;
     }
+  }
+  /* Accent text and strokes take --accent-ink, never --accent: the bright mint is
+     1.41:1 on paper. Both toggles read their pressed state from the live data-theme
+     attribute (see shared/Theme.ts), so the pill can never show the wrong theme. */
+  .theme-toggle {
+    align-items: center;
+    background: none;
+    border: 1px solid var(--hairline);
+    border-radius: 4px;
+    color: var(--text-2);
+    cursor: pointer;
+    display: inline-flex;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    justify-content: center;
+    letter-spacing: 0.08em;
+    padding: 5px 8px;
+    transition:
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+  .theme-toggle:hover,
+  .theme-toggle[aria-pressed='true'] {
+    border-color: var(--accent-edge);
+    color: var(--accent-ink);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .theme-toggle {
+      transition: none;
+    }
+  }
+  /* The 420px header row has no room for a fourth control beside the wordmark, the
+     join pill and the menu button, so below the drawer breakpoint the control lives
+     in the drawer instead — where it can also take a full 44px target. */
+  @media (max-width: 950px) {
+    .header-row .theme-toggle {
+      display: none;
+    }
+  }
+  .mobile-theme-toggle {
+    border-radius: var(--radius-pill);
+    letter-spacing: 0.14em;
+    margin-top: 22px;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0 16px;
+    width: 100%;
   }
 </style>
 
