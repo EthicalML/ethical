@@ -14,6 +14,8 @@ Pass routes after `--` to check a safe subset. Set `VERIFY_BASE_URL` only when d
 
 `--theme dark|light` (environment equivalent `VERIFY_THEME`, default `dark`) selects the theme every browser gate captures and asserts against. It is accepted by `verify-dom`, `verify-shots` and `verify-typewriter`.
 
+The `:all` scripts wrap their two viewport legs in `sh -c ... --` so forwarded flags reach both. npm appends extra arguments to the end of the script string, so a plain `&&` chain gave `--theme light` to the 420 leg only and silently re-ran 1440 in dark — which for `verify:dom:all` meant overwriting the contrast baseline the light run was supposed to be compared against.
+
 The flag seeds `localStorage.theme` before any script runs — the same signal the site's own pre-paint script reads, so the capture exercises the production path — and pins Playwright's emulated `prefers-color-scheme` to match. Both halves are load-bearing: Playwright defaults to light, so a gate that only seeds storage would silently capture light the moment the site gains an OS-preference fallback. As a fallback for builds where the theme script has not shipped yet, the seed also applies `data-theme` itself from a `MutationObserver`; it never overwrites an attribute the page already set, and it re-applies on `astro:after-swap` because Astro's `ClientRouter` swaps `<html>` attributes on every client-side navigation.
 
 Dark output stays at `out/<viewport>/` so the committed dark baseline remains comparable; every other theme writes to `out/<theme>/<viewport>/` and can never overwrite it. Colour assertions resolve the custom property they mean (`--accent`, `--text-1`, `--bg-inset`, `--typewriter-cursor`, …) from the live page rather than baking one theme's literal, and the canvas screenshot mask uses the active theme's `--bg-base`.
@@ -25,7 +27,13 @@ Dark output stays at `out/<viewport>/` so the committed dark baseline remains co
 A dark run **records** the baseline to the git-ignored `out/contrast-baseline/<viewport>/contrast.json`, merging per route so a partial run refreshes only what it visited. A light run **compares** against it and fails when an element
 
 - drops below a 1.15 ratio while it was at or above 1.15 in dark (invisible text), or
-- retains less than 90% of its dark ratio (a real contrast regression).
+- retains less than 90% of its dark ratio **and** does not clear 4.5:1 (a real contrast regression).
+
+The 4.5:1 clause is a pass threshold, not a failure threshold. The 0.9x rule alone flags the palette
+itself: an accent at 11.7:1 on near-black cannot also be 10.5:1 on paper without ceasing to be an
+accent, and its drop to 5.5:1 is the design. Absolute WCAG floors remain unusable for *failing* a
+node — correct dark decorative text sits at 1.07 — but a node that clears the body gate in light is
+readable whatever it scored in dark.
 
 Run the dark gate before the light gate; a light run with no recorded baseline fails rather than passing vacuously.
 

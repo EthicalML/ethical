@@ -332,15 +332,22 @@
   --ink-wash-a065: rgba(25, 24, 20, 0.09);
   --ink-wash-a050: rgba(25, 24, 20, 0.07);
   --ink-wash-a030: rgba(25, 24, 20, 0.04);
-  /* ---- wash: dark alpha x1.35. L* is compressive at the dark end, so a flipped
-     ladder would read ~26% weaker on paper ---- */
-  --wash-1: rgba(25, 24, 20, 0.02);
-  --wash-2: rgba(25, 24, 20, 0.04);
-  --wash-3: rgba(25, 24, 20, 0.08);
-  --wash-4: rgba(25, 24, 20, 0.12);
-  --wash-a070: rgba(25, 24, 20, 0.08);
-  --wash-a050: rgba(25, 24, 20, 0.08);
-  --wash-a040: rgba(25, 24, 20, 0.08);
+  /* ---- wash: the one family that does not simply take the x1.35 tint. A wash
+     means "lifted above the surface underneath", and lift is always toward the
+     light source in both themes — so the two resting rungs go UP, toward paper
+     white, and only the two interactive rungs tint down into ink. Flipping all
+     four to a dark tint is what makes a light theme read as grey soup: every
+     card and every form field sinks into the panel it is supposed to sit on.
+     The headroom above #f4f2ee is only ~4.5 L*, which is why the hairline is a
+     heavier mark here than in dark — the border does the work the lightness
+     step cannot finish. ---- */
+  --wash-1: rgba(255, 255, 255, 0.45);
+  --wash-2: rgba(255, 255, 255, 0.75);
+  --wash-3: rgba(25, 24, 20, 0.05);
+  --wash-4: rgba(25, 24, 20, 0.09);
+  --wash-a070: rgba(255, 255, 255, 0.75);
+  --wash-a050: rgba(255, 255, 255, 0.75);
+  --wash-a040: rgba(255, 255, 255, 0.75);
   /* ---- hairlines ---- */
   --hairline: rgba(25, 24, 20, 0.1);
   --hairline-card: rgba(25, 24, 20, 0.14);
@@ -353,13 +360,18 @@
   --hairline-a080: rgba(25, 24, 20, 0.1);
   --hairline-a060: rgba(25, 24, 20, 0.1);
   --hairline-a050: rgba(25, 24, 20, 0.1);
-  /* ---- accent: the mint survives as a fill and is never text. `--accent-ink` carries
-     every ink-bucket site, and the whole alpha ladder tints toward it (x1.65,
-     because it mixes toward #12673b rather than toward black) ---- */
+  /* ---- accent: the mint survives as a fill and is never text. `--accent-ink`
+     carries every ink-bucket site. The alpha ladder splits the same way the
+     opaque pair does: `wash` and `veil` are surface tints, so they stay the
+     bright mint and simply take more alpha (x~3, since a pale tint of a light
+     colour on paper travels far less than the same tint on near-black); `line`
+     and `edge` are rules and borders, so they tint toward the ink at x1.65.
+     Tinting all four toward the ink is what turns the accent sage-grey — a
+     mint wash on paper should still read mint. ---- */
   --accent-ink: #12673b;
   --accent-ink-rgb: 18, 103, 59;
-  --accent-wash: rgba(18, 103, 59, 0.1);
-  --accent-veil: rgba(18, 103, 59, 0.26);
+  --accent-wash: rgba(94, 230, 160, 0.22);
+  --accent-veil: rgba(94, 230, 160, 0.45);
   --accent-line: rgba(18, 103, 59, 0.38);
   --accent-edge: rgba(18, 103, 59, 0.55);
   --accent-a850: #5ee6a0;
@@ -378,13 +390,13 @@
   --accent-a250: rgba(18, 103, 59, 0.38);
   --accent-a240: rgba(18, 103, 59, 0.38);
   --accent-a220: rgba(18, 103, 59, 0.38);
-  --accent-a140: rgba(18, 103, 59, 0.26);
-  --accent-a130: rgba(18, 103, 59, 0.26);
-  --accent-a100: rgba(18, 103, 59, 0.1);
-  --accent-a090: rgba(18, 103, 59, 0.1);
-  --accent-a080: rgba(18, 103, 59, 0.1);
-  --accent-a060: rgba(18, 103, 59, 0.1);
-  --accent-a050: rgba(18, 103, 59, 0.1);
+  --accent-a140: rgba(94, 230, 160, 0.45);
+  --accent-a130: rgba(94, 230, 160, 0.45);
+  --accent-a100: rgba(94, 230, 160, 0.22);
+  --accent-a090: rgba(94, 230, 160, 0.22);
+  --accent-a080: rgba(94, 230, 160, 0.22);
+  --accent-a060: rgba(94, 230, 160, 0.22);
+  --accent-a050: rgba(94, 230, 160, 0.22);
   /* ---- semantic hues: hue preserved, lightness dropped until the ink form clears
      4.5:1 on --bg-inset. The `-fill` forms stay bright in both themes ---- */
   --warn: #785313;

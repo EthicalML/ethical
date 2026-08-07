@@ -782,7 +782,7 @@ for (const route of routes) {
       );
     if (
       !wash ||
-      !sameHue(wash[1], accentInk) ||
+      !sameHue(wash[1], tokens['--accent']) ||
       colorAlpha(wash[1]) >= 1 ||
       wash[2] !== tokens['--bg-inset']
     ) {
