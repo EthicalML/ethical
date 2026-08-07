@@ -207,7 +207,7 @@ const scenarios = [
     font-size: var(--mono-9);
   }
   button small {
-    color: var(--accent);
+    color: var(--accent-ink);
   }
   button span {
     color: var(--text-2);
@@ -218,11 +218,11 @@ const scenarios = [
   }
   button.active {
     background: var(--accent-wash-09);
-    border-color: rgba(94, 230, 160, 0.42);
+    border-color: var(--accent-a420);
   }
   button.active span,
   button.active b {
-    color: var(--accent);
+    color: var(--accent-ink);
   }
   [data-scenario='denied'] button.active {
     background: rgba(255, 84, 112, 0.07);
@@ -291,11 +291,11 @@ const scenarios = [
     opacity: 1;
   }
   article.passed {
-    border-color: rgba(94, 230, 160, 0.28);
+    border-color: var(--accent-line);
   }
   article.current {
-    border-color: var(--accent);
-    box-shadow: 0 0 24px rgba(94, 230, 160, 0.08);
+    border-color: var(--accent-ink);
+    box-shadow: 0 0 24px var(--accent-a080);
     transform: translateY(-4px);
   }
   article span,
@@ -311,9 +311,9 @@ const scenarios = [
     margin: 18px 0 6px;
   }
   article em {
-    border: 1px solid var(--accent);
+    border: 1px solid var(--accent-ink);
     bottom: 12px;
-    color: var(--accent);
+    color: var(--accent-ink);
     font: normal var(--mono-9)/1 var(--font-mono);
     opacity: 0;
     padding: 5px 6px;

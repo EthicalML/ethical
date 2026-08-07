@@ -34,8 +34,8 @@ const { compact = false } = Astro.props;
 
   .survey-tabs button[aria-selected='true'] {
     background: var(--accent-wash-09);
-    border-color: var(--accent);
-    color: var(--accent);
+    border-color: var(--accent-ink);
+    color: var(--accent-ink);
   }
 
   .survey-island .survey-toolbar {
@@ -95,7 +95,7 @@ const { compact = false } = Astro.props;
 
   .survey-island .survey-bars i b,
   .survey-island .survey-bars i em {
-    background: rgba(244, 242, 238, 0.42);
+    background: var(--ink-wash-a420);
     border-radius: 0;
     display: block;
     height: 14px;
@@ -107,7 +107,7 @@ const { compact = false } = Astro.props;
   }
 
   .survey-island .survey-bars i em {
-    background: rgba(244, 242, 238, 0.2);
+    background: var(--ink-wash-a200);
     height: 8px;
   }
 
@@ -118,7 +118,7 @@ const { compact = false } = Astro.props;
   }
 
   .survey-island .survey-bars small {
-    color: var(--accent);
+    color: var(--accent-ink);
   }
 
   .survey-island .survey-bars small.negative {
@@ -275,7 +275,7 @@ const { compact = false } = Astro.props;
   }
 
   .survey-island {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent);
+    background: linear-gradient(180deg, var(--wash-2), transparent);
     border: 1px solid var(--hairline-card);
     border-radius: var(--radius-card-lg);
     min-height: 560px;
@@ -330,7 +330,7 @@ const { compact = false } = Astro.props;
   }
 
   .survey-bars i {
-    background: rgba(255, 255, 255, 0.06);
+    background: var(--wash-3);
     height: 10px;
     overflow: hidden;
   }

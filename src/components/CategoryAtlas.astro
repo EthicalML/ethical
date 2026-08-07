@@ -116,7 +116,7 @@ const maximum = Math.max(...categories.map(({ count }) => count));
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
   .atlas-tile {
-    background: linear-gradient(150deg, rgba(94, 230, 160, 0.1), rgba(255, 255, 255, 0.025) 60%);
+    background: linear-gradient(150deg, var(--accent-a100), var(--wash-2) 60%);
     border: 1px solid var(--hairline-card);
     border-radius: var(--radius-card);
     color: var(--text-1);
@@ -136,8 +136,8 @@ const maximum = Math.max(...categories.map(({ count }) => count));
   .atlas-tile:hover,
   .atlas-tile:focus-visible,
   .atlas-tile[data-active] {
-    border-color: rgba(94, 230, 160, 0.55);
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+    border-color: var(--accent-a550);
+    box-shadow: 0 18px 40px var(--shadow-a220);
     outline: none;
     transform: translateY(-6px);
   }
@@ -151,7 +151,7 @@ const maximum = Math.max(...categories.map(({ count }) => count));
     max-width: 280px;
   }
   .atlas-tile > b {
-    color: var(--accent);
+    color: var(--accent-ink);
     font: 400 20px/1 var(--font-mono);
     grid-column: 2;
     grid-row: 1;
@@ -228,7 +228,7 @@ const maximum = Math.max(...categories.map(({ count }) => count));
       text-transform: uppercase;
     }
     .atlas-table > div > strong:last-child {
-      color: var(--accent);
+      color: var(--accent-ink);
       font-family: var(--font-mono);
       font-weight: 400;
     }

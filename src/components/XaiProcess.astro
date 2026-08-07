@@ -126,6 +126,7 @@ const { steps }: Props = Astro.props;
 <style>
   :global(.xai-process-window) {
     --accent: #e8b45c;
+    --accent-ink: #e8b45c;
     --accent-wash-09: rgba(232, 180, 92, 0.09);
     border-color: rgba(232, 180, 92, 0.25);
     margin-top: 34px;
@@ -186,11 +187,11 @@ const { steps }: Props = Astro.props;
     opacity: 1;
   }
   .process-flow article.passed {
-    border-color: rgba(94, 230, 160, 0.25);
+    border-color: var(--accent-a250);
   }
   .process-flow article.current {
-    background: rgba(94, 230, 160, 0.06);
-    border-color: var(--accent);
+    background: var(--accent-a060);
+    border-color: var(--accent-ink);
     transform: translateY(-5px);
   }
   .step-number,
@@ -199,7 +200,7 @@ const { steps }: Props = Astro.props;
     font-family: var(--font-mono);
   }
   .step-number {
-    color: var(--accent);
+    color: var(--accent-ink);
     font-size: var(--mono-9);
   }
   .process-flow article > small {
@@ -231,11 +232,11 @@ const { steps }: Props = Astro.props;
   }
   .process-flow article.current .checkpoint-actions span,
   .process-flow article.passed .checkpoint-actions span {
-    color: var(--accent);
+    color: var(--accent-ink);
   }
   .checkpoint-stamp {
     bottom: 18px;
-    color: var(--accent);
+    color: var(--accent-ink);
     font: 400 var(--mono-9)/1 var(--font-mono);
     opacity: 0;
     position: absolute;
@@ -294,7 +295,7 @@ const { steps }: Props = Astro.props;
     font: var(--mono-9)/1.35 var(--font-mono);
   }
   .feedback-loop b {
-    color: var(--accent);
+    color: var(--accent-ink);
     font-weight: 400;
   }
   .feedback-loop i {

@@ -57,7 +57,7 @@ const entries = partners.map(({ data: partner }) => ({
     padding: 44px 0;
   }
   .partner-logo {
-    background: #fff;
+    background: var(--logo-mark);
     display: block;
     height: 38px;
     margin-bottom: 20px;
@@ -82,7 +82,7 @@ const entries = partners.map(({ data: partner }) => ({
     letter-spacing: 0.1em;
   }
   .partner-role strong {
-    color: var(--accent);
+    color: var(--accent-ink);
   }
   .partner-links {
     display: flex;
@@ -91,9 +91,9 @@ const entries = partners.map(({ data: partner }) => ({
     margin-top: 20px;
   }
   .partner-links a {
-    border: 1px solid rgba(94, 230, 160, 0.35);
+    border: 1px solid var(--accent-a350);
     border-radius: var(--radius-pill);
-    color: var(--accent);
+    color: var(--accent-ink);
     font: var(--mono-10)/1 var(--font-mono);
     letter-spacing: 0.08em;
     padding: 8px 12px;

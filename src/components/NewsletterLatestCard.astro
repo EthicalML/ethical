@@ -28,8 +28,8 @@ const latestDate = latest?.data.date?.toLocaleDateString('en-GB', { day: 'numeri
 <style>
   .newsletter-latest-card {
     align-items: center;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent);
-    border: 1px solid rgba(94, 230, 160, 0.28);
+    background: linear-gradient(180deg, var(--wash-2), transparent);
+    border: 1px solid var(--accent-line);
     border-radius: var(--radius-card);
     display: flex;
     gap: 20px;
@@ -39,7 +39,7 @@ const latestDate = latest?.data.date?.toLocaleDateString('en-GB', { day: 'numeri
     padding: 24px 28px;
   }
   .newsletter-latest-card:hover {
-    border-color: var(--accent);
+    border-color: var(--accent-ink);
     opacity: 1;
   }
   .latest-title {
@@ -62,9 +62,9 @@ const latestDate = latest?.data.date?.toLocaleDateString('en-GB', { day: 'numeri
     max-width: 560px;
   }
   .latest-action {
-    border: 1px solid rgba(94, 230, 160, 0.45);
+    border: 1px solid var(--accent-edge);
     border-radius: var(--radius-control);
-    color: var(--accent);
+    color: var(--accent-ink);
     font-family: var(--font-mono);
     font-size: var(--body-14);
     padding: 12px 20px;

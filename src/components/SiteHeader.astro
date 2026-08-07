@@ -444,8 +444,8 @@ import CommandPalette from './CommandPalette.astro';
       color 0.2s ease;
   }
   .search-trigger:hover {
-    border-color: rgba(94, 230, 160, 0.45);
-    color: var(--accent);
+    border-color: var(--accent-edge);
+    color: var(--accent-ink);
   }
   @media (max-width: 950px) {
     .search-trigger {
@@ -743,7 +743,7 @@ import CommandPalette from './CommandPalette.astro';
   }
 
   .wordmark span:last-child {
-    color: var(--accent);
+    color: var(--accent-ink);
   }
 
   .primary-nav {
@@ -763,7 +763,7 @@ import CommandPalette from './CommandPalette.astro';
   }
 
   .nav-trigger[aria-expanded='true'] {
-    background: rgba(255, 255, 255, 0.07);
+    background: var(--wash-a070);
     color: var(--text-1);
   }
 
@@ -777,9 +777,9 @@ import CommandPalette from './CommandPalette.astro';
   }
 
   .join-pill {
-    border: 1px solid rgba(94, 230, 160, 0.45);
+    border: 1px solid var(--accent-edge);
     border-radius: var(--radius-control);
-    color: var(--accent);
+    color: var(--accent-ink);
     font-family: var(--font-mono);
     font-size: var(--mono-10-5);
     letter-spacing: 0.1em;
@@ -955,7 +955,7 @@ import CommandPalette from './CommandPalette.astro';
   }
 
   .oss-menu-list {
-    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    border-right: 1px solid var(--hairline-a080);
     display: flex;
     flex-direction: column;
     gap: 1px;
@@ -971,18 +971,18 @@ import CommandPalette from './CommandPalette.astro';
 
   .oss-menu-list a.active,
   .oss-menu-list a:hover {
-    background: rgba(94, 230, 160, 0.08);
+    background: var(--accent-a080);
     opacity: 1;
   }
 
   .oss-menu-list span {
-    color: rgba(244, 242, 238, 0.4);
+    color: var(--ink-a400);
     font: 8.5px/1 var(--font-mono);
     letter-spacing: 0.16em;
   }
 
   .oss-menu-list > a.active span {
-    color: var(--accent);
+    color: var(--accent-ink);
   }
 
   .oss-menu-list strong {
@@ -992,7 +992,7 @@ import CommandPalette from './CommandPalette.astro';
   }
 
   .oss-menu-list small {
-    color: rgba(244, 242, 238, 0.55);
+    color: var(--ink-a550);
     font-size: 12.5px;
     line-height: 1.45;
     margin-top: 2px;
@@ -1000,7 +1000,7 @@ import CommandPalette from './CommandPalette.astro';
 
   .oss-menu-list footer {
     align-items: flex-start;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid var(--hairline-a080);
     display: flex;
     flex-direction: column;
     font: 9.5px/1.4 var(--font-mono);
@@ -1038,7 +1038,7 @@ import CommandPalette from './CommandPalette.astro';
   }
 
   .oss-menu-preview p span {
-    color: var(--accent);
+    color: var(--accent-ink);
     font: 8.5px/1 var(--font-mono);
     letter-spacing: 0.16em;
   }
@@ -1048,7 +1048,7 @@ import CommandPalette from './CommandPalette.astro';
   }
 
   .oss-menu-preview p i {
-    color: rgba(244, 242, 238, 0.6);
+    color: var(--ink-a600);
     font-size: 13px;
     font-style: normal;
     line-height: 1.5;
@@ -1064,7 +1064,7 @@ import CommandPalette from './CommandPalette.astro';
   }
 
   .network-menu > div > p {
-    color: rgba(244, 242, 238, 0.35);
+    color: var(--ink-a350);
     font: 9px/1 var(--font-mono);
     letter-spacing: 0.16em;
     margin: 0;
@@ -1086,7 +1086,7 @@ import CommandPalette from './CommandPalette.astro';
   }
 
   .network-menu a:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--wash-a050);
     opacity: 1;
   }
 
@@ -1096,7 +1096,7 @@ import CommandPalette from './CommandPalette.astro';
   }
 
   .network-menu span {
-    color: rgba(244, 242, 238, 0.55);
+    color: var(--ink-a550);
     font-size: 12.5px;
     line-height: 1.45;
   }
@@ -1161,7 +1161,7 @@ import CommandPalette from './CommandPalette.astro';
   }
 
   .group-rail i {
-    color: var(--accent);
+    color: var(--accent-ink);
     grid-column: 2;
     grid-row: 1 / span 2;
   }
@@ -1202,7 +1202,7 @@ import CommandPalette from './CommandPalette.astro';
   }
 
   .initiative-pane a:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--wash-a050);
   }
 
   .initiative-pane strong {
@@ -1211,7 +1211,7 @@ import CommandPalette from './CommandPalette.astro';
   }
 
   .initiative-pane span {
-    color: rgba(244, 242, 238, 0.55);
+    color: var(--ink-a550);
     font-size: 12.5px;
     line-height: 1.45;
   }
@@ -1514,7 +1514,7 @@ import CommandPalette from './CommandPalette.astro';
 
   @media (max-width: 950px) {
     .mobile-menu-section > button i {
-      color: var(--accent);
+      color: var(--accent-ink);
       font: normal 22px/1 var(--font-body);
       text-align: center;
       transition: transform var(--duration-3) var(--ease-panel);
@@ -1541,7 +1541,7 @@ import CommandPalette from './CommandPalette.astro';
 
   @media (max-width: 950px) {
     .mobile-link-group > p {
-      color: var(--accent);
+      color: var(--accent-ink);
       font: var(--mono-9)/1 var(--font-mono);
       letter-spacing: 0.14em;
       margin: 8px 0 6px;

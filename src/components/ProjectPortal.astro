@@ -191,7 +191,7 @@ const morphName = (visual: string) => `${visual}-title`;
   }
 
   .portal-panel::after {
-    background: linear-gradient(90deg, rgba(15, 16, 15, 0.97) 0%, rgba(15, 16, 15, 0.78) 42%, rgba(15, 16, 15, 0.08) 78%);
+    background: linear-gradient(90deg, var(--scrim-2-a970) 0%, var(--scrim-2-a780) 42%, var(--scrim-2-a080) 78%);
     content: '';
     inset: 0;
     pointer-events: none;
@@ -234,9 +234,9 @@ const morphName = (visual: string) => `${visual}-title`;
   }
 
   .portal-pills span {
-    border: 1px solid rgba(94, 230, 160, 0.32);
+    border: 1px solid var(--accent-a320);
     border-radius: var(--radius-pill);
-    color: var(--accent);
+    color: var(--accent-ink);
     font: var(--mono-9)/1 var(--font-mono);
     letter-spacing: 0.08em;
     padding: 7px 9px;
@@ -257,8 +257,8 @@ const morphName = (visual: string) => `${visual}-title`;
   }
 
   .portal-enter {
-    border-bottom: 1px solid var(--accent);
-    color: var(--accent);
+    border-bottom: 1px solid var(--accent-ink);
+    color: var(--accent-ink);
     display: inline-block;
     font: var(--mono-10-5)/1 var(--font-mono);
     letter-spacing: 0.1em;
@@ -273,18 +273,18 @@ const morphName = (visual: string) => `${visual}-title`;
 
   .plot-grid {
     fill: none;
-    stroke: rgba(244, 242, 238, 0.14);
+    stroke: var(--ink-a140);
     stroke-width: 1;
   }
 
   .plot-bars {
-    fill: rgba(94, 230, 160, 0.28);
-    stroke: var(--accent);
+    fill: var(--accent-line);
+    stroke: var(--accent-ink);
     stroke-width: 1;
   }
 
   .plot-labels {
-    fill: rgba(244, 242, 238, 0.5);
+    fill: var(--ink-wash-a500);
     font: 10px var(--font-mono);
     text-anchor: middle;
   }
@@ -296,7 +296,7 @@ const morphName = (visual: string) => `${visual}-title`;
     }
 
     .portal-rail {
-      background: rgba(19, 20, 20, 0.94);
+      background: var(--scrim-1-a940);
       border-bottom: 1px solid var(--hairline);
       gap: 0;
       margin: 0 -18px;
@@ -323,7 +323,7 @@ const morphName = (visual: string) => `${visual}-title`;
     }
 
     .portal-rail a.active {
-      border-bottom-color: var(--accent);
+      border-bottom-color: var(--accent-ink);
     }
 
     .portal-panel {
@@ -333,7 +333,7 @@ const morphName = (visual: string) => `${visual}-title`;
     }
 
     .portal-panel::after {
-      background: linear-gradient(0deg, rgba(15, 16, 15, 0.98) 0%, rgba(15, 16, 15, 0.78) 48%, rgba(15, 16, 15, 0.16) 100%);
+      background: linear-gradient(0deg, var(--scrim-2-a980) 0%, var(--scrim-2-a780) 48%, var(--scrim-2-a160) 100%);
     }
 
     .portal-visual {
