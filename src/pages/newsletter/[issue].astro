@@ -30,10 +30,20 @@ const barDate = entry.data.date
 const position = numbers.indexOf(issue);
 const previous = position > 0 ? numbers[position - 1] : undefined;
 const next = position < numbers.length - 1 ? numbers[position + 1] : undefined;
+// Issue summaries are the description source and many run past the length
+// search results render, so they are trimmed on a word boundary rather than
+// cut mid-word by the engine.
+const truncateDescription = (value: string, maxLength = 160) => {
+  if (value.length <= maxLength) return value;
+  const candidate = value.slice(0, maxLength - 1).trimEnd();
+  return `${candidate.slice(0, candidate.lastIndexOf(' ')).replace(/[,:;]+$/, '')}…`;
+};
+
 const frontmatter = {
   title: `The ML Engineer — Issue #${issue}`,
-  description:
+  description: truncateDescription(
     entry.data.summary ?? 'The Machine Learning Engineer newsletter: curated articles, tutorials and insights from experienced machine learning professionals.',
+  ),
   article: true,
   articleHeadline: `The Machine Learning Engineer Issue #${issue}`,
   datePublished: entry.data.date?.toISOString().slice(0, 10),
