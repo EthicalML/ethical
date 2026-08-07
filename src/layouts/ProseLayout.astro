@@ -22,34 +22,38 @@ const { frontmatter } = Astro.props;
 </BaseLayout>
 
 <style is:global>
-.prose-content > p {
-  color: var(--text-2);
-  font-size: var(--body-18);
-  line-height: 1.7;
-  margin: 0;
-  max-width: 840px;
-  padding: 0 48px 72px;
-}
-
-.prose-section > p a,
-.prose-section > ul a,
-.prose-content p a,
-.prose-content ul a { color: var(--accent); }
-
-@media (max-width: 950px) {
   .prose-content > p {
+    color: var(--text-2);
+    font-size: var(--body-18);
+    line-height: 1.7;
+    margin: 0;
+    max-width: 840px;
+    padding: 0 48px 72px;
+  }
+
+  .prose-section > p a,
+  .prose-section > ul a,
+  .prose-content p a,
+  .prose-content ul a {
+    color: var(--accent);
+  }
+
+  @media (max-width: 950px) {
+    .prose-content > p {
       padding-inline: 24px;
     }
-}
+  }
 
-@media (max-width: 950px) {
-  .prose-content > p { padding: 0 24px 64px; }
-}
+  @media (max-width: 950px) {
+    .prose-content > p {
+      padding: 0 24px 64px;
+    }
+  }
 
-@media (max-width: 600px) {
-  .prose-content > p {
+  @media (max-width: 600px) {
+    .prose-content > p {
       font-size: 16px;
       padding: 0 18px 54px;
     }
-}
+  }
 </style>

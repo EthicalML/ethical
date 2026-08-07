@@ -24,42 +24,44 @@ const external = isExternalHref(href);
 </style>
 
 <style is:global>
-.cta-block {
-  align-items: center;
-  display: flex;
-  gap: 34px;
-  justify-content: space-between;
-  margin-top: 34px;
-  padding: 26px 30px;
-}
-
-.cta-block a {
-  background: transparent;
-  border: 1px solid rgba(94, 230, 160, .45);
-  border-radius: var(--radius-control);
-  color: var(--accent);
-  flex: none;
-  font-size: var(--body-14);
-  font-family: var(--font-mono);
-  font-weight: 500;
-  padding: 13px 20px;
-}
-
-@media (max-width: 950px) {
   .cta-block {
+    align-items: center;
+    display: flex;
+    gap: 34px;
+    justify-content: space-between;
+    margin-top: 34px;
+    padding: 26px 30px;
+  }
+
+  .cta-block a {
+    background: transparent;
+    border: 1px solid rgba(94, 230, 160, 0.45);
+    border-radius: var(--radius-control);
+    color: var(--accent);
+    flex: none;
+    font-size: var(--body-14);
+    font-family: var(--font-mono);
+    font-weight: 500;
+    padding: 13px 20px;
+  }
+
+  @media (max-width: 950px) {
+    .cta-block {
       align-items: flex-start;
       flex-direction: column;
     }
-}
+  }
 
-@media (max-width: 600px) {
-  .cta-block {
+  @media (max-width: 600px) {
+    .cta-block {
       margin-inline: 18px;
       padding: 22px 20px;
     }
-}
+  }
 
-@media (max-width: 600px) {
-  .cta-block a { width: 100%; }
-}
+  @media (max-width: 600px) {
+    .cta-block a {
+      width: 100%;
+    }
+  }
 </style>

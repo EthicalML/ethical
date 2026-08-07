@@ -30,7 +30,7 @@ Path-scoped instruction files (`.github/instructions/`):
 
 ## Local commands
 
-Node version is pinned in `.tool-versions`. `npm run dev` for the dev server, `npm run build && npm run preview` for the production build. Temporary files go under `./tmp`, never `/tmp`.
+Node version is pinned in `.tool-versions`. `npm run dev` for the dev server, `npm run build && npm run preview` for the production build. Use `npm run verify:parity -- <baseline-dir> <current-dir>` to mechanically prove screenshot parity; zero-visual-change work must pass with zero differing pixels unless a documented same-build recapture proves canvas instability. Temporary files go under `./tmp`, never `/tmp`.
 
 ## Editorial rules
 
@@ -206,7 +206,7 @@ Every change must satisfy:
 4. `npm run check:ratchet` reports zero errors, warnings, and hints.
 5. `npm run build` passes under the Node version pinned in `.tool-versions`.
 6. The DOM gate passes for all affected routes at desktop and mobile widths.
-7. Zero-change work has masked full-page screenshot parity; intentional visual changes have documented before/after evidence.
+7. Zero-change work passes `npm run verify:parity -- <baseline-dir> <current-dir>` with zero differing pixels after masked full-page capture; intentional visual changes have documented before/after evidence.
 8. Any added or changed animation updates the Motion table in the same change.
 9. The change lands on `master` through a pull request with green CI; direct pushes are blocked. The workflow is described at the top of this document.
 

@@ -51,43 +51,114 @@ const talks = [
 </aside>
 
 <style is:global>
-.footnote-band { align-items:start; border-top: 1px solid var(--hairline); display:grid; gap:44px; grid-template-columns:1.15fr .85fr 250px; padding:44px 48px 34px; }
+  .footnote-band {
+    align-items: start;
+    border-top: 1px solid var(--hairline);
+    display: grid;
+    gap: 44px;
+    grid-template-columns: 1.15fr 0.85fr 250px;
+    padding: 44px 48px 34px;
+  }
 
-.footnote-band p { color:rgba(244,242,238,.62); font-size:14px; line-height:1.62; margin:0; max-width:520px; }
+  .footnote-band p {
+    color: rgba(244, 242, 238, 0.62);
+    font-size: 14px;
+    line-height: 1.62;
+    margin: 0;
+    max-width: 520px;
+  }
 
-.footnote-band .eyebrow { color:rgba(244,242,238,.4); font:9.5px/normal var(--font-mono); letter-spacing:.14em; }
+  .footnote-band .eyebrow {
+    color: rgba(244, 242, 238, 0.4);
+    font: 9.5px/normal var(--font-mono);
+    letter-spacing: 0.14em;
+  }
 
-.footnote-about > p:not(.eyebrow) { margin-top:12px; }
+  .footnote-about > p:not(.eyebrow) {
+    margin-top: 12px;
+  }
 
-.footnote-band a { color:rgba(244,242,238,.7); font-size:13px; }
+  .footnote-band a {
+    color: rgba(244, 242, 238, 0.7);
+    font-size: 13px;
+  }
 
-.footnote-talks { display:flex; flex-direction:column; }
+  .footnote-talks {
+    display: flex;
+    flex-direction: column;
+  }
 
-.footnote-talks > .eyebrow { margin-bottom:10px; }
+  .footnote-talks > .eyebrow {
+    margin-bottom: 10px;
+  }
 
-.footnote-talks a { align-items:baseline; border-bottom:1px solid rgba(255,255,255,.06); display:flex; gap:12px; padding:7px 0; }
+  .footnote-talks a {
+    align-items: baseline;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    gap: 12px;
+    padding: 7px 0;
+  }
 
-.footnote-talks small { color:rgba(244,242,238,.35); flex:none; font:9.5px var(--font-mono); letter-spacing:.1em; width:34px; }
+  .footnote-talks small {
+    color: rgba(244, 242, 238, 0.35);
+    flex: none;
+    font: 9.5px var(--font-mono);
+    letter-spacing: 0.1em;
+    width: 34px;
+  }
 
-.footnote-talks a span { color:rgba(244,242,238,.74); }
+  .footnote-talks a span {
+    color: rgba(244, 242, 238, 0.74);
+  }
 
-.footnote-talks b { color:var(--accent); font-weight:400; margin-left:auto; }
+  .footnote-talks b {
+    color: var(--accent);
+    font-weight: 400;
+    margin-left: auto;
+  }
 
-.footnote-links { display:flex; flex-direction:column; gap:7px; margin-top:12px; }
+  .footnote-links {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-top: 12px;
+  }
 
-.footnote-all-talks { color:var(--accent); font:var(--mono-10)/1 var(--font-mono); letter-spacing:.08em; margin-top:14px; text-transform:uppercase; }
+  .footnote-all-talks {
+    color: var(--accent);
+    font: var(--mono-10)/1 var(--font-mono);
+    letter-spacing: 0.08em;
+    margin-top: 14px;
+    text-transform: uppercase;
+  }
 
-.footnote-band .footnote-legal { color:rgba(244,242,238,.35); font:9.5px/normal var(--font-mono); grid-column:1 / -1; justify-self:end; letter-spacing:.1em; margin:8px 0 0; max-width:none; text-align:right; }
+  .footnote-band .footnote-legal {
+    color: rgba(244, 242, 238, 0.35);
+    font: 9.5px/normal var(--font-mono);
+    grid-column: 1 / -1;
+    justify-self: end;
+    letter-spacing: 0.1em;
+    margin: 8px 0 0;
+    max-width: none;
+    text-align: right;
+  }
 
-@media (max-width: 950px) {
-  .footnote-band { padding:44px 24px; }
-}
+  @media (max-width: 950px) {
+    .footnote-band {
+      padding: 44px 24px;
+    }
+  }
 
-@media (max-width: 950px) {
-  .footnote-band { grid-template-columns: 1fr; }
-}
+  @media (max-width: 950px) {
+    .footnote-band {
+      grid-template-columns: 1fr;
+    }
+  }
 
-@media (max-width: 600px) {
-  .footnote-band { padding: 40px 18px; }
-}
+  @media (max-width: 600px) {
+    .footnote-band {
+      padding: 40px 18px;
+    }
+  }
 </style>

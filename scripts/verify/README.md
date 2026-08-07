@@ -10,6 +10,14 @@ npm run verify:typewriter
 
 Pass routes after `--` to check a safe subset. Set `VERIFY_BASE_URL` only when deliberately verifying another local origin. `--viewport WIDTH` or `--viewport WIDTHxHEIGHT` changes either responsive gate; `VERIFY_VIEWPORT` is the environment equivalent. Screenshot files and their manifest go to viewport-specific folders under the git-ignored `scripts/verify/out/`.
 
+Compare a fresh capture with a stored baseline mechanically:
+
+```sh
+npm run verify:parity -- <baseline-dir> <current-dir>
+```
+
+The default tolerance is zero differing pixels. Only use `--tolerance` for documented canvas instability that reproduces between two captures of the same build.
+
 ## Reviewed checks
 
 - HTTP status: asserts every requested route resolves successfully so a visually plausible error page cannot pass.

@@ -45,27 +45,51 @@ const { talks } = Astro.props;
 </section>
 
 <style is:global>
-.talk-grid { display: grid; gap: 34px 18px; grid-template-columns: 1fr 1fr; }
-
-.talk-grid article { border-bottom: 1px solid var(--hairline); padding-bottom: 24px; }
-
-.talk-grid img { aspect-ratio: 5/3; display: block; object-fit: cover; width: 100%; }
-
-.talk-grid .eyebrow { margin-top: 18px; }
-
-.talk-grid h2 { font:300 30px/1.1 var(--font-display); margin:12px 0; }
-
-.talk-grid article > span { color:var(--text-3); font-size:13px; }
-
-@media (max-width: 950px) {
   .talk-grid {
+    display: grid;
+    gap: 34px 18px;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .talk-grid article {
+    border-bottom: 1px solid var(--hairline);
+    padding-bottom: 24px;
+  }
+
+  .talk-grid img {
+    aspect-ratio: 5/3;
+    display: block;
+    object-fit: cover;
+    width: 100%;
+  }
+
+  .talk-grid .eyebrow {
+    margin-top: 18px;
+  }
+
+  .talk-grid h2 {
+    font: 300 30px/1.1 var(--font-display);
+    margin: 12px 0;
+  }
+
+  .talk-grid article > span {
+    color: var(--text-3);
+    font-size: 13px;
+  }
+
+  @media (max-width: 950px) {
+    .talk-grid {
       grid-template-columns: 1fr;
       padding-inline: 24px;
     }
-}
+  }
 
-@media (max-width: 600px) {
-  .talk-grid { padding-inline: 18px; }
-  .talk-grid h2 { font-size: 28px; }
-}
+  @media (max-width: 600px) {
+    .talk-grid {
+      padding-inline: 18px;
+    }
+    .talk-grid h2 {
+      font-size: 28px;
+    }
+  }
 </style>
