@@ -105,3 +105,11 @@ import { ArticleHero, TalkCard } from '../components/prose/components.js';
     All featured talks
   </a>
 </section>
+
+<style>{`
+.featured-talks-grid { display: grid; gap: 18px; grid-template-columns: 1fr 1fr; margin: 36px 0; }
+
+@media (max-width: 600px) {
+  .featured-talks-grid { grid-template-columns: 1fr; }
+}
+`}</style>
