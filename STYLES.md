@@ -8,21 +8,29 @@ Every colour that must differ between the dark and light themes is a token on `:
 has nowhere to flip to under `:root[data-theme='light']`, so a literal is a bug unless it is on the
 "never a token" list at the end of this section.
 
-There are six colour families. Each family has a small semantic ladder — use a ladder rung for new
+There are seven colour families. Each family has a small semantic ladder — use a ladder rung for new
 work. The `-a###` tokens beside each ladder are the same family at an off-ladder alpha (the digits
 are permille, so `-a420` is `alpha 0.42`); they exist because the dark theme already used those
-exact values and the site must not move. Treat them as members of the nearest rung and flip them
-with it.
+exact values and the site must not move. Treat them as members of the nearest rung.
+
+**In light they are the rung.** `--ink-a420`, `--ink-a440` and `--ink-a450` all resolve to the
+`--ink-4` light value; the same holds in every family. Collapsing them in *dark* would move up to
+6.75/255 against a 2/255 parity budget, but there is no light baseline to preserve, so light gets
+the clean sixteen-value ladder and dark keeps its exact historical appearance. Practically: an
+`-a###` token needs a light value only when it is added, and it is always a copy of its rung's.
+The single exception is `--ink-a050`/`--ink-a030`, ink below the ladder's floor — deliberately
+ghosted glyphs, which take the wash curve rather than `--ink-6` so they stay ghosts.
 
 | Family | Dark base | What each step is for |
 | --- | --- | --- |
 | `--ink-1` … `--ink-6` | `rgba(244, 242, 238, α)` | Foreground. 1 headings and primary body · 2 emphasised body, active nav · 3 secondary copy and standfirsts · 4 tertiary copy, captions, table cells · 5 metadata and mono eyebrows, **large/UI only** · 6 disabled text and decorative glyphs. |
 | `--ink-wash-a###` | same RGB, low alpha | The ink colour used as a *surface* tint or SVG fill rather than as ink. Flips to a black-based wash, not to the light ink colour. |
-| `--wash-1` … `--wash-4` | `rgba(255, 255, 255, α)` | Surface lift above the panel underneath. 1 barely-there zebra stripe · 2 resting card or field fill · 3 hover fill · 4 pressed or selected fill. |
+| `--wash-1` … `--wash-4` | `rgba(255, 255, 255, α)` | Surface lift above the panel underneath. 1 barely-there zebra stripe · 2 resting card or field fill · 3 hover fill · 4 pressed or selected fill. **This is the one family that is not a tint of the theme's ink.** Lift is toward the light source in both themes, so in light rungs 1–2 go *up* toward paper white and only 3–4 tint down into ink. Flipping all four to a dark tint sinks every card and field into the panel it should sit on — that is what "grey soup" looks like. |
 | `--hairline`, `--hairline-card`, `--hairline-strong`, `--hairline-a###` | `rgba(255, 255, 255, α)` | White used as a **border**. Separate from `--wash-*` because a light theme needs a heavier hairline than it needs a wash. |
 | `--accent-wash`, `--accent-veil`, `--accent-line`, `--accent-edge`, `--accent-ink`, `--accent`, `--accent-a###` | `rgba(94, 230, 160, α)` | wash: section tint and callout background · veil: chip fill, hover fill, selection · line: subtle rule, inactive underline · edge: visible border and focus ring · **`--accent-ink`: accent text, icon strokes and borders** · `--accent`: solid fills, dots and marks, paired with `--accent-on`. |
 | `--scrim-1-a###` … `--scrim-5-a###` | near-black, depth 1 lightest to 5 deepest | Page-canvas fades and overlay scrims that sit *over* content. Every one of them inverts under a light theme. |
-| `--shadow-a###`, `--shadow-panel` | `rgba(0, 0, 0, α)` | Drop shadows. Alphas cannot be scaled between themes — a light theme re-authors the shadow, it does not reuse the dark alpha. |
+| `--warn`, `--glitch-red`, `--glitch-blue`, `--violet`, `--indigo`, each with `-fill` and `-a###` | amber `#e8b45c`, red `#ff5a6e`, blue `#4ac7ff`, violet `#b694ff`, indigo `#7aa2ff` | Semantic hues: identity colours outside the accent family — the survey report and the XAI window are amber, the memory lifecycle is violet, the sequence pipeline is blue. Each follows the accent's ink/fill split, and the alpha ladder uses the accent's rungs. |
+| `--shadow-a###`, `--shadow-panel` | `rgba(0, 0, 0, α)` | Drop shadows. Alphas cannot be scaled between themes — a light theme re-authors the shadow, it does not reuse the dark alpha. `--shadow-hard` is the same idea as a raw colour rather than a box-shadow, because the canvas modules cannot consume a shadow list. |
 
 `--text-1` … `--text-4` are aliases over `--ink-1`, `--ink-3`, `--ink-4` and `--ink-5`; `--accent-wash-07`,
 `--accent-wash-09`, `--form-wash-14` and `--accent-wash-16` are aliases over the accent ladder. Use
@@ -38,7 +46,21 @@ property** decides which token a site takes:
 
 In the dark theme both resolve to `#5ee6a0`, so a misclassification is invisible until a light
 theme lands. A component that overrides `--accent` in its own subtree must override `--accent-ink`
-beside it, or that subtree falls back to the global green.
+beside it, or that subtree falls back to the global green. The same rule governs every semantic hue:
+`--warn` is the ink form and `--warn-fill` the bright one.
+
+Two refinements the light block forced:
+
+- **The alpha ladder splits the same way.** `--accent-wash` and `--accent-veil` are surface tints, so
+  under light they stay the bright mint and take more alpha; `--accent-line` and `--accent-edge` are
+  rules and borders, so they tint toward the ink. Tinting all four toward the ink turns the accent
+  sage-grey — a mint wash on paper should still read mint.
+- **A `background` that is really a rule takes the ink.** Six sites paint a 2px state indicator —
+  chapter-tab and switcher underlines, phase and stage rules — as a background. At 1.41:1 on paper a
+  mint underline is invisible, so they take `var(--accent-ink)`, which is the same green in dark.
+
+Each theme also declares `color-scheme`, which is what themes the native controls no stylesheet can
+reach: form field internals, scrollbars, the caret and the spellcheck underline.
 
 ### Never a token
 
@@ -50,6 +72,11 @@ beside it, or that subtree falls back to the global green.
 - Brand marks under `src/assets/`.
 - The two paper-white plates behind scanned documents and screenshots
   (`StageExplorer.astro`, `PolicyRecordPreview.astro`): they are paper in both themes.
+- Syntax-highlighted code. `github-dark` is baked into the markup at build time, so a console or code
+  panel is a dark surface in both themes; `QuickstartTerminal.astro` re-enters the ink tokens at
+  their dark values for that subtree rather than trying to flip it.
+- Raster and baked artwork. `src/assets/talks/*.svg` bake an opaque plate, so each ships a `-light`
+  twin and `TalksGrid.astro` hides the inactive one.
 
 ## Global stylesheet
 
