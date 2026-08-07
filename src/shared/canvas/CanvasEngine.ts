@@ -15,12 +15,12 @@ export interface CanvasPointer {
    compose their own alpha (`rgba(${accent},${pulse})`). Use `rgba()`/`rgbCss()`
    to format at draw time.
 
-   The two tables below are the source of truth rather than the CSS tokens:
-   canvas is not cascaded, the dark column is a byte-exact copy of the literals
-   these modules shipped with (so dark stays pixel-identical), and it keeps this
-   module independent of the token work landing in `tokens.css`. `--accent` and
-   `--accent-ink` are still read from CSS when they resolve, so a brand override
-   or the eventual ink/fill split flows through without a code change.
+   The two tables below are the fallback rather than the source of truth: the
+   dark column is a byte-exact copy of the literals these modules shipped with,
+   so dark stays pixel-identical even with no stylesheet. Where the equivalent
+   token resolves — `--accent`, `--accent-ink`, `--shadow-hard` and
+   `--canvas-surface-{1,2,3}` — the CSS wins, so a brand override or a palette
+   retune flows through without a code change.
 --------------------------------------------------------------------------- */
 
 export type Rgb = readonly [number, number, number];
@@ -44,6 +44,12 @@ export interface CanvasPalette {
   inset: Rgb;
   /** Hard occlusion outline. */
   shadow: Rgb;
+  /**
+   * The three lit faces of an isometric solid: top, right, left. `inset` is one
+   * surface and cannot express three, and the ordering inverts between themes —
+   * the darkest faces under dark, the lightest under light.
+   */
+  surface: readonly [Rgb, Rgb, Rgb];
 }
 
 const DARK: CanvasPalette = {
@@ -56,6 +62,11 @@ const DARK: CanvasPalette = {
   panel: [23, 24, 24],
   inset: [15, 16, 15],
   shadow: [0, 0, 0],
+  surface: [
+    [16, 19, 17],
+    [11, 13, 12],
+    [8, 10, 9],
+  ],
 };
 
 const LIGHT: CanvasPalette = {
@@ -64,10 +75,15 @@ const LIGHT: CanvasPalette = {
   accentInk: [17, 112, 64],
   ink: [25, 24, 20],
   wash: [25, 24, 20],
-  base: [247, 246, 243],
-  panel: [255, 255, 255],
-  inset: [235, 234, 229],
+  base: [244, 242, 238],
+  panel: [251, 250, 247],
+  inset: [232, 229, 222],
   shadow: [25, 24, 20],
+  surface: [
+    [246, 246, 243],
+    [238, 239, 235],
+    [228, 230, 225],
+  ],
 };
 
 export const rgba = (color: Rgb, alpha: number) =>
@@ -109,9 +125,6 @@ const parseRgb = (value: string): Rgb | undefined => {
   return [numbers[0], numbers[1], numbers[2]];
 };
 
-// Rec. 709 relative luminance, 0..1.
-const luminance = (color: Rgb) => (color[0] * 0.2126 + color[1] * 0.7152 + color[2] * 0.0722) / 255;
-
 let cachedPalette: CanvasPalette | undefined;
 let cachedTheme: string | undefined;
 const themeListeners = new Set<() => void>();
@@ -132,15 +145,14 @@ export const getPalette = (): CanvasPalette => {
       palette.accent = accent;
       palette.accentInk = accent;
     }
-    /* `--accent-ink` is honoured only when it can actually serve as ink on the
-       active surface. Today the token exists but is still the bright fill green
-       in both themes, which on a pale page is unreadable — so under light a
-       too-bright value is rejected in favour of the table. Once the light block
-       darkens it, this picks it up with no code change. */
     const accentInk = parseRgb(styles.getPropertyValue('--accent-ink'));
-    if (accentInk && !(theme === 'light' && luminance(accentInk) > 0.4)) {
-      palette.accentInk = accentInk;
-    }
+    if (accentInk) palette.accentInk = accentInk;
+    const shadow = parseRgb(styles.getPropertyValue('--shadow-hard'));
+    if (shadow) palette.shadow = shadow;
+    const surface = ([1, 2, 3] as const).map((step) =>
+      parseRgb(styles.getPropertyValue(`--canvas-surface-${step}`)),
+    );
+    if (surface.every(Boolean)) palette.surface = surface as unknown as readonly [Rgb, Rgb, Rgb];
   }
   cachedPalette = palette;
   cachedTheme = theme;

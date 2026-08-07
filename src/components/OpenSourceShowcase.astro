@@ -531,7 +531,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
 
   .xai-stages b {
     animation: xai-scan 3.2s linear infinite;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    background: linear-gradient(90deg, transparent, var(--accent-ink), transparent);
     display: block;
     height: 100%;
     left: 0;
@@ -921,7 +921,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     color: var(--accent-ink);
   }
   .oss-carousel-edge:hover b {
-    background: linear-gradient(180deg, transparent, var(--accent), transparent);
+    background: linear-gradient(180deg, transparent, var(--accent-ink), transparent);
     box-shadow: 0 0 14px var(--accent-a500);
   }
   .oss-carousel-edge.pressed b,
@@ -933,7 +933,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
       box-shadow: 0 0 0 rgba(94, 230, 160, 0);
     }
     50% {
-      background: linear-gradient(180deg, transparent, #8bf5c0, transparent);
+      background: linear-gradient(180deg, transparent, var(--mint-bright), transparent);
       box-shadow: 0 0 20px var(--accent-a850);
     }
     100% {

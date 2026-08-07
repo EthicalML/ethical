@@ -247,20 +247,11 @@ const styleAt = (heat: number, palette: CanvasPalette): CubeStyle => {
   };
 };
 
-// Ground plates: the darkest surfaces under dark, the lightest under light.
-const PLATE_DARK: Rgb[] = [
-  [16, 19, 17],
-  [11, 13, 12],
-  [8, 10, 9],
-];
-const PLATE_LIGHT: Rgb[] = [
-  [246, 246, 243],
-  [238, 239, 235],
-  [228, 230, 225],
-];
-
+/* Ground plates take the palette's three isometric faces: the darkest surfaces
+   under dark, the lightest under light, and editable from `tokens.css` because
+   `--canvas-surface-{1,2,3}` is where they now live. */
 const plateStyle = (palette: CanvasPalette): CubeStyle => {
-  const [top, right, left] = palette.light ? PLATE_LIGHT : PLATE_DARK;
+  const [top, right, left] = palette.surface;
   return {
     top: rgba(top, 0.94),
     right: rgba(right, 0.94),

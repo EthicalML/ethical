@@ -125,10 +125,10 @@ const { steps }: Props = Astro.props;
 
 <style>
   :global(.xai-process-window) {
-    --accent: #e8b45c;
-    --accent-ink: #e8b45c;
-    --accent-wash-09: rgba(232, 180, 92, 0.09);
-    border-color: rgba(232, 180, 92, 0.25);
+    --accent: var(--warn-fill);
+    --accent-ink: var(--warn);
+    --accent-wash-09: var(--warn-a090);
+    border-color: var(--warn-a250);
     margin-top: 34px;
   }
   xai-process {
