@@ -137,16 +137,16 @@ const { cards, eyebrow, heading } = Astro.props;
 
 .phase-card:is(:hover, .active) {
   background: var(--accent-wash-07);
-}
 
-.phase-card:is(:hover, .active) .phase-label { color: var(--accent); }
+  & .phase-label { color: var(--accent); }
 
-.phase-card:is(:hover, .active) .phase-details { color: rgba(244, 242, 238, .85); }
+  & .phase-details { color: rgba(244, 242, 238, .85); }
 
-.phase-card:is(:hover, .active) .phase-rule {
-  background: var(--accent);
-  box-shadow: 0 0 14px rgba(94, 230, 160, .5);
-  height: 3px;
+  & .phase-rule {
+    background: var(--accent);
+    box-shadow: 0 0 14px rgba(94, 230, 160, .5);
+    height: 3px;
+  }
 }
 
 @media (max-width: 950px) {
