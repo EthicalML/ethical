@@ -4,9 +4,10 @@
 // button perimeter trace lap over the settle window, the conduit packet line,
 // the mono terminal log and the confirmation bloom.
 const settleMs = 2500;
+const { id } = Astro.props;
 ---
 
-<newsletter-subscribe>
+<newsletter-subscribe id={id}>
   <form data-subscribe-form data-settle-ms={settleMs} style={`--settle: ${settleMs}ms`} novalidate>
     <label class="subscribe-field">
       <span class="visually-hidden">Email address</span>
