@@ -8,21 +8,21 @@ import {
 } from './CanvasEngine';
 
 /* Per-CRD identity colours stay identity across themes, but at full saturation
-   they carry no contrast on a pale surface (the accent green sits at ~1.4:1 on
-   white). Under light each is darkened toward the ink while keeping its hue, so
-   the CRD stays recognisable and the label stays readable. The return value is
-   still `#rrggbb` because call sites append a two-digit alpha suffix to it. */
-const themed = (hex: string, palette: CanvasPalette) => {
-  if (!palette.light) return hex;
-  const channels = [1, 3, 5].map((index) => Number.parseInt(hex.slice(index, index + 2), 16));
-  return `#${channels
-    .map((value) =>
-      Math.round(value * 0.42)
-        .toString(16)
-        .padStart(2, '0'),
-    )
-    .join('')}`;
+   they carry no contrast on a pale surface — every one of the four sits between
+   1.4:1 and 2.0:1 on `#f4f2ee`, which is not a legible label and barely a
+   visible stroke. A flat multiplier would clear the ratio but drags every hue
+   toward mud, so each is instead the authored ink form from the light block:
+   same hue, saturation lifted, lightness dropped to ~5.5:1 on paper. The return
+   value is still `#rrggbb` because call sites append a two-digit alpha suffix. */
+const HUE_INK: Record<string, string> = {
+  '#5ee6a0': '#117040', // accent mint  -> --accent-ink
+  '#4ac7ff': '#066895', // signal blue  -> --glitch-blue
+  '#e8b45c': '#835a13', // amber        -> --warn
+  '#b694ff': '#6f4cb9', // violet       -> --violet
 };
+
+const themed = (hex: string, palette: CanvasPalette) =>
+  palette.light ? (HUE_INK[hex.toLowerCase()] ?? hex) : hex;
 
 // Backdrop glow fades to the surface it sits on; the RGB of a zero-alpha stop
 // still drives gradient interpolation, so it is not interchangeable with any

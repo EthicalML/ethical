@@ -306,7 +306,7 @@
   }
   72.3% {
     opacity: 1;
-    text-shadow: 0 0 10px rgba(122, 162, 255, 0.4);
+    text-shadow: 0 0 10px var(--indigo-a400);
   }
   74.4% {
     opacity: 0.94;
@@ -462,7 +462,7 @@
   }
   72.3% {
     opacity: 1;
-    text-shadow: 0 0 4px rgba(122, 162, 255, 0.4);
+    text-shadow: 0 0 4px var(--indigo-a400);
   }
   74.4% {
     opacity: 0.94;
@@ -597,7 +597,7 @@
 
 @media (max-width: 950px) {
   .graph-switcher span.active::after {
-    background: var(--accent);
+    background: var(--accent-ink);
   }
 }
 

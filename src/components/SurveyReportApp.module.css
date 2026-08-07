@@ -1,11 +1,12 @@
 .app {
-  --report-amber: #e8b45c;
+  --report-amber: var(--warn-fill);
+  --report-amber-ink: var(--warn);
   --report-ease: cubic-bezier(0.22, 0.75, 0.2, 1);
   position: relative;
 }
 
 .app * {
-  scrollbar-color: rgba(232, 180, 92, 0.58) var(--ink-wash-a050);
+  scrollbar-color: var(--warn-a580) var(--ink-wash-a050);
   scrollbar-width: thin;
 }
 
@@ -19,7 +20,7 @@
 }
 
 .app *::-webkit-scrollbar-thumb {
-  background: rgba(232, 180, 92, 0.58);
+  background: var(--warn-a580);
   border-radius: 0;
 }
 
@@ -128,7 +129,7 @@
 }
 
 .chapterTabs a::after {
-  background: var(--accent);
+  background: var(--accent-ink);
   bottom: -1px;
   content: '';
   height: 2px;
@@ -176,8 +177,8 @@
 }
 
 .toggleTrack {
-  background: rgba(232, 180, 92, 0.12);
-  border: 1px solid rgba(232, 180, 92, 0.48);
+  background: var(--warn-a120);
+  border: 1px solid var(--warn-a480);
   display: block;
   height: 22px;
   padding: 2px;
@@ -200,23 +201,23 @@
 }
 
 .compareToggle[aria-checked='true'] {
-  color: var(--report-amber);
+  color: var(--report-amber-ink);
 }
 
 .compareToggle[aria-checked='true'] .toggleTrack {
-  background: rgba(232, 180, 92, 0.22);
-  border-color: var(--report-amber);
-  box-shadow: 0 0 15px rgba(232, 180, 92, 0.28);
+  background: var(--warn-a220);
+  border-color: var(--report-amber-ink);
+  box-shadow: 0 0 15px var(--warn-a280);
 }
 
 .compareToggle[aria-checked='true'] .toggleTrack b {
   background: var(--report-amber);
-  box-shadow: 0 0 9px rgba(232, 180, 92, 0.7);
+  box-shadow: 0 0 9px var(--warn-a700);
   transform: translateX(18px);
 }
 
 .compareToggle[aria-checked='true'] strong {
-  color: var(--report-amber);
+  color: var(--report-amber-ink);
 }
 
 .chapterViewport {
@@ -290,7 +291,7 @@
 }
 
 .questionRail a::before {
-  background: var(--accent);
+  background: var(--accent-ink);
   bottom: 6px;
   content: '';
   left: -1px;
@@ -323,7 +324,7 @@
 }
 
 .stepIndex {
-  color: var(--report-amber);
+  color: var(--report-amber-ink);
   font: var(--mono-9)/1 var(--font-mono);
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -412,7 +413,7 @@
     to bottom,
     var(--ink-wash-a065) 0 6px,
     transparent 6px 9px,
-    rgba(232, 180, 92, 0.08) 9px 12px
+    var(--warn-a080) 9px 12px
   );
   height: 12px;
 }
@@ -462,8 +463,8 @@
 }
 
 .deltaDown {
-  border-color: rgba(232, 180, 92, 0.3);
-  color: var(--report-amber);
+  border-color: var(--warn-a300);
+  color: var(--report-amber-ink);
 }
 
 .longTail {
@@ -671,7 +672,7 @@
 }
 
 .methodNote > span {
-  color: var(--report-amber);
+  color: var(--report-amber-ink);
 }
 
 .otherYearLink {
