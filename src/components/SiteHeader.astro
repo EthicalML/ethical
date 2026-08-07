@@ -208,7 +208,7 @@ import MobileDrawer from './MobileDrawer.astro';
   }
 
   .wordmark span:last-child {
-    color: var(--accent);
+    color: var(--accent-ink);
   }
 
   .primary-nav {
@@ -228,7 +228,7 @@ import MobileDrawer from './MobileDrawer.astro';
   }
 
   .nav-trigger[aria-expanded='true'] {
-    background: rgba(255, 255, 255, 0.07);
+    background: var(--wash-a070);
     color: var(--text-1);
   }
 
@@ -242,9 +242,9 @@ import MobileDrawer from './MobileDrawer.astro';
   }
 
   .join-pill {
-    border: 1px solid rgba(94, 230, 160, 0.45);
+    border: 1px solid var(--accent-edge);
     border-radius: var(--radius-control);
-    color: var(--accent);
+    color: var(--accent-ink);
     font-family: var(--font-mono);
     font-size: var(--mono-10-5);
     letter-spacing: 0.1em;
@@ -280,8 +280,8 @@ import MobileDrawer from './MobileDrawer.astro';
   }
 
   .search-trigger:hover {
-    border-color: rgba(94, 230, 160, 0.45);
-    color: var(--accent);
+    border-color: var(--accent-edge);
+    color: var(--accent-ink);
   }
 
   .mobile-menu-toggle {

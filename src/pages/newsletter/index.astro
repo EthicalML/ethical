@@ -101,8 +101,8 @@ const issueLabel = (entry: (typeof issues)[number]) => [`Issue ${entry.data.issu
 <style>
   .latest-card {
     align-items: center;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent);
-    border: 1px solid rgba(94, 230, 160, 0.28);
+    background: linear-gradient(180deg, var(--wash-2), transparent);
+    border: 1px solid var(--accent-line);
     border-radius: var(--radius-card);
     display: flex;
     justify-content: space-between;
@@ -112,7 +112,7 @@ const issueLabel = (entry: (typeof issues)[number]) => [`Issue ${entry.data.issu
     width: calc(100% - 48px);
   }
   .latest-card:hover {
-    border-color: var(--accent);
+    border-color: var(--accent-ink);
     opacity: 1;
   }
   .latest-title {
@@ -135,9 +135,9 @@ const issueLabel = (entry: (typeof issues)[number]) => [`Issue ${entry.data.issu
     max-width: 560px;
   }
   .latest-action {
-    border: 1px solid rgba(94, 230, 160, 0.45);
+    border: 1px solid var(--accent-edge);
     border-radius: var(--radius-control);
-    color: var(--accent);
+    color: var(--accent-ink);
     font-family: var(--font-mono);
     font-size: var(--body-14);
     padding: 12px 20px;
@@ -157,7 +157,7 @@ const issueLabel = (entry: (typeof issues)[number]) => [`Issue ${entry.data.issu
     padding: 12px 0 22px;
   }
   .finder-controls input {
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--wash-2);
     border: 1px solid var(--hairline);
     border-radius: 4px;
     color: var(--text-1);
@@ -169,11 +169,11 @@ const issueLabel = (entry: (typeof issues)[number]) => [`Issue ${entry.data.issu
     padding: 11px 14px;
   }
   .finder-controls input:focus {
-    border-color: var(--accent);
+    border-color: var(--accent-ink);
     outline: none;
   }
   .finder-controls input::placeholder {
-    color: rgba(244, 242, 238, 0.35);
+    color: var(--ink-a350);
   }
   .year-rail {
     display: flex;
@@ -198,8 +198,8 @@ const issueLabel = (entry: (typeof issues)[number]) => [`Issue ${entry.data.issu
     color: var(--text-1);
   }
   .year-rail button.active {
-    border-color: rgba(94, 230, 160, 0.5);
-    color: var(--accent);
+    border-color: var(--accent-a500);
+    color: var(--accent-ink);
   }
   .tag-rail {
     display: flex;
@@ -233,11 +233,11 @@ const issueLabel = (entry: (typeof issues)[number]) => [`Issue ${entry.data.issu
     color: var(--text-1);
   }
   .tag-rail button.active {
-    border-color: rgba(94, 230, 160, 0.5);
-    color: var(--accent);
+    border-color: var(--accent-a500);
+    color: var(--accent-ink);
   }
   .tag-rail button.active small {
-    color: var(--accent);
+    color: var(--accent-ink);
   }
   .finder-hint {
     color: var(--text-3);
@@ -259,8 +259,8 @@ const issueLabel = (entry: (typeof issues)[number]) => [`Issue ${entry.data.issu
     padding: 3px 7px;
   }
   .finder-palette:hover {
-    border-color: rgba(94, 230, 160, 0.45);
-    color: var(--accent);
+    border-color: var(--accent-edge);
+    color: var(--accent-ink);
   }
   .issue-list {
     border-top: 1px solid var(--hairline);
@@ -279,8 +279,8 @@ const issueLabel = (entry: (typeof issues)[number]) => [`Issue ${entry.data.issu
       border-color 0.2s ease;
   }
   .issue-cell:hover {
-    background: rgba(94, 230, 160, 0.05);
-    border-left-color: var(--accent);
+    background: var(--accent-a050);
+    border-left-color: var(--accent-ink);
     opacity: 1;
   }
   .issue-cell[hidden] {

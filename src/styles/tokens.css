@@ -351,7 +351,7 @@ type-writer {
   letter-spacing: .1em;
 }
 .accent-action {
-  color: var(--accent);
+  color: var(--accent-ink);
   font: var(--mono-10-5)/1 var(--font-mono);
   letter-spacing: .08em;
   text-transform: uppercase;

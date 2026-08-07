@@ -120,7 +120,7 @@
 }
 .dud-outline polygon {
   fill: none;
-  stroke: rgba(244, 242, 238, 0.16);
+  stroke: var(--ink-a160);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
@@ -190,7 +190,7 @@
   transform-origin: center;
 }
 .iso-face {
-  stroke: rgba(244, 242, 238, 0.16);
+  stroke: var(--ink-a160);
   stroke-linejoin: round;
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
@@ -209,7 +209,7 @@
 }
 .iso-link {
   fill: none;
-  stroke: rgba(244, 242, 238, 0.22);
+  stroke: var(--ink-a220);
   stroke-dasharray: 2 3;
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
@@ -281,7 +281,7 @@
   -webkit-line-clamp: 2;
 }
 .neon-copy > .footnote {
-  color: var(--accent);
+  color: var(--accent-ink);
   display: block;
   font: var(--mono-8) / 1.4 var(--font-mono);
   letter-spacing: 0.12em;
@@ -295,7 +295,7 @@ footer {
   margin-top: 12px;
 }
 footer a {
-  color: var(--accent);
+  color: var(--accent-ink);
   font: var(--mono-8) / 1.3 var(--font-mono);
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -304,7 +304,7 @@ footer a {
 /* --- V1 / V2 ghost numerals (cropped by the block edge, capped to ~50% of the
    card so a long label overflows the top-right but never spans wider) --- */
 .ghost-mark {
-  color: rgba(244, 242, 238, 0.05);
+  color: var(--ink-a050);
   font: 300 100px/0.8 var(--font-display);
   letter-spacing: -0.08em;
   max-width: 50%;
@@ -409,7 +409,7 @@ achievement-neon-rendition[data-entered='true'] [data-lego-piece]:not([data-sett
     transform: translate3d(var(--shift-x), var(--shift-y), 0);
   }
   .neon-slot[data-hover='tilt']:hover .neon-card {
-    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 18px 44px var(--shadow-a500);
     transform: translate3d(0, -12px, 0) rotate(var(--pickup, 4deg));
   }
 }
@@ -418,7 +418,7 @@ achievement-neon-rendition[data-entered='true'] [data-lego-piece]:not([data-sett
     transform: translate3d(var(--shift-x), var(--shift-y), 0);
   }
   .neon-slot[data-hover='tilt'][data-active='true'] .neon-card {
-    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 18px 44px var(--shadow-a500);
     transform: translate3d(0, -12px, 0) rotate(var(--pickup, 4deg));
   }
 }
@@ -430,7 +430,7 @@ achievement-neon-rendition[data-entered='true'] [data-lego-piece]:not([data-sett
 }
 .neon-slot:hover .ghost-mark,
 .neon-slot[data-active='true'] .ghost-mark {
-  color: color-mix(in srgb, var(--neon) 26%, rgba(244, 242, 238, 0.03));
+  color: color-mix(in srgb, var(--neon) 26%, var(--ink-a030));
 }
 /* During a slide reveal the top accent rule would read as a seam between the
    revealed neon and the card edge; fade it out while displaced. */
@@ -512,7 +512,7 @@ achievement-neon-rendition[data-entered='true'] [data-lego-piece]:not([data-sett
     transition: outline-color 180ms ease;
   }
   .neon-card:hover {
-    outline: 1px solid var(--accent);
+    outline: 1px solid var(--accent-ink);
     outline-offset: -1px;
   }
 }

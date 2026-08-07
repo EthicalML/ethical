@@ -42,7 +42,7 @@
 }
 
 .hero h1 em {
-  color: var(--accent);
+  color: var(--accent-ink);
   font-style: italic;
   position: relative;
   width: fit-content;
@@ -91,7 +91,7 @@
 }
 
 .hero-typewriter-dynamic {
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 .hero-typewriter-glitch {
@@ -152,7 +152,7 @@
 }
 
 .graph-switcher span {
-  background: rgba(244, 242, 238, 0.18);
+  background: var(--ink-wash-a180);
   display: block;
   height: 2px;
   width: 92px;
@@ -294,15 +294,15 @@
   }
   66.6% {
     opacity: 0.92;
-    text-shadow: 0 0 22px rgba(94, 230, 160, 0.55);
+    text-shadow: 0 0 22px var(--accent-a550);
   }
   68.3% {
     opacity: 1;
-    text-shadow: 0 0 6px rgba(94, 230, 160, 0.35);
+    text-shadow: 0 0 6px var(--accent-a350);
   }
   70.3% {
     opacity: 0.86;
-    text-shadow: 0 0 30px rgba(94, 230, 160, 0.6);
+    text-shadow: 0 0 30px var(--accent-a600);
   }
   72.3% {
     opacity: 1;
@@ -310,11 +310,11 @@
   }
   74.4% {
     opacity: 0.94;
-    text-shadow: 0 0 24px rgba(94, 230, 160, 0.45);
+    text-shadow: 0 0 24px var(--accent-edge);
   }
   76.4% {
     opacity: 1;
-    text-shadow: 0 0 8px rgba(94, 230, 160, 0.3);
+    text-shadow: 0 0 8px var(--accent-a300);
   }
 }
 
@@ -450,15 +450,15 @@
   }
   66.6% {
     opacity: 0.92;
-    text-shadow: 0 0 8px rgba(94, 230, 160, 0.55);
+    text-shadow: 0 0 8px var(--accent-a550);
   }
   68.3% {
     opacity: 1;
-    text-shadow: 0 0 3px rgba(94, 230, 160, 0.35);
+    text-shadow: 0 0 3px var(--accent-a350);
   }
   70.3% {
     opacity: 0.86;
-    text-shadow: 0 0 10px rgba(94, 230, 160, 0.6);
+    text-shadow: 0 0 10px var(--accent-a600);
   }
   72.3% {
     opacity: 1;
@@ -466,11 +466,11 @@
   }
   74.4% {
     opacity: 0.94;
-    text-shadow: 0 0 8px rgba(94, 230, 160, 0.45);
+    text-shadow: 0 0 8px var(--accent-edge);
   }
   76.4% {
     opacity: 1;
-    text-shadow: 0 0 3px rgba(94, 230, 160, 0.3);
+    text-shadow: 0 0 3px var(--accent-a300);
   }
 }
 
@@ -581,7 +581,7 @@
 
 @media (max-width: 950px) {
   .graph-switcher span::after {
-    background: rgba(244, 242, 238, 0.18);
+    background: var(--ink-wash-a180);
     content: '';
     height: 2px;
     inset: 21px 0 auto;
