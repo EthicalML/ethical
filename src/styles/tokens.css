@@ -707,7 +707,7 @@ main > .home-section:nth-last-child(1 of .home-section) { padding-bottom: 120px;
   .project-card { grid-template-columns: 1fr; }
 }
 @media (max-width: 950px) {
-  .principles-explorer, .survey-shell { padding-left:24px; padding-right:24px; }
+  .principles-explorer, .survey-shell { padding-inline: 24px; }
   .project-grid, .report-pair { grid-template-columns:1fr; }
 }
 
@@ -739,7 +739,7 @@ main > .home-section:nth-last-child(1 of .home-section) { padding-bottom: 120px;
   .stat { padding: 22px 18px; }
   .stat:last-child { grid-column: 1 / -1; }
   section > h2 { font-size: 36px; }
-  .principles-explorer { padding-left: 18px; padding-right: 18px; }
+  .principles-explorer { padding-inline: 18px; }
   .kaos-canvas-mount { height: 260px; }
   form { padding: 22px 18px; }
 }

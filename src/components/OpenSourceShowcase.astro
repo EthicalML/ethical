@@ -469,7 +469,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
 }
 
 @media (max-width: 950px) {
-  .open-source-prototype { padding-left: 24px; padding-right: 24px; }
+  .open-source-prototype { padding-inline: 24px; }
 }
 
 @media (max-width: 950px) {
@@ -551,12 +551,12 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
 .open-source-showcase h2 { font: 300 44px/1.1 var(--font-display); margin: 18px 0 38px; }
 
 @media (max-width: 950px) {
-  .open-source-showcase { padding-left:24px; padding-right:24px; }
+  .open-source-showcase { padding-inline: 24px; }
 }
 
 @media (max-width: 600px) {
   .open-source-prototype > h2 { font-size: 36px; }
-  .open-source-prototype { padding-left: 18px; padding-right: 18px; }
+  .open-source-prototype { padding-inline: 18px; }
 }
 </style>
 
@@ -807,7 +807,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     font: normal var(--mono-10) / 1 var(--font-mono);
   }
   .initiative-preview > p i {
-    margin-left: auto;
+    margin-inline-start: auto;
   }
   .mlsecops-preview {
     background: var(--bg-inset);
