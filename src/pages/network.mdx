@@ -5,13 +5,16 @@ composed: true
 layout: ../layouts/ProseLayout.astro
 ---
 
-import { ArticleHero, FormSection, NetworkDirectory, RecentIssuesRail } from '../components/prose/components.js';
+import { FormSection, Hero, NetworkDirectory, NewsletterLatestCard, RecentIssuesRail } from '../components/prose/components.js';
 import { contactFormCopy, networkSectors, networkStats } from '../data/contactForm';
 
-<ArticleHero
-  eyebrow="NETWORK & NEWSLETTER"
-  title="A network of aligned humans"
-  intro="Responsible technology takes more than changes to models — it takes a network of accountable people across engineering, research, policy and standards. It starts with the ML Engineer newsletter and runs through the Ethical AI Network."
+<Hero
+  status="ETHICAL AI NETWORK — PRACTITIONERS & INSTITUTIONS"
+  title={['A Network of', 'Aligned Humans', '1,000+ members']}
+  subtitle_lines={['Practitioners across engineering, research, policy', 'and standards, sharing the work of']}
+  beneficiaries={['responsible AI in production.', 'principles and frameworks.', 'open-source tools.', 'policy and standards.']}
+  primary_button={{ href: '#contact', label: 'Apply to join' }}
+  secondary_button={{ href: '/newsletter/', label: 'Read the newsletter' }}
 />
 
 <section className="cluster-section newsletter-section" data-reveal>
@@ -22,10 +25,16 @@ import { contactFormCopy, networkSectors, networkStats } from '../data/contactFo
     monitoring and the open-source tools that keep systems running.
   </p>
   <p className="theme-line">Production ML · MLOps · monitoring · ML security · explainability · GPU acceleration · LLMs · AI policy</p>
+  <NewsletterLatestCard />
   <RecentIssuesRail limit={6} />
-  <a className="button primary" href="/contact/?interest=newsletter#contact">
-    Subscribe
-  </a>
+  <div className="actions">
+    <a className="button primary" href="/newsletter/">
+      Browse all issues
+    </a>
+    <a className="button" href="/contact/?interest=newsletter#contact">
+      Subscribe
+    </a>
+  </div>
 </section>
 
 <section className="cluster-section network-section" data-reveal>

@@ -1,0 +1,80 @@
+---
+// Latest newsletter issue as a linked card, derived from the newsletter
+// content collection. Used on pages that point into the archive (/network/)
+// without carrying the archive's own finder chrome.
+import { getCollection } from 'astro:content';
+
+const issues = (await getCollection('newsletter')).sort(
+  (first, second) => (second.data.date?.getTime() ?? 0) - (first.data.date?.getTime() ?? 0) || second.data.issue - first.data.issue,
+);
+const latest = issues[0];
+const latestDate = latest?.data.date?.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+{
+  latest && (
+    <a class="newsletter-latest-card" href={`/newsletter/${latest.data.issue}/`}>
+      <div>
+        <p class="eyebrow">LATEST ISSUE</p>
+        <p class="latest-title">Issue #{latest.data.issue}</p>
+        {latestDate && <p class="latest-date">{latestDate}</p>}
+        {latest.data.summary && <p class="latest-summary">{latest.data.summary}</p>}
+      </div>
+      <span class="latest-action">Read issue</span>
+    </a>
+  )
+}
+
+<style>
+  .newsletter-latest-card {
+    align-items: center;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent);
+    border: 1px solid rgba(94, 230, 160, 0.28);
+    border-radius: var(--radius-card);
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    margin: 34px 0 26px;
+    max-width: 880px;
+    padding: 24px 28px;
+  }
+  .newsletter-latest-card:hover {
+    border-color: var(--accent);
+    opacity: 1;
+  }
+  .latest-title {
+    font: 300 var(--display-38) / 1.1 var(--font-display);
+    margin: 8px 0 4px;
+  }
+  .latest-date {
+    color: var(--text-2);
+    font-family: var(--font-mono);
+    font-size: var(--mono-11);
+    letter-spacing: 0.1em;
+    margin: 0;
+    text-transform: uppercase;
+  }
+  .latest-summary {
+    color: var(--text-2);
+    font-size: var(--body-14);
+    line-height: 1.6;
+    margin: 10px 0 0;
+    max-width: 560px;
+  }
+  .latest-action {
+    border: 1px solid rgba(94, 230, 160, 0.45);
+    border-radius: var(--radius-control);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: var(--body-14);
+    padding: 12px 20px;
+    white-space: nowrap;
+  }
+  @media (max-width: 600px) {
+    .newsletter-latest-card {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 16px;
+    }
+  }
+</style>

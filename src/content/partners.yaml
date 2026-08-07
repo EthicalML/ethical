@@ -16,7 +16,7 @@
   {
     'name': 'European Commission',
     'slug': 'european-commission',
-    'role': 'APPOINTED EXPERT',
+    'role': 'Appointed Expert',
     'logo': 'european-commission-logo.svg',
     'detail': 'European Commission AI policy work spans the AI Act, Data Act, Digital Services Act and Cyber Resilience Act.',
     'links': [],
@@ -24,7 +24,7 @@
   {
     'name': 'ACM',
     'slug': 'acm',
-    'role': 'GOVERNING BOARD',
+    'role': 'Governing Board',
     'logo': 'acm-logo-lockup.png',
     'detail': "ACM's Code of Ethics and Professional Conduct and its technology-policy work set expectations for computing professionals broadly. The nine Responsible AI Principles provide ML-specific commitments that practitioners and organisations can apply alongside ACM's professional-conduct baseline.",
     'links':
@@ -39,7 +39,7 @@
   {
     'name': 'Linux Foundation',
     'slug': 'linux-foundation',
-    'role': 'ASSOCIATE MEMBER',
+    'role': 'Associate Member',
     'logo': 'linux-foundation-logo.svg',
     'detail': "The Institute's collaboration with Linux Foundation AI & Data includes two open-source projects. Kompute is cross-vendor GPU acceleration work maintained alongside LF AI & Data and NumFOCUS. The MLSecOps Top 10 was connected to LF's Trusted AI work and an ML-security committee.",
     'links':
@@ -67,7 +67,7 @@
   {
     'name': 'IEEE',
     'slug': 'ieee',
-    'role': 'AI STANDARDS GROUP',
+    'role': 'AI Standards Group',
     'logo': 'ieee-logo.png',
     'detail': 'The Institute participates in IEEE AI standards work.',
     'links': [],
@@ -75,7 +75,7 @@
   {
     'name': 'ISO/IEC',
     'slug': 'iso-iec',
-    'role': 'AI STANDARDS GROUP',
+    'role': 'AI Standards Group',
     'logo': 'iso-logo-lockup.svg',
     'detail': 'The Institute participates in ISO/IEC AI standards work, which sets the formal, cross-industry baseline for how AI systems are assessed and governed. AI-RFX and the ML Maturity Model are compatible with that baseline.',
     'links': [],
