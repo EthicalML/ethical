@@ -1,4 +1,11 @@
-import { CanvasEngine, type CanvasDraw } from './CanvasEngine';
+import {
+  CanvasEngine,
+  type CanvasDraw,
+  getPalette,
+  onThemeChange,
+  rgba,
+  rgbCss,
+} from './CanvasEngine';
 import {
   clamp,
   hash,
@@ -19,8 +26,6 @@ import {
 // no explicit list the element defaults to POLICY_FRAGMENTS, so the policy hero page keeps its
 // idle behaviour by passing the policy fragments (or nothing).
 
-const ACCENT = '94,230,160';
-const WHITE = '244,242,238';
 const FONT_BASE = 15;
 const SUPERSAMPLE = 2;
 const GOLDEN = Math.PI * (3 - Math.sqrt(5));
@@ -97,6 +102,7 @@ export class PhraseTerrain extends HTMLElement {
   private short: string[] = shortlist(POLICY_FRAGMENTS);
   private anchors: Anchor[] = buildAnchors(this.short.length);
   private spriteCache = new Map<number, Sprite>();
+  private unsubscribeTheme?: () => void;
 
   // Crossfade state between phrase sets.
   private pending?: string[];
@@ -114,11 +120,19 @@ export class PhraseTerrain extends HTMLElement {
     window.addEventListener('blur', this.handlePointerLeave, { signal: this.controller.signal });
     // Rebuild sprites once the mono webfont resolves so they are not stuck on a fallback.
     document.fonts?.ready.then(() => this.spriteCache.clear());
+    // Phrases are rasterised into cached sprite canvases, so the glyph colour is
+    // baked at build time. A theme flip must drop the cache or the old theme's
+    // text keeps painting until the phrase list changes.
+    this.unsubscribeTheme = onThemeChange(() => {
+      this.spriteCache.clear();
+      this.engine?.redraw();
+    });
     this.engine = new CanvasEngine(canvas, this.draw);
   }
 
   disconnectedCallback() {
     this.controller.abort();
+    this.unsubscribeTheme?.();
     this.engine?.destroy();
   }
 
@@ -159,7 +173,8 @@ export class PhraseTerrain extends HTMLElement {
     context.font = `${pixel}px 'Geist Mono', monospace`;
     context.textAlign = 'center';
     context.textBaseline = 'middle';
-    context.fillStyle = `rgb(${hot ? WHITE : ACCENT})`;
+    const palette = getPalette();
+    context.fillStyle = rgbCss(hot ? palette.ink : palette.accentInk);
     context.fillText(text, width / 2, height / 2);
     const built = { canvas, w: width / SUPERSAMPLE, h: height / SUPERSAMPLE };
     this.spriteCache.set(key, built);
@@ -206,7 +221,7 @@ export class PhraseTerrain extends HTMLElement {
     return clamp(this.phaseT / FADE_SECONDS);
   }
 
-  private draw: CanvasDraw = (context, width, height, elapsed) => {
+  private draw: CanvasDraw = (context, width, height, elapsed, _pointer, palette) => {
     context.clearRect(0, 0, width, height);
     const fade = this.advanceFade(elapsed);
     const time = reducedMotion ? 6.4 : elapsed + 2.2;
@@ -233,9 +248,9 @@ export class PhraseTerrain extends HTMLElement {
       center.y,
       radiusX * 1.1,
     );
-    bodyGlow.addColorStop(0, `rgba(94,230,160,${0.07 * fade})`);
-    bodyGlow.addColorStop(0.6, `rgba(94,230,160,${0.026 * fade})`);
-    bodyGlow.addColorStop(1, 'rgba(94,230,160,0)');
+    bodyGlow.addColorStop(0, rgba(palette.accent, 0.07 * fade));
+    bodyGlow.addColorStop(0.6, rgba(palette.accent, 0.026 * fade));
+    bodyGlow.addColorStop(1, rgba(palette.accent, 0));
     context.fillStyle = bodyGlow;
     context.fillRect(0, 0, width, height);
 

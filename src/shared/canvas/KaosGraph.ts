@@ -1,3 +1,5 @@
+import { type CanvasPalette, getPalette, onThemeChange, rgba, rgbCss } from './CanvasEngine';
+
 interface GraphNode {
   id: string;
   label: string;
@@ -37,6 +39,10 @@ const EDGES: [number, number][] = [
   [5, 0],
 ];
 
+/* The policy gate keeps its amber identity in both themes; it is the one node
+   that is not accent-coloured and the warning read survives on either surface. */
+const GATE = 'rgba(232,180,92,.9)';
+
 export class KaosGraph extends HTMLElement {
   private active = true;
   private animationFrame = 0;
@@ -46,10 +52,12 @@ export class KaosGraph extends HTMLElement {
   private elapsed = 0;
   private height = 0;
   private intersectionObserver?: IntersectionObserver;
+  private palette: CanvasPalette = getPalette();
   private pointer = { x: -1, y: -1 };
   private reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   private resizeObserver?: ResizeObserver;
   private status?: HTMLElement | null;
+  private unsubscribeTheme?: () => void;
   private width = 0;
 
   connectedCallback() {
@@ -71,6 +79,7 @@ export class KaosGraph extends HTMLElement {
     this.resizeObserver = new ResizeObserver(this.handleResize);
     this.intersectionObserver = new IntersectionObserver(this.handleIntersection);
 
+    this.unsubscribeTheme = onThemeChange(this.handleThemeChange);
     this.fit();
     this.draw();
     this.resizeObserver.observe(this);
@@ -82,10 +91,19 @@ export class KaosGraph extends HTMLElement {
     this.controller.abort();
     this.intersectionObserver?.disconnect();
     this.resizeObserver?.disconnect();
+    this.unsubscribeTheme?.();
   }
+
+  // Owns its own rAF loop, so it subscribes directly. The explicit repaint
+  // covers the off-screen and reduced-motion cases, where no frame is pending.
+  private handleThemeChange = () => {
+    this.palette = getPalette();
+    if (this.context) this.draw();
+  };
 
   private compact() {
     const context = this.context!;
+    const palette = this.palette;
     const padding = 26;
     const middle = this.height * 0.42;
     const planner = { x: padding, y: middle };
@@ -100,7 +118,7 @@ export class KaosGraph extends HTMLElement {
         [planner, middleNode],
         [middleNode, gate],
       ].forEach(([start, end], edgeIndex) => {
-        context.strokeStyle = 'rgba(244,242,238,.16)';
+        context.strokeStyle = rgba(palette.ink, 0.16);
         context.beginPath();
         context.moveTo(start.x, start.y);
         context.lineTo(end.x, end.y);
@@ -114,7 +132,7 @@ export class KaosGraph extends HTMLElement {
           0,
           7,
         );
-        context.fillStyle = `rgba(94,230,160,${0.3 + Math.sin(progress * Math.PI) * 0.6})`;
+        context.fillStyle = rgba(palette.accentInk, 0.3 + Math.sin(progress * Math.PI) * 0.6);
         context.fill();
       });
     });
@@ -122,21 +140,21 @@ export class KaosGraph extends HTMLElement {
     const drawNode = (point: Point, radius: number, color: string) => {
       context.beginPath();
       context.arc(point.x, point.y, radius + 4, 0, 7);
-      context.fillStyle = 'rgba(94,230,160,.08)';
+      context.fillStyle = rgba(palette.accent, 0.08);
       context.fill();
       context.beginPath();
       context.arc(point.x, point.y, radius, 0, 7);
-      context.fillStyle = '#0f100f';
+      context.fillStyle = rgbCss(palette.inset);
       context.fill();
       context.strokeStyle = color;
       context.stroke();
     };
-    middleNodes.forEach((middleNode) => drawNode(middleNode, 7, 'rgba(94,230,160,.5)'));
-    drawNode(planner, 10, '#5ee6a0');
-    drawNode(gate, 10, 'rgba(232,180,92,.9)');
+    middleNodes.forEach((middleNode) => drawNode(middleNode, 7, rgba(palette.accentInk, 0.5)));
+    drawNode(planner, 10, rgbCss(palette.accentInk));
+    drawNode(gate, 10, GATE);
     context.font = "8.5px 'Geist Mono',monospace";
     context.textAlign = 'center';
-    context.fillStyle = 'rgba(244,242,238,.55)';
+    context.fillStyle = rgba(palette.ink, 0.55);
     context.fillText('PLANNER', planner.x + 8, middle + 26);
     context.fillText('POLICY GATE', gate.x - 14, middle + 26);
     context.textAlign = 'left';
@@ -144,6 +162,7 @@ export class KaosGraph extends HTMLElement {
 
   private draw = () => {
     const context = this.context!;
+    this.palette = getPalette();
     this.elapsed += 0.016;
     context.clearRect(0, 0, this.width, this.height);
     if (this.height < 220) {
@@ -176,7 +195,9 @@ export class KaosGraph extends HTMLElement {
       const start = points[from];
       const end = points[to];
       const highlighted = hovered === from || hovered === to;
-      context.strokeStyle = highlighted ? 'rgba(94,230,160,.65)' : 'rgba(244,242,238,.16)';
+      context.strokeStyle = highlighted
+        ? rgba(this.palette.accentInk, 0.65)
+        : rgba(this.palette.ink, 0.16);
       context.lineWidth = highlighted ? 1.4 : 1;
       context.beginPath();
       context.moveTo(start.screenX, start.screenY);
@@ -189,7 +210,7 @@ export class KaosGraph extends HTMLElement {
         const y = start.screenY + (end.screenY - start.screenY) * progress;
         context.beginPath();
         context.arc(x, y, 2.1, 0, 7);
-        context.fillStyle = `rgba(94,230,160,${0.25 + Math.sin(progress * Math.PI) * 0.6})`;
+        context.fillStyle = rgba(this.palette.accentInk, 0.25 + Math.sin(progress * Math.PI) * 0.6);
         context.fill();
       }
     });
@@ -200,19 +221,25 @@ export class KaosGraph extends HTMLElement {
       const radius = (node.id === 'plan' || node.id === 'pol' ? 15 : 12) * pulse;
       context.beginPath();
       context.arc(node.screenX, node.screenY, radius + (highlighted ? 7 : 4), 0, 7);
-      context.fillStyle = highlighted ? 'rgba(94,230,160,.16)' : 'rgba(94,230,160,.06)';
+      context.fillStyle = highlighted
+        ? rgba(this.palette.accent, 0.16)
+        : rgba(this.palette.accent, 0.06);
       context.fill();
       context.beginPath();
       context.arc(node.screenX, node.screenY, radius, 0, 7);
-      context.fillStyle = '#0f100f';
+      context.fillStyle = rgbCss(this.palette.inset);
       context.fill();
       context.strokeStyle =
-        node.id === 'pol' ? 'rgba(232,180,92,.9)' : highlighted ? '#5ee6a0' : 'rgba(94,230,160,.5)';
+        node.id === 'pol'
+          ? GATE
+          : highlighted
+            ? rgbCss(this.palette.accentInk)
+            : rgba(this.palette.accentInk, 0.5);
       context.lineWidth = 1.3;
       context.stroke();
       context.font = "9.5px 'Geist Mono',monospace";
       context.textAlign = 'center';
-      context.fillStyle = highlighted ? 'rgba(244,242,238,.95)' : 'rgba(244,242,238,.55)';
+      context.fillStyle = highlighted ? rgba(this.palette.ink, 0.95) : rgba(this.palette.ink, 0.55);
       context.fillText(node.label, node.screenX, node.screenY + radius + 14);
     });
     context.textAlign = 'left';
