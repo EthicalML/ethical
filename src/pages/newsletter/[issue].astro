@@ -34,6 +34,9 @@ const frontmatter = {
   title: `The ML Engineer — Issue #${issue}`,
   description:
     entry.data.summary ?? 'The Machine Learning Engineer newsletter: curated articles, tutorials and insights from experienced machine learning professionals.',
+  article: true,
+  articleHeadline: `The Machine Learning Engineer Issue #${issue}`,
+  datePublished: entry.data.date?.toISOString().slice(0, 10),
 };
 ---
 
@@ -95,6 +98,7 @@ const frontmatter = {
         <div class="issue-body">
           <Content />
         </div>
+        <p class="issue-subscribe" data-reveal>Enjoy The ML Engineer? <a href="/newsletter/#subscribe">Subscribe to receive the next issue</a>.</p>
       </div>
       {
         related.length > 0 && (
@@ -431,6 +435,18 @@ const frontmatter = {
   }
   .issue-body :global(pre.astro-code code) {
     font-family: var(--font-mono);
+  }
+  .issue-subscribe {
+    border-top: 1px solid var(--hairline);
+    color: var(--text-2);
+    font-size: var(--body-16);
+    margin: 0 auto 56px;
+    max-width: 645px;
+    padding: 30px 24px 0;
+  }
+  .issue-subscribe a {
+    border-bottom: 1px solid rgba(94, 230, 160, 0.35);
+    color: var(--accent);
   }
   @media (max-width: 950px) {
     .issue-body {
