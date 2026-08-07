@@ -15,3 +15,119 @@ const { eyebrow, title, intro, canvas = false, transitionName } = Astro.props;
   <h1 transition:name={transitionName} style={transitionName ? `view-transition-name: ${transitionName}` : undefined}>{title}</h1>
   {intro && <p>{intro}</p>}
 </header>
+
+<style is:global>
+.article-hero {
+  min-height: 480px;
+  padding: 108px 48px 76px;
+  position: relative;
+}
+
+.article-hero h1 { font: 300 clamp(54px, 7vw, 88px)/.98 var(--font-display); letter-spacing: -.025em; margin: 24px 0; max-width: 960px; }
+
+.article-hero > p:last-child { color: var(--text-2); font-size: 18px; line-height: 1.6; max-width: 680px; }
+
+.article-hero.canvas-variant { min-height: 650px; overflow: hidden; }
+
+.article-hero.canvas-variant::after {
+  background: linear-gradient(90deg, rgba(15, 16, 15, .94) 0%, rgba(15, 16, 15, .76) 35%, transparent 72%);
+  content: '';
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+}
+
+.article-hero.canvas-variant > :not(canvas, .kaos-architecture-mount, .kompute-canvas-mount, .policy-citadel-mount) { position: relative; z-index: 2; }
+
+.article-hero.canvas-variant > .kaos-architecture-mount {
+  height: min(500px, 100%);
+  left: 34%;
+  mask-image: linear-gradient(90deg, transparent 0, #000 260px);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 260px);
+  margin: 0;
+  opacity: .72;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 66%;
+  z-index: 0;
+}
+
+.article-hero.canvas-variant > .kompute-canvas-mount {
+  height: 100%;
+  left: 34%;
+  mask-image: linear-gradient(90deg, transparent 0, #000 260px);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 260px);
+  opacity: .58;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 66%;
+  z-index: 0;
+}
+
+.article-hero.canvas-variant > .kompute-canvas-mount canvas { height: 100%; width: 100%; }
+
+.article-hero.canvas-variant > .policy-citadel-mount { display: contents; }
+
+.article-hero.canvas-variant .hero-canvas {
+  left: 34%;
+  mask-image: linear-gradient(90deg, transparent 0, #000 260px);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 260px);
+  opacity: .85;
+  width: 66%;
+}
+
+@media (max-width: 800px) {
+  .article-hero { min-height: 390px; padding: 72px 24px 50px; }
+}
+
+@media (max-width: 800px) {
+  .article-hero h1 { font-size: 48px; }
+}
+
+@media (max-width: 950px) {
+  .article-hero {
+      min-height: 420px;
+      padding: 80px 24px 56px;
+    }
+}
+
+@media (max-width: 950px) {
+  .article-hero h1 { font-size: clamp(48px, 8vw, 64px); }
+}
+
+@media (max-width: 600px) {
+  .article-hero {
+      min-height: 360px;
+      padding: 64px 18px 44px;
+    }
+}
+
+@media (max-width: 600px) {
+  .article-hero h1 { font-size: clamp(42px, 11.5vw, 50px); }
+}
+
+@media (max-width: 600px) {
+  .article-hero > p:last-child { font-size: 16px; }
+}
+
+@media (max-width: 950px) {
+  .article-hero.canvas-variant > .kaos-architecture-mount,
+  .article-hero.canvas-variant > .kompute-canvas-mount,
+  .article-hero.canvas-variant .hero-canvas {
+    bottom: 0;
+    height: 340px;
+    left: 0;
+    mask-image: linear-gradient(180deg, transparent, #000 30%);
+    -webkit-mask-image: linear-gradient(180deg, transparent, #000 30%);
+    opacity: .5;
+    right: 0;
+    top: auto;
+    transform: none;
+    width: 100%;
+  }
+}
+</style>
