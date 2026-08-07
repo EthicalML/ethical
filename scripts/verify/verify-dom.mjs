@@ -211,6 +211,18 @@ for (const route of routes) {
           drawerOpen: drawer.getAttribute('aria-hidden') === 'false',
           firstPanelOpen: !drawer.querySelector('.mobile-submenu').hidden,
           joinVisible: drawer.querySelector('.join-pill').getBoundingClientRect().height >= 44,
+          /* The theme control is measured here, with the drawer open, rather than
+             in the page-level touch-target sweep: below 950px the desktop pill is
+             `display: none` and the drawer copy is inside a closed, hidden drawer,
+             so a page-level selector would match nothing and assert nothing. This
+             is where the control is actually reachable by a thumb. */
+          themeToggle: (() => {
+            const box = drawer.querySelector('[data-theme-toggle]')?.getBoundingClientRect() ?? {
+              width: 0,
+              height: 0,
+            };
+            return { width: box.width, height: box.height };
+          })(),
           minTargetHeight: Math.min(
             ...targets.map((element) => element.getBoundingClientRect().height),
           ),
@@ -426,7 +438,13 @@ for (const route of routes) {
       .map((node) => `${node.tagName.toLowerCase()}#${node.id}.${node.className}`);
     const touchTargets = [
       ...document.querySelectorAll(
-        '.header-row > .wordmark, [data-mobile-menu-open], .header-row .join-pill, main button, main .button, .cta-block a, .principle-pagination a, form button',
+        /* `[data-theme-toggle]` matches two controls. Below 950px — the same
+           breakpoint `isMobile` uses — the desktop pill is `display: none` and the
+           drawer copy is hidden inside the closed drawer, so this sweep passes over
+           both; it is a guard that the 52x25 desktop pill never becomes reachable
+           on mobile, not the primary assertion. The reachable control is measured
+           with the drawer open in `mobileNav.themeToggle`. */
+        '.header-row > .wordmark, [data-mobile-menu-open], [data-theme-toggle], .header-row .join-pill, main button, main .button, .cta-block a, .principle-pagination a, form button',
       ),
     ].filter((element) => {
       const style = getComputedStyle(element);
@@ -520,16 +538,23 @@ for (const route of routes) {
                   };
                 },
               ),
-              footnoteStandards: [...document.querySelectorAll('.footnote-band .standards a')].map(
-                (link) => {
-                  const style = getComputedStyle(link);
-                  return {
-                    color: style.color,
-                    fontFamily: style.fontFamily,
-                    fontSize: style.fontSize,
-                  };
-                },
-              ),
+              /* Was `.footnote-band .standards a`, which has never matched anything
+                 in the built site — `.some()` over an empty list is always false, so
+                 the tier it meant to guard was unasserted. The mono tier that does
+                 exist in the band is the two utility links; the count is asserted so
+                 a rename cannot make this vacuous again. */
+              footnoteStandards: [
+                ...document.querySelectorAll(
+                  '.footnote-band .footnote-all-talks, .footnote-band .footnote-legal a',
+                ),
+              ].map((link) => {
+                const style = getComputedStyle(link);
+                return {
+                  color: style.color,
+                  fontFamily: style.fontFamily,
+                  fontSize: style.fontSize,
+                };
+              }),
               initiativeCards: [
                 ...document.querySelectorAll('#reports .oss-carousel-track > article.oss-card'),
               ]
@@ -739,15 +764,16 @@ for (const route of routes) {
     )
       failures.push('homepage major-section divider or spacing rhythm is inconsistent');
     if (
+      checks.homepage.footnoteStandards.length !== 2 ||
       checks.homepage.footnoteStandards.some(
         ({ color, fontFamily, fontSize }) =>
           !sameHue(color, tokens['--text-1']) ||
           colorAlpha(color) >= 1 ||
           !fontFamily.includes('Geist Mono') ||
-          fontSize !== '9.5px',
+          fontSize !== '13px',
       )
     )
-      failures.push('homepage footnote standards type tier has regressed');
+      failures.push('homepage footnote mono link tier has regressed');
     if (
       checks.homepage.initiativeCards[0]?.eyebrow !== 'Governance' ||
       checks.homepage.initiativeCards[0]?.heading !== 'ML Maturity Model' ||
@@ -798,6 +824,8 @@ for (const route of routes) {
         !nav.drawerOpen ||
         !nav.firstPanelOpen ||
         !nav.joinVisible ||
+        nav.themeToggle.width < 43.5 ||
+        nav.themeToggle.height < 43.5 ||
         nav.minTargetHeight < 43.5 ||
         !nav.scrollLocked ||
         !nav.drawerClosed ||
