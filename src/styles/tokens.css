@@ -1,3 +1,5 @@
+/* Breakpoint convention: wide 950px, compact 600px, narrow 420px. */
+
 @font-face {
   font-display: swap;
   font-family: "Newsreader";
@@ -594,7 +596,7 @@ html[data-astro-transition="back"]::view-transition-new(newsletter-page) {
   }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 950px) {
   :root { --section-padding: 64px 24px; }
   .stat-band { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .stat { border-bottom: 1px solid var(--hairline); }
@@ -704,7 +706,7 @@ main > .home-section:nth-last-child(1 of .home-section) { padding-bottom: 120px;
 @media (max-width: 950px) {
   .project-card { grid-template-columns: 1fr; }
 }
-@media (max-width: 800px) {
+@media (max-width: 950px) {
   .principles-explorer, .survey-shell { padding-left:24px; padding-right:24px; }
   .project-grid, .report-pair { grid-template-columns:1fr; }
 }

@@ -743,7 +743,7 @@
   }
 }
 
-@media (max-width: 1180px) and (min-width: 1000px) {
+@media (max-width: 950px) and (min-width: 1000px) {
   .chapterSwitcher {
     grid-template-columns: 1fr auto;
   }
@@ -770,7 +770,7 @@
   }
 }
 
-@media (max-width: 999px) {
+@media (max-width: 950px) {
   .heroStats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     margin: 0 24px 64px;
@@ -915,7 +915,7 @@
   }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 600px) {
   .heroStats {
     grid-template-columns: 1fr;
   }
