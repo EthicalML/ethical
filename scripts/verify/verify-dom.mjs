@@ -10,6 +10,9 @@ import {
 } from './theme.mjs';
 
 const { chromium } = playwright;
+
+// WCAG 2.x AA for body text.
+const WCAG_BODY = 4.5;
 const { theme, rest: args } = parseThemeArgs(process.argv.slice(2));
 const routes = [];
 let viewportValue = process.env.VERIFY_VIEWPORT ?? '1440x1000';
@@ -592,7 +595,15 @@ for (const route of routes) {
       const darkRatio = reference[key];
       if (darkRatio === undefined) continue;
       if (ratio < 1.15 && darkRatio >= 1.15) invisible.push({ key, ratio, darkRatio });
-      else if (ratio < darkRatio * 0.9) regressions.push({ key, ratio, darkRatio });
+      /* The 0.9x rule catches text that got harder to read, but it cannot be the
+         whole gate: an accent that is 11.7:1 on near-black cannot also be 10.5:1
+         on paper without ceasing to be the accent, and the drop to 5.5:1 is the
+         design, not a regression. Absolute WCAG floors are unusable as a failure
+         threshold here (correct dark decorative text sits at 1.07), but they are
+         sound as a *pass* threshold: a node that clears the 4.5:1 body gate in
+         light is readable by definition, whatever it scored in dark. */
+      else if (ratio < WCAG_BODY && ratio < darkRatio * 0.9)
+        regressions.push({ key, ratio, darkRatio });
     }
     const worstFirst = (list) =>
       list.sort((a, b) => a.ratio / a.darkRatio - b.ratio / b.darkRatio).slice(0, 10);
@@ -771,7 +782,7 @@ for (const route of routes) {
       );
     if (
       !wash ||
-      !sameHue(wash[1], tokens['--accent']) ||
+      !sameHue(wash[1], accentInk) ||
       colorAlpha(wash[1]) >= 1 ||
       wash[2] !== tokens['--bg-inset']
     ) {

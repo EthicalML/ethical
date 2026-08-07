@@ -72,7 +72,7 @@ const DARK: CanvasPalette = {
 const LIGHT: CanvasPalette = {
   light: true,
   accent: [94, 230, 160],
-  accentInk: [17, 112, 64],
+  accentInk: [18, 103, 59],
   ink: [25, 24, 20],
   wash: [25, 24, 20],
   base: [244, 242, 238],

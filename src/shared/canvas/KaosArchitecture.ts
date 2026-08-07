@@ -15,10 +15,10 @@ import {
    same hue, saturation lifted, lightness dropped to ~5.5:1 on paper. The return
    value is still `#rrggbb` because call sites append a two-digit alpha suffix. */
 const HUE_INK: Record<string, string> = {
-  '#5ee6a0': '#117040', // accent mint  -> --accent-ink
-  '#4ac7ff': '#066895', // signal blue  -> --glitch-blue
-  '#e8b45c': '#835a13', // amber        -> --warn
-  '#b694ff': '#6f4cb9', // violet       -> --violet
+  '#5ee6a0': '#12673b', // accent mint  -> --accent-ink
+  '#4ac7ff': '#01608b', // signal blue  -> --glitch-blue
+  '#e8b45c': '#785313', // amber        -> --warn
+  '#b694ff': '#6646ab', // violet       -> --violet
 };
 
 const themed = (hex: string, palette: CanvasPalette) =>

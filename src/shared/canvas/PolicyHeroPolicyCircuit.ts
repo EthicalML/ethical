@@ -222,7 +222,7 @@ const HOT_LIGHT: CubeTone = {
   top: [214, 240, 226],
   right: [193, 227, 209],
   left: [172, 213, 192],
-  edge: [17, 112, 64],
+  edge: [18, 103, 59],
   edgeA: 0.7,
   edgeW: 1.2,
 };
