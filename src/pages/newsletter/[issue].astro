@@ -34,6 +34,9 @@ const frontmatter = {
   title: `The ML Engineer — Issue #${issue}`,
   description:
     entry.data.summary ?? 'The Machine Learning Engineer newsletter: curated articles, tutorials and insights from experienced machine learning professionals.',
+  article: true,
+  articleHeadline: `The Machine Learning Engineer Issue #${issue}`,
+  datePublished: entry.data.date?.toISOString().slice(0, 10),
 };
 ---
 
