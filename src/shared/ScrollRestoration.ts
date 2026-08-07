@@ -51,8 +51,13 @@ document.addEventListener('astro:before-swap', (event) => {
       () => {
         const target = document.getElementById(targetId);
         if (!target) return;
+        // Deep links centre their target by default. A target that marks itself
+        // `data-scroll-align="start"` lands at the top of the viewport instead,
+        // under whatever chrome its own scroll-margin reserves — centring is
+        // meaningless for an anchor that stands in for the start of a long block.
+        const block = target.dataset.scrollAlign === 'start' ? 'start' : 'center';
         const scrollToTarget = () => {
-          target.scrollIntoView({ behavior: 'instant', block: 'center' });
+          target.scrollIntoView({ behavior: 'instant', block });
         };
         scrollToTarget();
         requestAnimationFrame(scrollToTarget);
