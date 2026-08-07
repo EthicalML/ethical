@@ -137,7 +137,7 @@ methodology:
 
 import survey2024Csv from '../../data/survey-2024.csv?raw';
 import survey2025Csv from '../../data/survey-2025.csv?raw';
-import { ArticleHero, SurveyReport } from '../../components/prose/components.js';
+import { ArticleHero, SurveyEvidence, SurveyReport } from '../../components/prose/components.js';
 import { buildSurveyComparison } from '../../utils/SurveyReportData';
 
 export const report = buildSurveyComparison(survey2025Csv, survey2024Csv);
@@ -146,6 +146,14 @@ export const report = buildSurveyComparison(survey2025Csv, survey2024Csv);
   eyebrow="STATE OF PRODUCTION ML · 2025"
   title={frontmatter.title}
   intro="What 135 practitioners report from production: LLM and time series work surged, monitoring remains the top challenge at 42%, PyTorch edged ahead of scikit-learn, and AI risk and governance functions doubled year on year. Every answer compares against the 2024 baseline as you move through the chapters."
+/>
+
+<SurveyEvidence
+  edition={2025}
+  sample={135}
+  fieldDates="31 August to 1 December 2025"
+  methodology="This self-selected practitioner survey reports the nonblank response base for each question. Percentages use that question-level base, and totals can exceed 100% where respondents could select more than one answer. Findings describe the respondents and are not population estimates."
+  citation="The Institute for Ethical AI Alignment & Safety (2025), The State of Production ML in 2025, https://ethical.institute/reports/state-of-ml-2025/."
 />
 
 <SurveyReport

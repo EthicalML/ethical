@@ -1,0 +1,166 @@
+---
+interface LibraryEntry {
+  name: string;
+  href: string;
+  description: string;
+}
+
+interface Category {
+  name: string;
+  emoji: string;
+  entries: LibraryEntry[];
+}
+
+interface Props {
+  categories: Category[];
+}
+
+const { categories } = Astro.props;
+const slug = (value: string) =>
+  value
+    .toLowerCase()
+    .replaceAll(/[^a-z0-9]+/g, '-')
+    .replaceAll(/(^-|-$)/g, '');
+---
+
+<section class="production-catalogue" aria-labelledby="production-catalogue-heading" data-reveal>
+  <header>
+    <p class="eyebrow">ON-DOMAIN CATALOGUE</p>
+    <h2 id="production-catalogue-heading">The production ML library list</h2>
+    <p>Open a category to browse every library, its one-line description and its canonical project link.</p>
+  </header>
+  <div class="catalogue-categories">
+    {
+      categories.map((category, index) => (
+        <details id={slug(category.name)} open={index === 0}>
+          <summary>
+            <span aria-hidden="true">{category.emoji}</span>
+            <strong>{category.name}</strong>
+            <small>{category.entries.length} libraries</small>
+          </summary>
+          <ul>
+            {category.entries.map((entry) => (
+              <li>
+                <a href={entry.href} target="_blank" rel="noopener noreferrer">
+                  {entry.name}
+                </a>
+                {entry.description && <p>{entry.description}</p>}
+              </li>
+            ))}
+          </ul>
+        </details>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .production-catalogue {
+    margin: 0 auto;
+    max-width: 1180px;
+    padding: 84px 22px;
+  }
+
+  .production-catalogue > header {
+    margin-bottom: 34px;
+    max-width: 760px;
+  }
+
+  .production-catalogue h2 {
+    font: 300 clamp(32px, 5vw, 58px) / 1.05 var(--font-display);
+    margin: 12px 0 18px;
+  }
+
+  .production-catalogue header > p:not(.eyebrow) {
+    color: var(--text-2);
+    line-height: 1.65;
+  }
+
+  .catalogue-categories {
+    border-top: 1px solid var(--hairline-card);
+  }
+
+  .catalogue-categories details {
+    border-bottom: 1px solid var(--hairline-card);
+  }
+
+  .catalogue-categories summary {
+    align-items: center;
+    cursor: pointer;
+    display: grid;
+    gap: 14px;
+    grid-template-columns: auto 1fr auto;
+    min-height: 68px;
+    padding: 12px 16px;
+  }
+
+  .catalogue-categories summary:hover {
+    background: var(--accent-wash-09);
+  }
+
+  .catalogue-categories summary strong {
+    color: var(--text-1);
+    font: 400 17px/1.3 var(--font-display);
+  }
+
+  .catalogue-categories summary small {
+    color: var(--accent);
+    font: var(--mono-10) / 1 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .catalogue-categories ul {
+    display: grid;
+    gap: 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    list-style: none;
+    margin: 0;
+    padding: 0 16px 24px;
+  }
+
+  .catalogue-categories li {
+    border-top: 1px solid var(--hairline);
+    min-width: 0;
+    padding: 18px 20px 18px 0;
+  }
+
+  .catalogue-categories li:nth-child(even) {
+    padding-left: 20px;
+    padding-right: 0;
+  }
+
+  .catalogue-categories a {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .catalogue-categories p {
+    color: var(--text-3);
+    font-size: 14px;
+    line-height: 1.55;
+    margin: 7px 0 0;
+  }
+
+  @media (max-width: 700px) {
+    .production-catalogue {
+      padding-block: 64px;
+    }
+
+    .catalogue-categories summary {
+      grid-template-columns: auto 1fr;
+    }
+
+    .catalogue-categories summary small {
+      grid-column: 2;
+    }
+
+    .catalogue-categories ul {
+      grid-template-columns: 1fr;
+    }
+
+    .catalogue-categories li:nth-child(even) {
+      padding-left: 0;
+    }
+  }
+</style>

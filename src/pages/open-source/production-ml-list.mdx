@@ -1,19 +1,19 @@
 ---
 title: Awesome Production Machine Learning
-description: '"A curated list of awesome open source libraries to deploy, monitor, version and scale your machine learning." More than 550 libraries across 24 categories, with a summary of new additions released every month.'
+description: '"A curated list of awesome open source libraries to deploy, monitor, version and scale your machine learning." More than 500 libraries across 24 categories, with a summary of new additions released every month.'
 composed: true
 layout: ../../layouts/ProseLayout.astro
 ---
 
 import { ArticleHero, CategoryAtlas, CTA, Metrics } from '../../components/prose/components.js';
 import catalogues from '../../content/oss-catalogues.json';
+import ProductionMlCatalogue from '../../components/ProductionMlCatalogue.astro';
+import productionMlLibraries from '../../data/production-ml-libraries.json';
 
 <ArticleHero
   eyebrow="OPEN SOURCE · COMMUNITY · 20.8K STARS"
   title={frontmatter.title}
-  intro={
-    '"A curated list of awesome open source libraries to deploy, monitor, version and scale your machine learning." More than 550 libraries across 24 categories, with a summary of new additions released every month.'
-  }
+  intro={`"A curated list of awesome open source libraries to deploy, monitor, version and scale your machine learning." ${productionMlLibraries.libraryCount} libraries across ${productionMlLibraries.categories.length} categories, with a summary of new additions released every month.`}
   transitionName="production-ml-title"
 />
 
@@ -21,9 +21,13 @@ import catalogues from '../../content/oss-catalogues.json';
 
 <CategoryAtlas categories={catalogues.productionMl.categories} repository={catalogues.productionMl.repository} />
 
+<ProductionMlCatalogue categories={productionMlLibraries.categories} />
+
 ## How it stays current
 
 New libraries are added continuously and summarised in monthly releases, so watching the repository doubles as an ecosystem changelog. The weekly companion is the Machine Learning Engineer newsletter, where "over 70,000 ML professionals and enthusiasts" receive curated production ML articles and tutorials.
+
+The on-domain catalogue above is a committed rendition of the canonical GitHub README. The [GitHub repository](https://github.com/EthicalML/awesome-production-machine-learning) remains the source of truth for updates and contributions.
 
 <Metrics metricId="ecosystem" labels={['STARS', 'FORKS', 'CONTRIBUTORS', 'CATEGORIES']} />
 

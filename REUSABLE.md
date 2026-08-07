@@ -308,6 +308,20 @@ export const report = buildSurveyReport(surveyCsv);
 />
 ```
 
+## SurveyEvidence
+
+`src/components/SurveyEvidence.astro` renders the liftable sample, field-date, methodology and plain-text citation block immediately below a survey hero. Copy remains page-owned and is passed directly by each report page.
+
+### Props
+
+| Prop          | Type     | Notes                                                     |
+| ------------- | -------- | --------------------------------------------------------- |
+| `edition`     | `number` | Survey edition used for the heading and accessible label. |
+| `sample`      | `number` | Submitted response count.                                 |
+| `fieldDates`  | `string` | Submission window supported by the committed CSV.         |
+| `methodology` | `string` | Short extractable methodology and sampling caveat.        |
+| `citation`    | `string` | Plain-text citation for the edition.                      |
+
 ## Embed modes
 
 - `SurveyExplorer` / `SurveyExplorerIsland` accept a default-off `compact` prop for card embeds: short question pills sit beside the year toggle (replacing the full tabs, the sort button and the question meta), chrome is stripped, type and bars tighten to card scale, the N count is dropped, and the focus block becomes a name/share/YoY row. Wired on the homepage survey carousel card.

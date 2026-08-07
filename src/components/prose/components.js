@@ -20,6 +20,7 @@ export { default as PrinciplesExplorer } from '../PrinciplesExplorer.astro';
 export { default as TalksGrid } from '../TalksGrid.astro';
 export { default as SurveyExplorer } from '../SurveyExplorerIsland.astro';
 export { default as SurveyReport } from '../SurveyReportIsland.astro';
+export { default as SurveyEvidence } from '../SurveyEvidence.astro';
 export { default as QuickstartTerminal } from '../QuickstartTerminal.astro';
 export { default as ControlPlaneMap } from '../ControlPlaneMap.astro';
 export { default as MemoryLifecycle } from '../MemoryLifecycle.astro';
