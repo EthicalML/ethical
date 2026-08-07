@@ -67,7 +67,7 @@ for (const name of baselineFiles.filter((file) => currentFiles.includes(file))) 
     results.push({ route: name, status: 'size-mismatch', differingPixels: null, diff: diffPath });
     continue;
   }
-  const differingPixels = Number.parseInt(output.replace(/[^\d].*$/, ''), 10);
+  const differingPixels = Number(output);
   if (!Number.isFinite(differingPixels)) {
     results.push({ route: name, status: 'compare-failed', detail: output.slice(0, 200) });
     continue;
