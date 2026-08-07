@@ -1,4 +1,4 @@
-import { CanvasEngine, type CanvasDraw } from './CanvasEngine';
+import { CanvasEngine, type CanvasDraw, rgba } from './CanvasEngine';
 
 interface CategoryNode {
   label: string;
@@ -33,7 +33,7 @@ const edges: [number, number][] = [
   [6, 7],
 ];
 
-const drawConstellation: CanvasDraw = (context, width, height, elapsed) => {
+const drawConstellation: CanvasDraw = (context, width, height, elapsed, _pointer, palette) => {
   context.clearRect(0, 0, width, height);
   const padding = Math.min(width, height) * 0.1;
   const points = nodes.map((node) => ({
@@ -43,7 +43,7 @@ const drawConstellation: CanvasDraw = (context, width, height, elapsed) => {
   }));
 
   context.lineWidth = 1;
-  context.strokeStyle = 'rgba(244,242,238,.13)';
+  context.strokeStyle = rgba(palette.ink, 0.13);
   edges.forEach(([from, to]) => {
     context.beginPath();
     context.moveTo(points[from].screenX, points[from].screenY);
@@ -56,9 +56,9 @@ const drawConstellation: CanvasDraw = (context, width, height, elapsed) => {
     const pulse = 0.6 + Math.sin(elapsed * 0.7 + point.phase) * 0.25;
     context.beginPath();
     context.arc(point.screenX, point.screenY, index % 3 === 0 ? 4 : 3, 0, Math.PI * 2);
-    context.fillStyle = `rgba(94,230,160,${pulse})`;
+    context.fillStyle = rgba(palette.accentInk, pulse);
     context.fill();
-    context.fillStyle = 'rgba(244,242,238,.6)';
+    context.fillStyle = rgba(palette.ink, 0.6);
     context.fillText(point.label, point.screenX + 10, point.screenY + 4);
   });
 };

@@ -1,3 +1,5 @@
+import { rgba, type Rgb } from './CanvasEngine';
+
 export const POLICY_FRAGMENTS = [
   'eight (8) out of twelve (12) initial recommendations',
   'narrowness is maintained rather than merely declared',
@@ -65,11 +67,12 @@ export const drawGlow = (
   y: number,
   radius: number,
   alpha: number,
+  color: Rgb,
 ) => {
   const glow = context.createRadialGradient(x, y, 0, x, y, radius);
-  glow.addColorStop(0, `rgba(94,230,160,${alpha})`);
-  glow.addColorStop(0.42, `rgba(94,230,160,${alpha * 0.28})`);
-  glow.addColorStop(1, 'rgba(94,230,160,0)');
+  glow.addColorStop(0, rgba(color, alpha));
+  glow.addColorStop(0.42, rgba(color, alpha * 0.28));
+  glow.addColorStop(1, rgba(color, 0));
   context.fillStyle = glow;
   context.fillRect(x - radius, y - radius, radius * 2, radius * 2);
 };
