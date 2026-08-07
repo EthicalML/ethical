@@ -31,7 +31,7 @@ A dark run **records** the baseline to the git-ignored `out/contrast-baseline/<v
 
 The 4.5:1 clause is a pass threshold, not a failure threshold. The 0.9x rule alone flags the palette
 itself: an accent at 11.7:1 on near-black cannot also be 10.5:1 on paper without ceasing to be an
-accent, and its drop to 5.5:1 is the design. Absolute WCAG floors remain unusable for *failing* a
+accent, and its drop to 5.5:1 is the design. Absolute WCAG floors remain unusable for _failing_ a
 node — correct dark decorative text sits at 1.07 — but a node that clears the body gate in light is
 readable whatever it scored in dark.
 
