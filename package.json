@@ -16,6 +16,7 @@
     "verify:dom:all": "npm run verify:dom -- --viewport 1440x1000 && npm run verify:dom -- --viewport 420x900",
     "verify:shots": "node scripts/verify/verify-shots.mjs",
     "verify:shots:all": "npm run verify:shots -- --viewport 1440x1000 && npm run verify:shots -- --viewport 420x900",
+    "verify:parity": "node scripts/verify/verify-parity.mjs",
     "verify:typewriter": "node scripts/verify/verify-typewriter.mjs",
     "postbuild": "pagefind --site dist"
   },
