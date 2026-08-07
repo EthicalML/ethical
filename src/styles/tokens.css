@@ -38,28 +38,141 @@
   --bg-inset: #0f100f;
   --bg-header: rgba(19, 20, 20, 0.9);
   --bg-header-solid: #131414;
-  --text-1: #f4f2ee;
-  --text-2: rgba(244, 242, 238, 0.66);
-  --text-3: rgba(244, 242, 238, 0.45);
-  --text-4: rgba(244, 242, 238, 0.35);
+  /* ---- theme tokens: ink (foreground on dark) ---- */
+  --ink-1: #f4f2ee;
+  --ink-2: rgba(244, 242, 238, 0.85);
+  --ink-3: rgba(244, 242, 238, 0.66);
+  --ink-4: rgba(244, 242, 238, 0.48);
+  --ink-5: rgba(244, 242, 238, 0.36);
+  --ink-6: rgba(244, 242, 238, 0.18);
+  /* ink — off-ladder steps (exact dark values, grouped to a rung in STYLES.md) */
+  --ink-a820: rgba(244, 242, 238, 0.82);
+  --ink-a800: rgba(244, 242, 238, 0.8);
+  --ink-a740: rgba(244, 242, 238, 0.74);
+  --ink-a720: rgba(244, 242, 238, 0.72);
+  --ink-a700: rgba(244, 242, 238, 0.7);
+  --ink-a640: rgba(244, 242, 238, 0.64);
+  --ink-a620: rgba(244, 242, 238, 0.62);
+  --ink-a600: rgba(244, 242, 238, 0.6);
+  --ink-a550: rgba(244, 242, 238, 0.55);
+  --ink-a450: rgba(244, 242, 238, 0.45);
+  --ink-a440: rgba(244, 242, 238, 0.44);
+  --ink-a420: rgba(244, 242, 238, 0.42);
+  --ink-a400: rgba(244, 242, 238, 0.4);
+  --ink-a350: rgba(244, 242, 238, 0.35);
+  --ink-a300: rgba(244, 242, 238, 0.3);
+  --ink-a220: rgba(244, 242, 238, 0.22);
+  --ink-a160: rgba(244, 242, 238, 0.16);
+  --ink-a140: rgba(244, 242, 238, 0.14);
+  --ink-a050: rgba(244, 242, 238, 0.05);
+  --ink-a030: rgba(244, 242, 238, 0.03);
+  /* ink used as a surface tint rather than as ink */
+  --ink-wash-a650: rgba(244, 242, 238, 0.65);
+  --ink-wash-a500: rgba(244, 242, 238, 0.5);
+  --ink-wash-a450: rgba(244, 242, 238, 0.45);
+  --ink-wash-a420: rgba(244, 242, 238, 0.42);
+  --ink-wash-a280: rgba(244, 242, 238, 0.28);
+  --ink-wash-a220: rgba(244, 242, 238, 0.22);
+  --ink-wash-a200: rgba(244, 242, 238, 0.2);
+  --ink-wash-a180: rgba(244, 242, 238, 0.18);
+  --ink-wash-a065: rgba(244, 242, 238, 0.065);
+  --ink-wash-a050: rgba(244, 242, 238, 0.05);
+  --ink-wash-a030: rgba(244, 242, 238, 0.03);
+  /* ---- theme tokens: wash (white surface lift) ---- */
+  --wash-1: rgba(255, 255, 255, 0.015);
+  --wash-2: rgba(255, 255, 255, 0.03);
+  --wash-3: rgba(255, 255, 255, 0.06);
+  --wash-4: rgba(255, 255, 255, 0.09);
+  /* wash — off-ladder steps */
+  --wash-a070: rgba(255, 255, 255, 0.07);
+  --wash-a050: rgba(255, 255, 255, 0.05);
+  --wash-a040: rgba(255, 255, 255, 0.04);
+  /* hairlines (white, used as borders) */
+  --hairline: rgba(255, 255, 255, 0.07);
+  --hairline-card: rgba(255, 255, 255, 0.1);
+  --hairline-strong: rgba(255, 255, 255, 0.18);
+  --hairline-a260: rgba(255, 255, 255, 0.26);
+  --hairline-a160: rgba(255, 255, 255, 0.16);
+  --hairline-a140: rgba(255, 255, 255, 0.14);
+  --hairline-a120: rgba(255, 255, 255, 0.12);
+  --hairline-a090: rgba(255, 255, 255, 0.09);
+  --hairline-a080: rgba(255, 255, 255, 0.08);
+  --hairline-a060: rgba(255, 255, 255, 0.06);
+  --hairline-a050: rgba(255, 255, 255, 0.05);
+  /* ---- theme tokens: accent ---- */
+  --accent-ink: #5ee6a0;
+  --accent-wash: rgba(94, 230, 160, 0.07);
+  --accent-veil: rgba(94, 230, 160, 0.16);
+  --accent-line: rgba(94, 230, 160, 0.28);
+  --accent-edge: rgba(94, 230, 160, 0.45);
+  /* accent — off-ladder steps */
+  --accent-a850: rgba(94, 230, 160, 0.85);
+  --accent-a700: rgba(94, 230, 160, 0.7);
+  --accent-a650: rgba(94, 230, 160, 0.65);
+  --accent-a600: rgba(94, 230, 160, 0.6);
+  --accent-a550: rgba(94, 230, 160, 0.55);
+  --accent-a500: rgba(94, 230, 160, 0.5);
+  --accent-a480: rgba(94, 230, 160, 0.48);
+  --accent-a420: rgba(94, 230, 160, 0.42);
+  --accent-a400: rgba(94, 230, 160, 0.4);
+  --accent-a360: rgba(94, 230, 160, 0.36);
+  --accent-a350: rgba(94, 230, 160, 0.35);
+  --accent-a320: rgba(94, 230, 160, 0.32);
+  --accent-a300: rgba(94, 230, 160, 0.3);
+  --accent-a250: rgba(94, 230, 160, 0.25);
+  --accent-a240: rgba(94, 230, 160, 0.24);
+  --accent-a220: rgba(94, 230, 160, 0.22);
+  --accent-a140: rgba(94, 230, 160, 0.14);
+  --accent-a130: rgba(94, 230, 160, 0.13);
+  --accent-a100: rgba(94, 230, 160, 0.1);
+  --accent-a090: rgba(94, 230, 160, 0.09);
+  --accent-a080: rgba(94, 230, 160, 0.08);
+  --accent-a060: rgba(94, 230, 160, 0.06);
+  --accent-a050: rgba(94, 230, 160, 0.05);
+  /* scrim — near-black page-canvas fades, depth 1 (lightest) to 5 (deepest) */
+  --scrim-1-a940: rgba(19, 20, 20, 0.94);
+  --scrim-1-a720: rgba(19, 20, 20, 0.72);
+  --scrim-1-a650: rgba(19, 20, 20, 0.65);
+  --scrim-1-a180: rgba(19, 20, 20, 0.18);
+  --scrim-2-a980: rgba(15, 16, 15, 0.98);
+  --scrim-2-a970: rgba(15, 16, 15, 0.97);
+  --scrim-2-a940: rgba(15, 16, 15, 0.94);
+  --scrim-2-a920: rgba(15, 16, 15, 0.92);
+  --scrim-2-a780: rgba(15, 16, 15, 0.78);
+  --scrim-2-a760: rgba(15, 16, 15, 0.76);
+  --scrim-2-a160: rgba(15, 16, 15, 0.16);
+  --scrim-2-a080: rgba(15, 16, 15, 0.08);
+  --scrim-3-a720: rgba(12, 14, 13, 0.72);
+  --scrim-4-a660: rgba(10, 12, 11, 0.66);
+  --scrim-5-a620: rgba(5, 7, 6, 0.62);
+  /* shadow */
+  --shadow-a600: rgba(0, 0, 0, 0.6);
+  --shadow-a550: rgba(0, 0, 0, 0.55);
+  --shadow-a500: rgba(0, 0, 0, 0.5);
+  --shadow-a220: rgba(0, 0, 0, 0.22);
+  --logo-mark: #fff;
+
+  /* ---- semantic aliases over the ladders ---- */
+  --text-1: var(--ink-1);
+  --text-2: var(--ink-3);
+  --text-3: var(--ink-4);
+  --text-4: var(--ink-5);
   --accent: #5ee6a0;
   --accent-on: #0c1410;
-  --accent-wash-07: rgba(94, 230, 160, 0.07);
-  --accent-wash-09: rgba(94, 230, 160, 0.09);
-  --form-wash-14: rgba(94, 230, 160, 0.14);
-  --accent-wash-16: rgba(94, 230, 160, 0.16);
+  --accent-wash-07: var(--accent-wash);
+  --accent-wash-09: var(--accent-a090);
+  --form-wash-14: var(--accent-a140);
+  --accent-wash-16: var(--accent-veil);
   --warn: #e8b45c;
   --glitch-red: #ff5a6e;
   --glitch-blue: #4ac7ff;
-  --hairline: rgba(255, 255, 255, 0.07);
-  --hairline-card: rgba(255, 255, 255, 0.1);
   --radius-control: 0;
   --radius-row: 0;
   --radius-card: 0;
   --radius-card-lg: 0;
   --radius-pill: 999px;
   --radius-dropdown: 0;
-  --shadow-panel: 0 30px 70px rgba(0, 0, 0, 0.6);
+  --shadow-panel: 0 30px 70px var(--shadow-a600);
   --space-4: 4px;
   --space-6: 6px;
   --space-8: 8px;
@@ -125,11 +238,11 @@ a {
 }
 a:hover { opacity: .72; }
 .text-link {
-  color: var(--accent);
+  color: var(--accent-ink);
   text-decoration: underline;
   text-underline-offset: .16em;
 }
-::selection { background: rgba(94, 230, 160, .3); }
+::selection { background: var(--accent-a300); }
 button,
 input { font: inherit; }
 main { overflow: clip; }
@@ -141,9 +254,9 @@ button.nav-trigger {
 }
 .status-pill {
   align-items: center;
-  border: 1px solid rgba(255, 255, 255, .12);
+  border: 1px solid var(--hairline-a120);
   border-radius: var(--radius-pill);
-  color: rgba(244, 242, 238, .55);
+  color: var(--ink-a550);
   display: inline-flex;
   font-family: var(--font-mono);
   font-size: var(--mono-10);
@@ -185,15 +298,15 @@ type-writer {
   margin-top: 32px;
 }
 .button {
-  border: 1px solid rgba(255, 255, 255, .18);
+  border: 1px solid var(--hairline-strong);
   border-radius: var(--radius-control);
   font-size: var(--body-14);
   padding: 13px 22px;
 }
 .button.primary {
   background: transparent;
-  border-color: rgba(94, 230, 160, .45);
-  color: var(--accent);
+  border-color: var(--accent-edge);
+  color: var(--accent-ink);
   font-family: var(--font-mono);
   font-weight: 500;
 }
@@ -217,7 +330,7 @@ type-writer {
   font-weight: 300;
 }
 .stat span {
-  color: rgba(244, 242, 238, .44);
+  color: var(--ink-a440);
   display: block;
   font-family: var(--font-mono);
   font-size: var(--mono-10);
@@ -225,7 +338,7 @@ type-writer {
   margin-top: 7px;
 }
 .eyebrow {
-  color: var(--accent);
+  color: var(--accent-ink);
   font-family: var(--font-mono);
   font-size: var(--mono-10-5);
   letter-spacing: .14em;
@@ -252,13 +365,13 @@ section > h2 {
 .feature-card,
 .split-list > div,
 .widget {
-  background: linear-gradient(180deg, rgba(255, 255, 255, .035), transparent);
+  background: linear-gradient(180deg, var(--wash-2), transparent);
   border: 1px solid var(--hairline-card);
   border-radius: var(--radius-card);
   padding: 30px;
 }
 .principle-card a,
-.feature-card .action { color: var(--accent); }
+.feature-card .action { color: var(--accent-ink); }
 dd,
 td {
   color: var(--text-2);
@@ -302,7 +415,7 @@ dd { margin: 6px 0 0; }
    markdown-authored links the same accent that components get from
    `.text-link`: prose links carry no class of their own, so without this they
    inherit the body colour and cannot be told apart from the text. */
-.prose-section > .prose-section-eyebrow { color: var(--accent); }
+.prose-section > .prose-section-eyebrow { color: var(--accent-ink); }
 .prose-section-title {
   font-size: var(--display-44);
   line-height: 1.08;
@@ -339,7 +452,7 @@ dd { margin: 6px 0 0; }
 .prose-section blockquote::before,
 .prose-body blockquote::before,
 .issue-body blockquote::before {
-  color: rgba(94, 230, 160, .55);
+  color: var(--accent-a550);
   content: '\201C';
   font: 400 64px/1 var(--font-display);
   left: 16px;
@@ -361,7 +474,7 @@ dd { margin: 6px 0 0; }
   .issue-body blockquote::before { font-size: 48px; left: 4px; }
 }
 .prose-block {
-  background: linear-gradient(180deg, rgba(255, 255, 255, .035), transparent);
+  background: linear-gradient(180deg, var(--wash-2), transparent);
   border: 1px solid var(--hairline-card);
   border-radius: var(--radius-card);
 }
@@ -393,7 +506,7 @@ td {
   text-align: left;
 }
 th {
-  color: var(--accent);
+  color: var(--accent-ink);
   font-family: var(--font-mono);
   font-size: var(--mono-10);
   letter-spacing: .12em;
@@ -420,7 +533,7 @@ th {
   font-weight: 300;
 }
 .network-stats span {
-  color: rgba(244,242,238,.44);
+  color: var(--ink-a440);
   font-family: var(--font-mono);
   display: block;
   font-size: 10px;
@@ -429,7 +542,7 @@ th {
 }
 form {
   background: radial-gradient(70% 90% at 70% 0%, var(--form-wash-14), var(--bg-inset) 72%);
-  border: 1px solid rgba(255,255,255,.09);
+  border: 1px solid var(--hairline-a090);
   border-radius: var(--radius-card);
   display: flex;
   flex-direction: column;
@@ -440,7 +553,7 @@ form {
   width: 100%;
 }
 form label {
-  color: rgba(244,242,238,.45);
+  color: var(--ink-a450);
   display: flex;
   flex-direction: column;
   gap: var(--space-8);
@@ -451,8 +564,8 @@ form label {
 }
 form header h3 { font: 500 24px/normal var(--font-body); margin: 0; }
 input {
-  background: rgba(255, 255, 255, .04);
-  border: 1px solid rgba(255, 255, 255, .16);
+  background: var(--wash-a040);
+  border: 1px solid var(--hairline-a160);
   border-radius: var(--radius-control);
   color: var(--text-1);
   padding: 12px 14px;
@@ -472,7 +585,7 @@ fieldset {
 }
 fieldset label {
   align-items: center;
-  color: rgba(244,242,238,.82);
+  color: var(--ink-a820);
   cursor: pointer;
   display: flex;
   flex-direction: row;
@@ -481,12 +594,12 @@ fieldset label {
   letter-spacing: 0;
   text-transform: none;
 }
-fieldset input { accent-color: var(--accent); height: 15px; width: 15px; }
+fieldset input { accent-color: var(--accent-ink); height: 15px; width: 15px; }
 form button {
   background: transparent;
-  border: 1px solid rgba(94, 230, 160, .45);
+  border: 1px solid var(--accent-edge);
   border-radius: var(--radius-control);
-  color: var(--accent);
+  color: var(--accent-ink);
   cursor: pointer;
   font-family: var(--font-mono);
   font-weight: 500;
@@ -494,7 +607,7 @@ form button {
 }
 form button:hover { opacity: .72; }
 form button:disabled { cursor: wait; opacity: .6; }
-form small { color: rgba(244,242,238,.42); font-size: 12px; }
+form small { color: var(--ink-a420); font-size: 12px; }
 .form-honeypot {
   height: 1px;
   left: -10000px;
@@ -615,8 +728,8 @@ html[data-astro-transition="back"]::view-transition-new(newsletter-page) {
 }
 
 /* Round 5 prototype corrections */
-.kaos-panel { background: var(--bg-inset); border: 1px solid rgba(255,255,255,.09); border-radius: var(--radius-card); padding: 18px; }
-.kaos-panel [data-kaos-status] { color: var(--accent); }
+.kaos-panel { background: var(--bg-inset); border: 1px solid var(--hairline-a090); border-radius: var(--radius-card); padding: 18px; }
+.kaos-panel [data-kaos-status] { color: var(--accent-ink); }
 .kaos-canvas-mount { height: 400px; margin-top: 12px; min-height: 220px; overflow: hidden; position: relative; width: 100%; }
 .kaos-architecture-mount { height: 400px; margin-top: 12px; min-height: 220px; overflow: hidden; position: relative; width: 100%; }
 .fixed-canvas canvas, .kaos-canvas-mount canvas, .kaos-architecture-mount canvas { height: 100%; inset: 0; position: absolute; width: 100%; }
@@ -676,7 +789,7 @@ main > .home-section:nth-last-child(1 of .home-section) { padding-bottom: 120px;
   text-transform: uppercase;
 }
 .join-intro a,
-.text-link { color: var(--accent); }
+.text-link { color: var(--accent-ink); }
 .featured-talks .text-link { display: inline-block; font: var(--mono-10)/1 var(--font-mono); letter-spacing: .08em; padding: 14px 0; }
 .benefit-rows { margin-top: 34px; max-width: 980px; }
 .benefit-rows p {
@@ -818,7 +931,7 @@ main > .home-section:nth-last-child(1 of .home-section) { padding-bottom: 120px;
 }
 
 .policy-section a,
-.policy-work a { color: var(--accent); }
+.policy-work a { color: var(--accent-ink); }
 
 @media (max-width: 950px) {
   .policy-section,

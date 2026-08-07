@@ -2,6 +2,55 @@
 
 Put a rule with the component or page that owns the rendered surface; `src/styles/tokens.css` is only for tokens, foundations, shared primitives, cross-surface integration and page-wide motion.
 
+## Theme tokens
+
+Every colour that must differ between the dark and light themes is a token on `:root`. A literal
+has nowhere to flip to under `:root[data-theme='light']`, so a literal is a bug unless it is on the
+"never a token" list at the end of this section.
+
+There are six colour families. Each family has a small semantic ladder — use a ladder rung for new
+work. The `-a###` tokens beside each ladder are the same family at an off-ladder alpha (the digits
+are permille, so `-a420` is `alpha 0.42`); they exist because the dark theme already used those
+exact values and the site must not move. Treat them as members of the nearest rung and flip them
+with it.
+
+| Family | Dark base | What each step is for |
+| --- | --- | --- |
+| `--ink-1` … `--ink-6` | `rgba(244, 242, 238, α)` | Foreground. 1 headings and primary body · 2 emphasised body, active nav · 3 secondary copy and standfirsts · 4 tertiary copy, captions, table cells · 5 metadata and mono eyebrows, **large/UI only** · 6 disabled text and decorative glyphs. |
+| `--ink-wash-a###` | same RGB, low alpha | The ink colour used as a *surface* tint or SVG fill rather than as ink. Flips to a black-based wash, not to the light ink colour. |
+| `--wash-1` … `--wash-4` | `rgba(255, 255, 255, α)` | Surface lift above the panel underneath. 1 barely-there zebra stripe · 2 resting card or field fill · 3 hover fill · 4 pressed or selected fill. |
+| `--hairline`, `--hairline-card`, `--hairline-strong`, `--hairline-a###` | `rgba(255, 255, 255, α)` | White used as a **border**. Separate from `--wash-*` because a light theme needs a heavier hairline than it needs a wash. |
+| `--accent-wash`, `--accent-veil`, `--accent-line`, `--accent-edge`, `--accent-ink`, `--accent`, `--accent-a###` | `rgba(94, 230, 160, α)` | wash: section tint and callout background · veil: chip fill, hover fill, selection · line: subtle rule, inactive underline · edge: visible border and focus ring · **`--accent-ink`: accent text, icon strokes and borders** · `--accent`: solid fills, dots and marks, paired with `--accent-on`. |
+| `--scrim-1-a###` … `--scrim-5-a###` | near-black, depth 1 lightest to 5 deepest | Page-canvas fades and overlay scrims that sit *over* content. Every one of them inverts under a light theme. |
+| `--shadow-a###`, `--shadow-panel` | `rgba(0, 0, 0, α)` | Drop shadows. Alphas cannot be scaled between themes — a light theme re-authors the shadow, it does not reuse the dark alpha. |
+
+`--text-1` … `--text-4` are aliases over `--ink-1`, `--ink-3`, `--ink-4` and `--ink-5`; `--accent-wash-07`,
+`--accent-wash-09`, `--form-wash-14` and `--accent-wash-16` are aliases over the accent ladder. Use
+either name; they are one value.
+
+### The ink/fill rule for the accent
+
+`#5ee6a0` is 1.41:1 on paper, so in a light theme it can only ever be a fill. The **declaring
+property** decides which token a site takes:
+
+- `color`, `border*`, `stroke`, `outline`, `caret-color`, `accent-color`, `text-decoration-color` → `var(--accent-ink)`
+- `background*`, `fill`, `box-shadow`, `text-shadow`, `filter` → `var(--accent)`
+
+In the dark theme both resolve to `#5ee6a0`, so a misclassification is invisible until a light
+theme lands. A component that overrides `--accent` in its own subtree must override `--accent-ink`
+beside it, or that subtree falls back to the global green.
+
+### Never a token
+
+- `#000` inside `mask-image` / `-webkit-mask-image`. It is an alpha stencil, not a colour: it means
+  "opaque here". There are 25 of them and they are theme-independent.
+- Bare `transparent` and zero-alpha gradient endpoints such as `rgba(12, 14, 13, 0)`. The long form
+  exists to avoid Safari premultiplication artefacts — do not simplify it either.
+- `currentColor`, which is already themed by whatever set `color`.
+- Brand marks under `src/assets/`.
+- The two paper-white plates behind scanned documents and screenshots
+  (`StageExplorer.astro`, `PolicyRecordPreview.astro`): they are paper in both themes.
+
 ## Global stylesheet
 
 `src/styles/tokens.css` is 831 lines. The counts below are from the current parsed stylesheet: a rule is a CSS style rule or `@font-face` rule, keyframe step selectors are excluded, and declarations inside keyframes are included.
@@ -126,5 +175,5 @@ Use these widths for CSS media queries. A component that needs responsive client
 
 1. For a new component, put the rule in that component's scoped `<style>` block; use `is:global` only when styling child markup that Astro cannot scope, such as an island or custom element.
 2. For a page-specific tweak, put the rule in the owning `.astro` or `.mdx` page so it cannot affect another route.
-3. For a new token, add it to `:root` only after at least two owners need the same semantic value; otherwise keep the value local.
+3. For a new token, add it to `:root` when at least two owners need the same semantic value, or when the value must change between themes. A theme-dependent value is always a token, however few owners it has: a literal has nowhere to flip to under `:root[data-theme='light']`. Otherwise keep the value local.
 4. If an override seems necessary, find the existing owner first and change the original rule or component API. Add a cross-owner rule to `tokens.css` only when the relationship itself is shared and document that reason here.
