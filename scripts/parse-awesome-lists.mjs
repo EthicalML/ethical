@@ -5,6 +5,7 @@ import path from 'node:path';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const outputPath = path.join(root, 'src/content/oss-catalogues.json');
+const productionListPath = path.join(root, 'src/data/production-ml-libraries.json');
 
 const repositories = {
   productionMl: 'EthicalML/awesome-production-machine-learning',
@@ -54,6 +55,47 @@ function sections(text, headingLevel) {
     }
   }
   return results;
+}
+
+function plainText(markdown) {
+  return markdown
+    .replaceAll(/!\[[^\]]*\]\([^)]+\)/g, '')
+    .replaceAll(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replaceAll(/<[^>]+>/g, '')
+    .replaceAll(/[`*_]/g, '')
+    .replaceAll('&amp;', '&')
+    .replaceAll('&lt;', '<')
+    .replaceAll('&gt;', '>')
+    .replace(/^\s*[-–]\s*/, '')
+    .replaceAll(/\s+/g, ' ')
+    .trim();
+}
+
+function productionLibraries(text, categoryDetails) {
+  const content = sliceBetween(text, '# Main Content', '# Other Awesome Lists');
+  const result = [];
+  let current;
+
+  for (const line of content.split(/\r?\n/)) {
+    const heading = line.match(/^##\s+(.+?)\s*$/);
+    if (heading) {
+      const details = categoryDetails[result.length];
+      if (!details) throw new Error(`Could not match production ML category: ${heading[1]}`);
+      current = { name: details.name, emoji: details.emoji, entries: [] };
+      result.push(current);
+      continue;
+    }
+
+    const entry = line.match(/^\*\s+\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)\s*(.*)$/);
+    if (!entry || !current) continue;
+    current.entries.push({
+      name: plainText(entry[1]),
+      href: entry[2],
+      description: plainText(entry[3]),
+    });
+  }
+
+  return result;
 }
 
 function splitLeadingEmoji(label) {
@@ -108,6 +150,7 @@ const productionSections = sections(
   2,
 );
 const categories = zipLinksAndCounts(productionLinks, productionSections, splitLeadingEmoji);
+const libraryCategories = productionLibraries(production.text, categories);
 
 const regulation = fetchReadme(repositories.aiGuidelines);
 const areaLinks = markdownLinks(
@@ -138,6 +181,17 @@ if (categories.length !== 24 || areas.length !== 15 || themes.length !== 6) {
   );
 }
 
+const libraryCount = libraryCategories.reduce(
+  (total, category) => total + category.entries.length,
+  0,
+);
+const expectedLibraryCount = categories.reduce((total, category) => total + category.count, 0);
+if (libraryCategories.length !== 24 || libraryCount !== expectedLibraryCount) {
+  throw new Error(
+    `Unexpected production ML list size: ${libraryCategories.length} categories, ${libraryCount} libraries.`,
+  );
+}
+
 const snapshot = {
   productionMl: {
     repository: `https://github.com/${repositories.productionMl}`,
@@ -155,6 +209,19 @@ const snapshot = {
 };
 
 writeFileSync(outputPath, `${JSON.stringify(snapshot, null, 2)}\n`);
+writeFileSync(
+  productionListPath,
+  `${JSON.stringify(
+    {
+      repository: snapshot.productionMl.repository,
+      source: production.url,
+      libraryCount,
+      categories: libraryCategories,
+    },
+    null,
+    2,
+  )}\n`,
+);
 console.log(
-  `Wrote ${path.relative(root, outputPath)} (${categories.length} categories, ${areas.length} areas, ${themes.length} themes).`,
+  `Wrote ${path.relative(root, outputPath)} and ${path.relative(root, productionListPath)} (${categories.length} production categories, ${libraryCount} libraries, ${areas.length} areas, ${themes.length} themes).`,
 );

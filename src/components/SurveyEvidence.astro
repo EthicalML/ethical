@@ -1,0 +1,80 @@
+---
+interface Props {
+  edition: number;
+  sample: number;
+  fieldDates: string;
+  methodology: string;
+  citation: string;
+}
+
+const { edition, sample, fieldDates, methodology, citation } = Astro.props;
+---
+
+<section class="survey-evidence" aria-labelledby={`survey-evidence-${edition}`} data-reveal>
+  <div>
+    <p class="eyebrow">SURVEY EVIDENCE</p>
+    <h2 id={`survey-evidence-${edition}`}>{sample} practitioner responses</h2>
+    <p><strong>Field dates:</strong> {fieldDates}</p>
+    <p>{methodology}</p>
+  </div>
+  <aside aria-label={`Citation for the ${edition} survey`}>
+    <p class="eyebrow">CITE THIS AS</p>
+    <p>{citation}</p>
+  </aside>
+</section>
+
+<style>
+  .survey-evidence {
+    background: var(--bg-inset);
+    border-block: 1px solid var(--hairline-card);
+    display: grid;
+    gap: clamp(28px, 5vw, 72px);
+    grid-template-columns: minmax(0, 1.5fr) minmax(280px, 1fr);
+    padding: clamp(40px, 6vw, 72px) max(22px, calc((100vw - 1180px) / 2));
+  }
+
+  .survey-evidence h2 {
+    font: 300 clamp(28px, 4vw, 48px) / 1.08 var(--font-display);
+    margin: 10px 0 22px;
+  }
+
+  .survey-evidence p:not(.eyebrow) {
+    color: var(--text-2);
+    line-height: 1.65;
+    margin: 0;
+    max-width: 720px;
+  }
+
+  .survey-evidence p + p {
+    margin-top: 10px;
+  }
+
+  .survey-evidence strong {
+    color: var(--text-1);
+    font-weight: 500;
+  }
+
+  .survey-evidence aside {
+    border-left: 1px solid var(--accent);
+    padding-left: 24px;
+  }
+
+  .survey-evidence aside p:not(.eyebrow) {
+    color: var(--text-1);
+    font-family: var(--font-mono);
+    font-size: 13px;
+  }
+
+  @media (max-width: 760px) {
+    .survey-evidence {
+      grid-template-columns: 1fr;
+    }
+
+    .survey-evidence aside {
+      border-left: 0;
+      border-top: 1px solid var(--accent);
+      padding-left: 0;
+      padding-top: 22px;
+    }
+  }
+</style>

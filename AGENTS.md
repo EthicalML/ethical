@@ -160,6 +160,10 @@ Use props for typed strings, identifiers, hrefs, and structured values. Use slot
 
 MDX prose follows JSX parsing rules. Escape a bare `<` as `&lt;`, escape `{` as `\{`, or put the text in backticks.
 
+## Prose around widgets
+
+A short paragraph does not follow a table, card grid, chart or other widget. Composed pages have no prose shell, so a trailing sentence renders unframed and reads as an orphan. Put the sentence in the section lede above the widget, or fold it into the widget's own copy. A section is: heading, lede prose, widget. When a note genuinely belongs after the widget, it needs a component that frames it, not a bare paragraph.
+
 ## Automatic numbered sections
 
 `src/plugins/rehype-sectionize.mjs` turns every authored `## Heading` into a numbered `.prose-section`. Use `##` only when that treatment is intended. Use a composed MDX component for bespoke sections, and do not hand-author the generated eyebrow or wrapper.

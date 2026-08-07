@@ -1,0 +1,2876 @@
+{
+  "repository": "https://github.com/EthicalML/awesome-production-machine-learning",
+  "source": "https://raw.githubusercontent.com/EthicalML/awesome-production-machine-learning/master/README.md",
+  "libraryCount": 545,
+  "categories": [
+    {
+      "name": "AutoML",
+      "emoji": "🔧",
+      "entries": [
+        {
+          "name": "AIDE",
+          "href": "https://github.com/WecoAI/aideml",
+          "description": "AIDE is an open-source ML engineering agent that uses a tree search algorithm to autonomously explore, implement, and evaluate solution strategies for machine learning tasks."
+        },
+        {
+          "name": "AutoGluon",
+          "href": "https://github.com/autogluon/autogluon",
+          "description": "Automated feature, model, and hyperparameter selection for tabular, image, and text data on top of popular machine learning libraries (Scikit-Learn, LightGBM, CatBoost, PyTorch, MXNet)."
+        },
+        {
+          "name": "Autokeras",
+          "href": "https://github.com/keras-team/autokeras",
+          "description": "AutoML library for Keras based on \"Auto-Keras: Efficient Neural Architecture Search with Network Morphism\"."
+        },
+        {
+          "name": "auto-sklearn",
+          "href": "https://github.com/automl/auto-sklearn",
+          "description": "Framework to automate algorithm and hyperparameter tuning for sklearn."
+        },
+        {
+          "name": "Ax",
+          "href": "https://github.com/facebook/Ax",
+          "description": "Ax is an accessible, general-purpose platform for understanding, managing, deploying, and automating adaptive experiments."
+        },
+        {
+          "name": "BoTorch",
+          "href": "https://github.com/meta-pytorch/botorch",
+          "description": "BoTorch is a library for Bayesian Optimization built on PyTorch."
+        },
+        {
+          "name": "EvalML",
+          "href": "https://github.com/alteryx/evalml",
+          "description": "EvalML is an AutoML library which builds, optimizes, and evaluates machine learning pipelines using domain-specific objective functions."
+        },
+        {
+          "name": "Feature Engine",
+          "href": "https://github.com/feature-engine/feature_engine",
+          "description": "Feature-engine is a Python library that contains several transformers to engineer features for use in machine learning models."
+        },
+        {
+          "name": "Featuretools",
+          "href": "https://github.com/alteryx/featuretools",
+          "description": "An open source framework for automated feature engineering."
+        },
+        {
+          "name": "FLAML",
+          "href": "https://github.com/microsoft/FLAML",
+          "description": "FLAML is a fast library for automated machine learning & tuning."
+        },
+        {
+          "name": "HEBO",
+          "href": "https://github.com/huawei-noah/hebo",
+          "description": "Set of open-source hyperparameter optimization frameworks, including the winning submission to the NeurIPS 2020 Black-Box Optimisation Challenge tested on hyperparameter tuning tasks."
+        },
+        {
+          "name": "Katib",
+          "href": "https://github.com/kubeflow/katib",
+          "description": "A Kubernetes-based system for Hyperparameter Tuning and Neural Architecture Search."
+        },
+        {
+          "name": "keras-tuner",
+          "href": "https://github.com/keras-team/keras-tuner",
+          "description": "Keras Tuner is an easy-to-use, distributable hyperparameter optimisation framework that solves the pain points of performing a hyperparameter search. Keras Tuner makes it easy to define a search space and leverage included algorithms to find the best hyperparameter values."
+        },
+        {
+          "name": "Optuna",
+          "href": "https://github.com/optuna/optuna",
+          "description": "Optuna is an automatic hyperparameter optimisation software framework, particularly designed for machine learning."
+        },
+        {
+          "name": "OSS Vizier",
+          "href": "https://github.com/google/vizier",
+          "description": "OSS Vizier is a Python-based service for black-box optimisation and research, one of the first hyperparameter tuning services designed to work at scale."
+        },
+        {
+          "name": "Perpetual",
+          "href": "https://github.com/perpetual-ml/perpetual",
+          "description": "A gradient boosting machine that doesn't need hyperparameter optimization, with a simple budget parameter to control model complexity."
+        },
+        {
+          "name": "TPOT",
+          "href": "https://github.com/epistasislab/tpot",
+          "description": "Automation of sklearn pipeline creation (including feature selection, pre-processor, etc.)."
+        },
+        {
+          "name": "tsfresh",
+          "href": "https://github.com/blue-yonder/tsfresh",
+          "description": "Automatic extraction of relevant features from time series."
+        }
+      ]
+    },
+    {
+      "name": "Computation & Communication Optimisation",
+      "emoji": "🧮",
+      "entries": [
+        {
+          "name": "Accelerate",
+          "href": "https://github.com/huggingface/accelerate",
+          "description": "Accelerate abstracts exactly and only the boilerplate code related to multi-GPU/TPU/mixed-precision and leaves the rest of your code unchanged."
+        },
+        {
+          "name": "Adapters",
+          "href": "https://github.com/adapter-hub/adapters",
+          "description": "Adapters is a unified library for parameter-efficient and modular transfer learning."
+        },
+        {
+          "name": "BitBLAS",
+          "href": "https://github.com/microsoft/BitBLAS",
+          "description": "BitBLAS is a library to support mixed-precision BLAS operations on GPUs"
+        },
+        {
+          "name": "Cache-DiT",
+          "href": "https://github.com/vipshop/cache-dit",
+          "description": "Cache-DiT is built on top of Diffusers and supports nearly all DiTs, providing hybrid cache acceleration (DBCache, TaylorSeer, SCM, etc.) and comprehensive parallelism optimizations including Context Parallelism, Tensor Parallelism, and hybrid 2D/3D parallelism, with compatibility for compilation, CPU offloading, and quantization."
+        },
+        {
+          "name": "Colossal-AI",
+          "href": "https://github.com/hpcaitech/ColossalAI",
+          "description": "A unified deep learning system for big model era, which helps users to efficiently and quickly deploy large AI model training and inference."
+        },
+        {
+          "name": "Composer",
+          "href": "https://github.com/mosaicml/composer",
+          "description": "Composer is a PyTorch library that enables you to train neural networks faster, at lower cost, and to higher accuracy."
+        },
+        {
+          "name": "CuDF",
+          "href": "https://github.com/rapidsai/cudf",
+          "description": "Built based on the Apache Arrow columnar memory format, cuDF is a GPU DataFrame library for loading, joining, aggregating, filtering, and otherwise manipulating data."
+        },
+        {
+          "name": "CuML",
+          "href": "https://github.com/rapidsai/cuml",
+          "description": "cuML is a suite of libraries that implement machine learning algorithms and mathematical primitives functions that share compatible APIs with other RAPIDS projects."
+        },
+        {
+          "name": "CuPy",
+          "href": "https://github.com/cupy/cupy",
+          "description": "An implementation of NumPy-compatible multi-dimensional array on CUDA. CuPy consists of the core multi-dimensional array class, cupy.ndarray, and many functions on it."
+        },
+        {
+          "name": "DEAP",
+          "href": "https://github.com/DEAP/deap",
+          "description": "A novel evolutionary computation framework for rapid prototyping and testing of ideas. It seeks to make algorithms explicit and data structures transparent. It works in perfect harmony with parallelisation mechanisms such as multiprocessing and SCOOP."
+        },
+        {
+          "name": "DeepEP",
+          "href": "https://github.com/deepseek-ai/DeepEP",
+          "description": "DeepEP is a communication library tailored for Mixture-of-Experts (MoE) and expert parallelism (EP). It provides high-throughput and low-latency all-to-all GPU kernels, which are also known as MoE dispatch and combine. The library also supports low-precision operations, including FP8."
+        },
+        {
+          "name": "DGL",
+          "href": "https://github.com/dmlc/dgl",
+          "description": "DGL is an easy-to-use, high performance and scalable Python package for deep learning on graphs."
+        },
+        {
+          "name": "DLRover",
+          "href": "https://github.com/intelligent-machine-learning/dlrover",
+          "description": "DLRover makes the distributed training of large AI models easy, stable, fast and green."
+        },
+        {
+          "name": "Dask",
+          "href": "https://github.com/dask/dask",
+          "description": "Distributed parallel processing framework for Pandas and NumPy computations."
+        },
+        {
+          "name": "DeepSpeed",
+          "href": "https://github.com/deepspeedai/DeepSpeed",
+          "description": "DeepSpeed is a deep learning optimization library that makes distributed training and inference easy, efficient, and effective."
+        },
+        {
+          "name": "FlagGems",
+          "href": "https://github.com/FlagOpen/FlagGems",
+          "description": "FlagGems is a high-performance general operator library implemented in OpenAI Triton. It builds on a collection of backend neutral kernels that aims to accelerate LLM training and inference across diverse hardware platforms."
+        },
+        {
+          "name": "Flashlight",
+          "href": "https://github.com/flashlight/flashlight",
+          "description": "A fast, flexible machine learning library written entirely in C++ from the Facebook AI Research and the creators of Torch, TensorFlow, Eigen and Deep Speech."
+        },
+        {
+          "name": "Flax",
+          "href": "https://github.com/google/flax",
+          "description": "A neural network library and ecosystem for JAX designed for flexibility."
+        },
+        {
+          "name": "GPUStack",
+          "href": "https://github.com/gpustack/gpustack",
+          "description": "GPUStack is an open-source GPU cluster manager for running AI models."
+        },
+        {
+          "name": "Hivemind",
+          "href": "https://github.com/learning-at-home/hivemind",
+          "description": "Decentralized deep learning in PyTorch."
+        },
+        {
+          "name": "Horovod",
+          "href": "https://github.com/horovod/horovod",
+          "description": "Uber's distributed training framework for TensorFlow, Keras, and PyTorch."
+        },
+        {
+          "name": "Jax",
+          "href": "https://github.com/jax-ml/jax",
+          "description": "Composable transformations of Python+NumPy programs: differentiate, vectorize, JIT to GPU/TPU, and more."
+        },
+        {
+          "name": "Kompute",
+          "href": "https://github.com/KomputeProject/kompute",
+          "description": "Blazing fast, lightweight and mobile phone-enabled Vulkan compute framework optimized for advanced GPU data processing usecases."
+        },
+        {
+          "name": "Lava",
+          "href": "https://github.com/lava-nc/lava",
+          "description": "Lava is an open source framework to develop applications for neuromorphic hardware architectures."
+        },
+        {
+          "name": "Liger Kernel",
+          "href": "https://github.com/linkedin/Liger-Kernel",
+          "description": "Liger Kernel is a collection of Triton kernels designed specifically for LLM training."
+        },
+        {
+          "name": "LightGBM",
+          "href": "https://github.com/microsoft/LightGBM",
+          "description": "LightGBM is a gradient boosting framework that uses tree based learning algorithms."
+        },
+        {
+          "name": "MLX",
+          "href": "https://github.com/ml-explore/mlx",
+          "description": "MLX is an array framework for machine learning on Apple silicon."
+        },
+        {
+          "name": "Modin",
+          "href": "https://github.com/modin-project/modin",
+          "description": "Speed up your Pandas workflows by changing a single line of code."
+        },
+        {
+          "name": "NVIDIA TensorRT",
+          "href": "https://github.com/NVIDIA/TensorRT",
+          "description": "TensorRT is a C++ library for high-performance inference on NVIDIA GPUs and deep learning accelerators."
+        },
+        {
+          "name": "Nevergrad",
+          "href": "https://github.com/facebookresearch/nevergrad",
+          "description": "Nevergrad is a gradient-free optimisation platform."
+        },
+        {
+          "name": "Norse",
+          "href": "https://github.com/norse/norse",
+          "description": "Norse aims to exploit the advantages of bio-inspired neural components, which are sparse and event-driven - a fundamental difference from artificial neural networks."
+        },
+        {
+          "name": "Numba",
+          "href": "https://github.com/numba/numba",
+          "description": "A compiler for Python array and numerical functions."
+        },
+        {
+          "name": "Optimum",
+          "href": "https://github.com/huggingface/optimum",
+          "description": "Optimum is an extension of Transformers and Diffusers, providing a set of optimization tools enabling maximum efficiency to train and run models on targeted hardware while keeping things easy to use."
+        },
+        {
+          "name": "PEFT",
+          "href": "https://github.com/huggingface/peft",
+          "description": "Parameter-Efficient Fine-Tuning (PEFT) methods enable efficient adaptation of pre-trained language models (PLMs) to various downstream applications without fine-tuning all the model's parameters."
+        },
+        {
+          "name": "PaddlePaddle",
+          "href": "https://github.com/PaddlePaddle/Paddle",
+          "description": "PaddlePaddle is a framework to perform large-scale deep network training, using data sources distributed across hundreds of nodes."
+        },
+        {
+          "name": "PyG",
+          "href": "https://github.com/pyg-team/pytorch_geometric",
+          "description": "PyG (PyTorch Geometric) is a library built upon PyTorch to easily write and train Graph Neural Networks (GNNs) for a wide range of applications related to structured data."
+        },
+        {
+          "name": "PyTorch Lightning",
+          "href": "https://github.com/Lightning-AI/pytorch-lightning",
+          "description": "PyTorch Lightning pretrains, finetunes and deploys AI models on multiple GPUs, TPUs with zero code changes."
+        },
+        {
+          "name": "PyTorch",
+          "href": "https://github.com/pytorch/pytorch",
+          "description": "PyTorch is a library to develop and train neural network based deep learning models."
+        },
+        {
+          "name": "Ray",
+          "href": "https://github.com/ray-project/ray",
+          "description": "Ray is a flexible, high-performance distributed execution framework for machine learning."
+        },
+        {
+          "name": "SetFit",
+          "href": "https://github.com/huggingface/setfit",
+          "description": "SetFit is an efficient and prompt-free framework for few-shot fine-tuning of Sentence Transformers."
+        },
+        {
+          "name": "Sonnet",
+          "href": "https://github.com/google-deepmind/sonnet",
+          "description": "Sonnet is a library built on top of TensorFlow 2 designed to provide simple, composable abstractions for machine learning research."
+        },
+        {
+          "name": "Streaming",
+          "href": "https://github.com/mosaicml/streaming",
+          "description": "A Data Streaming Library for Efficient Neural Network Training."
+        },
+        {
+          "name": "TensorFlow",
+          "href": "https://github.com/tensorflow/tensorflow",
+          "description": "TensorFlow is a leading library designed for developing and deploying state-of-the-art machine learning applications."
+        },
+        {
+          "name": "ThunderKittens",
+          "href": "https://github.com/HazyResearch/ThunderKittens",
+          "description": "ThunderKittens is a framework to make it easy to write fast deep learning kernels in CUDA."
+        },
+        {
+          "name": "TorchOpt",
+          "href": "https://github.com/metaopt/torchopt",
+          "description": "TorchOpt is an efficient library for differentiable optimization built upon PyTorch."
+        },
+        {
+          "name": "Triton",
+          "href": "https://github.com/triton-lang/triton",
+          "description": "Triton is a language and compiler for writing highly efficient custom Deep-Learning primitives. The aim of Triton is to provide an open-source environment to write fast code at higher productivity than CUDA, but also with higher flexibility than other existing DSLs."
+        },
+        {
+          "name": "Vaex",
+          "href": "https://github.com/vaexio/vaex",
+          "description": "Vaex is a high performance Python library for lazy Out-of-Core DataFrames (similar to Pandas), to visualize and explore big tabular datasets. Vaex uses memory mapping, zero memory copy policy and lazy computations for best performance (no memory wasted)."
+        },
+        {
+          "name": "Vowpal Wabbit",
+          "href": "https://github.com/VowpalWabbit/vowpal_wabbit",
+          "description": "Vowpal Wabbit is a machine learning system which pushes the frontier of machine learning with techniques such as online, hashing, allreduce, reductions, learning2search, active, and interactive learning."
+        },
+        {
+          "name": "XGBoost",
+          "href": "https://github.com/dmlc/xgboost",
+          "description": "XGBoost is an optimized distributed gradient boosting library designed to be highly efficient, flexible and portable."
+        },
+        {
+          "name": "YDF",
+          "href": "https://github.com/google/yggdrasil-decision-forests",
+          "description": "YDF (Yggdrasil Decision Forests) is a library to train, evaluate, interpret, and serve Random Forest, Gradient Boosted Decision Trees, CART and Isolation forest models."
+        },
+        {
+          "name": "bitsandbytes",
+          "href": "https://github.com/bitsandbytes-foundation/bitsandbytes",
+          "description": "Bitsandbytes library is a lightweight Python wrapper around CUDA custom functions, in particular 8-bit optimizers, matrix multiplication (LLM.int8()), and 8 & 4-bit quantization functions."
+        },
+        {
+          "name": "einops",
+          "href": "https://github.com/arogozhnikov/einops",
+          "description": "Flexible and powerful tensor operations for readable and reliable code."
+        },
+        {
+          "name": "scikit-learn",
+          "href": "https://github.com/scikit-learn/scikit-learn",
+          "description": "Scikit-learn is a powerful machine learning library that provides a wide variety of modules for data access, data preparation and statistical model building."
+        },
+        {
+          "name": "snnTorch",
+          "href": "https://github.com/jeshraghian/snntorch",
+          "description": "snnTorch is a deep and online learning library with spiking neural networks."
+        },
+        {
+          "name": "torchdistill",
+          "href": "https://github.com/yoshitomo-matsubara/torchdistill",
+          "description": "torchdistill offers various state-of-the-art knowledge distillation methods and enables you to design (new) experiments simply by editing a declarative yaml config file instead of Python code."
+        },
+        {
+          "name": "torchkeras",
+          "href": "https://github.com/lyhue1991/torchkeras?tab=readme-ov-file",
+          "description": "The torchkeras library is a simple tool for training neural network in pytorch jusk in a keras style."
+        },
+        {
+          "name": "veScale",
+          "href": "https://github.com/volcengine/veScale",
+          "description": "veScale is a PyTorch native LLM training framework."
+        },
+        {
+          "name": "yellowbrick",
+          "href": "https://github.com/DistrictDataLabs/yellowbrick",
+          "description": "yellowbrick is a matplotlib-based model evaluation plots for scikit-learn and other machine learning libraries."
+        }
+      ]
+    },
+    {
+      "name": "Data Annotation & Synthesis",
+      "emoji": "🏷️",
+      "entries": [
+        {
+          "name": "Argilla",
+          "href": "https://github.com/argilla-io/argilla",
+          "description": "Argilla helps domain experts and data teams to build better NLP datasets in less time."
+        },
+        {
+          "name": "cleanlab",
+          "href": "https://github.com/cleanlab/cleanlab",
+          "description": "Python library for data-centric AI. Can automatically: find mislabeled data, detect outliers, estimate consensus + annotator-quality for multi-annotator datasets, suggest which data is best to (re)label next."
+        },
+        {
+          "name": "COCO Annotator",
+          "href": "https://github.com/jsbroks/coco-annotator",
+          "description": "Web-based image segmentation tool for object detection, localization and keypoints"
+        },
+        {
+          "name": "CVAT",
+          "href": "https://github.com/cvat-ai/cvat",
+          "description": "CVAT (Computer Vision Annotation Tool) is OpenCV's web-based annotation tool for both videos and images for computer algorithms."
+        },
+        {
+          "name": "Doccano",
+          "href": "https://github.com/doccano/doccano",
+          "description": "Open source text annotation tools for humans, providing functionality for sentiment analysis, named entity recognition, and machine translation."
+        },
+        {
+          "name": "Gretel Synthetics",
+          "href": "https://github.com/gretelai/gretel-synthetics",
+          "description": "Gretel Synthetics is a synthetic data generators for structured and unstructured text, featuring differentially private learning."
+        },
+        {
+          "name": "Label Studio",
+          "href": "https://github.com/HumanSignal/label-studio",
+          "description": "Multi-domain data labeling and annotation tool with standardized output format."
+        },
+        {
+          "name": "LightlyStudio",
+          "href": "https://github.com/lightly-ai/lightly-studio",
+          "description": "An open source tool to curate, annotate, and manage vision datasets (images and videos). Supports embedding-based auto-selection, annotation, and auto-labeling for bounding boxes and segmentation."
+        },
+        {
+          "name": "NeMo Curator",
+          "href": "https://github.com/NVIDIA/NeMo-Curator",
+          "description": "NeMo Curator is a GPU-accelerated framework for efficient large language model data curation."
+        },
+        {
+          "name": "refinery",
+          "href": "https://github.com/code-kern-ai/refinery",
+          "description": "The data scientist's open-source choice to scale, assess and maintain natural language data."
+        },
+        {
+          "name": "SDV",
+          "href": "https://github.com/sdv-dev/SDV",
+          "description": "Synthetic Data Vault (SDV) is a Synthetic Data Generation ecosystem of libraries that allows users to easily learn single-table, multi-table and timeseries datasets to later on generate new Synthetic Data that has the same format and statistical properties as the original dataset."
+        },
+        {
+          "name": "Semantic Segmentation Editor",
+          "href": "https://github.com/Hitachi-Automotive-And-Industry-Lab/semantic-segmentation-editor",
+          "description": "Hitachi's Open source tool for labelling camera and LIDAR data."
+        },
+        {
+          "name": "synthcity",
+          "href": "https://github.com/vanderschaarlab/synthcity",
+          "description": "synthcity is a library for generating and evaluating synthetic tabular data."
+        },
+        {
+          "name": "TabGAN",
+          "href": "https://github.com/Diyago/Tabular-data-generation",
+          "description": "Synthetic tabular data generation using GANs (CTGAN), Diffusion Models, and LLMs with adversarial filtering, privacy metrics, and sklearn integration."
+        },
+        {
+          "name": "ViPE",
+          "href": "https://github.com/nv-tlabs/vipe",
+          "description": "ViPE is a spatial AI tool for annotating camera poses and dense depth maps from raw videos."
+        },
+        {
+          "name": "YData Synthetic",
+          "href": "https://github.com/ydataai/ydata-synthetic",
+          "description": "YData Synthetic is a package to generate synthetic tabular and time-series data leveraging the state of the art generative models."
+        }
+      ]
+    },
+    {
+      "name": "Data Pipeline",
+      "emoji": "🧵",
+      "entries": [
+        {
+          "name": "Apache Airflow",
+          "href": "https://github.com/apache/airflow",
+          "description": "Data Pipeline framework built in Python, including scheduler, DAG definition and a UI for visualisation."
+        },
+        {
+          "name": "Apache Nifi",
+          "href": "https://github.com/apache/nifi",
+          "description": "Apache NiFi was made for dataflow. It supports highly configurable directed graphs of data routing, transformation, and system mediation logic."
+        },
+        {
+          "name": "Apache Oozie",
+          "href": "https://github.com/apache/oozie",
+          "description": "Workflow scheduler for Hadoop jobs."
+        },
+        {
+          "name": "Argo Workflows",
+          "href": "https://github.com/argoproj/argo-workflows",
+          "description": "Argo Workflows is an open source container-native workflow engine for orchestrating parallel jobs on Kubernetes. Argo Workflows is implemented as a Kubernetes CRD (Custom Resource Definition)."
+        },
+        {
+          "name": "Couler",
+          "href": "https://github.com/couler-proj/couler",
+          "description": "Unified interface for constructing and managing machine learning workflows on different workflow engines, such as Argo Workflows, Tekton Pipelines, and Apache Airflow."
+        },
+        {
+          "name": "DataTrove",
+          "href": "https://github.com/huggingface/datatrove",
+          "description": "DataTrove is a library to process, filter and deduplicate text data at a very large scale."
+        },
+        {
+          "name": "Dagster",
+          "href": "https://github.com/dagster-io/dagster",
+          "description": "A data orchestrator for machine learning, analytics, and ETL."
+        },
+        {
+          "name": "DBT",
+          "href": "https://github.com/dbt-labs/dbt-core",
+          "description": "ETL tool for running transformations inside data warehouses."
+        },
+        {
+          "name": "Flyte",
+          "href": "https://github.com/flyteorg/flyte",
+          "description": "Lyft's Cloud Native Machine Learning and Data Processing Platform - (Demo)."
+        },
+        {
+          "name": "Genie",
+          "href": "https://github.com/Netflix/genie",
+          "description": "Job orchestration engine to interface and trigger the execution of jobs from Hadoop-based systems."
+        },
+        {
+          "name": "Hamilton",
+          "href": "https://github.com/dagworks-inc/hamilton",
+          "description": "Hamilton is a micro-orchestration framework for defining dataflows. Runs anywhere python runs (e.g. jupyter, fastAPI, spark, ray, dask). Brings software engineering best practices without you knowing it. Use it to define feature engineering transforms, end-to-end model pipelines, and LLM workflows. It complements macro-orchestration systems (e.g. kedro, luigi, airflow, dbt, etc.) as it replaces the code within those macro tasks. Comes with a self-hostable UI that captures lineage & provenance, execution telemetry & data summaries, and builds a self-populating catalog; usable in development as well as production."
+        },
+        {
+          "name": "Instill VDP",
+          "href": "https://github.com/instill-ai/instill-core",
+          "description": "Instill VDP (Versatile Data Pipeline) aims to streamline the data processing pipelines from inception to completion."
+        },
+        {
+          "name": "Instructor",
+          "href": "https://github.com/instructor-ai/instructor",
+          "description": "Instructor makes it easy to get structured data like JSON from LLMs like GPT-3.5, GPT-4, GPT-4-Vision, and open-source models."
+        },
+        {
+          "name": "Kedro",
+          "href": "https://github.com/kedro-org/kedro",
+          "description": "Kedro is a workflow development tool that helps you build data pipelines that are robust, scalable, deployable, reproducible and versioned."
+        },
+        {
+          "name": "Luigi",
+          "href": "https://github.com/spotify/luigi",
+          "description": "Luigi is a Python module that helps you build complex pipelines of batch jobs, handling dependency resolution, workflow management, visualisation, etc.."
+        },
+        {
+          "name": "Metaflow",
+          "href": "https://github.com/Netflix/metaflow",
+          "description": "A framework for data scientists to easily build and manage real-life data science projects."
+        },
+        {
+          "name": "Pachyderm",
+          "href": "https://github.com/pachyderm/pachyderm",
+          "description": "Open source distributed processing framework build on Kubernetes focused mainly on dynamic building of production machine learning pipelines - (Video)."
+        },
+        {
+          "name": "Ploomber",
+          "href": "https://github.com/ploomber/ploomber",
+          "description": "The fastest way to build data pipelines. Develop iteratively, deploy anywhere."
+        },
+        {
+          "name": "Pixeltable",
+          "href": "https://github.com/pixeltable/pixeltable",
+          "description": "Open-source Python library providing declarative, incremental data infrastructure for building and managing multimodal AI workloads."
+        },
+        {
+          "name": "Prefect Core",
+          "href": "https://github.com/PrefectHQ/prefect",
+          "description": "Workflow management system that makes it easy to take your data pipelines and add semantics like retries, logging, dynamic mapping, caching, failure notifications, and more."
+        },
+        {
+          "name": "SeqIO",
+          "href": "https://github.com/google/seqio",
+          "description": "SeqIO is a library for processing sequential data to be fed into downstream sequence models."
+        },
+        {
+          "name": "Snakemake",
+          "href": "https://github.com/snakemake/snakemake",
+          "description": "Workflow management system for reproducible and scalable data analyses."
+        },
+        {
+          "name": "Towhee",
+          "href": "https://github.com/towhee-io/towhee",
+          "description": "General-purpose machine learning pipeline for generating embedding vectors using one or many ML models."
+        },
+        {
+          "name": "unstructured",
+          "href": "https://github.com/Unstructured-IO/unstructured",
+          "description": "unstructured streamlines and optimizes the data processing workflow for LLMs, ingesting and pre-processing images and text documents, such as PDFs, HTML, Word docs, and many more."
+        },
+        {
+          "name": "ZenML",
+          "href": "https://github.com/zenml-io/zenml",
+          "description": "ZenML is an extensible, open-source MLOps framework to create reproducible ML pipelines with a focus on automated metadata tracking, caching, and many integrations to other tools."
+        }
+      ]
+    },
+    {
+      "name": "Data Science Notebook",
+      "emoji": "📓",
+      "entries": [
+        {
+          "name": "Apache Zeppelin",
+          "href": "https://github.com/apache/zeppelin",
+          "description": "Web-based notebook that enables data-driven, interactive data analytics and collaborative documents with SQL, Scala and more."
+        },
+        {
+          "name": "Deepnote",
+          "href": "https://github.com/deepnote/deepnote",
+          "description": "Deepnote is a drop-in replacement for Jupyter with an AI-first design, sleek UI, new blocks, and native data integrations. Use Python, R, and SQL locally in your favorite IDE, then scale to Deepnote cloud for real-time collaboration, Deepnote agent, and deployable data apps."
+        },
+        {
+          "name": "Jupyter Notebooks",
+          "href": "https://github.com/jupyter/notebook",
+          "description": "Web interface python sandbox environments for reproducible development"
+        },
+        {
+          "name": "Marimo",
+          "href": "https://github.com/marimo-team/marimo",
+          "description": "Reactive Python notebook — run reproducible experiments, execute as a script, deploy as an app, and version with git."
+        },
+        {
+          "name": "Papermill",
+          "href": "https://github.com/nteract/papermill",
+          "description": "Papermill is a library for parameterizing notebooks and executing them like Python scripts."
+        },
+        {
+          "name": "Polynote",
+          "href": "https://github.com/polynote/polynote",
+          "description": "Polynote is an experimental polyglot notebook environment. Currently, it supports Scala and Python (with or without Spark), SQL, and Vega."
+        },
+        {
+          "name": "RMarkdown",
+          "href": "https://github.com/rstudio/rmarkdown",
+          "description": "The rmarkdown package is a next generation implementation of R Markdown based on Pandoc."
+        },
+        {
+          "name": "Stencila",
+          "href": "https://github.com/stencila/stencila",
+          "description": "Stencila is a platform for creating, collaborating on, and sharing data driven content. Content that is transparent and reproducible."
+        },
+        {
+          "name": "Voilà",
+          "href": "https://github.com/voila-dashboards/voila",
+          "description": "Voilà turns Jupyter notebooks into standalone web applications that can e.g. be used as dashboards."
+        },
+        {
+          "name": ".NET Interactive",
+          "href": "https://github.com/dotnet/interactive",
+          "description": ".NET Interactive takes the power of .NET and embeds it into your interactive experiences."
+        }
+      ]
+    },
+    {
+      "name": "Data Storage Optimisation",
+      "emoji": "💾",
+      "entries": [
+        {
+          "name": "AIStore",
+          "href": "https://github.com/NVIDIA/aistore",
+          "description": "AIStore is a lightweight object storage system with the capability to linearly scale out with each added storage node and a special focus on petascale deep learning."
+        },
+        {
+          "name": "Alluxio",
+          "href": "https://github.com/Alluxio/alluxio",
+          "description": "A virtual distributed storage system that bridges the gab between computation frameworks and storage systems."
+        },
+        {
+          "name": "Apache Arrow",
+          "href": "https://github.com/apache/arrow",
+          "description": "In-memory columnar representation of data compatible with Pandas, Hadoop-based systems, etc.."
+        },
+        {
+          "name": "Apache Druid",
+          "href": "https://github.com/apache/druid",
+          "description": "A high performance real-time analytics database. Check this article for introduction."
+        },
+        {
+          "name": "Apache Hudi",
+          "href": "https://github.com/apache/hudi",
+          "description": "Hudi is a transactional data lake platform that brings core warehouse and database functionality directly to a data lake. Hudi is great for streaming workloads, and also allows creation of efficient incremental batch pipelines. Supports popular query engines including Spark, Flink, Presto, Trino, Hive, etc. More info here."
+        },
+        {
+          "name": "Apache Iceberg",
+          "href": "https://github.com/apache/iceberg",
+          "description": "Iceberg is an ACID-compliant, high-performance format built for huge analytic tables (containing tens of petabytes of data), and it brings the reliability and simplicity of SQL tables to big data, while making it possible for engines like Spark, Trino, Flink, Presto, Hive and Impala to safely work with the same tables, at the same time. More info here."
+        },
+        {
+          "name": "Apache Ignite",
+          "href": "https://github.com/apache/ignite",
+          "description": "A memory-centric distributed database, caching, and processing platform for transactional, analytical, and streaming workloads delivering in-memory speeds at petabyte scale - Demo."
+        },
+        {
+          "name": "Apache Parquet",
+          "href": "https://github.com/apache/parquet-java",
+          "description": "On-disk columnar representation of data compatible with Pandas, Hadoop-based systems, etc.."
+        },
+        {
+          "name": "Apache Pinot",
+          "href": "https://github.com/apache/pinot",
+          "description": "A realtime distributed OLAP datastore. Comparison of the open source OLAP systems for big data: ClickHouse, Druid, and Pinot is found here."
+        },
+        {
+          "name": "Casibase",
+          "href": "https://github.com/casibase/casibase",
+          "description": "Casibase is a LangChain-like RAG (Retrieval-Augmented Generation) knowledge database with web UI and Enterprise SSO."
+        },
+        {
+          "name": "Chroma",
+          "href": "https://github.com/chroma-core/chroma",
+          "description": "Chroma is an open-source embedding database."
+        },
+        {
+          "name": "ClickHouse",
+          "href": "https://github.com/ClickHouse/ClickHouse",
+          "description": "ClickHouse is an open source column oriented database management system."
+        },
+        {
+          "name": "Delta Lake",
+          "href": "https://github.com/delta-io/delta",
+          "description": "Delta Lake is a storage layer that brings scalable, ACID transactions to Apache Spark and other big-data engines."
+        },
+        {
+          "name": "EdgeDB",
+          "href": "https://github.com/geldata/gel",
+          "description": "Gel supercharges Postgres with a modern data model, graph queries, Auth & AI solutions, and much more."
+        },
+        {
+          "name": "GPTCache",
+          "href": "https://github.com/zilliztech/GPTCache",
+          "description": "GPTCache is a library for creating semantic cache for large language model queries."
+        },
+        {
+          "name": "InfluxDB",
+          "href": "https://github.com/influxdata/influxdb",
+          "description": "Scalable datastore for metrics, events, and real-time analytics."
+        },
+        {
+          "name": "Milvus",
+          "href": "https://github.com/milvus-io/milvus",
+          "description": "Milvus is a cloud-native, open-source vector database built to manage embedding vectors generated by machine learning models and neural networks."
+        },
+        {
+          "name": "Marqo",
+          "href": "https://github.com/marqo-ai/marqo",
+          "description": "Marqo is an end-to-end vector search engine."
+        },
+        {
+          "name": "pgvector",
+          "href": "https://github.com/pgvector/pgvector",
+          "description": "pgvector helps with vector similarity search for Postgres."
+        },
+        {
+          "name": "PostgresML",
+          "href": "https://github.com/postgresml/postgresml",
+          "description": "PostgresML is a machine learning extension for PostgreSQL that enables you to perform training and inference on text and tabular data using SQL queries."
+        },
+        {
+          "name": "Redis",
+          "href": "https://github.com/redis/redis",
+          "description": "Redis is an open-source, in-memory data store that supports vector similarity search, making it suitable for AI/ML applications such as semantic search and recommendation systems."
+        },
+        {
+          "name": "Safetensors",
+          "href": "https://github.com/huggingface/safetensors",
+          "description": "Simple, safe way to store and distribute tensors."
+        },
+        {
+          "name": "TimescaleDB",
+          "href": "https://github.com/timescale/timescaledb",
+          "description": "An open-source time-series SQL database optimized for fast ingest and complex queries packaged as a PostgreSQL extension - (Video)."
+        },
+        {
+          "name": "Weaviate",
+          "href": "https://github.com/weaviate/weaviate",
+          "description": "A low-latency vector search engine (GraphQL, RESTful) with out-of-the-box support for different media types. Modules include Semantic Search, Q&A, Classification, Customizable Models (PyTorch/TensorFlow/Keras), and more."
+        },
+        {
+          "name": "Zarr",
+          "href": "https://github.com/zarr-developers/zarr-python",
+          "description": "Python implementation of chunked, compressed, N-dimensional arrays designed for use in parallel computing."
+        }
+      ]
+    },
+    {
+      "name": "Data Stream Processing",
+      "emoji": "💸",
+      "entries": [
+        {
+          "name": "Apache Beam",
+          "href": "https://github.com/apache/beam",
+          "description": "Apache Beam is a unified programming model for Batch and Streaming."
+        },
+        {
+          "name": "Apache Flink",
+          "href": "https://github.com/apache/flink",
+          "description": "Open source stream processing framework with powerful stream and batch processing capabilities."
+        },
+        {
+          "name": "Apache Kafka",
+          "href": "https://github.com/apache/kafka",
+          "description": "Kafka client library for building applications and microservices where the input and output are stored in kafka clusters."
+        },
+        {
+          "name": "Apache Samza",
+          "href": "https://github.com/apache/samza",
+          "description": "Distributed stream processing framework. It uses Apache Kafka for messaging, and Apache Hadoop YARN to provide fault tolerance, processor isolation, security, and resource management."
+        },
+        {
+          "name": "Apache Spark",
+          "href": "https://github.com/apache/spark",
+          "description": "Micro-batch processing for streams using the apache spark framework as a backend supporting stateful exactly-once semantics."
+        },
+        {
+          "name": "Bytewax",
+          "href": "https://github.com/bytewax/bytewax",
+          "description": "Flexible Python-centric stateful stream processing framework built on top of Rust engine."
+        },
+        {
+          "name": "FastStream",
+          "href": "https://github.com/airtai/faststream",
+          "description": "A modern broker-agnostic streaming Python framework supporting Apache Kafka, RabbitMQ and NATS protocols, inspired by FastAPI and easily integratable with other web frameworks."
+        },
+        {
+          "name": "MOA",
+          "href": "https://github.com/Waikato/moa",
+          "description": "MOA (Massive Online Analysis) is an open source framework for Big Data stream mining."
+        },
+        {
+          "name": "MosaicML Streaming",
+          "href": "https://github.com/mosaicml/streaming",
+          "description": "Fast, deterministic streaming of large datasets from cloud storage for distributed model training."
+        },
+        {
+          "name": "RisingWave",
+          "href": "https://github.com/risingwavelabs/risingwave",
+          "description": "A distributed SQL streaming database that unifies stream processing and low-latency serving, ideal for building and serving features for online machine learning."
+        },
+        {
+          "name": "TensorStore",
+          "href": "https://github.com/google/tensorstore",
+          "description": "Library for reading and writing large multi-dimensional arrays."
+        }
+      ]
+    },
+    {
+      "name": "Deployment & Serving",
+      "emoji": "💪",
+      "entries": [
+        {
+          "name": "Agenta",
+          "href": "https://github.com/Agenta-AI/agenta",
+          "description": "Agenta provides end-to-end tools for the entire LLMOps workflow: building (LLM playground, evaluation), deploying (prompt and configuration management), and (LLM observability and tracing)."
+        },
+        {
+          "name": "AirLLM",
+          "href": "https://github.com/lyogavin/airllm",
+          "description": "AirLLM optimizes inference memory usage, allowing 70B large language models to run inference on a single 4GB GPU card without quantization, distillation and pruning."
+        },
+        {
+          "name": "AITemplate",
+          "href": "https://github.com/facebookincubator/AITemplate",
+          "description": "AITemplate (AIT) is a Python framework that transforms deep neural networks into CUDA (NVIDIA GPU) / HIP (AMD GPU) C++ code for lightning-fast inference serving."
+        },
+        {
+          "name": "BentoML",
+          "href": "https://github.com/bentoml/BentoML",
+          "description": "BentoML is an open source framework for high performance ML model serving."
+        },
+        {
+          "name": "BISHENG",
+          "href": "https://github.com/dataelement/bisheng",
+          "description": "BISHENG is an open LLM application devops platform, focusing on enterprise scenarios."
+        },
+        {
+          "name": "DeepDetect",
+          "href": "https://github.com/jolibrain/deepdetect",
+          "description": "Machine Learning production server for TensorFlow, XGBoost and Cafe models written in C++ and maintained by Jolibrain."
+        },
+        {
+          "name": "Dynamo",
+          "href": "https://github.com/ai-dynamo/dynamo",
+          "description": "NVIDIA Dynamo is a high-throughput, low-latency inference framework designed for serving generative AI and reasoning models in multi-node distributed environments."
+        },
+        {
+          "name": "exo",
+          "href": "https://github.com/exo-explore/exo",
+          "description": "exo helps you run your AI cluster at home with everyday devices."
+        },
+        {
+          "name": "Genkit",
+          "href": "https://github.com/firebase/genkit",
+          "description": "Genkit is an open source framework for building AI-powered apps with familiar code-centric patterns. Genkit makes it easy to develop, integrate, and test AI features with observability and evaluations."
+        },
+        {
+          "name": "GoModel",
+          "href": "https://github.com/ENTERPILOT/GoModel",
+          "description": "GoModel is a self-hosted AI gateway written in Go that exposes a unified OpenAI-compatible API across OpenAI, Anthropic, Gemini, Groq, xAI, Ollama and other providers, with routing, usage tracking, rate limits, and guardrails."
+        },
+        {
+          "name": "Inference",
+          "href": "https://github.com/roboflow/inference",
+          "description": "A fast, production-ready inference server for computer vision supporting deployment of many popular model architectures and fine-tuned models. With Inference, you can deploy models such as YOLOv5, YOLOv8, CLIP, SAM, and CogVLM on your own hardware using Docker."
+        },
+        {
+          "name": "Infinity",
+          "href": "https://github.com/michaelfeil/infinity",
+          "description": "Infinity is a high-throughput, low-latency REST API for serving text-embeddings, reranking models and clip."
+        },
+        {
+          "name": "IPEX-LLM",
+          "href": "https://github.com/intel/ipex-llm",
+          "description": "IPEX-LLM is a PyTorch library for running LLM on Intel CPU and GPU (e.g., local PC with iGPU, discrete GPU such as Arc, Flex and Max) with very low latency."
+        },
+        {
+          "name": "LiteLLM",
+          "href": "https://github.com/BerriAI/litellm",
+          "description": "LiteLLM is a Python SDK, Proxy Server (LLM Gateway) to call 100+ LLM APIs in OpenAI format - Bedrock, Azure, OpenAI, VertexAI, Cohere, Anthropic, Sagemaker, HuggingFace, Replicate, Groq."
+        },
+        {
+          "name": "LiteRT",
+          "href": "https://github.com/google-ai-edge/litert",
+          "description": "LiteRT (formerly TensorFlow Lite) is Google's high-performance runtime for on-device AI inference, enabling deployment of machine learning models on mobile, embedded, and edge devices."
+        },
+        {
+          "name": "LiteRT-LM",
+          "href": "https://github.com/google-ai-edge/LiteRT-LM",
+          "description": "LiteRT-LM is Google's production-ready, high-performance inference framework for deploying Large Language Models on edge devices, with cross-platform support for Android, iOS, Web, Desktop, and IoT."
+        },
+        {
+          "name": "LitServe",
+          "href": "https://github.com/Lightning-AI/LitServe",
+          "description": "LitServe is a flexible serving engine for AI models built on FastAPI. It supports custom inference engines for models, agents, multi-modal systems, RAG, and complex ML pipelines."
+        },
+        {
+          "name": "Jina-serve",
+          "href": "https://github.com/jina-ai/serve",
+          "description": "Jina-serve is a framework for building and deploying AI services that communicate via gRPC, HTTP and WebSockets."
+        },
+        {
+          "name": "Kiln",
+          "href": "https://github.com/kiln-ai/kiln",
+          "description": "Kiln is an OSS tool for fine-tuning LLM models, synthetic data generation, and collaborating on datasets."
+        },
+        {
+          "name": "KServe",
+          "href": "https://github.com/kserve/kserve",
+          "description": "KServe provides a Kubernetes Custom Resource Definition for serving predictive and generative ML."
+        },
+        {
+          "name": "KTransformers",
+          "href": "https://github.com/kvcache-ai/ktransformers",
+          "description": "KTransformers is a flexible framework for experiencing cutting-edge LLM inference optimizations."
+        },
+        {
+          "name": "Langtrace",
+          "href": "https://github.com/Scale3-Labs/langtrace",
+          "description": "Langtrace is an open-source, Open Telemetry based end-to-end observability tool for LLM applications, providing real-time tracing, evaluations and metrics for popular LLMs, LLM frameworks, vectorDBs and more."
+        },
+        {
+          "name": "Lepton AI",
+          "href": "https://github.com/leptonai/leptonai",
+          "description": "LeptonAI Python library allows you to build an AI service from Python code with ease."
+        },
+        {
+          "name": "LightLLM",
+          "href": "https://github.com/ModelTC/lightllm",
+          "description": "LightLLM is a Python-based LLM (Large Language Model) inference and serving framework, notable for its lightweight design, easy scalability, and high-speed performance."
+        },
+        {
+          "name": "llama.cpp",
+          "href": "https://github.com/ggml-org/llama.cpp",
+          "description": "llama.cpp is an open source software library that performs inference on various large language models such as Llama."
+        },
+        {
+          "name": "llmfit",
+          "href": "https://github.com/AlexsJones/llmfit",
+          "description": "A terminal tool that right-sizes LLM models to your system's RAM, CPU, and GPU. Detects your hardware, scores each model across quality, speed, fit, and context dimensions, and tells you which ones will actually run well on your machine."
+        },
+        {
+          "name": "LMCache",
+          "href": "https://github.com/lmcache/lmcache",
+          "description": "LMCache is a high-performance KV cache layer that accelerates LLM inference."
+        },
+        {
+          "name": "LMDeploy",
+          "href": "https://github.com/internlm/lmdeploy",
+          "description": "LMDeploy is a toolkit for compressing, deploying, and serving LLM."
+        },
+        {
+          "name": "LM Studio",
+          "href": "https://github.com/lmstudio-ai/lms",
+          "description": "LM Studio is a tool for deploying LLM models locally on the computer, even on a relatively modest machine, provided it meets the minimum requirements."
+        },
+        {
+          "name": "LocalAI",
+          "href": "https://github.com/mudler/LocalAI",
+          "description": "LocalAI is a drop-in replacement REST API that's compatible with OpenAI API specifications for local inferencing."
+        },
+        {
+          "name": "MindsDB",
+          "href": "https://github.com/mindsdb/mindsdb",
+          "description": "MindsDB is the platform to create, serve, and fine-tune models in real-time from your database, vector store, and application data."
+        },
+        {
+          "name": "mini-sglang",
+          "href": "https://github.com/sgl-project/mini-sglang",
+          "description": "mini-sglang is a lightweight and efficient serving framework for large language models."
+        },
+        {
+          "name": "MLRun",
+          "href": "https://github.com/mlrun/mlrun",
+          "description": "MLRun is an open MLOps framework for quickly building and managing continuous ML and generative AI applications across their lifecycle."
+        },
+        {
+          "name": "MLServer",
+          "href": "https://github.com/SeldonIO/mlserver",
+          "description": "An inference server for your machine learning models, including support for multiple frameworks, multi-model serving and more."
+        },
+        {
+          "name": "Model Runner",
+          "href": "https://github.com/docker/model-runner",
+          "description": "Docker Model Runner makes it easy to manage, run, and serve AI models using Docker, supporting LLMs and other AI models pulled directly from Docker Hub or any OCI-compliant registry."
+        },
+        {
+          "name": "Mosec",
+          "href": "https://github.com/mosecorg/mosec",
+          "description": "A rust-powered and multi-stage pipelined model server which offers dynamic batching and more. Super easy to implement and deploy as micro-services."
+        },
+        {
+          "name": "nano-vllm",
+          "href": "https://github.com/GeeeekExplorer/nano-vllm",
+          "description": "nano-vllm is a lightweight vLLM implementation built from scratch, providing fast offline inference with optimization techniques such as prefix caching, tensor parallelism, and CUDA graph."
+        },
+        {
+          "name": "nndeploy",
+          "href": "https://github.com/nndeploy/nndeploy",
+          "description": "An Easy-to-Use and High-Performance AI deployment framework."
+        },
+        {
+          "name": "Nuclio",
+          "href": "https://github.com/nuclio/nuclio",
+          "description": "A high-performance \"serverless\" framework focused on data, I/O, and compute-intensive workloads. It is well integrated with popular data science tools, such as Jupyter and Kubeflow; supports a variety of data and streaming sources; and supports execution over CPUs and GPUs."
+        },
+        {
+          "name": "OpenLLM",
+          "href": "https://github.com/bentoml/OpenLLM",
+          "description": "OpenLLM allows developers to run any open-source LLMs (Llama 3.1, Qwen2, Phi3 and more) or custom models as OpenAI-compatible APIs with a single command."
+        },
+        {
+          "name": "OpenVINO",
+          "href": "https://github.com/openvinotoolkit/openvino",
+          "description": "OpenVINO is an open-source toolkit for optimizing and deploying AI inference."
+        },
+        {
+          "name": "Open WebUI",
+          "href": "https://github.com/open-webui/open-webui",
+          "description": "Open WebUI is an extensible, feature-rich, and user-friendly self-hosted AI platform designed to operate entirely offline. It supports various LLM runners like Ollama and OpenAI-compatible APIs, with built-in inference engine for RAG, making it a powerful AI deployment solution."
+        },
+        {
+          "name": "OptiLLM",
+          "href": "https://github.com/algorithmicsuperintelligence/optillm",
+          "description": "OptiLLM is an OpenAI API-compatible optimizing inference proxy that implements 20+ state-of-the-art techniques to dramatically improve LLM accuracy and performance on reasoning tasks - without requiring any model training or fine-tuning."
+        },
+        {
+          "name": "PowerInfer",
+          "href": "https://github.com/SJTU-IPADS/PowerInfer",
+          "description": "PowerInfer is a CPU/GPU LLM inference engine leveraging activation locality for your device."
+        },
+        {
+          "name": "Prompt2Model",
+          "href": "https://github.com/neulab/prompt2model",
+          "description": "Prompt2Model is a system that takes a natural language task description (like the prompts used for LLMs such as ChatGPT) to train a small special-purpose model that is conducive for deployment."
+        },
+        {
+          "name": "RamaLama",
+          "href": "https://github.com/containers/ramalama",
+          "description": "RamaLama is an open-source tool that simplifies the local use and serving of AI models for inference through OCI containers, eliminating the need to configure the host system."
+        },
+        {
+          "name": "RunAnywhere",
+          "href": "https://github.com/RunanywhereAI/runanywhere-sdks",
+          "description": "RunAnywhere is a production-ready SDK for running AI models (LLMs, speech-to-text, text-to-speech) on-device for iOS, Android, React Native, and Flutter - enabling private, offline, and fast mobile AI applications."
+        },
+        {
+          "name": "Seldon Core",
+          "href": "https://github.com/SeldonIO/seldon-core",
+          "description": "Open source platform for deploying and machine learning models in Kubernetes - (Video)."
+        },
+        {
+          "name": "SGLang",
+          "href": "https://github.com/sgl-project/sglang",
+          "description": "SGLang is a fast serving framework for large language models and vision language models."
+        },
+        {
+          "name": "SIE",
+          "href": "https://github.com/superlinked/sie",
+          "description": "Open-source inference server and production cluster for embeddings, reranking, and extraction. 85+ pre-configured models across dense, sparse, multi-vector, vision, rerankers, and extractors. Ships with Helm, KEDA autoscaling, Grafana dashboards, and Terraform."
+        },
+        {
+          "name": "SkyPilot",
+          "href": "https://github.com/skypilot-org/skypilot",
+          "description": "SkyPilot is a framework for running LLMs, AI, and batch jobs on any cloud, offering maximum cost savings, highest GPU availability, and managed execution."
+        },
+        {
+          "name": "Tensorflow Serving",
+          "href": "https://github.com/tensorflow/serving",
+          "description": "High-performant framework to serve Tensorflow models via grpc protocol able to handle 100k requests per second per core."
+        },
+        {
+          "name": "text-generation-inference",
+          "href": "https://github.com/huggingface/text-generation-inference",
+          "description": "Large Language Model Text Generation Inference."
+        },
+        {
+          "name": "TorchServe",
+          "href": "https://github.com/pytorch/serve",
+          "description": "TorchServe is a flexible and easy to use tool for serving PyTorch models."
+        },
+        {
+          "name": "torchtune",
+          "href": "https://github.com/meta-pytorch/torchtune",
+          "description": "torchtune is a PyTorch library for easily authoring, post-training, and experimenting with LLMs."
+        },
+        {
+          "name": "Transformer Lab",
+          "href": "https://github.com/transformerlab/transformerlab-app",
+          "description": "Transformer Lab is an open-source LLM workspace for finetuning, evaluating, exporting, and testing models locally across inference engines and platforms."
+        },
+        {
+          "name": "Triton Inference Server",
+          "href": "https://github.com/triton-inference-server/server",
+          "description": "Triton is a high performance open source serving software to deploy AI models from any framework on GPU & CPU while maximizing utilization."
+        },
+        {
+          "name": "Vercel AI",
+          "href": "https://github.com/vercel/ai",
+          "description": "Vercel AI is a TypeScript toolkit designed to help you build AI-powered applications using popular frameworks like Next.js, React, Svelte, Vue and runtimes like Node.js."
+        },
+        {
+          "name": "Vespa",
+          "href": "https://github.com/vespa-engine/vespa",
+          "description": "Search, make inferences in and organize vectors, tensors, text and structured data, at serving time and any scale."
+        },
+        {
+          "name": "vLLM",
+          "href": "https://github.com/vllm-project/vllm",
+          "description": "vLLM is a high-throughput and memory-efficient inference and serving engine for LLMs."
+        }
+      ]
+    },
+    {
+      "name": "Evaluation & Monitoring",
+      "emoji": "📈",
+      "entries": [
+        {
+          "name": "AlpacaEval",
+          "href": "https://github.com/tatsu-lab/alpaca_eval",
+          "description": "AlpacaEval is an automatic evaluator for instruction-following language models."
+        },
+        {
+          "name": "ANN-Benchmarks",
+          "href": "https://github.com/erikbern/ann-benchmarks",
+          "description": "ANN-Benchmarks is a benchmarking environment for approximate nearest neighbor algorithms search."
+        },
+        {
+          "name": "ARES",
+          "href": "https://github.com/stanford-futuredata/ARES",
+          "description": "ARES is a framework for automatically evaluating Retrieval-Augmented Generation (RAG) models."
+        },
+        {
+          "name": "BEIR",
+          "href": "https://github.com/beir-cellar/beir",
+          "description": "BEIR is a heterogeneous benchmark containing diverse IR tasks. It also provides a common and easy framework for evaluation of your NLP-based retrieval models within the benchmark."
+        },
+        {
+          "name": "Code Generation LM Evaluation Harness",
+          "href": "https://github.com/bigcode-project/bigcode-evaluation-harness",
+          "description": "Code Generation LM Evaluation Harness is a framework for the evaluation of code generation models."
+        },
+        {
+          "name": "COMET",
+          "href": "https://github.com/Unbabel/COMET",
+          "description": "COMET is an open-source framework for machine learning evaluation."
+        },
+        {
+          "name": "C-Eval",
+          "href": "https://github.com/hkust-nlp/ceval",
+          "description": "C-Eval is a comprehensive Chinese evaluation suite for foundation models."
+        },
+        {
+          "name": "Deepchecks",
+          "href": "https://github.com/deepchecks/deepchecks",
+          "description": "Deepchecks is a holistic open-source solution for all of your AI & ML validation needs, enabling you to test your data and models from research to production thoroughly."
+        },
+        {
+          "name": "DeepEval",
+          "href": "https://github.com/confident-ai/deepeval",
+          "description": "DeepEval is a simple-to-use, open-source evaluation framework for LLM applications."
+        },
+        {
+          "name": "DomainBed",
+          "href": "https://github.com/facebookresearch/DomainBed",
+          "description": "DomainBed is a test suite containing benchmark datasets and algorithms for domain generalization"
+        },
+        {
+          "name": "EvalAI",
+          "href": "https://github.com/Cloud-CV/EvalAI",
+          "description": "EvalAI is an open-source platform for evaluating and comparing AI algorithms at scale."
+        },
+        {
+          "name": "Evalchemy",
+          "href": "https://github.com/mlfoundations/evalchemy",
+          "description": "Evalchemy is a unified and easy-to-use toolkit for evaluating post-trained language models."
+        },
+        {
+          "name": "EvalPlus",
+          "href": "https://github.com/evalplus/evalplus",
+          "description": "EvalPlus is a robust evaluation framework for LLM4Code, featuring expanded HumanEval+ and MBPP+ benchmarks, efficiency assessment (EvalPerf), and a secure, extensible evaluation toolkit."
+        },
+        {
+          "name": "Evals",
+          "href": "https://github.com/openai/evals",
+          "description": "Evals is a framework for evaluating OpenAI models and an open-source registry of benchmarks."
+        },
+        {
+          "name": "EvalScope",
+          "href": "https://github.com/modelscope/evalscope",
+          "description": "EvalScope is a streamlined and customizable framework for efficient large model evaluation and performance benchmarking."
+        },
+        {
+          "name": "Evaluate",
+          "href": "https://github.com/huggingface/evaluate",
+          "description": "Evaluate is a library that makes evaluating and comparing models and reporting their performance easier and more standardized."
+        },
+        {
+          "name": "Evidently",
+          "href": "https://github.com/evidentlyai/evidently",
+          "description": "Evidently is an open-source framework to evaluate, test and monitor ML and LLM-powered systems."
+        },
+        {
+          "name": "Future AGI",
+          "href": "https://github.com/future-agi/future-agi",
+          "description": "Open-source self-hostable end-to-end agent engineering and optimization platform unifying tracing, evals, simulations, datasets, gateway, and guardrails for LLM and AI agent applications."
+        },
+        {
+          "name": "GAOKAO-Bench",
+          "href": "https://github.com/OpenLMLab/GAOKAO-Bench",
+          "description": "GAOKAO-Bench is an evaluation framework that uses Chinese National College Entrance Examination (GAOKAO) questions as a dataset to assess large models' language comprehension and logical reasoning abilities."
+        },
+        {
+          "name": "Giskard",
+          "href": "https://github.com/Giskard-AI/giskard",
+          "description": "Giskard is an open-source Python library that automatically detects performance, bias & security issues in AI applications."
+        },
+        {
+          "name": "guidellm",
+          "href": "https://github.com/vllm-project/guidellm",
+          "description": "guidellm is a benchmarking and performance evaluation tool for large language model inference systems."
+        },
+        {
+          "name": "Harbor",
+          "href": "https://github.com/harbor-framework/harbor",
+          "description": "Harbor is a framework for evaluating and optimizing agents and language models, supporting parallel experiments across container environments with built-in benchmark and environment management."
+        },
+        {
+          "name": "HumanEval",
+          "href": "https://github.com/openai/human-eval",
+          "description": "HumanEval is a benchmark for evaluating the functional correctness of code generation models using Python programming problems with unit tests."
+        },
+        {
+          "name": "Helicone",
+          "href": "https://github.com/Helicone/helicone",
+          "description": "Helicone is the all-in-one, open-source LLM developer platform."
+        },
+        {
+          "name": "HELM",
+          "href": "https://github.com/stanford-crfm/helm",
+          "description": "HELM (Holistic Evaluation of Language Models) provides tools for the holistic evaluation of language models, including standardized datasets, a unified API for various models, diverse metrics, r, and fairness perturbations, a prompt construction framework, and a proxy server for unified model access."
+        },
+        {
+          "name": "Inspect",
+          "href": "https://github.com/UKGovernmentBEIS/inspect_ai",
+          "description": "Inspect is a framework for large language model evaluations."
+        },
+        {
+          "name": "IsaacLab-Arena",
+          "href": "https://github.com/isaac-sim/IsaacLab-Arena",
+          "description": "IsaacLab-Arena is an open-source extension to NVIDIA Isaac Lab for composable environment creation and robotic policy evaluation at scale."
+        },
+        {
+          "name": "JiWER",
+          "href": "https://github.com/jitsi/jiwer",
+          "description": "JiWER is a simple and fast python package to evaluate an automatic speech recognition system."
+        },
+        {
+          "name": "Laminar",
+          "href": "https://github.com/lmnr-ai/lmnr",
+          "description": "Laminar is an open-source platform to trace, evaluate, label, and analyze LLM data for AI products."
+        },
+        {
+          "name": "Langfuse",
+          "href": "https://github.com/langfuse/langfuse",
+          "description": "Langfuse is an observability & analytics solution for LLM-based applications."
+        },
+        {
+          "name": "LangTest",
+          "href": "https://github.com/JohnSnowLabs/langtest",
+          "description": "LangTest is a comprehensive evaluation toolkit for NLP models."
+        },
+        {
+          "name": "Language Model Evaluation Harness",
+          "href": "https://github.com/EleutherAI/lm-evaluation-harness",
+          "description": "Language Model Evaluation Harness is a framework to test generative language models on a large number of different evaluation tasks."
+        },
+        {
+          "name": "LangWatch",
+          "href": "https://github.com/langwatch/langwatch",
+          "description": "LangWatch is a visual interface for DSPy and a complete LLM Ops platform for monitoring, experimenting, measuring and improving LLM pipelines, with a fair-code distribution model."
+        },
+        {
+          "name": "Latitude",
+          "href": "https://github.com/latitude-dev/latitude-llm",
+          "description": "Latitude is an open-source platform for AI agent observability with semantic trace search and issue tracking."
+        },
+        {
+          "name": "LightEval",
+          "href": "https://github.com/huggingface/lighteval",
+          "description": "LightEval is a lightweight LLM evaluation suite."
+        },
+        {
+          "name": "LLMPerf",
+          "href": "https://github.com/ray-project/llmperf",
+          "description": "LLMPerf is a tool for evaluating the performance of LLM APIs."
+        },
+        {
+          "name": "lmms-eval",
+          "href": "https://github.com/EvolvingLMMs-Lab/lmms-eval",
+          "description": "lmms-eval is an evaluation framework meticulously crafted for consistent and efficient evaluation of LMM."
+        },
+        {
+          "name": "Melting Pot",
+          "href": "https://github.com/google-deepmind/meltingpot",
+          "description": "Melting Pot is a suite of test scenarios for multi-agent reinforcement learning."
+        },
+        {
+          "name": "Meta-World",
+          "href": "https://github.com/Farama-Foundation/Metaworld",
+          "description": "Meta-World is an open-source simulated benchmark for meta-reinforcement learning and multi-task learning consisting of 50 distinct robotic manipulation tasks."
+        },
+        {
+          "name": "mireval",
+          "href": "https://github.com/mir-evaluation/mir_eval",
+          "description": "mireval is a Python library which provides a transparent, standardized, and straightforward way to evaluate Music Information Retrieval systems."
+        },
+        {
+          "name": "MLPerf Inference",
+          "href": "https://github.com/mlcommons/inference",
+          "description": "MLPerf Inference is a benchmark suite for measuring how fast systems can run models in a variety of deployment scenarios."
+        },
+        {
+          "name": "Massive Text Embedding Benchmark",
+          "href": "https://github.com/mlcommons/inference",
+          "description": "Massive Text Embedding Benchmark (MTEB) is a comprehensive evaluation framework that assesses the performance of text embedding models across diverse tasks and languages, encompassing 8 embedding tasks, 58 datasets, and 112 languages."
+        },
+        {
+          "name": "NannyML",
+          "href": "https://github.com/NannyML/nannyml",
+          "description": "NannyML is a library that allows you to estimate post-deployment model performance (without access to targets), detect data drift, and intelligently link data drift alerts back to changes in model performance."
+        },
+        {
+          "name": "OGB",
+          "href": "https://github.com/snap-stanford/ogb",
+          "description": "The Open Graph Benchmark (OGB) is a collection of benchmark datasets, data loaders, and evaluators for graph machine learning."
+        },
+        {
+          "name": "Ollama Grid Search",
+          "href": "https://github.com/dezoito/ollama-grid-search",
+          "description": "Ollama Grid Search automates the process of selecting the best models, prompts, or inference parameters for a given use-case, allowing you to iterate over their combinations and to visually inspect the results."
+        },
+        {
+          "name": "onWatch",
+          "href": "https://github.com/onllm-dev/onwatch",
+          "description": "onWatch is a lightweight Go CLI that tracks AI API quota usage across multiple providers (Anthropic Pro/Max Plans, Codex, Gemini CLI, Synthetic, Z.ai, GitHub Copilot, MiniMax Coding/Token Plan, Antigravity, OpenRouter) in real time, with consumption rate projections, historical usage graphs, and per-cycle tracking."
+        },
+        {
+          "name": "OpenCompass",
+          "href": "https://github.com/open-compass/OpenCompass",
+          "description": "OpenCompass is an LLM evaluation platform, supporting a wide range of models (LLaMA, LLaMa2, ChatGLM2, ChatGPT, Claude, etc) over 50+ datasets."
+        },
+        {
+          "name": "OpenLIT",
+          "href": "https://github.com/openlit/openlit",
+          "description": "OpenLIT is an open-source AI engineering platform that simplifies LLM workflows with observability, monitoring, guardrails, evaluations, and seamless integrations."
+        },
+        {
+          "name": "OpenLLMetry",
+          "href": "https://github.com/traceloop/openllmetry",
+          "description": "OpenLLMetry provides developers with deep visibility into Large Language Model applications through performance monitoring, execution tracing, and debugging capabilities."
+        },
+        {
+          "name": "Opik",
+          "href": "https://github.com/comet-ml/opik",
+          "description": "Opik is an open-source platform for evaluating, testing and monitoring LLM applications."
+        },
+        {
+          "name": "Overcooked-AI",
+          "href": "https://github.com/HumanCompatibleAI/overcooked_ai",
+          "description": "Overcooked-AI is a benchmark environment for fully cooperative human-AI task performance, based on the wildly popular video game Overcooked."
+        },
+        {
+          "name": "Phoenix",
+          "href": "https://github.com/Arize-ai/phoenix",
+          "description": "Phoenix is an open-source AI observability platform designed for experimentation, evaluation, and troubleshooting."
+        },
+        {
+          "name": "PromptBench",
+          "href": "https://github.com/microsoft/promptbench",
+          "description": "PromptBench is a unified evaluation framework for large language models"
+        },
+        {
+          "name": "Promptfoo",
+          "href": "https://github.com/promptfoo/promptfoo",
+          "description": "LLM red teaming and evaluation framework for testing jailbreaks, prompt injection, and other vulnerabilities with CI/CD integration."
+        },
+        {
+          "name": "Prometheus-Eval",
+          "href": "https://github.com/prometheus-eval/prometheus-eval",
+          "description": "RagaAI Catalyst is a comprehensive platform designed to enhance the management and optimization of LLM projects."
+        },
+        {
+          "name": "RagaAI Catalyst",
+          "href": "https://github.com/raga-ai-hub/RagaAI-Catalyst",
+          "description": "Prometheus-Eval is a collection of tools for training, evaluating, and using language models specialized in evaluating other language models."
+        },
+        {
+          "name": "Ragas",
+          "href": "https://github.com/explodinggradients/ragas",
+          "description": "Ragas is a framework to evaluate RAG pipelines."
+        },
+        {
+          "name": "RewardBench",
+          "href": "https://github.com/allenai/reward-bench",
+          "description": "RewardBench is a benchmark designed to evaluate the capabilities and safety of reward models."
+        },
+        {
+          "name": "RLBench",
+          "href": "https://github.com/stepjam/RLBench",
+          "description": "RLBench is an ambitious large-scale benchmark and learning environment designed to facilitate research in a number of vision-guided manipulation research areas, including: reinforcement learning, imitation learning, multi-task learning, geometric computer vision, and in particular, few-shot learning."
+        },
+        {
+          "name": "SimplerEnv",
+          "href": "https://github.com/simpler-env/SimplerEnv",
+          "description": "SimplerEnv is a simulated manipulation policy evaluation environments for real robot setups."
+        },
+        {
+          "name": "SwanLab",
+          "href": "https://github.com/SwanHubX/SwanLab",
+          "description": "SwanLab is an AI training tracking and visualization tool."
+        },
+        {
+          "name": "Speech-to-Text Benchmark",
+          "href": "https://github.com/Picovoice/speech-to-text-benchmark",
+          "description": "Speech-to-Text Benchmark is a minimalist and extensible framework for benchmarking different speech-to-text engines."
+        },
+        {
+          "name": "TensorFlow Model Analysis",
+          "href": "https://github.com/tensorflow/model-analysis",
+          "description": "TensorFlow Model Analysis (TFMA) is a library for evaluating TensorFlow models on large amounts of data in a distributed manner, using the same metrics defined in their trainer."
+        },
+        {
+          "name": "TorchBench",
+          "href": "https://github.com/pytorch/benchmark",
+          "description": "TorchBench is a collection of open source benchmarks used to evaluate PyTorch performance."
+        },
+        {
+          "name": "TruLens",
+          "href": "https://github.com/truera/trulens",
+          "description": "TruLens provides a set of tools for evaluating and tracking LLM experiments."
+        },
+        {
+          "name": "TrustLLM",
+          "href": "https://github.com/HowieHwong/TrustLLM",
+          "description": "TrustLLM is a comprehensive framework to evaluate the trustworthiness of large language models, which includes principles, surveys, and benchmarks."
+        },
+        {
+          "name": "VBench",
+          "href": "https://github.com/Vchitect/VBench",
+          "description": "VBench is a comprehensive benchmark suite for video generative models."
+        },
+        {
+          "name": "VLMEvalKit",
+          "href": "https://github.com/open-compass/VLMEvalKit",
+          "description": "VLMEvalKit is an open-source evaluation toolkit of large vision-language models (LVLMs)."
+        }
+      ]
+    },
+    {
+      "name": "Explainability & Fairness",
+      "emoji": "🔍",
+      "entries": [
+        {
+          "name": "Aequitas",
+          "href": "https://github.com/dssg/aequitas",
+          "description": "An open-source bias audit toolkit for data scientists, machine learning researchers, and policymakers to audit machine learning models for discrimination and bias, and to make informed and equitable decisions around developing and deploying predictive risk-assessment tools."
+        },
+        {
+          "name": "AI Explainability 360",
+          "href": "https://github.com/Trusted-AI/AIX360",
+          "description": "Interpretability and explainability of data and machine learning models including a comprehensive set of algorithms that cover different dimensions of explanations along with proxy explainability metrics."
+        },
+        {
+          "name": "AI Fairness 360",
+          "href": "https://github.com/Trusted-AI/AIF360",
+          "description": "A comprehensive set of fairness metrics for datasets and machine learning models, explanations for these metrics, and algorithms to mitigate bias in datasets and models."
+        },
+        {
+          "name": "Alibi",
+          "href": "https://github.com/SeldonIO/alibi",
+          "description": "Alibi is an open source Python library aimed at machine learning model inspection and interpretation. The initial focus on the library is on black-box, instance based model explanations."
+        },
+        {
+          "name": "captum",
+          "href": "https://github.com/pytorch/captum",
+          "description": "model interpretability and understanding library for PyTorch developed by Facebook. It contains general purpose implementations of integrated gradients, saliency maps, smoothgrad, vargrad and others for PyTorch models."
+        },
+        {
+          "name": "Fairlearn",
+          "href": "https://github.com/fairlearn/fairlearn",
+          "description": "Fairlearn is a python toolkit to assess and mitigate unfairness in machine learning models."
+        },
+        {
+          "name": "InterpretML",
+          "href": "https://github.com/interpretml/interpret",
+          "description": "InterpretML is an open-source package for training interpretable models and explaining blackbox systems."
+        },
+        {
+          "name": "Lightly",
+          "href": "https://github.com/lightly-ai/lightly",
+          "description": "A python framework for self-supervised learning on images. The learned representations can be used to analyze the distribution in unlabeled data and rebalance datasets."
+        },
+        {
+          "name": "LOFO Importance",
+          "href": "https://github.com/aerdem4/lofo-importance",
+          "description": "LOFO (Leave One Feature Out) Importance calculates the importances of a set of features based on a metric of choice, for a model of choice, by iteratively removing each feature from the set, and evaluating the performance of the model, with a validation scheme of choice, based on the chosen metric."
+        },
+        {
+          "name": "mljar-supervised",
+          "href": "https://github.com/mljar/mljar-supervised",
+          "description": "A Python package for AutoML on tabular data with feature engineering, hyper-parameters tuning, explanations and automatic documentation."
+        },
+        {
+          "name": "Quantus",
+          "href": "https://github.com/understandable-machine-intelligence-lab/Quantus",
+          "description": "Quantus is an eXplainable AI toolkit for responsible evaluation of neural network explanations"
+        },
+        {
+          "name": "SHAP",
+          "href": "https://github.com/shap/shap",
+          "description": "SHapley Additive exPlanations is a unified approach to explain the output of any machine learning model."
+        },
+        {
+          "name": "SHAPash",
+          "href": "https://github.com/MAIF/shapash",
+          "description": "Shapash is a Python library that provides several types of visualization that display explicit labels that everyone can understand."
+        },
+        {
+          "name": "WhatIf",
+          "href": "https://github.com/pair-code/what-if-tool",
+          "description": "An easy-to-use interface for expanding understanding of a black-box classification or regression ML model."
+        }
+      ]
+    },
+    {
+      "name": "Feature Store",
+      "emoji": "🎁",
+      "entries": [
+        {
+          "name": "FEAST",
+          "href": "https://github.com/feast-dev/feast",
+          "description": "Feast (Feature Store) is an open source feature store for machine learning. Feast is the fastest path to manage existing infrastructure to productionize analytic data for model training and online inference."
+        },
+        {
+          "name": "Featureform",
+          "href": "https://github.com/featureform/featureform",
+          "description": "A virtual featurestore. Plug-&-play with your existing infra. Data Scientist approved. Discovery, Governance, Lineage, & Collaboration just a pip install away. Supports pandas, Python, spark, SQL + integrations with major cloud vendors."
+        },
+        {
+          "name": "Hopsworks Feature Store",
+          "href": "https://github.com/logicalclocks/feature-store-api",
+          "description": "Offline/Online Feature Store for ML (Video)."
+        }
+      ]
+    },
+    {
+      "name": "Industry-strength Anomaly Detection",
+      "emoji": "🔴",
+      "entries": [
+        {
+          "name": "Alibi Detect",
+          "href": "https://github.com/SeldonIO/alibi-detect",
+          "description": "alibi-detect is a Python package focused on outlier, adversarial and concept drift detection."
+        },
+        {
+          "name": "Darts",
+          "href": "https://github.com/unit8co/darts",
+          "description": "Darts is a library for user-friendly forecasting and anomaly detection on time series."
+        },
+        {
+          "name": "Deequ",
+          "href": "https://github.com/awslabs/deequ",
+          "description": "A library built on top of Apache Spark for defining \"unit tests for data\", which measure data quality in large datasets."
+        },
+        {
+          "name": "PyOD",
+          "href": "https://github.com/yzhao062/pyod",
+          "description": "A Python Toolbox for Scalable Outlier Detection (Anomaly Detection)."
+        },
+        {
+          "name": "TFDV",
+          "href": "https://github.com/tensorflow/data-validation",
+          "description": "TFDV (Tensorflow Data Validation) is a library for exploring and validating machine learning data."
+        }
+      ]
+    },
+    {
+      "name": "Industry-strength Computer Vision",
+      "emoji": "👁️",
+      "entries": [
+        {
+          "name": "CameraTraps",
+          "href": "https://github.com/microsoft/CameraTraps",
+          "description": "CameraTraps (PyTorch Wildlife) is a collaborative deep learning framework for wildlife image analysis, providing detection and classification models trained on large-scale camera trap datasets."
+        },
+        {
+          "name": "Deep Lake",
+          "href": "https://github.com/activeloopai/deeplake",
+          "description": "Deep Lake is a data infrastructure optimized for computer vision."
+        },
+        {
+          "name": "DeepForest",
+          "href": "https://github.com/weecology/DeepForest",
+          "description": "DeepForest is a Python package for training and predicting individual tree crowns and species from airborne RGB imagery using deep learning."
+        },
+        {
+          "name": "Detectron2",
+          "href": "https://github.com/facebookresearch/detectron2",
+          "description": "Detectron2 is Facebook AI Research's next generation library that provides state-of-the-art detection and segmentation algorithms."
+        },
+        {
+          "name": "KerasCV",
+          "href": "https://github.com/keras-team/keras-cv",
+          "description": "KerasCV is a library of modular computer vision oriented Keras components."
+        },
+        {
+          "name": "Kornia",
+          "href": "https://github.com/kornia/kornia",
+          "description": "Kornia is a differentiable computer vision library built on PyTorch that provides a rich set of differentiable image processing and geometric vision algorithms."
+        },
+        {
+          "name": "LAVIS",
+          "href": "https://github.com/salesforce/LAVIS",
+          "description": "LAVIS is a deep learning library for LAnguage-and-VISion intelligence research and applications."
+        },
+        {
+          "name": "libcom",
+          "href": "https://github.com/bcmi/libcom",
+          "description": "libcom is an image composition toolbox."
+        },
+        {
+          "name": "LightlyTrain",
+          "href": "https://github.com/lightly-ai/lightly-train",
+          "description": "Pretrain computer vision models on unlabeled data for industrial applications."
+        },
+        {
+          "name": "MMCV",
+          "href": "https://github.com/open-mmlab/mmcv",
+          "description": "MMCV is a foundational computer vision library from OpenMMLab that provides essential functionalities like image and video processing, data transformation and augmentation, CNN architectures, and optimized CUDA operations."
+        },
+        {
+          "name": "SuperGradients",
+          "href": "https://github.com/Deci-AI/super-gradients",
+          "description": "SuperGradients is an open-source library for training PyTorch-based computer vision models."
+        },
+        {
+          "name": "supervision",
+          "href": "https://github.com/roboflow/supervision",
+          "description": "Supervision is a Python library designed for efficient computer vision pipeline management, providing tools for annotation, visualization, and monitoring of models."
+        },
+        {
+          "name": "VideoSys",
+          "href": "https://github.com/NUS-HPC-AI-Lab/VideoSys",
+          "description": "VideoSys supports many diffusion models with our various acceleration techniques, enabling these models to run faster and consume less memory."
+        }
+      ]
+    },
+    {
+      "name": "Industry-strength Information Retrieval",
+      "emoji": "🔥",
+      "entries": [
+        {
+          "name": "AutoRAG",
+          "href": "https://github.com/Marker-Inc-Korea/AutoRAG",
+          "description": "AutoRAG is a RAG AutoML tool for automatically finds an optimal RAG pipeline for your data."
+        },
+        {
+          "name": "BGE",
+          "href": "https://github.com/FlagOpen/FlagEmbedding",
+          "description": "BGE builds one-stop retrieval toolkit for search and RAG."
+        },
+        {
+          "name": "Cognita",
+          "href": "https://github.com/truefoundry/cognita",
+          "description": "Cognita is a RAG framework for building modular and production-ready applications."
+        },
+        {
+          "name": "DocArray",
+          "href": "https://github.com/docarray/docarray",
+          "description": "DocArray is a library for nested, unstructured, multimodal data in transit, including text, image, audio, video, 3D mesh, etc. It allows deep-learning engineers to efficiently process, embed, search, recommend, store, and transfer multimodal data with a Pythonic API."
+        },
+        {
+          "name": "EmbedAnything",
+          "href": "https://github.com/StarlightSearch/EmbedAnything",
+          "description": "EmbedAnything is a minimalist, lightweight, and high-performance embedding pipeline built in Rust for generating embeddings from text, images, audio, PDFs, and other media, with support for dense, sparse, ONNX, and late-interaction embeddings."
+        },
+        {
+          "name": "Faiss",
+          "href": "https://github.com/facebookresearch/faiss",
+          "description": "Faiss is a library for efficient similarity search and clustering of dense vectors."
+        },
+        {
+          "name": "fastRAG",
+          "href": "https://github.com/IntelLabs/fastRAG",
+          "description": "fastRAG is a research framework for efficient and optimized retrieval augmented generative pipelines, incorporating state-of-the-art LLMs and Information Retrieval."
+        },
+        {
+          "name": "GraphRAG",
+          "href": "https://github.com/microsoft/graphrag",
+          "description": "GraphRAG is a data pipeline and transformation suite that is designed to extract meaningful, structured data from unstructured text using the power of LLMs."
+        },
+        {
+          "name": "HippoRAG",
+          "href": "https://github.com/OSU-NLP-Group/HippoRAG",
+          "description": "HippoRAG is a novel retrieval augmented generation (RAG) framework inspired by the neurobiology of human long-term memory that enables LLMs to continuously integrate knowledge across external documents."
+        },
+        {
+          "name": "JamAI Base",
+          "href": "https://github.com/EmbeddedLLM/JamAIBase",
+          "description": "JamAI Base is an open-source RAG (Retrieval-Augmented Generation) backend platform that integrates an embedded database (SQLite) and an embedded vector database (LanceDB) with managed memory and RAG capabilities. It features built-in LLM, vector embeddings, and reranker orchestration and management, all accessible through a convenient, intuitive, spreadsheet-like UI and a simple REST API."
+        },
+        {
+          "name": "LangExtract",
+          "href": "https://github.com/google/langextract",
+          "description": "LangExtract is a Python library that uses LLMs to extract structured information from unstructured text documents based on user-defined instructions. It processes materials such as clinical notes or reports, identifying and organizing key details while ensuring the extracted data corresponds to the source text."
+        },
+        {
+          "name": "LightRAG",
+          "href": "https://github.com/HKUDS/LightRAG",
+          "description": "A simple and fast retrieval-augmented generation framework."
+        },
+        {
+          "name": "llmware",
+          "href": "https://github.com/llmware-ai/llmware",
+          "description": "llmware provides a unified framework for building LLM-based applications (e.g, RAG, Agents), using small, specialized models that can be deployed privately, integrated with enterprise knowledge sources safely and securely, and cost-effectively tuned and adapted for any business process."
+        },
+        {
+          "name": "Mem0",
+          "href": "https://github.com/mem0ai/mem0",
+          "description": "Mem0 enhances AI assistants and agents with an intelligent memory layer, enabling personalized AI interactions."
+        },
+        {
+          "name": "NGT",
+          "href": "https://github.com/yahoojapan/NGT",
+          "description": "NGT provides commands and a library for performing high-speed approximate nearest neighbor searches against a large volume of data in high dimensional vector data space."
+        },
+        {
+          "name": "NMSLIB",
+          "href": "https://github.com/nmslib/nmslib",
+          "description": "Non-Metric Space Library (NMSLIB): An efficient similarity search library and a toolkit for evaluation of k-NN methods for generic non-metric spaces."
+        },
+        {
+          "name": "Qdrant",
+          "href": "https://github.com/qdrant/qdrant",
+          "description": "An open source vector similarity search engine with extended filtering support."
+        },
+        {
+          "name": "R2R",
+          "href": "https://github.com/SciPhi-AI/R2R",
+          "description": "R2R (RAG to Riches) is a comprehensive platform for building, deploying, and scaling RAG applications with hybrid search, multimodal support, and advanced observability."
+        },
+        {
+          "name": "RAGFlow",
+          "href": "https://github.com/infiniflow/ragflow",
+          "description": "RAGFlow is a RAG engine based on deep document understanding."
+        },
+        {
+          "name": "RAGxplorer",
+          "href": "https://github.com/gabrielchua/RAGxplorer",
+          "description": "RAGxplorer is a tool to build RAG visualisations."
+        },
+        {
+          "name": "RAG-FiT",
+          "href": "https://github.com/IntelLabs/RAG-FiT",
+          "description": "RAG-FiT is a library designed to improve LLMs ability to use external information by fine-tuning models on specially created RAG-augmented datasets."
+        },
+        {
+          "name": "TextWorld",
+          "href": "https://github.com/microsoft/TextWorld",
+          "description": "TextWorld is a text-based game generator and extensible sandbox learning environment for training and testing reinforcement learning (RL) agents."
+        },
+        {
+          "name": "Vanna",
+          "href": "https://github.com/vanna-ai/vanna",
+          "description": "Vanna is a RAG framework for SQL generation and related functionality."
+        },
+        {
+          "name": "Zvec",
+          "href": "https://github.com/alibaba/zvec",
+          "description": "Zvec is an open-source, in-process vector database for low-latency similarity search."
+        }
+      ]
+    },
+    {
+      "name": "Industry-strength Natural Language Processing",
+      "emoji": "🔠",
+      "entries": [
+        {
+          "name": "aisuite",
+          "href": "https://github.com/andrewyng/aisuite",
+          "description": "aisuite is a simple, unified interface to multiple generative AI providers."
+        },
+        {
+          "name": "Align-Anything",
+          "href": "https://github.com/PKU-Alignment/align-anything",
+          "description": "Align-Anything aims to align any modality large models (any-to-any models), including LLMs, VLMs, and others, with human intentions and values"
+        },
+        {
+          "name": "BERTopic",
+          "href": "https://github.com/MaartenGr/BERTopic",
+          "description": "BERTopic is a topic modeling technique that leverages transformers and c-TF-IDF to create dense clusters allowing for easily interpretable topics whilst keeping important words in the topic descriptions."
+        },
+        {
+          "name": "Burr",
+          "href": "https://github.com/dagworks-inc/burr",
+          "description": "Burr helps you develop applications that make decisions (chatbot, agent, simulation). It comes with production-ready features (telemetry, persistence, deployment, etc.) and the open-source, free, and local-first Burr UI."
+        },
+        {
+          "name": "CodeTF",
+          "href": "https://github.com/salesforce/CodeTF",
+          "description": "CodeTF is a one-stop Python transformer-based library for code large language models (Code LLMs) and code intelligence, provides a seamless interface for training and inferencing on code intelligence tasks like code summarization, translation, code generation and so on."
+        },
+        {
+          "name": "Context7",
+          "href": "https://github.com/upstash/context7",
+          "description": "Context7 provides up-to-date code docs for prompts and AI coding agents."
+        },
+        {
+          "name": "Dify",
+          "href": "https://github.com/langgenius/dify",
+          "description": "Dify is an open-source LLM app development platform whose intuitive interface combines agentic AI workflow, RAG pipeline, agent capabilities, model management, observability features and more, letting you quickly go from prototype to production."
+        },
+        {
+          "name": "dspy",
+          "href": "https://github.com/stanfordnlp/dspy",
+          "description": "A framework for programming with foundation models."
+        },
+        {
+          "name": "Dust",
+          "href": "https://github.com/dust-tt/dust",
+          "description": "Dust assists in the design and deployment of large language model apps."
+        },
+        {
+          "name": "ESPnet",
+          "href": "https://github.com/espnet/espnet",
+          "description": "ESPnet is an end-to-end speech processing toolkit."
+        },
+        {
+          "name": "FastChat",
+          "href": "https://github.com/lm-sys/FastChat",
+          "description": "FastChat is an open platform for training, serving, and evaluating large language model based chatbots."
+        },
+        {
+          "name": "Flair",
+          "href": "https://github.com/flairNLP/flair",
+          "description": "Simple framework for state-of-the-art NLP developed by Zalando which builds directly on PyTorch."
+        },
+        {
+          "name": "FunASR",
+          "href": "https://github.com/modelscope/FunASR",
+          "description": "FunASR is a production-grade ASR toolkit supporting 50+ languages with built-in VAD, punctuation, speaker diarization, and emotion recognition, plus Docker/WebSocket/REST deployment and ONNX runtime support."
+        },
+        {
+          "name": "Fun-ASR",
+          "href": "https://github.com/FunAudioLLM/Fun-ASR",
+          "description": "LLM-based ASR supporting 31 languages including Chinese dialects with native punctuation, timestamps, and speaker diarization."
+        },
+        {
+          "name": "Gensim",
+          "href": "https://github.com/piskvorky/gensim",
+          "description": "Gensim is a Python library for topic modelling, document indexing and similarity retrieval with large corpora."
+        },
+        {
+          "name": "gpt-fast",
+          "href": "https://github.com/meta-pytorch/gpt-fast",
+          "description": "Simple and efficient pytorch-native transformer text generation."
+        },
+        {
+          "name": "h2oGPT",
+          "href": "https://github.com/h2oai/h2ogpt",
+          "description": "h2oGPT is an open source generative AI, gives organizations like yours the power to own large language models while preserving your data ownership."
+        },
+        {
+          "name": "Haystack",
+          "href": "https://github.com/deepset-ai/haystack",
+          "description": "Haystack is an open source NLP framework to interact with your data using Transformer models and LLMs (GPT-3 and alike). Haystack offers production-ready tools to quickly build ChatGPT-like question answering, semantic search, text generation, and more."
+        },
+        {
+          "name": "Interactive Composition Explorer",
+          "href": "https://github.com/oughtinc/ice",
+          "description": "ICE is a Python library and trace visualizer for language model programs."
+        },
+        {
+          "name": "Jan",
+          "href": "https://github.com/janhq/jan",
+          "description": "Jan is an open-source ChatGPT alternative that runs 100% offline on your computer, allowing you to download and run LLMs locally with full control and privacy."
+        },
+        {
+          "name": "Lamini",
+          "href": "https://github.com/lamini-ai/lamini",
+          "description": "Lamini is an LLM engine for rapidly customizing models."
+        },
+        {
+          "name": "LangChain",
+          "href": "https://github.com/langchain-ai/langchain",
+          "description": "LangChain assists in building applications with LLMs through composability."
+        },
+        {
+          "name": "LlamaIndex",
+          "href": "https://github.com/run-llama/llama_index",
+          "description": "LlamaIndex (GPT Index) is a data framework for your LLM application."
+        },
+        {
+          "name": "LLaMA",
+          "href": "https://github.com/meta-llama/llama",
+          "description": "LLaMA is intended as a minimal, hackable and readable example to load LLaMA (arXiv) models and run inference."
+        },
+        {
+          "name": "LLaMA-Factory",
+          "href": "https://github.com/hiyouga/LLaMA-Factory",
+          "description": "LLaMA-Factory makes it easy to fine-tunes 100+ large language models with zero-code CLI and Web UI"
+        },
+        {
+          "name": "LLMBox",
+          "href": "https://github.com/Alpha-VLLM/LLaMA2-Accessory",
+          "description": "LLMBox is a comprehensive library for implementing LLMs, including a unified training pipeline and comprehensive model evaluation."
+        },
+        {
+          "name": "LLaMA2-Accessory",
+          "href": "https://github.com/RUCAIBox/LLMBox",
+          "description": "LLaMA2-Accessory is an open-source toolkit for pretraining, finetuning and deployment of Large Language Models (LLMs) and multimodal LLMs."
+        },
+        {
+          "name": "LMFlow",
+          "href": "https://github.com/OptimalScale/LMFlow",
+          "description": "LMFlow is an extensible, convenient, and efficient toolbox for finetuning large machine learning models."
+        },
+        {
+          "name": "Megatron-LM",
+          "href": "https://github.com/NVIDIA/Megatron-LM",
+          "description": "Megatron-LM is a highly optimized and efficient library for training large language models."
+        },
+        {
+          "name": "MindNLP",
+          "href": "https://github.com/mindspore-lab/mindnlp",
+          "description": "MindNLP is an easy-to-use and high-performance NLP and LLM framework based on MindSpore, compatible with models and datasets of Huggingface."
+        },
+        {
+          "name": "MLC LLM",
+          "href": "https://github.com/mlc-ai/mlc-llm",
+          "description": "MLC LLM is a universal solution that allows any language models to be deployed natively on a diverse set of hardware backends and native applications, plus a productive framework for everyone to further optimize model performance for their own use cases."
+        },
+        {
+          "name": "mlx-lm",
+          "href": "https://github.com/ml-explore/mlx-lm",
+          "description": "MLX LM is a Python package for generating text and fine-tuning large language models on Apple silicon with MLX, featuring integration with Hugging Face Hub and support for quantization and distributed inference."
+        },
+        {
+          "name": "Ollama",
+          "href": "https://github.com/ollama/ollama",
+          "description": "Get up and running with large language models, locally."
+        },
+        {
+          "name": "olmOCR",
+          "href": "https://github.com/allenai/olmocr",
+          "description": "olmOCR is a toolkit for training language models to work with PDF documents in the wild."
+        },
+        {
+          "name": "PaddleNLP",
+          "href": "https://github.com/PaddlePaddle/PaddleNLP",
+          "description": "PaddleNLP is a Large Language Model (LLM) development suite based on the PaddlePaddle deep learning framework, supporting efficient large model training, lossless compression, and high-performance inference on various hardware devices."
+        },
+        {
+          "name": "Promptise Foundry",
+          "href": "https://github.com/promptise-com/foundry",
+          "description": "Promptise Foundry is a production Python framework for agentic AI and MCP servers, covering autonomous runtime, memory, tool integration, governance (budget, health, mission, secrets), guardrails, semantic caching, and observability."
+        },
+        {
+          "name": "PyLLMs",
+          "href": "https://github.com/kagisearch/pyllms",
+          "description": "PyLLMs is a minimal Python library to connect to various Language Models (LLMs) with a built-in model performance benchmark."
+        },
+        {
+          "name": "Semantic Kernel",
+          "href": "https://github.com/microsoft/semantic-kernel",
+          "description": "Semantic Kernel is an SDK that integrates Large Language Models (LLMs) like OpenAI, Azure OpenAI, and Hugging Face with conventional programming languages like C#, Python, and Java. Semantic Kernel achieves this by allowing you to define plugins that can be chained together in just a few lines of code."
+        },
+        {
+          "name": "Sentence Transformers",
+          "href": "https://github.com/UKPLab/sentence-transformers",
+          "description": "Sentence Transformers provides an easy method to compute dense vector representations for sentences, paragraphs, and images."
+        },
+        {
+          "name": "SpaCy",
+          "href": "https://github.com/explosion/spaCy",
+          "description": "spaCy is a library for advanced Natural Language Processing in Python and Cython."
+        },
+        {
+          "name": "SWIFT",
+          "href": "https://github.com/modelscope/ms-swift",
+          "description": "SWIFT is a scalable lightweight infrastructure for deep learning model fine-tuning."
+        },
+        {
+          "name": "Tensorflow Lingvo",
+          "href": "https://github.com/tensorflow/lingvo",
+          "description": "A framework for building neural networks in Tensorflow, particularly sequence models."
+        },
+        {
+          "name": "Tensorflow Text",
+          "href": "https://github.com/tensorflow/text",
+          "description": "TensorFlow Text provides a collection of text related classes and ops ready to use with TensorFlow 2.0."
+        },
+        {
+          "name": "ToolBench",
+          "href": "https://github.com/OpenBMB/ToolBench",
+          "description": "ToolBench is an open platform for training, serving, and evaluating large language model for tool learning."
+        },
+        {
+          "name": "Transformers",
+          "href": "https://github.com/huggingface/transformers",
+          "description": "Huggingface's library of state-of-the-art pretrained models for Natural Language Processing (NLP)."
+        }
+      ]
+    },
+    {
+      "name": "Industry-strength Recommender System",
+      "emoji": "🙌",
+      "entries": [
+        {
+          "name": "EasyRec",
+          "href": "https://github.com/alibaba/EasyRec",
+          "description": "EasyRec is a framework for large scale recommendation algorithms."
+        },
+        {
+          "name": "Gorse",
+          "href": "https://github.com/gorse-io/gorse",
+          "description": "Gorse aims to be a universal open-source recommender system that can be quickly introduced into a wide variety of online services."
+        },
+        {
+          "name": "Merlin",
+          "href": "https://github.com/NVIDIA-Merlin/Merlin",
+          "description": "NVIDIA Merlin is an open source library providing end-to-end GPU-accelerated recommender systems, from feature engineering and preprocessing to training deep learning models and running inference in production."
+        },
+        {
+          "name": "Recommenders",
+          "href": "https://github.com/recommenders-team/recommenders",
+          "description": "Recommenders contains benchmark and best practices for building recommendation systems, provided as Jupyter notebooks."
+        },
+        {
+          "name": "TorchRec",
+          "href": "https://github.com/meta-pytorch/torchrec",
+          "description": "TorchRec is a PyTorch domain library built to provide common sparsity and parallelism primitives needed for large-scale recommender systems (RecSys)."
+        }
+      ]
+    },
+    {
+      "name": "Industry-strength Reinforcement Learning",
+      "emoji": "🍕",
+      "entries": [
+        {
+          "name": "Acme",
+          "href": "https://github.com/google-deepmind/acme",
+          "description": "Acme is a library of reinforcement learning (RL) building blocks that strives to expose simple, efficient, and readable agents."
+        },
+        {
+          "name": "AReaL",
+          "href": "https://github.com/inclusionAI/AReaL",
+          "description": "AReaL is a reinforcement learning library."
+        },
+        {
+          "name": "ChatLearn",
+          "href": "https://github.com/alibaba/ChatLearn",
+          "description": "ChatLearn is a flexible and efficient reinforcement learning training framework for large language models, supporting distributed training engines (FSDP2, Megatron) and inference engines (vLLM, SGLang) with modern RL algorithms such as GRPO and GSPO."
+        },
+        {
+          "name": "CleanRL",
+          "href": "https://github.com/vwxyzjn/cleanrl",
+          "description": "CleanRL is a Deep Reinforcement Learning library that provides high-quality single-file implementation with research-friendly features. The implementation is clean and simple, yet we can scale it to run thousands of experiments using AWS Batch."
+        },
+        {
+          "name": "CompilerGym",
+          "href": "https://github.com/facebookresearch/CompilerGym",
+          "description": "CompilerGym is a library of easy to use and performant reinforcement learning environments for compiler tasks."
+        },
+        {
+          "name": "d3rlpy",
+          "href": "https://github.com/takuseno/d3rlpy",
+          "description": "d3rlpy is an offline deep reinforcement learning library for practitioners and researchers."
+        },
+        {
+          "name": "D4RL",
+          "href": "https://github.com/Farama-Foundation/D4RL",
+          "description": "D4RL is an open-source benchmark for offline reinforcement learning."
+        },
+        {
+          "name": "Dopamine",
+          "href": "https://github.com/google/dopamine",
+          "description": "Dopamine is a research framework for fast prototyping of reinforcement learning algorithms. It aims to fill the need for a small, easily grokked codebase in which users can freely experiment with wild ideas (speculative research)."
+        },
+        {
+          "name": "EvoTorch",
+          "href": "https://github.com/nnaisense/evotorch",
+          "description": "EvoTorch is an open source evolutionary computation library developed at NNAISENSE, built on top of PyTorch."
+        },
+        {
+          "name": "FinRL",
+          "href": "https://github.com/AI4Finance-Foundation/FinRL",
+          "description": "FinRL is the first open-source framework to demonstrate the great potential of financial reinforcement learning."
+        },
+        {
+          "name": "Gymnasium",
+          "href": "https://github.com/Farama-Foundation/Gymnasium",
+          "description": "Gymnasium is an open source Python library for developing and comparing reinforcement learning algorithms by providing a standard API to communicate between learning algorithms and environments, as well as a standard set of environments compliant with that API."
+        },
+        {
+          "name": "Gymnasium-Robotics",
+          "href": "https://github.com/Farama-Foundation/Gymnasium-Robotics",
+          "description": "Gymnasium-Robotics contains a collection of Reinforcement Learning robotic environments that use the Gymansium API. The environments run with the MuJoCo physics engine and the maintained mujoco python bindings."
+        },
+        {
+          "name": "Jumanji",
+          "href": "https://github.com/instadeepai/jumanji",
+          "description": "Jumanji is a suite of Reinforcement Learning (RL) environments written in JAX providing clean, hardware-accelerated environments for industry-driven research."
+        },
+        {
+          "name": "MARLlib",
+          "href": "https://github.com/Replicable-MARL/MARLlib",
+          "description": "MARLlib is a comprehensive Multi-Agent Reinforcement Learning algorithm library based on RLlib. It provides MARL research community with a unified platform for building, training, and evaluating MARL algorithms."
+        },
+        {
+          "name": "Mava",
+          "href": "https://github.com/instadeepai/Mava",
+          "description": "Mava is a framework for distributed multi-agent reinforcement learning in JAX."
+        },
+        {
+          "name": "Melting Pot",
+          "href": "https://github.com/google-deepmind/meltingpot",
+          "description": "Melting Pot is a suite of test scenarios for multi-agent reinforcement learning."
+        },
+        {
+          "name": "MetaDrive",
+          "href": "https://github.com/metadriverse/metadrive",
+          "description": "MetaDrive is a driving simulator that composes diverse driving scenarios for generalizable RL."
+        },
+        {
+          "name": "Minigrid",
+          "href": "https://github.com/Farama-Foundation/Minigrid",
+          "description": "The Minigrid library contains a collection of discrete grid-world environments to conduct research on Reinforcement Learning. The environments follow the Gymnasium standard API and they are designed to be lightweight, fast, and easily customizable."
+        },
+        {
+          "name": "MiniWorld",
+          "href": "https://github.com/Farama-Foundation/Miniworld",
+          "description": "MiniWorld is a minimalistic 3D interior environment simulator for reinforcement learning & robotics research."
+        },
+        {
+          "name": "ML-Agents",
+          "href": "https://github.com/Unity-Technologies/ml-agents",
+          "description": "ML-Agents is an open-source project that enables games and simulations to serve as environments for training reinforcement learning intelligent agents."
+        },
+        {
+          "name": "MLGym",
+          "href": "https://github.com/facebookresearch/MLGym",
+          "description": "MLGym is a gym environment enabling research on reinforcement learning (RL) algorithms for training such agents for ML tasks."
+        },
+        {
+          "name": "MushroomRL",
+          "href": "https://github.com/MushroomRL/mushroom-rl",
+          "description": "MushroomRL is a Python reinforcement learning (RL) library whose modularity allows to easily use well-known Python libraries for tensor computation (e.g. PyTorch, Tensorflow) and RL benchmarks (e.g. OpenAI Gym, PyBullet, Deepmind Control Suite)."
+        },
+        {
+          "name": "OmniSafe",
+          "href": "https://github.com/PKU-Alignment/omnisafe",
+          "description": "OmniSafe is an infrastructural framework designed to accelerate safe reinforcement learning (RL) research."
+        },
+        {
+          "name": "OpenRLHF",
+          "href": "https://github.com/OpenRLHF/OpenRLHF",
+          "description": "OpenRLHF is an open-source framework for reinforcement learning from human feedback (RLHF)."
+        },
+        {
+          "name": "PARL",
+          "href": "https://github.com/PaddlePaddle/PARL",
+          "description": "PARL is a flexible and high-efficient reinforcement learning framework."
+        },
+        {
+          "name": "PettingZoo",
+          "href": "https://github.com/Farama-Foundation/PettingZoo",
+          "description": "PettingZoo is a Python library for conducting research in multi-agent reinforcement learning, akin to a multi-agent version of Gymnasium."
+        },
+        {
+          "name": "ranx",
+          "href": "https://github.com/AmenRa/ranx",
+          "description": "ranx is a library of fast ranking evaluation metrics implemented in Python, leveraging Numba for high-speed vector operations and automatic parallelization."
+        },
+        {
+          "name": "RL4CO",
+          "href": "https://github.com/ai4co/rl4co",
+          "description": "RL4CO is a PyTorch library for all things reinforcement learning for combinatorial optimization (CO)."
+        },
+        {
+          "name": "RL2",
+          "href": "https://github.com/ChenmienTan/RL2",
+          "description": "RL2 is a reinforcement learning library."
+        },
+        {
+          "name": "RLinf",
+          "href": "https://github.com/RLinf/RLinf",
+          "description": "RLinf is a reinforcement learning library."
+        },
+        {
+          "name": "ROLL",
+          "href": "https://github.com/alibaba/ROLL",
+          "description": "ROLL is a reinforcement learning library."
+        },
+        {
+          "name": "skrl",
+          "href": "https://github.com/Toni-SM/skrl",
+          "description": "skrl is an open-source modular library for Reinforcement Learning written in Python (using PyTorch) and designed with a focus on readability, simplicity, and transparency of algorithm implementation."
+        },
+        {
+          "name": "SkyRL",
+          "href": "https://github.com/NovaSky-AI/SkyRL",
+          "description": "SkyRL is a full-stack reinforcement learning library providing modular training frameworks, cross-platform inference backends, agentic pipelines, and gymnasium environments for long-horizon, real-world RL tasks."
+        },
+        {
+          "name": "slime",
+          "href": "https://github.com/THUDM/slime",
+          "description": "slime is an LLM post-training framework for RL Scaling."
+        },
+        {
+          "name": "Stable Baselines",
+          "href": "https://github.com/DLR-RM/stable-baselines3",
+          "description": "A fork of OpenAI Baselines, implementations of reinforcement learning algorithms."
+        },
+        {
+          "name": "TF-Agents",
+          "href": "https://github.com/tensorflow/agents",
+          "description": "A reliable, scalable and easy to use TensorFlow library for contextual bandits and reinforcement learning."
+        },
+        {
+          "name": "TorchRL",
+          "href": "https://github.com/pytorch/rl",
+          "description": "TorchRL is an open-source Reinforcement Learning (RL) library for PyTorch."
+        },
+        {
+          "name": "TRL",
+          "href": "https://github.com/huggingface/trl",
+          "description": "Train transformer language models with reinforcement learning."
+        },
+        {
+          "name": "veRL",
+          "href": "https://github.com/volcengine/veRL",
+          "description": "veRL (HybridFlow) is a flexible, efficient and industrial-level RL(HF) training framework designed for LLMs."
+        }
+      ]
+    },
+    {
+      "name": "Industry-strength Robotics",
+      "emoji": "🤖",
+      "entries": [
+        {
+          "name": "AI2-THOR",
+          "href": "https://github.com/allenai/ai2thor",
+          "description": "AI2-THOR is a near photo-realistic interactable framework for AI agents."
+        },
+        {
+          "name": "Genesis",
+          "href": "https://github.com/Genesis-Embodied-AI/genesis-world",
+          "description": "Genesis is a physics platform for Embodied AI and robot simulation."
+        },
+        {
+          "name": "Habitat-Sim",
+          "href": "https://github.com/facebookresearch/habitat-sim",
+          "description": "Habitat-Sim is a flexible, high-performance 3D simulator for Embodied AI research."
+        },
+        {
+          "name": "IsaacLab",
+          "href": "https://github.com/isaac-sim/IsaacLab",
+          "description": "IsaacLab is a unified and modular framework for robot learning that leverages NVIDIA Isaac Sim."
+        },
+        {
+          "name": "LeRobot",
+          "href": "https://github.com/huggingface/lerobot",
+          "description": "LeRobot provides models, datasets, and tools for real-world robotics and imitation learning."
+        },
+        {
+          "name": "robosuite",
+          "href": "https://github.com/ARISE-Initiative/robosuite",
+          "description": "robosuite is a simulation framework powered by the MuJoCo physics engine for robot learning."
+        },
+        {
+          "name": "RoboVerse",
+          "href": "https://github.com/RoboVerseOrg/RoboVerse",
+          "description": "RoboVerse is a comprehensive robotics simulation platform with diverse environments."
+        }
+      ]
+    },
+    {
+      "name": "Industry-strength Visualisation",
+      "emoji": "📊",
+      "entries": [
+        {
+          "name": "Apache ECharts",
+          "href": "https://github.com/apache/echarts",
+          "description": "Apache ECharts is a powerful, interactive charting and data visualization library for browser."
+        },
+        {
+          "name": "Apache Superset",
+          "href": "https://github.com/apache/superset",
+          "description": "A modern, enterprise-ready business intelligence web application."
+        },
+        {
+          "name": "Bokeh",
+          "href": "https://github.com/bokeh/bokeh",
+          "description": "Bokeh is an interactive visualization library for Python that enables beautiful and meaningful visual presentation of data in modern web browsers."
+        },
+        {
+          "name": "Bread Dataset Viewer",
+          "href": "https://github.com/Bread-Technologies/mle_vscode_extension",
+          "description": "A VS Code extension for viewing and exploring large machine learning datasets (CSV, JSON, Parquet, etc.) directly within the editor without the IDE crashing."
+        },
+        {
+          "name": "Bread WandB Viewer",
+          "href": "https://github.com/Bread-Technologies/bread_wandb_viewer_extension",
+          "description": "A VS Code extension to view Weights & Biases experiments, logs, and artifacts within the IDE, eliminating the need to switch to the web UI & preserving data privacy by being 100% offline."
+        },
+        {
+          "name": "Data Formulator",
+          "href": "https://github.com/microsoft/data-formulator",
+          "description": "Transform data and create rich visualizations iteratively with AI."
+        },
+        {
+          "name": "ggplot2",
+          "href": "https://github.com/tidyverse/ggplot2",
+          "description": "An implementation of the grammar of graphics for R."
+        },
+        {
+          "name": "gradio",
+          "href": "https://github.com/gradio-app/gradio",
+          "description": "Quickly create and share demos of models - by only writing Python. Debug models interactively in your browser, get feedback from collaborators, and generate public links without deploying anything."
+        },
+        {
+          "name": "Kangas",
+          "href": "https://github.com/comet-ml/kangas",
+          "description": "Kangas is a tool for exploring, analyzing, and visualizing large-scale multimedia data. It provides a straightforward Python API for logging large tables of data, along with an intuitive visual interface for performing complex queries against your dataset."
+        },
+        {
+          "name": "matplotlib",
+          "href": "https://github.com/matplotlib/matplotlib",
+          "description": "A Python 2D plotting library which produces publication-quality figures in a variety of hardcopy formats and interactive environments across platforms."
+        },
+        {
+          "name": "Model Explorer",
+          "href": "https://github.com/google-ai-edge/model-explorer",
+          "description": "Model Explorer is a tool for visualizing and exploring machine learning models, providing an intuitive graph-based view to understand model structure, inspect layer details, and navigate large neural networks."
+        },
+        {
+          "name": "Netron",
+          "href": "https://github.com/lutzroeder/netron",
+          "description": "Netron is a viewer for neural network, deep learning and machine learning models."
+        },
+        {
+          "name": "Perspective",
+          "href": "https://github.com/finos/perspective",
+          "description": "Streaming pivot visualization via WebAssembly."
+        },
+        {
+          "name": "Plotly",
+          "href": "https://github.com/plotly/plotly.py",
+          "description": "An interactive, open source, and browser-based graphing library for Python."
+        },
+        {
+          "name": "Redash",
+          "href": "https://github.com/getredash/redash",
+          "description": "Redash is anopen source visualisation framework that is built to allow easy access to big datasets leveraging multiple backends."
+        },
+        {
+          "name": "Rerun",
+          "href": "https://github.com/rerun-io/rerun",
+          "description": "Rerun is an open-source SDK for logging, storing, querying, and visualizing multimodal data, designed for robotics, computer vision, and spatial AI."
+        },
+        {
+          "name": "seaborn",
+          "href": "https://github.com/mwaskom/seaborn",
+          "description": "Seaborn is a Python visualization library based on matplotlib. It provides a high-level interface for drawing attractive statistical graphics."
+        },
+        {
+          "name": "Spotlight",
+          "href": "https://github.com/Renumics/spotlight",
+          "description": "Spotlight helps you to identify critical data segments and model failure modes. It enables you to build and maintain reliable machine learning models by curating high-quality datasets."
+        },
+        {
+          "name": "Streamlit",
+          "href": "https://github.com/streamlit/streamlit",
+          "description": "Streamlit lets you create apps for your machine learning projects with deceptively simple Python scripts. It supports hot-reloading, so your app updates live as you edit and save your file."
+        },
+        {
+          "name": "tensorboardX",
+          "href": "https://github.com/lanpa/tensorboardX",
+          "description": "Write TensorBoard events with simple function call."
+        },
+        {
+          "name": "TensorBoard",
+          "href": "https://github.com/tensorflow/tensorboard",
+          "description": "TensorBoard is a visualization toolkit for machine learning experimentation that makes it easy to host, track, and share ML experiments."
+        },
+        {
+          "name": "Torchvista",
+          "href": "https://github.com/sachinhosmani/torchvista",
+          "description": "Torchvista is an interactive notebook-based tool to visualise the forward pass of any PyTorch model as a computation graph within notebooks, with support for collapsible nested modules and error-tolerant partial visualisations."
+        },
+        {
+          "name": "Transformer Explainer",
+          "href": "https://github.com/poloclub/transformer-explainer",
+          "description": "Transformer Explainer is an interactive visualization tool designed to help anyone learn how Transformer-based models like GPT work."
+        },
+        {
+          "name": "Vega-Altair",
+          "href": "https://github.com/vega/altair",
+          "description": "Vega-Altair is a declarative statistical visualization library for Python."
+        },
+        {
+          "name": "ydata-profiling",
+          "href": "https://github.com/ydataai/ydata-profiling",
+          "description": "ydata-profiling provides a one-line Exploratory Data Analysis (EDA) experience in a consistent and fast solution."
+        }
+      ]
+    },
+    {
+      "name": "Metadata Management",
+      "emoji": "📅",
+      "entries": [
+        {
+          "name": "Amundsen",
+          "href": "https://github.com/amundsen-io/amundsen",
+          "description": "Amundsen is a metadata driven application for improving the productivity of data analysts, data scientists and engineers when interacting with data."
+        },
+        {
+          "name": "Apache Atlas",
+          "href": "https://github.com/apache/atlas",
+          "description": "Apache Atlas framework is an extensible set of core foundational governance services – enabling enterprises to effectively and efficiently meet their compliance requirements within Hadoop and allows integration with the whole enterprise data ecosystem."
+        },
+        {
+          "name": "DataHub",
+          "href": "https://github.com/datahub-project/datahub",
+          "description": "DataHub is LinkedIn's generalized metadata search & discovery tool."
+        },
+        {
+          "name": "Marquez",
+          "href": "https://github.com/MarquezProject/marquez",
+          "description": "Marquez is an open source metadata service for the collection, aggregation, and visualization of a data ecosystem's metadata."
+        },
+        {
+          "name": "Metacat",
+          "href": "https://github.com/Netflix/metacat",
+          "description": "Metacat is a unified metadata exploration API service. Metacat focuses on solving these problems: 1) federated views of metadata systems; 2) arbitrary metadata storage about data sets; 3) metadata discovery."
+        },
+        {
+          "name": "ML Metadata",
+          "href": "https://github.com/google/ml-metadata",
+          "description": "a library for recording and retrieving metadata associated with ML developer and data scientist workflows."
+        }
+      ]
+    },
+    {
+      "name": "Model, Data & Experiment Management",
+      "emoji": "📜",
+      "entries": [
+        {
+          "name": "Aim",
+          "href": "https://github.com/aimhubio/aim",
+          "description": "A super-easy way to record, search and compare AI experiments."
+        },
+        {
+          "name": "ClearML",
+          "href": "https://github.com/clearml/clearml",
+          "description": "Auto-Magical Experiment Manager & Version Control for AI (previously Trains)."
+        },
+        {
+          "name": "DataHub",
+          "href": "https://github.com/datahub-project/datahub",
+          "description": "DataHub is an open-source data catalog for the modern data stack."
+        },
+        {
+          "name": "Dolt",
+          "href": "https://github.com/dolthub/dolt",
+          "description": "Dolt is a SQL database that you can fork, clone, branch, merge, push and pull just like a git repository."
+        },
+        {
+          "name": "DVC",
+          "href": "https://github.com/iterative/dvc",
+          "description": "DVC (Data Version Control) is a git fork that allows for version management of models."
+        },
+        {
+          "name": "HuggingFace Model Downloader",
+          "href": "https://github.com/bodaay/HuggingFaceModelDownloader",
+          "description": "HuggingFace Model Downloader is a utility tool for downloading models and datasets from the HuggingFace website. It offers multithreaded downloading for LFS files and ensures the integrity of downloaded models with SHA256 checksum verification."
+        },
+        {
+          "name": "Keepsake",
+          "href": "https://github.com/replicate/keepsake",
+          "description": "Version control for machine learning."
+        },
+        {
+          "name": "KitOps",
+          "href": "https://github.com/jozu-ai/kitops",
+          "description": "KitOps is an open and standards-based packaging and versioning system for AI/ML projects that works with all the AI/ML, development, and DevOps tools you are already using."
+        },
+        {
+          "name": "lakeFS",
+          "href": "https://github.com/treeverse/lakeFS",
+          "description": "Repeatable, atomic and versioned data lake on top of object storage."
+        },
+        {
+          "name": "MLflow",
+          "href": "https://github.com/mlflow/mlflow",
+          "description": "Open source platform to manage the ML lifecycle, including experimentation, reproducibility and deployment."
+        },
+        {
+          "name": "Neptune",
+          "href": "https://github.com/neptune-ai/neptune-client",
+          "description": "Neptune is a scalable experiment tracker for teams that train foundation models."
+        },
+        {
+          "name": "Polyaxon",
+          "href": "https://github.com/polyaxon/polyaxon",
+          "description": "A platform for reproducible and scalable machine learning and deep learning on kubernetes - (Video)."
+        },
+        {
+          "name": "Quilt",
+          "href": "https://github.com/quiltdata/quilt",
+          "description": "Versioning, reproducibility and deployment of data and models."
+        },
+        {
+          "name": "Sacred",
+          "href": "https://github.com/IDSIA/sacred",
+          "description": "Tool to help you configure, organize, log and reproduce machine learning experiments."
+        },
+        {
+          "name": "TerminusDB",
+          "href": "https://github.com/terminusdb/terminusdb",
+          "description": "A graph database management system that stores data like git."
+        },
+        {
+          "name": "Weights & Biases",
+          "href": "https://github.com/wandb/wandb",
+          "description": "Weights & Biase is a machine learning experiment tracking, dataset versioning, hyperparameter search, visualization, and collaboration."
+        }
+      ]
+    },
+    {
+      "name": "Model Storage Optimisation",
+      "emoji": "🔩",
+      "entries": [
+        {
+          "name": "AutoTrain Advanced",
+          "href": "https://github.com/huggingface/autotrain-advanced",
+          "description": "AutoTrain Advanced is a no-code solution that allows you to train machine learning models in just a few clicks."
+        },
+        {
+          "name": "Avalanche",
+          "href": "https://github.com/ContinualAI/avalanche",
+          "description": "Avalanche is an end-to-end Continual Learning library to provide a shared and collaborative open-source (MIT licensed) codebase for fast prototyping, training and reproducible evaluation of continual learning algorithms."
+        },
+        {
+          "name": "Axolotl",
+          "href": "https://github.com/axolotl-ai-cloud/axolotl",
+          "description": "Axolotl is a tool designed to streamline the fine-tuning of various AI models, offering support for multiple configurations and architectures."
+        },
+        {
+          "name": "BindsNET",
+          "href": "https://github.com/BindsNET/bindsnet",
+          "description": "BindsNET is a spiking neural network simulation library geared towards the development of biologically inspired algorithms for machine learning."
+        },
+        {
+          "name": "CML",
+          "href": "https://github.com/iterative/cml",
+          "description": "Continuous Machine Learning (CML) is an open-source library for implementing continuous integration & delivery (CI/CD) in machine learning projects."
+        },
+        {
+          "name": "CoreNet",
+          "href": "https://github.com/apple/corenet",
+          "description": "CoreNet is a deep neural network toolkit that allows researchers and engineers to train standard and novel small and large-scale models for variety of tasks, including foundation models (e.g., CLIP and LLM), object classification, object detection, and semantic segmentation."
+        },
+        {
+          "name": "DataLinter",
+          "href": "https://github.com/zgornel/DataLinter",
+          "description": "DataLinter is an open-source contextual linter for data and code, designed to be data and code agnosting through plugins."
+        },
+        {
+          "name": "Determined",
+          "href": "https://github.com/determined-ai/determined",
+          "description": "Deep learning training platform with integrated support for distributed training, hyperparameter tuning, and model management (supports Tensorflow and Pytorch)."
+        },
+        {
+          "name": "dstack",
+          "href": "https://github.com/dstackai/dstack",
+          "description": "dstack is an open-source container orchestrator that simplifies workload orchestration and drives GPU utilization for ML teams."
+        },
+        {
+          "name": "envd",
+          "href": "https://github.com/tensorchord/envd",
+          "description": "Machine learning development environment for data science and AI/ML engineering teams."
+        },
+        {
+          "name": "Fairseq",
+          "href": "https://github.com/facebookresearch/fairseq",
+          "description": "Fairseq(-py) is a sequence modeling toolkit that allows researchers and developers to train custom models for translation, summarization, language modeling and other text generation tasks."
+        },
+        {
+          "name": "Fire-Flyer File System",
+          "href": "https://github.com/deepseek-ai/3FS",
+          "description": "The Fire-Flyer File System (3FS) is a high-performance distributed file system designed to address the challenges of AI training and inference workloads. It leverages modern SSDs and RDMA networks to provide a shared storage layer that simplifies development of distributed applications."
+        },
+        {
+          "name": "H2O-3",
+          "href": "https://github.com/h2oai/h2o-3",
+          "description": "Fast scalable Machine Learning platform for smarter applications: Deep Learning, Gradient Boosting & XGBoost, Random Forest, Generalized Linear Modeling (Logistic Regression, Elastic Net), K-Means, PCA, Stacked Ensembles, Automatic Machine Learning (AutoML), etc.."
+        },
+        {
+          "name": "Hopsworks",
+          "href": "https://github.com/logicalclocks/hopsworks",
+          "description": "Hopsworks is a data-intensive platform for the design and operation of machine learning pipelines."
+        },
+        {
+          "name": "Ignite",
+          "href": "https://github.com/pytorch/ignite",
+          "description": "Ignite is a high-level library to help with training and evaluating neural networks in PyTorch flexibly and transparently."
+        },
+        {
+          "name": "Kubeflow",
+          "href": "https://github.com/kubeflow/kubeflow",
+          "description": "A cloud-native platform for machine learning based on Google's internal machine learning pipelines."
+        },
+        {
+          "name": "Ludwig",
+          "href": "https://github.com/ludwig-ai/ludwig",
+          "description": "Ludwig is a low-code framework for building custom AI models like LLMs and other deep neural networks."
+        },
+        {
+          "name": "MFTCoder",
+          "href": "https://github.com/codefuse-ai/MFTCoder",
+          "description": "MFTCoder is an open-source project of CodeFuse for accurate and efficient Multi-task Fine-tuning(MFT) on Large Language Models(LLMs), especially on Code-LLMs(large language model for code tasks)."
+        },
+        {
+          "name": "MLeap",
+          "href": "https://github.com/combust/mleap",
+          "description": "Standardisation of pipeline and model serialization for Spark, Tensorflow and sklearn."
+        },
+        {
+          "name": "Nanotron",
+          "href": "https://github.com/huggingface/nanotron",
+          "description": "Nanotron provides distributed primitives to train a variety of models efficiently using 3D parallelism."
+        },
+        {
+          "name": "NeMo",
+          "href": "https://github.com/NVIDIA/NeMo",
+          "description": "NVIDIA NeMo is a scalable and cloud-native generative AI framework built for researchers and PyTorch developers working on Large Language Models (LLMs), Multimodal Models (MMs), Automatic Speech Recognition (ASR), Text to Speech (TTS), and Computer Vision (CV) domains. It is designed to help you efficiently create, customize, and deploy new generative AI models by leveraging existing code and pre-trained model checkpoints."
+        },
+        {
+          "name": "Prime",
+          "href": "https://github.com/PrimeIntellect-ai/prime",
+          "description": "Prime is a framework for efficient, globally distributed training of AI models over the internet."
+        },
+        {
+          "name": "PyCaret",
+          "href": "https://github.com/pycaret/pycaret",
+          "description": ") - low-code library for training and deploying models (scikit-learn, XGBoost, LightGBM, spaCy)"
+        },
+        {
+          "name": "Sematic",
+          "href": "https://github.com/sematic-ai/sematic",
+          "description": "Platform to build resource-intensive pipelines with simple Python."
+        },
+        {
+          "name": "Skaffold",
+          "href": "https://github.com/GoogleContainerTools/skaffold",
+          "description": "Skaffold is a command line tool that facilitates continuous development for Kubernetes applications. You can iterate on your application source code locally then deploy to local or remote Kubernetes clusters."
+        },
+        {
+          "name": "TFX",
+          "href": "https://github.com/tensorflow/tfx",
+          "description": "Tensorflow Extended (TFX) is a production oriented configuration framework for ML based on TensorFlow, incl. monitoring and model version management."
+        },
+        {
+          "name": "unsloth",
+          "href": "https://github.com/unslothai/unsloth",
+          "description": "Fine-tuning & Reinforcement Learning for LLMs. Train OpenAI gpt-oss, DeepSeek-R1, Qwen3, Gemma 3, TTS 2x faster with 70% less VRAM."
+        }
+      ]
+    },
+    {
+      "name": "Model Training & Orchestration",
+      "emoji": "🏁",
+      "entries": [
+        {
+          "name": "AutoAWQ",
+          "href": "https://github.com/casper-hansen/AutoAWQ",
+          "description": "AutoAWQ is an easy-to-use package for 4-bit quantized models."
+        },
+        {
+          "name": "AutoGPTQ",
+          "href": "https://github.com/AutoGPTQ/AutoGPTQ",
+          "description": "An easy-to-use LLMs quantization package with user-friendly apis, based on GPTQ algorithm."
+        },
+        {
+          "name": "AWQ",
+          "href": "https://github.com/mit-han-lab/llm-awq",
+          "description": "Activation-aware Weight Quantization for LLM Compression and Acceleration."
+        },
+        {
+          "name": "GGML",
+          "href": "https://github.com/ggml-org/ggml",
+          "description": "GGML is a high-performance, tensor library for machine learning that enables efficient inference on CPUs, particularly optimized for large language models."
+        },
+        {
+          "name": "neural-compressor",
+          "href": "https://github.com/intel/neural-compressor",
+          "description": "Intel® Neural Compressor aims to provide popular model compression techniques such as quantization, pruning (sparsity), distillation, and neural architecture search on mainstream frameworks."
+        },
+        {
+          "name": "NNEF",
+          "href": "https://www.khronos.org/nnef",
+          "description": "Neural Network Exchange Format (NNEF) is an open standard for representing neural network models to enable interoperability and portability across different machine learning frameworks and platforms."
+        },
+        {
+          "name": "ONNX",
+          "href": "https://github.com/onnx/onnx",
+          "description": "ONNX (Open Neural Network Exchange) is an open-source format designed to facilitate interoperability and portability of machine learning models across different frameworks and platforms."
+        },
+        {
+          "name": "PFA",
+          "href": "https://dmg.org/pfa",
+          "description": "PFA (Portable Format for Analytics) format is a standard for representing and exchanging predictive models and analytics workflows in a portable, JSON-based format."
+        },
+        {
+          "name": "PMML",
+          "href": "https://dmg.org/pmml",
+          "description": "PMML (Predictive Model Markup Language) is an XML-based standard for representing and sharing predictive models between different applications."
+        },
+        {
+          "name": "Quanto",
+          "href": "https://github.com/huggingface/optimum-quanto",
+          "description": "Quanto aims to simplify quantizing deep learning models."
+        }
+      ]
+    },
+    {
+      "name": "Privacy & Safety",
+      "emoji": "🔏",
+      "entries": [
+        {
+          "name": "AI Gateway",
+          "href": "https://github.com/portkey-ai/gateway",
+          "description": "The AI Gateway is a blazing fast AI Gateway with integrated guardrails."
+        },
+        {
+          "name": "ART",
+          "href": "https://github.com/Trusted-AI/adversarial-robustness-toolbox",
+          "description": "ART (Adversarial Robustness Toolbox) provides tools that enable developers and researchers to defend and evaluate Machine Learning models and applications against the adversarial threats of Evasion, Poisoning, Extraction, and Inference."
+        },
+        {
+          "name": "CipherChat",
+          "href": "https://github.com/RobustNLP/CipherChat",
+          "description": "CipherChat is a framework to evaluate the generalization capability of safety alignment for LLMs"
+        },
+        {
+          "name": "DeepTeam",
+          "href": "https://github.com/confident-ai/deepteam",
+          "description": "DeepTeam is a simple-to-use, open-source LLM red teaming framework, for penetration testing and safe guarding large-language model systems."
+        },
+        {
+          "name": "FATE",
+          "href": "https://github.com/FederatedAI/FATE",
+          "description": "FATE (Federated AI Technology Enabler) is the world's first industrial grade federated learning open source framework to enable enterprises and institutions to collaborate on data while protecting data security and privacy."
+        },
+        {
+          "name": "FedML",
+          "href": "https://github.com/FedML-AI/FedML",
+          "description": "FedML provides a research and production integrated edge-cloud platform for Federated/Distributed Machine Learning at anywhere at any scale."
+        },
+        {
+          "name": "Flower",
+          "href": "https://github.com/adap/flower",
+          "description": "Flower is a Federated Learning Framework with a unified approach. It enables the federation of any ML workload, with any ML framework, and any programming language."
+        },
+        {
+          "name": "Google's Differential Privacy",
+          "href": "https://github.com/google/differential-privacy",
+          "description": "This is a C++ library of ε-differentially private algorithms, which can be used to produce aggregate statistics over numeric data sets containing private or sensitive information."
+        },
+        {
+          "name": "Guardrails",
+          "href": "https://github.com/guardrails-ai/guardrails",
+          "description": "Guardrails is a package that lets a user add structure, type and quality guarantees to the outputs of large language models."
+        },
+        {
+          "name": "NeMo Guardrails",
+          "href": "https://github.com/NVIDIA/NeMo-Guardrails",
+          "description": "NeMo Guardrails is an open-source toolkit for easily adding programmable guardrails to LLM-based conversational systems."
+        },
+        {
+          "name": "Opacus",
+          "href": "https://github.com/meta-pytorch/opacus",
+          "description": "Opacus is a library that enables training PyTorch models with differential privacy. It supports training with minimal code changes required on the client, has little impact on training performance, and allows the client to online track the privacy budget expended at any given moment."
+        },
+        {
+          "name": "OpenFL",
+          "href": "https://github.com/securefederatedai/openfl",
+          "description": "OpenFL is a Python framework for Federated Learning. OpenFL is designed to be a flexible, extensible and easily learnable tool for data scientists. OpenFL is developed by Intel Internet of Things Group (IOTG) and Intel Labs."
+        },
+        {
+          "name": "PySyft",
+          "href": "https://github.com/OpenMined/PySyft",
+          "description": "A Python library for secure, private Deep Learning. PySyft decouples private data from model training, using Multi-Party (MPC) within PyTorch."
+        },
+        {
+          "name": "Tensorflow Privacy",
+          "href": "https://github.com/tensorflow/privacy",
+          "description": "A Python library that includes implementations of TensorFlow optimizers for training machine learning models with differential privacy."
+        },
+        {
+          "name": "TF Encrypted",
+          "href": "https://github.com/tf-encrypted/tf-encrypted",
+          "description": "A Framework for Confidential Machine Learning on Encrypted Data in TensorFlow."
+        }
+      ]
+    }
+  ]
+}

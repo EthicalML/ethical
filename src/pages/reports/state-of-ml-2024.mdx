@@ -137,7 +137,7 @@ methodology:
 ---
 
 import survey2024Csv from '../../data/survey-2024.csv?raw';
-import { ArticleHero, SurveyReport } from '../../components/prose/components.js';
+import { ArticleHero, SurveyEvidence, SurveyReport } from '../../components/prose/components.js';
 import { buildSurveyReport } from '../../utils/SurveyReportData';
 
 export const report = buildSurveyReport(survey2024Csv);
@@ -146,6 +146,14 @@ export const report = buildSurveyReport(survey2024Csv);
   eyebrow="STATE OF PRODUCTION ML · 2024"
   title={frontmatter.title}
   intro="What 177 practitioners reported from production: CI/CD supported 69% of deployment workflows, AWS served more than half of cloud users, monitoring was the top challenge at 45%, and PyTorch led the library field at 36%."
+/>
+
+<SurveyEvidence
+  edition={2024}
+  sample={177}
+  fieldDates="14 September 2024 to 15 January 2025"
+  methodology="This self-selected practitioner survey reports the nonblank response base for each question. Percentages use that question-level base, and totals can exceed 100% where respondents could select more than one answer. Findings describe the respondents and are not population estimates."
+  citation="The Institute for Ethical AI Alignment & Safety (2024), The State of Production ML in 2024, https://ethical.institute/reports/state-of-ml-2024/."
 />
 
 <SurveyReport
