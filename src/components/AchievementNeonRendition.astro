@@ -455,6 +455,29 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
 </script>
 
 <style>
+  /* The collage is built from local plates and isometric faces rather than the
+     shared surfaces: they are one or two channels off `--bg-panel`/`--bg-inset`
+     by design, so they are their own tiny family. Under light the whole stack
+     inverts — the plates rise toward paper and the lit face stays the lightest
+     of the three, so the solids keep reading as solids. */
+  .achievement-neon-rendition {
+    --neon-plate-card: #171918;
+    --neon-plate-recessed: #131615;
+    --neon-plate-lift: #212423;
+    --neon-face-left: #161817;
+    --neon-face-right: #0e100f;
+    --neon-face-lit: #2a2e2c;
+    --neon-mix-base: #14100c;
+  }
+  :root[data-theme='light'] .achievement-neon-rendition {
+    --neon-plate-card: #fbfaf7;
+    --neon-plate-recessed: #f4f2ee;
+    --neon-plate-lift: #f2efe8;
+    --neon-face-left: #eae7df;
+    --neon-face-right: #e0dcd2;
+    --neon-face-lit: #fffffd;
+    --neon-mix-base: #f7f3ec;
+  }
   .achievement-neon-rendition {
     display: block;
   }
@@ -520,7 +543,7 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
     transition-duration: 0ms;
   }
   .neon-card {
-    background: #171918;
+    background: var(--neon-plate-card);
     border: 1px solid var(--hairline-card);
     color: var(--text-1);
     overflow: hidden;
@@ -531,7 +554,7 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
     z-index: 2;
   }
   .neon-slot[data-size='long'] .neon-card {
-    background: #131615;
+    background: var(--neon-plate-recessed);
   }
 
   /* --- Dud blocks: inert raised surfaces, no neon and no slide. Filled square,
@@ -543,14 +566,14 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
     z-index: 1;
   }
   .dud-face {
-    background: #212423;
+    background: var(--neon-plate-lift);
     border: 1px solid var(--hairline-card);
     inset: 0;
     position: absolute;
   }
   .dud[data-shape='plain'] .dud-face,
   .dud[data-shape='diamond-open'] .dud-face {
-    background: #131615;
+    background: var(--neon-plate-recessed);
   }
   .dud[data-shape='accent'] .dud-face {
     background: var(--accent);
@@ -563,7 +586,7 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
     width: 100%;
   }
   .dud-shape polygon {
-    fill: #212423;
+    fill: var(--neon-plate-lift);
     stroke: var(--hairline-card);
     stroke-linejoin: round;
     stroke-width: 1;
@@ -653,16 +676,16 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
     vector-effect: non-scaling-stroke;
   }
   .iso-top {
-    fill: #212423;
+    fill: var(--neon-plate-lift);
   }
   .iso-left {
-    fill: #161817;
+    fill: var(--neon-face-left);
   }
   .iso-right {
-    fill: #0e100f;
+    fill: var(--neon-face-right);
   }
   .iso-fill.iso-top {
-    fill: #2a2e2c;
+    fill: var(--neon-face-lit);
   }
   .iso-link {
     fill: none;
@@ -693,7 +716,7 @@ const duds = layout.duds.map((dud) => ({ area: dud.area, shape: dud.shape, rect:
   }
   .neon-slot:hover .iso-fill.iso-top,
   .neon-slot[data-active='true'] .iso-fill.iso-top {
-    fill: color-mix(in srgb, var(--neon) 42%, #14100c);
+    fill: color-mix(in srgb, var(--neon) 42%, var(--neon-mix-base));
   }
   .neon-slot:hover .iso-fill,
   .neon-slot[data-active='true'] .iso-fill {

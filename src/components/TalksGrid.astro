@@ -4,6 +4,10 @@ import alignment from '../assets/talks/alignment-field.svg';
 import systems from '../assets/talks/responsible-systems.svg';
 import agents from '../assets/talks/agent-safety.svg';
 import standards from '../assets/talks/standards.svg';
+import alignmentLight from '../assets/talks/alignment-field-light.svg';
+import systemsLight from '../assets/talks/responsible-systems-light.svg';
+import agentsLight from '../assets/talks/agent-safety-light.svg';
+import standardsLight from '../assets/talks/standards-light.svg';
 
 interface Talk {
   title: string;
@@ -18,6 +22,17 @@ interface Props {
 }
 
 const images = { alignment, systems, agents, standards };
+/* The cover art bakes an opaque plate, so it cannot be tinted from CSS and a
+   single file cannot serve both themes — on paper the dark plates read as four
+   holes punched in the page. Each has a light twin with the plate and the line
+   work re-toned; both ship and the inactive one is hidden, which keeps the dark
+   markup byte-identical. */
+const lightImages = {
+  alignment: alignmentLight,
+  systems: systemsLight,
+  agents: agentsLight,
+  standards: standardsLight,
+};
 const { talks } = Astro.props;
 ---
 
@@ -26,7 +41,8 @@ const { talks } = Astro.props;
     talks.map((talk) => (
       <article>
         <>
-          <Image src={images[talk.image]} alt="" width={800} height={480} />
+          <Image src={images[talk.image]} alt="" width={800} height={480} data-cover="dark" />
+          <Image src={lightImages[talk.image]} alt="" width={800} height={480} data-cover="light" />
           <p class="eyebrow">{talk.label}</p>
           <h2>
             {talk.href ? (
@@ -56,8 +72,11 @@ const { talks } = Astro.props;
     padding-bottom: 24px;
   }
 
+  /* The cover art is transparent line work rather than a baked plate, so the
+     plate is drawn here where it can flip with the theme. */
   .talk-grid img {
     aspect-ratio: 5/3;
+    background: var(--bg-inset);
     display: block;
     object-fit: cover;
     width: 100%;

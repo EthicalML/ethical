@@ -33,6 +33,10 @@
 }
 
 :root {
+  /* Themes the native controls the cascade cannot reach: form field internals,
+     scrollbars, the caret and the spellcheck underline. The site shipped with
+     nothing here, so the UA had been guessing from its own default. */
+  color-scheme: dark;
   --bg-base: #131414;
   --bg-panel: #171818;
   --bg-inset: #0f100f;
@@ -278,6 +282,7 @@
    derived from it — see STYLES.md. Every theme-dependent token on `:root` has a
    value here; nothing else does. */
 :root[data-theme='light'] {
+  color-scheme: light;
   /* ---- surfaces: elevation still goes up toward the light source, but the base sits
      below paper white so there is headroom to rise into ---- */
   --bg-base: #f4f2ee;
@@ -350,68 +355,68 @@
   --hairline-a050: rgba(25, 24, 20, 0.1);
   /* ---- accent: the mint survives as a fill and is never text. `--accent-ink` carries
      every ink-bucket site, and the whole alpha ladder tints toward it (x1.65,
-     because it mixes toward #117040 rather than toward black) ---- */
-  --accent-ink: #117040;
-  --accent-ink-rgb: 17, 112, 64;
-  --accent-wash: rgba(17, 112, 64, 0.1);
-  --accent-veil: rgba(17, 112, 64, 0.26);
-  --accent-line: rgba(17, 112, 64, 0.38);
-  --accent-edge: rgba(17, 112, 64, 0.55);
+     because it mixes toward #12673b rather than toward black) ---- */
+  --accent-ink: #12673b;
+  --accent-ink-rgb: 18, 103, 59;
+  --accent-wash: rgba(18, 103, 59, 0.1);
+  --accent-veil: rgba(18, 103, 59, 0.26);
+  --accent-line: rgba(18, 103, 59, 0.38);
+  --accent-edge: rgba(18, 103, 59, 0.55);
   --accent-a850: #5ee6a0;
-  --accent-a700: #117040;
-  --accent-a650: #117040;
-  --accent-a600: #117040;
-  --accent-a550: #117040;
-  --accent-a500: rgba(17, 112, 64, 0.55);
-  --accent-a480: rgba(17, 112, 64, 0.55);
-  --accent-a420: rgba(17, 112, 64, 0.55);
-  --accent-a400: rgba(17, 112, 64, 0.55);
-  --accent-a360: rgba(17, 112, 64, 0.55);
-  --accent-a350: rgba(17, 112, 64, 0.55);
-  --accent-a320: rgba(17, 112, 64, 0.38);
-  --accent-a300: rgba(17, 112, 64, 0.38);
-  --accent-a250: rgba(17, 112, 64, 0.38);
-  --accent-a240: rgba(17, 112, 64, 0.38);
-  --accent-a220: rgba(17, 112, 64, 0.38);
-  --accent-a140: rgba(17, 112, 64, 0.26);
-  --accent-a130: rgba(17, 112, 64, 0.26);
-  --accent-a100: rgba(17, 112, 64, 0.1);
-  --accent-a090: rgba(17, 112, 64, 0.1);
-  --accent-a080: rgba(17, 112, 64, 0.1);
-  --accent-a060: rgba(17, 112, 64, 0.1);
-  --accent-a050: rgba(17, 112, 64, 0.1);
+  --accent-a700: #12673b;
+  --accent-a650: #12673b;
+  --accent-a600: #12673b;
+  --accent-a550: #12673b;
+  --accent-a500: rgba(18, 103, 59, 0.55);
+  --accent-a480: rgba(18, 103, 59, 0.55);
+  --accent-a420: rgba(18, 103, 59, 0.55);
+  --accent-a400: rgba(18, 103, 59, 0.55);
+  --accent-a360: rgba(18, 103, 59, 0.55);
+  --accent-a350: rgba(18, 103, 59, 0.55);
+  --accent-a320: rgba(18, 103, 59, 0.38);
+  --accent-a300: rgba(18, 103, 59, 0.38);
+  --accent-a250: rgba(18, 103, 59, 0.38);
+  --accent-a240: rgba(18, 103, 59, 0.38);
+  --accent-a220: rgba(18, 103, 59, 0.38);
+  --accent-a140: rgba(18, 103, 59, 0.26);
+  --accent-a130: rgba(18, 103, 59, 0.26);
+  --accent-a100: rgba(18, 103, 59, 0.1);
+  --accent-a090: rgba(18, 103, 59, 0.1);
+  --accent-a080: rgba(18, 103, 59, 0.1);
+  --accent-a060: rgba(18, 103, 59, 0.1);
+  --accent-a050: rgba(18, 103, 59, 0.1);
   /* ---- semantic hues: hue preserved, lightness dropped until the ink form clears
      4.5:1 on --bg-inset. The `-fill` forms stay bright in both themes ---- */
-  --warn: #835a13;
-  --warn-a700: #835a13;
-  --warn-a580: #835a13;
-  --warn-a480: rgba(131, 90, 19, 0.55);
-  --warn-a300: rgba(131, 90, 19, 0.38);
-  --warn-a280: rgba(131, 90, 19, 0.38);
-  --warn-a250: rgba(131, 90, 19, 0.38);
-  --warn-a220: rgba(131, 90, 19, 0.38);
-  --warn-a120: rgba(131, 90, 19, 0.26);
-  --warn-a090: rgba(131, 90, 19, 0.1);
-  --warn-a080: rgba(131, 90, 19, 0.1);
-  --glitch-red: #c30f25;
-  --glitch-red-a100: rgba(195, 15, 37, 0.1);
-  --glitch-red-a070: rgba(195, 15, 37, 0.1);
-  --glitch-blue: #066895;
-  --glitch-blue-a250: rgba(6, 104, 149, 0.38);
-  --glitch-blue-a090: rgba(6, 104, 149, 0.1);
-  --glitch-blue-a025: rgba(6, 104, 149, 0.1);
-  --violet: #6f4cb9;
-  --violet-a550: #6f4cb9;
-  --violet-a280: rgba(111, 76, 185, 0.38);
-  --violet-a200: rgba(111, 76, 185, 0.26);
-  --violet-a180: rgba(111, 76, 185, 0.26);
-  --violet-a090: rgba(111, 76, 185, 0.1);
-  --violet-a070: rgba(111, 76, 185, 0.1);
-  --violet-a040: rgba(111, 76, 185, 0.1);
-  --violet-a025: rgba(111, 76, 185, 0.1);
-  --indigo: #335cbd;
-  --indigo-a400: rgba(51, 92, 189, 0.55);
-  --mint-bright: #2b6d4c;
+  --warn: #785313;
+  --warn-a700: #785313;
+  --warn-a580: #785313;
+  --warn-a480: rgba(120, 83, 19, 0.55);
+  --warn-a300: rgba(120, 83, 19, 0.38);
+  --warn-a280: rgba(120, 83, 19, 0.38);
+  --warn-a250: rgba(120, 83, 19, 0.38);
+  --warn-a220: rgba(120, 83, 19, 0.38);
+  --warn-a120: rgba(120, 83, 19, 0.26);
+  --warn-a090: rgba(120, 83, 19, 0.1);
+  --warn-a080: rgba(120, 83, 19, 0.1);
+  --glitch-red: #b41125;
+  --glitch-red-a100: rgba(180, 17, 37, 0.1);
+  --glitch-red-a070: rgba(180, 17, 37, 0.1);
+  --glitch-blue: #01608b;
+  --glitch-blue-a250: rgba(1, 96, 139, 0.38);
+  --glitch-blue-a090: rgba(1, 96, 139, 0.1);
+  --glitch-blue-a025: rgba(1, 96, 139, 0.1);
+  --violet: #6646ab;
+  --violet-a550: #6646ab;
+  --violet-a280: rgba(102, 70, 171, 0.38);
+  --violet-a200: rgba(102, 70, 171, 0.26);
+  --violet-a180: rgba(102, 70, 171, 0.26);
+  --violet-a090: rgba(102, 70, 171, 0.1);
+  --violet-a070: rgba(102, 70, 171, 0.1);
+  --violet-a040: rgba(102, 70, 171, 0.1);
+  --violet-a025: rgba(102, 70, 171, 0.1);
+  --indigo: #2f55af;
+  --indigo-a400: rgba(47, 85, 175, 0.55);
+  --mint-bright: #286547;
   /* ---- scrims sit over content and fade it out, so they invert rather than scale:
      depth 1 is the page, depth 5 the far extreme, which is white here ---- */
   --scrim-1-a940: rgba(244, 242, 238, 0.94);
