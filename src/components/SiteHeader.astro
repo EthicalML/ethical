@@ -30,13 +30,40 @@ import MobileDrawer from './MobileDrawer.astro';
         <button class="search-trigger" type="button" data-command-palette-open aria-label="Search the site">
           <span aria-hidden="true">⌘K</span>
         </button>
-        <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label="Light mode">
-          <span aria-hidden="true">LIGHT</span>
-        </button>
         <button class="nav-trigger" type="button" aria-expanded="false" data-menu-trigger="about" data-menu-width={menus.about.width}>
           {menus.about.label}<span class="caret" aria-hidden="true">▾</span>
         </button>
         <a class="join-pill" href={join.href}>{join.label}</a>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label="Light mode">
+          <svg
+            class="theme-icon theme-icon-sun"
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.25"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="4.25"></circle>
+            <path d="M12 2.75v2M12 19.25v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2.75 12h2M19.25 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+          </svg>
+          <svg
+            class="theme-icon theme-icon-moon"
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.25"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a6.75 6.75 0 0 0 10.7 10.7z"></path>
+          </svg>
+        </button>
         <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" data-mobile-menu-open>
           <span>Menu</span><i aria-hidden="true"></i>
         </button>
@@ -290,28 +317,38 @@ import MobileDrawer from './MobileDrawer.astro';
   /* Accent text and strokes take --accent-ink, never --accent: the bright mint is
      1.41:1 on paper. Both toggles read their pressed state from the live data-theme
      attribute (see shared/Theme.ts), so the pill can never show the wrong theme. */
+  /* A quiet glyph, not a control: no border, no fill, contour only. It sits to the
+     right of the join pill and should read as punctuation at the end of the row. */
   .theme-toggle {
     align-items: center;
     background: none;
-    border: 1px solid var(--hairline);
-    border-radius: 4px;
-    color: var(--text-2);
+    border: 0;
+    color: var(--text-4);
     cursor: pointer;
     display: inline-flex;
-    font-family: var(--font-mono);
-    font-size: 10px;
     justify-content: center;
-    letter-spacing: 0.08em;
-    padding: 5px 8px;
-    transition:
-      border-color 0.2s ease,
-      color 0.2s ease;
+    margin-inline-start: 2px;
+    padding: 6px;
+    transition: color 0.2s ease;
   }
 
-  .theme-toggle:hover,
-  .theme-toggle[aria-pressed='true'] {
-    border-color: var(--accent-edge);
+  .theme-toggle:hover {
     color: var(--accent-ink);
+  }
+
+  /* The icon names the destination, matching the aria-label: a sun while dark is
+     active because the click brings light, and a moon once light is on. */
+  .theme-icon {
+    display: block;
+  }
+
+  .theme-icon-moon,
+  .theme-toggle[aria-pressed='true'] .theme-icon-sun {
+    display: none;
+  }
+
+  .theme-toggle[aria-pressed='true'] .theme-icon-moon {
+    display: block;
   }
 
   @media (prefers-reduced-motion: reduce) {
