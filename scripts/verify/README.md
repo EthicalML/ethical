@@ -6,7 +6,10 @@ These scripts are the reviewed development harness required by ADR-008. Start a 
 npm run verify:dom:all
 npm run verify:shots:all
 npm run verify:typewriter
+npm run verify:motion:all
 ```
+
+Playwright is not a repository dependency — it is a browser download nobody building the site should pay for. `playwright.mjs` resolves it at run time from `node_modules` if a caller installed it there (CI does, pinned), otherwise from `PLAYWRIGHT_MODULE` or the local npx cache the harness has always been driven from.
 
 Pass routes after `--` to check a safe subset. Set `VERIFY_BASE_URL` only when deliberately verifying another local origin. `--viewport WIDTH` or `--viewport WIDTHxHEIGHT` changes either responsive gate; `VERIFY_VIEWPORT` is the environment equivalent. Screenshot files and their manifest go to viewport-specific folders under the git-ignored `scripts/verify/out/`.
 
@@ -36,6 +39,18 @@ node — correct dark decorative text sits at 1.07 — but a node that clears th
 readable whatever it scored in dark.
 
 Run the dark gate before the light gate; a light run with no recorded baseline fails rather than passing vacuously.
+
+## Motion
+
+`verify-motion` is the one gate that watches the journey rather than the destination. A real bug survived on `master` through every branch and was found by accident: navigating into a principle played its view transition 26px too low and snapped up on completion. Screenshots could not see it — the page was never in the wrong place, the _snapshot_ was. `.principle-prose` is both a `[data-reveal]` element and the named `principle-page` transition group, and the reveal settle was deferred by `requestAnimationFrame`, which runs after the browser photographs `::view-transition-new`. Fixed in `c38ef92` by settling in a microtask instead.
+
+The gate clicks a real link (never `goto`), then samples every animation frame for two seconds after the click: the scroll offset, and each tracked element's `getBoundingClientRect()`. The primer that leaks into the snapshot is a `translateY(26px)` on the real element, and `getBoundingClientRect` sees transforms, so the bad frame is measurable even though the pseudo-element is not.
+
+**The invariant is that arrival happens in a single motion.** From `astro:after-swap` onwards, every tracked element's document-space position — `scrollY + rect.top`, which cancels the router's own scroll — must already be its resting position. A trajectory that visits a position it later corrects away from by more than 2px is two motions. The resting value is the median of the window's last samples, and the assertion is stated against it rather than against "the first plateau" deliberately: a bad frame can be a single sample, too short to form a plateau of its own, and a plateau-relative rule would score it as the settle it corrects into. The 2px tolerance absorbs sub-pixel settle and layout rounding; it is not somewhere to hide a jump.
+
+`reducedMotion` is left at `no-preference` on purpose — under `reduce`, `Reveal` marks everything revealed at construction and the gate would assert nothing.
+
+Cases cover `/principles/` into a principle, principle prev/next in both directions, `/newsletter/` into an issue, and newsletter prev/next, at 1440x1000 and 420x900. Reverting `c38ef92` makes every principle case and both newsletter step cases fail with a measured 26px correction at post-swap frame 0, naming the route; the newsletter index card at 420 stays green because at that width the revealed elements are below the fold, so nothing on screen is photographed wrong.
 
 ## Parity
 
@@ -95,3 +110,9 @@ Every entry is echoed with its reason into the JSON report and cropped into `<di
 `npm run check:ratchet` also runs `verify-styles-doc.mjs`, which holds `STYLES.md` to the code it describes. Three derived checks — the `tokens.css` line, rule and declaration counts, every file owning styles appearing in the ownership table, and every table row pointing at a file that still owns styles — plus a `styles-hash` marker over `tokens.css` and every style block.
 
 The derived checks cannot be satisfied by a token edit: they either match reality or they do not. The hash is weaker by design; it only forces a deliberate look. After changing any style, read `STYLES.md`, correct anything now wrong, and run `npm run styles:sync` to restate the derived facts and re-bless the hash. A component and its extracted sibling sheet (`Hero.astro` + `Hero.css`) count as one owner.
+
+## In CI
+
+`.github/workflows/ci.yml` runs two of these gates. `motion` is a required check: it builds, serves `dist` on :4126 and runs `verify:motion:all`. `visual` rebuilds and photographs the PR's merge base and its head with `verify:shots:all` and compares them with `verify:parity`, so nothing is baselined and nothing can rot; `parity-summary.mjs` turns the two per-viewport reports into the PR comment and the verdict. Enforcement is by label — `dependencies` requires zero pixels, `visual-change` skips the job, anything else measures and reports without failing.
+
+Both install Playwright at a version pinned in the workflow, Chromium only. `verify-parity` shells out to ImageMagick and now accepts either the ImageMagick 7 `magick` entry point or the ImageMagick 6 per-command binaries that Ubuntu packages.

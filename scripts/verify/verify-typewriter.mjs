@@ -1,4 +1,4 @@
-import playwright from '/Users/asaucedo/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/index.js';
+import playwright from './playwright.mjs';
 
 import { applyTheme, parseThemeArgs, readTokenColors } from './theme.mjs';
 

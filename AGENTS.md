@@ -9,10 +9,18 @@ All changes land on `master` through a pull request; direct pushes are blocked b
 1. Branch from `master` (agents work in their own git worktree so parallel tracks never share a dirty checkout).
 2. Commit with comprehensive messages. Do not append session URLs to commit messages or PR bodies.
 3. Push the branch and open a PR with `gh pr create`.
-4. CI (`.github/workflows/ci.yml`) runs three required checks: `lint` (ESLint and Prettier), `typecheck` (the `astro check` ratchet), and `build` (the production build, in demo mode without `FORM_ENDPOINT`).
+4. CI (`.github/workflows/ci.yml`) runs four required checks — `lint` (ESLint and Prettier), `typecheck` (the `astro check` ratchet), `build` (the production build, in demo mode without `FORM_ENDPOINT`) and `motion` (the view-transition settle gate) — plus `visual`, a merge-base pixel-parity sweep whose enforcement depends on the PR's labels.
 5. Merge once CI is green. The merge landing on `master` triggers the production deploy.
 
-CI does not yet run the Playwright DOM gate, so `npm run verify:dom -- <route> --viewport 1440x1000` (and `420x900`) for affected routes remains a local pre-PR responsibility, as does the rest of the definition of done below.
+The `visual` job builds and photographs both the merge base and the head, so there are no committed baselines to go stale. It skips entirely when nothing under `src/`, `public/` or `package-lock.json` changed, and otherwise:
+
+| PR label        | Behaviour                                                                                                   |
+| --------------- | ----------------------------------------------------------------------------------------------------------- |
+| `dependencies`  | Zero differing pixels required; the job fails otherwise. A bump that moves rendering cannot merge silently. |
+| `visual-change` | Skipped. The author is declaring that pixels are meant to move.                                             |
+| anything else   | Measured and posted as a PR comment (routes changed, pixel counts, peak channel delta). Never fails.        |
+
+CI still does not run the Playwright DOM gate, so `npm run verify:dom -- <route> --viewport 1440x1000` (and `420x900`) for affected routes remains a local pre-PR responsibility, as does the rest of the definition of done below.
 
 ## Companion documents
 
