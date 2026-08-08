@@ -72,6 +72,7 @@
   --space-48: 48px;
   --space-56: 56px;
   --space-96: 96px;
+  --section-gap: 120px;
   --section-padding: 96px 48px;
   --font-display: "Newsreader", Georgia, serif;
   --font-body: "Geist", Helvetica, Arial, sans-serif;
@@ -632,11 +633,29 @@ kaos-graph, kaos-architecture { display: block; }
 /* A fixed two-line SELECTED box: wrapping labels must not change the card height. */
 /* Narrower breakpoints restyle the rows taller; re-reserve the six-row height. */
 .home-section {
-  padding: 120px 48px 0;
+  padding: var(--section-gap) 48px 0;
   scroll-margin-top: 124px;
 }
 /* Trailing hydration scripts are main's real last children, so plain :last-child never matches the closing section. */
-main > .home-section:nth-last-child(1 of .home-section) { padding-bottom: 120px; }
+main > .home-section:nth-last-child(1 of .home-section) { padding-bottom: var(--section-gap); }
+.network-lists { display: grid; gap: 26px; grid-template-columns: 1fr 1fr; margin-top: 24px; }
+.network-lists > div { display: flex; flex-direction: column; gap: 8px; }
+.network-lists .eyebrow { color: rgba(244,242,238,.4); font-size: var(--mono-10); letter-spacing: .1em; margin-bottom: 4px; }
+.network-lists span,.network-lists a { display: flex; font-size: 13.5px; gap: 10px; }
+.network-lists i { color: rgba(244,242,238,.8); font-style: normal; }
+.network-lists b { color: rgba(244,242,238,.42); font: 400 11px/normal var(--font-mono); margin-left: auto; }
+.network-lists a b { color: var(--accent); margin-left: 0; }
+
+@media (max-width: 900px) {
+  .kompute-feature,.kaos-feature { grid-template-columns: 1fr; }
+  .oss-copy { padding: 32px; }
+}
+@media (max-width: 800px) {
+  .open-source-prototype { padding-left: 24px; padding-right: 24px; }
+  .kaos-feature { padding: 26px; }
+  .survey-island .survey-bars button { grid-template-columns: 110px 1fr 45px; gap: 8px; }
+  .survey-island .survey-bars small { display: none; }
+}
 
 /* Round 4 shared implementation */
 .article-hero.canvas-variant .hero-canvas {
@@ -722,14 +741,73 @@ main > .home-section:nth-last-child(1 of .home-section) { padding-bottom: 120px;
 }
 
 @media (max-width: 950px) {
+  :root { --section-gap: 96px; }
+  .hero {
+    display: block;
+    min-height: 700px;
+    padding: 0 24px;
+  }
+  .hero-canvas {
+    bottom: 0;
+    height: 340px;
+    left: 0;
+    mask-image: linear-gradient(180deg, transparent, #000 30%);
+    opacity: .58;
+    top: auto;
+    width: 100%;
+  }
+  .hero-copy {
+    max-width: 680px;
+    padding: 64px 0 220px;
+  }
+  .hero h1 { font-size: clamp(48px, 8vw, 64px); }
+  .hero .button {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    min-height: 44px;
+  }
+  .graph-switcher {
+    gap: 4px;
+    margin-top: 24px;
+  }
+  .graph-switcher span {
+    background: transparent;
+    height: 44px;
+    position: relative;
+  }
+  .graph-switcher span::after {
+    background: rgba(244,242,238,.18);
+    content: "";
+    height: 2px;
+    inset: 21px 0 auto;
+    position: absolute;
+  }
+  .graph-switcher span.active { background: transparent; }
+  .graph-switcher span.active::after { background: var(--accent); }
   .stat-band { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .stat {
     border-bottom: 1px solid var(--hairline);
     min-width: 0;
     padding: 24px;
   }
-  .home-section { padding: 96px 24px 0; }
-  main > .home-section:nth-last-child(1 of .home-section) { padding-bottom: 96px; }
+  .affiliations > .eyebrow { padding-inline: 24px; }
+  .marquee-mask { mask-image: linear-gradient(90deg, transparent, #000 40px, #000 calc(100% - 40px), transparent); }
+  .marquee-item { padding-inline: 28px; }
+  .home-section { padding: var(--section-gap) 24px 0; }
+  main > .home-section:nth-last-child(1 of .home-section) { padding-bottom: var(--section-gap); }
+  .phase-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .phase-card { min-height: 220px; }
+  .principles-explorer-grid { gap: 32px; }
+  .principle-detail-wrap { position: static; }
+  .open-source-prototype,
+  .kompute-feature,
+  .kaos-feature,
+  .oss-copy { padding: 32px; }
+  .oss-copy > .figure-label,
+  .oss-metrics { padding-right: 0; }
+  .fixed-canvas { height: 320px; }
+  .kaos-feature { padding: 30px; }
   .kaos-canvas-mount { height: 320px; }
   form button { min-height: 44px; }
 }

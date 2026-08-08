@@ -1,0 +1,67 @@
+name: Catalogue sync
+
+# The open-source catalogues are committed snapshots of two upstream awesome-list
+# READMEs. This refreshes them monthly and opens a pull request when the upstream
+# lists have changed, so the on-site catalogue never silently drifts from source.
+#
+# The pull request is created with AUTOMATION_TOKEN rather than GITHUB_TOKEN:
+# GitHub does not run workflows on pull requests opened by GITHUB_TOKEN, so the
+# required checks would never report and auto-merge would wait forever. Without
+# the secret the job still refreshes and pushes the branch, then reports that the
+# pull request must be opened by hand.
+on:
+  schedule:
+    - cron: '17 6 3 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+          cache: npm
+      - run: npm ci
+      - name: Refresh the catalogue snapshots
+        run: node scripts/parse-awesome-lists.mjs
+      - name: Check for changes
+        id: diff
+        run: |
+          if git diff --quiet -- src/content/oss-catalogues.json src/data/production-ml-libraries.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "summary=$(git diff --shortstat -- src/content/oss-catalogues.json src/data/production-ml-libraries.json)" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Verify the refreshed snapshots build
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          npm run format:check
+          npm run build
+      - name: Open the pull request
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.AUTOMATION_TOKEN || github.token }}
+          HAS_PAT: ${{ secrets.AUTOMATION_TOKEN != '' }}
+          SUMMARY: ${{ steps.diff.outputs.summary }}
+        run: |
+          branch="catalogue-sync/$(date -u +%Y-%m-%d)"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add src/content/oss-catalogues.json src/data/production-ml-libraries.json
+          git commit -m "Refresh the open-source catalogue snapshots" -m "Regenerated from the upstream awesome-list READMEs by the monthly catalogue sync. $SUMMARY"
+          git push -u origin "$branch"
+          if [ "$HAS_PAT" != "true" ]; then
+            echo "AUTOMATION_TOKEN is not set, so a pull request opened here would not run CI. Branch $branch is pushed; open the pull request manually." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          body="Monthly regeneration of the committed catalogue snapshots from the upstream awesome-list READMEs. $SUMMARY Opened automatically by .github/workflows/catalogue-sync.yml with auto-merge enabled, so it lands once the required checks pass."
+          gh pr create --base master --head "$branch" --title "Refresh the open-source catalogue snapshots" --body "$body"
+          gh pr merge --auto --merge "$branch"
