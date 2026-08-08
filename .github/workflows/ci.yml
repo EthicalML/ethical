@@ -2,11 +2,19 @@ name: CI
 
 on:
   pull_request:
+    # `labeled`/`unlabeled` are here for the visual job: its enforcement is
+    # chosen by the PR's labels, so applying `visual-change` or `dependencies`
+    # has to be able to re-decide a run that already happened.
+    types: [opened, synchronize, reopened, labeled, unlabeled]
   workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  # Pinned so the gates are always read by the same browser. Bump deliberately.
+  PLAYWRIGHT_VERSION: 1.62.1
 
 jobs:
   lint:
@@ -43,3 +51,164 @@ jobs:
       # receiver URL never reaches fork-triggered runs. The deploy workflow
       # injects the secret for the production build.
       - run: npm run build
+
+  # Screenshots cannot see a transition that plays in the wrong place and then
+  # corrects: the landed page is correct, only the frames in between are not.
+  # This gate drives real client-side navigations and asserts the arrival is a
+  # single motion. It is required, and it is cheap enough to stay that way.
+  motion:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+          cache: npm
+      - run: npm ci
+      - name: Install Playwright
+        run: |
+          npm install --no-save --no-audit --no-fund "playwright@$PLAYWRIGHT_VERSION"
+          npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: Serve the build
+        run: |
+          nohup npx --yes http-server dist -p 4126 --silent > /dev/null 2>&1 &
+          for _ in $(seq 1 60); do
+            curl -fsS -o /dev/null http://127.0.0.1:4126/ && exit 0
+            sleep 1
+          done
+          echo "the built site never came up on :4126" >&2
+          exit 1
+      - run: npm run verify:motion:all
+
+  # Pixel parity against the PR's merge base. No baselines are committed — the
+  # job builds and photographs both sides itself, so it cannot go stale and
+  # cannot be blessed by hand. What it does with the answer depends on the
+  # labels; see PARITY_MODE below.
+  visual:
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'pull_request' &&
+      !contains(github.event.pull_request.labels.*.name, 'visual-change')
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      # `dependencies` is what Dependabot applies: a bump that moves rendering
+      # must not merge silently, so it is held to zero differing pixels.
+      # Everything else measures and reports without failing.
+      PARITY_MODE: >-
+        ${{ contains(github.event.pull_request.labels.*.name, 'dependencies') && 'enforce' || 'report' }}
+      # Playwright lives outside the checkout so it survives the two `npm ci`
+      # runs this job performs (merge base, then head).
+      PLAYWRIGHT_MODULE: ${{ runner.temp }}/playwright/node_modules/playwright/index.js
+      COMMENT_MARKER: '<!-- merge-base-visual-parity -->'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: Resolve the merge base and the scope
+        id: scope
+        run: |
+          git fetch --no-tags --prune origin "$GITHUB_BASE_REF"
+          base=$(git merge-base "origin/$GITHUB_BASE_REF" HEAD)
+          echo "base=$base" >> "$GITHUB_OUTPUT"
+          echo "Merge base: $base"
+          changed=$(git diff --name-only "$base" HEAD -- src public package-lock.json)
+          if [ -z "$changed" ]; then
+            echo "Nothing rendered changed; skipping the visual sweep."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "$changed"
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-node@v4
+        if: steps.scope.outputs.run == 'true'
+        with:
+          node-version-file: .tool-versions
+          cache: npm
+      - name: Install ImageMagick and Playwright
+        if: steps.scope.outputs.run == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq imagemagick
+          mkdir -p "$RUNNER_TEMP/playwright"
+          cd "$RUNNER_TEMP/playwright"
+          npm init -y >/dev/null
+          npm install --no-audit --no-fund "playwright@$PLAYWRIGHT_VERSION"
+          npx playwright install --with-deps chromium
+      - name: Capture the merge base
+        if: steps.scope.outputs.run == 'true'
+        run: |
+          git checkout --detach "${{ steps.scope.outputs.base }}"
+          npm ci
+          npm run build
+          .github/scripts/capture-shots.sh "$RUNNER_TEMP/shots/base"
+      - name: Capture the head
+        if: steps.scope.outputs.run == 'true'
+        run: |
+          git checkout --detach "${{ github.event.pull_request.head.sha }}"
+          npm ci
+          npm run build
+          .github/scripts/capture-shots.sh "$RUNNER_TEMP/shots/head"
+      - name: Compare
+        if: steps.scope.outputs.run == 'true'
+        id: compare
+        run: |
+          mkdir -p "$RUNNER_TEMP/parity"
+          for viewport in 1440 420; do
+            # verify-parity exits non-zero on any difference; the verdict is
+            # made from the reports, not from this exit code.
+            npm run --silent verify:parity -- \
+              "$RUNNER_TEMP/shots/base/$viewport" "$RUNNER_TEMP/shots/head/$viewport" \
+              --out "$RUNNER_TEMP/parity/diff-$viewport" \
+              > "$RUNNER_TEMP/parity/report-$viewport.json" || true
+          done
+      - name: Summarise
+        if: steps.scope.outputs.run == 'true'
+        id: summary
+        run: |
+          node scripts/verify/parity-summary.mjs \
+            --mode "$PARITY_MODE" \
+            --marker "$COMMENT_MARKER" \
+            --out "$RUNNER_TEMP/parity/comment.md" \
+            --verdict "$RUNNER_TEMP/parity/verdict.txt" \
+            "1440x1000=$RUNNER_TEMP/parity/report-1440.json" \
+            "420x900=$RUNNER_TEMP/parity/report-420.json"
+          echo "verdict=$(cat "$RUNNER_TEMP/parity/verdict.txt")" >> "$GITHUB_OUTPUT"
+      - name: Post or update the PR comment
+        # Fork PRs get a read-only token, so a comment is best-effort; the
+        # verdict below is not.
+        if: steps.scope.outputs.run == 'true' && !github.event.pull_request.head.repo.fork
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          existing=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" --paginate \
+            --jq "[.[] | select(.body | startswith(\"$COMMENT_MARKER\"))] | last | .id // empty")
+          if [ -n "$existing" ]; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$existing" \
+              -F body=@"$RUNNER_TEMP/parity/comment.md" >/dev/null
+          else
+            gh api -X POST "repos/$GITHUB_REPOSITORY/issues/$PR/comments" \
+              -F body=@"$RUNNER_TEMP/parity/comment.md" >/dev/null
+          fi
+      - name: Upload the diffs
+        if: steps.scope.outputs.run == 'true' && steps.summary.outputs.verdict == 'moved'
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-parity-diffs
+          path: ${{ runner.temp }}/parity
+          if-no-files-found: ignore
+      - name: Verdict
+        if: steps.scope.outputs.run == 'true'
+        run: |
+          cat "$RUNNER_TEMP/parity/comment.md" >> "$GITHUB_STEP_SUMMARY"
+          verdict='${{ steps.summary.outputs.verdict }}'
+          echo "Verdict: $verdict (mode: $PARITY_MODE)"
+          if [ "$verdict" = "moved" ] && [ "$PARITY_MODE" = "enforce" ]; then
+            echo "Labelled 'dependencies' and pixels moved against the merge base." >&2
+            exit 1
+          fi
