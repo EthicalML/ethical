@@ -29,7 +29,6 @@ Search by the surface name or representative selector below before adding a rule
 | `AffiliationMarquee.astro` | Partner affiliation logo marquee | `.affiliations`, `.marquee-track`, `.marquee-item` |
 | `AnimationWindow.astro` | Reusable playback window chrome | `animation-window`, `.window-header`, `.traffic-lights` |
 | `ArticleHero.astro` | Article and framework heroes, including canvas variants | `.article-hero`, `.hero-canvas` |
-| `CardGrid.astro` | Generic feature card copy inside card grids | `.feature-card h3`, `.feature-card p` |
 | `CategoryAtlas.astro` | Production ML category atlas | `.category-atlas`, `.atlas-field`, `.atlas-tile` |
 | `CenteredCTA.astro` | Centred call-to-action section | `.center-cta` |
 | `ChannelLinks.astro` | Network channel link rows | `.channel-links a` |
@@ -62,7 +61,6 @@ Search by the surface name or representative selector below before adding a rule
 | `ProductionMlCatalogue.astro` | Production ML catalogue and category details | `.production-catalogue`, `.catalogue-grid` |
 | `ProjectLinks.astro` | Project resource link buttons | `.project-links` |
 | `ProjectPortal.astro` | Open-source project portal and activity panels | `.project-portal`, `.portal-rail`, `.portal-stage` |
-| `PrototypeSwitcher.astro` | Prototype navigation switcher | `prototype-switcher`, `.prototype-switcher-nav` |
 | `QuickstartTerminal.astro` | KAOS quickstart terminal playback | `.quickstart-window`, `quickstart-terminal`, `.terminal-body` |
 | `RecentIssuesRail.astro` | Recent newsletter issue rail | `.recent-issues-rail` |
 | `RegulationGrid.astro` | Policy regulation catalogue and themes | `.regulation-catalogue`, `.regulation-grid` |
@@ -77,7 +75,6 @@ Search by the surface name or representative selector below before adding a rule
 | `SurveyExplorerIsland.astro` and `SurveyExplorer.tsx` | Homepage survey explorer tabs, year controls, bars and focus panel | `.survey-island`, `.survey-toolbar`, `.survey-bars`, `.survey-focus` |
 | `SurveyReportApp.module.css` | 2024 and 2025 report scrollytelling, charts and comparison controls | `.report`, `.chapterSwitcher`, `.barRow`, `.compareToggle` |
 | `TalkCard.astro` | Individual talk card | `.talk-card` |
-| `TalksGrid.astro` | Talks listing grid | `.talk-grid` |
 | `XaiProcess.astro` | XAI process player | `xai-process`, `.process-heading`, `.process-stage` |
 | `prose/CTA.astro` | MDX CTA block | `.cta-only`, `.cta-block` |
 | `prose/CapabilityTable.astro` | MDX capability table | `.capability-table` |
