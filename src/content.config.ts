@@ -116,19 +116,26 @@ const events = defineCollection({
     end: z.date().optional(),
     location: z.string().optional(),
     topics: z.array(z.enum(EVENT_TOPICS)).optional(),
-    cfp: z
-      .object({
-        url: z.url().optional(),
-        deadline: z.date().optional(),
-      })
+    cfps: z
+      .array(
+        z.object({
+          track: z.string().optional(),
+          url: z.url().optional(),
+          deadline: z.date().optional(),
+        }),
+      )
       .optional(),
-    talk: z
-      .object({
-        title: z.string(),
-        context: z.string().optional(),
-        video: z.url().optional(),
-        image: z.string().optional(),
-      })
+    talks: z
+      .array(
+        z.object({
+          title: z.string(),
+          track: z.string().optional(),
+          url: z.url().optional(),
+          context: z.string().optional(),
+          video: z.url().optional(),
+          image: z.string().optional(),
+        }),
+      )
       .optional(),
   }),
 });

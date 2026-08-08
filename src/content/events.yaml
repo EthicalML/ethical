@@ -1,5 +1,6 @@
 # Conferences and community events the network tracks or speaks at.
-# `talk` is present only where we appear; upcoming/past/featured/cfp-open are all derived.
+# `talks` is present only where we appear; upcoming/past/featured/cfp-open are all derived.
+# One event is one conference: several talks or several per-track CFPs live in the arrays.
 # Sorted by `start`, newest first.
 
 - slug: mlops-world-2026
@@ -19,9 +20,9 @@
   end: 2026-11-05
   location: Hamburg, DE
   topics: [general-tech, llms]
-  cfp:
-    url: https://codetalks.com/call-for-paper
-    deadline: 2026-08-31
+  cfps:
+    - url: https://codetalks.com/call-for-paper
+      deadline: 2026-08-31
 
 - slug: world-summit-ai-europe-2026
   name: World Summit AI Europe 2026
@@ -31,8 +32,8 @@
   end: 2026-10-08
   location: Amsterdam, NL
   topics: [ai-agents, ai-policy, llms]
-  talk:
-    title: To be announced
+  talks:
+    - title: To be announced
 
 - slug: ai-infra-summit-2026
   name: AI Infra Summit 2026
@@ -51,8 +52,8 @@
   end: 2026-09-11
   location: Berlin, DE
   topics: [ai-agents, llms]
-  talk:
-    title: To be announced
+  talks:
+    - title: To be announced
 
 - slug: euroscipy-2026
   name: EuroSciPy 2026
@@ -98,10 +99,10 @@
   end: 2026-04-16
   location: Darmstadt, DE
   topics: [python, mlops, ai-agents]
-  talk:
-    title: Production ML across 2015-2035
-    context: PYCON DE & PYDATA 2026 · VIDEO
-    video: https://www.youtube.com/watch?v=I1GvlW1H4WI
+  talks:
+    - title: Production ML across 2015-2035
+      context: PYCON DE & PYDATA 2026 · VIDEO
+      video: https://www.youtube.com/watch?v=I1GvlW1H4WI
 
 - slug: kubecon-europe-2026
   name: KubeCon + CloudNativeCon Europe 2026
@@ -120,11 +121,11 @@
   end: 2025-11-06
   location: Hamburg, DE
   topics: [general-tech, llms]
-  talk:
-    title: The State of GenAI 2025
-    context: CODE TALKS 2025 KEYNOTE · VIDEO
-    video: https://www.youtube.com/watch?v=cXYpyHTvFRk
-    image: /images/talks/state-genai-2025-code-talks.jpg
+  talks:
+    - title: The State of GenAI 2025
+      context: CODE TALKS 2025 KEYNOTE · VIDEO
+      video: https://www.youtube.com/watch?v=cXYpyHTvFRk
+      image: /images/talks/state-genai-2025-code-talks.jpg
 
 - slug: wearedevelopers-world-congress-2025
   name: WeAreDevelopers World Congress 2025
@@ -134,11 +135,11 @@
   end: 2025-07-11
   location: Berlin, DE
   topics: [general-tech, llms]
-  talk:
-    title: The State of GenAI in 2025
-    context: WWC25 KEYNOTE · VIDEO
-    video: https://www.youtube.com/watch?v=v2LENQOG-Xg
-    image: /images/talks/state-genai-2025-wwc25.jpg
+  talks:
+    - title: The State of GenAI in 2025
+      context: WWC25 KEYNOTE · VIDEO
+      video: https://www.youtube.com/watch?v=v2LENQOG-Xg
+      image: /images/talks/state-genai-2025-wwc25.jpg
 
 - slug: cloud-native-ai-day-europe-2025
   name: Cloud Native + Kubernetes AI Day Europe 2025
@@ -147,11 +148,11 @@
   start: 2025-04-01
   location: London, GB
   topics: [cloud-native, llms, mlops]
-  talk:
-    title: The State of GenAI & ML in the Cloud Native Ecosystem
-    context: WITH BARTOSZ OCYTKO, ZALANDO · VIDEO
-    video: https://www.youtube.com/watch?v=0uJGmMZGUJE
-    image: /images/talks/state-genai-cloud-native.jpg
+  talks:
+    - title: The State of GenAI & ML in the Cloud Native Ecosystem
+      context: WITH BARTOSZ OCYTKO, ZALANDO · VIDEO
+      video: https://www.youtube.com/watch?v=0uJGmMZGUJE
+      image: /images/talks/state-genai-cloud-native.jpg
 
 - slug: wearedevelopers-world-congress-2024
   name: WeAreDevelopers World Congress 2024
@@ -161,12 +162,12 @@
   end: 2024-07-19
   location: Berlin, DE
   topics: [general-tech, mlops]
-  talk:
-    title: The State of Production Machine Learning in 2024
-    context: WEAREDEVELOPERS 2024 · VIDEO
-    # The organiser also hosts this talk at youtube.com/live/AtA2XXo_b5s; same session, two uploads.
-    video: https://www.youtube.com/watch?v=NycftytgPnk
-    image: /images/talks/state-production-ml-2024.jpg
+  talks:
+    - title: The State of Production Machine Learning in 2024
+      context: WEAREDEVELOPERS 2024 · VIDEO
+      # The organiser also hosts this talk at youtube.com/live/AtA2XXo_b5s; same session, two uploads.
+      video: https://www.youtube.com/watch?v=NycftytgPnk
+      image: /images/talks/state-production-ml-2024.jpg
 
 - slug: pydata-global-2022
   name: PyData Global 2022
@@ -175,10 +176,10 @@
   start: 2022-12-01
   end: 2022-12-03
   topics: [python, llms, data-engineering]
-  talk:
-    title: Industrial Strength LLMs - Scaling Complex Large Text & Image Models
-    context: PYDATA GLOBAL 2022 · VIDEO
-    video: https://www.youtube.com/watch?v=RVUi_rAFfzU
+  talks:
+    - title: Industrial Strength LLMs - Scaling Complex Large Text & Image Models
+      context: PYDATA GLOBAL 2022 · VIDEO
+      video: https://www.youtube.com/watch?v=RVUi_rAFfzU
 
 - slug: neurips-2022
   name: NeurIPS 2022
@@ -188,11 +189,11 @@
   end: 2022-12-09
   location: New Orleans, US
   topics: [research, ml-security]
-  talk:
-    title: Security in ML Systems — Risks and Best Practices
-    context: NEURIPS WORKSHOP KEYNOTE · VIDEO
-    video: https://www.youtube.com/watch?v=7XSy5aw8oU8
-    image: /images/talks/security-ml-systems-neurips.jpg
+  talks:
+    - title: Security in ML Systems — Risks and Best Practices
+      context: NEURIPS WORKSHOP KEYNOTE · VIDEO
+      video: https://www.youtube.com/watch?v=7XSy5aw8oU8
+      image: /images/talks/security-ml-systems-neurips.jpg
 
 - slug: kubecon-north-america-2022
   name: KubeCon + CloudNativeCon North America 2022
@@ -202,11 +203,11 @@
   end: 2022-10-28
   location: Detroit, US
   topics: [cloud-native, mlops, data-engineering]
-  talk:
-    title: MetaOps — Metadata Systems for End-to-End Data & ML Platforms
-    context: KUBECON NA 2022 · VIDEO
-    # No CNCF recording of the Detroit session; this is the same talk recorded at PyData Global 2022.
-    video: https://www.youtube.com/watch?v=OSbH4dfswCY
+  talks:
+    - title: MetaOps — Metadata Systems for End-to-End Data & ML Platforms
+      context: KUBECON NA 2022 · VIDEO
+      # No CNCF recording of the Detroit session; this is the same talk recorded at PyData Global 2022.
+      video: https://www.youtube.com/watch?v=OSbH4dfswCY
 
 - slug: kubecon-europe-2022
   name: KubeCon + CloudNativeCon Europe 2022
@@ -216,11 +217,11 @@
   end: 2022-05-20
   location: Valencia, ES
   topics: [cloud-native, ai-infrastructure, mlops]
-  talk:
-    title: Accelerating High-Performance ML at Scale
-    context: WITH ELENA NEROSLAVSKAYA · VIDEO
-    video: https://www.youtube.com/watch?v=hj_lozIqo5M
-    image: /images/talks/high-performance-ml-scale.jpg
+  talks:
+    - title: Accelerating High-Performance ML at Scale
+      context: WITH ELENA NEROSLAVSKAYA · VIDEO
+      video: https://www.youtube.com/watch?v=hj_lozIqo5M
+      image: /images/talks/high-performance-ml-scale.jpg
 
 - slug: neurips-2021
   name: NeurIPS 2021
@@ -229,11 +230,11 @@
   start: 2021-12-06
   end: 2021-12-14
   topics: [research, ai-policy]
-  talk:
-    title: Practical AI Ethics — A Guide Towards Responsible ML
-    context: NEURIPS WORKSHOP KEYNOTE · VIDEO
-    video: https://www.youtube.com/watch?v=57YpXjcj0Ho
-    image: /images/talks/practical-ai-ethics-neurips.jpg
+  talks:
+    - title: Practical AI Ethics — A Guide Towards Responsible ML
+      context: NEURIPS WORKSHOP KEYNOTE · VIDEO
+      video: https://www.youtube.com/watch?v=57YpXjcj0Ho
+      image: /images/talks/practical-ai-ethics-neurips.jpg
 
 - slug: kubecon-europe-2021
   name: KubeCon + CloudNativeCon Europe 2021
@@ -242,35 +243,32 @@
   start: 2021-05-04
   end: 2021-05-07
   topics: [cloud-native, mlops]
-  talk:
-    title: Automated Machine Learning Performance Evaluation in Kubernetes at Scale
-    context: KUBECON EUROPE 2021 · VIDEO
-    video: https://www.youtube.com/watch?v=8ORl8lu1Eeo
-    image: /images/talks/ml-evaluation-kubecon-2021.jpg
+  talks:
+    - title: Automated Machine Learning Performance Evaluation in Kubernetes at Scale
+      context: KUBECON EUROPE 2021 · VIDEO
+      video: https://www.youtube.com/watch?v=8ORl8lu1Eeo
+      image: /images/talks/ml-evaluation-kubecon-2021.jpg
 
-- slug: fosdem-2021-python
-  name: FOSDEM 2021 Python Devroom
+# FOSDEM 2021 ran online rather than in Brussels, so no `location` is asserted.
+- slug: fosdem-2021
+  name: FOSDEM 2021
   series: fosdem
-  url: https://archive.fosdem.org/2021/schedule/event/python_cuda/
+  url: https://archive.fosdem.org/2021/
   start: 2021-02-07
-  topics: [python, ai-infrastructure, general-tech]
-  talk:
-    title: Beyond CUDA — GPU-accelerated Python on cross-vendor graphics cards
-    context: KOMPUTE + VULKAN SDK · VIDEO
-    video: https://www.youtube.com/watch?v=AJRyZ09IUdg
-    image: /images/talks/beyond-cuda-kompute.jpg
-
-- slug: fosdem-2021-hpc
-  name: FOSDEM 2021 HPC, Big Data & Data Science Devroom
-  series: fosdem
-  url: https://archive.fosdem.org/2021/schedule/event/gpu_vulkan/
-  start: 2021-02-07
-  topics: [ai-infrastructure, data-engineering, general-tech]
-  talk:
-    title: GPU Computing & Optimizations Made Simple with C++ Kompute & Vulkan
-    context: KOMPUTE + VULKAN · VIDEO
-    video: https://www.youtube.com/watch?v=Xz4fiQNmGSA
-    image: /images/talks/gpu-computing-kompute.jpg
+  topics: [python, ai-infrastructure, data-engineering, general-tech]
+  talks:
+    - title: Beyond CUDA — GPU-accelerated Python on cross-vendor graphics cards
+      track: Python Devroom
+      url: https://archive.fosdem.org/2021/schedule/event/python_cuda/
+      context: KOMPUTE + VULKAN SDK · VIDEO
+      video: https://www.youtube.com/watch?v=AJRyZ09IUdg
+      image: /images/talks/beyond-cuda-kompute.jpg
+    - title: GPU Computing & Optimizations Made Simple with C++ Kompute & Vulkan
+      track: HPC, Big Data & Data Science Devroom
+      url: https://archive.fosdem.org/2021/schedule/event/gpu_vulkan/
+      context: KOMPUTE + VULKAN · VIDEO
+      video: https://www.youtube.com/watch?v=Xz4fiQNmGSA
+      image: /images/talks/gpu-computing-kompute.jpg
 
 - slug: pycon-hk-2020-fall
   name: PyCon HK 2020 Fall
@@ -278,11 +276,11 @@
   url: https://pycon.hk/
   start: 2020-11-16 # unverified - event identity inferred from the newsletter label; date is the recording's publication date
   topics: [python, mlops]
-  talk:
-    title: Production ML Monitoring — Principles, Patterns and Techniques
-    context: TALK · VIDEO
-    video: https://www.youtube.com/watch?v=QcevzK9ZuDg
-    image: /images/talks/production-ml-monitoring.jpg
+  talks:
+    - title: Production ML Monitoring — Principles, Patterns and Techniques
+      context: TALK · VIDEO
+      video: https://www.youtube.com/watch?v=QcevzK9ZuDg
+      image: /images/talks/production-ml-monitoring.jpg
 
 - slug: fosdem-2020
   name: FOSDEM 2020
@@ -292,11 +290,11 @@
   end: 2020-02-02 # unverified
   location: Brussels, BE
   topics: [mlops, general-tech]
-  talk:
-    title: A CI/CD Framework for Production ML at Massive Scale
-    context: JENKINS X + SELDON CORE · VIDEO
-    video: https://www.youtube.com/watch?v=68_Phxwaj-k
-    image: /images/talks/cicd-production-ml.jpg
+  talks:
+    - title: A CI/CD Framework for Production ML at Massive Scale
+      context: JENKINS X + SELDON CORE · VIDEO
+      video: https://www.youtube.com/watch?v=68_Phxwaj-k
+      image: /images/talks/cicd-production-ml.jpg
 
 - slug: pydata-london-2019
   name: PyData London 2019
@@ -306,11 +304,11 @@
   end: 2019-07-14
   location: London, GB
   topics: [python, mlops, research]
-  talk:
-    title: Guide towards algorithm explainability in ML
-    context: PYDATA LONDON 2019 · VIDEO
-    video: https://www.youtube.com/watch?v=vq8mDiDODhc
-    image: /images/talks/explainability-pydata-london-2019.jpg
+  talks:
+    - title: Guide towards algorithm explainability in ML
+      context: PYDATA LONDON 2019 · VIDEO
+      video: https://www.youtube.com/watch?v=vq8mDiDODhc
+      image: /images/talks/explainability-pydata-london-2019.jpg
 
 - slug: infoshare-2019
   name: infoShare 2019
@@ -320,11 +318,11 @@
   end: 2019-05-09
   location: Gdańsk, PL
   topics: [data-engineering, general-tech]
-  talk:
-    title: Real-time NLP & ML with Spark Streaming and Kafka
-    context: INFOSHARE 2019 · VIDEO
-    video: https://www.youtube.com/watch?v=u-bIWsNpwrw
-    image: /images/talks/realtime-nlp-spark-kafka.jpg
+  talks:
+    - title: Real-time NLP & ML with Spark Streaming and Kafka
+      context: INFOSHARE 2019 · VIDEO
+      video: https://www.youtube.com/watch?v=u-bIWsNpwrw
+      image: /images/talks/realtime-nlp-spark-kafka.jpg
 
 - slug: fosdem-2019
   name: FOSDEM 2019
@@ -334,8 +332,8 @@
   end: 2019-02-03
   location: Brussels, BE
   topics: [mlops, general-tech]
-  talk:
-    title: MLOps tools to scale your production ML
-    context: FOSDEM 2019 · VIDEO
-    video: https://www.youtube.com/watch?v=Ynb6X0KZKxY
-    image: /images/talks/mlops-tools-fosdem-2019.jpg
+  talks:
+    - title: MLOps tools to scale your production ML
+      context: FOSDEM 2019 · VIDEO
+      video: https://www.youtube.com/watch?v=Ynb6X0KZKxY
+      image: /images/talks/mlops-tools-fosdem-2019.jpg

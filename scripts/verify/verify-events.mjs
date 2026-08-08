@@ -25,14 +25,24 @@ for (const [name, count] of countBy(events.map((event) => event.name))) {
   if (count > 1) fail(`Duplicate event name "${name}" appears ${count} times.`);
 }
 
-const videos = events.filter((event) => event.talk?.video).map((event) => event.talk.video);
-for (const [video, count] of countBy(videos)) {
-  if (count > 1) fail(`Talk video ${video} is claimed by ${count} events.`);
+for (const [slug, count] of countBy(events.map((event) => event.slug))) {
+  if (count > 1) fail(`Duplicate event slug "${slug}" appears ${count} times.`);
 }
 
-for (const event of events.filter((candidate) => candidate.cfp?.deadline)) {
-  if (event.cfp.deadline > event.start) {
-    fail(`CFP for "${event.name}" closes after the event itself starts.`);
+const talks = events.flatMap((event) => event.talks ?? []);
+const cfps = events.flatMap((event) => event.cfps ?? []);
+
+const videos = talks.filter((talk) => talk.video).map((talk) => talk.video);
+for (const [video, count] of countBy(videos)) {
+  if (count > 1) fail(`Talk video ${video} is claimed by ${count} talks.`);
+}
+
+for (const event of events) {
+  for (const cfp of event.cfps ?? []) {
+    if (cfp.deadline && cfp.deadline > event.start) {
+      const track = cfp.track ? ` (${cfp.track})` : '';
+      fail(`CFP for "${event.name}"${track} closes after the event itself starts.`);
+    }
   }
 }
 
@@ -54,7 +64,8 @@ if (failures.length > 0) {
       `events        ${events.length}`,
       `upcoming      ${upcoming}`,
       `past          ${events.length - upcoming}`,
-      `with talk     ${events.filter((event) => event.talk).length}`,
+      `talks         ${talks.length}`,
+      `cfps          ${cfps.length}`,
       `with video    ${videos.length}`,
       `featured      ${featured.length}`,
       `topics        ${[...topics]
