@@ -75,8 +75,9 @@ reach: form field internals, scrollbars, the caret and the spellcheck underline.
 - Syntax-highlighted code. `github-dark` is baked into the markup at build time, so a console or code
   panel is a dark surface in both themes; `QuickstartTerminal.astro` re-enters the ink tokens at
   their dark values for that subtree rather than trying to flip it.
-- Raster and baked artwork. `src/assets/talks/*.svg` bake an opaque plate, so each ships a `-light`
-  twin and `TalksGrid.astro` hides the inactive one.
+- Raster and baked artwork. A file that bakes an opaque plate cannot be flipped by CSS, so it needs
+  a `-light` twin under `src/assets/` and an owner that hides the inactive one. There is no live
+  instance today — `TalksGrid.astro`, the only one, was dead code and has been removed.
 
 ## Global stylesheet
 
