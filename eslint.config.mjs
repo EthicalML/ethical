@@ -7,6 +7,10 @@ export default [
   {
     ignores: [
       '.astro/**',
+      // Agent worktrees are checkouts of this same repo. Linting them gives
+      // typescript-eslint two tsconfig roots for one file set and floods the
+      // run with parse errors that belong to no working file.
+      '.claude/**',
       'dist/**',
       'node_modules/**',
       'public/**',
