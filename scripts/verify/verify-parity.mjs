@@ -63,6 +63,17 @@ for (const name of baselineFiles.filter((file) => currentFiles.includes(file))) 
     { encoding: 'utf8' },
   );
   const output = `${run.stderr ?? ''}`.trim();
+  // AE counts how many pixels differ at all; it says nothing about by how much.
+  // A sub-perceptual shift across a large flat area reads as a huge count, so a
+  // deliberate change needs PAE, the largest single-channel difference, to be
+  // judged. Both are reported: the count locates the change, the delta sizes it.
+  const peak = spawnSync(
+    'magick',
+    ['compare', '-metric', 'PAE', '-fuzz', '0%', basePath, currentPath, 'null:'],
+    { encoding: 'utf8' },
+  );
+  const peakMatch = /\(([\d.eE+-]+)\)/.exec(`${peak.stderr ?? ''}`);
+  const maxChannelDelta = peakMatch ? Math.round(Number(peakMatch[1]) * 255 * 100) / 100 : null;
   if (/image widths or heights differ/i.test(output)) {
     results.push({ route: name, status: 'size-mismatch', differingPixels: null, diff: diffPath });
     continue;
@@ -76,6 +87,7 @@ for (const name of baselineFiles.filter((file) => currentFiles.includes(file))) 
     route: name,
     status: differingPixels <= tolerance ? 'pass' : 'fail',
     differingPixels,
+    maxChannelDelta,
     diff: differingPixels === 0 ? null : diffPath,
   });
 }
