@@ -1,4 +1,6 @@
 ---
+import LinkCardGrid from './LinkCardGrid.astro';
+
 interface FrameworkCard {
   title: string;
   description: string;
@@ -27,7 +29,7 @@ const { groups } = Astro.props;
         <p id={`framework-group-${group.label.toLowerCase().replaceAll(' ', '-')}`} class="group-label meta-label">
           {group.label}
         </p>
-        <div class="card-grid">
+        <LinkCardGrid class="card-grid">
           {group.cards.map((card) => (
             <article>
               <div class="card-meta">
@@ -47,7 +49,7 @@ const { groups } = Astro.props;
               </a>
             </article>
           ))}
-        </div>
+        </LinkCardGrid>
       </section>
     ))
   }
@@ -69,10 +71,8 @@ const { groups } = Astro.props;
     margin: 0 0 18px;
   }
 
-  .card-grid {
-    display: grid;
+  :global(.link-card-grid.card-grid) {
     gap: 16px;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   article {
@@ -135,19 +135,9 @@ const { groups } = Astro.props;
     margin-top: auto;
   }
 
-  @media (max-width: 950px) {
-    .card-grid {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-
   @media (max-width: 600px) {
     .framework-cards {
       padding: 48px 18px 72px;
-    }
-
-    .card-grid {
-      grid-template-columns: 1fr;
     }
 
     article {

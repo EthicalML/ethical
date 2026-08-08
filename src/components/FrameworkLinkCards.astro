@@ -1,5 +1,6 @@
 ---
 import { isExternalHref } from '../utils/external-links.mjs';
+import LinkCardGrid from './LinkCardGrid.astro';
 
 interface LinkCard {
   eyebrow: string;
@@ -15,7 +16,7 @@ interface Props {
 const { cards } = Astro.props;
 ---
 
-<div class="framework-link-cards prose-block" data-reveal>
+<LinkCardGrid class="framework-link-cards prose-block" reveal>
   {
     cards.map((card) => {
       const external = isExternalHref(card.href);
@@ -29,15 +30,9 @@ const { cards } = Astro.props;
       );
     })
   }
-</div>
+</LinkCardGrid>
 
 <style>
-  .framework-link-cards {
-    display: grid;
-    gap: 14px;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
   a {
     border: 1px solid var(--hairline-card);
     display: flex;
@@ -78,7 +73,7 @@ const { cards } = Astro.props;
   }
 
   @media (max-width: 950px) {
-    .framework-link-cards {
+    :global(.link-card-grid.framework-link-cards) {
       grid-template-columns: 1fr;
     }
 
