@@ -99,9 +99,6 @@ jobs:
       # Everything else measures and reports without failing.
       PARITY_MODE: >-
         ${{ contains(github.event.pull_request.labels.*.name, 'dependencies') && 'enforce' || 'report' }}
-      # Playwright lives outside the checkout so it survives the two `npm ci`
-      # runs this job performs (merge base, then head).
-      PLAYWRIGHT_MODULE: ${{ runner.temp }}/playwright/node_modules/playwright/index.js
       COMMENT_MARKER: '<!-- merge-base-visual-parity -->'
     steps:
       - uses: actions/checkout@v4
@@ -133,11 +130,16 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq imagemagick
+          # Playwright lives outside the checkout so it survives the two
+          # `npm ci` runs this job performs (merge base, then head), and the
+          # gates are pointed at it by PLAYWRIGHT_MODULE. `runner.temp` is not
+          # a context job-level `env:` can read, so it is exported here.
           mkdir -p "$RUNNER_TEMP/playwright"
           cd "$RUNNER_TEMP/playwright"
           npm init -y >/dev/null
           npm install --no-audit --no-fund "playwright@$PLAYWRIGHT_VERSION"
           npx playwright install --with-deps chromium
+          echo "PLAYWRIGHT_MODULE=$RUNNER_TEMP/playwright/node_modules/playwright/index.js" >> "$GITHUB_ENV"
       - name: Capture the merge base
         if: steps.scope.outputs.run == 'true'
         run: |
