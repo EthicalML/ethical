@@ -114,6 +114,8 @@ const scopes = [
 </AnimationWindow>
 
 <script>
+  import { LoopingTimeline } from '../shared/LoopingTimeline';
+
   const lifecycleStatuses = [
     'New turn leaves the agent pod',
     'Verbatim turn enters the token-budgeted window',
@@ -124,8 +126,7 @@ const scopes = [
 
   class MemoryLifecycle extends HTMLElement {
     private controller = new AbortController();
-    private timer = 0;
-    private stage = 0;
+    private timeline?: LoopingTimeline;
 
     connectedCallback() {
       this.controller = new AbortController();
@@ -136,15 +137,19 @@ const scopes = [
       scopeButtons.forEach((button) => {
         button.addEventListener('click', () => this.selectScope(button, scopeButtons), { signal: this.controller.signal });
       });
-      windowElement.addEventListener('animationwindow:play', () => this.play(), { signal: this.controller.signal });
-      windowElement.addEventListener('animationwindow:pause', () => this.pause(), { signal: this.controller.signal });
-      this.render();
-      if (windowElement.dataset.playing === 'true') this.play();
+      this.timeline = new LoopingTimeline(this, {
+        lastStep: lifecycleStatuses.length - 1,
+        duration: 1450,
+        staticStep: 4,
+        restartAtEnd: false,
+        render: (stage) => this.render(stage),
+      });
+      this.timeline.connect();
     }
 
     disconnectedCallback() {
       this.controller.abort();
-      this.pause();
+      this.timeline?.disconnect();
     }
 
     private selectScope(button: HTMLButtonElement, buttons: HTMLButtonElement[]) {
@@ -164,22 +169,7 @@ const scopes = [
       });
     }
 
-    private play() {
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      this.pause();
-      this.timer = window.setTimeout(() => {
-        this.stage = (this.stage + 1) % lifecycleStatuses.length;
-        this.render();
-        this.play();
-      }, 1450);
-    }
-
-    private pause() {
-      window.clearTimeout(this.timer);
-    }
-
-    private render() {
-      const stage = matchMedia('(prefers-reduced-motion: reduce)').matches ? 4 : this.stage;
+    private render(stage: number) {
       this.dataset.stage = String(stage);
       const status = this.querySelector<HTMLElement>('[data-lifecycle-status]');
       if (status) status.textContent = lifecycleStatuses[stage];

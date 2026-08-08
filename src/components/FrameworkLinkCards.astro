@@ -1,5 +1,6 @@
 ---
 import { isExternalHref } from '../utils/external-links.mjs';
+import LinkCardGrid from './LinkCardGrid.astro';
 
 interface LinkCard {
   eyebrow: string;
@@ -15,7 +16,7 @@ interface Props {
 const { cards } = Astro.props;
 ---
 
-<div class="framework-link-cards prose-block" data-reveal>
+<LinkCardGrid class="framework-link-cards prose-block" reveal>
   {
     cards.map((card) => {
       const external = isExternalHref(card.href);
@@ -24,20 +25,14 @@ const { cards } = Astro.props;
           <span>{card.eyebrow}</span>
           <strong>{card.title}</strong>
           <p>{card.description}</p>
-          <i>Read more</i>
+          <i class="accent-action">Read more</i>
         </a>
       );
     })
   }
-</div>
+</LinkCardGrid>
 
 <style>
-  .framework-link-cards {
-    display: grid;
-    gap: 14px;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
   a {
     border: 1px solid var(--hairline-card);
     display: flex;
@@ -48,8 +43,13 @@ const { cards } = Astro.props;
 
   span,
   i {
+    font-size: var(--mono-9);
+    line-height: 1.2;
+  }
+
+  span {
     color: var(--text-4);
-    font: normal var(--mono-9)/1.2 var(--font-mono);
+    font-family: var(--font-mono);
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
@@ -69,12 +69,11 @@ const { cards } = Astro.props;
   }
 
   i {
-    color: var(--accent);
     margin-top: auto;
   }
 
   @media (max-width: 950px) {
-    .framework-link-cards {
+    :global(.link-card-grid.framework-link-cards) {
       grid-template-columns: 1fr;
     }
 

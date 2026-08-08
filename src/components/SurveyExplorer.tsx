@@ -162,15 +162,15 @@ function FocusPanel({ selectedRow, compact }: FocusPanelProps) {
     return (
       <div class="survey-focus">
         <div>
-          <span>SELECTED</span>
+          <span class="meta-label">SELECTED</span>
           <strong>{selectedRow.label}</strong>
         </div>
         <div>
-          <span>SHARE</span>
+          <span class="meta-label">SHARE</span>
           <strong>{selectedRow.value}%</strong>
         </div>
         <div>
-          <span>YOY VS 2024</span>
+          <span class="meta-label">YOY VS 2024</span>
           <strong>
             {selectedRow.delta > 0 ? '+' : ''}
             {selectedRow.delta} pts
@@ -183,15 +183,15 @@ function FocusPanel({ selectedRow, compact }: FocusPanelProps) {
   return (
     <div class="survey-focus">
       <div>
-        <span>SELECTED</span>
+        <span class="meta-label">SELECTED</span>
         <strong>{selectedRow.label}</strong>
       </div>
       <div>
-        <span>SHARE OF RESPONDENTS</span>
+        <span class="meta-label">SHARE OF RESPONDENTS</span>
         <strong>{selectedRow.value}% of respondents</strong>
       </div>
       <div>
-        <span>YEAR ON YEAR</span>
+        <span class="meta-label">YEAR ON YEAR</span>
         <strong>
           {selectedRow.delta > 0 ? '+' : ''}
           {selectedRow.delta} pts vs 2024

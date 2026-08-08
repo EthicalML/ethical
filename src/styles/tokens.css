@@ -233,6 +233,17 @@ type-writer {
   margin: 0;
   text-transform: uppercase;
 }
+.meta-label {
+  color: var(--text-3);
+  font: var(--mono-10)/1 var(--font-mono);
+  letter-spacing: .1em;
+}
+.accent-action {
+  color: var(--accent);
+  font: var(--mono-10-5)/1 var(--font-mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
 section > h2 {
   font-size: var(--display-44);
   line-height: 1.08;
@@ -250,7 +261,6 @@ section > h2 {
 .card-grid,
 .split-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .principle-card,
-.feature-card,
 .split-list > div,
 .widget {
   background: linear-gradient(180deg, rgba(255, 255, 255, .035), transparent);
@@ -258,8 +268,7 @@ section > h2 {
   border-radius: var(--radius-card);
   padding: 30px;
 }
-.principle-card a,
-.feature-card .action { color: var(--accent); }
+.principle-card a { color: var(--accent); }
 dd,
 td {
   color: var(--text-2);

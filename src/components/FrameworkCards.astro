@@ -1,4 +1,6 @@
 ---
+import LinkCardGrid from './LinkCardGrid.astro';
+
 interface FrameworkCard {
   title: string;
   description: string;
@@ -24,10 +26,10 @@ const { groups } = Astro.props;
   {
     groups.map((group) => (
       <section aria-labelledby={`framework-group-${group.label.toLowerCase().replaceAll(' ', '-')}`}>
-        <p id={`framework-group-${group.label.toLowerCase().replaceAll(' ', '-')}`} class="group-label">
+        <p id={`framework-group-${group.label.toLowerCase().replaceAll(' ', '-')}`} class="group-label meta-label">
           {group.label}
         </p>
-        <div class="card-grid">
+        <LinkCardGrid class="card-grid">
           {group.cards.map((card) => (
             <article>
               <div class="card-meta">
@@ -42,12 +44,12 @@ const { groups } = Astro.props;
                 {card.title}
               </h2>
               <p>{card.description}</p>
-              <a href={card.href} data-morph-pair={card.morphName}>
+              <a class="accent-action" href={card.href} data-morph-pair={card.morphName}>
                 Explore framework
               </a>
             </article>
           ))}
-        </div>
+        </LinkCardGrid>
       </section>
     ))
   }
@@ -65,16 +67,12 @@ const { groups } = Astro.props;
   }
 
   .group-label {
-    color: var(--text-3);
-    font: var(--mono-10)/1 var(--font-mono);
     letter-spacing: 0.14em;
     margin: 0 0 18px;
   }
 
-  .card-grid {
-    display: grid;
+  :global(.link-card-grid.card-grid) {
     gap: 16px;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   article {
@@ -134,26 +132,12 @@ const { groups } = Astro.props;
   }
 
   article > a {
-    color: var(--accent);
-    font: var(--mono-10-5)/1 var(--font-mono);
-    letter-spacing: 0.08em;
     margin-top: auto;
-    text-transform: uppercase;
-  }
-
-  @media (max-width: 950px) {
-    .card-grid {
-      grid-template-columns: 1fr 1fr;
-    }
   }
 
   @media (max-width: 600px) {
     .framework-cards {
       padding: 48px 18px 72px;
-    }
-
-    .card-grid {
-      grid-template-columns: 1fr;
     }
 
     article {

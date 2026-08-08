@@ -1,0 +1,34 @@
+---
+interface Props {
+  as?: 'div' | 'nav';
+  class?: string;
+  ariaLabel?: string;
+  reveal?: boolean;
+}
+
+const { as: Tag = 'div', class: className, ariaLabel, reveal = false }: Props = Astro.props;
+---
+
+<Tag class:list={['link-card-grid', className]} aria-label={ariaLabel} data-reveal={reveal ? '' : undefined}>
+  <slot />
+</Tag>
+
+<style>
+  .link-card-grid {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  @media (max-width: 950px) {
+    .link-card-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 600px) {
+    .link-card-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
