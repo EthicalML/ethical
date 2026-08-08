@@ -100,7 +100,7 @@ Search by the surface name or representative selector below before adding a rule
 | `:root`, `@font-face` | Fonts and design tokens are consumed across unrelated surfaces. |
 | `*`, `html`, `body`, element typography and link defaults | These establish the document foundation and reset native defaults consistently. |
 | Custom-element `display: contents` defaults | Wrapper elements span several component implementations and must not introduce layout boxes. |
-| `.actions`, `.button`, `.text-link`, `.status-pill`, `.eyebrow` | These presentation primitives are used by three or more unrelated components or authored pages. |
+| `.actions`, `.button`, `.text-link`, `.status-pill`, `.eyebrow`, `.meta-label`, `.accent-action` | These presentation primitives are used by three or more unrelated components or authored pages. |
 | `.stat-band`, `.stat`, `.split-list`, `.widget`, `.embedded-widget`, `.tags` | These are shared composition primitives with unrelated consumers. |
 | `.prose-section`, `.prose-block`, `.block-body`, prose lists and pull quotes | Markdown, MDX and newsletter bodies share the same generated prose contract. |
 | `table`, `th`, `td`, `dl`, `dt`, `dd` | Data and definition markup appears on unrelated prose and component surfaces. |
@@ -115,6 +115,16 @@ Search by the surface name or representative selector below before adding a rule
 | `.footnote-about .affiliations` and descendant marquee rules | The footer owns the compact composition while `AffiliationMarquee` owns the child markup. |
 | `.policy-section`, `.policy-work` and their shared descendants | The policy surface is composed by both the homepage component and the policy page. |
 | Shared section clusters, engagement bands, benefit rows and policy feature copy | These patterns have page and component consumers, so no single local style fence owns them. |
+
+## Presentation primitives
+
+| Primitive | Appearance | Use |
+| --- | --- | --- |
+| `.eyebrow` | Small uppercase accent text in the mono face with wide tracking. | Section and card eyebrows. Override only the size or tracking when the local hierarchy needs it. |
+| `.meta-label` | Small muted mono metadata with compact line-height and moderate tracking. | Dates, group labels, counts and short descriptive metadata. Local colour, size and tracking may express hierarchy without copying the whole treatment. |
+| `.accent-action` | Small uppercase mono action text in the accent colour. | Trailing card actions and compact text calls to action. Preserve sentence case locally when the authored action is not a label. |
+| `.text-link` | Accent-coloured underlined inline text with a readable underline offset. | Links inside prose. Do not use it for button-like or trailing card actions. |
+| `.prose-block` | Subtle top-to-bottom surface wash, hairline border and standard card radius. | Bordered prose widgets and editorial blocks. Components own their internal layout and padding. |
 
 ## Breakpoints
 

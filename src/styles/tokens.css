@@ -232,6 +232,17 @@ type-writer {
   margin: 0;
   text-transform: uppercase;
 }
+.meta-label {
+  color: var(--text-3);
+  font: var(--mono-10)/1 var(--font-mono);
+  letter-spacing: .1em;
+}
+.accent-action {
+  color: var(--accent);
+  font: var(--mono-10-5)/1 var(--font-mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
 section > h2 {
   font-size: var(--display-44);
   line-height: 1.08;

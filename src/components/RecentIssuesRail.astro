@@ -10,7 +10,7 @@ const issues = await getRecentIssueNumbers(limit);
     issues.map((number) => (
       <a href={`/newsletter/${number}/`}>
         <strong>#{number}</strong>
-        <span>Read issue</span>
+        <span class="meta-label">Read issue</span>
       </a>
     ))
   }
@@ -38,8 +38,6 @@ const issues = await getRecentIssueNumbers(limit);
   }
 
   .recent-issues-rail span {
-    color: var(--text-3);
-    font: var(--mono-10)/1 var(--font-mono);
     letter-spacing: 0.08em;
   }
 

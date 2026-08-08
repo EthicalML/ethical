@@ -24,7 +24,7 @@ const { groups } = Astro.props;
   {
     groups.map((group) => (
       <section aria-labelledby={`framework-group-${group.label.toLowerCase().replaceAll(' ', '-')}`}>
-        <p id={`framework-group-${group.label.toLowerCase().replaceAll(' ', '-')}`} class="group-label">
+        <p id={`framework-group-${group.label.toLowerCase().replaceAll(' ', '-')}`} class="group-label meta-label">
           {group.label}
         </p>
         <div class="card-grid">
@@ -42,7 +42,7 @@ const { groups } = Astro.props;
                 {card.title}
               </h2>
               <p>{card.description}</p>
-              <a href={card.href} data-morph-pair={card.morphName}>
+              <a class="accent-action" href={card.href} data-morph-pair={card.morphName}>
                 Explore framework
               </a>
             </article>
@@ -65,8 +65,6 @@ const { groups } = Astro.props;
   }
 
   .group-label {
-    color: var(--text-3);
-    font: var(--mono-10)/1 var(--font-mono);
     letter-spacing: 0.14em;
     margin: 0 0 18px;
   }
@@ -134,11 +132,7 @@ const { groups } = Astro.props;
   }
 
   article > a {
-    color: var(--accent);
-    font: var(--mono-10-5)/1 var(--font-mono);
-    letter-spacing: 0.08em;
     margin-top: auto;
-    text-transform: uppercase;
   }
 
   @media (max-width: 950px) {
