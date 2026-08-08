@@ -116,7 +116,7 @@ const maximum = Math.max(...categories.map(({ count }) => count));
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
   .atlas-tile {
-    background: linear-gradient(150deg, var(--accent-a100), var(--wash-2) 60%);
+    background: linear-gradient(150deg, var(--accent-wash), var(--wash-2) 60%);
     border: 1px solid var(--hairline-card);
     border-radius: var(--radius-card);
     color: var(--text-1);
@@ -136,7 +136,7 @@ const maximum = Math.max(...categories.map(({ count }) => count));
   .atlas-tile:hover,
   .atlas-tile:focus-visible,
   .atlas-tile[data-active] {
-    border-color: var(--accent-a550);
+    border-color: var(--accent-edge);
     box-shadow: 0 18px 40px var(--shadow-a220);
     outline: none;
     transform: translateY(-6px);

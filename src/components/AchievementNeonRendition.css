@@ -143,7 +143,7 @@
 }
 .dud-outline polygon {
   fill: none;
-  stroke: var(--ink-a160);
+  stroke: var(--ink-6);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
@@ -213,7 +213,7 @@
   transform-origin: center;
 }
 .iso-face {
-  stroke: var(--ink-a160);
+  stroke: var(--ink-6);
   stroke-linejoin: round;
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
@@ -232,7 +232,7 @@
 }
 .iso-link {
   fill: none;
-  stroke: var(--ink-a220);
+  stroke: var(--ink-6);
   stroke-dasharray: 2 3;
   stroke-width: 1;
   vector-effect: non-scaling-stroke;

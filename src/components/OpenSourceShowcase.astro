@@ -421,7 +421,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
   }
 
   .kaos-feature > div > p:not(.figure-label) {
-    color: var(--ink-a640);
+    color: var(--ink-3);
     font-size: 15.5px;
     line-height: 1.62;
     margin: 14px 0 0;
@@ -462,7 +462,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
   }
 
   .oss-tags span {
-    border: 1px solid var(--hairline-a140);
+    border: 1px solid var(--hairline-strong);
     border-radius: var(--radius-pill);
     color: var(--text-2);
     font: var(--mono-10-5)/1 var(--font-mono);
@@ -515,7 +515,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
   }
 
   .xai-stages small {
-    color: var(--ink-a410);
+    color: var(--ink-5);
     font: 10.5px var(--font-mono);
   }
 
@@ -570,7 +570,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
   }
 
   .ecosystem-preview > div p {
-    border-bottom: 1px solid var(--hairline-a050);
+    border-bottom: 1px solid var(--hairline);
     display: grid;
     font-size: 13px;
     gap: 14px;
@@ -580,7 +580,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
   }
 
   .ecosystem-preview small {
-    color: var(--ink-a445);
+    color: var(--ink-4);
     font: 11px var(--font-mono);
     text-align: right;
   }
@@ -612,7 +612,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
   }
 
   .kaos-feature {
-    background: radial-gradient(80% 140% at 88% 8%, var(--accent-a100), transparent 60%);
+    background: radial-gradient(80% 140% at 88% 8%, var(--accent-wash), transparent 60%);
     gap: 44px;
     grid-template-columns: 1fr 1.05fr;
     margin-top: 26px;
@@ -867,7 +867,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     background: transparent;
     border: 0;
     bottom: 0;
-    color: var(--accent-a550);
+    color: var(--accent-edge);
     cursor: pointer;
     display: flex;
     flex-direction: column;
@@ -895,7 +895,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     position: absolute;
   }
   .oss-carousel-edge b {
-    background: linear-gradient(180deg, transparent, var(--accent-a500), transparent);
+    background: linear-gradient(180deg, transparent, var(--accent-edge), transparent);
     flex: 1;
     margin: 0;
     transition:
@@ -922,7 +922,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
   }
   .oss-carousel-edge:hover b {
     background: linear-gradient(180deg, transparent, var(--accent-ink), transparent);
-    box-shadow: 0 0 14px var(--accent-a500);
+    box-shadow: 0 0 14px var(--accent-edge);
   }
   .oss-carousel-edge.pressed b,
   .oss-carousel-edge:active b {
@@ -934,10 +934,10 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
     }
     50% {
       background: linear-gradient(180deg, transparent, var(--mint-bright), transparent);
-      box-shadow: 0 0 20px var(--accent-a850);
+      box-shadow: 0 0 20px var(--accent-ink);
     }
     100% {
-      box-shadow: 0 0 14px var(--accent-a500);
+      box-shadow: 0 0 14px var(--accent-edge);
     }
   }
   .oss-carousel-track {

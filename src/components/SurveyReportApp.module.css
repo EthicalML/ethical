@@ -438,7 +438,7 @@
 }
 
 .currentBar {
-  background: linear-gradient(90deg, var(--accent-a480), var(--accent));
+  background: linear-gradient(90deg, var(--accent-edge), var(--accent));
   height: 6px;
   top: 0;
 }
@@ -449,7 +449,7 @@
 }
 
 .leadingBar .currentBar {
-  box-shadow: 0 0 18px var(--accent-a130);
+  box-shadow: 0 0 18px var(--accent-veil);
 }
 
 .delta {
@@ -846,7 +846,7 @@
   .chapterSelectWrap select:focus,
   .questionSelectWrap select:focus {
     border-color: var(--accent-ink);
-    outline: 1px solid var(--accent-a240);
+    outline: 1px solid var(--accent-line);
   }
 
   .compareToggle {
