@@ -1,0 +1,121 @@
+name: Bench cache
+
+# TEMPORARY. Measures whether caching is worth carrying for the new gates.
+# Deleted once the numbers are recorded.
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+env:
+  PLAYWRIGHT_VERSION: 1.62.1
+
+jobs:
+  npm-cold:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+      - run: |
+          start=$(date +%s)
+          npm ci --no-audit --no-fund
+          echo "RESULT npm-ci-cold $(( $(date +%s) - start ))s"
+
+  npm-setupnode-cache:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+          cache: npm
+      - run: |
+          start=$(date +%s)
+          npm ci --no-audit --no-fund
+          echo "RESULT npm-ci-setup-node-cache $(( $(date +%s) - start ))s"
+
+  npm-setupnode-cache-twice:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+          cache: npm
+      - run: |
+          start=$(date +%s)
+          npm ci --no-audit --no-fund
+          echo "RESULT npm-ci-first $(( $(date +%s) - start ))s"
+          start=$(date +%s)
+          npm ci --no-audit --no-fund
+          echo "RESULT npm-ci-second $(( $(date +%s) - start ))s"
+
+  npm-node-modules-cache:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+      - id: modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: bench-node-modules-${{ hashFiles('package-lock.json') }}
+      - run: |
+          start=$(date +%s)
+          if [ "${{ steps.modules.outputs.cache-hit }}" != "true" ]; then
+            npm ci --no-audit --no-fund
+          fi
+          echo "RESULT node-modules-cache hit=${{ steps.modules.outputs.cache-hit }} $(( $(date +%s) - start ))s"
+
+  playwright-cold:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+          cache: npm
+      - run: |
+          start=$(date +%s)
+          npm install --no-save --no-audit --no-fund "playwright@$PLAYWRIGHT_VERSION"
+          echo "RESULT playwright-npm-install $(( $(date +%s) - start ))s"
+          start=$(date +%s)
+          npx playwright install --with-deps chromium
+          echo "RESULT playwright-browser-cold $(( $(date +%s) - start ))s"
+
+  playwright-cached:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+          cache: npm
+      - id: browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: bench-playwright-${{ env.PLAYWRIGHT_VERSION }}
+      - run: |
+          npm install --no-save --no-audit --no-fund "playwright@$PLAYWRIGHT_VERSION"
+          start=$(date +%s)
+          npx playwright install --with-deps chromium
+          echo "RESULT playwright-browser hit=${{ steps.browsers.outputs.cache-hit }} $(( $(date +%s) - start ))s"
+
+  site-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: |
+          start=$(date +%s)
+          npm run build
+          echo "RESULT site-build $(( $(date +%s) - start ))s"
