@@ -1,6 +1,6 @@
 ---
 name: dependabot-fix-all
-description: Fix every open Dependabot PR end-to-end on autopilot. Use this skill when asked to run /dependabot-fix-all (no arguments). This skill acts as an orchestrator that discovers all open Dependabot PRs once, risk-orders them, then processes them one at a time by spawning an isolated non-interactive Codex child per PR that runs the dependabot-fix skill. It verifies each PR independently via gh, applies the repo's merge policy (the owner merges, the skill does not), records state in a durable ledger, and is bounded so it always terminates. Never pauses for user input.
+description: Fix every open Dependabot PR end-to-end on autopilot. Use this skill when asked to run /dependabot-fix-all (no arguments). This skill acts as an orchestrator that discovers all open Dependabot PRs once, risk-orders them, then processes them one at a time by spawning an isolated non-interactive Codex child per PR that runs the dependabot-fix skill. It verifies each PR independently via gh, merges a PR only when CI is green AND the pixel-parity sweep measured zero differing pixels, holds everything else for the owner, records state in a durable ledger, and is bounded so it always terminates. Never pauses for user input.
 allowed-tools: shell
 ---
 
@@ -16,7 +16,7 @@ Orchestrate the `dependabot-fix` skill across **every open Dependabot PR**, full
 - **Serial only.** Children share this one git working tree (each runs `gh pr checkout`, and the parity phase checks out a merge base and rebuilds). Never run children in parallel. Clean tree + `master` between children.
 - **Bounded — always terminates.** Discover PRs **once** and snapshot the list. Never re-discover inside the loop. Attempt each PR **at most once** (no orchestrator-level retry, no re-queue). Every child has a wall-clock timeout.
 - **Token-efficient.** **Never read a child's full log into context.** Use `grep`/`tail` on it and treat `gh` output as the ground truth for verification.
-- **The orchestrator never merges.** `master` is PR-only and the owner merges his own PRs. This run produces green PRs and recommendations, nothing else.
+- **Merge only on proof.** A dependency bump with green CI and a measured zero-pixel parity sweep has nothing left for a human to judge, so merge it. Anything else — a non-zero diff, a skipped or void sweep, a major, a failing check — is held for the owner. The bar is evidence, not caution: never merge on a sweep that did not actually run.
 - **Keep it simple.** No nesting (`dependabot-fix-all` never spawns another `dependabot-fix-all`), no extra retry loops, no cleverness beyond what is written here.
 
 Durable state lives in `./tmp/dfa-ledger.md` (gitignored, resumable), not in conversation memory.
@@ -42,7 +42,7 @@ REPO=EthicalML/ethical
   ```
   If dirty or on another branch, switch to `master` and confirm clean before proceeding (do not discard the owner's work silently — if the tree is dirty with unrelated changes, mark the whole run blocked and report).
 
-**Discover once** and snapshot — this is the *only* discovery; never list PRs again during the loop:
+**Discover once** and snapshot — this is the _only_ discovery; never list PRs again during the loop:
 
 ```bash
 gh pr list --repo $REPO --author app/dependabot \
@@ -98,7 +98,7 @@ Use the dependabot-fix skill in .claude/skills/dependabot-fix/SKILL.md to fix De
 in EthicalML/ethical, fully autonomously.
 
 Follow the skill exactly, including Phase E (merge-base pixel parity) unless Step 8.5 says it is
-skippable for this PR. Do not merge anything - the owner merges. Do not ask any questions; run on
+skippable for this PR. Do not merge anything yourself - the orchestrator decides that. Do not ask any questions; run on
 autopilot to completion and emit the final RESULT line as the last line of your output.
 EOF
 
@@ -142,7 +142,8 @@ gh pr view <n> --repo $REPO --json state,mergeStateStatus,labels
 
 Classify the outcome:
 
-- **ready** — the three required checks (`lint`, `typecheck`, `build`) are green, the PR is open and mergeable, and the child reported parity clean or parity legitimately skipped. Recommended for the owner to merge.
+- **merged** — the three required checks (`lint`, `typecheck`, `build`) are green, the PR is open and mergeable, and the parity sweep ran and measured **zero differing pixels**. Merge it with `gh pr merge <n> --merge` and record the result.
+- **ready** — as above, but parity was legitimately skipped (an actions-only bump, or a devDependency that never reaches `dist`). Nothing was measured, so nothing is proven: leave it for the owner and say why the sweep was skipped.
 - **held** — checks green but the child reported a parity difference or low confidence on a major. Needs owner eyes on the rendering before merge.
 - **superseded** — child scope-rejected; a comment was posted (and a `dependabot.yml` config PR opened if the config was the problem), original left open for the owner to close.
 - **blocked** — checks failing, child timeout, child error, or any state that is none of the above.
@@ -151,7 +152,9 @@ Classify the outcome:
 
 ### 5. Merge policy — do nothing
 
-There is no merge step. `master` is PR-only with required checks and the owner merges his own PRs. The orchestrator's product is a set of green, reported PRs plus a recommendation per PR. **Never** run `gh pr merge`.
+Merge a PR if and only if all of the following hold: the three required checks are green, `mergeable` is true, the parity sweep ran on both viewports, and every route reported `differingPixels: 0` with `maxChannelDelta: 0`. Then `gh pr merge <n> --merge`.
+
+Anything short of that is held, not merged — a non-zero diff however small, a skipped sweep, a void sweep (`compared: 0`), a size mismatch, an npm major, or a check that is merely not-failing rather than passing. A held PR is the product of this run; it is the one the owner actually needs to look at.
 
 ### 6. Record and continue
 
@@ -173,7 +176,7 @@ The loop is bounded by the Phase 0 snapshot; once every row is `done`, stop. The
 
 Print a concise summary table built from the ledger — **not** from child logs. Render as: `PR | ecosystem | outcome | parity | note`. Each child already posted its own report comment on its PR; the orchestrator does **not** duplicate those.
 
-Close with a one-paragraph wrap-up: how many are ready to merge, how many are held for visual review, how many superseded, how many blocked (and the single-line reason for each). Name the held PRs explicitly — those are the ones that need the owner, and they are the point of the run.
+Close with a one-paragraph wrap-up: how many were merged, how many are held for visual review, how many superseded, how many blocked (and the single-line reason for each). Name the held PRs explicitly — those are the ones that need the owner, and they are the point of the run.
 
 ---
 
@@ -190,7 +193,7 @@ Deliberately **not** supported. Dependabot already batches this repo into one PR
 - One attempt per PR; no orchestrator retry, no re-queue; every child has a wall-clock ceiling.
 - **Never** load a full child log into context — extract only the `RESULT:` line and the completion signal; use `gh` as the ground truth.
 - Monitor a completion signal Codex emits (`tokens used` / `codex exec failed` / `stream error`), never a marker written into the brief.
-- **Never merge.** The owner merges; this run produces green PRs and recommendations.
+- **Merge on proof, hold on doubt.** Zero measured pixels plus green checks merges. A sweep that was skipped or did not run proves nothing and must never be treated as a pass.
 - A parity claim with no evidence file is downgraded to `held`, never accepted as green.
 - Fully non-interactive (autopilot); never pause for input.
 - Scratch under `./tmp/` (never `/tmp/`); `./tmp/dfa-ledger.md` is the durable, resumable state.

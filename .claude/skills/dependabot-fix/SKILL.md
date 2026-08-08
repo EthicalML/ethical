@@ -1,6 +1,6 @@
 ---
 name: dependabot-fix
-description: Comprehensively diagnose and fix a failing Dependabot PR on this Astro site. Use this skill when asked to run /dependabot-fix <pr-number>. The user provides the PR number in their prompt. The skill loads PR context, surveys errors at a high level, ingests relevant repo conventions and harness docs via subagents, performs a deep root-cause diagnosis, designs a risk-tiered fix with a manual testing strategy, runs a merge-base pixel-parity sweep to catch visual regressions CI cannot see, commits the fix directly to the Dependabot PR branch, posts a report as a comment on it (never commits it), and evaluates whether the skill itself needs updating afterwards.
+description: Comprehensively diagnose and fix a failing Dependabot PR on this Astro site. Use this skill when asked to run /dependabot-fix <pr-number>. The user provides the PR number in their prompt. The skill loads PR context, surveys errors at a high level, ingests relevant repo conventions and harness docs via subagents, performs a deep root-cause diagnosis, designs a risk-tiered fix with a manual testing strategy, runs a merge-base pixel-parity sweep to catch visual regressions CI cannot see, commits the fix directly to the Dependabot PR branch, merges when checks are green and the sweep measured zero pixels, posts a report as a comment on it (never commits it), and evaluates whether the skill itself needs updating afterwards.
 allowed-tools: shell
 ---
 
@@ -129,16 +129,16 @@ Security-update groups (`all-security`) are left bundled: security bumps are tim
 
 Write a plan covering the following; scale depth to risk:
 
-| Section                                        | Always | If risk ≥ medium         |
-| ---------------------------------------------- | ------ | ------------------------ |
-| Root cause                                     | ✅     | ✅                       |
-| Files expected to change                       | ✅     | ✅                       |
-| Fix approach (and alternatives considered)     | ✅     | ✅                       |
-| Risk rating (low/medium/high)                  | ✅     | ✅                       |
-| Reproduction steps                             | ✅     | ✅ (must be executable)  |
-| Manual testing strategy                        | ✅     | ✅ expanded              |
-| Rollback plan                                  |        | ✅                       |
-| Blast radius (rendered output / deploy / URLs) |        | ✅                       |
+| Section                                        | Always | If risk ≥ medium        |
+| ---------------------------------------------- | ------ | ----------------------- |
+| Root cause                                     | ✅     | ✅                      |
+| Files expected to change                       | ✅     | ✅                      |
+| Fix approach (and alternatives considered)     | ✅     | ✅                      |
+| Risk rating (low/medium/high)                  | ✅     | ✅                      |
+| Reproduction steps                             | ✅     | ✅ (must be executable) |
+| Manual testing strategy                        | ✅     | ✅ expanded             |
+| Rollback plan                                  |        | ✅                      |
+| Blast radius (rendered output / deploy / URLs) |        | ✅                      |
 
 Risk ≥ medium if **any** of:
 
@@ -233,16 +233,16 @@ npm run verify:parity -- ./tmp/parity/base/420  ./tmp/parity/head/420  > ./tmp/p
 - `differingPixels` — the AE count. Locates the change. A large count over a flat area can be sub-perceptual.
 - `maxChannelDelta` — the peak single-channel difference out of 255. Sizes the change. This is the number that says whether a human could see it.
 
-| Result                                              | Reading                                                                                                                                        | Action                                                                                                       |
-| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `passed: true`, zero differing pixels               | The bump is pixel-neutral. Expected outcome.                                                                                                    | Proceed. Record "parity clean, 37 routes × 2 viewports" in the report.                                        |
-| Non-zero pixels, `maxChannelDelta` ≤ 2              | Sub-perceptual — usually a rounding or compositing shift from a CSS/build-tool bump.                                                             | Not automatically a failure, but **not yours to wave through**. Report it with route names and the diff images. |
-| Non-zero pixels, `maxChannelDelta` > 2              | A visible rendering change from a dependency bump. Something moved, recoloured, or reflowed.                                                     | **Escalate.** Do not merge, do not allowlist.                                                                  |
-| `size-mismatch` on any route                        | Page height or width changed — a layout regression, the most serious class here.                                                                 | **Escalate.** Always.                                                                                          |
-| Differences confined to canvas-backed routes        | Canvases are masked by `verify:shots`, so this should not happen; if it does, the mask or the canvas mount changed.                              | **Escalate.** Investigate before assuming instability.                                                         |
-| `compared: 0`, routes missing, or fingerprints equal when they should not be | The harness did not measure what you think it measured.                                                             | Void the run and redo it. Never report a void run as green.                                                    |
+| Result                                                                       | Reading                                                                                                             | Action                                                                                                          |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `passed: true`, zero differing pixels                                        | The bump is pixel-neutral. Expected outcome.                                                                        | Proceed. Record "parity clean, 37 routes × 2 viewports" in the report.                                          |
+| Non-zero pixels, `maxChannelDelta` ≤ 2                                       | Sub-perceptual — usually a rounding or compositing shift from a CSS/build-tool bump.                                | Not automatically a failure, but **not yours to wave through**. Report it with route names and the diff images. |
+| Non-zero pixels, `maxChannelDelta` > 2                                       | A visible rendering change from a dependency bump. Something moved, recoloured, or reflowed.                        | **Escalate.** Do not merge, do not allowlist.                                                                   |
+| `size-mismatch` on any route                                                 | Page height or width changed — a layout regression, the most serious class here.                                    | **Escalate.** Always.                                                                                           |
+| Differences confined to canvas-backed routes                                 | Canvases are masked by `verify:shots`, so this should not happen; if it does, the mask or the canvas mount changed. | **Escalate.** Investigate before assuming instability.                                                          |
+| `compared: 0`, routes missing, or fingerprints equal when they should not be | The harness did not measure what you think it measured.                                                             | Void the run and redo it. Never report a void run as green.                                                     |
 
-**Do not use `--allow` or `--tolerance` to make a dependency bump pass.** The allowlist is a reviewed, human-signed mechanism with an `approvedBy` and `approvedIn` field; a bot filing its own entries defeats the gate entirely. A tolerance is for documented canvas instability that reproduces between two captures of the *same* build, which is not this.
+**Do not use `--allow` or `--tolerance` to make a dependency bump pass.** The allowlist is a reviewed, human-signed mechanism with an `approvedBy` and `approvedIn` field; a bot filing its own entries defeats the gate entirely. A tolerance is for documented canvas instability that reproduces between two captures of the _same_ build, which is not this.
 
 **Escalation means: leave the PR open, post the parity JSON and the diff image paths as part of the report comment, state plainly that a human must look at the rendering, and emit `left-open` as the RESULT.** Do not decide alone that a visible pixel change is acceptable — the whole point is that this is exactly the class of regression no automated gate in this repo catches.
 
@@ -277,16 +277,27 @@ gh run rerun <run-id> --failed --repo $REPO  # only for a genuine flake
 - Do not use `@dependabot rebase` after pushing fix commits — it will discard them.
 - Prefer version **pinning** over rollback when a transitive `@latest` drift is the cause.
 
-### Step 11.5 · Merge policy — the owner merges
+### Step 11.5 · Merge policy — merge on proof
 
-`master` is PR-only with required checks (`lint`, `typecheck`, `build`), and the standing convention in this repo is that **the owner merges his own PRs**. This skill therefore **does not merge**. It pushes the fix, gets CI green, posts the report, and leaves the PR open with a clear recommendation.
+`master` is PR-only with required checks (`lint`, `typecheck`, `build`).
 
-| Situation                                  | Action                                                                       |
-| ------------------------------------------ | ---------------------------------------------------------------------------- |
-| Grouped minor/patch batch, CI green, parity clean | Post report recommending merge. **Leave open.**                        |
-| npm major, CI green, parity clean          | Post report noting it is a major and what was tested. **Leave open.**        |
-| Any parity difference at all               | Post report with the diff evidence and an explicit ask for visual review. **Leave open.** |
-| Scope-rejected                             | Post the scope-reject comment. **Leave open.**                               |
+The owner's standing convention is that he merges his own PRs, but that is about work with design judgement in it. A dependency bump is not that: with green checks and a measured zero-pixel parity sweep, there is nothing left for a human to decide. So **merge it** — `gh pr merge <n> --merge`.
+
+Hold, and leave the PR open with a recommendation, in every other case:
+
+- the parity sweep measured any non-zero difference, however small
+- the sweep was skipped, or ran but measured nothing (`compared: 0`)
+- the bump is an npm major
+- a required check is failing, or merely absent rather than passing
+
+The distinction is evidence, not caution. A skipped sweep is not a clean sweep, and a bump nobody measured is exactly the one worth a human's eye.
+
+| Situation                                         | Action                                                                                    |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Grouped minor/patch batch, CI green, parity clean | Post report recommending merge. **Leave open.**                                           |
+| npm major, CI green, parity clean                 | Post report noting it is a major and what was tested. **Leave open.**                     |
+| Any parity difference at all                      | Post report with the diff evidence and an explicit ask for visual review. **Leave open.** |
+| Scope-rejected                                    | Post the scope-reject comment. **Leave open.**                                            |
 
 Do not use any in-chat prompt as a merge gate — it does not reliably block execution. The gate is simply that the PR stays open and the owner reviews it.
 
@@ -313,7 +324,7 @@ RESULT: <ready|left-open|superseded|blocked> pr=<PR_NUM> reason="<short phrase>"
 - `superseded` — scope-rejected; comment posted, config PR opened if applicable, original left open.
 - `blocked` — could not be fixed this run (record why in `reason`).
 
-This skill runs **fully non-interactive / autopilot**: never ask questions in any mode — resolve every decision autonomously per the policies above and emit the RESULT line. "Escalate" here means *leave the PR open and say so in the report*, not *stop and ask*.
+This skill runs **fully non-interactive / autopilot**: never ask questions in any mode — resolve every decision autonomously per the policies above and emit the RESULT line. "Escalate" here means _leave the PR open and say so in the report_, not _stop and ask_.
 
 ### Step 13 · Evaluate skill currency
 
@@ -336,7 +347,7 @@ If yes — and only if the learning is non-obvious — propose a small follow-up
 - Scratch files under `./tmp/` (never `/tmp/`); suppress output with `2>./tmp/null`
 - Comprehensive commit messages; **no trailers, no co-author lines, no session URLs**
 - The report is **posted as a PR comment**, never committed
-- **This skill never merges.** The owner merges; the skill leaves the PR open with a recommendation
+- **Merge on proof, hold on doubt.** Green checks plus a measured zero-pixel sweep merges; a skipped, void or non-zero sweep is held for the owner
 - Never use `--allow` or `--tolerance` to make a bump pass parity
 - Runs fully non-interactive (autopilot); the **final output line** is the `RESULT:` status line
 
