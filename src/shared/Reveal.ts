@@ -45,10 +45,14 @@ export class Reveal {
 
     // The router's scroll (top pin, or the deep-link scroll in
     // ScrollRestoration) is applied by listeners registered after this one, so
-    // measuring now would read the pre-navigation offset. Wait one frame, then
-    // settle what is on screen and prime only the rest. Priming a frame late is
-    // invisible: anything still primed is by definition below the threshold.
-    requestAnimationFrame(() => {
+    // measuring inline would read the pre-navigation offset. Defer to a
+    // microtask: it runs once every `astro:after-swap` listener has had its
+    // turn, but still inside the router's view-transition update callback —
+    // before the browser captures the new snapshot. Deferring a frame instead
+    // (rAF) settles *after* the capture, so every on-screen `[data-reveal]`
+    // element is photographed at the inline stylesheet's primed offset and the
+    // whole transition plays 26px low, snapping up when the pseudo-elements go.
+    queueMicrotask(() => {
       if (this.controller.signal.aborted) return;
       this.sweep();
       this.prime();
