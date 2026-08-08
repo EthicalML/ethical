@@ -16,6 +16,8 @@
     "verify:dom:all": "sh -c 'node scripts/verify/verify-dom.mjs --viewport 1440x1000 \"$@\" && node scripts/verify/verify-dom.mjs --viewport 420x900 \"$@\"' --",
     "verify:shots": "node scripts/verify/verify-shots.mjs",
     "verify:shots:all": "sh -c 'node scripts/verify/verify-shots.mjs --viewport 1440x1000 \"$@\" && node scripts/verify/verify-shots.mjs --viewport 420x900 \"$@\"' --",
+    "verify:motion": "node scripts/verify/verify-motion.mjs",
+    "verify:motion:all": "sh -c 'node scripts/verify/verify-motion.mjs --viewport 1440x1000 \"$@\" && node scripts/verify/verify-motion.mjs --viewport 420x900 \"$@\"' --",
     "verify:parity": "node scripts/verify/verify-parity.mjs",
     "verify:typewriter": "node scripts/verify/verify-typewriter.mjs",
     "postbuild": "pagefind --site dist",
