@@ -59,7 +59,11 @@ const resources = [
   <AnimationWindow title="kaos control plane" class="control-plane-window" chromeOnly>
     <div class="map-shell">
       <div class="map-stage">
-        <kaos-architecture variant="interactive" aria-label="Interactive KAOS control plane architecture; select a custom resource to inspect it">
+        <kaos-architecture
+          variant="interactive"
+          data-surface="dark"
+          aria-label="Interactive KAOS control plane architecture; select a custom resource to inspect it"
+        >
           <canvas aria-hidden="true"></canvas>
         </kaos-architecture>
         <p class="map-hint"><span aria-hidden="true">↗</span> Select a resource node</p>

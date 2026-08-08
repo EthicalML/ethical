@@ -1,4 +1,11 @@
-import { CanvasEngine, type CanvasPalette, type CanvasPointer, rgba, rgbCss } from './CanvasEngine';
+import {
+  CanvasEngine,
+  type CanvasPalette,
+  type CanvasPointer,
+  rgba,
+  rgbCss,
+  surfaceOf,
+} from './CanvasEngine';
 import { createCubeDrawer } from './KomputeCube';
 import { createGalaxyDrawer } from './KaosArchitecture';
 
@@ -257,6 +264,7 @@ export class NavPreview extends HTMLElement {
         else if (mode === 'list') drawEcosystem(context, width, height * 0.72, elapsed, palette);
         else this.galaxy.draw(context, width, height * 0.86, elapsed, pointer, palette);
       },
+      surfaceOf(this),
     );
   }
 

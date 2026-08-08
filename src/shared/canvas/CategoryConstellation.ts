@@ -1,4 +1,4 @@
-import { CanvasEngine, type CanvasDraw, rgba } from './CanvasEngine';
+import { CanvasEngine, type CanvasDraw, rgba, surfaceOf } from './CanvasEngine';
 
 interface CategoryNode {
   label: string;
@@ -68,7 +68,7 @@ export class CategoryConstellation extends HTMLElement {
 
   connectedCallback() {
     const canvas = this.querySelector('canvas');
-    if (canvas) this.engine = new CanvasEngine(canvas, drawConstellation);
+    if (canvas) this.engine = new CanvasEngine(canvas, drawConstellation, surfaceOf(this));
   }
 
   disconnectedCallback() {

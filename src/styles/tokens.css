@@ -144,12 +144,42 @@
   /* A raw colour rather than a box-shadow, so the canvas modules can consume it
      as a hard occlusion stroke. */
   --shadow-hard: #000;
+  /* ---- canvas palette --------------------------------------------------------
+     Canvas paints outside the cascade, so the engine resolves these once per
+     theme and hands them to every draw call. There are two sets because a
+     canvas takes its colours from the SURFACE it sits on, not from the theme:
+     the `--canvas-*` set is for artwork on the page ground, the `--canvas-dark-*`
+     set for artwork inside one of the inverted (dark) blocks. Under the dark
+     theme the page IS that surface, so the two sets are identical here. Which
+     mount is which is a hardcoded `data-surface` label on the mount element —
+     see STYLES.md beside the inverted-block selector list. */
+  --canvas-ink: var(--ink-1);
+  /* Not `--wash-1`: the canvas needs the wash HUE at full opacity, and composes
+     its own alpha per mark. White on dark, slate on paper. */
+  --canvas-wash: #fff;
+  --canvas-base: var(--bg-base);
+  --canvas-panel: var(--bg-panel);
+  --canvas-inset: var(--bg-inset);
+  --canvas-accent: var(--accent);
+  --canvas-accent-ink: var(--accent-ink);
+  --canvas-shadow: var(--shadow-hard);
   /* The three lit faces of an isometric solid: top, right, left. `--bg-inset`
      is one surface and cannot express three, and the ordering inverts between
-     themes (darkest faces under dark, lightest under light). */
+     surfaces (darkest faces on dark, lightest on paper). */
   --canvas-surface-1: #101311;
   --canvas-surface-2: #0b0d0c;
   --canvas-surface-3: #080a09;
+  --canvas-dark-ink: var(--canvas-ink);
+  --canvas-dark-wash: var(--canvas-wash);
+  --canvas-dark-base: var(--canvas-base);
+  --canvas-dark-panel: var(--canvas-panel);
+  --canvas-dark-inset: var(--canvas-inset);
+  --canvas-dark-accent: var(--canvas-accent);
+  --canvas-dark-accent-ink: var(--canvas-accent-ink);
+  --canvas-dark-shadow: var(--canvas-shadow);
+  --canvas-dark-surface-1: var(--canvas-surface-1);
+  --canvas-dark-surface-2: var(--canvas-surface-2);
+  --canvas-dark-surface-3: var(--canvas-surface-3);
   --logo-mark: #fff;
 
   /* ---- semantic aliases over the ladders ---- */
@@ -353,11 +383,38 @@
   --shadow-panel:
     0 1px 2px rgba(28, 34, 31, 0.05),
     0 12px 32px -10px rgba(28, 34, 31, 0.14);
-  /* ---- the three lit faces of an isometric solid. The solids sit inside the
-     inverted blocks, so the faces stay on the panel ladder ---- */
-  --canvas-surface-1: #454f4b;
-  --canvas-surface-2: #39433f;
-  --canvas-surface-3: #2e3733;
+  /* ---- canvas palette. The page-ground set: the artwork that sits on paper —
+     the policy circuit on `/`, the three `/open-source/` portal visuals and the
+     form-send overlay — is the only artwork that inverts ---- */
+  --canvas-ink: var(--ink-1);
+  --canvas-wash: #39433f;
+  --canvas-base: var(--bg-base);
+  --canvas-panel: var(--bg-panel);
+  --canvas-inset: var(--bg-inset);
+  --canvas-accent: var(--accent);
+  --canvas-accent-ink: var(--accent-ink);
+  --canvas-shadow: var(--shadow-hard);
+  /* The three lit faces on paper: a solid is lit from the same side, so the
+     ordering mirrors the dark ramp rather than repeating it. */
+  --canvas-surface-1: #fbfcfa;
+  --canvas-surface-2: #eceee9;
+  --canvas-surface-3: #dfe2dd;
+  /* ---- the on-dark set. These MUST match the inverted-block rule below: the
+     canvas cannot inherit from the block it sits in, so the block's values are
+     restated here for the engine to read off `:root`. Change one, change both. */
+  --canvas-dark-ink: #f2f5f3;
+  --canvas-dark-wash: #fff;
+  --canvas-dark-base: #39433f;
+  --canvas-dark-panel: #39433f;
+  --canvas-dark-inset: #333c38;
+  /* `--acc-b`, the design's light teal for use on dark, in both its fill and
+     its ink form — on slate it clears as a mark and as a stroke. */
+  --canvas-dark-accent: #7fcfc5;
+  --canvas-dark-accent-ink: #7fcfc5;
+  --canvas-dark-shadow: #0c100e;
+  --canvas-dark-surface-1: #454f4b;
+  --canvas-dark-surface-2: #39433f;
+  --canvas-dark-surface-3: #2e3733;
   /* The brand mark and the hero caret both sit on inverted blocks. */
   --logo-mark: #313a36;
   --typewriter-cursor: #f2f5f3;
@@ -422,9 +479,10 @@
   --warn: #e8b45c;
   --logo-mark: #f2f5f3;
   --shadow-hard: #0c100e;
-  --canvas-surface-1: #454f4b;
-  --canvas-surface-2: #39433f;
-  --canvas-surface-3: #2e3733;
+  /* The canvas palette is NOT re-entered here: a canvas paints outside the
+     cascade and cannot read the block it sits in. The on-dark values live on
+     `:root` as `--canvas-dark-*`, and each mount carries a `data-surface`
+     label saying which set it takes. */
   /* Every block in the list above already paints itself from a surface rung, so
      re-pointing the rungs inside the subtree is what turns the block dark. */
   --bg-base: #39433f;

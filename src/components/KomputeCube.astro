@@ -2,21 +2,27 @@
 interface Props {
   embedded?: boolean;
   backdrop?: boolean;
+  surface?: 'dark' | 'page';
 }
 
-const { embedded = false, backdrop = false } = Astro.props;
+/* `surface` is the hardcoded label for what this mount sits on: the light theme
+   keeps whole blocks dark, so a cube inside one must keep painting light-on-dark.
+   Both embedded callers pass the same props but sit on different surfaces —
+   `ArticleHero` on the dark hero, `ProjectPortal` on paper — so the caller says
+   which, and canvas never sniffs its own backdrop. */
+const { embedded = false, backdrop = false, surface = 'dark' } = Astro.props;
 ---
 
 {
   embedded ? (
-    <kompute-cube class:list={['kompute-canvas-mount', !backdrop && 'widget embedded-widget']}>
+    <kompute-cube class:list={['kompute-canvas-mount', !backdrop && 'widget embedded-widget']} data-surface={surface}>
       <canvas aria-label="Animated Kompute cube" />
     </kompute-cube>
   ) : (
     <section aria-labelledby="kompute-cube-heading" data-reveal>
       <p class="eyebrow">CUSTOM WIDGET</p>
       <h2 id="kompute-cube-heading">Kompute cube</h2>
-      <kompute-cube class="widget kompute-canvas-mount">
+      <kompute-cube class="widget kompute-canvas-mount" data-surface={surface}>
         <canvas aria-label="Animated Kompute cube" />
       </kompute-cube>
     </section>

@@ -5,6 +5,8 @@ import {
   rgba,
   rgbCss,
   type Rgb,
+  type CanvasSurface,
+  surfaceOf,
 } from './CanvasEngine';
 
 type HeroMode = 'planes' | 'sphere' | 'contour';
@@ -71,6 +73,7 @@ export class HeroCycle extends HTMLElement {
   private lastPointer?: { x: number; y: number };
   private pointer = { x: 0.5, y: 0.5 };
   private pointerTarget = { x: 0.5, y: 0.5 };
+  private surface: CanvasSurface = 'dark';
   private palette: CanvasPalette = getPalette();
   private reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   private resizeObserver?: ResizeObserver;
@@ -91,6 +94,8 @@ export class HeroCycle extends HTMLElement {
 
   connectedCallback() {
     this.controller = new AbortController();
+    this.surface = surfaceOf(this);
+    this.palette = getPalette(this.surface);
     this.canvas = this.querySelector('canvas') ?? undefined;
     this.host =
       this.canvas?.closest<HTMLElement>('.hero, .canvas-variant') ??
@@ -129,13 +134,13 @@ export class HeroCycle extends HTMLElement {
   // offscreen `buffer` is fully repainted every frame, but a paused, hidden or
   // reduced-motion element needs an explicit repaint to clear the stale theme.
   private handleThemeChange = () => {
-    this.palette = getPalette();
+    this.palette = getPalette(this.surface);
     if (this.context) this.draw(this.state.last);
   };
 
   private draw(elapsed: number) {
     const context = this.context!;
-    this.palette = getPalette();
+    this.palette = getPalette(this.surface);
     const delta = Math.max(0, Math.min(0.05, elapsed - this.state.last));
     this.state.last = elapsed;
     const pointerFollow = 1 - Math.exp(-delta * 8);
@@ -372,7 +377,7 @@ export class HeroCycle extends HTMLElement {
     elapsed: number,
   ) {
     if (!this.sphere) this.initializeSphere();
-    const sphereGreen = this.palette.light ? this.palette.accentInk : SPHERE_GREEN_DARK;
+    const sphereGreen = this.palette.onLight ? this.palette.accentInk : SPHERE_GREEN_DARK;
     const rotationX = -0.24 + elapsed * 0.06 + (this.pointer.y - 0.5) * 0.5;
     const rotationY = 0.4 + elapsed * 0.2 + this.state.spin * 1.4 + (this.pointer.x - 0.5) * 0.9;
     const radius = Math.min(width, height) * 0.36;

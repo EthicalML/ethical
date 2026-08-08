@@ -4,6 +4,7 @@ import {
   type CanvasPalette,
   type CanvasPointer,
   rgba,
+  surfaceOf,
 } from './CanvasEngine';
 
 type Vector = [number, number, number];
@@ -254,11 +255,11 @@ export function createCubeDrawer(): CanvasDraw {
         /* Plastic body: an arithmetic grey, not a colour literal. Dark keeps the
            near-black 10..22 ramp; light mirrors it into a 245..233 ramp so the
            cube stays a light object with dark stickers rather than a black blob. */
-        const body = palette.light
+        const body = palette.onLight
           ? Math.round(245 - 12 * quad.shade)
           : Math.round(10 + 12 * quad.shade);
         path(quad.pts);
-        context.fillStyle = `rgb(${body},${body + (palette.light ? -1 : 1)},${body})`;
+        context.fillStyle = `rgb(${body},${body + (palette.onLight ? -1 : 1)},${body})`;
         context.fill();
         context.strokeStyle = rgba(palette.shadow, 0.7);
         context.stroke();
@@ -278,7 +279,7 @@ export class KomputeCube extends HTMLElement {
 
   connectedCallback() {
     const canvas = this.querySelector('canvas');
-    if (canvas) this.engine = new CanvasEngine(canvas, createCubeDrawer());
+    if (canvas) this.engine = new CanvasEngine(canvas, createCubeDrawer(), surfaceOf(this));
   }
 
   disconnectedCallback() {

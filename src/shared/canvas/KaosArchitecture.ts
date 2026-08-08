@@ -5,6 +5,7 @@ import {
   rgba,
   rgbCss,
   type Rgb,
+  surfaceOf,
 } from './CanvasEngine';
 
 /* Per-CRD identity colours stay identity across themes, but at full saturation
@@ -22,7 +23,7 @@ const HUE_INK: Record<string, string> = {
 };
 
 const themed = (hex: string, palette: CanvasPalette) =>
-  palette.light ? (HUE_INK[hex.toLowerCase()] ?? hex) : hex;
+  palette.onLight ? (HUE_INK[hex.toLowerCase()] ?? hex) : hex;
 
 // Backdrop glow fades to the surface it sits on; the RGB of a zero-alpha stop
 // still drives gradient interpolation, so it is not interchangeable with any
@@ -161,7 +162,7 @@ const drawBackdrop = (
   glow.addColorStop(0, rgba(palette.accent, 0.09));
   // The blue stop is the MCP/runtime identity hue; it reads on both surfaces.
   glow.addColorStop(0.45, 'rgba(74,199,255,.03)');
-  glow.addColorStop(1, rgba(palette.light ? palette.base : BACKDROP_FADE_DARK, 0));
+  glow.addColorStop(1, rgba(palette.onLight ? palette.base : BACKDROP_FADE_DARK, 0));
   context.fillStyle = glow;
   context.fillRect(0, 0, width, height);
 
@@ -275,7 +276,7 @@ const drawNode = (
     context.closePath();
   }
   context.fillStyle = rgbCss(
-    palette.light
+    palette.onLight
       ? operator
         ? OPERATOR_FILL_LIGHT
         : NODE_FILL_LIGHT
@@ -413,7 +414,7 @@ export class KaosArchitecture extends HTMLElement {
     this.canvas.setAttribute('aria-hidden', 'true');
     if (!this.canvas.parentElement) this.append(this.canvas);
 
-    this.engine = new CanvasEngine(this.canvas, this.galaxy.draw);
+    this.engine = new CanvasEngine(this.canvas, this.galaxy.draw, surfaceOf(this));
     this.canvas.addEventListener('pointermove', this.handlePointerMove, {
       signal: this.controller.signal,
     });

@@ -1,4 +1,4 @@
-import { CanvasEngine, type CanvasPalette } from './CanvasEngine';
+import { CanvasEngine, type CanvasPalette, surfaceOf } from './CanvasEngine';
 
 /* Isometric transmission scene that runs over a dimmed contact form while a
    submission is in flight. Unlike the other canvases here it is not ambient:
@@ -144,6 +144,7 @@ class FormSendIso extends HTMLElement {
           }
         }
       },
+      surfaceOf(this),
     );
   }
 

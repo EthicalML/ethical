@@ -11,23 +11,40 @@ export interface CanvasPointer {
    theme (never per frame — `getComputedStyle` in a 60fps loop is a trap) and
    handed to every draw call.
 
+   A canvas takes its colours from the SURFACE it sits on, not from the active
+   theme. The light theme keeps whole blocks dark on a light page — the header,
+   both heroes, the KAOS and Kompute features, the map stage — and most canvases
+   live inside one of those, so under light they must keep painting light-on-dark.
+   Only the artwork that sits on the page ground inverts.
+
+   Which is which is a hardcoded label, never inferred: every mount carries a
+   `data-surface="dark" | "page"` attribute, read once at construction by
+   `surfaceOf()`. Sniffing the backdrop would break on transparent parents,
+   gradients and canvases that straddle two surfaces.
+
    Slots are RGB triplets, not formatted strings, because most call sites
    compose their own alpha (`rgba(${accent},${pulse})`). Use `rgba()`/`rgbCss()`
    to format at draw time.
 
    The two tables below are the fallback rather than the source of truth: the
    dark column is a byte-exact copy of the literals these modules shipped with,
-   so dark stays pixel-identical even with no stylesheet. Where the equivalent
-   token resolves — `--accent`, `--accent-ink`, `--shadow-hard` and
-   `--canvas-surface-{1,2,3}` — the CSS wins, so a brand override or a palette
-   retune flows through without a code change.
+   so dark stays pixel-identical even with no stylesheet. Where the tokens
+   resolve — the `--canvas-*` set for a page mount, `--canvas-dark-*` for a dark
+   one — the CSS wins, so a palette retune flows through without a code change.
 --------------------------------------------------------------------------- */
+
+/** Which surface a mount sits on. A hardcoded label, not a measurement. */
+export type CanvasSurface = 'dark' | 'page';
 
 export type Rgb = readonly [number, number, number];
 
 export interface CanvasPalette {
-  /** True when `data-theme="light"` is set on the document element. */
-  light: boolean;
+  /**
+   * True only when this canvas sits on a LIGHT surface — i.e. a `page` mount
+   * under the light theme. A `dark` mount is false in both themes, which is
+   * why the hero and the cube barely change when the theme flips.
+   */
+  onLight: boolean;
   /** Brand green as a fill. Unchanged across themes. */
   accent: Rgb;
   /** Brand green as text/stroke. Darkens under light so glyphs stay legible. */
@@ -46,14 +63,14 @@ export interface CanvasPalette {
   shadow: Rgb;
   /**
    * The three lit faces of an isometric solid: top, right, left. `inset` is one
-   * surface and cannot express three, and the ordering inverts between themes —
-   * the darkest faces under dark, the lightest under light.
+   * surface and cannot express three, and the ordering inverts between surfaces
+   * — the darkest faces on dark, the lightest on paper.
    */
   surface: readonly [Rgb, Rgb, Rgb];
 }
 
-const DARK: CanvasPalette = {
-  light: false,
+const ON_DARK: CanvasPalette = {
+  onLight: false,
   accent: [94, 230, 160],
   accentInk: [94, 230, 160],
   ink: [244, 242, 238],
@@ -69,20 +86,20 @@ const DARK: CanvasPalette = {
   ],
 };
 
-const LIGHT: CanvasPalette = {
-  light: true,
-  accent: [94, 230, 160],
-  accentInk: [18, 103, 59],
-  ink: [25, 24, 20],
-  wash: [25, 24, 20],
-  base: [244, 242, 238],
-  panel: [251, 250, 247],
-  inset: [232, 229, 222],
-  shadow: [25, 24, 20],
+const ON_PAGE_LIGHT: CanvasPalette = {
+  onLight: true,
+  accent: [10, 151, 137],
+  accentInk: [5, 98, 89],
+  ink: [49, 58, 54],
+  wash: [57, 67, 63],
+  base: [246, 248, 246],
+  panel: [255, 255, 255],
+  inset: [231, 234, 231],
+  shadow: [49, 58, 54],
   surface: [
-    [246, 246, 243],
-    [238, 239, 235],
-    [228, 230, 225],
+    [251, 252, 250],
+    [236, 238, 233],
+    [223, 226, 221],
   ],
 };
 
@@ -125,37 +142,62 @@ const parseRgb = (value: string): Rgb | undefined => {
   return [numbers[0], numbers[1], numbers[2]];
 };
 
-let cachedPalette: CanvasPalette | undefined;
+const cache = new Map<string, CanvasPalette>();
 let cachedTheme: string | undefined;
 const themeListeners = new Set<() => void>();
 
 const currentTheme = () =>
   (typeof document === 'undefined' ? '' : document.documentElement.dataset.theme) ?? '';
 
-/** Resolved palette for the active theme. Cached until `data-theme` changes. */
-export const getPalette = (): CanvasPalette => {
+/**
+ * The surface label a mount declares. `dark` is the fallback because it is the
+ * only answer that is right in both themes when the attribute is missing — the
+ * dark theme has no page/block distinction to get wrong.
+ */
+export const surfaceOf = (element: Element | null | undefined): CanvasSurface =>
+  (element as HTMLElement | null | undefined)?.dataset?.surface === 'page' ? 'page' : 'dark';
+
+/**
+ * Resolved palette for a surface under the active theme. Cached until
+ * `data-theme` changes; never call this per frame.
+ */
+export const getPalette = (surface: CanvasSurface = 'dark'): CanvasPalette => {
   const theme = currentTheme();
-  if (cachedPalette && cachedTheme === theme) return cachedPalette;
-  const table = theme === 'light' ? LIGHT : DARK;
-  const palette = { ...table };
+  if (cachedTheme !== theme) {
+    cache.clear();
+    cachedTheme = theme;
+  }
+  const cached = cache.get(surface);
+  if (cached) return cached;
+  const onLight = surface === 'page' && theme === 'light';
+  const palette = { ...(onLight ? ON_PAGE_LIGHT : ON_DARK), onLight };
   if (typeof document !== 'undefined') {
     const styles = getComputedStyle(document.documentElement);
-    const accent = parseRgb(styles.getPropertyValue('--accent'));
-    if (accent) {
-      palette.accent = accent;
-      palette.accentInk = accent;
-    }
-    const accentInk = parseRgb(styles.getPropertyValue('--accent-ink'));
-    if (accentInk) palette.accentInk = accentInk;
-    const shadow = parseRgb(styles.getPropertyValue('--shadow-hard'));
-    if (shadow) palette.shadow = shadow;
-    const surface = ([1, 2, 3] as const).map((step) =>
-      parseRgb(styles.getPropertyValue(`--canvas-surface-${step}`)),
-    );
-    if (surface.every(Boolean)) palette.surface = surface as unknown as readonly [Rgb, Rgb, Rgb];
+    // One token namespace per surface, both declared on `:root` — the canvas
+    // cannot read the block it sits in, so the block's values are restated there.
+    const prefix = surface === 'page' ? '--canvas' : '--canvas-dark';
+    const read = (slot: string) => parseRgb(styles.getPropertyValue(`${prefix}-${slot}`));
+    const assign = <
+      K extends 'accent' | 'accentInk' | 'ink' | 'wash' | 'base' | 'panel' | 'inset' | 'shadow',
+    >(
+      key: K,
+      slot: string,
+    ) => {
+      const value = read(slot);
+      if (value) palette[key] = value;
+    };
+    assign('accent', 'accent');
+    assign('accentInk', 'accent-ink');
+    assign('ink', 'ink');
+    assign('wash', 'wash');
+    assign('base', 'base');
+    assign('panel', 'panel');
+    assign('inset', 'inset');
+    assign('shadow', 'shadow');
+    const surfaces = ([1, 2, 3] as const).map((step) => read(`surface-${step}`));
+    if (surfaces.every(Boolean)) palette.surface = surfaces as unknown as readonly [Rgb, Rgb, Rgb];
   }
-  cachedPalette = palette;
-  cachedTheme = theme;
+  cache.set(surface, palette);
   return palette;
 };
 
@@ -171,7 +213,8 @@ export const onThemeChange = (listener: () => void) => {
 if (typeof document !== 'undefined') {
   new MutationObserver(() => {
     if (currentTheme() === cachedTheme) return;
-    cachedPalette = undefined;
+    cache.clear();
+    cachedTheme = undefined;
     themeListeners.forEach((listener) => listener());
   }).observe(document.documentElement, {
     attributeFilter: ['data-theme'],
@@ -208,6 +251,7 @@ export class CanvasEngine {
   constructor(
     private canvas: HTMLCanvasElement,
     private drawFrame: CanvasDraw,
+    private surface: CanvasSurface = 'dark',
   ) {
     const context = canvas.getContext('2d');
     if (!context) throw new Error('Canvas 2D context is unavailable.');
@@ -223,7 +267,14 @@ export class CanvasEngine {
     });
     this.unsubscribeTheme = onThemeChange(this.handleThemeChange);
     this.fit();
-    this.drawFrame(this.context, this.width, this.height, 0, this.pointer, getPalette());
+    this.drawFrame(
+      this.context,
+      this.width,
+      this.height,
+      0,
+      this.pointer,
+      getPalette(this.surface),
+    );
     this.resizeObserver.observe(this.canvas);
     this.intersectionObserver.observe(this.canvas);
     if (!this.reducedMotion) this.animationFrame = requestAnimationFrame(this.frame);
@@ -244,7 +295,7 @@ export class CanvasEngine {
       this.height,
       this.elapsedSeconds,
       this.pointer,
-      getPalette(),
+      getPalette(this.surface),
     );
   }
 
@@ -278,7 +329,7 @@ export class CanvasEngine {
       this.height,
       this.elapsedSeconds,
       this.pointer,
-      getPalette(),
+      getPalette(this.surface),
     );
     if (this.active && this.playing && !this.reducedMotion) {
       this.animationFrame = requestAnimationFrame(this.frame);

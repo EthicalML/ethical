@@ -5,6 +5,7 @@ import {
   rgba,
   rgbCss,
   type Rgb,
+  surfaceOf,
 } from './CanvasEngine';
 import {
   createIso,
@@ -236,8 +237,8 @@ const mix = (a: Rgb, b: Rgb, t: number): Rgb => [
 
 const styleAt = (heat: number, palette: CanvasPalette): CubeStyle => {
   const t = clamp(heat);
-  const cold = palette.light ? COLD_LIGHT : COLD_DARK;
-  const hot = palette.light ? HOT_LIGHT : HOT_DARK;
+  const cold = palette.onLight ? COLD_LIGHT : COLD_DARK;
+  const hot = palette.onLight ? HOT_LIGHT : HOT_DARK;
   return {
     top: rgbCss(mix(cold.top, hot.top, t)),
     right: rgbCss(mix(cold.right, hot.right, t)),
@@ -286,7 +287,7 @@ export class PolicyHeroPolicyCircuit extends HTMLElement {
     // pointer events and make the hover flicker on and off as the cursor crosses text.
     window.addEventListener('pointermove', this.handlePointer, { signal: this.controller.signal });
     window.addEventListener('blur', this.handleLeave, { signal: this.controller.signal });
-    this.engine = new CanvasEngine(canvas, this.draw);
+    this.engine = new CanvasEngine(canvas, this.draw, surfaceOf(this));
   }
 
   disconnectedCallback() {
@@ -312,9 +313,9 @@ export class PolicyHeroPolicyCircuit extends HTMLElement {
 
   private draw: CanvasDraw = (context, width, height, elapsed, _pointer, palette) => {
     context.clearRect(0, 0, width, height);
-    const signalTone = palette.light ? palette.accentInk : SIGNAL_DARK;
-    const payloadTone = palette.light ? palette.accentInk : PAYLOAD_DARK;
-    const riseTone = palette.light ? palette.accentInk : RISE_DARK;
+    const signalTone = palette.onLight ? palette.accentInk : SIGNAL_DARK;
+    const payloadTone = palette.onLight ? palette.accentInk : PAYLOAD_DARK;
+    const riseTone = palette.onLight ? palette.accentInk : RISE_DARK;
     const time = reducedMotion ? 7 : elapsed + 3;
     // Per-embed tuning: data-scale multiplies the iso unit; data-center-x/-y shift
     // the citadel within the canvas (fractions of canvas size).

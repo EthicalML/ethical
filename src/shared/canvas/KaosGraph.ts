@@ -1,4 +1,12 @@
-import { type CanvasPalette, getPalette, onThemeChange, rgba, rgbCss } from './CanvasEngine';
+import {
+  type CanvasPalette,
+  type CanvasSurface,
+  getPalette,
+  onThemeChange,
+  rgba,
+  rgbCss,
+  surfaceOf,
+} from './CanvasEngine';
 
 interface GraphNode {
   id: string;
@@ -52,6 +60,7 @@ export class KaosGraph extends HTMLElement {
   private elapsed = 0;
   private height = 0;
   private intersectionObserver?: IntersectionObserver;
+  private surface: CanvasSurface = 'dark';
   private palette: CanvasPalette = getPalette();
   private pointer = { x: -1, y: -1 };
   private reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -62,6 +71,8 @@ export class KaosGraph extends HTMLElement {
 
   connectedCallback() {
     this.controller = new AbortController();
+    this.surface = surfaceOf(this);
+    this.palette = getPalette(this.surface);
     this.classList.add('kaos-canvas-mount');
     this.canvas = this.querySelector('canvas') ?? document.createElement('canvas');
     this.canvas.setAttribute('aria-hidden', 'true');
@@ -97,7 +108,7 @@ export class KaosGraph extends HTMLElement {
   // Owns its own rAF loop, so it subscribes directly. The explicit repaint
   // covers the off-screen and reduced-motion cases, where no frame is pending.
   private handleThemeChange = () => {
-    this.palette = getPalette();
+    this.palette = getPalette(this.surface);
     if (this.context) this.draw();
   };
 
@@ -162,7 +173,7 @@ export class KaosGraph extends HTMLElement {
 
   private draw = () => {
     const context = this.context!;
-    this.palette = getPalette();
+    this.palette = getPalette(this.surface);
     this.elapsed += 0.016;
     context.clearRect(0, 0, this.width, this.height);
     if (this.height < 220) {

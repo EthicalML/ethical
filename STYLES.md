@@ -95,6 +95,29 @@ Two refinements the light block forced:
 Each theme also declares `color-scheme`, which is what themes the native controls no stylesheet can
 reach: form field internals, scrollbars, the caret and the spellcheck underline.
 
+### The canvas palette and the surface label
+
+The light theme keeps **whole blocks dark** on a light page — one selector list in `tokens.css`:
+the header and its menus and drawer, `.hero`, `.article-hero.canvas-variant`, `.kompute-feature`,
+`.kaos-feature`, `.map-stage`, `.kaos-panel`, `.palette-panel`. Depth on paper comes from inverting
+sections, not from shading cards.
+
+Canvas paints outside the cascade, so a canvas cannot inherit those re-entered rungs. It therefore
+takes its colours from the **surface it sits on, not from the active theme**, via two token sets on
+`:root`: `--canvas-*` for artwork on the page ground and `--canvas-dark-*` for artwork inside one of
+the inverted blocks. Under dark the page _is_ that surface and the two sets are identical, which is
+what keeps dark pixel-exact.
+
+Which set a mount takes is a **hardcoded label**, never inferred: `data-surface="dark" | "page"` on
+the mount element, read once at construction by `surfaceOf()`. Nothing sniffs its own backdrop —
+that breaks on transparent parents, gradients and canvases that straddle two surfaces. Today only
+five mounts are `page`: the homepage policy circuit, the three `/open-source/` portal visuals and the
+form-send overlay. Everything else sits inside an inverted block and barely changes between themes.
+
+**Two things must stay in step with the list above.** The `--canvas-dark-*` values in the light
+block restate the inverted-block values — change one, change both. And if a component ever moves a
+canvas from a dark block onto the page ground, its `data-surface` label must move with it.
+
 ### Never a token
 
 - `#000` inside `mask-image` / `-webkit-mask-image`. It is an alpha stencil, not a colour: it means

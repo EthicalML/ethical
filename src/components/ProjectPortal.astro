@@ -44,8 +44,8 @@ const morphName = (visual: string) => `${visual}-title`;
       projects.map((project) => (
         <article id={panelId(project.title)} class={`portal-panel visual-${project.visual}`} data-project-panel data-reveal>
           <div class="portal-visual" aria-hidden="true">
-            {project.visual === 'kaos' && <KaosArchitecture panel />}
-            {project.visual === 'kompute' && <KomputeCube embedded backdrop />}
+            {project.visual === 'kaos' && <KaosArchitecture panel surface="page" />}
+            {project.visual === 'kompute' && <KomputeCube embedded backdrop surface="page" />}
             {project.visual === 'xai' && (
               <svg viewBox="0 0 640 420" role="presentation">
                 <g class="plot-grid">
@@ -71,7 +71,7 @@ const morphName = (visual: string) => `${visual}-title`;
               </svg>
             )}
             {project.visual === 'production-ml' && (
-              <category-constellation>
+              <category-constellation data-surface="page">
                 <canvas />
               </category-constellation>
             )}
