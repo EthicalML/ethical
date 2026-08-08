@@ -1,0 +1,53 @@
+version: 2
+
+# Routine version updates arrive in one batch on Wednesday mornings rather than
+# as a trickle of single-package pull requests. Security updates are a separate
+# GitHub feature and are NOT governed by this schedule: they open as soon as an
+# advisory lands, which is the behaviour we want. The grouping below applies to
+# both, so a security batch also arrives as one pull request per group.
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: wednesday
+      time: '06:00'
+      timezone: Europe/Berlin
+    open-pull-requests-limit: 5
+    groups:
+      # Astro and its integrations move together; a split upgrade usually fails
+      # to build, so they belong in one pull request.
+      astro:
+        patterns:
+          - astro
+          - '@astrojs/*'
+      # Lint, format and type tooling: churny, low risk, and never worth a
+      # pull request each.
+      tooling:
+        patterns:
+          - eslint
+          - eslint-*
+          - '@eslint/*'
+          - '@typescript-eslint/*'
+          - prettier
+          - prettier-*
+          - typescript
+          - globals
+      # Everything else that is not a major bump. Majors stay individual so
+      # they can be read and tested on their own.
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: wednesday
+      time: '06:00'
+      timezone: Europe/Berlin
+    groups:
+      actions:
+        patterns:
+          - '*'
