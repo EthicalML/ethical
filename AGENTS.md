@@ -184,18 +184,19 @@ A short paragraph does not follow a table, card grid, chart or other widget. Com
 
 ## Homepage source map
 
-| Concern                                                          | Authoring source                                                       |
-| ---------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| Hero, evidence, phases, policy, project, survey and network copy | `src/pages/index.mdx`                                                  |
-| Principle content                                                | `src/content/principles/*.md`                                          |
-| Repository facts                                                 | `src/content/repos-metrics.yaml`                                       |
-| Partner directory and affiliation logos                          | `src/content/partners.yaml`                                            |
-| Survey source rows                                               | `src/data/survey-2024.csv`, `src/data/survey-2025.csv`                 |
-| Derived survey questions                                         | `src/content/survey-questions.yaml`                                    |
-| Recent newsletter issue numbers                                  | `newsletter` content collection via `src/utils/RecentIssues.ts`        |
-| Header navigation and wordmark                                   | `src/components/SiteHeader.astro`                                      |
-| Footer and footnote chrome                                       | `src/components/SiteFooter.astro`, `src/components/FootnoteBand.astro` |
-| Form delivery endpoint                                           | `FORM_ENDPOINT` through `loadEnv`, base64 Vite define in the JS bundle |
+| Concern                                                          | Authoring source                                                          |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Hero, evidence, phases, policy, project, survey and network copy | `src/pages/index.mdx`                                                     |
+| Principle content                                                | `src/content/principles/*.md`                                             |
+| Repository facts                                                 | `src/content/repos-metrics.yaml`                                          |
+| Partner directory and affiliation logos                          | `src/content/partners.yaml`                                               |
+| Survey source rows                                               | `src/data/survey-2024.csv`, `src/data/survey-2025.csv`                    |
+| Derived survey questions                                         | `src/content/survey-questions.yaml`                                       |
+| Recent newsletter issue numbers                                  | `newsletter` content collection via `src/utils/RecentIssues.ts`           |
+| Header navigation content and wordmark                           | `src/data/navigation.ts`                                                  |
+| Header shell, mega-menu and mobile drawer chrome                 | `src/components/SiteHeader.astro`, `MegaMenu.astro`, `MobileDrawer.astro` |
+| Footer and footnote chrome                                       | `src/components/SiteFooter.astro`, `src/components/FootnoteBand.astro`    |
+| Form delivery endpoint                                           | `FORM_ENDPOINT` through `loadEnv`, base64 Vite define in the JS bundle    |
 
 ## Definition of done
 

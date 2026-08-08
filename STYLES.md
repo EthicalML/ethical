@@ -68,7 +68,9 @@ Search by the surface name or representative selector below before adding a rule
 | `RegulationGrid.astro` | Policy regulation catalogue and themes | `.regulation-catalogue`, `.regulation-grid` |
 | `RequestPath.astro` | KAOS request-path player and scenario controls | `request-path`, `.scenario-picker`, `.request-stage` |
 | `SequencePipeline.astro` | Kompute sequence pipeline player | `sequence-pipeline`, `.pipeline-heading`, `.pipeline-stage` |
-| `SiteHeader.astro` | Desktop mega navigation, mobile menu, search trigger and header persistence chrome | `.site-header`, `.primary-nav`, `.mega-panel`, `.mobile-menu` |
+| `SiteHeader.astro` | Persistent header shell, wordmark, desktop navigation triggers, search trigger and right-hand controls | `.site-header`, `.header-row`, `.primary-nav`, `.nav-right` |
+| `MegaMenu.astro` | Desktop mega-menu panels, project preview and initiative panes | `.mega-panel`, `.oss-menu`, `.initiative-menu` |
+| `MobileDrawer.astro` | Mobile navigation drawer, accordion sections and drawer controls | `.mobile-drawer`, `.mobile-nav`, `.mobile-menu-section` |
 | `SplitList.astro` | Reusable split-list columns | `.split-list ul` |
 | `StageExplorer.astro` | Tabbed stage explorer | `stage-explorer`, `.stage-selector`, `.stage-panel` |
 | `SurveyEvidence.astro` | Survey methodology and evidence block | `.survey-evidence` |
@@ -104,6 +106,8 @@ Search by the surface name or representative selector below before adding a rule
 | `table`, `th`, `td`, `dl`, `dt`, `dd` | Data and definition markup appears on unrelated prose and component surfaces. |
 | Base `form`, `fieldset`, label, input and form-button rules | The contact/network form and newsletter form share these control foundations. |
 | Root, principle and newsletter view-transition selectors and keyframes | Their endpoints cross layouts, pages and persisted header chrome. |
+| `SiteHeader.astro` global `.site-header` transition name | The persisted node keeps its previous page scope across a route swap, so its transition name must remain unscoped. |
+| `MegaMenu.astro` global `om-swap` keyframes | The mega-menu script assigns this animation by name at runtime, outside Astro's scoped keyframe rewriting. |
 | `.fixed-canvas canvas`, `.kaos-canvas-mount canvas`, `.kaos-architecture-mount canvas` | The canvas sizing contract has multiple unrelated hosts. |
 | `.kaos-canvas-mount`, `.kaos-architecture-mount`, `kaos-graph`, `kaos-architecture` | Shared KAOS canvas elements are embedded by multiple owners. |
 | `.home-section` and its final-section rule | Page sections are composed through several homepage components and hydration adds non-section siblings. |
