@@ -137,7 +137,7 @@ canvas from a dark block onto the page ground, its `data-surface` label must mov
 
 ## Global stylesheet
 
-`src/styles/tokens.css` is 831 lines. The counts below are from the current parsed stylesheet: a rule is a CSS style rule or `@font-face` rule, keyframe step selectors are excluded, and declarations inside keyframes are included.
+`src/styles/tokens.css` is 1,326 lines. The counts below are from the current parsed stylesheet: a rule is a CSS style rule or `@font-face` rule, keyframe step selectors are excluded, and declarations inside keyframes are included.
 
 | Category                             | Rules | Declarations | Contents                                                                                                                              |
 | ------------------------------------ | ----: | -----------: | ------------------------------------------------------------------------------------------------------------------------------------- |
@@ -150,7 +150,8 @@ canvas from a dark block onto the page ground, its `data-surface` label must mov
 | Page and view-transition motion      |    19 |           36 | Root settle, principle and newsletter navigation, persistent-header groups and reduced-motion handling.                               |
 | Responsive foundation                |     7 |            8 | Global section, typography, primitive and form adjustments at the named breakpoints.                                                  |
 | Cross-surface and canvas integration |    73 |          151 | Canvas mount contracts, homepage section composition, shared composed-page clusters and rules spanning a page plus a child component. |
-| Total                                |   181 |          542 | Global CSS only.                                                                                                                      |
+| Theme overrides                      |     1 |          104 | Every theme-dependent token's light value on `:root[data-theme='light']`.                                                             |
+| Total                                |   251 |          674 | Global CSS only.                                                                                                                      |
 
 ## Component and page owners
 
@@ -203,6 +204,7 @@ Search by the surface name or representative selector below before adding a rule
 | `MegaMenu.astro`                                                                  | Desktop mega-menu panels, project preview and initiative panes                                         | `.mega-panel`, `.oss-menu`, `.initiative-menu`                                 |
 | `MobileDrawer.astro`                                                              | Mobile navigation drawer, accordion sections and drawer controls                                       | `.mobile-drawer`, `.mobile-nav`, `.mobile-menu-section`                        |
 | `SplitList.astro`                                                                 | Reusable split-list columns                                                                            | `.split-list ul`                                                               |
+| `LinkCardGrid.astro`                                                              | Shared link-card grid vocabulary                                                                       | `.link-card-grid`, `.link-card`                                                |
 | `StageExplorer.astro`                                                             | Tabbed stage explorer                                                                                  | `stage-explorer`, `.stage-selector`, `.stage-panel`                            |
 | `SurveyEvidence.astro`                                                            | Survey methodology and evidence block                                                                  | `.survey-evidence`                                                             |
 | `SurveyExplorerIsland.astro`, `SurveyExplorerIsland.css` and `SurveyExplorer.tsx` | Homepage survey explorer tabs, year controls, bars and focus panel                                     | `.survey-island`, `.survey-toolbar`, `.survey-bars`, `.survey-focus`           |
@@ -272,3 +274,5 @@ Use these widths for CSS media queries. A component that needs responsive client
 2. For a page-specific tweak, put the rule in the owning `.astro` or `.mdx` page so it cannot affect another route.
 3. For a new token, add it to `:root` when at least two owners need the same semantic value, or when the value must change between themes. A theme-dependent value is always a token, however few owners it has: a literal has nowhere to flip to under `:root[data-theme='light']`. Otherwise keep the value local.
 4. If an override seems necessary, find the existing owner first and change the original rule or component API. Add a cross-owner rule to `tokens.css` only when the relationship itself is shared and document that reason here.
+
+<!-- styles-hash: 65102e4caced1444223c75882745a2b65685a53d2815330c603b4ff991ae86fa -->

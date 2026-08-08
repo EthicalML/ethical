@@ -8,7 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "check:ratchet": "node scripts/verify/verify-check.mjs",
+    "check:ratchet": "node scripts/verify/verify-check.mjs && node scripts/verify/verify-styles-doc.mjs",
     "lint": "eslint .",
     "format": "prettier --write src scripts astro.config.mjs eslint.config.mjs prettier.config.mjs package.json tsconfig.json AGENTS.md README.md",
     "format:check": "prettier --check src scripts astro.config.mjs eslint.config.mjs prettier.config.mjs package.json tsconfig.json AGENTS.md README.md",
@@ -18,7 +18,9 @@
     "verify:shots:all": "sh -c 'node scripts/verify/verify-shots.mjs --viewport 1440x1000 \"$@\" && node scripts/verify/verify-shots.mjs --viewport 420x900 \"$@\"' --",
     "verify:parity": "node scripts/verify/verify-parity.mjs",
     "verify:typewriter": "node scripts/verify/verify-typewriter.mjs",
-    "postbuild": "pagefind --site dist"
+    "postbuild": "pagefind --site dist",
+    "styles:sync": "node scripts/verify/verify-styles-doc.mjs --sync",
+    "check:styles-doc": "node scripts/verify/verify-styles-doc.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "7.0.3",

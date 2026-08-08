@@ -89,3 +89,9 @@ Every entry is echoed with its reason into the JSON report and cropped into `<di
 - Text contrast delta: samples every visible text element's composited contrast ratio, records it in the dark run and fails the light run on invisible text or a ratio that lost more than 10% of its dark value.
 - Deterministic full-page screenshots: disables animation and transition timing, scrolls once to activate lazy content, returns to the top, and masks canvases so refactor comparisons measure stable layout rather than animation frames.
 - Hero typewriter: asserts sequential initial typing across all three fixed lines, cursor movement, pill-matched type, accent colour, 9-second headline phase lock, stable geometry, changing initial and rotation frames, the underline comparison crops, mobile containment, and a static reduced-motion state without a cursor.
+
+## Style-ownership drift
+
+`npm run check:ratchet` also runs `verify-styles-doc.mjs`, which holds `STYLES.md` to the code it describes. Three derived checks — the `tokens.css` line, rule and declaration counts, every file owning styles appearing in the ownership table, and every table row pointing at a file that still owns styles — plus a `styles-hash` marker over `tokens.css` and every style block.
+
+The derived checks cannot be satisfied by a token edit: they either match reality or they do not. The hash is weaker by design; it only forces a deliberate look. After changing any style, read `STYLES.md`, correct anything now wrong, and run `npm run styles:sync` to restate the derived facts and re-bless the hash. A component and its extracted sibling sheet (`Hero.astro` + `Hero.css`) count as one owner.

@@ -18,6 +18,18 @@ Do it in two steps with parity proving each: convert the global block to scoped,
 
 `src/shared/canvas/HeroCycle.ts` owns a requestAnimationFrame loop and correctly handles reduced motion, backing-store resize, frame cancellation and listener teardown, but it has no `IntersectionObserver`. It pauses only when the document is hidden, so the homepage and article hero canvases keep animating while scrolled out of view, burning CPU and battery on every visit. The smallest safe fix adds intersection gating to its existing lifecycle. Migrating it fully onto `CanvasEngine` would delete duplicate resize and pointer plumbing but changes pointer coverage and the cycle clock, so treat that as a separate visually-verified change. Found by the 2026-08-08 canvas contract audit, which cleared every other canvas host.
 
+## Bugs
+
+* When in mobile mode, sometimes when clicking on the menu, the menu disappears / crashes. 
+
+## Improve the search
+
+The search is still not immediate, takes a while to laod
+Can we make it such that it displays all and filters progressively?
+That way when you open it you could have some of the top recommended pages too
+Also i searched "mle 123", and "123" and the MLE newsletter 123 does not come up
+So it seems there are still inefficienes herel.
+
 ## Principles prev/next: sticky sub-navbar with directional slide
 
 The principle pages carry prev/next only at the bottom, and the transition does not read as progression. Move the controls into a sticky sub-navbar in the same spirit as the newsletter issue navigation, always reachable, and animate the change directionally: on next, the current principle text exits to the left while the next enters from the right; reversed on previous. Audit the Motion table entry for "Principle directional slide" when doing this. The current markup also uses ASCII-arrow link text, which the conventions forbid.
