@@ -363,12 +363,21 @@ for (const route of routes) {
         ?.map(Number) ?? [0, 0, 0, 0];
       return { r: parts[0], g: parts[1], b: parts[2], a: parts[3] ?? 1 };
     };
-    const sourceOver = (top, under) => ({
-      r: top.r * top.a + under.r * (1 - top.a),
-      g: top.g * top.a + under.g * (1 - top.a),
-      b: top.b * top.a + under.b * (1 - top.a),
-      a: 1,
-    });
+    // Porter-Duff source-over, alpha included. Returning a hardcoded `a: 1`
+    // makes two stacked translucent layers look opaque, which stops the
+    // ancestor walk early and reports a background the page never paints.
+    const sourceOver = (top, under) => {
+      const alpha = top.a + under.a * (1 - top.a);
+      if (alpha === 0) return { r: 0, g: 0, b: 0, a: 0 };
+      const blend = (topChannel, underChannel) =>
+        (topChannel * top.a + underChannel * under.a * (1 - top.a)) / alpha;
+      return {
+        r: blend(top.r, under.r),
+        g: blend(top.g, under.g),
+        b: blend(top.b, under.b),
+        a: alpha,
+      };
+    };
     const channelLuminance = (value) => {
       const scaled = value / 255;
       return scaled <= 0.03928 ? scaled / 12.92 : ((scaled + 0.055) / 1.055) ** 2.4;
