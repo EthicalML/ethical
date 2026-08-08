@@ -59,6 +59,28 @@ const article = frontmatter.article
     <script is:inline type="application/ld+json" set:html={JSON.stringify(organization)} />
     {article && <script is:inline type="application/ld+json" set:html={JSON.stringify(article)} />}
     <script is:inline>
+      // Stamp the stored theme before the first paint, or a light-mode visitor sees a
+      // frame of dark. Both `is:inline` and the position in <head> are load-bearing: a
+      // bundled/deferred script runs after paint, and an init script at document-start
+      // has no `document.documentElement` to write to yet.
+      //
+      // Dark is the default and `prefers-color-scheme` is deliberately NOT consulted —
+      // the theme is an explicit, persisted choice, and an OS fallback would silently
+      // flip every headless capture (Playwright emulates light by default).
+      //
+      // The key must stay `theme`: the verification harness seeds `localStorage.theme`
+      // to drive light captures, and a rename would make every light run capture dark.
+      (() => {
+        let stored = null;
+        try {
+          stored = localStorage.getItem('theme');
+        } catch {
+          // Safari private mode throws on any storage access; fall through to the default.
+        }
+        document.documentElement.dataset.theme = stored === 'light' ? 'light' : 'dark';
+      })();
+    </script>
+    <script is:inline>
       // The router keeps history.scrollRestoration = 'manual', so on reload the browser
       // paints the top of the page before any script can restore the position — a
       // flicker no post-paint code can beat. When a deep restore is pending, keep the
@@ -93,6 +115,16 @@ const article = frontmatter.article
       [data-reveal]:not([data-reveal='trigger']):not([data-revealed='1']) {
         opacity: 0;
         transform: translateY(26px);
+      }
+      /* Flipping the theme repaints every themed property at once. Hundreds of them sit
+         behind a colour transition, so without this the page smears through a half-lit
+         intermediate at whatever durations happen to be declared. The class is added for
+         the single frame the flip lands on and removed on the next one. */
+      html.is-theme-switching,
+      html.is-theme-switching *,
+      html.is-theme-switching *::before,
+      html.is-theme-switching *::after {
+        transition: none !important;
       }
       @media (prefers-reduced-motion: reduce) {
         [data-reveal]:not([data-reveal='trigger']):not([data-revealed='1']) {
@@ -169,6 +201,7 @@ const article = frontmatter.article
       import '../shared/Motion';
       import '../shared/Reveal';
       import '../shared/ScrollRestoration';
+      import '../shared/Theme';
     </script>
   </body>
 </html>

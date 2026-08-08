@@ -5,7 +5,8 @@ const resources = [
   {
     id: 'agent',
     name: 'Agent',
-    color: '#5ee6a0',
+    color: 'var(--accent)',
+    ink: 'var(--accent-ink)',
     description: 'A Kubernetes resource for a running agent and its model, tools, peers and memory binding.',
     why: 'Use it when you want one deployable agent endpoint with its dependencies declared together.',
     example: 'kaos agent deploy my-agent --modelapi my-api --model "smollm2:135m"',
@@ -14,7 +15,8 @@ const resources = [
   {
     id: 'model',
     name: 'ModelAPI',
-    color: '#4ac7ff',
+    color: 'var(--glitch-blue-fill)',
+    ink: 'var(--glitch-blue)',
     description: 'The LLM access layer, either proxied through LiteLLM or hosted in-cluster with Ollama.',
     why: 'Use it to give agents a named model endpoint without coupling them to provider infrastructure.',
     example: 'kaos modelapi deploy my-api --mode Hosted --model "smollm2:135m"',
@@ -23,7 +25,8 @@ const resources = [
   {
     id: 'mcp',
     name: 'MCPServer',
-    color: '#e8b45c',
+    color: 'var(--warn-fill)',
+    ink: 'var(--warn)',
     description: 'A deployable tool server that speaks the Model Context Protocol.',
     why: 'Use it to make tools available to agents as a declared, operator-managed dependency.',
     example: 'kind: MCPServer\nspec:\n  runtime: python-string',
@@ -32,7 +35,8 @@ const resources = [
   {
     id: 'memory',
     name: 'MemoryStore',
-    color: '#b694ff',
+    color: 'var(--violet-fill)',
+    ink: 'var(--violet)',
     description: 'A central memory service that agents can bind to for durable recall across sessions.',
     why: 'Use it when an agent needs shared, scoped memory beyond its local conversation window.',
     example: 'kaos memorystore create support-memory --modelapi support-modelapi',
@@ -41,7 +45,8 @@ const resources = [
   {
     id: 'access',
     name: 'AccessGrant',
-    color: '#e8b45c',
+    color: 'var(--warn-fill)',
+    ink: 'var(--warn)',
     description: 'A declarative binding between a user, group or agent and the resources it may reach.',
     why: 'Use it to make entry and internal movement explicit when authorization is enabled.',
     example: 'kaos auth grant create --group researchers --resource agent/researcher',
@@ -54,7 +59,11 @@ const resources = [
   <AnimationWindow title="kaos control plane" class="control-plane-window" chromeOnly>
     <div class="map-shell">
       <div class="map-stage">
-        <kaos-architecture variant="interactive" aria-label="Interactive KAOS control plane architecture; select a custom resource to inspect it">
+        <kaos-architecture
+          variant="interactive"
+          data-surface="dark"
+          aria-label="Interactive KAOS control plane architecture; select a custom resource to inspect it"
+        >
           <canvas aria-hidden="true"></canvas>
         </kaos-architecture>
         <p class="map-hint"><span aria-hidden="true">↗</span> Select a resource node</p>
@@ -66,7 +75,7 @@ const resources = [
           <p>SELECT A RESOURCE</p>
           <div role="tablist" aria-label="KAOS custom resources">
             {
-              resources.map(({ id, name, color }, index) => (
+              resources.map(({ id, name, color, ink }, index) => (
                 <button
                   type="button"
                   role="tab"
@@ -75,7 +84,7 @@ const resources = [
                   aria-selected={index === 0 ? 'true' : 'false'}
                   tabindex={index === 0 ? 0 : -1}
                   data-resource={id}
-                  style={`--resource-color: ${color}`}
+                  style={`--resource-color: ${color}; --resource-ink: ${ink}`}
                 >
                   <>
                     <i aria-hidden="true" />
@@ -186,8 +195,7 @@ const resources = [
     min-height: 576px;
   }
   .map-stage {
-    background:
-      linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px), var(--bg-inset);
+    background: linear-gradient(var(--wash-1) 1px, transparent 1px), linear-gradient(90deg, var(--wash-1) 1px, transparent 1px), var(--bg-inset);
     background-size: 40px 40px;
     min-height: 576px;
     overflow: hidden;
@@ -213,7 +221,7 @@ const resources = [
     top: 20px;
   }
   .map-hint span {
-    color: var(--accent);
+    color: var(--accent-ink);
     font-size: 15px;
   }
   .map-legend {
@@ -232,7 +240,7 @@ const resources = [
     gap: 7px;
   }
   .map-legend i {
-    border: 1px solid var(--accent);
+    border: 1px solid var(--accent-ink);
     display: block;
     height: 7px;
     transform: rotate(45deg);
@@ -265,7 +273,7 @@ const resources = [
   }
   .resource-picker button {
     align-items: center;
-    background: rgba(255, 255, 255, 0.018);
+    background: var(--wash-1);
     border: 1px solid var(--hairline-card);
     color: var(--text-2);
     cursor: pointer;
@@ -293,7 +301,7 @@ const resources = [
     width: 8px;
   }
   .resource-picker button small {
-    color: var(--resource-color);
+    color: var(--resource-ink);
     font-size: 7.5px;
     grid-column: 2;
     letter-spacing: 0.08em;
@@ -303,7 +311,7 @@ const resources = [
   .resource-picker button:focus-visible,
   .resource-picker button[aria-selected='true'] {
     background: color-mix(in srgb, var(--resource-color) 9%, transparent);
-    border-color: color-mix(in srgb, var(--resource-color) 55%, transparent);
+    border-color: color-mix(in srgb, var(--resource-ink) 55%, transparent);
     color: var(--text-1);
     outline: none;
   }
@@ -347,7 +355,7 @@ const resources = [
     padding-top: 14px;
   }
   pre {
-    background: rgba(0, 0, 0, 0.22);
+    background: var(--shadow-a220);
     border: 1px solid var(--hairline-card);
     color: var(--text-1);
     font: var(--mono-9)/1.5 var(--font-mono);
@@ -363,7 +371,7 @@ const resources = [
     unicode-bidi: plaintext;
   }
   article > a {
-    color: var(--accent);
+    color: var(--accent-ink);
     display: inline-block;
     font-size: var(--body-13);
     margin-top: 16px;

@@ -162,14 +162,14 @@ const frontmatter = {
     animation: meta-lock 0.4s var(--ease-panel, cubic-bezier(0.16, 1, 0.3, 1));
     background: var(--bg-panel);
     border-top-color: transparent;
-    border-bottom-color: rgba(94, 230, 160, 0.22);
+    border-bottom-color: var(--accent-veil);
     padding: 8px 24px;
   }
   /* Lock-in: the bar arrives slightly oversized and compresses as it docks,
      with a brief accent flash on the seam. */
   @keyframes meta-lock {
     from {
-      border-bottom-color: rgba(94, 230, 160, 0.65);
+      border-bottom-color: var(--accent-edge);
       transform: translateY(-8px) scaleY(1.12);
     }
     60% {
@@ -202,7 +202,7 @@ const frontmatter = {
     justify-self: end;
   }
   a.issue-step:hover {
-    color: var(--accent);
+    color: var(--accent-ink);
     opacity: 1;
   }
   .issue-step i {
@@ -220,12 +220,12 @@ const frontmatter = {
     padding: 6px 11px;
   }
   .issue-chip.issue-number {
-    border-color: rgba(94, 230, 160, 0.4);
-    color: var(--accent);
+    border-color: var(--accent-edge);
+    color: var(--accent-ink);
   }
   .chip-rule {
     align-self: center;
-    background: rgba(244, 242, 238, 0.22);
+    background: var(--ink-wash-a220);
     flex: none;
     height: 22px;
     margin: 0 3px;
@@ -257,8 +257,8 @@ const frontmatter = {
       color 0.2s ease;
   }
   a.issue-tag:hover {
-    border-color: rgba(94, 230, 160, 0.5);
-    color: var(--accent);
+    border-color: var(--accent-edge);
+    color: var(--accent-ink);
     opacity: 1;
   }
   .issue-related {
@@ -285,7 +285,7 @@ const frontmatter = {
       transform 0.2s ease;
   }
   .related-grid a:hover {
-    border-color: rgba(94, 230, 160, 0.55);
+    border-color: var(--accent-edge);
     opacity: 1;
     transform: translateY(-2px);
   }
@@ -321,8 +321,8 @@ const frontmatter = {
     padding: 8px 14px;
   }
   .issue-chip.archive {
-    border-color: rgba(94, 230, 160, 0.35);
-    color: var(--accent);
+    border-color: var(--accent-line);
+    color: var(--accent-ink);
   }
   .issue-body {
     padding: 48px 24px 56px;
@@ -379,27 +379,27 @@ const frontmatter = {
     width: 9px;
   }
   .issue-body :global(a) {
-    border-bottom: 1px solid rgba(94, 230, 160, 0.35);
-    color: var(--accent);
+    border-bottom: 1px solid var(--accent-line);
+    color: var(--accent-ink);
     transition:
       border-color 0.2s ease,
       text-shadow 0.2s ease;
   }
   .issue-body :global(a:hover) {
-    border-bottom-color: var(--accent);
+    border-bottom-color: var(--accent-ink);
     opacity: 1;
-    text-shadow: 0 0 18px rgba(94, 230, 160, 0.55);
+    text-shadow: 0 0 18px var(--accent-edge);
   }
   .issue-body :global(h2 a),
   .issue-body :global(h3 a) {
-    border-bottom: 1px solid rgba(94, 230, 160, 0.35);
-    color: var(--accent);
+    border-bottom: 1px solid var(--accent-line);
+    color: var(--accent-ink);
   }
   .issue-body :global(h2 a:hover),
   .issue-body :global(h3 a:hover) {
-    border-bottom-color: var(--accent);
+    border-bottom-color: var(--accent-ink);
     opacity: 1;
-    text-shadow: 0 0 22px rgba(94, 230, 160, 0.45);
+    text-shadow: 0 0 22px var(--accent-edge);
   }
   .issue-body :global(img) {
     border: 1px solid var(--hairline-card);
@@ -427,7 +427,7 @@ const frontmatter = {
     background:
       radial-gradient(circle at 16px 15px, var(--glitch-red) 3.5px, transparent 4.5px),
       radial-gradient(circle at 29px 15px, var(--warn) 3.5px, transparent 4.5px), radial-gradient(circle at 42px 15px, var(--accent) 3.5px, transparent 4.5px),
-      rgba(255, 255, 255, 0.025);
+      var(--wash-2);
     border-bottom: 1px solid var(--hairline-card);
     content: '';
     height: 30px;
@@ -455,8 +455,8 @@ const frontmatter = {
     padding: 30px 24px 0;
   }
   .issue-subscribe a {
-    border-bottom: 1px solid rgba(94, 230, 160, 0.35);
-    color: var(--accent);
+    border-bottom: 1px solid var(--accent-line);
+    color: var(--accent-ink);
   }
   @media (max-width: 950px) {
     .issue-body {

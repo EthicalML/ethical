@@ -115,7 +115,7 @@ const { title, chromeOnly = false, finite = false, class: className }: Props = A
   }
   .window-header {
     align-items: center;
-    background: rgba(255, 255, 255, 0.025);
+    background: var(--wash-2);
     border-bottom: 1px solid var(--hairline-card);
     display: grid;
     grid-template-columns: minmax(58px, 1fr) auto minmax(58px, 1fr);
@@ -180,7 +180,7 @@ const { title, chromeOnly = false, finite = false, class: className }: Props = A
   .play-toggle:hover,
   .play-toggle:focus-visible {
     background: var(--accent-wash-09);
-    color: var(--accent);
+    color: var(--accent-ink);
     outline: none;
   }
   .play-toggle svg {

@@ -120,7 +120,7 @@ const settleMs = 2500;
             </button>
             <i class="send-conduit" aria-hidden="true" />
             <div class="send-overlay" data-send-overlay aria-hidden="true">
-              <form-send-iso data-send-iso>
+              <form-send-iso data-send-iso data-surface="page">
                 <canvas />
               </form-send-iso>
             </div>
@@ -392,8 +392,8 @@ const settleMs = 2500;
 
   /* The browser's default focus ring is a blue that exists nowhere else here. */
   .form-fields input:focus-visible {
-    border-color: color-mix(in srgb, var(--accent) 70%, transparent);
-    outline: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    border-color: color-mix(in srgb, var(--accent-ink) 70%, transparent);
+    outline: 1px solid color-mix(in srgb, var(--accent-ink) 45%, transparent);
     outline-offset: 1px;
   }
 
@@ -450,7 +450,7 @@ const settleMs = 2500;
       opacity: 0;
     }
     to {
-      background: rgba(12, 14, 13, 0.72);
+      background: var(--scrim-3-a720);
       opacity: 1;
     }
   }
@@ -472,14 +472,14 @@ const settleMs = 2500;
 
   .button-trace rect {
     fill: none;
-    stroke: var(--accent);
+    stroke: var(--accent-ink);
     stroke-dasharray: 100;
     stroke-dashoffset: 100;
     stroke-width: 1.5;
   }
 
   form[data-state='submitting'] .button-trace {
-    filter: drop-shadow(0 0 5px rgba(94, 230, 160, 0.65));
+    filter: drop-shadow(0 0 5px var(--accent-edge));
     opacity: 1;
   }
 
@@ -495,7 +495,7 @@ const settleMs = 2500;
 
   /* Conduit: the citadel's packet-along-a-route idiom, under the button. */
   .send-conduit {
-    background: rgba(94, 230, 160, 0.16);
+    background: var(--accent-veil);
     display: block;
     height: 1px;
     margin-top: 12px;
@@ -553,9 +553,9 @@ const settleMs = 2500;
      container corner rather than to the button, so submit() sets top from the
      button's measured offset. Left edge and width match the button. */
   .send-terminal:not([hidden]) {
-    background: rgba(10, 12, 11, 0.66);
-    border-left: 1px solid rgba(94, 230, 160, 0.45);
-    color: var(--accent);
+    background: var(--scrim-4-a660);
+    border-left: 1px solid var(--accent-edge);
+    color: var(--accent-ink);
     display: block;
     font: 12px/1.75 var(--font-mono);
     left: 0;
@@ -609,7 +609,7 @@ const settleMs = 2500;
   }
 
   form[data-state='success'] .sent-check {
-    color: var(--accent);
+    color: var(--accent-ink);
     display: block;
     height: 26px;
     margin-bottom: 12px;
@@ -630,7 +630,7 @@ const settleMs = 2500;
 
   fieldset input[type='checkbox'] {
     appearance: none;
-    border: 1px solid rgba(255, 255, 255, 0.26);
+    border: 1px solid var(--hairline-strong);
     border-radius: 3px;
     display: grid;
     flex: none;
@@ -653,7 +653,7 @@ const settleMs = 2500;
 
   fieldset input[type='checkbox']:checked {
     background: var(--accent);
-    border-color: var(--accent);
+    border-color: var(--accent-ink);
   }
 
   fieldset input[type='checkbox']:checked::before {
@@ -673,7 +673,7 @@ const settleMs = 2500;
     0% {
       background: var(--accent-wash-16);
       box-shadow: 0 0 0 7px var(--accent-wash-16);
-      color: var(--accent);
+      color: var(--accent-ink);
     }
     100% {
       background: transparent;
@@ -724,7 +724,7 @@ const settleMs = 2500;
   }
 
   .join-section > .network-split {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent);
+    background: linear-gradient(180deg, var(--wash-2), transparent);
     border: 1px solid var(--hairline-card);
     border-radius: var(--radius-card-lg);
     display: grid;
@@ -744,7 +744,7 @@ const settleMs = 2500;
   }
 
   .network-split h2 + p {
-    color: rgba(244, 242, 238, 0.64);
+    color: var(--ink-3);
     font-size: 16px;
     line-height: 1.62;
     margin: 14px 0 0;
@@ -805,7 +805,7 @@ const settleMs = 2500;
   }
 
   .network-lists .eyebrow {
-    color: rgba(244, 242, 238, 0.4);
+    color: var(--ink-5);
     font-size: var(--mono-10);
     letter-spacing: 0.1em;
     margin-bottom: 4px;
@@ -819,18 +819,18 @@ const settleMs = 2500;
   }
 
   .network-lists i {
-    color: rgba(244, 242, 238, 0.8);
+    color: var(--ink-2);
     font-style: normal;
   }
 
   .network-lists b {
-    color: rgba(244, 242, 238, 0.42);
+    color: var(--ink-5);
     font: 400 11px/normal var(--font-mono);
     margin-inline-start: auto;
   }
 
   .network-lists a b {
-    color: var(--accent);
+    color: var(--accent-ink);
     margin-left: 0;
   }
 

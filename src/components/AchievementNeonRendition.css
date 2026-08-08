@@ -1,3 +1,26 @@
+/* The collage is built from local plates and isometric faces rather than the
+   shared surfaces: they are one or two channels off `--bg-panel`/`--bg-inset`
+   by design, so they are their own tiny family. Under light the whole stack
+   inverts — the plates rise toward paper and the lit face stays the lightest
+   of the three, so the solids keep reading as solids. */
+.achievement-neon-rendition {
+  --neon-plate-card: #171918;
+  --neon-plate-recessed: #131615;
+  --neon-plate-lift: #212423;
+  --neon-face-left: #161817;
+  --neon-face-right: #0e100f;
+  --neon-face-lit: #2a2e2c;
+  --neon-mix-base: #14100c;
+}
+:root[data-theme='light'] .achievement-neon-rendition {
+  --neon-plate-card: #fbfaf7;
+  --neon-plate-recessed: #f4f2ee;
+  --neon-plate-lift: #f2efe8;
+  --neon-face-left: #eae7df;
+  --neon-face-right: #e0dcd2;
+  --neon-face-lit: #fffffd;
+  --neon-mix-base: #f7f3ec;
+}
 .achievement-neon-rendition {
   display: block;
 }
@@ -63,7 +86,7 @@
   transition-duration: 0ms;
 }
 .neon-card {
-  background: #171918;
+  background: var(--neon-plate-card);
   border: 1px solid var(--hairline-card);
   color: var(--text-1);
   overflow: hidden;
@@ -74,7 +97,7 @@
   z-index: 2;
 }
 .neon-slot[data-size='long'] .neon-card {
-  background: #131615;
+  background: var(--neon-plate-recessed);
 }
 
 /* --- Dud blocks: inert raised surfaces, no neon and no slide. Filled square,
@@ -86,14 +109,14 @@
   z-index: 1;
 }
 .dud-face {
-  background: #212423;
+  background: var(--neon-plate-lift);
   border: 1px solid var(--hairline-card);
   inset: 0;
   position: absolute;
 }
 .dud[data-shape='plain'] .dud-face,
 .dud[data-shape='diamond-open'] .dud-face {
-  background: #131615;
+  background: var(--neon-plate-recessed);
 }
 .dud[data-shape='accent'] .dud-face {
   background: var(--accent);
@@ -106,7 +129,7 @@
   width: 100%;
 }
 .dud-shape polygon {
-  fill: #212423;
+  fill: var(--neon-plate-lift);
   stroke: var(--hairline-card);
   stroke-linejoin: round;
   stroke-width: 1;
@@ -120,7 +143,7 @@
 }
 .dud-outline polygon {
   fill: none;
-  stroke: rgba(244, 242, 238, 0.16);
+  stroke: var(--ink-6);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
@@ -190,26 +213,26 @@
   transform-origin: center;
 }
 .iso-face {
-  stroke: rgba(244, 242, 238, 0.16);
+  stroke: var(--ink-6);
   stroke-linejoin: round;
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 .iso-top {
-  fill: #212423;
+  fill: var(--neon-plate-lift);
 }
 .iso-left {
-  fill: #161817;
+  fill: var(--neon-face-left);
 }
 .iso-right {
-  fill: #0e100f;
+  fill: var(--neon-face-right);
 }
 .iso-fill.iso-top {
-  fill: #2a2e2c;
+  fill: var(--neon-face-lit);
 }
 .iso-link {
   fill: none;
-  stroke: rgba(244, 242, 238, 0.22);
+  stroke: var(--ink-6);
   stroke-dasharray: 2 3;
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
@@ -236,7 +259,7 @@
 }
 .neon-slot:hover .iso-fill.iso-top,
 .neon-slot[data-active='true'] .iso-fill.iso-top {
-  fill: color-mix(in srgb, var(--neon) 42%, #14100c);
+  fill: color-mix(in srgb, var(--neon) 42%, var(--neon-mix-base));
 }
 .neon-slot:hover .iso-fill,
 .neon-slot[data-active='true'] .iso-fill {
@@ -281,7 +304,7 @@
   -webkit-line-clamp: 2;
 }
 .neon-copy > .footnote {
-  color: var(--accent);
+  color: var(--accent-ink);
   display: block;
   font: var(--mono-8) / 1.4 var(--font-mono);
   letter-spacing: 0.12em;
@@ -295,7 +318,7 @@ footer {
   margin-top: 12px;
 }
 footer a {
-  color: var(--accent);
+  color: var(--accent-ink);
   font: var(--mono-8) / 1.3 var(--font-mono);
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -304,7 +327,7 @@ footer a {
 /* --- V1 / V2 ghost numerals (cropped by the block edge, capped to ~50% of the
    card so a long label overflows the top-right but never spans wider) --- */
 .ghost-mark {
-  color: rgba(244, 242, 238, 0.05);
+  color: var(--ink-a050);
   font: 300 100px/0.8 var(--font-display);
   letter-spacing: -0.08em;
   max-width: 50%;
@@ -409,7 +432,7 @@ achievement-neon-rendition[data-entered='true'] [data-lego-piece]:not([data-sett
     transform: translate3d(var(--shift-x), var(--shift-y), 0);
   }
   .neon-slot[data-hover='tilt']:hover .neon-card {
-    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 18px 44px var(--shadow-a500);
     transform: translate3d(0, -12px, 0) rotate(var(--pickup, 4deg));
   }
 }
@@ -418,7 +441,7 @@ achievement-neon-rendition[data-entered='true'] [data-lego-piece]:not([data-sett
     transform: translate3d(var(--shift-x), var(--shift-y), 0);
   }
   .neon-slot[data-hover='tilt'][data-active='true'] .neon-card {
-    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 18px 44px var(--shadow-a500);
     transform: translate3d(0, -12px, 0) rotate(var(--pickup, 4deg));
   }
 }
@@ -430,7 +453,7 @@ achievement-neon-rendition[data-entered='true'] [data-lego-piece]:not([data-sett
 }
 .neon-slot:hover .ghost-mark,
 .neon-slot[data-active='true'] .ghost-mark {
-  color: color-mix(in srgb, var(--neon) 26%, rgba(244, 242, 238, 0.03));
+  color: color-mix(in srgb, var(--neon) 26%, var(--ink-a030));
 }
 /* During a slide reveal the top accent rule would read as a seam between the
    revealed neon and the card edge; fade it out while displaced. */
@@ -512,7 +535,7 @@ achievement-neon-rendition[data-entered='true'] [data-lego-piece]:not([data-sett
     transition: outline-color 180ms ease;
   }
   .neon-card:hover {
-    outline: 1px solid var(--accent);
+    outline: 1px solid var(--accent-ink);
     outline-offset: -1px;
   }
 }

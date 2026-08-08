@@ -10,13 +10,70 @@ npm run verify:typewriter
 
 Pass routes after `--` to check a safe subset. Set `VERIFY_BASE_URL` only when deliberately verifying another local origin. `--viewport WIDTH` or `--viewport WIDTHxHEIGHT` changes either responsive gate; `VERIFY_VIEWPORT` is the environment equivalent. Screenshot files and their manifest go to viewport-specific folders under the git-ignored `scripts/verify/out/`.
 
+## Themes
+
+`--theme dark|light` (environment equivalent `VERIFY_THEME`, default `dark`) selects the theme every browser gate captures and asserts against. It is accepted by `verify-dom`, `verify-shots` and `verify-typewriter`.
+
+The `:all` scripts wrap their two viewport legs in `sh -c ... --` so forwarded flags reach both. npm appends extra arguments to the end of the script string, so a plain `&&` chain gave `--theme light` to the 420 leg only and silently re-ran 1440 in dark — which for `verify:dom:all` meant overwriting the contrast baseline the light run was supposed to be compared against.
+
+The flag seeds `localStorage.theme` before any script runs — the same signal the site's own pre-paint script reads, so the capture exercises the production path — and pins Playwright's emulated `prefers-color-scheme` to match. Both halves are load-bearing: Playwright defaults to light, so a gate that only seeds storage would silently capture light the moment the site gains an OS-preference fallback. As a fallback for builds where the theme script has not shipped yet, the seed also applies `data-theme` itself from a `MutationObserver`; it never overwrites an attribute the page already set, and it re-applies on `astro:after-swap` because Astro's `ClientRouter` swaps `<html>` attributes on every client-side navigation.
+
+Dark output stays at `out/<viewport>/` so the committed dark baseline remains comparable; every other theme writes to `out/<theme>/<viewport>/` and can never overwrite it. Colour assertions resolve the custom property they mean (`--accent`, `--text-1`, `--bg-inset`, `--typewriter-cursor`, …) from the live page rather than baking one theme's literal, and the canvas screenshot mask uses the active theme's `--bg-base`.
+
+## Contrast delta gate
+
+`verify-dom` samples every text-bearing element, composites its colour over the first opaque ancestor background, and records the WCAG ratio under a structural key. Absolute WCAG floors are unusable as a gate here: the correct dark site already produces ratios of 1.07 and 1.52 on decorative text. The gate is therefore a delta against dark.
+
+A dark run **records** the baseline to the git-ignored `out/contrast-baseline/<viewport>/contrast.json`, merging per route so a partial run refreshes only what it visited. A light run **compares** against it and fails when an element
+
+- drops below a 1.15 ratio while it was at or above 1.15 in dark (invisible text), or
+- retains less than 90% of its dark ratio **and** does not clear 4.5:1 (a real contrast regression).
+
+The 4.5:1 clause is a pass threshold, not a failure threshold. The 0.9x rule alone flags the palette
+itself: an accent at 11.7:1 on near-black cannot also be 10.5:1 on paper without ceasing to be an
+accent, and its drop to 5.5:1 is the design. Absolute WCAG floors remain unusable for _failing_ a
+node — correct dark decorative text sits at 1.07 — but a node that clears the body gate in light is
+readable whatever it scored in dark.
+
+Run the dark gate before the light gate; a light run with no recorded baseline fails rather than passing vacuously.
+
+## Parity
+
 Compare a fresh capture with a stored baseline mechanically:
 
 ```sh
-npm run verify:parity -- <baseline-dir> <current-dir>
+npm run verify:parity -- <baseline-dir> <current-dir> [--allow <file.json>]
 ```
 
 The default tolerance is zero differing pixels. Only use `--tolerance` for documented canvas instability that reproduces between two captures of the same build.
+
+### Reviewed allowlist
+
+`--allow` names a JSON file keyed by screenshot filename, listing regions a reviewer has signed off on:
+
+```json
+{
+  "home.png": [
+    {
+      "region": "400x60+100+200",
+      "maxChannelDelta": 2,
+      "pixels": 24000,
+      "reason": "hairline rgba(255,255,255,0.07) collapsed onto the 0.08 ladder step",
+      "approvedBy": "reviewer",
+      "approvedIn": "PR #34"
+    }
+  ]
+}
+```
+
+`region` is ImageMagick geometry, `WIDTHxHEIGHT+X+Y`. It is deliberately **not** a tolerance, and `--fuzz` is deliberately not the mechanism — a global magnitude threshold would equally hide a difference nobody reviewed. Instead the declared regions are masked out of _both_ images and the rest of the page must still match exactly, so the gate is unweakened everywhere the reviewer did not look. Within each region the script then requires:
+
+- a maximum channel delta at or below the declared `maxChannelDelta`, hard-capped at 2/255 by the script — anything a viewer could see must be argued as a design change, not filed here;
+- a differing-pixel count at or below the declared `pixels`, so a region cannot quietly grow to absorb new differences;
+- at least one differing pixel, so a stale entry fails the gate instead of rotting;
+- the difference bounding box of the unmasked pair to fall inside the declared regions, which surfaces "you masked the wrong place".
+
+Every entry is echoed with its reason into the JSON report and cropped into `<diff-dir>/allow/<route>-<n>.png`, so review is per-difference and visual. Allowlist routes that produce no difference at all are reported as `unusedAllowlistRoutes` and fail the run. Omitting `--allow` leaves the gate exactly as it is: zero pixels, no exceptions.
 
 ## Reviewed checks
 
@@ -26,8 +83,9 @@ The default tolerance is zero differing pixels. Only use `--tolerance` for docum
 - Canvas pixel sampling: scales the full canvas into a small sample and asserts every visible canvas has at least one non-transparent pixel because blank widgets survived visual review during evaluation; the header's deliberately hidden preview mount is excluded until a menu opens it.
 - Page height ceiling: asserts the document remains below 20,000px to catch canvas ResizeObserver feedback loops.
 - Page width ceiling: asserts pages do not exceed the selected viewport; wide tables must scroll inside their own container.
-- Mobile checks: asserts the drawer accordions, JOIN access, Escape/focus/scroll-lock handling, 44px touch targets, stacked form/footer, responsive evidence/phase grids, non-sticky principles detail, capped hero canvas, and contained survey tabs.
+- Mobile checks: asserts the drawer accordions, JOIN access, Escape/focus/scroll-lock handling, 44px touch targets including the drawer's theme toggle (measured with the drawer open, because below 950px the desktop pill is hidden and the drawer copy is not laid out until it opens), stacked form/footer, responsive evidence/phase grids, non-sticky principles detail, capped hero canvas, and contained survey tabs.
 - Homepage structure: asserts the three hero modes, principle layout, survey card/bars, and viewport-appropriate KAOS feature mount remain wired after refactors.
 - KAOS mount bounds: asserts route and preview graph hosts stay between 220px and 500px, covering both the compact threshold and the prior infinite-height bug class.
+- Text contrast delta: samples every visible text element's composited contrast ratio, records it in the dark run and fails the light run on invisible text or a ratio that lost more than 10% of its dark value.
 - Deterministic full-page screenshots: disables animation and transition timing, scrolls once to activate lazy content, returns to the top, and masks canvases so refactor comparisons measure stable layout rather than animation frames.
 - Hero typewriter: asserts sequential initial typing across all three fixed lines, cursor movement, pill-matched type, accent colour, 9-second headline phase lock, stable geometry, changing initial and rotation frames, the underline comparison crops, mobile containment, and a static reduced-motion state without a cursor.

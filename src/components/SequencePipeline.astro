@@ -108,9 +108,10 @@ const stages = [
 
 <style>
   :global(.sequence-window) {
-    --accent: #4ac7ff;
-    --accent-wash-09: rgba(74, 199, 255, 0.09);
-    border-color: rgba(74, 199, 255, 0.25);
+    --accent: var(--glitch-blue-fill);
+    --accent-ink: var(--glitch-blue);
+    --accent-wash-09: var(--glitch-blue-a090);
+    border-color: var(--glitch-blue-a250);
     margin-top: 34px;
   }
   sequence-pipeline {
@@ -156,7 +157,7 @@ const stages = [
     position: relative;
   }
   .stage-flow article {
-    background: rgba(255, 255, 255, 0.018);
+    background: var(--wash-1);
     border: 1px solid var(--hairline-card);
     min-height: 154px;
     opacity: 0.35;
@@ -173,11 +174,11 @@ const stages = [
     opacity: 1;
   }
   .stage-flow article.passed {
-    border-color: rgba(94, 230, 160, 0.25);
+    border-color: var(--accent-line);
   }
   .stage-flow article.current {
-    background: rgba(94, 230, 160, 0.07);
-    border-color: var(--accent);
+    background: var(--accent-wash);
+    border-color: var(--accent-ink);
     transform: translateY(-5px);
   }
   .stage-number,
@@ -186,7 +187,7 @@ const stages = [
     font-family: var(--font-mono);
   }
   .stage-number {
-    color: var(--accent);
+    color: var(--accent-ink);
     font-size: var(--mono-9);
   }
   .stage-flow small {
@@ -212,7 +213,7 @@ const stages = [
   }
   .tensor-packet {
     align-items: center;
-    color: var(--accent);
+    color: var(--accent-ink);
     display: flex;
     font: 700 8px/1 var(--font-mono);
     gap: 5px;
@@ -223,7 +224,7 @@ const stages = [
   }
   .tensor-packet i {
     background: var(--accent);
-    box-shadow: 0 0 14px rgba(94, 230, 160, 0.7);
+    box-shadow: 0 0 14px var(--accent-edge);
     height: 7px;
     transform: rotate(45deg);
     width: 7px;
@@ -242,7 +243,7 @@ const stages = [
   }
   .sequence-operations {
     align-items: stretch;
-    background: rgba(255, 255, 255, 0.018);
+    background: var(--wash-1);
     border: 1px solid var(--hairline-card);
     display: grid;
     gap: 12px;
@@ -266,7 +267,7 @@ const stages = [
       opacity 0.25s ease;
   }
   .sequence-operations > div.active {
-    border-color: var(--accent);
+    border-color: var(--accent-ink);
     opacity: 1;
   }
   .sequence-operations b,
@@ -276,7 +277,7 @@ const stages = [
     font-family: var(--font-mono);
   }
   .sequence-operations b {
-    color: var(--accent);
+    color: var(--accent-ink);
     font-size: var(--mono-9);
   }
   .sequence-operations span {
@@ -311,7 +312,7 @@ const stages = [
     border-top: 1px solid var(--hairline-card);
   }
   .result-row b {
-    color: var(--accent);
+    color: var(--accent-ink);
     font-weight: 400;
   }
   @media (max-width: 950px) {

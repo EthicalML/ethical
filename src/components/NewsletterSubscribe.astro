@@ -50,7 +50,7 @@ const { id } = Astro.props;
     flex: 1;
   }
   .subscribe-field input {
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--wash-2);
     border: 1px solid var(--hairline);
     border-radius: 4px;
     color: var(--text-1);
@@ -62,11 +62,11 @@ const { id } = Astro.props;
     width: 100%;
   }
   .subscribe-field input:focus {
-    border-color: var(--accent);
+    border-color: var(--accent-ink);
     outline: none;
   }
   .subscribe-field input::placeholder {
-    color: rgba(244, 242, 238, 0.35);
+    color: var(--ink-5);
   }
   button {
     position: relative;
@@ -84,13 +84,13 @@ const { id } = Astro.props;
   }
   .button-trace rect {
     fill: none;
-    stroke: var(--accent);
+    stroke: var(--accent-ink);
     stroke-dasharray: 100;
     stroke-dashoffset: 100;
     stroke-width: 1.5;
   }
   form[data-state='submitting'] .button-trace {
-    filter: drop-shadow(0 0 5px rgba(94, 230, 160, 0.65));
+    filter: drop-shadow(0 0 5px var(--accent-edge));
     opacity: 1;
   }
   form[data-state='submitting'] .button-trace rect {
@@ -102,7 +102,7 @@ const { id } = Astro.props;
     }
   }
   .send-conduit {
-    background: rgba(94, 230, 160, 0.16);
+    background: var(--accent-veil);
     display: block;
     height: 1px;
     margin-top: 12px;
@@ -135,8 +135,8 @@ const { id } = Astro.props;
     display: none;
   }
   .send-terminal:not([hidden]) {
-    border-left: 1px solid rgba(94, 230, 160, 0.45);
-    color: var(--accent);
+    border-left: 1px solid var(--accent-edge);
+    color: var(--accent-ink);
     display: block;
     font: 12px/1.75 var(--font-mono);
     margin: 12px 0 0;
@@ -174,7 +174,7 @@ const { id } = Astro.props;
   }
   .subscribe-note[data-state='success'] {
     animation: subscribe-bloom 700ms var(--ease-panel);
-    color: var(--accent);
+    color: var(--accent-ink);
   }
   @keyframes subscribe-bloom {
     from {

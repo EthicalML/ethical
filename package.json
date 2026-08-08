@@ -13,9 +13,9 @@
     "format": "prettier --write src scripts astro.config.mjs eslint.config.mjs prettier.config.mjs package.json tsconfig.json AGENTS.md README.md",
     "format:check": "prettier --check src scripts astro.config.mjs eslint.config.mjs prettier.config.mjs package.json tsconfig.json AGENTS.md README.md",
     "verify:dom": "node scripts/verify/verify-dom.mjs",
-    "verify:dom:all": "npm run verify:dom -- --viewport 1440x1000 && npm run verify:dom -- --viewport 420x900",
+    "verify:dom:all": "sh -c 'node scripts/verify/verify-dom.mjs --viewport 1440x1000 \"$@\" && node scripts/verify/verify-dom.mjs --viewport 420x900 \"$@\"' --",
     "verify:shots": "node scripts/verify/verify-shots.mjs",
-    "verify:shots:all": "npm run verify:shots -- --viewport 1440x1000 && npm run verify:shots -- --viewport 420x900",
+    "verify:shots:all": "sh -c 'node scripts/verify/verify-shots.mjs --viewport 1440x1000 \"$@\" && node scripts/verify/verify-shots.mjs --viewport 420x900 \"$@\"' --",
     "verify:parity": "node scripts/verify/verify-parity.mjs",
     "verify:typewriter": "node scripts/verify/verify-typewriter.mjs",
     "postbuild": "pagefind --site dist"

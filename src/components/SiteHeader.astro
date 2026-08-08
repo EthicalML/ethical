@@ -34,6 +34,36 @@ import MobileDrawer from './MobileDrawer.astro';
           {menus.about.label}<span class="caret" aria-hidden="true">▾</span>
         </button>
         <a class="join-pill" href={join.href}>{join.label}</a>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label="Light mode">
+          <svg
+            class="theme-icon theme-icon-sun"
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.25"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="4.25"></circle>
+            <path d="M12 2.75v2M12 19.25v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2.75 12h2M19.25 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+          </svg>
+          <svg
+            class="theme-icon theme-icon-moon"
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.25"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a6.75 6.75 0 0 0 10.7 10.7z"></path>
+          </svg>
+        </button>
         <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" data-mobile-menu-open>
           <span>Menu</span><i aria-hidden="true"></i>
         </button>
@@ -208,7 +238,7 @@ import MobileDrawer from './MobileDrawer.astro';
   }
 
   .wordmark span:last-child {
-    color: var(--accent);
+    color: var(--accent-ink);
   }
 
   .primary-nav {
@@ -228,7 +258,7 @@ import MobileDrawer from './MobileDrawer.astro';
   }
 
   .nav-trigger[aria-expanded='true'] {
-    background: rgba(255, 255, 255, 0.07);
+    background: var(--wash-3);
     color: var(--text-1);
   }
 
@@ -242,9 +272,9 @@ import MobileDrawer from './MobileDrawer.astro';
   }
 
   .join-pill {
-    border: 1px solid rgba(94, 230, 160, 0.45);
+    border: 1px solid var(--accent-edge);
     border-radius: var(--radius-control);
-    color: var(--accent);
+    color: var(--accent-ink);
     font-family: var(--font-mono);
     font-size: var(--mono-10-5);
     letter-spacing: 0.1em;
@@ -280,8 +310,51 @@ import MobileDrawer from './MobileDrawer.astro';
   }
 
   .search-trigger:hover {
-    border-color: rgba(94, 230, 160, 0.45);
-    color: var(--accent);
+    border-color: var(--accent-edge);
+    color: var(--accent-ink);
+  }
+
+  /* Accent text and strokes take --accent-ink, never --accent: the bright mint is
+     1.41:1 on paper. Both toggles read their pressed state from the live data-theme
+     attribute (see shared/Theme.ts), so the pill can never show the wrong theme. */
+  /* A quiet glyph, not a control: no border, no fill, contour only. It sits to the
+     right of the join pill and should read as punctuation at the end of the row. */
+  .theme-toggle {
+    align-items: center;
+    background: none;
+    border: 0;
+    color: var(--text-4);
+    cursor: pointer;
+    display: inline-flex;
+    justify-content: center;
+    margin-inline-start: 2px;
+    padding: 6px;
+    transition: color 0.2s ease;
+  }
+
+  .theme-toggle:hover {
+    color: var(--accent-ink);
+  }
+
+  /* The icon names the destination, matching the aria-label: a sun while dark is
+     active because the click brings light, and a moon once light is on. */
+  .theme-icon {
+    display: block;
+  }
+
+  .theme-icon-moon,
+  .theme-toggle[aria-pressed='true'] .theme-icon-sun {
+    display: none;
+  }
+
+  .theme-toggle[aria-pressed='true'] .theme-icon-moon {
+    display: block;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .theme-toggle {
+      transition: none;
+    }
   }
 
   .mobile-menu-toggle {
@@ -312,8 +385,12 @@ import MobileDrawer from './MobileDrawer.astro';
       top: 18px;
     }
 
+    /* The 420px header row has no room for a fourth control beside the wordmark,
+       the join pill and the menu button, so below the drawer breakpoint the theme
+       control lives in the drawer instead (see MobileDrawer.astro). */
     .nav-right .nav-trigger,
-    .search-trigger {
+    .search-trigger,
+    .theme-toggle {
       display: none;
     }
 

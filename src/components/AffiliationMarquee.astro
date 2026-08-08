@@ -58,7 +58,7 @@ const items = partners.map(({ data: partner }) => ({
   }
 
   .affiliations > .eyebrow {
-    color: rgba(244, 242, 238, 0.3);
+    color: var(--ink-5);
     font-size: 9.5px;
     padding: 0 48px 18px;
   }
@@ -103,7 +103,7 @@ const items = partners.map(({ data: partner }) => ({
   }
 
   .marquee-logo {
-    background: #fff;
+    background: var(--logo-mark);
     transition: background 0.3s ease;
     height: 100%;
     mask-image: var(--logo-mask);
@@ -124,7 +124,7 @@ const items = partners.map(({ data: partner }) => ({
   }
 
   .marquee-item:hover .marquee-role {
-    color: var(--accent);
+    color: var(--accent-ink);
   }
 
   .marquee-item:hover .marquee-logo {

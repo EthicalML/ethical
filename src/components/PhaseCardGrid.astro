@@ -72,7 +72,7 @@ const { cards, eyebrow, heading } = Astro.props;
 
 <style is:global>
   .phase-label {
-    color: var(--accent);
+    color: var(--accent-ink);
     font-family: var(--font-mono);
     font-size: var(--mono-10-5);
     letter-spacing: 0.14em;
@@ -86,8 +86,8 @@ const { cards, eyebrow, heading } = Astro.props;
   }
 
   .phase-grid {
-    background: rgba(255, 255, 255, 0.09);
-    border: 1px solid rgba(255, 255, 255, 0.09);
+    background: var(--wash-4);
+    border: 1px solid var(--hairline-card);
     border-radius: var(--radius-card);
     display: grid;
     gap: 1px;
@@ -129,7 +129,7 @@ const { cards, eyebrow, heading } = Astro.props;
   }
 
   .phase-rule {
-    background: rgba(94, 230, 160, var(--rule-opacity));
+    background: rgba(var(--accent-ink-rgb), var(--rule-opacity));
     height: 2px;
     margin-top: auto;
     transition:
@@ -142,16 +142,16 @@ const { cards, eyebrow, heading } = Astro.props;
     background: var(--accent-wash-07);
 
     & .phase-label {
-      color: var(--accent);
+      color: var(--accent-ink);
     }
 
     & .phase-details {
-      color: rgba(244, 242, 238, 0.85);
+      color: var(--ink-2);
     }
 
     & .phase-rule {
       background: var(--accent);
-      box-shadow: 0 0 14px rgba(94, 230, 160, 0.5);
+      box-shadow: 0 0 14px var(--accent-edge);
       height: 3px;
     }
   }
