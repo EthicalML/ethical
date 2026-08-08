@@ -31,6 +31,8 @@ export { default as ProjectLinks } from '../ProjectLinks.astro';
 export { default as SequencePipeline } from '../SequencePipeline.astro';
 export { default as StageExplorer } from '../StageExplorer.astro';
 export { default as TalkCard } from '../TalkCard.astro';
+export { default as EventList } from '../EventList.astro';
+export { default as EventArchive } from '../EventArchive.astro';
 export { default as CategoryAtlas } from '../CategoryAtlas.astro';
 export { default as RegulationGrid } from '../RegulationGrid.astro';
 export { default as AnimationWindow } from '../AnimationWindow.astro';

@@ -1,0 +1,249 @@
+---
+import { loadEvents, eventDate, recordings, type Event } from '../utils/Events';
+
+const today = new Date();
+const { all, upcoming, past } = await loadEvents(today);
+// Ahead of us first, then history: the archive is read for "what is coming"
+// more often than "what happened".
+const events: Event[] = [...upcoming, ...past];
+
+const topicCounts = new Map<string, number>();
+for (const event of all) for (const topic of event.topics ?? []) topicCounts.set(topic, (topicCounts.get(topic) ?? 0) + 1);
+const topics = [...topicCounts.entries()].sort(
+  (left, right) => right[1] - left[1] || left[0].localeCompare(right[0]),
+);
+const attended = events.filter((event) => (event.talks ?? []).length > 0).length;
+---
+
+<event-finder class="event-archive">
+  <div class="finder-controls">
+    <input
+      data-finder-input
+      type="search"
+      placeholder="Find an event — name, city or year"
+      aria-label="Filter events by name, city or year"
+    />
+    <label class="finder-toggle">
+      <input type="checkbox" data-finder-ours checked />
+      Only events we spoke at ({attended})
+    </label>
+  </div>
+
+  <div class="tag-rail" role="group" aria-label="Filter by topic">
+    {
+      topics.map(([topic, count]) => (
+        <button type="button" data-finder-topic={topic}>
+          {topic} <small>{count}</small>
+        </button>
+      ))
+    }
+  </div>
+
+  <ul class="archive-list">
+    {
+      events.map((event) => (
+        <li
+          class="archive-row"
+          data-topics={(event.topics ?? []).join(' ')}
+          data-ours={(event.talks ?? []).length > 0 ? 'yes' : 'no'}
+          data-text={`${event.name} ${event.location ?? ''} ${event.start.getFullYear()}`.toLowerCase()}
+        >
+          <span class="archive-date">{eventDate(event)}</span>
+          <span class="archive-body">
+            <a href={event.url} target="_blank" rel="noopener noreferrer">
+              {event.name}
+            </a>
+            {event.location && <span class="archive-where">{event.location}</span>}
+            {(event.talks ?? []).map((talk) => (
+              <span class="archive-talk">
+                {talk.track && <span class="archive-track">{talk.track}</span>}
+                {talk.title}
+              </span>
+            ))}
+          </span>
+          <span class="archive-links">
+            {recordings(event).map((talk) => (
+              <a href={talk.video} target="_blank" rel="noopener noreferrer">
+                Watch
+              </a>
+            ))}
+          </span>
+        </li>
+      ))
+    }
+  </ul>
+  <p class="finder-empty" data-finder-empty hidden>No events match.</p>
+</event-finder>
+
+<style>
+  .finder-controls {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-20);
+    margin-bottom: var(--space-20);
+  }
+  .finder-controls input[type='search'] {
+    background: var(--bg-inset);
+    border: 1px solid var(--hairline);
+    color: var(--text-1);
+    flex: 1 1 260px;
+    padding: var(--space-12) var(--space-14);
+  }
+  .finder-toggle {
+    align-items: center;
+    color: var(--text-2);
+    display: flex;
+    font-size: 0.85rem;
+    gap: var(--space-8);
+  }
+  .tag-rail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8);
+    margin-bottom: var(--space-20);
+  }
+  .tag-rail button {
+    background: transparent;
+    border: 1px solid var(--hairline);
+    color: var(--text-2);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    padding: var(--space-6) var(--space-12);
+    text-transform: uppercase;
+  }
+  .tag-rail button small {
+    color: var(--text-4);
+  }
+  .tag-rail button:hover,
+  .tag-rail button.active {
+    border-color: var(--text-3);
+    color: var(--text-1);
+  }
+  .archive-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .archive-row {
+    align-items: baseline;
+    border-bottom: 1px solid var(--hairline);
+    display: grid;
+    gap: var(--space-8) var(--space-20);
+    grid-template-columns: 132px 1fr auto;
+    padding: var(--space-12) 0;
+  }
+  .archive-row[hidden] {
+    display: none;
+  }
+  .archive-date {
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .archive-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .archive-body > a {
+    color: var(--text-1);
+    text-decoration: none;
+  }
+  .archive-body > a:hover {
+    text-decoration: underline;
+  }
+  .archive-where,
+  .archive-talk {
+    color: var(--text-2);
+    font-size: 0.88rem;
+  }
+  .archive-talk {
+    color: var(--text-3);
+  }
+  .archive-track {
+    color: var(--text-4);
+    margin-right: var(--space-8);
+  }
+  .archive-links a {
+    color: var(--text-2);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .finder-empty {
+    color: var(--text-2);
+  }
+  @media (max-width: 640px) {
+    .archive-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  class EventFinder extends HTMLElement {
+    private controller = new AbortController();
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const { signal } = this.controller;
+      const input = this.querySelector<HTMLInputElement>('[data-finder-input]');
+      const oursOnly = this.querySelector<HTMLInputElement>('[data-finder-ours]');
+      const topicButtons = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-finder-topic]'));
+      const rows = Array.from(this.querySelectorAll<HTMLLIElement>('.archive-row'));
+      const empty = this.querySelector<HTMLElement>('[data-finder-empty]');
+      if (!input || !rows.length) return;
+
+      let activeTopic: string | null = null;
+
+      const apply = () => {
+        const query = input.value.trim().toLowerCase();
+        let visible = 0;
+        for (const row of rows) {
+          const topics = (row.dataset.topics ?? '').split(' ');
+          const matchesQuery = !query || (row.dataset.text ?? '').includes(query);
+          const matchesTopic = !activeTopic || topics.includes(activeTopic);
+          // A search or a topic is an explicit widening, so it overrides the
+          // default "only ours" view rather than fighting it.
+          const matchesOurs =
+            !oursOnly?.checked || query || activeTopic ? true : row.dataset.ours === 'yes';
+          const show = matchesQuery && matchesTopic && matchesOurs;
+          row.hidden = !show;
+          if (show) visible += 1;
+        }
+        if (empty) empty.hidden = visible > 0;
+      };
+
+      input.addEventListener('input', apply, { signal });
+      oursOnly?.addEventListener('change', apply, { signal });
+      topicButtons.forEach((button) =>
+        button.addEventListener(
+          'click',
+          () => {
+            const topic = button.dataset.finderTopic ?? null;
+            activeTopic = activeTopic === topic ? null : topic;
+            topicButtons.forEach((other) =>
+              other.classList.toggle('active', other.dataset.finderTopic === activeTopic),
+            );
+            apply();
+          },
+          { signal },
+        ),
+      );
+
+      apply();
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+    }
+  }
+
+  if (!customElements.get('event-finder')) customElements.define('event-finder', EventFinder);
+</script>

@@ -80,7 +80,7 @@ talks:
     href: https://www.youtube.com/watch?v=hj_lozIqo5M
 ---
 
-import { ArticleHero, TalkCard } from '../components/prose/components.js';
+import { ArticleHero, TalkCard, EventList, EventArchive } from '../components/prose/components.js';
 
 <ArticleHero
   eyebrow="TALKS & EVENTS"
@@ -90,11 +90,31 @@ import { ArticleHero, TalkCard } from '../components/prose/components.js';
 
 <section className="cluster-section upcoming-section" data-reveal>
   <p className="eyebrow">SPEAKING NEXT</p>
-  <h2>Upcoming talks and events</h2>
-  <p>No public dates right now — announcements go out first through the ML Engineer newsletter.</p>
+  <h2>Where we will be</h2>
+  <EventList
+    mode="speaking"
+    empty="No public dates right now — announcements go out first through the ML Engineer newsletter."
+  />
   <a className="button primary" href="/contact/?interest=newsletter#contact">
     Subscribe
   </a>
+</section>
+
+<section className="cluster-section cfp-section" data-reveal>
+  <p className="eyebrow">OPEN CALLS FOR PAPERS</p>
+  <h2>Conferences taking submissions</h2>
+  <p>
+    Deadlines we are tracking across the production ML, platform and cloud native calendar. Tracks
+    are listed separately where a conference runs its own call per room.
+  </p>
+  <EventList mode="cfp" empty="No calls open right now." />
+</section>
+
+<section className="cluster-section recommended-section" data-reveal>
+  <p className="eyebrow">WORTH YOUR TIME</p>
+  <h2>Recommended this year</h2>
+  <p>A personal selection of the events worth the trip, whether or not we are on the programme.</p>
+  <EventList mode="featured" names={frontmatter.featured} />
 </section>
 
 <section className="cluster-section featured-talks" data-reveal>
@@ -110,6 +130,15 @@ import { ArticleHero, TalkCard } from '../components/prose/components.js';
   <a className="text-link" href="https://www.youtube.com/playlist?list=PL7F3ZwS1Ae8UJIbFB_yBFUSe3cNtpZObi" target="_blank" rel="noopener noreferrer">
     All featured talks
   </a>
+</section>
+
+<section className="cluster-section archive-section" data-reveal>
+  <p className="eyebrow">ARCHIVE</p>
+  <h2>Every event, past and ahead</h2>
+  <p>
+    Search by name, city or year, or filter by topic. Recordings are linked where they exist.
+  </p>
+  <EventArchive />
 </section>
 
 <style>{`

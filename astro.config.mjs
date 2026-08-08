@@ -38,6 +38,8 @@ export default defineConfig({
     preview: { allowedHosts: ['ethical.institute', 'localhost', '127.0.0.1'] },
   },
   redirects: {
+    '/talks/': '/talks-and-events/',
+    '/talks.html': '/talks-and-events/',
     '/principles.html': '/principles/',
     '/security.html': '/frameworks/security/',
     '/rfx.html': '/frameworks/ai-rfx/',

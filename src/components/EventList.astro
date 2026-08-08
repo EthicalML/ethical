@@ -1,0 +1,138 @@
+---
+import { loadEvents, openCfps, eventDate, deadlineLabel, type Event } from '../utils/Events';
+
+interface Props {
+  /** speaking: upcoming events we appear at. cfp: open calls, soonest deadline first. featured: the curated list, in the order given. */
+  mode: 'speaking' | 'cfp' | 'featured';
+  /** Event names, required for mode="featured". Order is preserved. */
+  names?: string[];
+  empty?: string;
+}
+
+const { mode, names = [], empty } = Astro.props;
+const today = new Date();
+const { upcoming } = await loadEvents(today);
+
+let events: Event[] = [];
+if (mode === 'speaking') events = upcoming.filter((event) => (event.talks ?? []).length > 0);
+if (mode === 'cfp') {
+  events = upcoming
+    .filter((event) => openCfps(event, today).length > 0)
+    .sort(
+      (left, right) =>
+        Math.min(...openCfps(left, today).map((cfp) => cfp.deadline!.getTime())) -
+        Math.min(...openCfps(right, today).map((cfp) => cfp.deadline!.getTime())),
+    );
+}
+if (mode === 'featured') {
+  events = names
+    .map((name) => upcoming.find((event) => event.name === name))
+    .filter((event): event is Event => Boolean(event));
+}
+---
+
+{
+  events.length === 0 && empty ? (
+    <p class="event-empty">{empty}</p>
+  ) : (
+    <ul class="event-list" data-reveal>
+      {events.map((event) => (
+        <li class="event-row">
+          <span class="event-date">{eventDate(event)}</span>
+          <span class="event-body">
+            <a class="event-name" href={event.url} target="_blank" rel="noopener noreferrer">
+              {event.name}
+            </a>
+            {event.location && <span class="event-where">{event.location}</span>}
+            {mode === 'speaking' &&
+              (event.talks ?? []).map((talk) => <span class="event-talk">{talk.title}</span>)}
+            {mode === 'cfp' &&
+              openCfps(event, today).map((cfp) => (
+                <span class="event-cfp">
+                  {cfp.track && <span class="event-track">{cfp.track}</span>}
+                  {cfp.url ? (
+                    <a href={cfp.url} target="_blank" rel="noopener noreferrer">
+                      {deadlineLabel(cfp.deadline!, today)}
+                    </a>
+                  ) : (
+                    deadlineLabel(cfp.deadline!, today)
+                  )}
+                </span>
+              ))}
+          </span>
+          {mode === 'featured' && openCfps(event, today).length > 0 && (
+            <span class="event-flag">CFP OPEN</span>
+          )}
+          {mode === 'featured' && (event.talks ?? []).length > 0 && (
+            <span class="event-flag">SPEAKING</span>
+          )}
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+<style>
+  .event-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .event-row {
+    align-items: baseline;
+    border-bottom: 1px solid var(--hairline);
+    display: grid;
+    gap: var(--space-8) var(--space-20);
+    grid-template-columns: 132px 1fr auto;
+    padding: var(--space-14) 0;
+  }
+  .event-date {
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .event-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .event-name {
+    color: var(--text-1);
+    text-decoration: none;
+  }
+  .event-name:hover {
+    text-decoration: underline;
+  }
+  .event-where,
+  .event-talk,
+  .event-cfp {
+    color: var(--text-2);
+    font-size: 0.9rem;
+  }
+  .event-talk {
+    color: var(--text-3);
+  }
+  .event-track {
+    color: var(--text-3);
+    margin-right: var(--space-8);
+  }
+  .event-cfp a {
+    color: var(--text-1);
+  }
+  .event-flag {
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+  }
+  .event-empty {
+    color: var(--text-2);
+  }
+  @media (max-width: 640px) {
+    .event-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
