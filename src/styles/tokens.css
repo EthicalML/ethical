@@ -477,6 +477,13 @@
   --accent-edge: rgba(127, 207, 197, 0.48);
   --glitch-red: #e08a4f;
   --warn: #e8b45c;
+  /* A scrim fades content out toward the surface it sits on, so a scrim INSIDE
+     an inverted block fades toward the block, not toward paper. `ArticleHero`'s
+     copy scrim is the only one that lands here, and painting it white washed the
+     hero canvas out and took the on-dark copy with it. The rest of the scrim
+     family is only ever used on the page ground, where the light values stand. */
+  --scrim-2-a930: rgba(45, 53, 50, 0.93);
+  --scrim-2-a770: rgba(45, 53, 50, 0.77);
   --logo-mark: #f2f5f3;
   --shadow-hard: #0c100e;
   /* The canvas palette is NOT re-entered here: a canvas paints outside the
