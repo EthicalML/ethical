@@ -11,10 +11,23 @@
 # captures taken by two different procedures. Only the built output should
 # differ between the two sides.
 #
-# The server is torn down before returning. Reusing the port across two builds
-# is the one reliable way to produce a confident, meaningless green: if the
-# first server survives, the second sweep photographs the first build and parity
-# passes because it compared a build to itself.
+# Reusing :4126 across two builds is the one reliable way to produce a
+# confident, meaningless green: if the first server survives, the second sweep
+# photographs the first build and parity passes because it compared a build to
+# itself. That is not hypothetical — it happened on the first CI run of this
+# job. `npx` spawns http-server as a child, so killing the npx wrapper left the
+# real server holding the port, the second `npx http-server` died of
+# EADDRINUSE in the background where nothing was watching, and the sweep
+# cheerfully re-photographed the merge base and called it identical.
+#
+# Two guards, because teardown is a thing that can fail in ways nobody
+# anticipated:
+#
+#   1. The whole process group is killed and the port is confirmed free, both
+#      before starting and after finishing.
+#   2. The served bytes are checked against the bytes on disk before a single
+#      screenshot is taken. Whatever else goes wrong, this sweep cannot
+#      photograph a build other than the one it was handed.
 set -euo pipefail
 
 dist="$1"
@@ -22,18 +35,55 @@ destination="$2"
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$root"
 
-test -d "$dist" || { echo "no build at $dist" >&2; exit 1; }
+test -d "$dist" || {
+  echo "no build at $dist" >&2
+  exit 1
+}
+
+port_free() { ! curl -fsS -o /dev/null --max-time 2 "http://127.0.0.1:4126/" 2>/dev/null; }
+
+await_port_free() {
+  for _ in $(seq 1 20); do
+    port_free && return 0
+    sleep 0.5
+  done
+  return 1
+}
+
+if ! port_free; then
+  echo "something is already serving :4126; refusing to photograph it" >&2
+  exit 1
+fi
+
 rm -rf scripts/verify/out
 
-npx --yes http-server "$dist" -p 4126 --silent &
+# `setsid` puts the server and every child npx spawns into one process group, so
+# teardown can take the group down rather than only the wrapper.
+setsid npx --yes http-server "$dist" -p 4126 --silent &
 server=$!
-trap 'kill "$server" 2>/dev/null || true; wait "$server" 2>/dev/null || true' EXIT
+cleanup() {
+  kill -TERM "-$server" 2>/dev/null || kill -TERM "$server" 2>/dev/null || true
+  wait "$server" 2>/dev/null || true
+  await_port_free || {
+    echo ":4126 is still held after teardown; the next sweep would photograph this build" >&2
+    exit 1
+  }
+}
+trap cleanup EXIT
 
 for _ in $(seq 1 60); do
-  if curl -fsS -o /dev/null http://127.0.0.1:4126/; then break; fi
+  curl -fsS -o /dev/null "http://127.0.0.1:4126/" && break
   sleep 1
 done
-curl -fsS -o /dev/null http://127.0.0.1:4126/
+
+# The identity check. If this passes, the sweep is photographing $dist and
+# nothing else — no surviving server, no stale build, no silent green.
+served=$(curl -fsS "http://127.0.0.1:4126/" | shasum | cut -d' ' -f1)
+ondisk=$(shasum < "$dist/index.html" | cut -d' ' -f1)
+if [ "$served" != "$ondisk" ]; then
+  echo "‽ :4126 is not serving $dist (served $served, on disk $ondisk)" >&2
+  exit 1
+fi
 
 npm run verify:shots:all > /dev/null
 
