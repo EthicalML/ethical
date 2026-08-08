@@ -25,7 +25,7 @@ Search by the surface name or representative selector below before adding a rule
 
 | Owner | Surface | Representative selectors |
 | --- | --- | --- |
-| `AchievementNeonRendition.astro` | Policy achievement set table and freeform neon collage | `.achievement-neon-rendition`, `.neon-canvas` |
+| `AchievementNeonRendition.astro` / `AchievementNeonRendition.css` | Policy achievement set table and freeform neon collage | `.achievement-neon-rendition`, `.neon-canvas` |
 | `AffiliationMarquee.astro` | Partner affiliation logo marquee | `.affiliations`, `.marquee-track`, `.marquee-item` |
 | `AnimationWindow.astro` | Reusable playback window chrome | `animation-window`, `.window-header`, `.traffic-lights` |
 | `ArticleHero.astro` | Article and framework heroes, including canvas variants | `.article-hero`, `.hero-canvas` |
@@ -41,7 +41,7 @@ Search by the surface name or representative selector below before adding a rule
 | `FormSection.astro` | Homepage network form and full contact form | `.form-shell`, `.form-card`, `.field-note`, `.send-stage` |
 | `FrameworkCards.astro` | Framework directory groups and cards | `.framework-cards`, `.card-grid`, `.framework-card` |
 | `FrameworkLinkCards.astro` | Related framework link cards | `.framework-link-cards` |
-| `Hero.astro` | Homepage hero, hero canvas and cycle controls | `.hero`, `.hero-copy`, `.hero-canvas`, `.hero-switchers` |
+| `Hero.astro` / `Hero.css` | Homepage hero, hero canvas and cycle controls | `.hero`, `.hero-copy`, `.hero-canvas`, `.hero-switchers` |
 | `KaosProjectFooter.astro` | KAOS project metrics footer | `.kaos-project-footer` |
 | `KomputeCube.astro` | Kompute cube canvas host | `kompute-cube`, `canvas` |
 | `MediaBand.astro` | Media figure band | `media-band`, `figure`, `figcaption` |
@@ -72,7 +72,7 @@ Search by the surface name or representative selector below before adding a rule
 | `SplitList.astro` | Reusable split-list columns | `.split-list ul` |
 | `StageExplorer.astro` | Tabbed stage explorer | `stage-explorer`, `.stage-selector`, `.stage-panel` |
 | `SurveyEvidence.astro` | Survey methodology and evidence block | `.survey-evidence` |
-| `SurveyExplorerIsland.astro` and `SurveyExplorer.tsx` | Homepage survey explorer tabs, year controls, bars and focus panel | `.survey-island`, `.survey-toolbar`, `.survey-bars`, `.survey-focus` |
+| `SurveyExplorerIsland.astro`, `SurveyExplorerIsland.css` and `SurveyExplorer.tsx` | Homepage survey explorer tabs, year controls, bars and focus panel | `.survey-island`, `.survey-toolbar`, `.survey-bars`, `.survey-focus` |
 | `SurveyReportApp.module.css` | 2024 and 2025 report scrollytelling, charts and comparison controls | `.report`, `.chapterSwitcher`, `.barRow`, `.compareToggle` |
 | `TalkCard.astro` | Individual talk card | `.talk-card` |
 | `XaiProcess.astro` | XAI process player | `xai-process`, `.process-heading`, `.process-stage` |
@@ -135,7 +135,7 @@ Use these widths for CSS media queries. A component that needs responsive client
 
 ## Where a new rule goes
 
-1. For a new component, put the rule in that component's scoped `<style>` block; use `is:global` only when styling child markup that Astro cannot scope, such as an island or custom element.
+1. For a new component, put the rule in that component's scoped `<style>` block; use `is:global` only when styling child markup that Astro cannot scope, such as an island or custom element. When a component's CSS grows large enough to obscure its markup and script, move that block unchanged to a same-named companion CSS file and import it from the original style fence.
 2. For a page-specific tweak, put the rule in the owning `.astro` or `.mdx` page so it cannot affect another route.
 3. For a new token, add it to `:root` only after at least two owners need the same semantic value; otherwise keep the value local.
 4. If an override seems necessary, find the existing owner first and change the original rule or component API. Add a cross-owner rule to `tokens.css` only when the relationship itself is shared and document that reason here.
