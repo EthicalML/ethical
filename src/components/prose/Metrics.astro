@@ -40,3 +40,55 @@ const metrics: Metric[] = values
     ))
   }
 </aside>
+
+<style is:global>
+  .metrics-block {
+    display: grid;
+    grid-template-columns: repeat(var(--metric-count, 3), 1fr);
+    margin-top: 20px;
+  }
+
+  .metrics-block div {
+    border-right: 1px solid var(--hairline);
+    display: grid;
+    gap: 8px;
+    padding: 24px;
+  }
+
+  .metrics-block div:last-child {
+    border-right: 0;
+  }
+
+  .metrics-block strong {
+    color: var(--accent);
+    font-family: var(--font-display);
+    font-size: var(--display-34);
+    font-weight: 300;
+  }
+
+  .metrics-block span {
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: var(--mono-10);
+    letter-spacing: 0.1em;
+  }
+
+  @media (max-width: 950px) {
+    .metrics-block {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 950px) {
+    .metrics-block div {
+      border-bottom: 1px solid var(--hairline);
+      border-right: 0;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .metrics-block {
+      margin-inline: 18px;
+    }
+  }
+</style>

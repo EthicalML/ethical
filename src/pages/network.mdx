@@ -65,3 +65,11 @@ import { contactFormCopy, networkSectors, networkStats } from '../data/contactFo
   sectors={networkSectors}
   stats={networkStats.filter((stat) => stat.label === 'NETWORK MEMBERS')}
 />
+
+<style>{`
+.join-intro { padding-bottom: 48px; }
+
+@media (max-width: 600px) {
+  .join-intro { padding-bottom: 60px; }
+}
+`}</style>

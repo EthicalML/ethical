@@ -22,3 +22,35 @@ const { eyebrow, heading, items } = Astro.props;
     ))
   }
 </section>
+
+<style is:global>
+  .channel-links a {
+    border-top: 1px solid var(--hairline);
+    display: flex;
+    justify-content: space-between;
+    padding: 18px 4px;
+  }
+
+  .channel-links a span {
+    color: var(--text-3);
+  }
+
+  @media (max-width: 950px) {
+    .channel-links a {
+      align-items: center;
+      gap: 20px;
+      min-height: 56px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .channel-links {
+      padding-inline: 18px;
+    }
+    .channel-links a {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 5px;
+    }
+  }
+</style>

@@ -37,3 +37,57 @@ const { sectorEyebrow, sectorHeading, memberEyebrow, memberHeading, members, sec
     <div class="member-wordmarks">{members.map((name) => <span>{name}</span>)}</div>
   </div>
 </section>
+
+<style is:global>
+  .network-directory {
+    display: grid;
+    gap: 60px;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .network-directory > div > p:not(.eyebrow) {
+    border-top: 1px solid var(--hairline);
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+    padding: 13px 0;
+  }
+
+  .member-wordmarks {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .member-wordmarks span {
+    border: 1px solid var(--hairline);
+    color: var(--accent);
+    font: 14px var(--font-mono);
+    letter-spacing: 0.1em;
+    padding: 24px;
+  }
+
+  .network-section .network-directory {
+    padding: 54px 0 0;
+  }
+
+  @media (max-width: 950px) {
+    .network-directory {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 950px) {
+    .network-directory {
+      padding-inline: 24px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .network-directory {
+      padding-inline: 18px;
+    }
+    .member-wordmarks {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

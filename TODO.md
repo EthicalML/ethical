@@ -6,6 +6,26 @@ Six-phase programme, owner-approved direction (2026-08-07). Phases 1-5 are the a
 
 Phase 6 — LLM-optimized serving (owner direction, proven pattern from industry startups): serve different, LLM-optimized content to AI crawlers (GPTBot, ClaudeBot, PerplexityBot) — never to Googlebot, so classic SEO cloaking risk does not apply. Staged: first, plain markdown text renditions of key pages served to AI user-agents; then expanded curated LLM-specific content designed for ingestion into training and RAG corpora, richer than the human pages. Requires an edge layer in front of GitHub Pages (Cloudflare Worker routing by user-agent); the markdown renditions can be generated at build time from the same MDX sources.
 
+## Bug: the hero canvas animates offscreen
+
+`src/shared/canvas/HeroCycle.ts` owns a requestAnimationFrame loop and correctly handles reduced motion, backing-store resize, frame cancellation and listener teardown, but it has no `IntersectionObserver`. It pauses only when the document is hidden, so the homepage and article hero canvases keep animating while scrolled out of view, burning CPU and battery on every visit. The smallest safe fix adds intersection gating to its existing lifecycle. Migrating it fully onto `CanvasEngine` would delete duplicate resize and pointer plumbing but changes pointer coverage and the cycle clock, so treat that as a separate visually-verified change. Found by the 2026-08-08 canvas contract audit, which cleared every other canvas host.
+
+## Principles prev/next: sticky sub-navbar with directional slide
+
+The principle pages carry prev/next only at the bottom, and the transition does not read as progression. Move the controls into a sticky sub-navbar in the same spirit as the newsletter issue navigation, always reachable, and animate the change directionally: on next, the current principle text exits to the left while the next enters from the right; reversed on previous. Audit the Motion table entry for "Principle directional slide" when doing this. The current markup also uses ASCII-arrow link text, which the conventions forbid.
+
+## Production ML list: category modal and monthly sync
+
+Presentation follow-up to the on-domain catalogue: clicking a category card should open that category's libraries in a modal or in-place expanded panel rather than rendering as one long list below the fold. The full list must stay server-rendered in the DOM (hidden-until-click is fine and stays crawlable) since on-domain crawlability is the whole point of the catalogue. The monthly refresh half is done and shipped as `.github/workflows/catalogue-sync.yml`; it needs an `AUTOMATION_TOKEN` repository secret before its pull requests can auto-merge.
+
+## Policy record: full text preview
+
+The reading room renders each publication as page images with the canonical PDF hosted remotely, so the document bodies are the only genuinely uncrawlable content on the site. Add a second action next to the PDF link: a "preview text" control opening the full document text in a modal, converted from the PDF into readable markdown with tables and structure preserved. Extraction quality is the open question: `scripts/fetch-policy-previews.mjs` already downloads and extracts text, so first assess whether that structured output is good enough for tables and headings; if not, evaluate an OCR or document-understanding model, or a one-off subagent extraction pass committed as data. Confirm republication rights for the ACM-published documents before committing full text to the repo.
+
+## Easy optimisation: composed pages ship the whole prose CSS bundle
+
+Every composed MDX page imports through the `src/components/prose/components.js` barrel, and Vite bundles all prose-component CSS into one 110,215-byte chunk, so importing one component ships everyone's CSS. `TalksGrid` proved it: zero consumers, markup never rendered, CSS still in the bundle. `/policy/` and `/open-source/` therefore download 188,709 bytes of CSS against 35,339 for `/privacy/`, roughly 150KB each of stylesheet they never use. Test whether direct component imports on one composed page split the chunk before doing the whole set. This is a serving optimisation with no maintenance benefit, so it only earns time if the fix is close to trivial.
+
 ## Reveal thresholds: switch from % to fixed pixels
 
 The reveal system (src/shared/Reveal.ts) fires at a percentage of element height (REVEAL_RATIO 0.45, TALL_REVEAL_VH fallback). Owner call 2026-08-06: percentage is the wrong model for most elements — a tall section needs hundreds of scrolled pixels before it fires while a short one fires almost immediately. Switch to a fixed pixel threshold (element reveals once ~N px of it are visible) for most targets, keeping percentage/bespoke behaviour only for the few widgets that need it. Audit the Motion table entries when doing this.
@@ -18,9 +38,6 @@ Owner has ideas for the newsletter beyond the carried-over archive (396 issues l
 
 Six homepage scroll-effect variants sit in the open PR #12, paused for owner decision: pick a variant to land or close the PR.
 
-## tokens.css breakup (post-cutover, pixel-perfect)
-
-Roughly 3/4 of tokens.css (~2,200 lines) is per-component styling; relocate it into the ~15-20 owning components, delete dead rules as they surface (likely 10-20%), and consolidate the five ad-hoc breakpoints (950/900/800/600/520) into 2-3 named ones. Zero visual change by construction: every batch gates on masked full-page screenshot parity for all 33 pages at 2-3 widths (definition of done #7). Run as a low-supervision worker campaign in 3-4 scoped rounds (survey+carousel → principles+hero → menus+cards+misc → breakpoints & sweep), ~30-45 min each; owner eye pass only where parity diffs flag. Deliberately deferred until after the redesign cutover so parity runs against a stable target. Standing guardrail effective now: no NEW component rules go into tokens.css — style in the owning component.
 
 ## Deferred
 

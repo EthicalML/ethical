@@ -43,3 +43,54 @@ const next = number < 9 ? String(number + 1).padStart(2, '0') : undefined;
     }
   </nav>
 </BaseLayout>
+
+<style is:global>
+  .principle-prose {
+    color: var(--text-2);
+    font-size: var(--body-18);
+    line-height: 1.7;
+    max-width: 840px;
+    padding: 0 48px;
+  }
+
+  @media (max-width: 950px) {
+    .principle-prose {
+      padding: 0 24px;
+    }
+  }
+
+  .principle-pagination {
+    display: flex;
+    justify-content: space-between;
+    padding: 28px 48px 96px;
+  }
+
+  .principle-pagination a {
+    border: 1px solid var(--hairline-card);
+    border-radius: var(--radius-pill);
+    padding: 10px 16px;
+  }
+
+  @media (max-width: 950px) {
+    .principle-pagination {
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 28px 24px 72px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .principle-prose {
+      font-size: 16px;
+      padding-inline: 18px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .principle-pagination {
+      align-items: stretch;
+      flex-direction: column;
+      padding: 24px 18px 60px;
+    }
+  }
+</style>

@@ -40,3 +40,28 @@ const {
     </table>
   </div>
 </div>
+
+<style is:global>
+  .comparison-table-block {
+    margin-top: 34px;
+  }
+
+  .table-wrap {
+    margin-top: 34px;
+    overflow-x: auto;
+  }
+
+  @media (max-width: 950px) {
+    .table-wrap {
+      max-width: 100%;
+      overscroll-behavior-inline: contain;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
+  @media (max-width: 950px) {
+    .table-wrap table {
+      min-width: 640px;
+    }
+  }
+</style>

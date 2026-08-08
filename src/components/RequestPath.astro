@@ -258,7 +258,7 @@ const scenarios = [
     font-weight: 400;
   }
   .identity-note {
-    margin-left: auto;
+    margin-inline-start: auto;
   }
   .path {
     align-items: center;
@@ -398,7 +398,7 @@ const scenarios = [
   }
   .path-status small {
     color: var(--text-4);
-    margin-left: auto;
+    margin-inline-start: auto;
   }
   .status-dot {
     background: var(--accent);
@@ -409,7 +409,7 @@ const scenarios = [
   .is-denied .status-dot {
     background: var(--glitch-red);
   }
-  @media (max-width: 850px) {
+  @media (max-width: 950px) {
     .scenario-picker {
       align-items: start;
       grid-template-columns: 1fr;
@@ -430,7 +430,7 @@ const scenarios = [
       display: none;
     }
   }
-  @media (max-width: 620px) {
+  @media (max-width: 600px) {
     .scenario-buttons {
       grid-template-columns: 1fr;
     }
@@ -444,7 +444,7 @@ const scenarios = [
       margin-left: 0;
     }
   }
-  @media (max-width: 799px) {
+  @media (max-width: 950px) {
     request-path {
       container-type: inline-size;
       overflow: hidden;
@@ -460,7 +460,7 @@ const scenarios = [
     }
     .identity-note,
     .path-status small {
-      margin-left: auto;
+      margin-inline-start: auto;
     }
     .path {
       align-items: center;

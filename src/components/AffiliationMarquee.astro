@@ -50,6 +50,119 @@ const items = partners.map(({ data: partner }) => ({
   </section>
 </affiliation-marquee>
 
+<style is:global>
+  .affiliations {
+    border-bottom: 1px solid var(--hairline);
+    padding: 26px 0 18.5px;
+    overflow: hidden;
+  }
+
+  .affiliations > .eyebrow {
+    color: rgba(244, 242, 238, 0.3);
+    font-size: 9.5px;
+    padding: 0 48px 18px;
+  }
+
+  .marquee-mask {
+    mask-image: linear-gradient(90deg, transparent, #000 120px, #000 calc(100% - 120px), transparent);
+    overflow: hidden;
+  }
+
+  .marquee-track {
+    animation: om-marquee 38s linear infinite;
+    display: flex;
+    width: max-content;
+  }
+
+  .marquee-mask:hover .marquee-track {
+    animation-play-state: paused;
+  }
+
+  .marquee-set {
+    display: flex;
+  }
+
+  .marquee-item {
+    align-items: center;
+    border-left: 1px solid var(--hairline);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 64px;
+    justify-content: center;
+    padding: 0 42px;
+  }
+
+  .marquee-logo-frame {
+    align-items: center;
+    display: flex;
+    flex: 0 0 auto;
+    height: 34px;
+    justify-content: center;
+    width: 154px;
+  }
+
+  .marquee-logo {
+    background: #fff;
+    transition: background 0.3s ease;
+    height: 100%;
+    mask-image: var(--logo-mask);
+    mask-mode: alpha;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mask-size: contain;
+    width: clamp(58px, calc(var(--logo-ratio) * 34px), 154px);
+  }
+
+  .marquee-role {
+    color: var(--text-4);
+    font: 9px/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: color 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .marquee-item:hover .marquee-role {
+    color: var(--accent);
+  }
+
+  .marquee-item:hover .marquee-logo {
+    background: var(--accent);
+  }
+
+  @keyframes om-marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (max-width: 950px) {
+    .affiliations > .eyebrow {
+      padding-inline: 24px;
+    }
+  }
+
+  @media (max-width: 950px) {
+    .marquee-mask {
+      mask-image: linear-gradient(90deg, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+    }
+  }
+
+  @media (max-width: 950px) {
+    .marquee-item {
+      padding-inline: 28px;
+    }
+  }
+
+  @media (max-width: 950px) and (prefers-reduced-motion: reduce) {
+    .marquee-track {
+      animation: none;
+      transform: none;
+    }
+  }
+</style>
+
 <style>
   affiliation-marquee {
     display: contents;

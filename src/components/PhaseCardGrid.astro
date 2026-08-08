@@ -69,3 +69,138 @@ const { cards, eyebrow, heading } = Astro.props;
     customElements.define('phase-card-grid', PhaseCardGrid);
   }
 </script>
+
+<style is:global>
+  .phase-label {
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: var(--mono-10-5);
+    letter-spacing: 0.14em;
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  .strategy {
+    padding: 96px 48px 0;
+    scroll-margin-top: 124px;
+  }
+
+  .phase-grid {
+    background: rgba(255, 255, 255, 0.09);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: var(--radius-card);
+    display: grid;
+    gap: 1px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-top: 34px;
+    overflow: hidden;
+  }
+
+  .phase-card {
+    background: var(--bg-base);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+    min-height: 250px;
+    padding: 32px 26px;
+    transition: background var(--duration-3) ease;
+  }
+
+  .phase-label {
+    color: var(--text-3);
+    font-size: var(--mono-10);
+    margin: 0;
+    transition: color var(--duration-3) ease;
+  }
+
+  .phase-card h3 {
+    font-size: var(--display-30);
+    margin: 0;
+  }
+
+  .phase-details {
+    color: var(--text-3);
+    display: flex;
+    flex-direction: column;
+    font-size: var(--body-14);
+    gap: var(--space-6);
+    line-height: 1.5;
+    transition: color var(--duration-3) ease;
+  }
+
+  .phase-rule {
+    background: rgba(94, 230, 160, var(--rule-opacity));
+    height: 2px;
+    margin-top: auto;
+    transition:
+      height var(--duration-3),
+      background var(--duration-3),
+      box-shadow var(--duration-3);
+  }
+
+  .phase-card:is(:hover, .active) {
+    background: var(--accent-wash-07);
+
+    & .phase-label {
+      color: var(--accent);
+    }
+
+    & .phase-details {
+      color: rgba(244, 242, 238, 0.85);
+    }
+
+    & .phase-rule {
+      background: var(--accent);
+      box-shadow: 0 0 14px rgba(94, 230, 160, 0.5);
+      height: 3px;
+    }
+  }
+
+  @media (max-width: 950px) {
+    .strategy {
+      padding: 64px 24px 0;
+    }
+  }
+
+  :where(.strategy).home-section {
+    padding: 120px 48px 0;
+    scroll-margin-top: 124px;
+  }
+
+  @media (max-width: 950px) {
+    :where(.strategy).home-section {
+      padding: 96px 24px 0;
+    }
+  }
+
+  @media (max-width: 950px) {
+    .phase-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 950px) {
+    .phase-card {
+      min-height: 220px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .strategy {
+      padding-inline: 18px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .phase-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .phase-card {
+      min-height: 200px;
+      padding: 26px 22px;
+    }
+  }
+</style>

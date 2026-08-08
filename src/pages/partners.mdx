@@ -49,3 +49,31 @@ import { ArticleHero, CenteredCTA, PartnerDirectory } from '../components/prose/
 <PartnerDirectory />
 
 <CenteredCTA eyebrow="WORK WITH US" heading="Start an institutional collaboration" href="/contact/#contact" label="Contact the Institute" />
+
+<style>{`
+.policy-feature {
+  color: inherit;
+  display: block;
+  margin: 0 48px 96px;
+  padding: 44px;
+}
+
+.policy-feature h2 { font: 300 52px/1.08 var(--font-display); margin: 16px 0; }
+
+.policy-feature > span { color: var(--accent); display: inline-block; font: var(--mono-10)/1 var(--font-mono); letter-spacing: .08em; margin-top: 20px; }
+
+.partner-list-heading { padding-bottom: 18px; }
+
+@media (max-width: 950px) {
+  .policy-feature, .policy-eu-feature { margin: 0 24px 72px; }
+}
+
+@media (max-width: 600px) {
+  .policy-feature, .policy-eu-feature { margin: 0 18px 60px; padding: 28px 22px; }
+}
+
+@media (max-width: 600px) {
+  .policy-feature h2 { font-size: 38px; }
+  .partner-list-heading { padding-bottom: 60px; }
+}
+`}</style>

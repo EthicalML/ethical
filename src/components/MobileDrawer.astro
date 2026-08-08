@@ -1,0 +1,410 @@
+---
+import { join, menus, wordmark } from '../data/navigation';
+---
+
+<mobile-drawer>
+  <div class="mobile-drawer" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Site navigation" aria-hidden="true" data-mobile-menu>
+    <div class="mobile-drawer-header">
+      <a class="wordmark" href="/">
+        <span>{wordmark.primary}</span>
+        <span>{wordmark.secondary}</span>
+      </a>
+      <a class="join-pill" href={join.href}>{join.label}</a>
+      <button class="mobile-menu-close" type="button" aria-label="Close menu" data-mobile-menu-close>
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+    <nav class="mobile-nav" aria-label="Mobile navigation">
+      {
+        Object.entries(menus).map(([id, menu], menuIndex) => (
+          <section class="mobile-menu-section" style={`--menu-index:${menuIndex}`}>
+            <button type="button" aria-expanded="false" aria-controls={`mobile-submenu-${id}`} data-mobile-accordion>
+              <span>{String(menuIndex + 1).padStart(2, '0')}</span>
+              <strong>{menu.label}</strong>
+              <i aria-hidden="true">+</i>
+            </button>
+            <div class="mobile-submenu" id={`mobile-submenu-${id}`} hidden>
+              {menu.columns ? (
+                menu.columns.map((column) => (
+                  <div class="mobile-link-group">
+                    <p>{column.heading}</p>
+                    {column.items.map((item) => (
+                      <a href={item.href}>
+                        <strong>{item.title}</strong>
+                        <span>{item.description}</span>
+                      </a>
+                    ))}
+                  </div>
+                ))
+              ) : menu.groups ? (
+                menu.groups.map((group) => (
+                  <div class="mobile-link-group">
+                    <p>{group.title}</p>
+                    {group.items.map((item) => (
+                      <a href={item.href}>
+                        <strong>{item.label}</strong>
+                        <span>{item.description}</span>
+                      </a>
+                    ))}
+                  </div>
+                ))
+              ) : (
+                <div class="mobile-link-group">
+                  {menu.items!.map((item) => (
+                    <a href={item.href}>
+                      <strong>{item.title}</strong>
+                      {item.description && <span>{item.description}</span>}
+                    </a>
+                  ))}
+                  {menu.footerLinks?.map((item) => (
+                    <a href={item.href}>
+                      <strong>{item.label}</strong>
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+        ))
+      }
+    </nav>
+  </div>
+</mobile-drawer>
+
+<script>
+  class MobileDrawerElement extends HTMLElement {
+    private controller = new AbortController();
+    private openButton?: HTMLButtonElement;
+    private lastFocus: HTMLElement | null = null;
+    private lockedScroll = 0;
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const drawer = this.querySelector<HTMLElement>('[data-mobile-menu]');
+      const closeButton = this.querySelector<HTMLButtonElement>('[data-mobile-menu-close]');
+      if (!drawer || !closeButton) return;
+
+      const signal = this.controller.signal;
+      closeButton.addEventListener('click', () => this.closeMenu(), { signal });
+      drawer.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => this.closeMenu(), { signal });
+      });
+      drawer.querySelectorAll<HTMLButtonElement>('[data-mobile-accordion]').forEach((button) => {
+        button.addEventListener(
+          'click',
+          () => {
+            const expanded = button.getAttribute('aria-expanded') === 'true';
+            const controls = button.getAttribute('aria-controls');
+            const submenu = controls ? drawer.querySelector<HTMLElement>(`#${controls}`) : null;
+            button.setAttribute('aria-expanded', String(!expanded));
+            if (submenu) submenu.hidden = expanded;
+          },
+          { signal },
+        );
+      });
+      document.addEventListener(
+        'keydown',
+        (event) => {
+          if (drawer.getAttribute('aria-hidden') === 'true') return;
+          if (event.key === 'Escape') {
+            event.preventDefault();
+            this.closeMenu();
+            return;
+          }
+          if (event.key !== 'Tab') return;
+          const items = Array.from(drawer.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')).filter((element) => !element.closest('[hidden]'));
+          const first = items[0];
+          const last = items[items.length - 1];
+          if (!first || !last) return;
+          if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+          } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+          }
+        },
+        { signal },
+      );
+      matchMedia('(min-width: 951px)').addEventListener(
+        'change',
+        (event) => {
+          if (event.matches) this.closeMenu();
+        },
+        { signal },
+      );
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+    }
+
+    openMenu(openButton: HTMLButtonElement) {
+      const drawer = this.querySelector<HTMLElement>('[data-mobile-menu]');
+      const closeButton = this.querySelector<HTMLButtonElement>('[data-mobile-menu-close]');
+      if (!drawer || !closeButton) return;
+      this.openButton = openButton;
+      this.lastFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      this.lockedScroll = scrollY;
+      document.body.style.top = `-${this.lockedScroll}px`;
+      document.body.classList.add('mobile-nav-open');
+      drawer.setAttribute('aria-hidden', 'false');
+      openButton.setAttribute('aria-expanded', 'true');
+      closeButton.focus();
+    }
+
+    closeMenu() {
+      const drawer = this.querySelector<HTMLElement>('[data-mobile-menu]');
+      if (!drawer || drawer.getAttribute('aria-hidden') === 'true') return;
+      drawer.setAttribute('aria-hidden', 'true');
+      this.openButton?.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('mobile-nav-open');
+      document.body.style.top = '';
+      scrollTo(0, this.lockedScroll);
+      this.lastFocus?.focus();
+    }
+  }
+
+  if (!customElements.get('mobile-drawer')) customElements.define('mobile-drawer', MobileDrawerElement);
+</script>
+
+<style>
+  mobile-drawer {
+    display: contents;
+  }
+
+  .mobile-drawer {
+    display: none;
+  }
+
+  .wordmark {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    font-family: var(--font-mono);
+    font-size: var(--mono-10);
+    letter-spacing: 0.15em;
+    line-height: 1.08;
+    white-space: nowrap;
+  }
+
+  .wordmark span:last-child {
+    color: var(--accent);
+  }
+
+  .join-pill {
+    border: 1px solid rgba(94, 230, 160, 0.45);
+    border-radius: var(--radius-control);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: var(--mono-10-5);
+    letter-spacing: 0.1em;
+    margin-inline-start: auto;
+    padding: 9px 13px;
+    white-space: nowrap;
+  }
+
+  @keyframes menu-row {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (max-width: 950px) {
+    .mobile-drawer {
+      background: var(--bg-panel);
+      display: block;
+      height: 100dvh;
+      inset: 0;
+      min-height: 100vh;
+      opacity: 0;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      pointer-events: none;
+      position: fixed;
+      transform: translateY(-12px);
+      transition:
+        opacity var(--duration-3) var(--ease-panel),
+        transform var(--duration-3) var(--ease-panel),
+        visibility var(--duration-3);
+      visibility: hidden;
+      z-index: 80;
+    }
+
+    .mobile-drawer[aria-hidden='false'] {
+      opacity: 1;
+      pointer-events: auto;
+      transform: none;
+      visibility: visible;
+    }
+
+    .mobile-drawer-header {
+      align-items: center;
+      background: var(--bg-header);
+      border-bottom: 1px solid var(--hairline);
+      display: flex;
+      gap: 10px;
+      min-height: 68px;
+      padding: 12px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    .mobile-drawer-header .wordmark {
+      font-size: 9px;
+      justify-content: center;
+      margin-right: auto;
+      min-height: 44px;
+      width: auto;
+    }
+
+    .mobile-drawer-header .join-pill {
+      align-items: center;
+      display: inline-flex;
+      margin-left: 0;
+      min-height: 44px;
+      padding: 9px 14px;
+    }
+
+    .mobile-menu-close {
+      background: transparent;
+      border: 1px solid var(--hairline-card);
+      border-radius: 50%;
+      color: var(--text-1);
+      cursor: pointer;
+      height: 44px;
+      position: relative;
+      width: 44px;
+    }
+
+    .mobile-menu-close span::before,
+    .mobile-menu-close span::after {
+      background: currentColor;
+      content: '';
+      height: 1px;
+      left: 13px;
+      position: absolute;
+      top: 21px;
+      width: 16px;
+    }
+
+    .mobile-menu-close span::before {
+      transform: rotate(45deg);
+    }
+
+    .mobile-menu-close span::after {
+      transform: rotate(-45deg);
+    }
+
+    .mobile-nav {
+      margin: 0 auto;
+      max-width: 760px;
+      padding: 24px 20px 48px;
+    }
+
+    .mobile-menu-section {
+      border-top: 1px solid var(--hairline);
+      padding: 0;
+    }
+
+    .mobile-menu-section:last-child {
+      border-bottom: 1px solid var(--hairline);
+    }
+
+    .mobile-menu-section > button {
+      align-items: center;
+      background: transparent;
+      border: 0;
+      color: var(--text-1);
+      cursor: pointer;
+      display: grid;
+      grid-template-columns: 38px 1fr 28px;
+      min-height: 60px;
+      padding: 8px 4px;
+      text-align: left;
+      width: 100%;
+    }
+
+    .mobile-menu-section > button span {
+      color: var(--text-4);
+      font: var(--mono-9)/1 var(--font-mono);
+      letter-spacing: 0.12em;
+    }
+
+    .mobile-menu-section > button strong {
+      font: 300 25px/1.1 var(--font-display);
+    }
+
+    .mobile-menu-section > button i {
+      color: var(--accent);
+      font: normal 22px/1 var(--font-body);
+      text-align: center;
+      transition: transform var(--duration-3) var(--ease-panel);
+    }
+
+    .mobile-menu-section > button[aria-expanded='true'] i {
+      transform: rotate(45deg);
+    }
+
+    .mobile-submenu {
+      padding: 0 0 18px 38px;
+    }
+
+    .mobile-link-group + .mobile-link-group {
+      margin-top: 18px;
+    }
+
+    .mobile-link-group > p {
+      color: var(--accent);
+      font: var(--mono-9)/1 var(--font-mono);
+      letter-spacing: 0.14em;
+      margin: 8px 0 6px;
+      text-transform: uppercase;
+    }
+
+    .mobile-link-group a {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 48px;
+      padding: 7px 8px;
+    }
+
+    .mobile-link-group a strong {
+      font-size: 14px;
+      font-weight: 400;
+    }
+
+    .mobile-link-group a span {
+      color: var(--text-3);
+      font-size: 12px;
+      line-height: 1.4;
+      margin-top: 2px;
+    }
+
+    .mobile-drawer[aria-hidden='false'] .mobile-menu-section {
+      animation: menu-row var(--duration-34) var(--ease-panel) both;
+      animation-delay: calc(var(--menu-index) * 35ms);
+    }
+  }
+
+  @media (max-width: 420px) {
+    .mobile-drawer-header {
+      padding-inline: 14px;
+    }
+
+    .mobile-drawer-header .join-pill {
+      padding-inline: 11px;
+    }
+
+    .mobile-nav {
+      padding-inline: 14px;
+    }
+  }
+</style>
