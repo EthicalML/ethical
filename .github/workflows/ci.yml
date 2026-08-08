@@ -140,20 +140,29 @@ jobs:
           npm install --no-audit --no-fund "playwright@$PLAYWRIGHT_VERSION"
           npx playwright install --with-deps chromium
           echo "PLAYWRIGHT_MODULE=$RUNNER_TEMP/playwright/node_modules/playwright/index.js" >> "$GITHUB_ENV"
-      - name: Capture the merge base
+      - name: Build the merge base
         if: steps.scope.outputs.run == 'true'
         run: |
           git checkout --detach "${{ steps.scope.outputs.base }}"
           npm ci
           npm run build
-          .github/scripts/capture-shots.sh "$RUNNER_TEMP/shots/base"
-      - name: Capture the head
+          mv dist "$RUNNER_TEMP/dist-base"
+      - name: Build the head
         if: steps.scope.outputs.run == 'true'
         run: |
           git checkout --detach "${{ github.event.pull_request.head.sha }}"
           npm ci
           npm run build
-          .github/scripts/capture-shots.sh "$RUNNER_TEMP/shots/head"
+          mv dist "$RUNNER_TEMP/dist-head"
+      # Both sides are photographed from the head's checkout, after both builds
+      # exist. The merge base predates the harness that photographs it — running
+      # its own `scripts/verify` would either fail outright or compare two
+      # captures taken by two different procedures. One camera, two subjects.
+      - name: Capture both builds
+        if: steps.scope.outputs.run == 'true'
+        run: |
+          .github/scripts/capture-shots.sh "$RUNNER_TEMP/dist-base" "$RUNNER_TEMP/shots/base"
+          .github/scripts/capture-shots.sh "$RUNNER_TEMP/dist-head" "$RUNNER_TEMP/shots/head"
       - name: Compare
         if: steps.scope.outputs.run == 'true'
         id: compare
