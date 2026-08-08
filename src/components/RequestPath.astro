@@ -62,6 +62,8 @@ const scenarios = [
 </AnimationWindow>
 
 <script>
+  import { LoopingTimeline } from '../shared/LoopingTimeline';
+
   const statuses = [
     'Request ready at client',
     'JWT verified by Envoy Gateway',
@@ -72,8 +74,7 @@ const scenarios = [
 
   class RequestPath extends HTMLElement {
     private controller = new AbortController();
-    private timer = 0;
-    private step = 0;
+    private timeline?: LoopingTimeline;
 
     connectedCallback() {
       this.controller = new AbortController();
@@ -82,59 +83,37 @@ const scenarios = [
       if (!windowElement || !scenarios.length) return;
 
       scenarios.forEach((button) => {
-        button.addEventListener('click', () => this.selectScenario(button, scenarios, windowElement), { signal: this.controller.signal });
+        button.addEventListener('click', () => this.selectScenario(button, scenarios), { signal: this.controller.signal });
       });
-      windowElement.addEventListener('animationwindow:play', () => this.play(), { signal: this.controller.signal });
-      windowElement.addEventListener('animationwindow:pause', () => this.pause(), { signal: this.controller.signal });
-      this.render();
-      if (windowElement.dataset.playing === 'true') this.play();
+      this.timeline = new LoopingTimeline(this, {
+        lastStep: () => (this.dataset.scenario === 'denied' ? 2 : 4),
+        duration: 900,
+        staticStep: () => (this.dataset.scenario === 'denied' ? 2 : 4),
+        render: (step) => this.render(step),
+      });
+      this.timeline.connect();
     }
 
     disconnectedCallback() {
       this.controller.abort();
-      window.clearTimeout(this.timer);
+      this.timeline?.disconnect();
     }
 
-    private selectScenario(button: HTMLButtonElement, scenarios: HTMLButtonElement[], windowElement: HTMLElement) {
+    private selectScenario(button: HTMLButtonElement, scenarios: HTMLButtonElement[]) {
       this.dataset.scenario = button.dataset.scenario;
       scenarios.forEach((item) => {
         const active = item === button;
         item.classList.toggle('active', active);
         item.setAttribute('aria-pressed', String(active));
       });
-      this.step = 0;
-      this.render();
-      if (windowElement.dataset.playing === 'true') this.play();
+      this.timeline?.reset();
     }
 
-    private play() {
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      const limit = this.dataset.scenario === 'denied' ? 2 : 4;
-      if (this.step >= limit) this.step = 0;
-      this.render();
-      this.scheduleNext(limit);
-    }
-
-    private pause() {
-      window.clearTimeout(this.timer);
-    }
-
-    private scheduleNext(limit: number) {
-      window.clearTimeout(this.timer);
-      this.timer = window.setTimeout(() => {
-        this.step = this.step >= limit ? 0 : this.step + 1;
-        this.render();
-        this.scheduleNext(limit);
-      }, 900);
-    }
-
-    private render() {
+    private render(visibleStep: number) {
       const scenario = this.dataset.scenario ?? 'denied';
       const denied = scenario === 'denied';
       const autonomous = scenario === 'agent';
       const limit = denied ? 2 : 4;
-      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const visibleStep = reduced ? limit : this.step;
       this.dataset.step = String(visibleStep);
       this.classList.toggle('is-denied', denied && visibleStep >= 2);
 

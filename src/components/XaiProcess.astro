@@ -66,56 +66,34 @@ const { steps }: Props = Astro.props;
 </AnimationWindow>
 
 <script>
+  import { LoopingTimeline } from '../shared/LoopingTimeline';
+
   const processStates = ['Inspect the data before training', 'Evaluate model behaviour across groups', 'Monitor production predictions and feed findings back'];
 
   class XaiProcess extends HTMLElement {
-    private controller = new AbortController();
-    private timer = 0;
-    private stage = 0;
+    private timeline?: LoopingTimeline;
 
     connectedCallback() {
-      this.controller = new AbortController();
-      const windowElement = this.closest<HTMLElement>('animation-window');
-      if (!windowElement) return;
-      windowElement.addEventListener('animationwindow:play', () => this.play(), { signal: this.controller.signal });
-      windowElement.addEventListener('animationwindow:pause', () => this.pause(), { signal: this.controller.signal });
-      this.render();
-      if (windowElement.dataset.playing === 'true') this.play();
+      this.timeline = new LoopingTimeline(this, {
+        lastStep: processStates.length - 1,
+        duration: 1400,
+        render: (stage) => this.render(stage),
+      });
+      this.timeline.connect();
     }
 
     disconnectedCallback() {
-      this.controller.abort();
-      window.clearTimeout(this.timer);
+      this.timeline?.disconnect();
     }
 
-    private play() {
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      if (this.stage >= 2) this.stage = 0;
-      this.render();
-      this.scheduleNext();
-    }
-
-    private pause() {
-      window.clearTimeout(this.timer);
-    }
-
-    private scheduleNext() {
-      window.clearTimeout(this.timer);
-      this.timer = window.setTimeout(() => {
-        this.stage = this.stage >= 2 ? 0 : this.stage + 1;
-        this.render();
-        this.scheduleNext();
-      }, 1400);
-    }
-
-    private render() {
-      this.dataset.stage = String(this.stage);
+    private render(stage: number) {
+      this.dataset.stage = String(stage);
       const state = this.querySelector<HTMLElement>('[data-process-state]');
-      if (state) state.textContent = processStates[this.stage];
+      if (state) state.textContent = processStates[stage];
       this.querySelectorAll<HTMLElement>('[data-process-step]').forEach((step) => {
         const index = Number(step.dataset.processStep);
-        step.classList.toggle('passed', index < this.stage);
-        step.classList.toggle('current', index === this.stage);
+        step.classList.toggle('passed', index < stage);
+        step.classList.toggle('current', index === stage);
       });
     }
   }

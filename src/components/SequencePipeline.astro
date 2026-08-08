@@ -59,6 +59,8 @@ const stages = [
 </AnimationWindow>
 
 <script>
+  import { LoopingTimeline } from '../shared/LoopingTimeline';
+
   const pipelineStates = [
     'Manager creates the device context',
     'Tensor carries host data',
@@ -68,59 +70,35 @@ const stages = [
   ];
 
   class SequencePipeline extends HTMLElement {
-    private controller = new AbortController();
-    private timer = 0;
-    private stage = 0;
+    private timeline?: LoopingTimeline;
 
     connectedCallback() {
-      this.controller = new AbortController();
-      const windowElement = this.closest<HTMLElement>('animation-window');
-      if (!windowElement) return;
-      windowElement.addEventListener('animationwindow:play', () => this.play(), { signal: this.controller.signal });
-      windowElement.addEventListener('animationwindow:pause', () => this.pause(), { signal: this.controller.signal });
-      this.render();
-      if (windowElement.dataset.playing === 'true') this.play();
+      this.timeline = new LoopingTimeline(this, {
+        lastStep: pipelineStates.length - 1,
+        duration: 1050,
+        render: (stage) => this.render(stage),
+      });
+      this.timeline.connect();
     }
 
     disconnectedCallback() {
-      this.controller.abort();
-      window.clearTimeout(this.timer);
+      this.timeline?.disconnect();
     }
 
-    private play() {
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      if (this.stage >= 4) this.stage = 0;
-      this.render();
-      this.scheduleNext();
-    }
-
-    private pause() {
-      window.clearTimeout(this.timer);
-    }
-
-    private scheduleNext() {
-      window.clearTimeout(this.timer);
-      this.timer = window.setTimeout(() => {
-        this.stage = this.stage >= 4 ? 0 : this.stage + 1;
-        this.render();
-        this.scheduleNext();
-      }, 1050);
-    }
-
-    private render() {
-      this.dataset.stage = String(this.stage);
+    private render(stage: number) {
+      this.dataset.stage = String(stage);
       const state = this.querySelector<HTMLElement>('[data-state]');
       const result = this.querySelector<HTMLElement>('[data-result]');
-      if (state) state.textContent = pipelineStates[this.stage];
-      if (result) result.textContent = this.stage >= 4 ? 'RESULTS SYNCHRONISED' : 'Waiting for sequence';
+      if (state) state.textContent = pipelineStates[stage];
+      if (result) result.textContent = stage >= 4 ? 'RESULTS SYNCHRONISED' : 'Waiting for sequence';
       this.querySelectorAll<HTMLElement>('[data-pipeline-stage]').forEach((item) => {
         const index = Number(item.dataset.pipelineStage);
-        item.classList.toggle('passed', index < this.stage);
-        item.classList.toggle('current', index === this.stage);
+        item.classList.toggle('passed', index < stage);
+        item.classList.toggle('current', index === stage);
       });
       this.querySelectorAll<HTMLElement>('[data-operation]').forEach((item, index) => {
         const activeAt = [3, 4, 4][index];
-        item.classList.toggle('active', this.stage >= activeAt);
+        item.classList.toggle('active', stage >= activeAt);
       });
     }
   }
