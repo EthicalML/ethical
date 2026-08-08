@@ -8,18 +8,52 @@ Every colour that must differ between the dark and light themes is a token on `:
 has nowhere to flip to under `:root[data-theme='light']`, so a literal is a bug unless it is on the
 "never a token" list at the end of this section.
 
-There are seven colour families. Each family has a small semantic ladder — use a ladder rung for new
-work. The `-a###` tokens beside each ladder are the same family at an off-ladder alpha (the digits
-are permille, so `-a420` is `alpha 0.42`); they exist because the dark theme already used those
-exact values and the site must not move. Treat them as members of the nearest rung.
+There are seven colour families. Each family has a small semantic ladder — **use a ladder rung for
+new work, always.** The ladder is the ramp: sixteen job-named rungs, each named for what it does
+rather than for a number.
 
-**In light they are the rung.** `--ink-a420`, `--ink-a440` and `--ink-a450` all resolve to the
-`--ink-4` light value; the same holds in every family. Collapsing them in *dark* would move up to
-6.75/255 against a 2/255 parity budget, but there is no light baseline to preserve, so light gets
-the clean sixteen-value ladder and dark keeps its exact historical appearance. Practically: an
-`-a###` token needs a light value only when it is added, and it is always a copy of its rung's.
-The single exception is `--ink-a050`/`--ink-a030`, ink below the ladder's floor — deliberately
-ghosted glyphs, which take the wash curve rather than `--ink-6` so they stay ghosts.
+| Job | Rungs |
+| --- | --- |
+| Text | `--ink-1` primary · `--ink-2` emphasis · `--ink-3` secondary · `--ink-4` tertiary · `--ink-5` metadata · `--ink-6` faint |
+| Surfaces | `--bg-base` page · `--bg-panel` panel · `--bg-inset` inset |
+| Borders | `--hairline` subtle · `--hairline-card` visible · `--hairline-strong` strong |
+| Fills | `--wash-1` zebra · `--wash-2` resting · `--wash-3` hover · `--wash-4` pressed |
+| Accent | `--accent-ink` ink · `--accent` fill · `--accent-wash` / `--accent-veil` tint · `--accent-line` / `--accent-edge` rule |
+
+The `-a###` tokens beside each ladder are the same family at an off-ladder alpha (the digits are
+permille, so `-a420` is `alpha 0.42`). **That namespace is closed.** They are historical: they are a
+1:1 capture of every alpha literal the dark theme already shipped, and every one that could be
+collapsed onto a rung or a neighbour inside a measured 3/255 budget has been. The 86 that remain are
+grandfathered by name in `scripts/verify/token-alpha-allowlist.json`, and `npm run check:ratchet`
+fails on any `-a###` that is not on that list — declared or merely referenced. Adding a colour means
+adding a *job*, not an alpha. Treat the survivors as members of the nearest rung.
+
+### Why 86 survive and not sixteen
+
+Collapsing is bounded by arithmetic, not by taste. Ink sits 244 channel levels above the darkest
+surface, so `Δα 0.01` is already `2.44/255` before rendering; measured through Chrome's
+gamma-corrected glyph and hairline antialiasing it lands at `3/255`. The smallest step present
+anywhere in the data is `Δα 0.01`. So under a 3/255 budget a merge is only available where two
+tokens are one permille step apart *and* nothing else on the same pixel also moved — which is why
+the 37 that merged are almost all `x`/`x+0.02` pairs collapsing to their midpoint.
+
+Three findings are worth keeping, all measured rather than reasoned:
+
+- **Two one-step merges still bust the budget.** `--ink-a140`+`--ink-a160` peaked at 5/255 on
+  `/policy/` and `--hairline-a120`+`--hairline-a140` at 4/255 on `/`. Both keep their own tokens.
+- **The accent family compounds.** Every accent merge measures ≤3/255 in isolation, but accent tints
+  share pixels with a wash fill, a hairline border and ink text on the same card or form field, and
+  the combination measures 4/255. No accent `-a###` was merged for that reason alone.
+- **Shadows are not exercised.** Every shadow merge measured 0/255 across all 37 routes, which is
+  evidence that no capture paints them, not evidence that they are safe. They were left intact.
+
+**In light they are the rung.** `--ink-a410`, `--ink-a445` and `--ink-4` all resolve to the same
+light value; the same holds in every family. Light has no baseline to preserve, so it gets the clean
+ladder and dark keeps its (near-)exact historical appearance. Practically: an `-a###` token needs a
+light value only when it is added, and it is always a copy of its rung's. The single exception is
+`--ink-a050`/`--ink-a030`, ink below the ladder's floor — deliberately ghosted glyphs, which take
+the wash curve rather than `--ink-6` so they stay ghosts, and which are excluded from merging for
+the same reason.
 
 | Family | Dark base | What each step is for |
 | --- | --- | --- |
