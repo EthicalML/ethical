@@ -1,0 +1,258 @@
+---
+// PROTOTYPE F — "The reel". The stage holds the talk itself: scroll swaps the
+// still, and the active one offers to play in place. Closest to what a
+// programme chair actually wants, which is to watch someone speak.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ScrollStage from '../../components/ScrollStage.astro';
+import SpeakingEnquiry from '../../components/SpeakingEnquiry.astro';
+import EventBanner from '../../components/EventBanner.astro';
+import { loadEvents, eventDate, recordings } from '../../utils/Events';
+
+const today = new Date();
+const { all } = await loadEvents(today);
+
+// One entry per recorded talk, newest first: the reel is talks, not events.
+const reel = all
+  .flatMap((event) => recordings(event).map((talk) => ({ event, talk })))
+  .sort((left, right) => right.event.start.getTime() - left.event.start.getTime());
+
+const videoId = (url?: string) => (url ?? '').match(/[?&]v=([\w-]+)/)?.[1] ?? '';
+---
+
+<BaseLayout
+  frontmatter={{ title: 'Speaking — prototype F', description: 'Prototype.', noindex: true }}
+>
+  <main class="reel">
+    <header class="rl-head">
+      <p class="eyebrow">SPEAKING</p>
+      <h1>{reel.length} talks on the record</h1>
+      <p class="lede">Scroll the reel. Press play on any of them without leaving the page.</p>
+    </header>
+
+    <ScrollStage class="rl-stage" line={0.42}>
+      <div slot="stage" class="rl-screen">
+        {
+          reel.map(({ event, talk }) => (
+            <figure class="rl-frame" data-stage-item data-video={videoId(talk.video)}>
+              <span class="rl-art">
+                {talk.image ? (
+                  <img src={talk.image} alt="" loading="lazy" />
+                ) : (
+                  <EventBanner
+                    slug={event.slug}
+                    series={event.series}
+                    label={event.series.toUpperCase()}
+                    topic={event.topics?.[0]}
+                    image={event.image}
+                  />
+                )}
+                <button class="rl-play" type="button" data-play={videoId(talk.video)} aria-label={`Play ${talk.title}`}>
+                  Play
+                </button>
+              </span>
+              <figcaption>
+                <span class="rl-venue">
+                  {event.name} · {eventDate(event)}
+                </span>
+                <span class="rl-title">{talk.title}</span>
+              </figcaption>
+            </figure>
+          ))
+        }
+        <div class="rl-player" data-player hidden>
+          <button class="rl-close" type="button" data-player-close>Close</button>
+          <div class="rl-embed" data-player-embed></div>
+        </div>
+      </div>
+
+      <div slot="steps">
+        {
+          reel.map(({ event, talk }) => (
+            <section class="rl-step" data-stage-step>
+              <p class="rl-step-date">{eventDate(event)}</p>
+              <h2>{talk.title}</h2>
+              <p class="rl-step-venue">
+                {event.name}
+                {event.location && ` · ${event.location}`}
+                {talk.track && ` · ${talk.track}`}
+              </p>
+              <a class="text-link" href={talk.video} target="_blank" rel="noopener noreferrer">
+                Watch on YouTube
+              </a>
+            </section>
+          ))
+        }
+      </div>
+    </ScrollStage>
+
+    <section class="rl-close-cta">
+      <h2>Want one of these for your stage?</h2>
+      <button class="button primary" type="button" data-enquiry-open>Invite me to speak</button>
+    </section>
+    <SpeakingEnquiry />
+  </main>
+</BaseLayout>
+
+<style>
+  .rl-head {
+    padding: var(--space-56) var(--space-40) var(--space-26);
+  }
+  .rl-head h1 {
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    margin: var(--space-8) 0 var(--space-12);
+  }
+  .lede {
+    color: var(--text-2);
+  }
+  .rl-stage {
+    padding: 0 var(--space-40) var(--space-48);
+  }
+  .rl-screen {
+    height: 100%;
+    position: relative;
+  }
+  .rl-frame {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    position: absolute;
+    transition: opacity 0.5s ease;
+  }
+  .rl-frame[data-active='1'] {
+    opacity: 1;
+  }
+  .rl-art {
+    aspect-ratio: 16 / 9;
+    border: 1px solid var(--hairline);
+    display: block;
+    overflow: hidden;
+    position: relative;
+  }
+  .rl-art img {
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+  }
+  .rl-play {
+    background: rgba(19, 20, 20, 0.72);
+    border: 1px solid var(--accent-edge, var(--hairline-strong));
+    color: var(--accent, var(--text-1));
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    inset: auto auto var(--space-14) var(--space-14);
+    letter-spacing: 0.12em;
+    min-height: 44px;
+    padding: var(--space-8) var(--space-14);
+    position: absolute;
+    text-transform: uppercase;
+  }
+  .rl-venue {
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .rl-title {
+    color: var(--text-1);
+    display: block;
+  }
+  .rl-player {
+    background: var(--bg-base);
+    inset: 0;
+    position: absolute;
+    z-index: 3;
+  }
+  .rl-player[hidden] {
+    display: none;
+  }
+  .rl-embed {
+    aspect-ratio: 16 / 9;
+    width: 100%;
+  }
+  .rl-embed :global(iframe) {
+    border: 0;
+    height: 100%;
+    width: 100%;
+  }
+  .rl-close {
+    background: var(--bg-panel);
+    border: 1px solid var(--hairline);
+    color: var(--text-2);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-8);
+    min-height: 44px;
+    padding: var(--space-8) var(--space-12);
+    text-transform: uppercase;
+  }
+  .rl-step {
+    border-top: 1px solid var(--hairline);
+    min-height: 58vh;
+    opacity: 0.3;
+    padding: var(--space-34) 0;
+    transition: opacity 0.5s ease;
+  }
+  .rl-step[data-active='1'] {
+    opacity: 1;
+  }
+  .rl-step-date {
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    margin: 0;
+    text-transform: uppercase;
+  }
+  .rl-step h2 {
+    font-size: 1.4rem;
+    line-height: 1.25;
+    margin: var(--space-8) 0 var(--space-8);
+  }
+  .rl-step-venue {
+    color: var(--text-3);
+    margin: 0 0 var(--space-14);
+  }
+  .rl-close-cta {
+    border-top: 1px solid var(--hairline);
+    padding: var(--space-48) var(--space-40);
+  }
+  @media (max-width: 999px), (prefers-reduced-motion: reduce) {
+    .rl-frame {
+      opacity: 1;
+      margin-bottom: var(--space-26);
+      position: static;
+    }
+    .rl-step {
+      min-height: 0;
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  // The embed is only created on demand: twenty autoplaying iframes would be a
+  // page-weight disaster, and YouTube sets cookies the moment one exists.
+  const player = document.querySelector<HTMLElement>('[data-player]');
+  const embed = document.querySelector<HTMLElement>('[data-player-embed]');
+  if (player && embed) {
+    document.querySelectorAll<HTMLButtonElement>('[data-play]').forEach((button) =>
+      button.addEventListener('click', () => {
+        const id = button.dataset.play;
+        if (!id) return;
+        embed.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1" title="Talk recording" allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+        player.hidden = false;
+      }),
+    );
+    document.querySelector('[data-player-close]')?.addEventListener('click', () => {
+      embed.innerHTML = '';
+      player.hidden = true;
+    });
+  }
+</script>
