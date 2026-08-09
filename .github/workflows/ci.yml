@@ -20,8 +20,8 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .tool-versions
           cache: npm
@@ -31,8 +31,8 @@ jobs:
   typecheck:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .tool-versions
           cache: npm
@@ -41,8 +41,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .tool-versions
           cache: npm
@@ -59,8 +59,8 @@ jobs:
   motion:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .tool-versions
           cache: npm
@@ -101,7 +101,7 @@ jobs:
         ${{ contains(github.event.pull_request.labels.*.name, 'dependencies') && 'enforce' || 'report' }}
       COMMENT_MARKER: '<!-- merge-base-visual-parity -->'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
@@ -120,7 +120,7 @@ jobs:
             echo "$changed"
             echo "run=true" >> "$GITHUB_OUTPUT"
           fi
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         if: steps.scope.outputs.run == 'true'
         with:
           node-version-file: .tool-versions
@@ -208,7 +208,7 @@ jobs:
           fi
       - name: Upload the diffs
         if: steps.scope.outputs.run == 'true' && steps.summary.outputs.verdict == 'moved'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: visual-parity-diffs
           path: ${{ runner.temp }}/parity
