@@ -2,24 +2,13 @@
 import EventBanner from './EventBanner.astro';
 import { loadEvents, eventDate, recordings, openCfps, type Event } from '../utils/Events';
 
-interface Props {
-  /** Video URLs to lead with. These are the recordings worth showing first. */
-  featured?: string[];
-}
-
-const { featured = [] } = Astro.props;
 const today = new Date();
 const { all, upcoming, past } = await loadEvents(today);
 
-const isFeatured = (event: Event) => (event.talks ?? []).some((talk) => talk.video && featured.includes(talk.video));
-
-// Featured recordings lead, then what is ahead, then history. The old page had
-// a separate "selected recordings" grid saying the same thing twice.
-const events: Event[] = [
-  ...all.filter(isFeatured).sort((left, right) => right.start.getTime() - left.start.getTime()),
-  ...upcoming.filter((event) => !isFeatured(event)),
-  ...past.filter((event) => !isFeatured(event)),
-];
+// One chronological order: what is ahead, then history. Pinning a block of
+// favourites to the top made the sort unreadable — the reader cannot tell why
+// 2019 sits above 2026.
+const events: Event[] = [...upcoming, ...past];
 
 const topicCounts = new Map<string, number>();
 for (const event of all) for (const topic of event.topics ?? []) topicCounts.set(topic, (topicCounts.get(topic) ?? 0) + 1);
@@ -63,7 +52,6 @@ const leadImage = (event: Event) =>
       events.map((event) => (
         <a
           class="archive-card"
-          class:list={['archive-card', isFeatured(event) && 'is-featured']}
           href={recordings(event)[0]?.video ?? event.url}
           target="_blank"
           rel="noopener noreferrer"
@@ -86,11 +74,11 @@ const leadImage = (event: Event) =>
           </span>
           <span class="card-text">
             <span class="card-date">{eventDate(event)}</span>
-            <span class="card-title">{(event.talks ?? [])[0]?.title ?? event.name}</span>
-            <span class="card-sub">
-              {event.name}
-              {event.location && ` · ${event.location}`}
-            </span>
+            <span class="card-title">{event.name}</span>
+            {event.location && <span class="card-sub">{event.location}</span>}
+            {(event.talks ?? []).map((talk) => (
+              <span class="card-talk">{talk.title}</span>
+            ))}
           </span>
         </a>
       ))
@@ -186,9 +174,6 @@ const leadImage = (event: Event) =>
     border-color: var(--accent-edge, var(--hairline-strong));
     transform: translateY(-3px);
   }
-  .archive-card.is-featured {
-    border-color: var(--hairline-strong);
-  }
   .card-art {
     aspect-ratio: 16 / 9;
     display: block;
@@ -235,6 +220,14 @@ const leadImage = (event: Event) =>
   .card-sub {
     color: var(--text-3);
     font-size: 0.75rem;
+  }
+  .card-talk {
+    border-top: 1px solid var(--hairline);
+    color: var(--text-2);
+    font-size: 0.76rem;
+    line-height: 1.35;
+    margin-top: var(--space-6);
+    padding-top: var(--space-6);
   }
   .finder-empty {
     color: var(--text-2);
