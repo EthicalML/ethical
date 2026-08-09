@@ -6,9 +6,12 @@ interface Props {
   transitionName?: string;
   morphSource?: string;
   variant?: 'ambient' | 'interactive';
+  surface?: 'dark' | 'page';
 }
 
-const { embedded = false, panel = false, backdrop = false, transitionName, morphSource, variant = 'ambient' } = Astro.props;
+/* `surface`: see KomputeCube.astro. The panel mount sits on paper in the portal;
+   every other mount sits inside an inverted block. */
+const { embedded = false, panel = false, backdrop = false, transitionName, morphSource, variant = 'ambient', surface = 'dark' } = Astro.props;
 const transitionStyle = transitionName ? `view-transition-name: ${transitionName}` : undefined;
 ---
 
@@ -21,6 +24,7 @@ const transitionStyle = transitionName ? `view-transition-name: ${transitionName
       transition:name={transitionName}
       style={transitionStyle}
       data-morph-source={morphSource}
+      data-surface={surface}
     />
   ) : embedded ? (
     <kaos-architecture
@@ -29,12 +33,19 @@ const transitionStyle = transitionName ? `view-transition-name: ${transitionName
       variant={variant}
       transition:name={transitionName}
       style={transitionStyle}
+      data-surface={surface}
     />
   ) : (
     <section id="opensource" aria-labelledby="kaos-heading" data-reveal>
       <p class="eyebrow">CUSTOM WIDGET</p>
       <h2 id="kaos-heading">KAOS agent graph</h2>
-      <kaos-architecture class="widget kaos-architecture-mount" variant={variant} transition:name={transitionName} style={transitionStyle} />
+      <kaos-architecture
+        class="widget kaos-architecture-mount"
+        variant={variant}
+        transition:name={transitionName}
+        style={transitionStyle}
+        data-surface={surface}
+      />
     </section>
   )
 }

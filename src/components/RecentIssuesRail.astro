@@ -10,8 +10,52 @@ const issues = await getRecentIssueNumbers(limit);
     issues.map((number) => (
       <a href={`/newsletter/${number}/`}>
         <strong>#{number}</strong>
-        <span>Read issue</span>
+        <span class="meta-label">Read issue</span>
       </a>
     ))
   }
 </div>
+
+<style is:global>
+  .recent-issues-rail {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 38px 0 30px;
+  }
+
+  .recent-issues-rail a {
+    border: 1px solid var(--hairline-card);
+    color: inherit;
+    display: grid;
+    gap: 9px;
+    margin: -1px 0 0 -1px;
+    padding: 24px;
+  }
+
+  .recent-issues-rail strong {
+    color: var(--accent-ink);
+    font: 300 28px var(--font-display);
+  }
+
+  .recent-issues-rail span {
+    letter-spacing: 0.08em;
+  }
+
+  .recent-issues-rail i {
+    color: var(--accent-ink);
+    font-style: normal;
+    justify-self: end;
+  }
+
+  @media (max-width: 950px) {
+    .recent-issues-rail {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .recent-issues-rail {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -62,6 +62,8 @@ const scenarios = [
 </AnimationWindow>
 
 <script>
+  import { LoopingTimeline } from '../shared/LoopingTimeline';
+
   const statuses = [
     'Request ready at client',
     'JWT verified by Envoy Gateway',
@@ -72,8 +74,7 @@ const scenarios = [
 
   class RequestPath extends HTMLElement {
     private controller = new AbortController();
-    private timer = 0;
-    private step = 0;
+    private timeline?: LoopingTimeline;
 
     connectedCallback() {
       this.controller = new AbortController();
@@ -82,59 +83,37 @@ const scenarios = [
       if (!windowElement || !scenarios.length) return;
 
       scenarios.forEach((button) => {
-        button.addEventListener('click', () => this.selectScenario(button, scenarios, windowElement), { signal: this.controller.signal });
+        button.addEventListener('click', () => this.selectScenario(button, scenarios), { signal: this.controller.signal });
       });
-      windowElement.addEventListener('animationwindow:play', () => this.play(), { signal: this.controller.signal });
-      windowElement.addEventListener('animationwindow:pause', () => this.pause(), { signal: this.controller.signal });
-      this.render();
-      if (windowElement.dataset.playing === 'true') this.play();
+      this.timeline = new LoopingTimeline(this, {
+        lastStep: () => (this.dataset.scenario === 'denied' ? 2 : 4),
+        duration: 900,
+        staticStep: () => (this.dataset.scenario === 'denied' ? 2 : 4),
+        render: (step) => this.render(step),
+      });
+      this.timeline.connect();
     }
 
     disconnectedCallback() {
       this.controller.abort();
-      window.clearTimeout(this.timer);
+      this.timeline?.disconnect();
     }
 
-    private selectScenario(button: HTMLButtonElement, scenarios: HTMLButtonElement[], windowElement: HTMLElement) {
+    private selectScenario(button: HTMLButtonElement, scenarios: HTMLButtonElement[]) {
       this.dataset.scenario = button.dataset.scenario;
       scenarios.forEach((item) => {
         const active = item === button;
         item.classList.toggle('active', active);
         item.setAttribute('aria-pressed', String(active));
       });
-      this.step = 0;
-      this.render();
-      if (windowElement.dataset.playing === 'true') this.play();
+      this.timeline?.reset();
     }
 
-    private play() {
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      const limit = this.dataset.scenario === 'denied' ? 2 : 4;
-      if (this.step >= limit) this.step = 0;
-      this.render();
-      this.scheduleNext(limit);
-    }
-
-    private pause() {
-      window.clearTimeout(this.timer);
-    }
-
-    private scheduleNext(limit: number) {
-      window.clearTimeout(this.timer);
-      this.timer = window.setTimeout(() => {
-        this.step = this.step >= limit ? 0 : this.step + 1;
-        this.render();
-        this.scheduleNext(limit);
-      }, 900);
-    }
-
-    private render() {
+    private render(visibleStep: number) {
       const scenario = this.dataset.scenario ?? 'denied';
       const denied = scenario === 'denied';
       const autonomous = scenario === 'agent';
       const limit = denied ? 2 : 4;
-      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const visibleStep = reduced ? limit : this.step;
       this.dataset.step = String(visibleStep);
       this.classList.toggle('is-denied', denied && visibleStep >= 2);
 
@@ -207,7 +186,7 @@ const scenarios = [
     font-size: var(--mono-9);
   }
   button small {
-    color: var(--accent);
+    color: var(--accent-ink);
   }
   button span {
     color: var(--text-2);
@@ -218,14 +197,14 @@ const scenarios = [
   }
   button.active {
     background: var(--accent-wash-09);
-    border-color: rgba(94, 230, 160, 0.42);
+    border-color: var(--accent-edge);
   }
   button.active span,
   button.active b {
-    color: var(--accent);
+    color: var(--accent-ink);
   }
   [data-scenario='denied'] button.active {
-    background: rgba(255, 84, 112, 0.07);
+    background: var(--glitch-red-a070);
     border-color: var(--glitch-red);
   }
   [data-scenario='denied'] button.active small,
@@ -258,7 +237,7 @@ const scenarios = [
     font-weight: 400;
   }
   .identity-note {
-    margin-left: auto;
+    margin-inline-start: auto;
   }
   .path {
     align-items: center;
@@ -291,11 +270,11 @@ const scenarios = [
     opacity: 1;
   }
   article.passed {
-    border-color: rgba(94, 230, 160, 0.28);
+    border-color: var(--accent-line);
   }
   article.current {
-    border-color: var(--accent);
-    box-shadow: 0 0 24px rgba(94, 230, 160, 0.08);
+    border-color: var(--accent-ink);
+    box-shadow: 0 0 24px var(--accent-wash);
     transform: translateY(-4px);
   }
   article span,
@@ -311,9 +290,9 @@ const scenarios = [
     margin: 18px 0 6px;
   }
   article em {
-    border: 1px solid var(--accent);
+    border: 1px solid var(--accent-ink);
     bottom: 12px;
-    color: var(--accent);
+    color: var(--accent-ink);
     font: normal var(--mono-9)/1 var(--font-mono);
     opacity: 0;
     padding: 5px 6px;
@@ -361,7 +340,7 @@ const scenarios = [
   }
   .is-denied .pdp {
     border-color: var(--glitch-red);
-    box-shadow: 0 0 24px rgba(255, 84, 112, 0.1);
+    box-shadow: 0 0 24px var(--glitch-red-a100);
   }
   .is-denied .pdp em {
     border-color: var(--glitch-red);
@@ -398,7 +377,7 @@ const scenarios = [
   }
   .path-status small {
     color: var(--text-4);
-    margin-left: auto;
+    margin-inline-start: auto;
   }
   .status-dot {
     background: var(--accent);
@@ -409,7 +388,7 @@ const scenarios = [
   .is-denied .status-dot {
     background: var(--glitch-red);
   }
-  @media (max-width: 850px) {
+  @media (max-width: 950px) {
     .scenario-picker {
       align-items: start;
       grid-template-columns: 1fr;
@@ -430,7 +409,7 @@ const scenarios = [
       display: none;
     }
   }
-  @media (max-width: 620px) {
+  @media (max-width: 600px) {
     .scenario-buttons {
       grid-template-columns: 1fr;
     }
@@ -444,7 +423,7 @@ const scenarios = [
       margin-left: 0;
     }
   }
-  @media (max-width: 799px) {
+  @media (max-width: 950px) {
     request-path {
       container-type: inline-size;
       overflow: hidden;
@@ -460,7 +439,7 @@ const scenarios = [
     }
     .identity-note,
     .path-status small {
-      margin-left: auto;
+      margin-inline-start: auto;
     }
     .path {
       align-items: center;

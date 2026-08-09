@@ -9,16 +9,25 @@ All changes land on `master` through a pull request; direct pushes are blocked b
 1. Branch from `master` (agents work in their own git worktree so parallel tracks never share a dirty checkout).
 2. Commit with comprehensive messages. Do not append session URLs to commit messages or PR bodies.
 3. Push the branch and open a PR with `gh pr create`.
-4. CI (`.github/workflows/ci.yml`) runs three required checks: `lint` (ESLint and Prettier), `typecheck` (the `astro check` ratchet), and `build` (the production build, in demo mode without `FORM_ENDPOINT`).
+4. CI (`.github/workflows/ci.yml`) runs four required checks — `lint` (ESLint and Prettier), `typecheck` (the `astro check` ratchet), `build` (the production build, in demo mode without `FORM_ENDPOINT`) and `motion` (the view-transition settle gate) — plus `visual`, a merge-base pixel-parity sweep whose enforcement depends on the PR's labels.
 5. Merge once CI is green. The merge landing on `master` triggers the production deploy.
 
-CI does not yet run the Playwright DOM gate, so `npm run verify:dom -- <route> --viewport 1440x1000` (and `420x900`) for affected routes remains a local pre-PR responsibility, as does the rest of the definition of done below.
+The `visual` job builds and photographs both the merge base and the head, so there are no committed baselines to go stale. It skips entirely when nothing under `src/`, `public/` or `package-lock.json` changed, and otherwise:
+
+| PR label        | Behaviour                                                                                                   |
+| --------------- | ----------------------------------------------------------------------------------------------------------- |
+| `dependencies`  | Zero differing pixels required; the job fails otherwise. A bump that moves rendering cannot merge silently. |
+| `visual-change` | Skipped. The author is declaring that pixels are meant to move.                                             |
+| anything else   | Measured and posted as a PR comment (routes changed, pixel counts, peak channel delta). Never fails.        |
+
+CI still does not run the Playwright DOM gate, so `npm run verify:dom -- <route> --viewport 1440x1000` (and `420x900`) for affected routes remains a local pre-PR responsibility, as does the rest of the definition of done below.
 
 ## Companion documents
 
 | Document                       | Read it when                                                                                                                                                                                                                                                                                                   |
 | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `REUSABLE.md`                  | Before using or changing a documented reusable presentation component; API changes update the entry in the same change.                                                                                                                                                                                        |
+| `STYLES.md`                    | Before adding or moving CSS; it maps global categories, component and page owners, deliberate cross-surface rules, and the named breakpoints.                                                                                                                                                                  |
 | `scripts/verify/README.md`     | Before running or editing the verification harness (DOM gate, screenshots, ratchet).                                                                                                                                                                                                                           |
 | `scripts/forms/apps-script.gs` | Before changing the contact form or its delivery. This file is the receiver's source of truth, deployed manually in the Google Apps Script editor; form field changes must stay aligned across `src/data/contactForm.ts`, `src/components/FormSection.astro`, this script, and the spreadsheet's column order. |
 
@@ -30,7 +39,7 @@ Path-scoped instruction files (`.github/instructions/`):
 
 ## Local commands
 
-Node version is pinned in `.tool-versions`. `npm run dev` for the dev server, `npm run build && npm run preview` for the production build. Temporary files go under `./tmp`, never `/tmp`.
+Node version is pinned in `.tool-versions`. `npm run dev` for the dev server, `npm run build && npm run preview` for the production build. Use `npm run verify:parity -- <baseline-dir> <current-dir>` to mechanically prove screenshot parity; zero-visual-change work must pass with zero differing pixels unless a documented same-build recapture proves canvas instability. Temporary files go under `./tmp`, never `/tmp`.
 
 ## Editorial rules
 
@@ -183,18 +192,19 @@ A short paragraph does not follow a table, card grid, chart or other widget. Com
 
 ## Homepage source map
 
-| Concern                                                          | Authoring source                                                       |
-| ---------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| Hero, evidence, phases, policy, project, survey and network copy | `src/pages/index.mdx`                                                  |
-| Principle content                                                | `src/content/principles/*.md`                                          |
-| Repository facts                                                 | `src/content/repos-metrics.yaml`                                       |
-| Partner directory and affiliation logos                          | `src/content/partners.yaml`                                            |
-| Survey source rows                                               | `src/data/survey-2024.csv`, `src/data/survey-2025.csv`                 |
-| Derived survey questions                                         | `src/content/survey-questions.yaml`                                    |
-| Recent newsletter issue numbers                                  | `newsletter` content collection via `src/utils/RecentIssues.ts`        |
-| Header navigation and wordmark                                   | `src/components/SiteHeader.astro`                                      |
-| Footer and footnote chrome                                       | `src/components/SiteFooter.astro`, `src/components/FootnoteBand.astro` |
-| Form delivery endpoint                                           | `FORM_ENDPOINT` through `loadEnv`, base64 Vite define in the JS bundle |
+| Concern                                                          | Authoring source                                                          |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Hero, evidence, phases, policy, project, survey and network copy | `src/pages/index.mdx`                                                     |
+| Principle content                                                | `src/content/principles/*.md`                                             |
+| Repository facts                                                 | `src/content/repos-metrics.yaml`                                          |
+| Partner directory and affiliation logos                          | `src/content/partners.yaml`                                               |
+| Survey source rows                                               | `src/data/survey-2024.csv`, `src/data/survey-2025.csv`                    |
+| Derived survey questions                                         | `src/content/survey-questions.yaml`                                       |
+| Recent newsletter issue numbers                                  | `newsletter` content collection via `src/utils/RecentIssues.ts`           |
+| Header navigation content and wordmark                           | `src/data/navigation.ts`                                                  |
+| Header shell, mega-menu and mobile drawer chrome                 | `src/components/SiteHeader.astro`, `MegaMenu.astro`, `MobileDrawer.astro` |
+| Footer and footnote chrome                                       | `src/components/SiteFooter.astro`, `src/components/FootnoteBand.astro`    |
+| Form delivery endpoint                                           | `FORM_ENDPOINT` through `loadEnv`, base64 Vite define in the JS bundle    |
 
 ## Definition of done
 
@@ -206,7 +216,7 @@ Every change must satisfy:
 4. `npm run check:ratchet` reports zero errors, warnings, and hints.
 5. `npm run build` passes under the Node version pinned in `.tool-versions`.
 6. The DOM gate passes for all affected routes at desktop and mobile widths.
-7. Zero-change work has masked full-page screenshot parity; intentional visual changes have documented before/after evidence.
+7. Zero-change work passes `npm run verify:parity -- <baseline-dir> <current-dir>` with zero differing pixels after masked full-page capture; intentional visual changes have documented before/after evidence.
 8. Any added or changed animation updates the Motion table in the same change.
 9. The change lands on `master` through a pull request with green CI; direct pushes are blocked. The workflow is described at the top of this document.
 

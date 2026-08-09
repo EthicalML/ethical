@@ -2,6 +2,23 @@
 
 Documented reusable components for composed pages. An API change to a component documented here updates this file in the same change. Pages own their content; these components arrange supplied data and never hide owner-editable copy.
 
+## LinkCardGrid
+
+`src/components/LinkCardGrid.astro`. A responsive grid shell for collections of linked cards that carry a short label, title and trailing detail. It establishes the standard three-column layout, collapses to two columns at the wide breakpoint and one at the compact breakpoint, and leaves card content and card-specific presentation with the consumer. `FrameworkCards`, `FrameworkLinkCards` and `RegulationGrid` compose it; their local CSS records only meaningful differences such as gap size or an earlier single-column collapse.
+
+### Props
+
+| Prop | Type | Notes |
+| --- | --- | --- |
+| `as` | `'div' \| 'nav'` | Root semantic element; defaults to `div`. Use `nav` only for a genuine navigation collection. |
+| `class` | `string?` | Consumer-owned class for local card presentation and small layout overrides. |
+| `ariaLabel` | `string?` | Accessible label for a `nav` root. |
+| `reveal` | `boolean?` | Adds the standard `data-reveal` hook when the grid itself owns its entrance. |
+
+Pass the cards as children in a direct repeated structure. The consumer owns label, title, detail, optional metadata and link semantics, so the grid does not accumulate content-mode props. `FrameworkCards`, for example, supplies its status pill and principle chips inside each card.
+
+`PhaseCardGrid` is deliberately separate because it owns selectable state and expanded detail rows. `MediaBand` is deliberately separate because its children are semantic figures with images and captions.
+
 ## AchievementNeonRendition
 
 `src/components/AchievementNeonRendition.astro`. One card system, two layouts, for a set of headline achievements: each card carries a top-anchored eyebrow, a fixed-scale title, a description, at most a primary and a secondary link rendered as buttons, a dim oversized ghost identifier cropped by the block edge, and an isometric mini-structure ghosted into the bottom-right corner. On reveal (hover or tap) the card displaces out of its footprint, uncovering a neon under-block on the vacated side. Inert dud blocks fill the remaining cells. Live on `/policy/` as variant 2.

@@ -1,4 +1,6 @@
 ---
+import LinkCardGrid from './LinkCardGrid.astro';
+
 interface CatalogueItem {
   name: string;
   emoji: string;
@@ -16,7 +18,7 @@ const { areas, themes, repository } = Astro.props;
 ---
 
 <div class="regulation-catalogue" data-reveal>
-  <nav class="regulation-grid" aria-label="AI regulation by economic area">
+  <LinkCardGrid as="nav" class="regulation-grid" ariaLabel="AI regulation by economic area">
     {
       areas.map(({ name, emoji, count, anchor }) => (
         <a href={`${repository}${anchor}`} target="_blank" rel="noopener noreferrer">
@@ -26,7 +28,7 @@ const { areas, themes, repository } = Astro.props;
         </a>
       ))
     }
-  </nav>
+  </LinkCardGrid>
   <nav class="regulation-themes" aria-label="AI guidelines by theme">
     {
       themes.map(({ name, emoji, anchor }) => (
@@ -43,12 +45,10 @@ const { areas, themes, repository } = Astro.props;
   .regulation-catalogue {
     margin-top: 34px;
   }
-  .regulation-grid {
-    display: grid;
+  :global(.link-card-grid.regulation-grid) {
     gap: 8px;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  .regulation-grid a {
+  :global(.regulation-grid) a {
     align-items: center;
     border: 1px solid var(--hairline-card);
     border-radius: var(--radius-row);
@@ -63,24 +63,24 @@ const { areas, themes, repository } = Astro.props;
       border-color 0.18s ease,
       transform 0.18s ease;
   }
-  .regulation-grid a:hover,
-  .regulation-grid a:focus-visible,
+  :global(.regulation-grid) a:hover,
+  :global(.regulation-grid) a:focus-visible,
   .regulation-themes a:hover,
   .regulation-themes a:focus-visible {
     background: var(--accent-wash-07);
-    border-color: rgba(94, 230, 160, 0.45);
+    border-color: var(--accent-edge);
     outline: none;
     transform: translateY(-2px);
   }
-  .regulation-grid a > span {
+  :global(.regulation-grid) a > span {
     font-size: 22px;
   }
-  .regulation-grid strong {
+  :global(.regulation-grid) strong {
     font-size: 14px;
     font-weight: 500;
     line-height: 1.25;
   }
-  .regulation-grid small {
+  :global(.regulation-grid) small {
     color: var(--text-3);
     font: var(--mono-10)/1 var(--font-mono);
   }
@@ -105,14 +105,14 @@ const { areas, themes, repository } = Astro.props;
     margin-right: 7px;
   }
 
-  @media (max-width: 800px) {
-    .regulation-grid {
+  @media (max-width: 600px) {
+    :global(.link-card-grid.regulation-grid) {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
-  @media (max-width: 480px) {
-    .regulation-grid {
+  @media (max-width: 420px) {
+    :global(.link-card-grid.regulation-grid) {
       grid-template-columns: 1fr;
     }
   }

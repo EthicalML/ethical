@@ -66,56 +66,34 @@ const { steps }: Props = Astro.props;
 </AnimationWindow>
 
 <script>
+  import { LoopingTimeline } from '../shared/LoopingTimeline';
+
   const processStates = ['Inspect the data before training', 'Evaluate model behaviour across groups', 'Monitor production predictions and feed findings back'];
 
   class XaiProcess extends HTMLElement {
-    private controller = new AbortController();
-    private timer = 0;
-    private stage = 0;
+    private timeline?: LoopingTimeline;
 
     connectedCallback() {
-      this.controller = new AbortController();
-      const windowElement = this.closest<HTMLElement>('animation-window');
-      if (!windowElement) return;
-      windowElement.addEventListener('animationwindow:play', () => this.play(), { signal: this.controller.signal });
-      windowElement.addEventListener('animationwindow:pause', () => this.pause(), { signal: this.controller.signal });
-      this.render();
-      if (windowElement.dataset.playing === 'true') this.play();
+      this.timeline = new LoopingTimeline(this, {
+        lastStep: processStates.length - 1,
+        duration: 1400,
+        render: (stage) => this.render(stage),
+      });
+      this.timeline.connect();
     }
 
     disconnectedCallback() {
-      this.controller.abort();
-      window.clearTimeout(this.timer);
+      this.timeline?.disconnect();
     }
 
-    private play() {
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      if (this.stage >= 2) this.stage = 0;
-      this.render();
-      this.scheduleNext();
-    }
-
-    private pause() {
-      window.clearTimeout(this.timer);
-    }
-
-    private scheduleNext() {
-      window.clearTimeout(this.timer);
-      this.timer = window.setTimeout(() => {
-        this.stage = this.stage >= 2 ? 0 : this.stage + 1;
-        this.render();
-        this.scheduleNext();
-      }, 1400);
-    }
-
-    private render() {
-      this.dataset.stage = String(this.stage);
+    private render(stage: number) {
+      this.dataset.stage = String(stage);
       const state = this.querySelector<HTMLElement>('[data-process-state]');
-      if (state) state.textContent = processStates[this.stage];
+      if (state) state.textContent = processStates[stage];
       this.querySelectorAll<HTMLElement>('[data-process-step]').forEach((step) => {
         const index = Number(step.dataset.processStep);
-        step.classList.toggle('passed', index < this.stage);
-        step.classList.toggle('current', index === this.stage);
+        step.classList.toggle('passed', index < stage);
+        step.classList.toggle('current', index === stage);
       });
     }
   }
@@ -125,9 +103,10 @@ const { steps }: Props = Astro.props;
 
 <style>
   :global(.xai-process-window) {
-    --accent: #e8b45c;
-    --accent-wash-09: rgba(232, 180, 92, 0.09);
-    border-color: rgba(232, 180, 92, 0.25);
+    --accent: var(--warn-fill);
+    --accent-ink: var(--warn);
+    --accent-wash-09: var(--warn-a085);
+    border-color: var(--warn-a250);
     margin-top: 34px;
   }
   xai-process {
@@ -186,11 +165,11 @@ const { steps }: Props = Astro.props;
     opacity: 1;
   }
   .process-flow article.passed {
-    border-color: rgba(94, 230, 160, 0.25);
+    border-color: var(--accent-line);
   }
   .process-flow article.current {
-    background: rgba(94, 230, 160, 0.06);
-    border-color: var(--accent);
+    background: var(--accent-wash);
+    border-color: var(--accent-ink);
     transform: translateY(-5px);
   }
   .step-number,
@@ -199,7 +178,7 @@ const { steps }: Props = Astro.props;
     font-family: var(--font-mono);
   }
   .step-number {
-    color: var(--accent);
+    color: var(--accent-ink);
     font-size: var(--mono-9);
   }
   .process-flow article > small {
@@ -231,11 +210,11 @@ const { steps }: Props = Astro.props;
   }
   .process-flow article.current .checkpoint-actions span,
   .process-flow article.passed .checkpoint-actions span {
-    color: var(--accent);
+    color: var(--accent-ink);
   }
   .checkpoint-stamp {
     bottom: 18px;
-    color: var(--accent);
+    color: var(--accent-ink);
     font: 400 var(--mono-9)/1 var(--font-mono);
     opacity: 0;
     position: absolute;
@@ -294,13 +273,13 @@ const { steps }: Props = Astro.props;
     font: var(--mono-9)/1.35 var(--font-mono);
   }
   .feedback-loop b {
-    color: var(--accent);
+    color: var(--accent-ink);
     font-weight: 400;
   }
   .feedback-loop i {
     border-top: 1px solid var(--hairline-card);
   }
-  @media (max-width: 800px) {
+  @media (max-width: 950px) {
     xai-process {
       padding: 22px 18px;
     }
@@ -326,7 +305,7 @@ const { steps }: Props = Astro.props;
       display: none;
     }
   }
-  @media (max-width: 799px) {
+  @media (max-width: 950px) {
     :global(.xai-process-window .window-content) {
       container-type: inline-size;
       overflow: hidden;

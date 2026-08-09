@@ -98,8 +98,8 @@ const { python, cpp } = Astro.props;
     position: absolute;
   }
   button[aria-selected='true'] {
-    border-bottom-color: var(--accent);
-    color: var(--accent);
+    border-bottom-color: var(--accent-ink);
+    color: var(--accent-ink);
   }
   .copy-button {
     border-left: 1px solid var(--hairline-card);
@@ -110,7 +110,7 @@ const { python, cpp } = Astro.props;
   .copy-button:hover,
   .copy-button:focus-visible {
     background: var(--accent-wash-09);
-    color: var(--accent);
+    color: var(--accent-ink);
     outline: none;
   }
   [data-code-panel] :global(.astro-code) {
@@ -128,7 +128,7 @@ const { python, cpp } = Astro.props;
   [hidden] {
     display: none;
   }
-  @media (max-width: 520px) {
+  @media (max-width: 600px) {
     .code-toolbar {
       padding-inline: 8px;
     }

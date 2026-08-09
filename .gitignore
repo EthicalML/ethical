@@ -100,7 +100,12 @@ _site/
 # Working / scratch files
 tmp/
 
-.claude
+# Agent-local state stays out of the repo, but skills are project tooling and
+# belong to everyone working on it. The eslint ignore for .claude is separate
+# (eslint.config.mjs) and unaffected: worktrees are still never linted.
+.claude/*
+!.claude/skills/
+.claude/settings.local.json
 CLAUDE.md
 tmp2
 .obsidian/

@@ -167,3 +167,26 @@ import StatBand from '../components/StatBand.astro';
     </a>
   </div>
 </section>
+
+<style>{`
+.policy-work {
+  background: radial-gradient(80% 180% at 80% 50%, var(--accent-wash), transparent 58%);
+  padding: 96px 48px 104px;
+}
+
+.policy-work > div {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+  margin-top: 34px;
+}
+
+@media (max-width: 950px) {
+  .policy-work { padding: 68px 24px 72px; }
+}
+
+@media (max-width: 600px) {
+  .policy-work { padding: 56px 18px 60px; }
+}
+`}</style>

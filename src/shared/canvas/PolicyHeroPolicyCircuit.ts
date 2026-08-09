@@ -1,4 +1,12 @@
-import { CanvasEngine, type CanvasDraw } from './CanvasEngine';
+import {
+  CanvasEngine,
+  type CanvasDraw,
+  type CanvasPalette,
+  rgba,
+  rgbCss,
+  type Rgb,
+  surfaceOf,
+} from './CanvasEngine';
 import {
   createIso,
   drawIsoCube,
@@ -173,8 +181,21 @@ const CUBE_H = 0.9;
 const BEAT = 2.0;
 const RING_GY = 0.28;
 
-// Cold-to-hot cube palette, interpolated by a district's hover heat so it eases in and out.
-const COLD = {
+/* Cold-to-hot cube palette, interpolated by a district's hover heat so it eases
+   in and out. These are numeric channel triplets rather than colour strings, so
+   no colour grep finds them — they are listed per theme here deliberately.
+   Faces are near-black under dark and near-white under light; the cold edge is a
+   desaturated hairline, the hot edge is the accent. */
+interface CubeTone {
+  top: Rgb;
+  right: Rgb;
+  left: Rgb;
+  edge: Rgb;
+  edgeA: number;
+  edgeW: number;
+}
+
+const COLD_DARK: CubeTone = {
   top: [32, 37, 34],
   right: [20, 23, 21],
   left: [13, 15, 14],
@@ -182,7 +203,7 @@ const COLD = {
   edgeA: 0.15,
   edgeW: 1,
 };
-const HOT = {
+const HOT_DARK: CubeTone = {
   top: [40, 55, 46],
   right: [25, 36, 30],
   left: [16, 25, 21],
@@ -190,28 +211,63 @@ const HOT = {
   edgeA: 0.6,
   edgeW: 1.2,
 };
-const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-const mixRgb = (a: number[], b: number[], t: number) =>
-  `rgb(${Math.round(lerp(a[0], b[0], t))},${Math.round(lerp(a[1], b[1], t))},${Math.round(lerp(a[2], b[2], t))})`;
+const COLD_LIGHT: CubeTone = {
+  top: [233, 234, 230],
+  right: [216, 219, 214],
+  left: [199, 203, 198],
+  edge: [78, 92, 84],
+  edgeA: 0.28,
+  edgeW: 1,
+};
+const HOT_LIGHT: CubeTone = {
+  top: [214, 240, 226],
+  right: [193, 227, 209],
+  left: [172, 213, 192],
+  edge: [18, 103, 59],
+  edgeA: 0.7,
+  edgeW: 1.2,
+};
 
-const styleAt = (heat: number): CubeStyle => {
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+const mix = (a: Rgb, b: Rgb, t: number): Rgb => [
+  Math.round(lerp(a[0], b[0], t)),
+  Math.round(lerp(a[1], b[1], t)),
+  Math.round(lerp(a[2], b[2], t)),
+];
+
+const styleAt = (heat: number, palette: CanvasPalette): CubeStyle => {
   const t = clamp(heat);
+  const cold = palette.onLight ? COLD_LIGHT : COLD_DARK;
+  const hot = palette.onLight ? HOT_LIGHT : HOT_DARK;
   return {
-    top: mixRgb(COLD.top, HOT.top, t),
-    right: mixRgb(COLD.right, HOT.right, t),
-    left: mixRgb(COLD.left, HOT.left, t),
-    edge: `rgba(${Math.round(lerp(COLD.edge[0], HOT.edge[0], t))},${Math.round(lerp(COLD.edge[1], HOT.edge[1], t))},${Math.round(lerp(COLD.edge[2], HOT.edge[2], t))},${lerp(COLD.edgeA, HOT.edgeA, t)})`,
-    edgeWidth: lerp(COLD.edgeW, HOT.edgeW, t),
+    top: rgbCss(mix(cold.top, hot.top, t)),
+    right: rgbCss(mix(cold.right, hot.right, t)),
+    left: rgbCss(mix(cold.left, hot.left, t)),
+    edge: rgba(mix(cold.edge, hot.edge, t), lerp(cold.edgeA, hot.edgeA, t)),
+    edgeWidth: lerp(cold.edgeW, hot.edgeW, t),
   };
 };
 
-const PLATE_STYLE: CubeStyle = {
-  top: 'rgba(16,19,17,0.94)',
-  right: 'rgba(11,13,12,0.94)',
-  left: 'rgba(8,10,9,0.94)',
-  edge: 'rgba(94,230,160,0.1)',
-  edgeWidth: 1,
+/* Ground plates take the palette's three isometric faces: the darkest surfaces
+   under dark, the lightest under light, and editable from `tokens.css` because
+   `--canvas-surface-{1,2,3}` is where they now live. */
+const plateStyle = (palette: CanvasPalette): CubeStyle => {
+  const [top, right, left] = palette.surface;
+  return {
+    top: rgba(top, 0.94),
+    right: rgba(right, 0.94),
+    left: rgba(left, 0.94),
+    edge: rgba(palette.accentInk, 0.1),
+    edgeWidth: 1,
+  };
 };
+
+/* Three off-token bright greens carry the "live signal" read: conduit packets,
+   payload text and the rising phrase. Under light they collapse onto the accent
+   ink, which is the only accent value legible as text on a pale surface. */
+const SIGNAL_DARK: Rgb = [180, 255, 214];
+const PAYLOAD_DARK: Rgb = [190, 255, 220];
+const RISE_DARK: Rgb = [200, 255, 224];
 
 export class PolicyHeroPolicyCircuit extends HTMLElement {
   private controller = new AbortController();
@@ -231,7 +287,7 @@ export class PolicyHeroPolicyCircuit extends HTMLElement {
     // pointer events and make the hover flicker on and off as the cursor crosses text.
     window.addEventListener('pointermove', this.handlePointer, { signal: this.controller.signal });
     window.addEventListener('blur', this.handleLeave, { signal: this.controller.signal });
-    this.engine = new CanvasEngine(canvas, this.draw);
+    this.engine = new CanvasEngine(canvas, this.draw, surfaceOf(this));
   }
 
   disconnectedCallback() {
@@ -255,8 +311,11 @@ export class PolicyHeroPolicyCircuit extends HTMLElement {
     this.pointer.active = false;
   };
 
-  private draw: CanvasDraw = (context, width, height, elapsed) => {
+  private draw: CanvasDraw = (context, width, height, elapsed, _pointer, palette) => {
     context.clearRect(0, 0, width, height);
+    const signalTone = palette.onLight ? palette.accentInk : SIGNAL_DARK;
+    const payloadTone = palette.onLight ? palette.accentInk : PAYLOAD_DARK;
+    const riseTone = palette.onLight ? palette.accentInk : RISE_DARK;
     const time = reducedMotion ? 7 : elapsed + 3;
     // Per-embed tuning: data-scale multiplies the iso unit; data-center-x/-y shift
     // the citadel within the canvas (fractions of canvas size).
@@ -310,16 +369,17 @@ export class PolicyHeroPolicyCircuit extends HTMLElement {
       this.outerHeat[i] = h + (target - h) * ease;
     });
 
-    drawIsoGrid(context, project, 8, 'rgba(94,230,160,0.04)');
+    drawIsoGrid(context, project, 8, rgba(palette.accentInk, 0.04));
 
     // Layered ground plates give the district its stepped, fortified silhouette.
-    drawIsoCube(context, project, 0, 0, 0, R + 0.9, 0.12, PLATE_STYLE);
-    drawIsoCube(context, project, 0, 0.12, 0, R - 0.3, 0.14, PLATE_STYLE);
-    drawIsoCube(context, project, 0, 0.26, 0, 3.3, 0.14, PLATE_STYLE);
+    const plate = plateStyle(palette);
+    drawIsoCube(context, project, 0, 0, 0, R + 0.9, 0.12, plate);
+    drawIsoCube(context, project, 0, 0.12, 0, R - 0.3, 0.14, plate);
+    drawIsoCube(context, project, 0, 0.26, 0, 3.3, 0.14, plate);
 
     // Perimeter rampart walls: low crenellated plates between the bastions and gates.
     for (const wall of WALLS) {
-      drawIsoCube(context, project, wall.gx, 0.26, wall.gz, 0.5, 0.5, styleAt(0));
+      drawIsoCube(context, project, wall.gx, 0.26, wall.gz, 0.5, 0.5, styleAt(0, palette));
     }
 
     const hub: IsoPoint = project(0, 0.16, 0);
@@ -333,7 +393,7 @@ export class PolicyHeroPolicyCircuit extends HTMLElement {
     ) => {
       const pts = grid.map(([gx, gz]) => project(gx, gy, gz));
       const lit = clamp(heat);
-      context.strokeStyle = `rgba(94,230,160,${0.12 + lit * 0.42})`;
+      context.strokeStyle = rgba(palette.accentInk, 0.12 + lit * 0.42);
       context.lineWidth = 1 + lit * 0.9;
       context.beginPath();
       pts.forEach((p, i) => (i ? context.lineTo(p[0], p[1]) : context.moveTo(p[0], p[1])));
@@ -345,15 +405,16 @@ export class PolicyHeroPolicyCircuit extends HTMLElement {
         const along = t * segments;
         const seg = Math.min(segments - 1, Math.floor(along));
         const point = lerpPoint(pts[seg], pts[seg + 1], along - seg);
-        if (lit > 0.05) drawGlow(context, point[0], point[1], unit * 0.5, 0.05 + lit * 0.3);
+        if (lit > 0.05)
+          drawGlow(context, point[0], point[1], unit * 0.5, 0.05 + lit * 0.3, palette.accentInk);
         context.beginPath();
         context.arc(point[0], point[1], 1.4, 0, Math.PI * 2);
-        context.fillStyle = `rgba(180,255,214,${0.45 + lit * 0.45})`;
+        context.fillStyle = rgba(signalTone, 0.45 + lit * 0.45);
         context.fill();
         // The payload is the data flowing through the conduit; reveal it on lit routes.
         if (p === 0 && payload && lit > 0.35) {
           context.font = `${Math.max(7.5, unit * 0.4)}px 'Geist Mono', monospace`;
-          context.fillStyle = `rgba(190,255,220,${clamp(lit)})`;
+          context.fillStyle = rgba(payloadTone, clamp(lit));
           context.textAlign = 'left';
           context.fillText(payload, point[0] + unit * 0.45, point[1] - unit * 0.35);
           context.textAlign = 'start';
@@ -407,8 +468,8 @@ export class PolicyHeroPolicyCircuit extends HTMLElement {
     }
 
     // Central hub marker.
-    drawIsoCube(context, project, 0, 0.14, 0, 0.6, 0.5, styleAt(0));
-    drawGlow(context, hub[0], hub[1] - unit * 0.4, unit * 1.2, 0.14);
+    drawIsoCube(context, project, 0, 0.14, 0, 0.6, 0.5, styleAt(0, palette));
+    drawGlow(context, hub[0], hub[1] - unit * 0.4, unit * 1.2, 0.14, palette.accentInk);
 
     // Outer districts (gates and bastions), drawn back to front.
     [...OUTER.keys()]
@@ -416,14 +477,15 @@ export class PolicyHeroPolicyCircuit extends HTMLElement {
       .forEach((index) => {
         const d = OUTER[index];
         const heat = this.outerHeat[index];
-        const style = styleAt(heat);
+        const style = styleAt(heat, palette);
         drawIsoCube(context, project, d.gx, 0.26, d.gz, d.half + 0.12, 0.18, style);
         drawIsoCube(context, project, d.gx, 0.44, d.gz, d.half, d.base, style);
         const topPoint = project(d.gx, 0.44 + d.base + 0.3, d.gz);
-        if (heat > 0.05) drawGlow(context, topPoint[0], topPoint[1], unit * 1.3, heat * 0.24);
+        if (heat > 0.05)
+          drawGlow(context, topPoint[0], topPoint[1], unit * 1.3, heat * 0.24, palette.accentInk);
         if (heat > 0.2) {
           context.font = `${Math.max(7.5, unit * 0.4)}px 'Geist Mono', monospace`;
-          context.fillStyle = `rgba(180,255,214,${clamp(heat)})`;
+          context.fillStyle = rgba(signalTone, clamp(heat));
           context.textAlign = 'center';
           context.fillText(d.label, topPoint[0], topPoint[1] - unit * 0.6);
           context.textAlign = 'start';
@@ -440,7 +502,7 @@ export class PolicyHeroPolicyCircuit extends HTMLElement {
         this.heights[index] += (target - this.heights[index]) * (reducedMotion ? 1 : 0.08);
         const current = this.heights[index];
         const heat = this.towerHeat[index];
-        const style = styleAt(heat);
+        const style = styleAt(heat, palette);
         const full = Math.floor(current);
         const frac = current - full;
 
@@ -463,14 +525,21 @@ export class PolicyHeroPolicyCircuit extends HTMLElement {
 
         const topPoint = project(tower.gx, 0.44 + current + 0.4, tower.gz);
         if (index === active) {
-          drawGlow(context, topPoint[0], topPoint[1], unit * (1.4 + flash), 0.15 + flash * 0.32);
+          drawGlow(
+            context,
+            topPoint[0],
+            topPoint[1],
+            unit * (1.4 + flash),
+            0.15 + flash * 0.32,
+            palette.accentInk,
+          );
         } else if (heat > 0.05) {
-          drawGlow(context, topPoint[0], topPoint[1], unit * 1.3, heat * 0.24);
+          drawGlow(context, topPoint[0], topPoint[1], unit * 1.3, heat * 0.24, palette.accentInk);
         }
 
         context.font = `${Math.max(7.5, unit * 0.42)}px 'Geist Mono', monospace`;
         context.fillStyle =
-          heat > 0.2 || index === active ? 'rgba(180,255,214,0.92)' : 'rgba(244,242,238,0.5)';
+          heat > 0.2 || index === active ? rgba(signalTone, 0.92) : rgba(palette.ink, 0.5);
         context.textAlign = 'center';
         context.fillText(tower.label, topPoint[0], topPoint[1] - unit * 0.7);
         context.textAlign = 'start';
@@ -483,10 +552,17 @@ export class PolicyHeroPolicyCircuit extends HTMLElement {
     if (riseAlpha > 0.02 && activeTower.rise) {
       const lift = 1.9 + beatProgress * 1.8;
       const risePoint = project(activeTower.gx, 0.44 + this.heights[active] + lift, activeTower.gz);
-      drawGlow(context, risePoint[0], risePoint[1], unit * 1.7, riseAlpha * 0.16);
+      drawGlow(
+        context,
+        risePoint[0],
+        risePoint[1],
+        unit * 1.7,
+        riseAlpha * 0.16,
+        palette.accentInk,
+      );
       context.font = `${Math.max(9.5, unit * 0.52)}px 'Geist Mono', monospace`;
       context.textAlign = 'center';
-      context.fillStyle = `rgba(200,255,224,${riseAlpha})`;
+      context.fillStyle = rgba(riseTone, riseAlpha);
       context.fillText(activeTower.rise, risePoint[0], risePoint[1]);
       context.textAlign = 'start';
     }

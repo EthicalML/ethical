@@ -14,3 +14,7 @@ const { compact = false } = Astro.props;
 ---
 
 <SurveyExplorer data={survey} compact={compact} client:visible />
+
+<style is:global>
+  @import './SurveyExplorerIsland.css';
+</style>

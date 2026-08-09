@@ -12,3 +12,48 @@ const { title, eyebrow = 'FEATURE', widget } = Astro.props;
   </div>
   {widget === 'kaos-graph' && <KaosGraph embedded />}
 </aside>
+
+<style is:global>
+  .feature-block {
+    display: grid;
+    gap: 44px;
+    grid-template-columns: 1.05fr 0.95fr;
+    margin: 0 48px 96px;
+    overflow: hidden;
+    padding: 38px;
+  }
+
+  .feature-block h2 {
+    font-size: var(--display-38);
+    line-height: 1.1;
+    margin: 12px 0 18px;
+  }
+
+  @media (max-width: 950px) {
+    .feature-block {
+      margin: 0 24px 64px;
+      padding: 28px;
+    }
+  }
+
+  @media (max-width: 950px) {
+    .feature-block {
+      grid-template-columns: 1fr;
+      margin: 0 24px 72px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .feature-block {
+      gap: 28px;
+      margin: 0 18px 60px;
+      padding: 24px 20px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .feature-block h2 {
+      font-size: 34px;
+    }
+  }
+</style>

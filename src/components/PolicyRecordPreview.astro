@@ -324,7 +324,7 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
   }
 
   .record-count strong {
-    color: var(--accent);
+    color: var(--accent-ink);
     font-size: 22px;
     font-weight: 400;
     margin-right: 7px;
@@ -361,7 +361,7 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
   }
 
   .prv-search:focus-visible {
-    border-color: var(--accent);
+    border-color: var(--accent-ink);
     outline: none;
   }
 
@@ -385,7 +385,7 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
 
   .prv-filters button[aria-pressed='true'] {
     background: var(--accent);
-    border-color: var(--accent);
+    border-color: var(--accent-ink);
     color: var(--accent-on);
   }
 
@@ -431,7 +431,7 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
   }
 
   .prv-row:hover {
-    background: rgba(255, 255, 255, 0.025);
+    background: var(--wash-2);
   }
 
   .prv-row[aria-selected='true'] {
@@ -470,8 +470,8 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
   }
 
   .role-tag {
-    border: 1px solid var(--accent);
-    color: var(--accent);
+    border: 1px solid var(--accent-ink);
+    color: var(--accent-ink);
     font: var(--mono-9) / 1 var(--font-mono);
     letter-spacing: 0.08em;
     padding: 3px 7px;
@@ -489,7 +489,7 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
 
   .prv-back {
     background: var(--accent);
-    border: 1px solid var(--accent);
+    border: 1px solid var(--accent-ink);
     color: var(--accent-on);
     cursor: pointer;
     display: none;
@@ -562,7 +562,7 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
   }
 
   .prv-doc-bar button:hover {
-    color: var(--accent);
+    color: var(--accent-ink);
   }
 
   .prv-doc-bar span {
@@ -640,7 +640,7 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
   }
 
   .pending-tag {
-    background: rgba(255, 255, 255, 0.06);
+    background: var(--wash-3);
     color: var(--text-3);
     font: var(--mono-9) / 1 var(--font-mono);
     letter-spacing: 0.1em;
@@ -650,8 +650,8 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
   }
 
   .prv-cta {
-    border: 1px solid var(--accent);
-    color: var(--accent);
+    border: 1px solid var(--accent-ink);
+    color: var(--accent-ink);
     display: inline-block;
     font: var(--mono-10) / 1 var(--font-mono);
     letter-spacing: 0.1em;
@@ -664,7 +664,7 @@ const pageNames = (slug: string): string[] => Array.from({ length: pageCount(slu
     color: var(--accent-on);
   }
 
-  @media (max-width: 900px) {
+  @media (max-width: 950px) {
     .prv {
       padding: 56px 22px 64px;
     }

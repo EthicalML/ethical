@@ -1,4 +1,11 @@
-import { CanvasEngine, type CanvasDraw, type CanvasPointer } from './CanvasEngine';
+import {
+  CanvasEngine,
+  type CanvasDraw,
+  type CanvasPalette,
+  type CanvasPointer,
+  rgba,
+  surfaceOf,
+} from './CanvasEngine';
 
 type Vector = [number, number, number];
 
@@ -119,6 +126,7 @@ export function createCubeDrawer(): CanvasDraw {
     height: number,
     elapsed: number,
     pointer: CanvasPointer,
+    palette: CanvasPalette,
   ) => {
     const delta = Math.max(0, Math.min(0.05, last === undefined ? 0.016 : elapsed - last));
     last = elapsed;
@@ -157,6 +165,10 @@ export function createCubeDrawer(): CanvasDraw {
         point[2],
       ];
     };
+    /* Sticker tones are the cube's identity and stay put across themes — they are
+       a six-colour scheme, not semantic colour, and they read on either surface.
+       They are also consumed numerically below (hex parsed and scaled by shade),
+       so they cannot become `var()` references. */
     const tones = ['#efece6', '#a8ada3', '#5ee6a0', '#3f9c74', '#cfd2c9', '#7d847c'];
     const axes: Vector[] = [
       [1, 0, 0],
@@ -240,11 +252,16 @@ export function createCubeDrawer(): CanvasDraw {
     quads
       .sort((first, second) => first.depth - second.depth)
       .forEach((quad) => {
-        const body = Math.round(10 + 12 * quad.shade);
+        /* Plastic body: an arithmetic grey, not a colour literal. Dark keeps the
+           near-black 10..22 ramp; light mirrors it into a 245..233 ramp so the
+           cube stays a light object with dark stickers rather than a black blob. */
+        const body = palette.onLight
+          ? Math.round(245 - 12 * quad.shade)
+          : Math.round(10 + 12 * quad.shade);
         path(quad.pts);
-        context.fillStyle = `rgb(${body},${body + 1},${body})`;
+        context.fillStyle = `rgb(${body},${body + (palette.onLight ? -1 : 1)},${body})`;
         context.fill();
-        context.strokeStyle = 'rgba(0,0,0,.7)';
+        context.strokeStyle = rgba(palette.shadow, 0.7);
         context.stroke();
         if (!quad.tone) return;
         const color = [1, 3, 5]
@@ -262,7 +279,7 @@ export class KomputeCube extends HTMLElement {
 
   connectedCallback() {
     const canvas = this.querySelector('canvas');
-    if (canvas) this.engine = new CanvasEngine(canvas, createCubeDrawer());
+    if (canvas) this.engine = new CanvasEngine(canvas, createCubeDrawer(), surfaceOf(this));
   }
 
   disconnectedCallback() {

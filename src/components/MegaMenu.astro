@@ -1,0 +1,622 @@
+---
+import { menus } from '../data/navigation';
+
+const initialProject = menus.oss.items![0]!;
+---
+
+<mega-menu>
+  <div class="menu-wrap">
+    <div class="mega-panel" data-menu-panel aria-hidden="true">
+      {
+        Object.entries(menus).map(([id, menu]) => (
+          <div class:list={['mega-panel-body', id === 'overview' && 'is-active']} data-menu-body={id}>
+            {menu.eyebrow && !menu.groups && <p class="menu-eyebrow">{menu.eyebrow}</p>}
+            {menu.columns ? (
+              <div class="network-menu">
+                {menu.columns.map(({ heading, items }) => (
+                  <div>
+                    <p>{heading}</p>
+                    <div>
+                      {items.map(({ title, description, href }) => (
+                        <a href={href}>
+                          <strong>{title}</strong>
+                          <span>{description}</span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : menu.groups ? (
+              <div class="initiative-menu">
+                <div class="group-rail">
+                  {menu.groups.map(({ title, note }, index) => (
+                    <button type="button" class:list={{ active: index === 0 }} data-initiative-index={index}>
+                      <strong>{title}</strong>
+                      <span>{note}</span>
+                      <i />
+                    </button>
+                  ))}
+                </div>
+                <div class="initiative-panes">
+                  {menu.groups.map(({ note, items }, index) => (
+                    <div class:list={['initiative-pane', index === 0 && 'active']} data-initiative-pane={index}>
+                      <p>{note}</p>
+                      <div>
+                        {items.map(({ label, description, href }) => (
+                          <a href={href}>
+                            <strong>{label}</strong>
+                            <span>{description}</span>
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : id === 'policy' ? (
+              <div class="oss-menu-list standalone">
+                {menu.items!.map(({ eyebrow, title, description, href }) => (
+                  <a href={href}>
+                    <span>{eyebrow}</span>
+                    <strong>{title}</strong>
+                    <small>{description}</small>
+                  </a>
+                ))}
+                <footer>
+                  {menu.footerLinks!.map(({ label, href }) => (
+                    <a class="button primary" href={href}>
+                      {label}
+                    </a>
+                  ))}
+                </footer>
+              </div>
+            ) : id === 'oss' ? (
+              <div class="oss-menu">
+                <div class="oss-menu-list">
+                  {menu.items!.map(({ key, eyebrow, title, description, href }, index) => (
+                    <a
+                      href={href}
+                      class:list={{ active: index === 0 }}
+                      data-oss-index={index}
+                      data-oss-key={key}
+                      data-oss-eyebrow={eyebrow}
+                      data-oss-title={title}
+                      data-oss-description={description}
+                    >
+                      <span>{eyebrow}</span>
+                      <strong>{title}</strong>
+                      <small>{description}</small>
+                    </a>
+                  ))}
+                  <footer>
+                    {menu.footerLinks!.map(({ label, href }) => (
+                      <a class="button primary" href={href}>
+                        {label}
+                      </a>
+                    ))}
+                  </footer>
+                </div>
+                <div class="oss-menu-preview">
+                  <nav-preview mode={initialProject.key} data-surface="dark">
+                    <canvas aria-hidden="true" />
+                  </nav-preview>
+                  <p>
+                    <span data-oss-preview-eyebrow>{initialProject.eyebrow}</span>
+                    <strong data-oss-preview-title>{initialProject.title}</strong>
+                    <i data-oss-preview-description>{initialProject.description}</i>
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div class:list={['menu-link-list', id === 'network' && 'two-columns']}>
+                {menu.items!.map((item, index) => (
+                  <a href={item.href} style={`--row-index:${index}`}>
+                    {(id === 'overview' || id === 'about') && <span>{item.number}</span>}
+                    <strong>{item.title}</strong>
+                    <span aria-hidden="true" />
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</mega-menu>
+
+<script>
+  import '../shared/canvas/NavPreview';
+
+  class MegaMenuElement extends HTMLElement {
+    private controller = new AbortController();
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const panel = this.querySelector<HTMLElement>('[data-menu-panel]');
+      if (!panel) return;
+
+      const signal = this.controller.signal;
+      panel.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => this.dispatchEvent(new CustomEvent('mega-menu:close', { bubbles: true })), { signal });
+      });
+
+      const previewCanvas = panel.querySelector<HTMLElement>('nav-preview');
+      const previewEyebrow = panel.querySelector<HTMLElement>('[data-oss-preview-eyebrow]');
+      const previewTitle = panel.querySelector<HTMLElement>('[data-oss-preview-title]');
+      const previewDescription = panel.querySelector<HTMLElement>('[data-oss-preview-description]');
+      panel.querySelectorAll<HTMLElement>('[data-oss-index]').forEach((row) => {
+        const select = () => {
+          if (row.classList.contains('active')) return;
+          panel.querySelectorAll('[data-oss-index]').forEach((item) => {
+            item.classList.toggle('active', item === row);
+          });
+          if (row.dataset.ossKey) previewCanvas?.setAttribute('mode', row.dataset.ossKey);
+          if (previewEyebrow) previewEyebrow.textContent = row.dataset.ossEyebrow ?? '';
+          if (previewTitle) previewTitle.textContent = row.dataset.ossTitle ?? '';
+          if (previewDescription) previewDescription.textContent = row.dataset.ossDescription ?? '';
+          const preview = panel.querySelector<HTMLElement>('.oss-menu-preview');
+          if (preview) {
+            preview.style.animation = 'none';
+            requestAnimationFrame(() => {
+              preview.style.animation = 'om-swap .3s cubic-bezier(.16,1,.3,1)';
+            });
+          }
+        };
+        row.addEventListener('mouseenter', select, { signal });
+        row.addEventListener('focus', select, { signal });
+      });
+
+      panel.querySelectorAll<HTMLElement>('[data-initiative-index]').forEach((row) => {
+        const select = () => {
+          const index = row.dataset.initiativeIndex;
+          panel.querySelectorAll('[data-initiative-index]').forEach((item) => {
+            item.classList.toggle('active', item === row);
+          });
+          panel.querySelectorAll<HTMLElement>('[data-initiative-pane]').forEach((pane) => {
+            pane.classList.toggle('active', pane.dataset.initiativePane === index);
+          });
+        };
+        row.addEventListener('mouseenter', select, { signal });
+        row.addEventListener('focus', select, { signal });
+      });
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+    }
+
+    openMenu(id: string, left: number, width: number) {
+      const panel = this.querySelector<HTMLElement>('[data-menu-panel]');
+      if (!panel) return;
+      this.positionMenu(left, width);
+      panel.querySelectorAll<HTMLElement>('[data-menu-body]').forEach((body) => {
+        const selected = body.dataset.menuBody === id;
+        body.classList.toggle('is-active', selected);
+        if (selected) {
+          body.style.animation = 'none';
+          requestAnimationFrame(() => {
+            body.style.animation = 'om-swap .3s cubic-bezier(.16,1,.3,1)';
+          });
+        }
+      });
+      panel.setAttribute('aria-hidden', 'false');
+      panel.classList.add('is-open');
+    }
+
+    positionMenu(left: number, width: number) {
+      const panel = this.querySelector<HTMLElement>('[data-menu-panel]');
+      panel?.style.setProperty('--panel-left', `${left}px`);
+      panel?.style.setProperty('--panel-width', `${width}px`);
+    }
+
+    closeMenu() {
+      const panel = this.querySelector<HTMLElement>('[data-menu-panel]');
+      panel?.classList.remove('is-open');
+      panel?.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  if (!customElements.get('mega-menu')) customElements.define('mega-menu', MegaMenuElement);
+</script>
+
+<style>
+  mega-menu {
+    display: contents;
+  }
+
+  .menu-wrap {
+    height: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 100%;
+  }
+
+  .mega-panel {
+    --panel-left: 40px;
+    --panel-width: 380px;
+    background: var(--bg-panel);
+    border: 1px solid var(--hairline-card);
+    box-shadow: var(--shadow-panel);
+    filter: blur(3px);
+    left: var(--panel-left);
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    transform: translateY(-8px);
+    transform-origin: top left;
+    transition:
+      left 0.42s var(--ease-panel),
+      width 0.42s var(--ease-panel),
+      opacity 0.3s var(--ease-panel),
+      transform 0.3s var(--ease-panel),
+      filter 0.3s;
+    width: var(--panel-width);
+  }
+
+  .mega-panel.is-open {
+    filter: none;
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+
+  .mega-panel-body {
+    display: none;
+    min-height: 280px;
+    padding: 24px 26px;
+  }
+
+  .mega-panel-body.is-active {
+    display: block;
+  }
+
+  .mega-panel-body[data-menu-body='oss'],
+  .mega-panel-body[data-menu-body='policy'],
+  .mega-panel-body[data-menu-body='network'] {
+    min-height: 0;
+    padding: 0;
+  }
+
+  .menu-eyebrow {
+    color: var(--text-4);
+    font-family: var(--font-mono);
+    font-size: var(--mono-9);
+    letter-spacing: 0.16em;
+    margin: 0;
+    padding: 0 12px 12px;
+  }
+
+  .menu-link-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .menu-link-list.two-columns {
+    display: grid;
+    gap: 1px 20px;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .menu-link-list a {
+    align-items: center;
+    border-top: 1px solid var(--hairline);
+    display: grid;
+    font-size: var(--body-14-5);
+    grid-template-columns: 30px 1fr auto;
+    min-height: 41px;
+    padding: 0 12px;
+  }
+
+  .menu-link-list a:hover {
+    background: var(--accent-wash-07);
+    opacity: 1;
+  }
+
+  .menu-link-list a span {
+    color: var(--text-4);
+    font-family: var(--font-mono);
+    font-size: var(--mono-9);
+    font-weight: 400;
+  }
+
+  .menu-link-list a strong {
+    font-weight: 400;
+  }
+
+  .oss-menu {
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    margin: 0;
+  }
+
+  .oss-menu-list {
+    border-right: 1px solid var(--hairline);
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    padding: 18px 20px;
+  }
+
+  .oss-menu-list.standalone {
+    border-right: 0;
+  }
+
+  .oss-menu-list > a {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 10px 14px;
+  }
+
+  .oss-menu-list a.active,
+  .oss-menu-list a:hover {
+    background: var(--accent-wash);
+    opacity: 1;
+  }
+
+  .oss-menu-list span {
+    color: var(--ink-5);
+    font: 8.5px/1 var(--font-mono);
+    letter-spacing: 0.16em;
+  }
+
+  .oss-menu-list > a.active span {
+    color: var(--accent-ink);
+  }
+
+  .oss-menu-list strong {
+    font-size: 15.5px;
+    font-weight: 400;
+    margin-top: 4px;
+  }
+
+  .oss-menu-list small {
+    color: var(--ink-4);
+    font-size: 12.5px;
+    line-height: 1.45;
+    margin-top: 2px;
+  }
+
+  .oss-menu-list footer {
+    align-items: flex-start;
+    border-top: 1px solid var(--hairline);
+    display: flex;
+    flex-direction: column;
+    font: 9.5px/1.4 var(--font-mono);
+    gap: 8px;
+    letter-spacing: 0.14em;
+    margin-top: 12px;
+    padding: 12px 12px 0;
+  }
+
+  .oss-menu-preview {
+    background: var(--bg-inset);
+    min-height: 300px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .oss-menu-preview canvas {
+    height: 100%;
+    inset: 0;
+    mask-image: linear-gradient(180deg, #000 42%, transparent 94%);
+    -webkit-mask-image: linear-gradient(180deg, #000 42%, transparent 94%);
+    position: absolute;
+    width: 100%;
+  }
+
+  .oss-menu-preview p {
+    bottom: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    left: 26px;
+    margin: 0;
+    position: absolute;
+    right: 26px;
+  }
+
+  .oss-menu-preview p span {
+    color: var(--accent-ink);
+    font: 8.5px/1 var(--font-mono);
+    letter-spacing: 0.16em;
+  }
+
+  .oss-menu-preview p strong {
+    font: 300 26px/1.2 var(--font-display);
+  }
+
+  .oss-menu-preview p i {
+    color: var(--ink-3);
+    font-size: 13px;
+    font-style: normal;
+    line-height: 1.5;
+    max-width: 420px;
+  }
+
+  .network-menu {
+    display: grid;
+    gap: 34px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    height: 314.5px;
+    padding: 28px 34px;
+  }
+
+  .network-menu > div > p {
+    color: var(--ink-5);
+    font: 9px/1 var(--font-mono);
+    letter-spacing: 0.16em;
+    margin: 0;
+  }
+
+  .network-menu > div > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 12px;
+  }
+
+  .network-menu a {
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 9px 12px;
+  }
+
+  .network-menu a:hover {
+    background: var(--wash-3);
+    opacity: 1;
+  }
+
+  .network-menu strong {
+    font-size: 14.5px;
+    font-weight: 400;
+  }
+
+  .network-menu span {
+    color: var(--ink-4);
+    font-size: 12.5px;
+    line-height: 1.45;
+  }
+
+  .mega-panel-body[data-menu-body='overview'] {
+    height: 365px;
+  }
+
+  .mega-panel-body[data-menu-body='initiatives'] {
+    height: 340px;
+    padding: 0;
+  }
+
+  .mega-panel-body[data-menu-body='about'] {
+    height: 323px;
+  }
+
+  .initiative-menu {
+    display: grid;
+    grid-template-columns: 230px 1fr;
+    height: 340px;
+    margin: 0;
+  }
+
+  .group-rail {
+    border-right: 1px solid var(--hairline);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 24px 18px;
+  }
+
+  .group-rail button {
+    align-items: center;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    color: inherit;
+    column-gap: 10px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    padding: 11px 13px;
+    row-gap: 2px;
+    text-align: left;
+    width: 100%;
+  }
+
+  .group-rail button.active {
+    background: var(--accent-wash-09);
+  }
+
+  .group-rail strong {
+    font-size: 14.5px;
+    font-weight: 400;
+  }
+
+  .group-rail span {
+    color: var(--text-4);
+    font: 8.5px/1.4 var(--font-mono);
+    grid-column: 1;
+    letter-spacing: 0.14em;
+  }
+
+  .group-rail i {
+    color: var(--accent-ink);
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  .initiative-panes {
+    padding: 26px 30px;
+  }
+
+  .initiative-pane {
+    display: none;
+  }
+
+  .initiative-pane.active {
+    display: block;
+  }
+
+  .initiative-pane > p {
+    color: var(--text-4);
+    font: 9px var(--font-mono);
+    letter-spacing: 0.16em;
+    margin: 0;
+  }
+
+  .initiative-pane > div {
+    display: grid;
+    gap: 4px 26px;
+    grid-template-columns: 1fr 1fr;
+    margin-top: 14px;
+  }
+
+  .initiative-pane a {
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    padding: 10px 12px;
+  }
+
+  .initiative-pane a:hover {
+    background: var(--wash-3);
+  }
+
+  .initiative-pane strong {
+    font-size: 14.5px;
+    font-weight: 400;
+  }
+
+  .initiative-pane span {
+    color: var(--ink-4);
+    font-size: 12.5px;
+    line-height: 1.45;
+  }
+
+  @media (max-width: 950px) {
+    .mega-panel {
+      display: none;
+    }
+  }
+</style>
+
+<style is:global>
+  /* Runtime inline animations cannot reference Astro-renamed scoped keyframes. */
+  @keyframes om-swap {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>

@@ -23,7 +23,7 @@ const ariaSentence = [...subtitle_lines, initialBeneficiary].filter(Boolean).joi
 ---
 
 <header class="hero" data-reveal data-pagefind-ignore>
-  <hero-cycle><canvas class="hero-canvas" aria-hidden="true"></canvas></hero-cycle>
+  <hero-cycle data-surface="dark"><canvas class="hero-canvas" aria-hidden="true"></canvas></hero-cycle>
   <div class="hero-copy">
     {
       status_href ? (
@@ -219,3 +219,7 @@ const ariaSentence = [...subtitle_lines, initialBeneficiary].filter(Boolean).joi
     customElements.define('type-writer', TypeWriter);
   }
 </script>
+
+<style is:global>
+  @import './Hero.css';
+</style>

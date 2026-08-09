@@ -55,7 +55,7 @@ const { edition, sample, fieldDates, methodology, citation } = Astro.props;
   }
 
   .survey-evidence aside {
-    border-left: 1px solid var(--accent);
+    border-left: 1px solid var(--accent-ink);
     padding-left: 24px;
   }
 
@@ -65,14 +65,14 @@ const { edition, sample, fieldDates, methodology, citation } = Astro.props;
     font-size: 13px;
   }
 
-  @media (max-width: 760px) {
+  @media (max-width: 950px) {
     .survey-evidence {
       grid-template-columns: 1fr;
     }
 
     .survey-evidence aside {
       border-left: 0;
-      border-top: 1px solid var(--accent);
+      border-top: 1px solid var(--accent-ink);
       padding-left: 0;
       padding-top: 22px;
     }

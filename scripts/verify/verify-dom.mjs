@@ -1,8 +1,19 @@
-import playwright from '/Users/asaucedo/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/index.js';
-import { readFile } from 'node:fs/promises';
+import playwright from './playwright.mjs';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import {
+  applyTheme,
+  colorAlpha,
+  DEFAULT_THEME,
+  parseThemeArgs,
+  readTokenColors,
+  sameHue,
+} from './theme.mjs';
 
 const { chromium } = playwright;
-const args = process.argv.slice(2);
+
+// WCAG 2.x AA for body text.
+const WCAG_BODY = 4.5;
+const { theme, rest: args } = parseThemeArgs(process.argv.slice(2));
 const routes = [];
 let viewportValue = process.env.VERIFY_VIEWPORT ?? '1440x1000';
 for (let index = 0; index < args.length; index += 1) {
@@ -32,11 +43,25 @@ if (routes.length === 0) {
   routes.push(...JSON.parse(await readFile(new URL('./routes.json', import.meta.url), 'utf8')));
 }
 
+// Contrast ratios are recorded in dark and compared in light: absolute WCAG
+// floors are unusable here because the correct dark site already produces 1.07
+// and 1.52 on decorative text, so the only honest gate is the delta.
+const contrastBaselineDir = new URL(`./out/contrast-baseline/${viewport.width}/`, import.meta.url);
+const contrastBaselineFile = new URL('contrast.json', contrastBaselineDir);
+const recordsContrastBaseline = theme === DEFAULT_THEME;
+const contrastBaseline = recordsContrastBaseline
+  ? {}
+  : await readFile(contrastBaselineFile, 'utf8')
+      .then(JSON.parse)
+      .catch(() => null);
+
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage({
   viewport,
   deviceScaleFactor: 1,
+  colorScheme: theme,
 });
+await applyTheme(page, theme);
 // The form check below submits for real, and a build made with FORM_ENDPOINT
 // configured carries the live receiver in its bundle, so without this stub
 // every gate run appends a Chrome Gate row to the production spreadsheet.
@@ -186,6 +211,18 @@ for (const route of routes) {
           drawerOpen: drawer.getAttribute('aria-hidden') === 'false',
           firstPanelOpen: !drawer.querySelector('.mobile-submenu').hidden,
           joinVisible: drawer.querySelector('.join-pill').getBoundingClientRect().height >= 44,
+          /* The theme control is measured here, with the drawer open, rather than
+             in the page-level touch-target sweep: below 950px the desktop pill is
+             `display: none` and the drawer copy is inside a closed, hidden drawer,
+             so a page-level selector would match nothing and assert nothing. This
+             is where the control is actually reachable by a thumb. */
+          themeToggle: (() => {
+            const box = drawer.querySelector('[data-theme-toggle]')?.getBoundingClientRect() ?? {
+              width: 0,
+              height: 0,
+            };
+            return { width: box.width, height: box.height };
+          })(),
           minTargetHeight: Math.min(
             ...targets.map((element) => element.getBoundingClientRect().height),
           ),
@@ -317,12 +354,106 @@ for (const route of routes) {
     const canvases = [...document.querySelectorAll('canvas')].filter(
       (canvas) => canvas.clientWidth >= 2 && canvas.clientHeight >= 2,
     );
+    // Text-contrast sampling. Composites each element's colour over the first
+    // opaque ancestor background and reports the WCAG ratio, keyed by a
+    // structural path so the key survives content edits.
+    const parseColor = (value) => {
+      const parts = String(value)
+        .match(/[\d.]+/g)
+        ?.map(Number) ?? [0, 0, 0, 0];
+      return { r: parts[0], g: parts[1], b: parts[2], a: parts[3] ?? 1 };
+    };
+    // Porter-Duff source-over, alpha included. Returning a hardcoded `a: 1`
+    // makes two stacked translucent layers look opaque, which stops the
+    // ancestor walk early and reports a background the page never paints.
+    const sourceOver = (top, under) => {
+      const alpha = top.a + under.a * (1 - top.a);
+      if (alpha === 0) return { r: 0, g: 0, b: 0, a: 0 };
+      const blend = (topChannel, underChannel) =>
+        (topChannel * top.a + underChannel * under.a * (1 - top.a)) / alpha;
+      return {
+        r: blend(top.r, under.r),
+        g: blend(top.g, under.g),
+        b: blend(top.b, under.b),
+        a: alpha,
+      };
+    };
+    const channelLuminance = (value) => {
+      const scaled = value / 255;
+      return scaled <= 0.03928 ? scaled / 12.92 : ((scaled + 0.055) / 1.055) ** 2.4;
+    };
+    const luminance = (color) =>
+      0.2126 * channelLuminance(color.r) +
+      0.7152 * channelLuminance(color.g) +
+      0.0722 * channelLuminance(color.b);
+    const contrastRatio = (a, b) => {
+      const [high, low] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+      return (high + 0.05) / (low + 0.05);
+    };
+    const canvasBackdrop = { r: 255, g: 255, b: 255, a: 1 };
+    const effectiveBackground = (element) => {
+      let current = element;
+      let stack = null;
+      while (current) {
+        const layer = parseColor(getComputedStyle(current).backgroundColor);
+        if (layer.a > 0) {
+          stack = stack ? sourceOver(stack, layer) : layer;
+          if (stack.a >= 1) return stack;
+        }
+        current = current.parentElement;
+      }
+      return stack ? sourceOver(stack, canvasBackdrop) : canvasBackdrop;
+    };
+    const structuralKey = (element) => {
+      const steps = [];
+      let current = element;
+      while (current && current !== document.body && steps.length < 6) {
+        const tag = current.tagName.toLowerCase();
+        const classes = String(current.className || '')
+          .trim()
+          .split(/\s+/)
+          .filter(Boolean)
+          .slice(0, 3)
+          .join('.');
+        const index =
+          [...(current.parentElement?.children ?? [])]
+            .filter((sibling) => sibling.tagName === current.tagName)
+            .indexOf(current) + 1;
+        steps.unshift(`${tag}${classes ? `.${classes}` : ''}:${index}`);
+        current = current.parentElement;
+      }
+      return steps.join('>');
+    };
+    const textContrast = [];
+    const contrastSeen = new Set();
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      if (!node.nodeValue.trim()) continue;
+      const element = node.parentElement;
+      if (!element || contrastSeen.has(element)) continue;
+      contrastSeen.add(element);
+      const style = getComputedStyle(element);
+      if (style.display === 'none' || style.visibility === 'hidden') continue;
+      if (Number(style.opacity) === 0 || !element.getClientRects().length) continue;
+      const background = effectiveBackground(element);
+      const foreground = sourceOver(parseColor(style.color), background);
+      textContrast.push({
+        key: structuralKey(element),
+        ratio: Number(contrastRatio(foreground, background).toFixed(3)),
+      });
+    }
     const unrevealed = [...document.querySelectorAll('[data-reveal]')]
       .filter((node) => node.dataset.revealed !== '1')
       .map((node) => `${node.tagName.toLowerCase()}#${node.id}.${node.className}`);
     const touchTargets = [
       ...document.querySelectorAll(
-        '.header-row > .wordmark, [data-mobile-menu-open], .header-row .join-pill, main button, main .button, .cta-block a, .principle-pagination a, form button',
+        /* `[data-theme-toggle]` matches two controls. Below 950px — the same
+           breakpoint `isMobile` uses — the desktop pill is `display: none` and the
+           drawer copy is hidden inside the closed drawer, so this sweep passes over
+           both; it is a guard that the 52x25 desktop pill never becomes reachable
+           on mobile, not the primary assertion. The reachable control is measured
+           with the drawer open in `mobileNav.themeToggle`. */
+        '.header-row > .wordmark, [data-mobile-menu-open], [data-theme-toggle], .header-row .join-pill, main button, main .button, .cta-block a, .principle-pagination a, form button',
       ),
     ].filter((element) => {
       const style = getComputedStyle(element);
@@ -356,6 +487,7 @@ for (const route of routes) {
       pageWidth: document.documentElement.scrollWidth,
       viewportWidth: document.documentElement.clientWidth,
       unrevealed,
+      textContrast,
       fonts: {
         newsreader: document.fonts.check('16px "Newsreader"'),
         geist: document.fonts.check('16px "Geist"'),
@@ -415,16 +547,23 @@ for (const route of routes) {
                   };
                 },
               ),
-              footnoteStandards: [...document.querySelectorAll('.footnote-band .standards a')].map(
-                (link) => {
-                  const style = getComputedStyle(link);
-                  return {
-                    color: style.color,
-                    fontFamily: style.fontFamily,
-                    fontSize: style.fontSize,
-                  };
-                },
-              ),
+              /* Was `.footnote-band .standards a`, which has never matched anything
+                 in the built site — `.some()` over an empty list is always false, so
+                 the tier it meant to guard was unasserted. The mono tier that does
+                 exist in the band is the two utility links; the count is asserted so
+                 a rename cannot make this vacuous again. */
+              footnoteStandards: [
+                ...document.querySelectorAll(
+                  '.footnote-band .footnote-all-talks, .footnote-band .footnote-legal a',
+                ),
+              ].map((link) => {
+                const style = getComputedStyle(link);
+                return {
+                  color: style.color,
+                  fontFamily: style.fontFamily,
+                  fontSize: style.fontSize,
+                };
+              }),
               initiativeCards: [
                 ...document.querySelectorAll('#reports .oss-carousel-track > article.oss-card'),
               ]
@@ -460,7 +599,72 @@ for (const route of routes) {
   });
   if (checks.homepage) Object.assign(checks.homepage, homepageInteractions);
 
+  // Colour assertions name the token they mean and resolve it from the page, so
+  // they describe intent ("this is the accent ink") in either theme rather than
+  // one theme's literal.
+  const tokens = await readTokenColors(page, [
+    '--text-1',
+    '--accent',
+    '--accent-ink',
+    '--bg-inset',
+  ]);
+  const accentInk = tokens['--accent-ink'] ?? tokens['--accent'];
+
+  // Lowest ratio per structural key; several elements can share a key and the
+  // worst of them is the one worth gating on.
+  const contrastByKey = {};
+  for (const { key, ratio } of checks.textContrast) {
+    contrastByKey[key] = Math.min(contrastByKey[key] ?? Infinity, ratio);
+  }
+  let contrastReport = null;
+  if (recordsContrastBaseline) {
+    contrastBaseline[route] = contrastByKey;
+  } else if (!contrastBaseline?.[route]) {
+    contrastReport = { compared: 0, missingBaseline: true, regressions: [], invisible: [] };
+  } else {
+    const reference = contrastBaseline[route];
+    const regressions = [];
+    const invisible = [];
+    for (const [key, ratio] of Object.entries(contrastByKey)) {
+      const darkRatio = reference[key];
+      if (darkRatio === undefined) continue;
+      if (ratio < 1.15 && darkRatio >= 1.15) invisible.push({ key, ratio, darkRatio });
+      /* The 0.9x rule catches text that got harder to read, but it cannot be the
+         whole gate: an accent that is 11.7:1 on near-black cannot also be 10.5:1
+         on paper without ceasing to be the accent, and the drop to 5.5:1 is the
+         design, not a regression. Absolute WCAG floors are unusable as a failure
+         threshold here (correct dark decorative text sits at 1.07), but they are
+         sound as a *pass* threshold: a node that clears the 4.5:1 body gate in
+         light is readable by definition, whatever it scored in dark. */
+      else if (ratio < WCAG_BODY && ratio < darkRatio * 0.9)
+        regressions.push({ key, ratio, darkRatio });
+    }
+    const worstFirst = (list) =>
+      list.sort((a, b) => a.ratio / a.darkRatio - b.ratio / b.darkRatio).slice(0, 10);
+    contrastReport = {
+      compared: Object.keys(contrastByKey).filter((key) => key in reference).length,
+      missingBaseline: false,
+      invisibleCount: invisible.length,
+      regressionCount: regressions.length,
+      invisible: worstFirst(invisible),
+      regressions: worstFirst(regressions),
+    };
+  }
+
   const failures = [];
+  if (contrastReport?.missingBaseline) {
+    failures.push(`no dark contrast baseline for ${route}; run the dark gate first`);
+  }
+  if (contrastReport?.invisibleCount) {
+    failures.push(
+      `${contrastReport.invisibleCount} element(s) dropped below a 1.15 contrast ratio that were legible in dark`,
+    );
+  }
+  if (contrastReport?.regressionCount) {
+    failures.push(
+      `${contrastReport.regressionCount} element(s) lost more than 10% of their dark contrast ratio`,
+    );
+  }
   const validStatus = isNotFoundRoute
     ? response && [200, 404].includes(response.status())
     : response?.status() === 200;
@@ -569,14 +773,16 @@ for (const route of routes) {
     )
       failures.push('homepage major-section divider or spacing rhythm is inconsistent');
     if (
+      checks.homepage.footnoteStandards.length !== 2 ||
       checks.homepage.footnoteStandards.some(
         ({ color, fontFamily, fontSize }) =>
-          color !== 'rgba(244, 242, 238, 0.42)' ||
+          !sameHue(color, tokens['--text-1']) ||
+          colorAlpha(color) >= 1 ||
           !fontFamily.includes('Geist Mono') ||
-          fontSize !== '9.5px',
+          fontSize !== '13px',
       )
     )
-      failures.push('homepage footnote standards type tier has regressed');
+      failures.push('homepage footnote mono link tier has regressed');
     if (
       checks.homepage.initiativeCards[0]?.eyebrow !== 'Governance' ||
       checks.homepage.initiativeCards[0]?.heading !== 'ML Maturity Model' ||
@@ -596,16 +802,24 @@ for (const route of routes) {
       checks.homepage.initiativeCards[1]?.inlineLinks.length !== 1 ||
       checks.homepage.initiativeCards[1]?.inlineLinks.some(
         ({ color, decoration, href, label }) =>
-          color !== 'rgb(94, 230, 160)' ||
+          color !== accentInk ||
           decoration !== 'underline' ||
           href !== '/frameworks/security/' ||
           label !== 'the Agentic & ML Security framework',
       )
     )
       failures.push('homepage governance/security card structure is incomplete');
+    // Semantically: an accent wash of the same geometry fading into the inset
+    // surface. The literals move with the theme; the relationship does not.
+    const wash =
+      /^radial-gradient\(70% 90% at 70% 0%, (rgba?\([^)]*\)), (rgba?\([^)]*\)) 72%\)$/.exec(
+        checks.homepage.formWash,
+      );
     if (
-      checks.homepage.formWash !==
-      'radial-gradient(70% 90% at 70% 0%, rgba(94, 230, 160, 0.14), rgb(15, 16, 15) 72%)'
+      !wash ||
+      !sameHue(wash[1], tokens['--accent']) ||
+      colorAlpha(wash[1]) >= 1 ||
+      wash[2] !== tokens['--bg-inset']
     ) {
       failures.push('homepage form wash differs from the prototype');
     }
@@ -619,6 +833,8 @@ for (const route of routes) {
         !nav.drawerOpen ||
         !nav.firstPanelOpen ||
         !nav.joinVisible ||
+        nav.themeToggle.width < 43.5 ||
+        nav.themeToggle.height < 43.5 ||
         nav.minTargetHeight < 43.5 ||
         !nav.scrollLocked ||
         !nav.drawerClosed ||
@@ -691,7 +907,10 @@ for (const route of routes) {
     failures,
     errors,
     form: formChecks,
+    contrast: contrastReport ?? { recorded: Object.keys(contrastByKey).length },
     ...checks,
+    // The full per-node ratio table is baseline material, not report material.
+    textContrast: undefined,
   });
 
   page.off('pageerror', onPageError);
@@ -699,6 +918,17 @@ for (const route of routes) {
 }
 
 await browser.close();
+if (recordsContrastBaseline) {
+  await mkdir(contrastBaselineDir, { recursive: true });
+  const stored = await readFile(contrastBaselineFile, 'utf8')
+    .then(JSON.parse)
+    .catch(() => ({}));
+  // Merge so a partial run refreshes only the routes it visited.
+  await writeFile(
+    contrastBaselineFile,
+    `${JSON.stringify({ ...stored, ...contrastBaseline }, null, 2)}\n`,
+  );
+}
 const passed = results.every((result) => result.passed);
-console.log(JSON.stringify({ passed, baseUrl, viewport, results }, null, 2));
+console.log(JSON.stringify({ passed, theme, baseUrl, viewport, results }, null, 2));
 if (!passed) process.exit(1);

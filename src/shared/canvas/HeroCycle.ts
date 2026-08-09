@@ -1,4 +1,20 @@
+import {
+  type CanvasPalette,
+  getPalette,
+  onThemeChange,
+  rgba,
+  rgbCss,
+  type Rgb,
+  type CanvasSurface,
+  surfaceOf,
+} from './CanvasEngine';
+
 type HeroMode = 'planes' | 'sphere' | 'contour';
+
+/* The sphere mode paints in its own slightly cooler green, distinct from the
+   site accent — kept as a literal under dark so the mode stays visually its own,
+   collapsed onto the accent ink under light where it would otherwise vanish. */
+const SPHERE_GREEN_DARK: Rgb = [62, 207, 166];
 
 interface GraphNode {
   anchor?: string;
@@ -57,8 +73,11 @@ export class HeroCycle extends HTMLElement {
   private lastPointer?: { x: number; y: number };
   private pointer = { x: 0.5, y: 0.5 };
   private pointerTarget = { x: 0.5, y: 0.5 };
+  private surface: CanvasSurface = 'dark';
+  private palette: CanvasPalette = getPalette();
   private reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   private resizeObserver?: ResizeObserver;
+  private unsubscribeTheme?: () => void;
   private sphere?: { vertices: [number, number, number][]; edges: [number, number][] };
   private startedAt = performance.now();
   private state: HeroState = {
@@ -75,6 +94,8 @@ export class HeroCycle extends HTMLElement {
 
   connectedCallback() {
     this.controller = new AbortController();
+    this.surface = surfaceOf(this);
+    this.palette = getPalette(this.surface);
     this.canvas = this.querySelector('canvas') ?? undefined;
     this.host =
       this.canvas?.closest<HTMLElement>('.hero, .canvas-variant') ??
@@ -95,6 +116,7 @@ export class HeroCycle extends HTMLElement {
     });
     this.resizeObserver = new ResizeObserver(this.handleResize);
 
+    this.unsubscribeTheme = onThemeChange(this.handleThemeChange);
     this.fit();
     this.draw(0);
     this.resizeObserver.observe(this.canvas);
@@ -105,10 +127,20 @@ export class HeroCycle extends HTMLElement {
     cancelAnimationFrame(this.animationFrame);
     this.controller.abort();
     this.resizeObserver?.disconnect();
+    this.unsubscribeTheme?.();
   }
+
+  // This element owns its rAF loop, so it subscribes to the theme directly. The
+  // offscreen `buffer` is fully repainted every frame, but a paused, hidden or
+  // reduced-motion element needs an explicit repaint to clear the stale theme.
+  private handleThemeChange = () => {
+    this.palette = getPalette(this.surface);
+    if (this.context) this.draw(this.state.last);
+  };
 
   private draw(elapsed: number) {
     const context = this.context!;
+    this.palette = getPalette(this.surface);
     const delta = Math.max(0, Math.min(0.05, elapsed - this.state.last));
     this.state.last = elapsed;
     const pointerFollow = 1 - Math.exp(-delta * 8);
@@ -217,7 +249,7 @@ export class HeroCycle extends HTMLElement {
       }
     }
     context.globalAlpha = 0.08 * tear;
-    context.fillStyle = '#5ee6a0';
+    context.fillStyle = rgbCss(this.palette.accentInk);
     context.fillRect(0, (random(99) * this.height) | 0, this.width, 2 + 3 * tear);
     context.globalAlpha = 1;
   }
@@ -251,12 +283,12 @@ export class HeroCycle extends HTMLElement {
       context.lineWidth = 0.7;
       const fade = 0.34 - (index / 54) * 0.26;
       context.strokeStyle =
-        index % 9 === 0 ? `rgba(94,230,160,${fade + 0.1})` : `rgba(244,242,238,${fade})`;
+        index % 9 === 0 ? rgba(this.palette.accentInk, fade + 0.1) : rgba(this.palette.ink, fade);
       context.stroke();
     }
     context.beginPath();
     context.ellipse(centerX, centerY, 14, 9, elapsed * 0.25, 0, 7);
-    context.strokeStyle = 'rgba(94,230,160,.75)';
+    context.strokeStyle = rgba(this.palette.accentInk, 0.75);
     context.lineWidth = 1.1;
     context.stroke();
   }
@@ -308,7 +340,7 @@ export class HeroCycle extends HTMLElement {
         (1 - edge.distance / edge.limit) *
         (0.3 + (0.3 * ((start.z + end.z) / 2 + 1)) / 2);
       if (alpha < 0.012) return;
-      context.strokeStyle = `rgba(94,230,160,${alpha})`;
+      context.strokeStyle = rgba(this.palette.accentInk, alpha);
       context.beginPath();
       context.moveTo(start.x, start.y);
       context.lineTo(end.x, end.y);
@@ -321,18 +353,18 @@ export class HeroCycle extends HTMLElement {
       context.beginPath();
       context.arc(point.x, point.y, radius, 0, 7);
       context.fillStyle = bright
-        ? `rgba(94,230,160,${point.alpha * 0.95})`
-        : `rgba(244,242,238,${point.alpha * (0.3 + 0.42 * point.perspective)})`;
+        ? rgba(this.palette.accentInk, point.alpha * 0.95)
+        : rgba(this.palette.ink, point.alpha * (0.3 + 0.42 * point.perspective));
       context.fill();
       if (bright) {
         context.beginPath();
         context.arc(point.x, point.y, radius + 6 + 3 * point.perspective, 0, 7);
-        context.strokeStyle = `rgba(94,230,160,${point.alpha * 0.16})`;
+        context.strokeStyle = rgba(this.palette.accentInk, point.alpha * 0.16);
         context.stroke();
       }
       if (point.anchor && point.z > -0.1) {
         context.font = "10px 'Geist Mono',monospace";
-        context.fillStyle = `rgba(244,242,238,${point.alpha * 0.3})`;
+        context.fillStyle = rgba(this.palette.ink, point.alpha * 0.3);
         context.fillText(point.anchor.toUpperCase(), point.x + 11, point.y - 9);
       }
     });
@@ -345,6 +377,7 @@ export class HeroCycle extends HTMLElement {
     elapsed: number,
   ) {
     if (!this.sphere) this.initializeSphere();
+    const sphereGreen = this.palette.onLight ? this.palette.accentInk : SPHERE_GREEN_DARK;
     const rotationX = -0.24 + elapsed * 0.06 + (this.pointer.y - 0.5) * 0.5;
     const rotationY = 0.4 + elapsed * 0.2 + this.state.spin * 1.4 + (this.pointer.x - 0.5) * 0.9;
     const radius = Math.min(width, height) * 0.36;
@@ -374,7 +407,7 @@ export class HeroCycle extends HTMLElement {
     );
 
     context.setLineDash([1, 6]);
-    context.strokeStyle = 'rgba(62,207,166,.18)';
+    context.strokeStyle = rgba(sphereGreen, 0.18);
     context.beginPath();
     context.arc(centerX, centerY, radius * 1.06, 0, 7);
     context.stroke();
@@ -383,7 +416,7 @@ export class HeroCycle extends HTMLElement {
       const life = Math.min(alive[from], alive[to]);
       if (life <= 0.02) return;
       const depth = 0.15 + Math.max(0, 1 - ((points[from].z + points[to].z) / 2 + 1) / 2) * 0.75;
-      context.strokeStyle = `rgba(62,207,166,${depth * life * 0.8})`;
+      context.strokeStyle = rgba(sphereGreen, depth * life * 0.8);
       context.beginPath();
       context.moveTo(points[from].x, points[from].y);
       context.lineTo(points[to].x, points[to].y);
@@ -395,17 +428,17 @@ export class HeroCycle extends HTMLElement {
       const depth = 0.4 + Math.max(0, 1 - (point.z + 1) / 2) * 0.6;
       context.beginPath();
       context.arc(point.x, point.y, 2.4 * (0.4 + life * 0.9), 0, 7);
-      context.fillStyle = `rgba(62,207,166,${depth * life * (point.z < 0 ? 1 : 0.45)})`;
+      context.fillStyle = rgba(sphereGreen, depth * life * (point.z < 0 ? 1 : 0.45));
       context.fill();
     });
     const glow = context.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius * 0.22);
-    glow.addColorStop(0, 'rgba(62,207,166,.5)');
-    glow.addColorStop(1, 'rgba(62,207,166,0)');
+    glow.addColorStop(0, rgba(sphereGreen, 0.5));
+    glow.addColorStop(1, rgba(sphereGreen, 0));
     context.fillStyle = glow;
     context.beginPath();
     context.arc(centerX, centerY, radius * 0.22, 0, 7);
     context.fill();
-    context.fillStyle = '#fff';
+    context.fillStyle = rgbCss(this.palette.wash);
     context.beginPath();
     context.arc(centerX, centerY, 3, 0, 7);
     context.fill();

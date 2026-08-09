@@ -1,10 +1,17 @@
 version: 2
 
-# Routine version updates arrive in one batch on Wednesday mornings rather than
-# as a trickle of single-package pull requests. Security updates are a separate
-# GitHub feature and are NOT governed by this schedule: they open as soon as an
-# advisory lands, which is the behaviour we want. The grouping below applies to
-# both, so a security batch also arrives as one pull request per group.
+# One batch, not a trickle. Routine version updates arrive as a single pull
+# request per ecosystem on Wednesday mornings; security updates arrive as a
+# single pull request as soon as an advisory lands.
+#
+# `applies-to` is load-bearing. A group without it covers version updates ONLY,
+# so security updates fall back to one pull request per advisory no matter how
+# the version groups are arranged. That is why every ecosystem below declares
+# both an `all` and an `all-security` group.
+#
+# Majors stay on their own for npm: a framework bump usually needs reading and
+# testing by itself, and bundling one into a batch means the whole batch fails
+# or the major goes in unread.
 updates:
   - package-ecosystem: npm
     directory: /
@@ -15,30 +22,15 @@ updates:
       timezone: Europe/Berlin
     open-pull-requests-limit: 5
     groups:
-      # Astro and its integrations move together; a split upgrade usually fails
-      # to build, so they belong in one pull request.
-      astro:
-        patterns:
-          - astro
-          - '@astrojs/*'
-      # Lint, format and type tooling: churny, low risk, and never worth a
-      # pull request each.
-      tooling:
-        patterns:
-          - eslint
-          - eslint-*
-          - '@eslint/*'
-          - '@typescript-eslint/*'
-          - prettier
-          - prettier-*
-          - typescript
-          - globals
-      # Everything else that is not a major bump. Majors stay individual so
-      # they can be read and tested on their own.
-      minor-and-patch:
+      all:
+        applies-to: version-updates
+        patterns: ['*']
         update-types:
           - minor
           - patch
+      all-security:
+        applies-to: security-updates
+        patterns: ['*']
 
   - package-ecosystem: github-actions
     directory: /
@@ -48,6 +40,9 @@ updates:
       time: '06:00'
       timezone: Europe/Berlin
     groups:
-      actions:
-        patterns:
-          - '*'
+      all:
+        applies-to: version-updates
+        patterns: ['*']
+      all-security:
+        applies-to: security-updates
+        patterns: ['*']
