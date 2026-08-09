@@ -30,6 +30,7 @@
   name: World Summit AI Europe 2026
   series: world-summit-ai-europe
   url: https://worldsummit.ai/
+  image: https://worldsummit.ai/wp-content/uploads/sites/4/2025/10/WSAI25_Karen-Hao_Main-Stage_Wide-Audience-scaled.jpg
   start: 2026-10-07
   end: 2026-10-08
   location: Amsterdam, NL
@@ -41,6 +42,7 @@
   name: AI Infra Summit 2026
   series: ai-infra-summit
   url: https://www.ai-infra-summit.com/
+  image: https://cdn.asp.events/CLIENT_Kisaco_R_E0D4AD69_B740_B124_D2ADF5A777880773/sites/AI-Infra-Summit-2026/media/Andrew-1-.png/fit-in/1024x999/filters:no_upscale()
   start: 2026-09-15
   end: 2026-09-17
   location: Santa Clara, US
@@ -50,6 +52,7 @@
   name: Signals Conference 2026
   series: signals-conference
   url: https://signalsconf.io/
+  image: https://signalsconf.io/glow-still.webp
   start: 2026-09-10
   end: 2026-09-11
   location: Berlin, DE
@@ -155,6 +158,7 @@
   name: Cloud Native + Kubernetes AI Day Europe 2025
   series: cloud-native-ai-day
   url: https://events.linuxfoundation.org/archive/2025/kubecon-cloudnativecon-europe/
+  image: https://events.linuxfoundation.org/wp-content/uploads/2024/11/KubeCon-EU25_ThemeGraphics_hero-2-copy-1-1536x768.jpg
   start: 2025-04-01
   location: London, GB
   topics: [cloud-native, llms, mlops]
@@ -226,6 +230,7 @@
   name: KubeCon + CloudNativeCon Europe 2022
   series: kubecon-europe
   url: https://events.linuxfoundation.org/archive/2022/kubecon-cloudnativecon-europe/
+  image: https://events.linuxfoundation.org/wp-content/uploads/46985432955_277ea4c8e3_o-e1573156058153-1.jpg
   start: 2022-05-16
   end: 2022-05-20
   location: Valencia, ES

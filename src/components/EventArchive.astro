@@ -1,204 +1,261 @@
 ---
+import EventBanner from './EventBanner.astro';
 import { loadEvents, eventDate, recordings, openCfps, type Event } from '../utils/Events';
 
+interface Props {
+  /** Video URLs to lead with. These are the recordings worth showing first. */
+  featured?: string[];
+}
+
+const { featured = [] } = Astro.props;
 const today = new Date();
 const { all, upcoming, past } = await loadEvents(today);
-// Ahead of us first, then history: the archive is read for "what is coming"
-// more often than "what happened".
-const events: Event[] = [...upcoming, ...past];
+
+const isFeatured = (event: Event) => (event.talks ?? []).some((talk) => talk.video && featured.includes(talk.video));
+
+// Featured recordings lead, then what is ahead, then history. The old page had
+// a separate "selected recordings" grid saying the same thing twice.
+const events: Event[] = [
+  ...all.filter(isFeatured).sort((left, right) => right.start.getTime() - left.start.getTime()),
+  ...upcoming.filter((event) => !isFeatured(event)),
+  ...past.filter((event) => !isFeatured(event)),
+];
 
 const topicCounts = new Map<string, number>();
 for (const event of all) for (const topic of event.topics ?? []) topicCounts.set(topic, (topicCounts.get(topic) ?? 0) + 1);
 const topics = [...topicCounts.entries()].sort(
   (left, right) => right[1] - left[1] || left[0].localeCompare(right[0]),
 );
-const attended = events.filter((event) => (event.talks ?? []).length > 0).length;
-const withCalls = events.filter((event) => openCfps(event, today).length > 0).length;
+
+/** The image a card leads with: a talk still, then the event's own art, then the generated mark. */
+const leadImage = (event: Event) =>
+  (event.talks ?? []).find((talk) => talk.image)?.image ?? event.image;
 ---
 
 <event-finder class="event-archive">
-  <div class="finder-controls">
+  <div class="finder-bar">
     <input
       data-finder-input
       type="search"
-      placeholder="Find an event — name, city or year"
-      aria-label="Filter events by name, city or year"
+      placeholder="Search by name, city or year"
+      aria-label="Search events by name, city or year"
     />
-    <label class="finder-toggle">
-      <input type="checkbox" data-finder-ours checked />
-      Only events we spoke at ({attended})
-    </label>
-    <label class="finder-toggle">
-      <input type="checkbox" data-finder-cfp />
-      Open call for papers ({withCalls})
-    </label>
+    <div class="finder-modes" role="group" aria-label="Filter events">
+      <button type="button" data-finder-mode="all" class="active">All</button>
+      <button type="button" data-finder-mode="ours">We spoke</button>
+      <button type="button" data-finder-mode="video">Recordings</button>
+      <button type="button" data-finder-mode="cfp">Open call</button>
+    </div>
   </div>
 
-  <div class="tag-rail" role="group" aria-label="Filter by topic">
+  <div class="topic-rail" role="group" aria-label="Filter by topic">
     {
       topics.map(([topic, count]) => (
         <button type="button" data-finder-topic={topic}>
-          {topic} <small>{count}</small>
+          {topic} <small data-topic-count={topic}>{count}</small>
         </button>
       ))
     }
   </div>
 
-  <ul class="archive-list">
+  <div class="archive-grid">
     {
       events.map((event) => (
-        <li
-          class="archive-row"
+        <a
+          class="archive-card"
+          class:list={['archive-card', isFeatured(event) && 'is-featured']}
+          href={recordings(event)[0]?.video ?? event.url}
+          target="_blank"
+          rel="noopener noreferrer"
           data-topics={(event.topics ?? []).join(' ')}
           data-ours={(event.talks ?? []).length > 0 ? 'yes' : 'no'}
+          data-video={recordings(event).length > 0 ? 'yes' : 'no'}
           data-cfp={openCfps(event, today).length > 0 ? 'yes' : 'no'}
-          data-text={`${event.name} ${event.location ?? ''} ${event.start.getFullYear()}`.toLowerCase()}
+          data-text={`${event.name} ${event.location ?? ''} ${event.start.getFullYear()} ${(event.talks ?? []).map((talk) => talk.title).join(' ')}`.toLowerCase()}
         >
-          <span class="archive-date">{eventDate(event)}</span>
-          <span class="archive-body">
-            <a href={event.url} target="_blank" rel="noopener noreferrer">
+          <span class="card-art">
+            <EventBanner
+              slug={event.slug}
+              series={event.series}
+              label={event.series.toUpperCase()}
+              topic={event.topics?.[0]}
+              image={leadImage(event)}
+            />
+            {recordings(event).length > 0 && <span class="card-flag">WATCH</span>}
+            {openCfps(event, today).length > 0 && <span class="card-flag cfp">CFP OPEN</span>}
+          </span>
+          <span class="card-text">
+            <span class="card-date">{eventDate(event)}</span>
+            <span class="card-title">{(event.talks ?? [])[0]?.title ?? event.name}</span>
+            <span class="card-sub">
               {event.name}
-            </a>
-            {event.location && <span class="archive-where">{event.location}</span>}
-            {openCfps(event, today).map((cfp) => (
-              <span class="archive-cfp">
-                CFP{cfp.track ? ` · ${cfp.track}` : ''} · closes{' '}
-                {cfp.deadline!.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
-              </span>
-            ))}
-            {(event.talks ?? []).map((talk) => (
-              <span class="archive-talk">
-                {talk.track && <span class="archive-track">{talk.track}</span>}
-                {talk.title}
-              </span>
-            ))}
+              {event.location && ` · ${event.location}`}
+            </span>
           </span>
-          <span class="archive-links">
-            {recordings(event).map((talk) => (
-              <a href={talk.video} target="_blank" rel="noopener noreferrer">
-                Watch
-              </a>
-            ))}
-          </span>
-        </li>
+        </a>
       ))
     }
-  </ul>
+  </div>
   <p class="finder-empty" data-finder-empty hidden>No events match.</p>
 </event-finder>
 
 <style>
-  .finder-controls {
+  .finder-bar {
     align-items: center;
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-20);
-    margin-bottom: var(--space-20);
+    gap: var(--space-14);
+    margin-bottom: var(--space-14);
   }
-  .finder-controls input[type='search'] {
+  .finder-bar input[type='search'] {
     background: var(--bg-inset);
     border: 1px solid var(--hairline);
     color: var(--text-1);
-    flex: 1 1 260px;
+    flex: 1 1 240px;
     padding: var(--space-12) var(--space-14);
   }
-  .finder-toggle {
-    align-items: center;
-    color: var(--text-2);
+  /* A segmented control rather than checkboxes: the states are exclusive and a
+     row of ticked boxes read as a form, not a filter. */
+  .finder-modes {
     display: flex;
-    font-size: 0.85rem;
-    gap: var(--space-8);
   }
-  .tag-rail {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-8);
-    margin-bottom: var(--space-20);
-  }
-  .tag-rail button {
+  .finder-modes button,
+  .topic-rail button {
     background: transparent;
     border: 1px solid var(--hairline);
-    color: var(--text-2);
+    color: var(--text-3);
     cursor: pointer;
     font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.06em;
-    padding: var(--space-6) var(--space-12);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    padding: var(--space-8) var(--space-14);
+    transition:
+      border-color 0.3s ease,
+      color 0.3s ease;
     text-transform: uppercase;
   }
-  .tag-rail button small {
-    color: var(--text-4);
+  .finder-modes button + button {
+    border-left: 0;
   }
-  .tag-rail button:hover,
-  .tag-rail button.active {
-    border-color: var(--text-3);
+  .finder-modes button:hover,
+  .topic-rail button:hover {
     color: var(--text-1);
   }
-  .archive-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  .finder-modes button.active {
+    border-color: var(--accent-edge, var(--hairline-strong));
+    color: var(--accent, var(--text-1));
   }
-  .archive-row {
-    align-items: baseline;
-    border-bottom: 1px solid var(--hairline);
+  .topic-rail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+    margin-bottom: var(--space-26);
+  }
+  .topic-rail button {
+    font-size: 0.66rem;
+    padding: var(--space-4) var(--space-8);
+  }
+  .topic-rail button small {
+    color: var(--text-4);
+    margin-left: var(--space-4);
+  }
+  .topic-rail button.active {
+    border-color: var(--accent-edge, var(--hairline-strong));
+    color: var(--accent, var(--text-1));
+  }
+
+  .archive-grid {
     display: grid;
-    gap: var(--space-8) var(--space-20);
-    grid-template-columns: 132px 1fr auto;
-    padding: var(--space-12) 0;
+    gap: var(--space-20);
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   }
-  .archive-row[hidden] {
+  .archive-card {
+    border: 1px solid var(--hairline);
+    color: inherit;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    text-decoration: none;
+    transition:
+      border-color 0.4s ease,
+      transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .archive-card[hidden] {
     display: none;
   }
-  .archive-date {
-    color: var(--text-3);
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+  .archive-card:hover {
+    border-color: var(--accent-edge, var(--hairline-strong));
+    transform: translateY(-3px);
   }
-  .archive-body {
+  .archive-card.is-featured {
+    border-color: var(--hairline-strong);
+  }
+  .card-art {
+    aspect-ratio: 16 / 9;
+    display: block;
+    overflow: hidden;
+    position: relative;
+  }
+  .card-flag {
+    background: rgba(19, 20, 20, 0.72);
+    border: 1px solid var(--hairline-strong);
+    bottom: var(--space-8);
+    color: var(--text-1);
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    left: var(--space-8);
+    letter-spacing: 0.12em;
+    padding: 3px var(--space-6);
+    position: absolute;
+    z-index: 2;
+  }
+  .card-flag.cfp {
+    border-color: var(--accent-edge, var(--hairline-strong));
+    color: var(--accent, var(--text-1));
+    left: auto;
+    right: var(--space-8);
+  }
+  .card-text {
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
+    padding: var(--space-12) var(--space-14) var(--space-14);
   }
-  .archive-body > a {
-    color: var(--text-1);
-    text-decoration: none;
-  }
-  .archive-body > a:hover {
-    text-decoration: underline;
-  }
-  .archive-where,
-  .archive-talk {
-    color: var(--text-2);
-    font-size: 0.88rem;
-  }
-  .archive-talk {
+  .card-date {
     color: var(--text-3);
-  }
-  .archive-cfp {
-    color: var(--accent, var(--text-1));
     font-family: var(--font-mono);
-    font-size: 0.74rem;
-  }
-  .archive-track {
-    color: var(--text-4);
-    margin-right: var(--space-8);
-  }
-  .archive-links a {
-    color: var(--text-2);
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.08em;
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
+  }
+  .card-title {
+    color: var(--text-1);
+    font-size: 0.86rem;
+    line-height: 1.35;
+  }
+  .card-sub {
+    color: var(--text-3);
+    font-size: 0.75rem;
   }
   .finder-empty {
     color: var(--text-2);
+    margin-top: var(--space-20);
   }
-  @media (max-width: 640px) {
-    .archive-row {
-      grid-template-columns: 1fr;
+  /* Below the gate's mobile breakpoint every control has to clear 44x44. The
+     compact chip sizing is a desktop affordance, not a universal one. */
+  @media (max-width: 950px) {
+    .finder-modes button,
+    .topic-rail button {
+      min-height: 44px;
+      padding-left: var(--space-12);
+      padding-right: var(--space-12);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .archive-card {
+      transition: none;
+    }
+    .archive-card:hover {
+      transform: none;
     }
   }
 </style>
@@ -211,37 +268,58 @@ const withCalls = events.filter((event) => openCfps(event, today).length > 0).le
       this.controller = new AbortController();
       const { signal } = this.controller;
       const input = this.querySelector<HTMLInputElement>('[data-finder-input]');
-      const oursOnly = this.querySelector<HTMLInputElement>('[data-finder-ours]');
-      const callsOnly = this.querySelector<HTMLInputElement>('[data-finder-cfp]');
+      const modeButtons = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-finder-mode]'));
       const topicButtons = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-finder-topic]'));
-      const rows = Array.from(this.querySelectorAll<HTMLLIElement>('.archive-row'));
+      const cards = Array.from(this.querySelectorAll<HTMLAnchorElement>('.archive-card'));
       const empty = this.querySelector<HTMLElement>('[data-finder-empty]');
-      if (!input || !rows.length) return;
+      if (!input || !cards.length) return;
 
+      let mode = 'all';
       let activeTopic: string | null = null;
+
+      const matchesMode = (card: HTMLElement) =>
+        mode === 'all' ||
+        (mode === 'ours' && card.dataset.ours === 'yes') ||
+        (mode === 'video' && card.dataset.video === 'yes') ||
+        (mode === 'cfp' && card.dataset.cfp === 'yes');
 
       const apply = () => {
         const query = input.value.trim().toLowerCase();
         let visible = 0;
-        for (const row of rows) {
-          const topics = (row.dataset.topics ?? '').split(' ');
-          const matchesQuery = !query || (row.dataset.text ?? '').includes(query);
-          const matchesTopic = !activeTopic || topics.includes(activeTopic);
-          // A search or a topic is an explicit widening, so it overrides the
-          // default "only ours" view rather than fighting it.
-          const matchesOurs =
-            !oursOnly?.checked || query || activeTopic ? true : row.dataset.ours === 'yes';
-          const matchesCalls = !callsOnly?.checked || row.dataset.cfp === 'yes';
-          const show = matchesQuery && matchesTopic && matchesOurs && matchesCalls;
-          row.hidden = !show;
+        // Topic counts are recomputed against everything the other filters
+        // allow, so a chip never promises more results than it can deliver.
+        const counts = new Map<string, number>();
+        for (const card of cards) {
+          const topics = (card.dataset.topics ?? '').split(' ').filter(Boolean);
+          const matchesQuery = !query || (card.dataset.text ?? '').includes(query);
+          const eligible = matchesQuery && matchesMode(card);
+          if (eligible) for (const topic of topics) counts.set(topic, (counts.get(topic) ?? 0) + 1);
+          const show = eligible && (!activeTopic || topics.includes(activeTopic));
+          card.hidden = !show;
           if (show) visible += 1;
+        }
+        for (const button of topicButtons) {
+          const topic = button.dataset.finderTopic ?? '';
+          const count = counts.get(topic) ?? 0;
+          const label = button.querySelector('[data-topic-count]');
+          if (label) label.textContent = String(count);
+          button.hidden = count === 0 && activeTopic !== topic;
         }
         if (empty) empty.hidden = visible > 0;
       };
 
       input.addEventListener('input', apply, { signal });
-      oursOnly?.addEventListener('change', apply, { signal });
-      callsOnly?.addEventListener('change', apply, { signal });
+      modeButtons.forEach((button) =>
+        button.addEventListener(
+          'click',
+          () => {
+            mode = button.dataset.finderMode ?? 'all';
+            modeButtons.forEach((other) => other.classList.toggle('active', other === button));
+            apply();
+          },
+          { signal },
+        ),
+      );
       topicButtons.forEach((button) =>
         button.addEventListener(
           'click',

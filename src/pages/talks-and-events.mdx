@@ -80,7 +80,7 @@ talks:
     href: https://www.youtube.com/watch?v=hj_lozIqo5M
 ---
 
-import { ArticleHero, TalkCard, EventCards, EventArchive } from '../components/prose/components.js';
+import { ArticleHero, EventCards, EventArchive } from '../components/prose/components.js';
 
 <ArticleHero
   eyebrow="TALKS & EVENTS"
@@ -102,31 +102,13 @@ import { ArticleHero, TalkCard, EventCards, EventArchive } from '../components/p
   <a className="button primary" href="/contact/?interest=newsletter#contact">Subscribe</a>
 </section>
 
-<section className="cluster-section featured-talks" data-reveal>
-  <p className="eyebrow">FEATURED TALKS</p>
-  <h2>Selected recordings</h2>
-  <div className="featured-talks-grid">
-    {frontmatter.talks
-      .filter((talk) => talk.featured)
-      .map((talk) => (
-        <TalkCard href={talk.href} image={talk.image} title={talk.title} eyebrow={talk.context} alt="" layout="grid" />
-      ))}
-  </div>
-  <a className="text-link" href="https://www.youtube.com/playlist?list=PL7F3ZwS1Ae8UJIbFB_yBFUSe3cNtpZObi" target="_blank" rel="noopener noreferrer">
-    All featured talks
-  </a>
-</section>
-
 <section className="cluster-section archive-section" data-reveal>
   <p className="eyebrow">ARCHIVE</p>
-  <h2>Every event, past and ahead</h2>
-  <EventArchive />
+  <h2>Every talk and event</h2>
+  <p>
+    Featured recordings first, then what is ahead, then everything behind. Search by name, city or
+    year, or filter by topic.
+  </p>
+  <EventArchive featured={frontmatter.talks.filter((talk) => talk.featured).map((talk) => talk.href)} />
 </section>
 
-<style>{`
-.featured-talks-grid { display: grid; gap: 18px; grid-template-columns: 1fr 1fr; margin: 36px 0; }
-
-@media (max-width: 600px) {
-  .featured-talks-grid { grid-template-columns: 1fr; }
-}
-`}</style>
