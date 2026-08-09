@@ -8,7 +8,22 @@ All changes land on `master` through a pull request; direct pushes are blocked b
 
 1. Branch from `master` **in your own git worktree** (`git worktree add ./tmp/wt-<slug> -b <branch> origin/master`), so parallel tracks never share a dirty checkout. This is not optional housekeeping: other sessions and background agents are routinely live in the main checkout, and working there means their uncommitted files are in your `git status`.
 2. **Stage explicit paths, never a directory**, and read `git diff --cached --name-only` before you commit. `git add <dir>` sweeps up whatever a concurrent session happens to have untracked in that directory. That is not merely noise in the diff: committing another session's untracked file makes it tracked, so the next branch switch **deletes it from their working tree**. A file you did not touch appearing in your diff means stop and find out whose it is.
-3. Commit with comprehensive messages. Do not append session URLs to commit messages or PR bodies.
+3. Commit with comprehensive messages in [Conventional Commits](https://www.conventionalcommits.org) form: `type(scope): summary`, imperative mood, no trailing full stop. PR titles take the same form. Do not append session URLs to commit messages or PR bodies.
+
+   | Type       | For                                                 |
+   | ---------- | --------------------------------------------------- |
+   | `feat`     | A capability the site did not have                  |
+   | `fix`      | A defect in shipped behaviour                       |
+   | `refactor` | Structure changes with no change in rendered output |
+   | `perf`     | A measured improvement to speed or payload          |
+   | `docs`     | `AGENTS.md`, `STYLES.md`, `README.md`, skills       |
+   | `test`     | The `scripts/verify/` harness and its gates         |
+   | `build`    | Dependencies, the Astro config, the lockfile        |
+   | `ci`       | `.github/workflows/`                                |
+   | `chore`    | Anything that fits none of the above                |
+
+   The scope is the surface, not the file: `feat(newsletter)`, `fix(header)`, `refactor(tokens)`, `ci(visual)`. Omit it when a change is genuinely site-wide. The subject line is the summary; the body still carries the reasoning, and a comprehensive body matters more than the prefix. Mark a breaking change with `!` after the type or scope.
+
 4. Push the branch and open a PR with `gh pr create`, then check `gh pr diff <n> --name-only` and confirm every file belongs to the change.
 5. CI (`.github/workflows/ci.yml`) runs four required checks — `lint` (ESLint and Prettier), `typecheck` (the `astro check` ratchet), `build` (the production build, in demo mode without `FORM_ENDPOINT`) and `motion` (the view-transition settle gate) — plus `visual`, a merge-base pixel-parity sweep whose enforcement depends on the PR's labels.
 6. Merge once CI is green. The merge landing on `master` triggers the production deploy.
