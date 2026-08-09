@@ -1,19 +1,9 @@
 ---
-import { join, menus, wordmark } from '../data/navigation';
+import { menus } from '../data/navigation';
 ---
 
 <mobile-drawer>
   <div class="mobile-drawer" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Site navigation" aria-hidden="true" data-mobile-menu>
-    <div class="mobile-drawer-header">
-      <a class="wordmark" href="/">
-        <span>{wordmark.primary}</span>
-        <span>{wordmark.secondary}</span>
-      </a>
-      <a class="join-pill" href={join.href}>{join.label}</a>
-      <button class="mobile-menu-close" type="button" aria-label="Close menu" data-mobile-menu-close>
-        <span aria-hidden="true"></span>
-      </button>
-    </div>
     <nav class="mobile-nav" aria-label="Mobile navigation">
       {
         Object.entries(menus).map(([id, menu], menuIndex) => (
@@ -84,11 +74,9 @@ import { join, menus, wordmark } from '../data/navigation';
     connectedCallback() {
       this.controller = new AbortController();
       const drawer = this.querySelector<HTMLElement>('[data-mobile-menu]');
-      const closeButton = this.querySelector<HTMLButtonElement>('[data-mobile-menu-close]');
-      if (!drawer || !closeButton) return;
+      if (!drawer) return;
 
       const signal = this.controller.signal;
-      closeButton.addEventListener('click', () => this.closeMenu(), { signal });
       drawer.querySelectorAll('a').forEach((link) => {
         link.addEventListener('click', () => this.closeMenu(), { signal });
       });
@@ -115,7 +103,13 @@ import { join, menus, wordmark } from '../data/navigation';
             return;
           }
           if (event.key !== 'Tab') return;
-          const items = Array.from(drawer.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')).filter((element) => !element.closest('[hidden]'));
+          // The toggle now lives in the persisted header rather than the drawer,
+          // so the trap has to name it explicitly or the control that closes the
+          // dialog would be the one thing Tab could never reach.
+          const items = [
+            ...(this.openButton ? [this.openButton as HTMLElement] : []),
+            ...Array.from(drawer.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')),
+          ].filter((element) => !element.closest('[hidden]'));
           const first = items[0];
           const last = items[items.length - 1];
           if (!first || !last) return;
@@ -144,8 +138,7 @@ import { join, menus, wordmark } from '../data/navigation';
 
     openMenu(openButton: HTMLButtonElement) {
       const drawer = this.querySelector<HTMLElement>('[data-mobile-menu]');
-      const closeButton = this.querySelector<HTMLButtonElement>('[data-mobile-menu-close]');
-      if (!drawer || !closeButton) return;
+      if (!drawer) return;
       this.openButton = openButton;
       this.lastFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       this.lockedScroll = scrollY;
@@ -153,7 +146,9 @@ import { join, menus, wordmark } from '../data/navigation';
       document.body.classList.add('mobile-nav-open');
       drawer.setAttribute('aria-hidden', 'false');
       openButton.setAttribute('aria-expanded', 'true');
-      closeButton.focus();
+      // Focus stays on the toggle, which is now the control that closes the
+      // drawer and sits above it in the pinned header. Moving focus inside would
+      // not take anyway: the panel is still `visibility: hidden` this frame.
     }
 
     closeMenu() {
@@ -178,33 +173,6 @@ import { join, menus, wordmark } from '../data/navigation';
 
   .mobile-drawer {
     display: none;
-  }
-
-  .wordmark {
-    display: flex;
-    flex: none;
-    flex-direction: column;
-    font-family: var(--font-mono);
-    font-size: var(--mono-10);
-    letter-spacing: 0.15em;
-    line-height: 1.08;
-    white-space: nowrap;
-  }
-
-  .wordmark span:last-child {
-    color: var(--accent-ink);
-  }
-
-  .join-pill {
-    border: 1px solid var(--accent-edge);
-    border-radius: var(--radius-control);
-    color: var(--accent-ink);
-    font-family: var(--font-mono);
-    font-size: var(--mono-10-5);
-    letter-spacing: 0.1em;
-    margin-inline-start: auto;
-    padding: 9px 13px;
-    white-space: nowrap;
   }
 
   @keyframes menu-row {
@@ -246,69 +214,10 @@ import { join, menus, wordmark } from '../data/navigation';
       visibility: visible;
     }
 
-    .mobile-drawer-header {
-      align-items: center;
-      background: var(--bg-header);
-      border-bottom: 1px solid var(--hairline);
-      display: flex;
-      gap: 10px;
-      min-height: 68px;
-      padding: 12px 20px;
-      position: sticky;
-      top: 0;
-      z-index: 2;
-    }
-
-    .mobile-drawer-header .wordmark {
-      font-size: 9px;
-      justify-content: center;
-      margin-right: auto;
-      min-height: 44px;
-      width: auto;
-    }
-
-    .mobile-drawer-header .join-pill {
-      align-items: center;
-      display: inline-flex;
-      margin-left: 0;
-      min-height: 44px;
-      padding: 9px 14px;
-    }
-
-    .mobile-menu-close {
-      background: transparent;
-      border: 1px solid var(--hairline-card);
-      border-radius: 50%;
-      color: var(--text-1);
-      cursor: pointer;
-      height: 44px;
-      position: relative;
-      width: 44px;
-    }
-
-    .mobile-menu-close span::before,
-    .mobile-menu-close span::after {
-      background: currentColor;
-      content: '';
-      height: 1px;
-      left: 13px;
-      position: absolute;
-      top: 21px;
-      width: 16px;
-    }
-
-    .mobile-menu-close span::before {
-      transform: rotate(45deg);
-    }
-
-    .mobile-menu-close span::after {
-      transform: rotate(-45deg);
-    }
-
     .mobile-nav {
       margin: 0 auto;
       max-width: 760px;
-      padding: 24px 20px 48px;
+      padding: calc(68px + 24px) 20px 48px;
     }
 
     .mobile-menu-section {
@@ -398,14 +307,6 @@ import { join, menus, wordmark } from '../data/navigation';
   }
 
   @media (max-width: 420px) {
-    .mobile-drawer-header {
-      padding-inline: 14px;
-    }
-
-    .mobile-drawer-header .join-pill {
-      padding-inline: 11px;
-    }
-
     .mobile-nav {
       padding-inline: 14px;
     }
