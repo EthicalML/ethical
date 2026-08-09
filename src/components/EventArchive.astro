@@ -1,5 +1,5 @@
 ---
-import { loadEvents, eventDate, recordings, type Event } from '../utils/Events';
+import { loadEvents, eventDate, recordings, openCfps, type Event } from '../utils/Events';
 
 const today = new Date();
 const { all, upcoming, past } = await loadEvents(today);
@@ -13,6 +13,7 @@ const topics = [...topicCounts.entries()].sort(
   (left, right) => right[1] - left[1] || left[0].localeCompare(right[0]),
 );
 const attended = events.filter((event) => (event.talks ?? []).length > 0).length;
+const withCalls = events.filter((event) => openCfps(event, today).length > 0).length;
 ---
 
 <event-finder class="event-archive">
@@ -26,6 +27,10 @@ const attended = events.filter((event) => (event.talks ?? []).length > 0).length
     <label class="finder-toggle">
       <input type="checkbox" data-finder-ours checked />
       Only events we spoke at ({attended})
+    </label>
+    <label class="finder-toggle">
+      <input type="checkbox" data-finder-cfp />
+      Open call for papers ({withCalls})
     </label>
   </div>
 
@@ -46,6 +51,7 @@ const attended = events.filter((event) => (event.talks ?? []).length > 0).length
           class="archive-row"
           data-topics={(event.topics ?? []).join(' ')}
           data-ours={(event.talks ?? []).length > 0 ? 'yes' : 'no'}
+          data-cfp={openCfps(event, today).length > 0 ? 'yes' : 'no'}
           data-text={`${event.name} ${event.location ?? ''} ${event.start.getFullYear()}`.toLowerCase()}
         >
           <span class="archive-date">{eventDate(event)}</span>
@@ -54,6 +60,12 @@ const attended = events.filter((event) => (event.talks ?? []).length > 0).length
               {event.name}
             </a>
             {event.location && <span class="archive-where">{event.location}</span>}
+            {openCfps(event, today).map((cfp) => (
+              <span class="archive-cfp">
+                CFP{cfp.track ? ` · ${cfp.track}` : ''} · closes{' '}
+                {cfp.deadline!.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+              </span>
+            ))}
             {(event.talks ?? []).map((talk) => (
               <span class="archive-talk">
                 {talk.track && <span class="archive-track">{talk.track}</span>}
@@ -165,6 +177,11 @@ const attended = events.filter((event) => (event.talks ?? []).length > 0).length
   .archive-talk {
     color: var(--text-3);
   }
+  .archive-cfp {
+    color: var(--accent, var(--text-1));
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+  }
   .archive-track {
     color: var(--text-4);
     margin-right: var(--space-8);
@@ -195,6 +212,7 @@ const attended = events.filter((event) => (event.talks ?? []).length > 0).length
       const { signal } = this.controller;
       const input = this.querySelector<HTMLInputElement>('[data-finder-input]');
       const oursOnly = this.querySelector<HTMLInputElement>('[data-finder-ours]');
+      const callsOnly = this.querySelector<HTMLInputElement>('[data-finder-cfp]');
       const topicButtons = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-finder-topic]'));
       const rows = Array.from(this.querySelectorAll<HTMLLIElement>('.archive-row'));
       const empty = this.querySelector<HTMLElement>('[data-finder-empty]');
@@ -213,7 +231,8 @@ const attended = events.filter((event) => (event.talks ?? []).length > 0).length
           // default "only ours" view rather than fighting it.
           const matchesOurs =
             !oursOnly?.checked || query || activeTopic ? true : row.dataset.ours === 'yes';
-          const show = matchesQuery && matchesTopic && matchesOurs;
+          const matchesCalls = !callsOnly?.checked || row.dataset.cfp === 'yes';
+          const show = matchesQuery && matchesTopic && matchesOurs && matchesCalls;
           row.hidden = !show;
           if (show) visible += 1;
         }
@@ -222,6 +241,7 @@ const attended = events.filter((event) => (event.talks ?? []).length > 0).length
 
       input.addEventListener('input', apply, { signal });
       oursOnly?.addEventListener('change', apply, { signal });
+      callsOnly?.addEventListener('change', apply, { signal });
       topicButtons.forEach((button) =>
         button.addEventListener(
           'click',

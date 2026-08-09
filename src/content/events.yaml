@@ -7,6 +7,7 @@
   name: MLOps World 2026
   series: mlops-world
   url: https://mlopsworld.com/
+  image: https://mlopsworld.com/wp-content/uploads/2025/07/MLOps-Gen-AI-2025.webp
   start: 2026-11-17 # unverified - organiser listings disagree between 16-18 and 17-18 November
   end: 2026-11-18 # unverified
   location: Austin, US
@@ -16,6 +17,7 @@
   name: code.talks 2026
   series: code-talks
   url: https://codetalks.com/
+  image: https://framerusercontent.com/images/Oqu7DZwtuRRgdxPfjf9jBSiuruE.png
   start: 2026-11-04
   end: 2026-11-05
   location: Hamburg, DE
@@ -59,6 +61,7 @@
   name: EuroSciPy 2026
   series: euroscipy
   url: https://euroscipy.org/
+  image: https://euroscipy.org/static/social_card.png
   start: 2026-07-18
   end: 2026-07-23
   location: Kraków, PL
@@ -68,6 +71,7 @@
   name: EuroPython 2026
   series: europython
   url: https://europython.eu/
+  image: https://ep2026.europython.eu/social-card.png
   start: 2026-07-13
   end: 2026-07-19
   location: Kraków, PL
@@ -77,6 +81,7 @@
   name: WeAreDevelopers World Congress 2026
   series: wearedevelopers-world-congress
   url: https://www.wearedevelopers.com/world-congress
+  image: https://imagedelivery.net/p2Gwf4g3bNtyXUmnEu9Kdw/main-stage/main-stage-panorama/og?format=auto
   start: 2026-07-08
   end: 2026-07-10
   location: Berlin, DE
@@ -86,6 +91,7 @@
   name: Data + AI Summit 2026
   series: data-ai-summit
   url: https://www.databricks.com/dataaisummit
+  image: https://www.databricks.com/dataaisummit/sites/default/files/2026-02/dais26-og-1200x628.jpg
   start: 2026-06-15
   end: 2026-06-18
   location: San Francisco, US
@@ -95,6 +101,7 @@
   name: PyCon DE & PyData 2026
   series: pycon-de
   url: https://2026.pycon.de/
+  image: https://2026.pycon.de/static/media/social_card.png
   start: 2026-04-14
   end: 2026-04-16
   location: Darmstadt, DE
@@ -108,6 +115,7 @@
   name: KubeCon + CloudNativeCon Europe 2026
   series: kubecon-europe
   url: https://events.linuxfoundation.org/kubecon-cloudnativecon-europe/
+  image: https://events.linuxfoundation.org/wp-content/uploads/2025/10/Social-Snackable.png
   start: 2026-03-23
   end: 2026-03-26
   location: Amsterdam, NL
@@ -117,6 +125,7 @@
   name: code.talks 2025
   series: code-talks
   url: https://codetalks.com/
+  image: https://framerusercontent.com/images/Oqu7DZwtuRRgdxPfjf9jBSiuruE.png
   start: 2025-11-05
   end: 2025-11-06
   location: Hamburg, DE
@@ -131,6 +140,7 @@
   name: WeAreDevelopers World Congress 2025
   series: wearedevelopers-world-congress
   url: https://www.wearedevelopers.com/world-congress
+  image: https://imagedelivery.net/p2Gwf4g3bNtyXUmnEu9Kdw/main-stage/main-stage-panorama/og?format=auto
   start: 2025-07-09
   end: 2025-07-11
   location: Berlin, DE
@@ -158,6 +168,7 @@
   name: WeAreDevelopers World Congress 2024
   series: wearedevelopers-world-congress
   url: https://www.wearedevelopers.com/world-congress
+  image: https://imagedelivery.net/p2Gwf4g3bNtyXUmnEu9Kdw/main-stage/main-stage-panorama/og?format=auto
   start: 2024-07-17
   end: 2024-07-19
   location: Berlin, DE
@@ -173,6 +184,7 @@
   name: PyData Global 2022
   series: pydata-global
   url: https://pydata.org/global2022/
+  image: https://pydata.org/global2022/wp-content/uploads/2022/11/PyDataGlobal-OpenGraph.png
   start: 2022-12-01
   end: 2022-12-03
   topics: [python, llms, data-engineering]
@@ -199,6 +211,7 @@
   name: KubeCon + CloudNativeCon North America 2022
   series: kubecon-north-america
   url: https://events.linuxfoundation.org/archive/2022/kubecon-cloudnativecon-north-america/
+  image: https://events.linuxfoundation.org/wp-content/uploads/2022/07/KubeConNA22_WebGraphics_web-header.jpg
   start: 2022-10-24
   end: 2022-10-28
   location: Detroit, US
@@ -240,6 +253,7 @@
   name: KubeCon + CloudNativeCon Europe 2021
   series: kubecon-europe
   url: https://events.linuxfoundation.org/archive/2021/kubecon-cloudnativecon-europe/
+  image: https://events.linuxfoundation.org/wp-content/uploads/2020/10/KubeCon_EU_2021_web_web-bg.png
   start: 2021-05-04
   end: 2021-05-07
   topics: [cloud-native, mlops]
@@ -274,6 +288,7 @@
   name: PyCon HK 2020 Fall
   series: pycon-hk
   url: https://pycon.hk/
+  image: https://pycon.hk/2026/open-graph.webp
   start: 2020-11-16 # unverified - event identity inferred from the newsletter label; date is the recording's publication date
   topics: [python, mlops]
   talks:
@@ -314,6 +329,7 @@
   name: infoShare 2019
   series: infoshare
   url: https://infoshare.pl/
+  image: https://infoshare.pl/_media/2026/og_26.png
   start: 2019-05-08
   end: 2019-05-09
   location: Gdańsk, PL

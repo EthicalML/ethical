@@ -11,12 +11,15 @@
 interface Props {
   slug: string;
   series?: string;
+  /** Linked, never stored. A dead href simply paints nothing, which leaves the
+   * generated ground and mark as the fallback with no script involved. */
+  image?: string;
   label?: string;
   topic?: string;
   class?: string;
 }
 
-const { slug, series, label = '', topic, class: className } = Astro.props;
+const { slug, series, image, label = '', topic, class: className } = Astro.props;
 
 // FNV-1a: small, stable across builds, and good enough to scatter five motifs.
 function hash(value: string): number {
@@ -88,6 +91,21 @@ const polygon = Array.from({ length: count + 2 }, (_, index) => {
   preserveAspectRatio="xMidYMid slice"
 >
   <rect width="1200" height="720" fill={ground}></rect>
+  {
+    image && (
+      <g class="plate">
+        <image
+          href={image}
+          x="180"
+          y="108"
+          width="840"
+          height="504"
+          preserveAspectRatio="xMidYMid slice"
+        />
+        <rect x="180" y="108" width="840" height="504" fill="none" stroke={ink} stroke-width="3" opacity="0.55" />
+      </g>
+    )
+  }
   <g class="motif">
 
   {
@@ -147,6 +165,17 @@ const polygon = Array.from({ length: count + 2 }, (_, index) => {
   }
   /* The mark drifts and brightens under the pointer. Inline SVG is what makes
      this reachable at all: a committed .svg or a raster could not be touched. */
+  /* The plate is a framed inset on the ground rather than a full bleed, so the
+     mark can cross over it and the tint still frames the card. */
+  .plate {
+    transform-origin: center;
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  :global(a:hover) .event-banner .plate,
+  :global(.event-card:hover) .event-banner .plate,
+  .event-banner:hover .plate {
+    transform: scale(1.04);
+  }
   .motif {
     transform-origin: center;
     transition:
@@ -160,8 +189,14 @@ const polygon = Array.from({ length: count + 2 }, (_, index) => {
     transform: rotate(4deg) scale(1.08);
   }
   @media (prefers-reduced-motion: reduce) {
-    .motif {
+    .motif,
+    .plate {
       transition: none;
+    }
+    :global(a:hover) .event-banner .plate,
+    :global(.event-card:hover) .event-banner .plate,
+    .event-banner:hover .plate {
+      transform: none;
     }
     :global(a:hover) .event-banner .motif,
     :global(.event-card:hover) .event-banner .motif,

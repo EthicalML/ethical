@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { load as parse } from 'js-yaml';
 
 const eventsUrl = new URL('../../src/content/events.yaml', import.meta.url);
-const talksUrl = new URL('../../src/pages/talks.mdx', import.meta.url);
+const talksUrl = new URL('../../src/pages/talks-and-events.mdx', import.meta.url);
 
 const events = parse(readFileSync(eventsUrl, 'utf8'));
 const frontmatter = parse(readFileSync(talksUrl, 'utf8').split('---')[1] ?? '');

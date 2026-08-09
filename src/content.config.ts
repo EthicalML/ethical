@@ -112,6 +112,9 @@ const events = defineCollection({
     name: z.string(),
     series: z.string(),
     url: z.url(),
+    // Site-absolute path to a committed banner derivative, not a remote URL.
+    // Absent means the generated SVG banner is used instead.
+    image: z.string().optional(),
     start: z.date(),
     end: z.date().optional(),
     location: z.string().optional(),
