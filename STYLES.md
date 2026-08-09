@@ -143,6 +143,14 @@ to anyone working in the default theme. `npm run check:ratchet` now fails if a l
 selects blocks by class instead of by the role, if `data-surface-plate` appears without it, or if a
 `data-surface` value is anything but `dark` or `page`.
 
+Those are spelling checks: they prove the attribute is used consistently, not that any mount
+resolves to the surface it is really sitting on. `npm run verify:canvas-surface` proves that —
+it loads every route in **light**, walks up from each canvas to the first opaque background, and
+fails if the resolved surface disagrees with what is painted there. Light is the only theme
+where the question has an answer: under dark the page ground _is_ the inverted colour, so a
+mount on the wrong surface looks correct either way. It runs in CI beside the motion gate,
+because it needs a browser and a build.
+
 Canvas paints outside the cascade, so a canvas cannot inherit those re-entered rungs. It therefore
 takes its colours from the **surface it sits on, not from the active theme**, via two token sets on
 `:root`: `--canvas-*` for artwork on the page ground and `--canvas-dark-*` for artwork inside one of
