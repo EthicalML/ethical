@@ -82,7 +82,7 @@ form[data-state='exiting'] .send-overlay {
     opacity: 0;
   }
   to {
-    background: var(--scrim-3-a720);
+    background: rgba(var(--scrim-stage-rgb), 0.72);
     opacity: 1;
   }
 }
@@ -185,7 +185,7 @@ form[data-state='success'] .form-confirmation {
    container corner rather than to the button, so submit() sets top from the
    button's measured offset. Left edge and width match the button. */
 .send-terminal:not([hidden]) {
-  background: var(--scrim-4-a660);
+  background: rgba(var(--scrim-stage-rgb), 0.66);
   border-left: 1px solid var(--accent-edge);
   color: var(--accent-ink);
   display: block;

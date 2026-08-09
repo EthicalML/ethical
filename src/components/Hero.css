@@ -152,7 +152,7 @@
 }
 
 .graph-switcher span {
-  background: var(--ink-wash-a190);
+  background: rgba(var(--ink-wash-rgb), calc(0.19 * var(--ink-wash-lift)));
   display: block;
   height: 2px;
   width: 92px;
@@ -581,7 +581,7 @@
 
 @media (max-width: 950px) {
   .graph-switcher span::after {
-    background: var(--ink-wash-a190);
+    background: rgba(var(--ink-wash-rgb), calc(0.19 * var(--ink-wash-lift)));
     content: '';
     height: 2px;
     inset: 21px 0 auto;

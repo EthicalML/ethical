@@ -191,7 +191,7 @@ const morphName = (visual: string) => `${visual}-title`;
   }
 
   .portal-panel::after {
-    background: linear-gradient(90deg, var(--scrim-2-a975) 0%, var(--scrim-2-a770) 42%, var(--scrim-2-a080) 78%);
+    background: linear-gradient(90deg, rgba(var(--scrim-inset-rgb), 0.975) 0%, rgba(var(--scrim-inset-rgb), 0.77) 42%, rgba(var(--scrim-inset-rgb), 0.08) 78%);
     content: '';
     inset: 0;
     pointer-events: none;
@@ -284,7 +284,7 @@ const morphName = (visual: string) => `${visual}-title`;
   }
 
   .plot-labels {
-    fill: var(--ink-wash-a500);
+    fill: rgba(var(--ink-wash-rgb), calc(0.5 * var(--ink-wash-lift)));
     font: 10px var(--font-mono);
     text-anchor: middle;
   }
@@ -296,7 +296,7 @@ const morphName = (visual: string) => `${visual}-title`;
     }
 
     .portal-rail {
-      background: var(--scrim-1-a940);
+      background: rgba(var(--scrim-page-rgb), 0.94);
       border-bottom: 1px solid var(--hairline);
       gap: 0;
       margin: 0 -18px;
@@ -333,7 +333,12 @@ const morphName = (visual: string) => `${visual}-title`;
     }
 
     .portal-panel::after {
-      background: linear-gradient(0deg, var(--scrim-2-a975) 0%, var(--scrim-2-a770) 48%, var(--scrim-2-a160) 100%);
+      background: linear-gradient(
+        0deg,
+        rgba(var(--scrim-inset-rgb), 0.975) 0%,
+        rgba(var(--scrim-inset-rgb), 0.77) 48%,
+        rgba(var(--scrim-inset-rgb), 0.16) 100%
+      );
     }
 
     .portal-visual {
