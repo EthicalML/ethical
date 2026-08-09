@@ -15,11 +15,9 @@
 // background, and assert the resolved surface matches what is painted there.
 
 import { readFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
+import playwright from './playwright.mjs';
 
-const require = createRequire(import.meta.url);
-const PLAYWRIGHT = '/Users/asaucedo/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/index.js';
-const { chromium } = require(process.env.PLAYWRIGHT_PATH ?? PLAYWRIGHT);
+const { chromium } = playwright;
 
 const args = process.argv.slice(2);
 const baseIndex = args.indexOf('--base-url');
