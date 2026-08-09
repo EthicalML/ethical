@@ -70,8 +70,23 @@ const parseRegion = (value) => {
   const [width, height, x, y] = match.slice(1).map(Number);
   return { width, height, x, y };
 };
+// ImageMagick 7 exposes one `magick` entry point; ImageMagick 6 — what Debian,
+// Ubuntu and therefore the CI runners package — ships only the legacy per-command
+// binaries. Resolve once and translate, so the same gate runs against a
+// developer's IM7 and a runner's IM6 without either having to know.
+const LEGACY_SUBCOMMANDS = new Set(['compare', 'convert', 'identify', 'mogrify', 'montage']);
+const hasMagickCommand = spawnSync('magick', ['-version'], { encoding: 'utf8' }).status === 0;
+const magickArgv = (parameters) => {
+  if (hasMagickCommand) return ['magick', parameters];
+  if (LEGACY_SUBCOMMANDS.has(parameters[0])) return [parameters[0], parameters.slice(1)];
+  return ['convert', parameters];
+};
+const runMagick = (parameters) => {
+  const [command, argv] = magickArgv(parameters);
+  return spawnSync(command, argv, { encoding: 'utf8' });
+};
 const magick = (parameters) => {
-  const run = spawnSync('magick', parameters, { encoding: 'utf8' });
+  const run = runMagick(parameters);
   return { stdout: `${run.stdout ?? ''}`.trim(), stderr: `${run.stderr ?? ''}`.trim() };
 };
 const differingPixelsBetween = (left, right) => {
@@ -221,21 +236,31 @@ for (const name of baselineFiles.filter((file) => currentFiles.includes(file))) 
   const diffPath = path.join(diffDir, name);
   // ImageMagick's AE metric counts absolutely different pixels and writes the
   // diff image; it exits non-zero when the images differ, which is expected.
-  const run = spawnSync(
-    'magick',
-    ['compare', '-metric', 'AE', '-fuzz', '0%', basePath, currentPath, diffPath],
-    { encoding: 'utf8' },
-  );
+  const run = runMagick([
+    'compare',
+    '-metric',
+    'AE',
+    '-fuzz',
+    '0%',
+    basePath,
+    currentPath,
+    diffPath,
+  ]);
   const output = `${run.stderr ?? ''}`.trim();
   // AE counts how many pixels differ at all; it says nothing about by how much.
   // A sub-perceptual shift across a large flat area reads as a huge count, so a
   // deliberate change needs PAE, the largest single-channel difference, to be
   // judged. Both are reported: the count locates the change, the delta sizes it.
-  const peak = spawnSync(
-    'magick',
-    ['compare', '-metric', 'PAE', '-fuzz', '0%', basePath, currentPath, 'null:'],
-    { encoding: 'utf8' },
-  );
+  const peak = runMagick([
+    'compare',
+    '-metric',
+    'PAE',
+    '-fuzz',
+    '0%',
+    basePath,
+    currentPath,
+    'null:',
+  ]);
   const peakMatch = /\(([\d.eE+-]+)\)/.exec(`${peak.stderr ?? ''}`);
   const maxChannelDelta = peakMatch ? Math.round(Number(peakMatch[1]) * 255 * 100) / 100 : null;
   if (/image widths or heights differ/i.test(output)) {
