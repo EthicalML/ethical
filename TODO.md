@@ -6,21 +6,9 @@ Six-phase programme, owner-approved direction (2026-08-07). Phases 1-5 are the a
 
 Phase 6 — LLM-optimized serving (owner direction, proven pattern from industry startups): serve different, LLM-optimized content to AI crawlers (GPTBot, ClaudeBot, PerplexityBot) — never to Googlebot, so classic SEO cloaking risk does not apply. Staged: first, plain markdown text renditions of key pages served to AI user-agents; then expanded curated LLM-specific content designed for ingestion into training and RAG corpora, richer than the human pages. Requires an edge layer in front of GitHub Pages (Cloudflare Worker routing by user-agent); the markdown renditions can be generated at build time from the same MDX sources.
 
-## Scope and colocate the last two oversized components
+## OpenSourceShowcase: two dead selectors
 
-`OpenSourceShowcase.astro` (1,235 lines) and `FormSection.astro` (893) are the two components the simplification pass left oversized, and both are now larger than they were before the CSS breakup: they absorbed their styles from `tokens.css` and then did not qualify for colocation, because each carries a scoped `<style>` block AND an `is:global` one, and a single companion file would erase that boundary.
-
-Measured since: all 19 classes in `OpenSourceShowcase`'s 431-line global block appear in its own markup, so the block does not need to be global. It is global only because the tokens campaign moved it verbatim to guarantee a byte-identical relocation. Its scoped block has three classes that are not in its markup (`kaos-canvas-mount`, `pressed`, `css`), which look like runtime-added or child-canvas classes and are the genuine exceptions.
-
-Do it in two steps with parity proving each: convert the global block to scoped, keeping only the rules that genuinely need to escape, then colocate the whole stylesheet into `OpenSourceShowcase.css` through `@import` in the style block. Check `FormSection` for the same shape. Owner call 2026-08-08: schedule this after the templating pull request merges.
-
-## Bug: the hero canvas animates offscreen
-
-`src/shared/canvas/HeroCycle.ts` owns a requestAnimationFrame loop and correctly handles reduced motion, backing-store resize, frame cancellation and listener teardown, but it has no `IntersectionObserver`. It pauses only when the document is hidden, so the homepage and article hero canvases keep animating while scrolled out of view, burning CPU and battery on every visit. The smallest safe fix adds intersection gating to its existing lifecycle. Migrating it fully onto `CanvasEngine` would delete duplicate resize and pointer plumbing but changes pointer coverage and the cycle clock, so treat that as a separate visually-verified change. Found by the 2026-08-08 canvas contract audit, which cleared every other canvas host.
-
-## Bugs
-
-* When in mobile mode, sometimes when clicking on the menu, the menu disappears / crashes. 
+`OpenSourceShowcase.css` carries two `.open-source-showcase` rules that match nothing: the component's root is the `open-source-showcase` custom element carrying `.open-source-prototype`. Deleting them is not purely mechanical, because the padding they were meant to apply may be intended and currently comes from elsewhere, so it needs a visually reviewed change rather than a blind removal. Found during the 2026-08-08 colocation pass.
 
 ## Improve the search
 
