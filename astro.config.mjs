@@ -26,7 +26,14 @@ const newsletterRedirects = Object.fromEntries(
     // makes the build fail with ENOTDIR. Enable each redirect automatically as
     // its passthrough file is retired.
     .filter((issue) => !existsSync(resolve(`public/mle/${issue}.html`)))
-    .map((issue) => [`/mle/${issue}.html`, `/newsletter/${issue}/`]),
+    // Both spellings. The legacy site served these as real files, so GitHub
+    // Pages resolved an extension-less /mle/395 to mle/395.html for free. A
+    // redirect is a directory, not a file, so that implicit resolution has
+    // nothing to find and every inbound link without the extension 404s.
+    .flatMap((issue) => [
+      [`/mle/${issue}.html`, `/newsletter/${issue}/`],
+      [`/mle/${issue}`, `/newsletter/${issue}/`],
+    ]),
 );
 
 export default defineConfig({
@@ -52,7 +59,9 @@ export default defineConfig({
     '/mle.html': '/newsletter/',
     ...newsletterRedirects,
     '/mle/397.html': '/newsletter/397/',
+    '/mle/397': '/newsletter/397/',
     '/mle/398.html': '/newsletter/398/',
+    '/mle/398': '/newsletter/398/',
     '/privacypolicy.html': '/privacy/',
     '/state-of-ml-2024': '/reports/state-of-ml-2024/',
     '/state-of-ml-2025': '/reports/state-of-ml-2025/',
