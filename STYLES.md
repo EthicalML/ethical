@@ -95,12 +95,24 @@ Two refinements the light block forced:
 Each theme also declares `color-scheme`, which is what themes the native controls no stylesheet can
 reach: form field internals, scrollbars, the caret and the spellcheck underline.
 
-### The canvas palette and the surface label
+### The inverted surface role
 
-The light theme keeps **whole blocks dark** on a light page — one selector list in `tokens.css`:
-the header and its menus and drawer, `.hero`, `.article-hero.canvas-variant`, `.kompute-feature`,
-`.kaos-feature`, `.map-stage`, `.kaos-panel`, `.palette-panel`. Depth on paper comes from inverting
-sections, not from shading cards.
+The light theme keeps **whole blocks dark** on a light page: the header and its menus and drawer,
+both heroes, `.kompute-feature`, `.kaos-feature`, `.map-stage`, `.kaos-panel`, `.palette-panel`.
+Depth on paper comes from inverting sections, not from shading cards.
+
+Membership is a **role declared at the block**: `data-surface="dark"` on the element that owns it.
+One rule in `tokens.css` keys off that attribute and re-enters the ink, wash, hairline, accent and
+surface rungs at their on-dark values for the subtree. A block whose own background is the page's
+adds `data-surface-plate` beside the role, which paints the panel plate under it; the plate is never
+valid without the role.
+
+This used to be a hand-maintained selector list in `tokens.css`, with a second hand-maintained
+`data-surface` label on every canvas mount inside those blocks. Two lists, in two files, nothing
+holding them together — and a block missing from either renders wrong **in light only**, invisible
+to anyone working in the default theme. `npm run check:ratchet` now fails if a light-theme rule
+selects blocks by class instead of by the role, if `data-surface-plate` appears without it, or if a
+`data-surface` value is anything but `dark` or `page`.
 
 Canvas paints outside the cascade, so a canvas cannot inherit those re-entered rungs. It therefore
 takes its colours from the **surface it sits on, not from the active theme**, via two token sets on
@@ -108,15 +120,19 @@ takes its colours from the **surface it sits on, not from the active theme**, vi
 the inverted blocks. Under dark the page _is_ that surface and the two sets are identical, which is
 what keeps dark pixel-exact.
 
-Which set a mount takes is a **hardcoded label**, never inferred: `data-surface="dark" | "page"` on
-the mount element, read once at construction by `surfaceOf()`. Nothing sniffs its own backdrop —
-that breaks on transparent parents, gradients and canvases that straddle two surfaces. Today only
-five mounts are `page`: the homepage policy circuit, the three `/open-source/` portal visuals and the
-form-send overlay. Everything else sits inside an inverted block and barely changes between themes.
+Which set a mount takes is **the same declaration**, never inferred: `surfaceOf()` reads the nearest
+ancestor carrying `data-surface`, which for most mounts is the inverted block itself. So the CSS
+treatment and the canvas palette cannot disagree — there is only one thing to declare, and moving a
+block moves both. Nothing sniffs its own backdrop; that breaks on transparent parents, gradients and
+canvases that straddle two surfaces. A mount whose ancestry would answer wrong overrides it on
+itself, which is what the five `page` mounts do: the homepage policy circuit, the three
+`/open-source/` portal visuals and the form-send overlay. The three `KaosGraph` mounts that sit on
+the page ground while painting on-dark artwork declare `dark` on themselves and therefore take the
+plate treatment with it.
 
-**Two things must stay in step with the list above.** The `--canvas-dark-*` values in the light
-block restate the inverted-block values — change one, change both. And if a component ever moves a
-canvas from a dark block onto the page ground, its `data-surface` label must move with it.
+**One thing still has to stay in step.** The `--canvas-dark-*` values on `:root` restate the role
+rule's values, because a canvas cannot read the block it sits in — change one, change both. That
+pair is now compared by `npm run check:ratchet` rather than by memory.
 
 ### Never a token
 
@@ -137,7 +153,7 @@ canvas from a dark block onto the page ground, its `data-surface` label must mov
 
 ## Global stylesheet
 
-`src/styles/tokens.css` is 1,326 lines. The counts below are from the current parsed stylesheet: a rule is a CSS style rule or `@font-face` rule, keyframe step selectors are excluded, and declarations inside keyframes are included.
+`src/styles/tokens.css` is 1,322 lines. The counts below are from the current parsed stylesheet: a rule is a CSS style rule or `@font-face` rule, keyframe step selectors are excluded, and declarations inside keyframes are included.
 
 | Category                             | Rules | Declarations | Contents                                                                                                                              |
 | ------------------------------------ | ----: | -----------: | ------------------------------------------------------------------------------------------------------------------------------------- |
@@ -183,7 +199,7 @@ Search by the surface name or representative selector below before adding a rule
 | `NetworkDirectory.astro`                                                          | Network member directory and wordmarks                                                                 | `.network-directory`, `.member-wordmarks`                                      |
 | `NewsletterLatestCard.astro`                                                      | Reusable latest-newsletter card                                                                        | `.newsletter-latest-card`, `.latest-title`                                     |
 | `NewsletterSubscribe.astro`                                                       | Newsletter subscription form                                                                           | `newsletter-subscribe`, `.subscribe-field`, `.subscribe-status`                |
-| `OpenSourceShowcase.astro` / `OpenSourceShowcase.css`                            | Homepage flagship initiative carousel, KAOS and survey showcase cards                                  | `.open-source-prototype`, `.showcase-track`, `.carousel-edge`, `.kaos-feature` |
+| `OpenSourceShowcase.astro` / `OpenSourceShowcase.css`                             | Homepage flagship initiative carousel, KAOS and survey showcase cards                                  | `.open-source-prototype`, `.showcase-track`, `.carousel-edge`, `.kaos-feature` |
 | `PartnerDirectory.astro`                                                          | Partner directory entries and logos                                                                    | `.partner-directory`, `.partner-entry`, `.partner-logo`                        |
 | `PhaseCardGrid.astro`                                                             | Homepage strategy phase cards                                                                          | `.strategy`, `.phase-grid`, `.phase-card`, `.phase-rule`                       |
 | `PolicyMandates.astro`                                                            | Policy mandate cards                                                                                   | `.mandate-grid`, `.mandate-row`                                                |
@@ -275,4 +291,4 @@ Use these widths for CSS media queries. A component that needs responsive client
 3. For a new token, add it to `:root` when at least two owners need the same semantic value, or when the value must change between themes. A theme-dependent value is always a token, however few owners it has: a literal has nowhere to flip to under `:root[data-theme='light']`. Otherwise keep the value local.
 4. If an override seems necessary, find the existing owner first and change the original rule or component API. Add a cross-owner rule to `tokens.css` only when the relationship itself is shared and document that reason here.
 
-<!-- styles-hash: 701a08a82f9d59e6c1118589a1bb683a1e34df95c39462c23db79c9446474fb8 -->
+<!-- styles-hash: 5d7d8b605ddec3e68e31a9b0f56de8fd822c59f7cc8dcd2373c87fb094b8efcc -->

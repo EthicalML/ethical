@@ -421,28 +421,22 @@
   --typewriter-cursor: #f2f5f3;
 }
 
-/* ---- the inverted blocks ----------------------------------------------------
+/* ---- the inverted surface role ----------------------------------------------
    The design's depth model: on paper the hero, the header and the feature and
    preview blocks stay dark slate-green rather than becoming tinted cards. Each
    one is a `--panel` surface, so the ink, hairline, wash and accent rungs are
    re-entered at their on-dark values for that subtree — the same move
-   `QuickstartTerminal` already makes for the baked-dark console. One rule, one
-   selector list, so "which blocks invert" is a single readable decision.
+   `QuickstartTerminal` already makes for the baked-dark console.
+
+   Membership is declared AT THE BLOCK, as `data-surface="dark"` on the element
+   that owns it. It used to be a selector list here, which meant a new dark block
+   rendered wrong in light only — invisible to anyone working in the default
+   theme — until someone remembered to come back and edit this file. The same
+   attribute is what `surfaceOf()` reads for the canvas palette, so the CSS
+   treatment and the canvas label cannot disagree: there is only one declaration.
+   `npm run check:ratchet` fails if this rule stops keying off the attribute.
    Nothing here applies under the dark theme. */
-:root[data-theme='light'] :is(
-  .site-header,
-  .mega-panel,
-  .oss-menu-preview,
-  .mobile-drawer,
-  .hero,
-  .article-hero.canvas-variant,
-  .kompute-feature,
-  .kaos-feature,
-  .map-stage,
-  .kaos-panel,
-  .palette-panel,
-  .palette-input-row
-) {
+:root[data-theme='light'] [data-surface='dark'] {
   --ink-1: #f2f5f3;
   --ink-2: rgba(242, 245, 243, 0.88);
   --ink-3: rgba(242, 245, 243, 0.78);
@@ -514,8 +508,10 @@
   color: var(--ink-1);
 }
 
-/* The two blocks that have no surface of their own — they inherit the page. */
-:root[data-theme='light'] :is(.hero, .article-hero.canvas-variant, .kompute-feature, .kaos-feature) {
+/* Blocks with no surface of their own would otherwise inherit the page. They opt
+   into the plate beside the role, on the same element: `data-surface-plate` is
+   only ever valid together with `data-surface="dark"`, which the ratchet checks. */
+:root[data-theme='light'] [data-surface='dark'][data-surface-plate] {
   background: var(--bg-panel);
   color: var(--ink-1);
 }

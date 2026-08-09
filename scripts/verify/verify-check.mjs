@@ -90,3 +90,127 @@ if (!alphaPassed) {
   );
   process.exitCode = 1;
 }
+
+// ---------------------------------------------------------------------------
+// Inverted-surface role.
+//
+// The light theme keeps whole blocks dark on a light page. That used to be a
+// hand-maintained selector list in `tokens.css` plus a matching `data-surface`
+// label on every canvas mount inside those blocks — two lists, in two files,
+// with nothing holding them together. A block added to neither renders wrong in
+// LIGHT ONLY, which nobody working in the default theme ever sees.
+//
+// Now membership is one declaration at the block, `data-surface="dark"`, read
+// by the stylesheet and by `surfaceOf()` alike. These checks keep it that way:
+//
+//   1. the role rule keys off the attribute, so the selector list cannot regrow;
+//   2. `data-surface-plate` never appears without the role beside it;
+//   3. every declared value is `dark` or `page`, so a typo is not a silent `page`;
+//   4. the `--canvas-dark-*` set restates the role rule's values exactly — the
+//      canvas cannot read the block it sits in, so those are copies, and copies
+//      drift.
+const tokensCss = readFileSync(new URL('../../src/styles/tokens.css', import.meta.url), 'utf8');
+const surfaceFindings = [];
+
+const roleRule = /:root\[data-theme='light'\]\s*\[data-surface='dark'\]\s*\{([^}]*)\}/.exec(
+  tokensCss,
+);
+if (!roleRule) {
+  surfaceFindings.push(
+    "The inverted-surface role rule is gone or no longer keys off `[data-surface='dark']`. " +
+      'Membership is declared at the block, never as a selector list here.',
+  );
+}
+for (const [, selector] of tokensCss.matchAll(/:root\[data-theme='light'\]\s+([^{]+)\{/g)) {
+  const text = selector.trim();
+  if (text.includes('[data-surface')) continue;
+  surfaceFindings.push(
+    `A light-theme rule selects blocks by class rather than by the surface role: \`${text}\`. ` +
+      'Give the block `data-surface="dark"` instead.',
+  );
+}
+
+const markupRoot = fileURLToPath(new URL('../../src/', import.meta.url));
+const surfaceValues = new Set();
+const walkMarkup = (dir) => {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      walkMarkup(full);
+      continue;
+    }
+    if (!/\.(astro|tsx|html)$/.test(entry.name)) continue;
+    const text = readFileSync(full, 'utf8');
+    for (const [, value] of text.matchAll(/data-surface=(?:"([^"]*)"|'([^']*)')/g)) {
+      surfaceValues.add(value);
+    }
+    for (const [, value] of text.matchAll(/data-surface=\{([^}]*)\}/g)) {
+      for (const [, literal] of value.matchAll(/'([^']*)'/g)) surfaceValues.add(literal);
+    }
+    for (const [tag] of text.matchAll(/<[a-zA-Z][^>]*>/g)) {
+      if (!tag.includes('data-surface-plate')) continue;
+      if (tag.includes('data-surface=')) continue;
+      surfaceFindings.push(
+        `${full}: \`data-surface-plate\` without \`data-surface="dark"\` on the same element. ` +
+          'The plate is the role plus a background; it is never the background alone.',
+      );
+    }
+  }
+};
+walkMarkup(markupRoot);
+for (const value of surfaceValues) {
+  if (value === 'dark' || value === 'page') continue;
+  surfaceFindings.push(
+    `\`data-surface="${value}"\` is not a surface. The only values are \`dark\` and \`page\`.`,
+  );
+}
+
+// The canvas cannot inherit the role rule's re-entered rungs, so `:root` carries
+// a `--canvas-dark-*` copy of them. Copies drift; this compares them.
+const declarationsIn = (block) =>
+  new Map(
+    [...block.matchAll(/(--[a-z0-9-]+)\s*:\s*([^;]+);/g)].map(([, name, value]) => [
+      name,
+      value.trim(),
+    ]),
+  );
+const lightRoot = /:root\[data-theme='light'\]\s*\{([\s\S]*?)\n\}/.exec(tokensCss);
+if (roleRule && lightRoot) {
+  const role = declarationsIn(roleRule[1]);
+  const root = declarationsIn(lightRoot[1]);
+  const mirrored = [
+    ['--canvas-dark-ink', '--ink-1'],
+    ['--canvas-dark-base', '--bg-base'],
+    ['--canvas-dark-panel', '--bg-panel'],
+    ['--canvas-dark-inset', '--bg-inset'],
+    ['--canvas-dark-accent', '--accent'],
+    ['--canvas-dark-accent-ink', '--accent-ink'],
+    ['--canvas-dark-shadow', '--shadow-hard'],
+  ];
+  for (const [canvasToken, roleToken] of mirrored) {
+    const canvasValue = root.get(canvasToken);
+    const roleValue = role.get(roleToken);
+    if (canvasValue === undefined || roleValue === undefined) {
+      surfaceFindings.push(
+        `${canvasToken} / ${roleToken}: one of the pair is missing, so the canvas palette and the ` +
+          'inverted blocks can no longer be compared.',
+      );
+      continue;
+    }
+    if (canvasValue !== roleValue) {
+      surfaceFindings.push(
+        `${canvasToken} is \`${canvasValue}\` but the inverted blocks paint ${roleToken} as ` +
+          `\`${roleValue}\`. A canvas cannot read the block it sits in, so these are copies: change one, change both.`,
+      );
+    }
+  }
+}
+
+console.log(
+  JSON.stringify(
+    { surfaceRole: { passed: surfaceFindings.length === 0, findings: surfaceFindings } },
+    null,
+    2,
+  ),
+);
+if (surfaceFindings.length > 0) process.exitCode = 1;

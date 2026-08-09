@@ -17,10 +17,16 @@ export interface CanvasPointer {
    live inside one of those, so under light they must keep painting light-on-dark.
    Only the artwork that sits on the page ground inverts.
 
-   Which is which is a hardcoded label, never inferred: every mount carries a
-   `data-surface="dark" | "page"` attribute, read once at construction by
+   Which is which is a declared label, never inferred: the nearest ancestor
+   carrying `data-surface="dark" | "page"` decides, read once at construction by
    `surfaceOf()`. Sniffing the backdrop would break on transparent parents,
    gradients and canvases that straddle two surfaces.
+
+   That attribute is the SAME declaration the stylesheet keys the inverted
+   surface role off (`tokens.css`, `:root[data-theme='light'] [data-surface='dark']`),
+   so a block cannot be dark in CSS and light to its canvas. A mount inside a
+   dark block inherits it and says nothing; a mount that sits somewhere its
+   ancestry gets wrong overrides it on itself.
 
    Slots are RGB triplets, not formatted strings, because most call sites
    compose their own alpha (`rgba(${accent},${pulse})`). Use `rgba()`/`rgbCss()`
@@ -33,7 +39,7 @@ export interface CanvasPointer {
    one — the CSS wins, so a palette retune flows through without a code change.
 --------------------------------------------------------------------------- */
 
-/** Which surface a mount sits on. A hardcoded label, not a measurement. */
+/** Which surface a mount sits on. A declared label, not a measurement. */
 export type CanvasSurface = 'dark' | 'page';
 
 export type Rgb = readonly [number, number, number];
@@ -150,12 +156,17 @@ const currentTheme = () =>
   (typeof document === 'undefined' ? '' : document.documentElement.dataset.theme) ?? '';
 
 /**
- * The surface label a mount declares. `dark` is the fallback because it is the
- * only answer that is right in both themes when the attribute is missing — the
- * dark theme has no page/block distinction to get wrong.
+ * The surface a mount sits on: the nearest declaration at or above it. Blocks
+ * that stay dark on a light page declare `data-surface="dark"` on themselves —
+ * the same attribute `tokens.css` re-enters the on-dark rungs for — so a canvas
+ * inside one needs no label of its own and cannot disagree with its block. A
+ * mount whose ancestry would answer wrong declares its own value and wins.
+ *
+ * `page` is the fallback: an undeclared mount is on the page ground, and under
+ * dark the two answers are identical anyway.
  */
 export const surfaceOf = (element: Element | null | undefined): CanvasSurface =>
-  (element as HTMLElement | null | undefined)?.dataset?.surface === 'page' ? 'page' : 'dark';
+  element?.closest?.('[data-surface]')?.getAttribute('data-surface') === 'dark' ? 'dark' : 'page';
 
 /**
  * Resolved palette for a surface under the active theme. Cached until
