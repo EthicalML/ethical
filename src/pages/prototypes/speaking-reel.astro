@@ -6,7 +6,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import ScrollStage from '../../components/ScrollStage.astro';
 import SpeakingEnquiry from '../../components/SpeakingEnquiry.astro';
 import EventBanner from '../../components/EventBanner.astro';
+import VideoLoader from '../../components/VideoLoader.astro';
 import { loadEvents, eventDate, recordings } from '../../utils/Events';
+import { tintFor } from '../../utils/EventTints';
 
 const today = new Date();
 const { all } = await loadEvents(today);
@@ -22,6 +24,7 @@ const videoId = (url?: string) => (url ?? '').match(/[?&]v=([\w-]+)/)?.[1] ?? ''
 <BaseLayout
   frontmatter={{ title: 'Speaking — prototype F', description: 'Prototype.', noindex: true }}
 >
+  <div class="rl-wash" aria-hidden="true"></div>
   <main class="reel">
     <header class="rl-head">
       <p class="eyebrow">SPEAKING</p>
@@ -33,8 +36,14 @@ const videoId = (url?: string) => (url ?? '').match(/[?&]v=([\w-]+)/)?.[1] ?? ''
       <div slot="stage" class="rl-screen">
         {
           reel.map(({ event, talk }) => (
-            <figure class="rl-frame" data-stage-item data-video={videoId(talk.video)}>
-              <span class="rl-art">
+            <figure
+              class="rl-frame"
+              data-stage-item
+              data-video-id={videoId(talk.video)}
+              data-tint={tintFor(event.topics?.[0], event.slug)[0]}
+            >
+              {event.image && <img class="rl-backdrop" src={event.image} alt="" loading="lazy" />}
+              <span class="rl-inset" data-inset>
                 {talk.image ? (
                   <img src={talk.image} alt="" loading="lazy" />
                 ) : (
@@ -46,22 +55,27 @@ const videoId = (url?: string) => (url ?? '').match(/[?&]v=([\w-]+)/)?.[1] ?? ''
                     image={event.image}
                   />
                 )}
-                <button class="rl-play" type="button" data-play={videoId(talk.video)} aria-label={`Play ${talk.title}`}>
-                  Play
-                </button>
               </span>
               <figcaption>
                 <span class="rl-venue">
                   {event.name} · {eventDate(event)}
                 </span>
                 <span class="rl-title">{talk.title}</span>
+                <span class="rl-actions">
+                  <a class="button" href={talk.video} target="_blank" rel="noopener noreferrer">
+                    Open video
+                  </a>
+                  <button class="button primary" type="button" data-enquiry-open>
+                    Invite me to speak
+                  </button>
+                </span>
               </figcaption>
             </figure>
           ))
         }
-        <div class="rl-player" data-player hidden>
-          <button class="rl-close" type="button" data-player-close>Close</button>
-          <div class="rl-embed" data-player-embed></div>
+        <div class="rl-live" data-live-embed></div>
+        <div class="rl-loading" data-loading-slot>
+          <VideoLoader />
         </div>
       </div>
 
@@ -94,6 +108,25 @@ const videoId = (url?: string) => (url ?? '').match(/[?&]v=([\w-]+)/)?.[1] ?? ''
 </BaseLayout>
 
 <style>
+  /* The page takes its colour from the talk on screen. The wash is the same
+     ground the generated banner uses, blurred to a haze and held at low alpha:
+     the ceiling is the palette itself, which is dark by construction, rather
+     than a brightness filter bolted on after. */
+  .rl-wash {
+    background: radial-gradient(120% 80% at 30% 0%, var(--wash, transparent), transparent 70%);
+    filter: blur(90px);
+    inset: -20vh -10vw;
+    opacity: 0;
+    pointer-events: none;
+    position: fixed;
+    transition:
+      background 1.1s ease,
+      opacity 1.1s ease;
+    z-index: -1;
+  }
+  .rl-wash[data-on='1'] {
+    opacity: 0.85;
+  }
   .rl-head {
     padding: var(--space-56) var(--space-40) var(--space-26);
   }
@@ -116,39 +149,53 @@ const videoId = (url?: string) => (url ?? '').match(/[?&]v=([\w-]+)/)?.[1] ?? ''
     flex-direction: column;
     gap: var(--space-12);
     inset: 0;
+    justify-content: flex-end;
     margin: 0;
     opacity: 0;
+    padding: var(--space-26);
     position: absolute;
     transition: opacity 0.5s ease;
   }
   .rl-frame[data-active='1'] {
     opacity: 1;
   }
-  .rl-art {
+  /* The venue photograph fills the stage; the talk still sits in front of it at
+     about two thirds width, so the room is the setting and the slide is the
+     subject. */
+  .rl-backdrop {
+    filter: grayscale(0.35) contrast(1.05);
+    height: 100%;
+    inset: 0;
+    object-fit: cover;
+    opacity: 0.3;
+    position: absolute;
+    width: 100%;
+    z-index: 0;
+  }
+  .rl-inset {
+    align-self: center;
     aspect-ratio: 16 / 9;
-    border: 1px solid var(--hairline);
+    border: 1px solid var(--hairline-strong);
     display: block;
+    margin: auto auto 0;
     overflow: hidden;
     position: relative;
+    width: 72%;
+    z-index: 1;
   }
-  .rl-art img {
+  .rl-inset img {
     height: 100%;
     object-fit: cover;
     width: 100%;
   }
-  .rl-play {
-    background: rgba(19, 20, 20, 0.72);
-    border: 1px solid var(--accent-edge, var(--hairline-strong));
-    color: var(--accent, var(--text-1));
-    cursor: pointer;
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    inset: auto auto var(--space-14) var(--space-14);
-    letter-spacing: 0.12em;
+  .rl-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-12);
+    margin-top: var(--space-14);
+  }
+  .rl-actions .button {
     min-height: 44px;
-    padding: var(--space-8) var(--space-14);
-    position: absolute;
-    text-transform: uppercase;
   }
   .rl-venue {
     color: var(--text-3);
@@ -160,37 +207,52 @@ const videoId = (url?: string) => (url ?? '').match(/[?&]v=([\w-]+)/)?.[1] ?? ''
   .rl-title {
     color: var(--text-1);
     display: block;
+    font-size: 1.1rem;
   }
-  .rl-player {
-    background: var(--bg-base);
-    inset: 0;
+  figcaption {
+    position: relative;
+    z-index: 1;
+  }
+  /* One player, parked over whichever still is active. Eighteen iframes would
+     be eighteen player downloads and eighteen sets of cookies; this is one,
+     and it only loads once the scroll has settled on a talk. */
+  .rl-live {
+    aspect-ratio: 16 / 9;
+    display: none;
+    left: 50%;
     position: absolute;
+    transform: translateX(-50%);
+    width: 72%;
+    z-index: 2;
+  }
+  /* Shown as soon as it holds a player, not once it is ready: a lazily loaded
+     iframe inside a display:none box never loads, so gating visibility on the
+     load event deadlocked the cue. The loader simply covers it meanwhile. */
+  .rl-live:not(:empty) {
+    display: block;
+  }
+  /* Sits exactly where the player will, so the cue becomes the video rather
+     than the video appearing beside a spinner. */
+  .rl-loading {
+    aspect-ratio: 16 / 9;
+    left: 50%;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    transform: translateX(-50%);
+    transition: opacity 0.4s ease;
+    visibility: hidden;
+    width: 72%;
     z-index: 3;
   }
-  .rl-player[hidden] {
-    display: none;
+  .rl-loading[data-showing='1'] {
+    opacity: 1;
+    visibility: visible;
   }
-  .rl-embed {
-    aspect-ratio: 16 / 9;
-    width: 100%;
-  }
-  .rl-embed :global(iframe) {
-    border: 0;
+  .rl-live :global(iframe) {
+    border: 1px solid var(--hairline-strong);
     height: 100%;
     width: 100%;
-  }
-  .rl-close {
-    background: var(--bg-panel);
-    border: 1px solid var(--hairline);
-    color: var(--text-2);
-    cursor: pointer;
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.1em;
-    margin-bottom: var(--space-8);
-    min-height: 44px;
-    padding: var(--space-8) var(--space-12);
-    text-transform: uppercase;
   }
   .rl-step {
     border-top: 1px solid var(--hairline);
@@ -237,22 +299,101 @@ const videoId = (url?: string) => (url ?? '').match(/[?&]v=([\w-]+)/)?.[1] ?? ''
 </style>
 
 <script>
-  // The embed is only created on demand: twenty autoplaying iframes would be a
-  // page-weight disaster, and YouTube sets cookies the moment one exists.
-  const player = document.querySelector<HTMLElement>('[data-player]');
-  const embed = document.querySelector<HTMLElement>('[data-player-embed]');
-  if (player && embed) {
-    document.querySelectorAll<HTMLButtonElement>('[data-play]').forEach((button) =>
-      button.addEventListener('click', () => {
-        const id = button.dataset.play;
-        if (!id) return;
-        embed.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1" title="Talk recording" allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
-        player.hidden = false;
-      }),
+  // The player follows the active talk. It is not autoplay: the embed sits
+  // there ready and the visitor presses play.
+  //
+  // The one rule that matters: react to the active VIDEO changing, not to
+  // attribute writes. ScrollStage stamps data-active on every frame on every
+  // scroll tick, so an observer that acts on each mutation re-cues eighteen
+  // times a scroll — which is what made this flicker.
+  const live = document.querySelector<HTMLElement>('[data-live-embed]');
+  const slot = document.querySelector<HTMLElement>('[data-loading-slot]');
+  const loader = slot?.querySelector<HTMLElement>('[data-loader]');
+  const frames = Array.from(document.querySelectorAll<HTMLElement>('.rl-frame'));
+
+  if (live && frames.length) {
+    const MIN_CUE = 900;
+    let activeId = '';
+    let cueShownAt = 0;
+    let hideTimer = 0;
+    let mountTimer = 0;
+
+    const activeFrame = () => frames.find((frame) => frame.dataset.active === '1');
+
+    const place = () => {
+      const inset = activeFrame()?.querySelector<HTMLElement>('[data-inset]');
+      if (slot && inset) slot.style.top = `${inset.offsetTop}px`;
+      if (inset) live.style.top = `${inset.offsetTop}px`;
+    };
+
+    const showCue = () => {
+      if (!slot || !loader) return;
+      clearTimeout(hideTimer);
+      place();
+      if (slot.dataset.showing === '1') return;
+      cueShownAt = performance.now();
+      // Unhidden first so the element is laid out, then flipped on a later
+      // frame: opacity cannot transition from a display:none starting point.
+      loader.hidden = false;
+      requestAnimationFrame(() => {
+        slot.dataset.showing = '1';
+      });
+    };
+
+    // Only ever hides for the talk it was raised for. A player that finishes
+    // after the reader has moved on must not uncover someone else's video.
+    const hideCueFor = (id: string) => {
+      if (!slot || !loader || id !== activeId) return;
+      clearTimeout(hideTimer);
+      hideTimer = window.setTimeout(
+        () => {
+          if (id !== activeId) return;
+          slot.dataset.showing = '0';
+          live.dataset.ready = '1';
+          // Teardown waits for the fade, otherwise the cue vanishes mid-transition.
+          window.setTimeout(() => {
+            if (slot.dataset.showing === '0') loader.hidden = true;
+          }, 420);
+        },
+        Math.max(0, MIN_CUE - (performance.now() - cueShownAt)),
+      );
+    };
+
+    const mount = (id: string) => {
+      if (id !== activeId) return;
+      place();
+      live.dataset.ready = '0';
+      live.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?hl=en" title="Talk recording" allow="accelerometer; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+      live.querySelector('iframe')?.addEventListener('load', () => hideCueFor(id), { once: true });
+      window.setTimeout(() => hideCueFor(id), 6000);
+    };
+
+    const wash = document.querySelector<HTMLElement>('.rl-wash');
+    const paint = () => {
+      const tint = activeFrame()?.dataset.tint;
+      if (!wash || !tint) return;
+      wash.style.setProperty('--wash', tint);
+      wash.dataset.on = '1';
+    };
+
+    const sync = () => {
+      paint();
+      const id = activeFrame()?.dataset.videoId ?? '';
+      if (!id) return;
+      place();
+      if (id === activeId) return; // same talk: nothing to cue, nothing to load
+      activeId = id;
+      showCue();
+      clearTimeout(mountTimer);
+      // Settle before building, so scrolling across several talks loads the one
+      // you stop on rather than each one you pass.
+      mountTimer = window.setTimeout(() => mount(id), 260);
+    };
+
+    const observer = new MutationObserver(sync);
+    frames.forEach((frame) =>
+      observer.observe(frame, { attributes: true, attributeFilter: ['data-active'] }),
     );
-    document.querySelector('[data-player-close]')?.addEventListener('click', () => {
-      embed.innerHTML = '';
-      player.hidden = true;
-    });
+    sync();
   }
 </script>

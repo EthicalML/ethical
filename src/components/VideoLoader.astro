@@ -1,0 +1,180 @@
+---
+/**
+ * Cueing state for the reel: the isometric transmission scene from the contact
+ * form, plus a typed line, held over the stage while a player mounts.
+ *
+ * The scene is the same `form-send-iso` element the send button drives, so the
+ * page has one idiom for "something is in flight" rather than two. Its progress
+ * is driven here too: an ambient loop would say nothing about whether the video
+ * is nearly ready.
+ */
+interface Props {
+  lines?: string[];
+}
+
+const { lines = ['Cueing the recording', 'Fetching the stream', 'Almost there'] } = Astro.props;
+---
+
+<video-loader class="video-loader" data-loader hidden data-lines={JSON.stringify(lines)}>
+  <form-send-iso data-loader-iso data-surface="page">
+    <canvas></canvas>
+  </form-send-iso>
+  <p class="loader-line">
+    <span class="loader-text" data-loader-text></span><span class="loader-cursor" aria-hidden="true"
+    ></span>
+  </p>
+</video-loader>
+
+<style>
+  .video-loader {
+    align-items: center;
+    background: var(--bg-inset);
+    border: 1px solid var(--hairline-strong);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-14);
+    inset: 0;
+    justify-content: center;
+    position: absolute;
+    z-index: 4;
+  }
+  .video-loader[hidden] {
+    display: none;
+  }
+  /* Sized rather than stretched: at 62% height the scene pushed the line off
+     centre, so the stack is a square canvas and a caption, centred together. */
+  .video-loader form-send-iso {
+    display: block;
+    height: min(46%, 190px);
+    width: min(60%, 260px);
+  }
+  .video-loader canvas {
+    height: 100%;
+    width: 100%;
+  }
+  .loader-line {
+    color: var(--text-2);
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    margin: 0;
+    text-transform: uppercase;
+  }
+  .loader-cursor {
+    background: var(--accent, var(--text-1));
+    display: inline-block;
+    height: 0.9em;
+    margin-left: 2px;
+    vertical-align: -0.1em;
+    width: 7px;
+    animation: loader-blink 1s steps(2, start) infinite;
+  }
+  @keyframes loader-blink {
+    to {
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .loader-cursor {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  import '../shared/canvas/FormSendIso';
+
+  class VideoLoader extends HTMLElement {
+    private controller = new AbortController();
+    private timer = 0;
+    private frame = 0;
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const output = this.querySelector<HTMLElement>('[data-loader-text]');
+      const iso = this.querySelector<HTMLElement & { progress: number; settled: boolean }>(
+        '[data-loader-iso]',
+      );
+      const lines: string[] = JSON.parse(this.dataset.lines ?? '[]');
+      if (!output || !lines.length) return;
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+
+      // Reset on every showing, not once at construction: a cue that resumes
+      // mid-word from the last talk, over a scene whose progress already ran to
+      // completion, is the animation not restarting at all.
+      let line = 0;
+      let index = 0;
+      let deleting = false;
+      let started = 0;
+
+      const tick = () => {
+        const text = lines[line];
+        index += deleting ? -1 : 1;
+        output.textContent = text.slice(0, index);
+        let delay = deleting ? 24 : 46;
+        if (!deleting && index === text.length) {
+          deleting = true;
+          delay = 900;
+        } else if (deleting && index === 0) {
+          deleting = false;
+          line = (line + 1) % lines.length;
+          delay = 220;
+        }
+        this.timer = window.setTimeout(tick, delay);
+      };
+
+      // The scene's packet position is elapsed time, the same contract the form
+      // uses, so it reads as progress rather than decoration. It loops while the
+      // cue is up, because the wait has no known length.
+      const CYCLE = 2600;
+      const advance = () => {
+        if (!iso) return;
+        const elapsed = performance.now() - started;
+        iso.progress = (elapsed % CYCLE) / CYCLE;
+        this.frame = requestAnimationFrame(advance);
+      };
+
+      const start = () => {
+        clearTimeout(this.timer);
+        cancelAnimationFrame(this.frame);
+        line = 0;
+        index = 0;
+        deleting = false;
+        output.textContent = '';
+        if (reduced.matches) {
+          output.textContent = lines[0];
+          return;
+        }
+        started = performance.now();
+        tick();
+        if (iso) {
+          iso.settled = false;
+          iso.progress = 0;
+          advance();
+        }
+      };
+
+      // Only run while actually shown: a hidden loader should cost nothing.
+      const observer = new MutationObserver(() => {
+        if (this.hidden) {
+          clearTimeout(this.timer);
+          cancelAnimationFrame(this.frame);
+        } else {
+          start();
+        }
+      });
+      observer.observe(this, { attributes: true, attributeFilter: ['hidden'] });
+      this.controller.signal.addEventListener('abort', () => observer.disconnect());
+      if (!this.hidden) start();
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+      clearTimeout(this.timer);
+      cancelAnimationFrame(this.frame);
+    }
+  }
+
+  if (!customElements.get('video-loader')) customElements.define('video-loader', VideoLoader);
+</script>
