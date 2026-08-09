@@ -141,6 +141,11 @@ jobs:
           echo "the built site never came up on :4126" >&2
           exit 1
       - run: npm run verify:motion:all
+      # Canvas paints outside the cascade, so its colours come from the surface a
+      # mount sits on rather than the active theme. The screenshot gate masks every
+      # canvas and only runs dark, where both surfaces resolve identically — so this
+      # is the only check that can see a mount painting for the wrong backdrop.
+      - run: npm run verify:canvas-surface
 
   # Pixel parity against the PR's merge base. No baselines are committed — the
   # job builds and photographs both sides itself, so it cannot go stale and

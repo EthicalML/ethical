@@ -64,9 +64,21 @@ noticing that their alphas were never jobs in the first place:
   mark. The nine light values turned out to be nothing but their dark alpha times 1.32, so that
   factor is now `--ink-wash-lift` rather than nine hand-tuned numbers. Zero pixels in dark; light
   lands within 0.7/255 of the values it replaced.
-- **Shadows.** The one family where alpha _is_ cheap: black on near-black moves `Δα × 19`, so the
-  three deep steps (.60/.55/.50) were one job at three hand-typed strengths and merge inside the
-  budget. Two rungs now: `--shadow-drop` for a raised panel or overlay, `--shadow-lift` for a tile.
+- **Shadows.** The three deep steps (.60/.55/.50) were one job at three hand-typed strengths and
+  became `--shadow-drop`; `--shadow-lift` is the tile shadow. Two rungs now.
+
+  **The budget argument for that merge was wrong, and the merge was kept anyway — knowingly.** It
+  read `Δα × 19`, black over `--bg-base`, giving 1.9/255 for .50 → .60. But these shadows fall
+  under dropdowns and modals, on a scrimmed overlay rather than the raw page, and measured on real
+  captures of the command palette the change is **45/255 across ~337k pixels**. Far outside the
+  3/255 budget. It survives because the owner compared the two side by side and could not see any
+  difference — 45/255 spread through a soft gradient reads as nothing — not because it was small.
+
+  **Nothing measured it at the time, and nothing would today.** No screenshot in `routes.json`
+  opens a menu or a modal, so the entire shadow family is unpainted in every capture. `verify:parity`
+  reported `0/255` for shadows throughout, which meant "no capture paints them", not "safe". If you
+  change a shadow, compare it by hand with the palette or a mega menu open; the sweep will agree
+  with you whatever you do.
 
 **Do not propose collapsing the rest invisibly.** Ink sits 244 channel levels above the darkest
 surface, so `Δα 0.01` is already `2.44/255` before rendering and ~`3/255` after glyph antialiasing,
@@ -142,6 +154,14 @@ holding them together — and a block missing from either renders wrong **in lig
 to anyone working in the default theme. `npm run check:ratchet` now fails if a light-theme rule
 selects blocks by class instead of by the role, if `data-surface-plate` appears without it, or if a
 `data-surface` value is anything but `dark` or `page`.
+
+Those are spelling checks: they prove the attribute is used consistently, not that any mount
+resolves to the surface it is really sitting on. `npm run verify:canvas-surface` proves that —
+it loads every route in **light**, walks up from each canvas to the first opaque background, and
+fails if the resolved surface disagrees with what is painted there. Light is the only theme
+where the question has an answer: under dark the page ground _is_ the inverted colour, so a
+mount on the wrong surface looks correct either way. It runs in CI beside the motion gate,
+because it needs a browser and a build.
 
 Canvas paints outside the cascade, so a canvas cannot inherit those re-entered rungs. It therefore
 takes its colours from the **surface it sits on, not from the active theme**, via two token sets on
