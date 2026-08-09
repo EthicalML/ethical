@@ -154,6 +154,15 @@ jobs:
   visual:
     needs: changes
     runs-on: ubuntu-latest
+    # One definition, one leg per theme, run concurrently. Light is where a
+    # theme-only regression can hide: dark is the default everyone develops in,
+    # so a light-only mistake is invisible until someone flips the toggle.
+    # fail-fast is off because a dark failure must not cancel the light leg —
+    # that would withhold the answer the leg exists to give.
+    strategy:
+      fail-fast: false
+      matrix:
+        theme: [dark, light]
     if: >-
       github.event_name == 'pull_request' &&
       needs.changes.outputs.code == 'true' &&
@@ -167,7 +176,13 @@ jobs:
       # Everything else measures and reports without failing.
       PARITY_MODE: >-
         ${{ contains(github.event.pull_request.labels.*.name, 'dependencies') && 'enforce' || 'report' }}
-      COMMENT_MARKER: '<!-- merge-base-visual-parity -->'
+      # Per theme: the comment updater matches on this marker and takes the
+      # last hit, so one marker across two legs means they overwrite each other
+      # and you read one theme's result believing it covers both.
+      COMMENT_MARKER: '<!-- merge-base-visual-parity-${{ matrix.theme }} -->'
+      # Separate ports: both legs can land on one runner, and a held port makes
+      # the second sweep photograph the first build — a silently wrong pass.
+      SHOT_PORT: ${{ matrix.theme == 'light' && '4127' || '4126' }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -229,8 +244,8 @@ jobs:
       - name: Capture both builds
         if: steps.scope.outputs.run == 'true'
         run: |
-          .github/scripts/capture-shots.sh "$RUNNER_TEMP/dist-base" "$RUNNER_TEMP/shots/base"
-          .github/scripts/capture-shots.sh "$RUNNER_TEMP/dist-head" "$RUNNER_TEMP/shots/head"
+          .github/scripts/capture-shots.sh "$RUNNER_TEMP/dist-base" "$RUNNER_TEMP/shots/base" "${{ matrix.theme }}" "$SHOT_PORT"
+          .github/scripts/capture-shots.sh "$RUNNER_TEMP/dist-head" "$RUNNER_TEMP/shots/head" "${{ matrix.theme }}" "$SHOT_PORT"
       - name: Compare
         if: steps.scope.outputs.run == 'true'
         id: compare
@@ -251,6 +266,7 @@ jobs:
           node scripts/verify/parity-summary.mjs \
             --mode "$PARITY_MODE" \
             --marker "$COMMENT_MARKER" \
+            --title "Visual parity — ${{ matrix.theme == 'light' && 'light theme ☀️' || 'dark theme 🌙' }}" \
             --out "$RUNNER_TEMP/parity/comment.md" \
             --verdict "$RUNNER_TEMP/parity/verdict.txt" \
             "1440x1000=$RUNNER_TEMP/parity/report-1440.json" \

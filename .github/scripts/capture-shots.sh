@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Serves a built site on :4126, photographs every route in routes.json at both
+# Serves a built site on $port, photographs every route in routes.json at both
 # viewports, and moves the captures to $2.
 #
 #   capture-shots.sh <dist-dir> <destination>
@@ -11,7 +11,7 @@
 # captures taken by two different procedures. Only the built output should
 # differ between the two sides.
 #
-# Reusing :4126 across two builds is the one reliable way to produce a
+# Reusing :$port across two builds is the one reliable way to produce a
 # confident, meaningless green: if the first server survives, the second sweep
 # photographs the first build and parity passes because it compared a build to
 # itself. That is not hypothetical — it happened on the first CI run of this
@@ -32,6 +32,8 @@ set -euo pipefail
 
 dist="$1"
 destination="$2"
+theme="${3:-dark}"
+port="${4:-4126}"
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$root"
 
@@ -40,7 +42,7 @@ test -d "$dist" || {
   exit 1
 }
 
-port_free() { ! curl -fsS -o /dev/null --max-time 2 "http://127.0.0.1:4126/" 2>/dev/null; }
+port_free() { ! curl -fsS -o /dev/null --max-time 2 "http://127.0.0.1:$port/" 2>/dev/null; }
 
 await_port_free() {
   for _ in $(seq 1 20); do
@@ -51,7 +53,7 @@ await_port_free() {
 }
 
 if ! port_free; then
-  echo "something is already serving :4126; refusing to photograph it" >&2
+  echo "something is already serving :$port; refusing to photograph it" >&2
   exit 1
 fi
 
@@ -59,33 +61,33 @@ rm -rf scripts/verify/out
 
 # `setsid` puts the server and every child npx spawns into one process group, so
 # teardown can take the group down rather than only the wrapper.
-setsid npx --yes http-server "$dist" -p 4126 --silent &
+setsid npx --yes http-server "$dist" -p "$port" --silent &
 server=$!
 cleanup() {
   kill -TERM "-$server" 2>/dev/null || kill -TERM "$server" 2>/dev/null || true
   wait "$server" 2>/dev/null || true
   await_port_free || {
-    echo ":4126 is still held after teardown; the next sweep would photograph this build" >&2
+    echo ":$port is still held after teardown; the next sweep would photograph this build" >&2
     exit 1
   }
 }
 trap cleanup EXIT
 
 for _ in $(seq 1 60); do
-  curl -fsS -o /dev/null "http://127.0.0.1:4126/" && break
+  curl -fsS -o /dev/null "http://127.0.0.1:$port/" && break
   sleep 1
 done
 
 # The identity check. If this passes, the sweep is photographing $dist and
 # nothing else — no surviving server, no stale build, no silent green.
-served=$(curl -fsS "http://127.0.0.1:4126/" | shasum | cut -d' ' -f1)
+served=$(curl -fsS "http://127.0.0.1:$port/" | shasum | cut -d' ' -f1)
 ondisk=$(shasum < "$dist/index.html" | cut -d' ' -f1)
 if [ "$served" != "$ondisk" ]; then
-  echo "‽ :4126 is not serving $dist (served $served, on disk $ondisk)" >&2
+  echo "‽ :$port is not serving $dist (served $served, on disk $ondisk)" >&2
   exit 1
 fi
 
-npm run verify:shots:all > /dev/null
+npm run verify:shots:all -- --theme "$theme" > /dev/null
 
 mkdir -p "$(dirname "$destination")"
 rm -rf "$destination"
