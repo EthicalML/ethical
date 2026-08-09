@@ -11,7 +11,7 @@ featured:
   - MLOps World 2026
 ---
 
-import { ArticleHero, EventCards, EventArchive } from '../components/prose/components.js';
+import { ArticleHero, EventCards, EventArchive, TalkReel } from '../components/prose/components.js';
 
 <ArticleHero
   eyebrow="TALKS & EVENTS"
@@ -30,7 +30,23 @@ import { ArticleHero, EventCards, EventArchive } from '../components/prose/compo
     names={frontmatter.featured}
     empty="No public dates right now — announcements go out first through the ML Engineer newsletter."
   />
-  <a className="button primary" href="/contact/?interest=newsletter#contact">Subscribe</a>
+  <a className="button primary" href="/newsletter/">Subscribe to newsletter</a>
+</section>
+
+<section className="cluster-section reel-section" data-reveal>
+  <p className="eyebrow">FEATURED TALKS</p>
+  <h2>Three worth watching</h2>
+  <p>
+    Scroll through them, or press play on any one without leaving the page. Every other recording
+    is in the archive below.
+  </p>
+  <TalkReel
+    titles={[
+      'The State of GenAI 2025',
+      'Production ML across 2015-2035',
+      'The State of Production Machine Learning in 2024',
+    ]}
+  />
 </section>
 
 <section className="cluster-section archive-section" data-reveal>

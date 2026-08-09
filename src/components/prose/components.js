@@ -44,3 +44,4 @@ export { default as FrameworkLinkCards } from '../FrameworkLinkCards.astro';
 export { default as PolicyMandates } from '../PolicyMandates.astro';
 export { default as PolicyRecordShelves } from '../PolicyRecordShelves.astro';
 export { default as AchievementNeonRendition } from '../AchievementNeonRendition.astro';
+export { default as TalkReel } from '../TalkReel.astro';

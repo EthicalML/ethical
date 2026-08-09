@@ -35,8 +35,30 @@ const { lines = ['Cueing the recording', 'Fetching the stream', 'Almost there'] 
     gap: var(--space-14);
     inset: 0;
     justify-content: center;
+    /* Clips the poster's bleed: the blur needs material to bleed from, so the
+       layer is inset past the edges, but it must stop at the media box rather
+       than haloing outside it. */
+    overflow: hidden;
     position: absolute;
     z-index: 4;
+  }
+  /* The video's own thumbnail, blurred and held well back, so the cue is
+     already showing the frame the player opens on and the handover is a
+     dissolve rather than a cut from a blank panel.
+     brightness(0.16) is measured, not judged: a near-white slide lands the
+     panel at luminance 36 against the page's 20, which reads as texture behind
+     the scene rather than a picture competing with it. At 0.34 it measured 75
+     and swallowed both the scene and the line. */
+  .video-loader::before {
+    background: var(--poster, none) center / cover no-repeat;
+    content: '';
+    filter: blur(7px) brightness(0.16) saturate(0.9);
+    inset: -12px;
+    position: absolute;
+  }
+  .video-loader > * {
+    position: relative;
+    z-index: 1;
   }
   .video-loader[hidden] {
     display: none;
