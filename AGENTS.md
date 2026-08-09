@@ -6,11 +6,12 @@ The website for The Institute for Ethical AI Alignment & Safety (`ethical.instit
 
 All changes land on `master` through a pull request; direct pushes are blocked by a branch ruleset.
 
-1. Branch from `master` (agents work in their own git worktree so parallel tracks never share a dirty checkout).
-2. Commit with comprehensive messages. Do not append session URLs to commit messages or PR bodies.
-3. Push the branch and open a PR with `gh pr create`.
-4. CI (`.github/workflows/ci.yml`) runs four required checks — `lint` (ESLint and Prettier), `typecheck` (the `astro check` ratchet), `build` (the production build, in demo mode without `FORM_ENDPOINT`) and `motion` (the view-transition settle gate) — plus `visual`, a merge-base pixel-parity sweep whose enforcement depends on the PR's labels.
-5. Merge once CI is green. The merge landing on `master` triggers the production deploy.
+1. Branch from `master` **in your own git worktree** (`git worktree add ./tmp/wt-<slug> -b <branch> origin/master`), so parallel tracks never share a dirty checkout. This is not optional housekeeping: other sessions and background agents are routinely live in the main checkout, and working there means their uncommitted files are in your `git status`.
+2. **Stage explicit paths, never a directory**, and read `git diff --cached --name-only` before you commit. `git add <dir>` sweeps up whatever a concurrent session happens to have untracked in that directory. That is not merely noise in the diff: committing another session's untracked file makes it tracked, so the next branch switch **deletes it from their working tree**. A file you did not touch appearing in your diff means stop and find out whose it is.
+3. Commit with comprehensive messages. Do not append session URLs to commit messages or PR bodies.
+4. Push the branch and open a PR with `gh pr create`, then check `gh pr diff <n> --name-only` and confirm every file belongs to the change.
+5. CI (`.github/workflows/ci.yml`) runs four required checks — `lint` (ESLint and Prettier), `typecheck` (the `astro check` ratchet), `build` (the production build, in demo mode without `FORM_ENDPOINT`) and `motion` (the view-transition settle gate) — plus `visual`, a merge-base pixel-parity sweep whose enforcement depends on the PR's labels.
+6. Merge once CI is green. The merge landing on `master` triggers the production deploy.
 
 The `visual` job builds and photographs both the merge base and the head, so there are no committed baselines to go stale. It skips entirely when nothing under `src/`, `public/` or `package-lock.json` changed, and otherwise:
 
