@@ -1,0 +1,172 @@
+---
+/**
+ * A generated banner for an event that has no photograph.
+ *
+ * Conferences do not come with artwork, and drawing one per event would either
+ * block entries or age into placeholder soup. This draws the same kind of mark
+ * as the hand-authored talk SVGs in src/assets/talks — a tinted ground, one
+ * geometric figure, a mono label — but computes it from the event's slug, so a
+ * given event always looks the same and a new one costs nothing.
+ */
+interface Props {
+  slug: string;
+  series?: string;
+  label?: string;
+  topic?: string;
+  class?: string;
+}
+
+const { slug, series, label = '', topic, class: className } = Astro.props;
+
+// FNV-1a: small, stable across builds, and good enough to scatter five motifs.
+function hash(value: string): number {
+  let out = 2166136261;
+  for (let index = 0; index < value.length; index += 1) {
+    out ^= value.charCodeAt(index);
+    out = Math.imul(out, 16777619);
+  }
+  return out >>> 0;
+}
+
+const grounds: Record<string, [string, string]> = {
+  mlops: ['#173629', '#5ee6a0'],
+  llms: ['#1b2733', '#7fb3ff'],
+  'ai-agents': ['#2e221b', '#e8b45c'],
+  'ml-security': ['#2b1b1f', '#ef8f9c'],
+  'data-engineering': ['#1f2a1b', '#a9d47f'],
+  research: ['#241b2e', '#c39cf0'],
+  python: ['#1b2a2e', '#6fd3d8'],
+  'cloud-native': ['#16262e', '#63c6e0'],
+  'ai-infrastructure': ['#2a2418', '#d8c26a'],
+  'ai-policy': ['#252525', '#cfcabf'],
+  'general-tech': ['#1c1d1d', '#9aa0a0'],
+};
+
+// The figure is seeded by the series and its placement by the edition, so
+// KubeCon reads as KubeCon across years while no two editions sit identically.
+const seed = hash(slug);
+const family = hash(series ?? slug);
+// `general-tech` covers a third of the set, so a single grey would make the
+// commonest case the dullest. Unmapped topics take a seeded hue instead.
+const fallbackHue = family % 360;
+const [ground, ink] = grounds[topic ?? ''] ?? [
+  `hsl(${fallbackHue} 18% 12%)`,
+  `hsl(${fallbackHue} 42% 62%)`,
+];
+const motif = family % 6;
+// Independent draws from the seed so figures do not move in lockstep. The
+// shifts must be unsigned: `>>` is signed, so any seed above 2^31 yielded
+// negative radii and off-canvas centres, leaving a third of the set blank.
+const x = 260 + ((seed >>> 3) % 680);
+const y = 200 + ((seed >>> 7) % 320);
+const size = 120 + ((seed >>> 11) % 190);
+const tilt = (seed >>> 15) % 360;
+const count = 3 + ((seed >>> 19) % 4);
+// Within a family the figure stays the same kind of mark, but its amplitude,
+// angle and spacing come from the edition, so two years never draw alike.
+const amplitude = 60 + ((seed >>> 21) % 220);
+const spacing = 110 + ((seed >>> 23) % 130);
+const weight = 1.5 + ((seed >>> 25) % 3);
+
+const dots = Array.from({ length: count * 3 }, (_, index) => ({
+  cx: 180 + ((index * 137 + (seed % 90)) % 900),
+  cy: 180 + ((index * 211 + ((seed >>> 5) % 70)) % 420),
+  r: 6 + ((seed >>> (index % 12)) % 14),
+}));
+const ring = Array.from({ length: count }, (_, index) => size - index * 34).filter((r) => r > 18);
+const polygon = Array.from({ length: count + 2 }, (_, index) => {
+  const angle = ((Math.PI * 2) / (count + 2)) * index + (tilt * Math.PI) / 180;
+  return `${Math.round(x + Math.cos(angle) * size)},${Math.round(y + Math.sin(angle) * size)}`;
+}).join(' ');
+---
+
+<svg
+  class:list={['event-banner', className]}
+  viewBox="0 0 1200 720"
+  role="img"
+  aria-label={label ? `${label} banner` : 'Event banner'}
+  preserveAspectRatio="xMidYMid slice"
+>
+  <rect width="1200" height="720" fill={ground}></rect>
+  <g class="motif">
+
+  {
+    motif === 0 &&
+      ring.map((r) => <circle cx={x} cy={y} r={r} fill="none" stroke={ink} stroke-width={weight} opacity="0.7" />)
+  }
+  {motif === 1 && dots.map((dot) => <circle cx={dot.cx} cy={dot.cy} r={dot.r} fill={ink} opacity="0.55" />)}
+  {
+    motif === 2 && (
+      <path
+        d={`M-40 ${y} C ${180 + count * 40} ${y - amplitude}, ${460 + count * 30} ${y + amplitude}, 800 ${y - amplitude / 2} S 1180 ${y + amplitude / 3}, 1240 ${y}`}
+        fill="none"
+        stroke={ink}
+        stroke-width={weight}
+        opacity="0.8"
+      />
+    )
+  }
+  {motif === 3 && <polygon points={polygon} fill="none" stroke={ink} stroke-width={weight} opacity="0.75" />}
+  {
+    motif === 4 &&
+      Array.from({ length: Math.ceil(1400 / spacing) }, (_, index) => (
+        <line
+          x1={-120 + index * spacing}
+          y1="760"
+          x2={-120 + index * spacing + (tilt - 180)}
+          y2="-40"
+          stroke={ink}
+          stroke-width={weight}
+          opacity="0.45"
+        />
+      ))
+  }
+
+    {
+      motif === 5 && (
+        <path
+          d={`M ${x - size} ${y} A ${size} ${size} 0 0 1 ${x + size} ${y}`}
+          fill="none"
+          stroke={ink}
+          stroke-width="2"
+          opacity="0.8"
+          transform={`rotate(${tilt} ${x} ${y})`}
+        />
+      )
+    }
+  </g>
+  <path d="M0 719H1200" stroke={ink} stroke-width="2" opacity="0.5"></path>
+  {label && <text x="56" y="92" fill="#f4f2ee" font-family="monospace" font-size="30" opacity="0.85">{label}</text>}
+</svg>
+
+<style>
+  .event-banner {
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+  /* The mark drifts and brightens under the pointer. Inline SVG is what makes
+     this reachable at all: a committed .svg or a raster could not be touched. */
+  .motif {
+    transform-origin: center;
+    transition:
+      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.7s ease;
+  }
+  :global(a:hover) .event-banner .motif,
+  :global(.event-card:hover) .event-banner .motif,
+  .event-banner:hover .motif {
+    opacity: 1;
+    transform: rotate(4deg) scale(1.08);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .motif {
+      transition: none;
+    }
+    :global(a:hover) .event-banner .motif,
+    :global(.event-card:hover) .event-banner .motif,
+    .event-banner:hover .motif {
+      transform: none;
+    }
+  }
+</style>

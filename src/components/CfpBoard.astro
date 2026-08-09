@@ -1,0 +1,177 @@
+---
+import { loadEvents, openCfps, deadlineLabel, daysUntil, eventDate } from '../utils/Events';
+
+interface Props {
+  empty?: string;
+  /** Deadlines further out than this are still listed, but the bar stops filling. */
+  horizon?: number;
+}
+
+const { empty = 'No calls open right now.', horizon = 120 } = Astro.props;
+const today = new Date();
+const { upcoming } = await loadEvents(today);
+
+// One row per open call, not per event: a conference running a call per track
+// has several deadlines, and the track is the thing you submit to.
+const calls = upcoming
+  .flatMap((event) => openCfps(event, today).map((cfp) => ({ event, cfp })))
+  .sort((left, right) => left.cfp.deadline!.getTime() - right.cfp.deadline!.getTime());
+---
+
+{
+  calls.length === 0 ? (
+    <p class="cfp-empty">{empty}</p>
+  ) : (
+    <div class="cfp-board" data-reveal>
+      {calls.map(({ event, cfp }) => {
+        const days = daysUntil(cfp.deadline!, today);
+        // Nearer deadlines fill more of the bar, so urgency is legible before
+        // the number is read.
+        const fill = Math.max(4, Math.min(100, Math.round((1 - days / horizon) * 100)));
+        return (
+          <a
+            class="cfp-row"
+            href={cfp.url ?? event.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={`--fill:${fill}%`}
+          >
+            <span class="cfp-days">
+              <strong>{days}</strong>
+              <span>days</span>
+            </span>
+            <span class="cfp-body">
+              <span class="cfp-name">
+                {event.name}
+                {cfp.track && <span class="cfp-track">{cfp.track}</span>}
+              </span>
+              <span class="cfp-meta">
+                {event.location && <span>{event.location}</span>}
+                <span>{eventDate(event)}</span>
+                <span class="cfp-deadline">{deadlineLabel(cfp.deadline!, today)}</span>
+              </span>
+              <span class="cfp-bar">
+                <span class="cfp-bar-fill" />
+              </span>
+            </span>
+            <span class="cfp-go">Submit</span>
+          </a>
+        );
+      })}
+    </div>
+  )
+}
+
+<style>
+  .cfp-board {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+    margin: var(--space-34) 0 var(--space-26);
+  }
+  .cfp-row {
+    align-items: center;
+    background: var(--bg-panel);
+    border: 1px solid var(--hairline);
+    color: inherit;
+    display: grid;
+    gap: var(--space-20);
+    grid-template-columns: 92px 1fr auto;
+    padding: var(--space-20);
+    text-decoration: none;
+    transition: border-color 0.4s ease;
+  }
+  .cfp-row:hover {
+    border-color: var(--accent-edge, var(--hairline-strong));
+  }
+  .cfp-days {
+    align-items: baseline;
+    color: var(--accent, var(--text-1));
+    display: flex;
+    font-family: var(--font-mono);
+    gap: var(--space-6);
+  }
+  .cfp-days strong {
+    font-size: 2.1rem;
+    font-weight: 400;
+    line-height: 1;
+  }
+  .cfp-days span {
+    color: var(--text-3);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .cfp-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    min-width: 0;
+  }
+  .cfp-name {
+    color: var(--text-1);
+  }
+  .cfp-track {
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    margin-left: var(--space-12);
+  }
+  .cfp-meta {
+    color: var(--text-3);
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 0.82rem;
+    gap: var(--space-14);
+  }
+  .cfp-deadline {
+    color: var(--text-2);
+  }
+  .cfp-bar {
+    background: var(--hairline);
+    display: block;
+    height: 2px;
+    margin-top: var(--space-6);
+    overflow: hidden;
+    width: 100%;
+  }
+  .cfp-bar-fill {
+    background: var(--accent, var(--text-1));
+    display: block;
+    height: 100%;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+    width: var(--fill);
+  }
+  /* The bar fills as the row arrives, so the motion carries the urgency rather
+     than decorating it. */
+  [data-revealed='1'] .cfp-bar-fill,
+  .cfp-board[data-revealed='1'] .cfp-bar-fill {
+    transform: scaleX(1);
+  }
+  .cfp-go {
+    color: var(--text-2);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .cfp-empty {
+    color: var(--text-2);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cfp-bar-fill {
+      transform: scaleX(1);
+      transition: none;
+    }
+  }
+  @media (max-width: 760px) {
+    .cfp-row {
+      grid-template-columns: 72px 1fr;
+    }
+    .cfp-go {
+      display: none;
+    }
+  }
+</style>
