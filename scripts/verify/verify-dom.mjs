@@ -275,6 +275,49 @@ for (const route of routes) {
     await page.evaluate(() => scrollTo(0, 0));
     await page.waitForTimeout(300);
     if (isMobile) {
+      await page.evaluate(() => scrollTo(0, 2000));
+      await page.waitForTimeout(200);
+      const lockedScroll = await page.evaluate(() => scrollY);
+      await page.locator('[data-mobile-menu-open]').click();
+      await page.waitForTimeout(400);
+      homepageInteractions.mobileDrawerScrolled = await page.evaluate((expectedScroll) => {
+        const drawer = document.querySelector('[data-mobile-menu]');
+        const header = document.querySelector('.site-header');
+        const siteHeader = drawer.closest('site-header');
+        return {
+          expectedScroll,
+          ariaHidden: drawer.getAttribute('aria-hidden'),
+          bodyPosition: getComputedStyle(document.body).position,
+          bodyTop: document.body.style.top,
+          drawerTop: drawer.getBoundingClientRect().top,
+          drawerZIndex: getComputedStyle(drawer).zIndex,
+          headerZIndex: getComputedStyle(header).zIndex,
+          parent: drawer.closest('mobile-drawer').parentElement.localName,
+          persist: siteHeader?.getAttribute('data-astro-transition-persist'),
+          paintsOnTop: Boolean(
+            document.elementFromPoint(innerWidth / 2, 1)?.closest('[data-mobile-menu]'),
+          ),
+          scrollLocked: document.body.classList.contains('mobile-nav-open'),
+        };
+      }, lockedScroll);
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(100);
+      homepageInteractions.mobileDrawerScrolled.closed = await page.evaluate(() => ({
+        bodyTop: document.body.style.top,
+        scrollY,
+        scrollUnlocked: !document.body.classList.contains('mobile-nav-open'),
+      }));
+      await page.locator('[data-mobile-menu-open]').click();
+      await page.setViewportSize({ width: 1000, height: viewport.height });
+      await page.waitForTimeout(100);
+      homepageInteractions.mobileDrawerScrolled.desktopResize = await page.evaluate(() => ({
+        ariaHidden: document.querySelector('[data-mobile-menu]').getAttribute('aria-hidden'),
+        bodyTop: document.body.style.top,
+        scrollUnlocked: !document.body.classList.contains('mobile-nav-open'),
+      }));
+      await page.setViewportSize(viewport);
+      await page.evaluate(() => scrollTo(0, 0));
+      await page.waitForTimeout(300);
       await page.locator('[data-mobile-menu-open]').click();
       await page.waitForTimeout(400);
       await page.locator('[data-mobile-accordion]').first().click();
@@ -923,6 +966,28 @@ for (const route of routes) {
       const expectedStatColumns = viewport.width <= 600 ? 2 : 3;
       const expectedPhaseColumns = viewport.width <= 600 ? 1 : 2;
       const nav = checks.homepage.mobileNav;
+      const scrolledDrawer = checks.homepage.mobileDrawerScrolled;
+      if (
+        !scrolledDrawer ||
+        scrolledDrawer.expectedScroll <= 0 ||
+        scrolledDrawer.ariaHidden !== 'false' ||
+        scrolledDrawer.bodyPosition !== 'fixed' ||
+        scrolledDrawer.bodyTop !== `-${scrolledDrawer.expectedScroll}px` ||
+        Math.abs(scrolledDrawer.drawerTop) > 0.5 ||
+        scrolledDrawer.drawerZIndex !== '80' ||
+        scrolledDrawer.headerZIndex !== '60' ||
+        scrolledDrawer.parent !== 'site-header' ||
+        scrolledDrawer.persist !== 'site-header' ||
+        !scrolledDrawer.paintsOnTop ||
+        !scrolledDrawer.scrollLocked ||
+        Math.abs(scrolledDrawer.closed.scrollY - scrolledDrawer.expectedScroll) > 1 ||
+        scrolledDrawer.closed.bodyTop !== '' ||
+        !scrolledDrawer.closed.scrollUnlocked ||
+        scrolledDrawer.desktopResize.ariaHidden !== 'true' ||
+        scrolledDrawer.desktopResize.bodyTop !== '' ||
+        !scrolledDrawer.desktopResize.scrollUnlocked
+      )
+        failures.push('mobile drawer does not remain viewport-fixed after opening while scrolled');
       if (
         !nav ||
         nav.accordionCount !== 6 ||
