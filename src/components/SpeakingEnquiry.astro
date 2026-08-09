@@ -1,0 +1,255 @@
+---
+/**
+ * A speaking enquiry that rides along the page rather than sitting at the foot
+ * of it. The ask on a booking page is always the same, so it should never be
+ * more than one click away, and it should not cost a page load to reach.
+ *
+ * Prototype component: three sketches under /prototypes/ use it. It posts
+ * nowhere yet — the real form lives in FormSection and has a receiver.
+ */
+interface Props {
+  /** Render the fixed edge tab as well as the panel. */
+  rail?: boolean;
+  label?: string;
+}
+
+const { rail = true, label = 'Invite me to speak' } = Astro.props;
+---
+
+<speaking-enquiry class="enquiry">
+  {
+    rail && (
+      <button class="enquiry-rail" type="button" data-enquiry-open>
+        {label}
+      </button>
+    )
+  }
+
+  <div class="enquiry-scrim" data-enquiry-scrim hidden></div>
+
+  <aside class="enquiry-panel" data-enquiry-panel aria-label="Speaking enquiry" hidden>
+    <div class="enquiry-head">
+      <p class="eyebrow">SPEAKING ENQUIRY</p>
+      <button class="enquiry-close" type="button" data-enquiry-close aria-label="Close">Close</button>
+    </div>
+    <h2>Tell me about the event</h2>
+    <p class="enquiry-intro">
+      Keynotes and technical talks on production ML, agentic systems and AI security. Most dates are
+      booked three to six months ahead.
+    </p>
+    <form class="enquiry-form" data-enquiry-form>
+      <label>
+        Event
+        <input type="text" name="event" placeholder="Conference or company" required />
+      </label>
+      <label>
+        Dates
+        <input type="text" name="dates" placeholder="March 2027, or a window" />
+      </label>
+      <label>
+        Format
+        <select name="format">
+          <option>Keynote</option>
+          <option>Conference talk</option>
+          <option>Workshop</option>
+          <option>Panel or roundtable</option>
+        </select>
+      </label>
+      <label>
+        Anything else
+        <textarea name="detail" rows="4" placeholder="Audience, theme, location"></textarea>
+      </label>
+      <label>
+        Your email
+        <input type="email" name="email" required />
+      </label>
+      <button class="button primary" type="submit">Send enquiry</button>
+      <p class="enquiry-note">Prototype only — this form does not submit anywhere yet.</p>
+    </form>
+  </aside>
+</speaking-enquiry>
+
+<style>
+  .enquiry-rail {
+    background: var(--bg-panel);
+    border: 1px solid var(--accent-edge, var(--hairline-strong));
+    color: var(--accent, var(--text-1));
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    padding: var(--space-14) var(--space-12);
+    position: fixed;
+    right: 0;
+    text-transform: uppercase;
+    top: 42vh;
+    /* vertical-rl alone puts the tab on the edge reading top-to-bottom. The
+       rotate(180deg) it used to carry, with a right-centre origin, swung the
+       whole button off-screen: visible to CSS, unclickable in practice. */
+    writing-mode: vertical-rl;
+    z-index: 40;
+  }
+  .enquiry-rail:hover {
+    background: var(--bg-inset);
+  }
+  .enquiry-scrim {
+    background: rgba(8, 9, 9, 0.62);
+    inset: 0;
+    position: fixed;
+    z-index: 45;
+  }
+  .enquiry-scrim[hidden],
+  .enquiry-panel[hidden] {
+    display: none;
+  }
+  .enquiry-panel {
+    background: var(--bg-panel);
+    border-left: 1px solid var(--hairline-strong);
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-14);
+    max-width: 92vw;
+    overflow-y: auto;
+    padding: var(--space-34) var(--space-26);
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 420px;
+    z-index: 50;
+  }
+  .enquiry-panel[data-open='1'] {
+    animation: slide-in 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @keyframes slide-in {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+  .enquiry-head {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+  }
+  .enquiry-close {
+    background: none;
+    border: 1px solid var(--hairline);
+    color: var(--text-2);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    min-height: 44px;
+    padding: var(--space-8) var(--space-12);
+    text-transform: uppercase;
+  }
+  .enquiry-panel h2 {
+    margin: 0;
+  }
+  .enquiry-intro {
+    color: var(--text-2);
+    margin: 0;
+  }
+  .enquiry-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-14);
+  }
+  .enquiry-form label {
+    color: var(--text-3);
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    gap: var(--space-6);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .enquiry-form input,
+  .enquiry-form select,
+  .enquiry-form textarea {
+    background: var(--bg-inset);
+    border: 1px solid var(--hairline);
+    color: var(--text-1);
+    font-family: inherit;
+    font-size: 0.92rem;
+    letter-spacing: normal;
+    padding: var(--space-12);
+    text-transform: none;
+  }
+  .enquiry-note {
+    color: var(--text-4);
+    font-size: 0.74rem;
+    margin: 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .enquiry-panel[data-open='1'] {
+      animation: none;
+    }
+  }
+  @media (max-width: 640px) {
+    .enquiry-rail {
+      bottom: 0;
+      left: 0;
+      right: 0;
+      top: auto;
+      transform: none;
+      writing-mode: horizontal-tb;
+    }
+    .enquiry-panel {
+      width: 100%;
+    }
+  }
+</style>
+
+<script>
+  class SpeakingEnquiry extends HTMLElement {
+    private controller = new AbortController();
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const { signal } = this.controller;
+      const panel = this.querySelector<HTMLElement>('[data-enquiry-panel]');
+      const scrim = this.querySelector<HTMLElement>('[data-enquiry-scrim]');
+      if (!panel || !scrim) return;
+
+      const setOpen = (open: boolean) => {
+        panel.hidden = !open;
+        scrim.hidden = !open;
+        panel.dataset.open = open ? '1' : '0';
+        if (open) panel.querySelector<HTMLInputElement>('input')?.focus();
+      };
+
+      document.querySelectorAll('[data-enquiry-open]').forEach((button) =>
+        button.addEventListener('click', () => setOpen(true), { signal }),
+      );
+      this.querySelector('[data-enquiry-close]')?.addEventListener('click', () => setOpen(false), { signal });
+      scrim.addEventListener('click', () => setOpen(false), { signal });
+      // Escape closes, because a panel that traps you is worse than no panel.
+      document.addEventListener(
+        'keydown',
+        (event) => {
+          if (event.key === 'Escape' && !panel.hidden) setOpen(false);
+        },
+        { signal },
+      );
+      this.querySelector('[data-enquiry-form]')?.addEventListener(
+        'submit',
+        (event) => {
+          event.preventDefault();
+          setOpen(false);
+        },
+        { signal },
+      );
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+    }
+  }
+
+  if (!customElements.get('speaking-enquiry')) customElements.define('speaking-enquiry', SpeakingEnquiry);
+</script>

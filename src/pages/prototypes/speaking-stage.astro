@@ -1,0 +1,193 @@
+---
+// PROTOTYPE A — "The stage". Cinematic full-bleed opener, credibility numbers
+// early, then talks as a scrolling reel. The enquiry rides on a fixed rail.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SpeakingEnquiry from '../../components/SpeakingEnquiry.astro';
+import EventBanner from '../../components/EventBanner.astro';
+import { loadEvents, recordings, eventDate } from '../../utils/Events';
+
+const today = new Date();
+const { all, past } = await loadEvents(today);
+const withTalks = past.filter((event) => (event.talks ?? []).length > 0);
+const venues = new Set(all.map((event) => event.location).filter(Boolean));
+const years = new Set(all.map((event) => event.start.getFullYear()));
+const talkCount = all.reduce((total, event) => total + (event.talks ?? []).length, 0);
+// PLACEHOLDER: a real main-stage photo at usable resolution, so the layout can
+// be judged properly. It is the World Summit AI stage, not the speaker. Swap for
+// owner-supplied photography.
+const stage =
+  'https://worldsummit.ai/wp-content/uploads/2025/10/WSAI25_Karen-Hao_Main-Stage_Wide-Audience-scaled.jpg';
+---
+
+<BaseLayout
+  frontmatter={{
+    title: 'Speaking — prototype A',
+    description: 'Prototype: invite Alejandro Saucedo to speak.',
+    noindex: true,
+  }}
+>
+  <main class="stage-proto">
+    <section class="opener">
+      <img class="opener-image" src={stage} alt="" />
+      <div class="opener-copy">
+        <p class="eyebrow">KEYNOTES · CONFERENCE TALKS · WORKSHOPS</p>
+        <h1>The talk your programme is missing</h1>
+        <p class="lede">
+          Production ML, agentic systems and AI security — delivered on main stages from KubeCon to
+          NeurIPS, and written up every week for {}70,000 practitioners.
+        </p>
+        <button class="button primary" type="button" data-enquiry-open>Invite me to speak</button>
+      </div>
+    </section>
+
+    <section class="numbers">
+      <div><strong>{talkCount}</strong><span>talks delivered</span></div>
+      <div><strong>{venues.size}</strong><span>cities</span></div>
+      <div><strong>{years.size}</strong><span>years on stage</span></div>
+      <div><strong>70k+</strong><span>newsletter readers</span></div>
+    </section>
+
+    <section class="reel">
+      <p class="eyebrow">ON STAGE</p>
+      <h2>Recent talks</h2>
+      <div class="reel-track">
+        {
+          withTalks.slice(0, 10).map((event) => (
+            <a class="reel-card" href={recordings(event)[0]?.video ?? event.url} target="_blank" rel="noopener noreferrer">
+              <span class="reel-art">
+                <EventBanner
+                  slug={event.slug}
+                  series={event.series}
+                  label={event.series.toUpperCase()}
+                  topic={event.topics?.[0]}
+                  image={(event.talks ?? []).find((talk) => talk.image)?.image ?? event.image}
+                />
+              </span>
+              <span class="reel-text">
+                <span class="reel-date">{eventDate(event)}</span>
+                <span class="reel-title">{(event.talks ?? [])[0]?.title}</span>
+                <span class="reel-venue">{event.name}</span>
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    <SpeakingEnquiry />
+  </main>
+</BaseLayout>
+
+<style>
+  .opener {
+    align-items: end;
+    display: grid;
+    min-height: 78vh;
+    position: relative;
+  }
+  .opener-image {
+    filter: grayscale(0.3) contrast(1.1);
+    height: 100%;
+    inset: 0;
+    object-fit: cover;
+    opacity: 0.42;
+    position: absolute;
+    width: 100%;
+  }
+  .opener::after {
+    background: linear-gradient(to top, var(--bg-base) 6%, transparent 62%);
+    content: '';
+    inset: 0;
+    position: absolute;
+  }
+  .opener-copy {
+    max-width: 720px;
+    padding: var(--space-56) var(--space-40);
+    position: relative;
+    z-index: 1;
+  }
+  .opener h1 {
+    font-size: clamp(2.4rem, 5.4vw, 4.4rem);
+    line-height: 1.02;
+    margin: var(--space-14) 0 var(--space-20);
+  }
+  .lede {
+    color: var(--text-2);
+    margin-bottom: var(--space-26);
+    max-width: 52ch;
+  }
+  .numbers {
+    border-block: 1px solid var(--hairline);
+    display: grid;
+    gap: var(--space-20);
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    padding: var(--space-34) var(--space-40);
+  }
+  .numbers strong {
+    color: var(--accent, var(--text-1));
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 2rem;
+    font-weight: 400;
+  }
+  .numbers span {
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .reel {
+    padding: var(--space-56) var(--space-40);
+  }
+  .reel-track {
+    display: grid;
+    gap: var(--space-20);
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    margin-top: var(--space-26);
+  }
+  .reel-card {
+    border: 1px solid var(--hairline);
+    color: inherit;
+    text-decoration: none;
+    transition:
+      border-color 0.4s ease,
+      transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .reel-card:hover {
+    border-color: var(--accent-edge, var(--hairline-strong));
+    transform: translateY(-3px);
+  }
+  .reel-art {
+    aspect-ratio: 16 / 9;
+    display: block;
+    overflow: hidden;
+  }
+  .reel-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-14);
+  }
+  .reel-date {
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+  }
+  .reel-title {
+    color: var(--text-1);
+  }
+  .reel-venue {
+    color: var(--text-3);
+    font-size: 0.8rem;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reel-card {
+      transition: none;
+    }
+    .reel-card:hover {
+      transform: none;
+    }
+  }
+</style>

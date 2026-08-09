@@ -1,0 +1,231 @@
+---
+// PROTOTYPE B — "The dossier". The enquiry never leaves: a docked panel holds
+// the ask while the evidence scrolls past it. Built for a programme chair who
+// arrived to decide, not to browse.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SpeakingEnquiry from '../../components/SpeakingEnquiry.astro';
+import { loadEvents, eventDate } from '../../utils/Events';
+
+const today = new Date();
+const { all, past } = await loadEvents(today);
+const withTalks = past.filter((event) => (event.talks ?? []).length > 0);
+const topics = [...new Set(all.flatMap((event) => event.topics ?? []))];
+// PLACEHOLDER photography until owner-supplied stage shots arrive.
+const shots = [
+  'https://worldsummit.ai/wp-content/uploads/2025/10/WSAI25_Karen-Hao_Main-Stage_Wide-Audience-scaled.jpg',
+  'https://events.linuxfoundation.org/wp-content/uploads/2022/07/KubeConNA22_WebGraphics_web-header.jpg',
+];
+---
+
+<BaseLayout
+  frontmatter={{
+    title: 'Speaking — prototype B',
+    description: 'Prototype: invite Alejandro Saucedo to speak.',
+    noindex: true,
+  }}
+>
+  <main class="dossier">
+    <div class="dossier-grid">
+      <div class="dossier-body">
+        <p class="eyebrow">SPEAKER DOSSIER</p>
+        <h1>Alejandro Saucedo</h1>
+        <p class="lede">
+          Keynotes and technical talks on production ML, agentic systems and AI security. Director of
+          Engineering, and author of a weekly newsletter read by more than 70,000 practitioners.
+        </p>
+
+        <div class="shots">
+          {shots.map((src) => <img src={src} alt="" loading="lazy" />)}
+        </div>
+
+        <h2>What I speak about</h2>
+        <ul class="topics">
+          {topics.map((topic) => <li>{topic.replace(/-/g, ' ')}</li>)}
+        </ul>
+
+        <h2>Selected appearances</h2>
+        <ol class="appearances">
+          {
+            withTalks.map((event) => (
+              <li>
+                <span class="app-date">{eventDate(event)}</span>
+                <span class="app-body">
+                  <strong>{event.name}</strong>
+                  {event.location && <span class="app-loc">{event.location}</span>}
+                  {(event.talks ?? []).map((talk) => (
+                    <span class="app-talk">
+                      {talk.title}
+                      {talk.video && (
+                        <a href={talk.video} target="_blank" rel="noopener noreferrer">
+                          Watch
+                        </a>
+                      )}
+                    </span>
+                  ))}
+                </span>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+
+      <aside class="dossier-dock">
+        <div class="dock-card">
+          <p class="eyebrow">BOOKING</p>
+          <h2>Invite me to speak</h2>
+          <p>Most dates are booked three to six months ahead.</p>
+          <button class="button primary" type="button" data-enquiry-open>Start an enquiry</button>
+          <dl>
+            <div><dt>Formats</dt><dd>Keynote, talk, workshop, panel</dd></div>
+            <div><dt>Travel</dt><dd>Europe, US, remote</dd></div>
+            <div><dt>Languages</dt><dd>English, Spanish</dd></div>
+          </dl>
+        </div>
+      </aside>
+    </div>
+      <SpeakingEnquiry />
+  </main>
+</BaseLayout>
+
+<style>
+  .dossier-grid {
+    display: grid;
+    gap: var(--space-48);
+    grid-template-columns: minmax(0, 1fr) 340px;
+    padding: var(--space-56) var(--space-40);
+  }
+  .dossier-body h1 {
+    font-size: clamp(2.2rem, 4.4vw, 3.4rem);
+    margin: var(--space-8) 0 var(--space-20);
+  }
+  .lede {
+    color: var(--text-2);
+    max-width: 56ch;
+  }
+  .shots {
+    display: grid;
+    gap: var(--space-14);
+    grid-template-columns: 1fr 1fr;
+    margin: var(--space-34) 0;
+  }
+  .shots img {
+    aspect-ratio: 3 / 2;
+    border: 1px solid var(--hairline);
+    object-fit: cover;
+    width: 100%;
+  }
+  .topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8);
+    list-style: none;
+    margin: 0 0 var(--space-40);
+    padding: 0;
+  }
+  .topics li {
+    border: 1px solid var(--hairline);
+    color: var(--text-2);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    padding: var(--space-6) var(--space-12);
+    text-transform: uppercase;
+  }
+  .appearances {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .appearances li {
+    border-top: 1px solid var(--hairline);
+    display: grid;
+    gap: var(--space-20);
+    grid-template-columns: 150px 1fr;
+    padding: var(--space-14) 0;
+  }
+  .app-date {
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .app-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .app-loc {
+    color: var(--text-3);
+    font-size: 0.82rem;
+  }
+  .app-talk {
+    color: var(--text-2);
+    font-size: 0.88rem;
+  }
+  .app-talk a {
+    color: var(--accent, var(--text-1));
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    margin-left: var(--space-8);
+    text-transform: uppercase;
+  }
+  .dossier-dock {
+    align-self: start;
+    position: sticky;
+    top: 96px;
+  }
+  .dock-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--hairline-strong);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-14);
+    padding: var(--space-26);
+  }
+  .dock-card h2 {
+    margin: 0;
+  }
+  .dock-card p {
+    color: var(--text-2);
+    margin: 0;
+  }
+  .dock-card dl {
+    border-top: 1px solid var(--hairline);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    margin: 0;
+    padding-top: var(--space-14);
+  }
+  .dock-card dl div {
+    display: flex;
+    gap: var(--space-12);
+    justify-content: space-between;
+  }
+  .dock-card dt {
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .dock-card dd {
+    color: var(--text-2);
+    font-size: 0.82rem;
+    margin: 0;
+    text-align: right;
+  }
+  @media (max-width: 900px) {
+    .dossier-grid {
+      grid-template-columns: 1fr;
+    }
+    .dossier-dock {
+      position: static;
+    }
+    .appearances li {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

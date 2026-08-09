@@ -69,5 +69,10 @@ export default defineConfig({
   markdown: {
     processor: unified({ rehypePlugins: [rehypeExternalLinks, rehypeSectionize] }),
   },
-  integrations: [mdx(), preact(), sitemap()],
+  integrations: [
+    mdx(),
+    preact(),
+    // Prototypes are working sketches, not pages anyone should find in search.
+    sitemap({ filter: (page) => !page.includes('/prototypes/') }),
+  ],
 });
