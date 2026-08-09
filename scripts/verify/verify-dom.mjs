@@ -157,6 +157,78 @@ for (const route of routes) {
 
   let homepageInteractions = null;
   if (route === '/') {
+    await page.evaluate(() => scrollTo(0, 0));
+    await page.waitForTimeout(100);
+    await page.evaluate(() => {
+      const originalClearRect = CanvasRenderingContext2D.prototype.clearRect;
+      window.__heroCyclePaints = 0;
+      window.__heroVisibilityStates = [];
+      document.addEventListener('visibilitychange', () => {
+        window.__heroVisibilityStates.push(document.visibilityState);
+      });
+      CanvasRenderingContext2D.prototype.clearRect = function (...parameters) {
+        if (this.canvas.closest('hero-cycle')) window.__heroCyclePaints += 1;
+        return originalClearRect.apply(this, parameters);
+      };
+    });
+    const activeHeroMode = () =>
+      page.locator('[data-hero-mode].active').evaluate((indicator) => indicator.dataset.heroMode);
+    const firstMode = await activeHeroMode();
+    await page.waitForFunction(
+      (mode) => document.querySelector('[data-hero-mode].active')?.dataset.heroMode !== mode,
+      firstMode,
+      { timeout: 10_000 },
+    );
+    const synchronizedMode = await activeHeroMode();
+    await page.waitForTimeout(4_600);
+    const visibleStart = await page.evaluate(() => window.__heroCyclePaints);
+    await page.waitForTimeout(400);
+    const visibleEnd = await page.evaluate(() => window.__heroCyclePaints);
+    await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
+    await page.waitForTimeout(300);
+    const offscreenEnd = await page.evaluate(() => window.__heroCyclePaints);
+    const themeStart = offscreenEnd;
+    await page.evaluate(() => {
+      document.documentElement.dataset.theme = 'light';
+    });
+    await page.waitForTimeout(100);
+    const lightThemeEnd = await page.evaluate(() => window.__heroCyclePaints);
+    await page.evaluate(() => {
+      document.documentElement.dataset.theme = 'dark';
+    });
+    await page.waitForTimeout(100);
+    const darkThemeEnd = await page.evaluate(() => window.__heroCyclePaints);
+    await page.evaluate(() => {
+      Object.defineProperty(document, 'hidden', { configurable: true, value: true });
+      Object.defineProperty(document, 'visibilityState', {
+        configurable: true,
+        value: 'hidden',
+      });
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    await page.waitForTimeout(250);
+    await page.evaluate(() => {
+      Object.defineProperty(document, 'hidden', { configurable: true, value: false });
+      Object.defineProperty(document, 'visibilityState', {
+        configurable: true,
+        value: 'visible',
+      });
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    await page.waitForTimeout(250);
+    const visibilityStates = await page.evaluate(() => window.__heroVisibilityStates);
+    const hiddenEnd = await page.evaluate(() => window.__heroCyclePaints);
+    const resumedAt = Date.now();
+    await page.evaluate(() => scrollTo(0, 0));
+    const resumedStart = await page.evaluate(() => window.__heroCyclePaints);
+    await page.waitForTimeout(400);
+    const resumedEnd = await page.evaluate(() => window.__heroCyclePaints);
+    await page.waitForFunction(
+      (mode) => document.querySelector('[data-hero-mode].active')?.dataset.heroMode !== mode,
+      synchronizedMode,
+      { timeout: 5_000 },
+    );
+    const resumeToModeChangeMs = Date.now() - resumedAt;
     homepageInteractions = await page.evaluate(async () => {
       const section = document.querySelector('#principles');
       const detail = document.querySelector('.principle-detail-wrap');
@@ -184,6 +256,16 @@ for (const route of routes) {
         formWash: getComputedStyle(document.querySelector('#join form')).backgroundImage,
       };
     });
+    homepageInteractions.heroCyclePlayback = {
+      visibleFrames: visibleEnd - visibleStart,
+      offscreenFrames: offscreenEnd - visibleEnd,
+      lightThemeRepaints: lightThemeEnd - themeStart,
+      darkThemeRepaints: darkThemeEnd - lightThemeEnd,
+      visibilityStates,
+      hiddenFrames: hiddenEnd - darkThemeEnd,
+      resumedFrames: resumedEnd - resumedStart,
+      resumeToModeChangeMs,
+    };
     const xaiPreview = page.locator('.xai-preview');
     const firstXaiFrame = await xaiPreview.screenshot();
     await page.waitForTimeout(350);
@@ -749,6 +831,20 @@ for (const route of routes) {
       failures.push('homepage principle pills or Read principle targets are incomplete');
     if (!checks.homepage.xaiFramesChanged)
       failures.push('homepage XAI scan pixels do not change over time');
+    const heroPlayback = checks.homepage.heroCyclePlayback;
+    if (
+      !heroPlayback ||
+      heroPlayback.visibleFrames < 10 ||
+      heroPlayback.offscreenFrames > 1 ||
+      heroPlayback.lightThemeRepaints !== 1 ||
+      heroPlayback.darkThemeRepaints !== 1 ||
+      heroPlayback.visibilityStates.join() !== ['hidden', 'visible'].join() ||
+      heroPlayback.hiddenFrames !== 0 ||
+      heroPlayback.resumedFrames < 10 ||
+      heroPlayback.resumedFrames > heroPlayback.visibleFrames * 1.5 + 2 ||
+      heroPlayback.resumeToModeChangeMs >= 5_000
+    )
+      failures.push('homepage hero cycle does not pause, repaint, or resume correctly');
     const expectedHomeSections = isMobile
       ? [
           ['strategy', '0px', '96px'],

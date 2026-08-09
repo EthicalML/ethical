@@ -61,6 +61,7 @@ const LABELS = [
 ];
 
 export class HeroCycle extends HTMLElement {
+  private active = true;
   private animationFrame = 0;
   private buffer?: HTMLCanvasElement;
   private canvas?: HTMLCanvasElement;
@@ -70,11 +71,13 @@ export class HeroCycle extends HTMLElement {
   private height = 0;
   private host?: HTMLElement;
   private indicators: HTMLElement[] = [];
+  private intersectionObserver?: IntersectionObserver;
   private lastPointer?: { x: number; y: number };
   private pointer = { x: 0.5, y: 0.5 };
   private pointerTarget = { x: 0.5, y: 0.5 };
   private surface: CanvasSurface = 'dark';
   private palette: CanvasPalette = getPalette();
+  private pausedAt?: number;
   private reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   private resizeObserver?: ResizeObserver;
   private unsubscribeTheme?: () => void;
@@ -115,17 +118,20 @@ export class HeroCycle extends HTMLElement {
       signal: this.controller.signal,
     });
     this.resizeObserver = new ResizeObserver(this.handleResize);
+    this.intersectionObserver = new IntersectionObserver(this.handleIntersection);
 
     this.unsubscribeTheme = onThemeChange(this.handleThemeChange);
     this.fit();
     this.draw(0);
     this.resizeObserver.observe(this.canvas);
+    this.intersectionObserver.observe(this.canvas);
     if (!this.reducedMotion) this.animationFrame = requestAnimationFrame(this.loop);
   }
 
   disconnectedCallback() {
     cancelAnimationFrame(this.animationFrame);
     this.controller.abort();
+    this.intersectionObserver?.disconnect();
     this.resizeObserver?.disconnect();
     this.unsubscribeTheme?.();
   }
@@ -476,15 +482,14 @@ export class HeroCycle extends HTMLElement {
     if (this.reducedMotion) this.draw(0);
   };
 
+  private handleIntersection = ([entry]: IntersectionObserverEntry[]) => {
+    this.active = entry.isIntersecting;
+    this.updatePlayback();
+  };
+
   private handleVisibilityChange = () => {
     this.visible = !document.hidden;
-    if (this.visible && !this.reducedMotion) {
-      this.startedAt = performance.now();
-      this.state.last = 0;
-      this.animationFrame = requestAnimationFrame(this.loop);
-    } else {
-      cancelAnimationFrame(this.animationFrame);
-    }
+    this.updatePlayback();
   };
 
   private initializeGraph() {
@@ -566,8 +571,23 @@ export class HeroCycle extends HTMLElement {
 
   private loop = (now: number) => {
     this.draw((now - this.startedAt) / 1000);
-    if (this.visible) this.animationFrame = requestAnimationFrame(this.loop);
+    if (this.active && this.visible) this.animationFrame = requestAnimationFrame(this.loop);
   };
+
+  private updatePlayback() {
+    if (this.reducedMotion) return;
+    cancelAnimationFrame(this.animationFrame);
+    const now = performance.now();
+    if (!this.active || !this.visible) {
+      this.pausedAt ??= now;
+      return;
+    }
+    if (this.pausedAt !== undefined) {
+      this.startedAt += now - this.pausedAt;
+      this.pausedAt = undefined;
+    }
+    this.animationFrame = requestAnimationFrame(this.loop);
+  }
 
   private paint(
     mode: HeroMode,
