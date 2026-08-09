@@ -313,11 +313,26 @@ Never commit the report. `tmp/` is gitignored precisely so this stays out of the
 
 ### Step 12.5 · Emit a machine-readable result line
 
-As the **final line of output**, print exactly one status line so an orchestrator (e.g. `/dependabot-fix-all`) can classify the outcome without parsing prose:
+As the **final line of output**, print exactly one status line so an orchestrator (e.g. `/dependabot-fix-all`) can classify the outcome without parsing prose.
+
+**Substitute the placeholders. Do not print the template.** Two runs of this skill have ended by echoing the angle-bracket form back verbatim, which tells an orchestrator nothing and silently pushes the work of classifying the run onto whoever reads the log. A `RESULT:` line containing `<` or `>` is a malformed result, not a result.
+
+Shape:
 
 ```
 RESULT: <ready|left-open|superseded|blocked> pr=<PR_NUM> reason="<short phrase>"
 ```
+
+Real examples of what to actually print:
+
+```
+RESULT: ready pr=45 reason="declared the markdown-remark dep, CI green, 74 comparisons clean"
+RESULT: left-open pr=33 reason="npm major; requires node 22.22.3, needs owner sign-off"
+RESULT: superseded pr=44 reason="Dependabot replaced it with PR 47"
+RESULT: blocked pr=51 reason="build fails on an upstream type error with no fix available"
+```
+
+Before printing it, check your own line: exactly one status word from the four, a real PR number, and a reason naming what actually happened. If any of that is missing, you have not finished.
 
 - `ready` — fix pushed (or none needed), CI green, parity clean, recommended for the owner to merge.
 - `left-open` — CI green but held for human judgement (parity difference, or a major the run is not confident about).
