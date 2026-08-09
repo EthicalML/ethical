@@ -104,7 +104,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
   <h2 data-reveal>{projects.section.title}</h2>
   <p class="section-intro" data-reveal>{projects.section.intro}</p>
 
-  <article class="kompute-feature" data-reveal>
+  <article class="kompute-feature" data-surface="dark" data-surface-plate data-reveal>
     <div class="oss-copy">
       <p class="figure-label"><span>{projects.kompute.figure}</span><span>{projects.kompute.affiliation}</span></p>
       <h3>{projects.kompute.title}</h3>
@@ -136,10 +136,10 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
         }
       </div>
     </div>
-    <div class="fixed-canvas cube-mount"><kompute-cube data-surface="dark"><canvas aria-label="Animated 27-cubie Rubik's cube"></canvas></kompute-cube></div>
+    <div class="fixed-canvas cube-mount"><kompute-cube><canvas aria-label="Animated 27-cubie Rubik's cube"></canvas></kompute-cube></div>
   </article>
 
-  <article class="kaos-feature" data-reveal>
+  <article class="kaos-feature" data-surface="dark" data-surface-plate data-reveal>
     <div>
       <p class="figure-label"><span>{projects.kaos.figure}</span></p>
       <h3 data-morph-source="kaos-title" data-morph-name="kaos-title">{projects.kaos.title}</h3>
@@ -173,7 +173,7 @@ const statline = (id: string) => repoMetrics[id].map(({ value, label }: { value:
         }
       </div>
     </div>
-    <div class="kaos-panel windowed">
+    <div class="kaos-panel windowed" data-surface="dark">
       <AnimationWindow title={projects.kaos.panelEyebrow.toLowerCase()} class="kaos-showcase-window" chromeOnly>
         <KaosGraph panel />
       </AnimationWindow>

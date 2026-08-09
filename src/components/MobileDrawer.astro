@@ -3,7 +3,16 @@ import { menus } from '../data/navigation';
 ---
 
 <mobile-drawer>
-  <div class="mobile-drawer" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Site navigation" aria-hidden="true" data-mobile-menu>
+  <div
+    class="mobile-drawer"
+    id="mobile-menu"
+    data-surface="dark"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Site navigation"
+    aria-hidden="true"
+    data-mobile-menu
+  >
     <nav class="mobile-nav" aria-label="Mobile navigation">
       {
         Object.entries(menus).map(([id, menu], menuIndex) => (

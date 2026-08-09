@@ -432,7 +432,7 @@ achievement-neon-rendition[data-entered='true'] [data-lego-piece]:not([data-sett
     transform: translate3d(var(--shift-x), var(--shift-y), 0);
   }
   .neon-slot[data-hover='tilt']:hover .neon-card {
-    box-shadow: 0 18px 44px var(--shadow-a500);
+    box-shadow: 0 18px 44px var(--shadow-drop);
     transform: translate3d(0, -12px, 0) rotate(var(--pickup, 4deg));
   }
 }
@@ -441,7 +441,7 @@ achievement-neon-rendition[data-entered='true'] [data-lego-piece]:not([data-sett
     transform: translate3d(var(--shift-x), var(--shift-y), 0);
   }
   .neon-slot[data-hover='tilt'][data-active='true'] .neon-card {
-    box-shadow: 0 18px 44px var(--shadow-a500);
+    box-shadow: 0 18px 44px var(--shadow-drop);
     transform: translate3d(0, -12px, 0) rotate(var(--pickup, 4deg));
   }
 }

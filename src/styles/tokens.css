@@ -53,16 +53,16 @@
   --ink-5: rgba(244, 242, 238, 0.36);
   --ink-a050: rgba(244, 242, 238, 0.05);
   --ink-a030: rgba(244, 242, 238, 0.03);
-  /* ink used as a surface tint rather than as ink */
-  --ink-wash-a650: rgba(244, 242, 238, 0.65);
-  --ink-wash-a500: rgba(244, 242, 238, 0.5);
-  --ink-wash-a450: rgba(244, 242, 238, 0.45);
-  --ink-wash-a420: rgba(244, 242, 238, 0.42);
-  --ink-wash-a280: rgba(244, 242, 238, 0.28);
-  --ink-wash-a220: rgba(244, 242, 238, 0.22);
-  --ink-wash-a190: rgba(244, 242, 238, 0.19);
-  --ink-wash-a065: rgba(244, 242, 238, 0.065);
-  --ink-wash-a040: rgba(244, 242, 238, 0.04);
+  /* Ink used as a surface tint or an SVG fill rather than as ink. There were
+     nine steps here and not one of them was a job: they are bar tracks, grid
+     rules, indicator bars and carousel dots, each composing whatever alpha its
+     mark needed. The alpha belongs at the mark, so the token is the colour and
+     the call site writes `rgba(var(--ink-wash-rgb), calc(.42 * var(--ink-wash-lift)))`.
+     `--ink-wash-lift` is the whole of what light did differently: every one of
+     those nine light values was its dark alpha times 1.32, because slate on
+     paper needs more of itself than paper on slate does. */
+  --ink-wash-rgb: 244, 242, 238;
+  --ink-wash-lift: 1;
   /* ---- theme tokens: wash (white surface lift) ---- */
   --wash-1: rgba(255, 255, 255, 0.015);
   --wash-2: rgba(255, 255, 255, 0.03);
@@ -87,19 +87,19 @@
   --accent-line: rgba(94, 230, 160, 0.28);
   --accent-edge: rgba(94, 230, 160, 0.45);
   /* accent — off-ladder steps */
-  /* scrim — near-black page-canvas fades, depth 1 (lightest) to 5 (deepest) */
-  --scrim-1-a940: rgba(19, 20, 20, 0.94);
-  --scrim-1-a720: rgba(19, 20, 20, 0.72);
-  --scrim-1-a650: rgba(19, 20, 20, 0.65);
-  --scrim-1-a180: rgba(19, 20, 20, 0.18);
-  --scrim-2-a975: rgba(15, 16, 15, 0.975);
-  --scrim-2-a930: rgba(15, 16, 15, 0.93);
-  --scrim-2-a770: rgba(15, 16, 15, 0.77);
-  --scrim-2-a160: rgba(15, 16, 15, 0.16);
-  --scrim-2-a080: rgba(15, 16, 15, 0.08);
-  --scrim-3-a720: rgba(12, 14, 13, 0.72);
-  --scrim-4-a660: rgba(10, 12, 11, 0.66);
-  --scrim-5-a620: rgba(5, 7, 6, 0.62);
+  /* ---- scrim: what a fade fades TOWARD -------------------------------------
+     Twelve tokens used to spell out four colours at nine alphas, because a
+     gradient's stops had each been given a name. A fade is one job and its
+     stops are positions in it, so the alpha went back to the call site, which
+     writes `rgba(var(--scrim-page-rgb), .72)`. What is left is the four
+     surfaces a scrim can fade toward, and those genuinely differ: they invert
+     under light, which is the only reason a scrim is a token at all. */
+  --scrim-page-rgb: 19, 20, 20;
+  --scrim-inset-rgb: 15, 16, 15;
+  /* The stage under the form send overlay. Absorbed the near-identical fourth
+     depth: measured 1.3/255 at its heaviest stop. */
+  --scrim-stage-rgb: 12, 14, 13;
+  --scrim-modal-rgb: 5, 7, 6;
   /* ---- theme tokens: semantic hues ----
      Identity colours outside the accent family. Each hue follows the accent's
      ink/fill split: the bare name is the **ink** form and darkens under light so
@@ -136,11 +136,13 @@
   --indigo-fill: #7aa2ff;
   --indigo-a400: rgba(122, 162, 255, 0.4);
   --mint-bright: #8bf5c0;
-  /* shadow */
-  --shadow-a600: rgba(0, 0, 0, 0.6);
-  --shadow-a550: rgba(0, 0, 0, 0.55);
-  --shadow-a500: rgba(0, 0, 0, 0.5);
-  --shadow-a220: rgba(0, 0, 0, 0.22);
+  /* ---- shadow: two jobs, drop and lift -------------------------------------
+     Black on near-black is the one place in this palette where alpha is cheap:
+     `Δα 0.10` costs `0.10 x 19 = 1.9/255`, against `2.4/255` for a `Δα 0.01`
+     step of ink. So the three deep steps (.60/.55/.50) really were one job at
+     three hand-typed strengths and merge inside the budget. */
+  --shadow-drop: rgba(0, 0, 0, 0.6);
+  --shadow-lift: rgba(0, 0, 0, 0.22);
   /* A raw colour rather than a box-shadow, so the canvas modules can consume it
      as a hard occlusion stroke. */
   --shadow-hard: #000;
@@ -199,7 +201,7 @@
   --radius-card-lg: 0;
   --radius-pill: 999px;
   --radius-dropdown: 0;
-  --shadow-panel: 0 30px 70px var(--shadow-a600);
+  --shadow-panel: 0 30px 70px var(--shadow-drop);
   --space-4: 4px;
   --space-6: 6px;
   --space-8: 8px;
@@ -294,15 +296,8 @@
   --ink-a030: rgba(49, 58, 54, 0.04);
   /* ---- ink used as a surface tint or an SVG fill rather than as ink. Flips to
      the slate wash, never to the light ink colour ---- */
-  --ink-wash-a650: rgba(49, 58, 54, 0.86);
-  --ink-wash-a500: rgba(49, 58, 54, 0.66);
-  --ink-wash-a450: rgba(49, 58, 54, 0.6);
-  --ink-wash-a420: rgba(49, 58, 54, 0.56);
-  --ink-wash-a280: rgba(49, 58, 54, 0.37);
-  --ink-wash-a220: rgba(49, 58, 54, 0.29);
-  --ink-wash-a190: rgba(49, 58, 54, 0.25);
-  --ink-wash-a065: rgba(49, 58, 54, 0.09);
-  --ink-wash-a040: rgba(49, 58, 54, 0.05);
+  --ink-wash-rgb: 49, 58, 54;
+  --ink-wash-lift: 1.32;
   /* ---- wash: lift above the surface underneath, and lift is toward the light
      source in both themes — so the two resting rungs go UP toward paper white
      and only the two interactive rungs tint down into the slate. Flipping all
@@ -362,24 +357,14 @@
   --mint-bright: #056259;
   /* ---- scrims sit over content and fade it out, so they invert rather than
      scale: depth 1 is the page, depth 5 the far extreme, white here ---- */
-  --scrim-1-a940: rgba(246, 248, 246, 0.94);
-  --scrim-1-a720: rgba(246, 248, 246, 0.72);
-  --scrim-1-a650: rgba(246, 248, 246, 0.65);
-  --scrim-1-a180: rgba(246, 248, 246, 0.18);
-  --scrim-2-a975: rgba(249, 250, 249, 0.97);
-  --scrim-2-a930: rgba(249, 250, 249, 0.94);
-  --scrim-2-a770: rgba(249, 250, 249, 0.76);
-  --scrim-2-a160: rgba(249, 250, 249, 0.16);
-  --scrim-2-a080: rgba(249, 250, 249, 0.08);
-  --scrim-3-a720: rgba(251, 252, 251, 0.72);
-  --scrim-4-a660: rgba(253, 253, 253, 0.66);
-  --scrim-5-a620: rgba(255, 255, 255, 0.62);
+  --scrim-page-rgb: 246, 248, 246;
+  --scrim-inset-rgb: 249, 250, 249;
+  --scrim-stage-rgb: 251, 252, 251;
+  --scrim-modal-rgb: 255, 255, 255;
   /* ---- shadows are re-authored, never scaled. rgba(0,0,0,.6) costs 4 L* on
      the dark base and 47 L* on paper — the same alpha is a 12x heavier mark ---- */
-  --shadow-a600: rgba(28, 34, 31, 0.12);
-  --shadow-a550: rgba(28, 34, 31, 0.11);
-  --shadow-a500: rgba(28, 34, 31, 0.1);
-  --shadow-a220: rgba(28, 34, 31, 0.06);
+  --shadow-drop: rgba(28, 34, 31, 0.12);
+  --shadow-lift: rgba(28, 34, 31, 0.06);
   --shadow-hard: #313a36;
   --shadow-panel:
     0 1px 2px rgba(28, 34, 31, 0.05),
@@ -421,28 +406,22 @@
   --typewriter-cursor: #f2f5f3;
 }
 
-/* ---- the inverted blocks ----------------------------------------------------
+/* ---- the inverted surface role ----------------------------------------------
    The design's depth model: on paper the hero, the header and the feature and
    preview blocks stay dark slate-green rather than becoming tinted cards. Each
    one is a `--panel` surface, so the ink, hairline, wash and accent rungs are
    re-entered at their on-dark values for that subtree — the same move
-   `QuickstartTerminal` already makes for the baked-dark console. One rule, one
-   selector list, so "which blocks invert" is a single readable decision.
+   `QuickstartTerminal` already makes for the baked-dark console.
+
+   Membership is declared AT THE BLOCK, as `data-surface="dark"` on the element
+   that owns it. It used to be a selector list here, which meant a new dark block
+   rendered wrong in light only — invisible to anyone working in the default
+   theme — until someone remembered to come back and edit this file. The same
+   attribute is what `surfaceOf()` reads for the canvas palette, so the CSS
+   treatment and the canvas label cannot disagree: there is only one declaration.
+   `npm run check:ratchet` fails if this rule stops keying off the attribute.
    Nothing here applies under the dark theme. */
-:root[data-theme='light'] :is(
-  .site-header,
-  .mega-panel,
-  .oss-menu-preview,
-  .mobile-drawer,
-  .hero,
-  .article-hero.canvas-variant,
-  .kompute-feature,
-  .kaos-feature,
-  .map-stage,
-  .kaos-panel,
-  .palette-panel,
-  .palette-input-row
-) {
+:root[data-theme='light'] [data-surface='dark'] {
   --ink-1: #f2f5f3;
   --ink-2: rgba(242, 245, 243, 0.88);
   --ink-3: rgba(242, 245, 243, 0.78);
@@ -451,15 +430,8 @@
   --ink-6: rgba(242, 245, 243, 0.3);
   --ink-a050: rgba(242, 245, 243, 0.06);
   --ink-a030: rgba(242, 245, 243, 0.04);
-  --ink-wash-a650: rgba(242, 245, 243, 0.65);
-  --ink-wash-a500: rgba(242, 245, 243, 0.5);
-  --ink-wash-a450: rgba(242, 245, 243, 0.45);
-  --ink-wash-a420: rgba(242, 245, 243, 0.42);
-  --ink-wash-a280: rgba(242, 245, 243, 0.28);
-  --ink-wash-a220: rgba(242, 245, 243, 0.22);
-  --ink-wash-a190: rgba(242, 245, 243, 0.19);
-  --ink-wash-a065: rgba(242, 245, 243, 0.065);
-  --ink-wash-a040: rgba(242, 245, 243, 0.04);
+  --ink-wash-rgb: 242, 245, 243;
+  --ink-wash-lift: 1;
   --wash-1: rgba(255, 255, 255, 0.03);
   --wash-2: rgba(255, 255, 255, 0.06);
   --wash-3: rgba(255, 255, 255, 0.1);
@@ -483,8 +455,7 @@
      copy scrim is the only one that lands here, and painting it white washed the
      hero canvas out and took the on-dark copy with it. The rest of the scrim
      family is only ever used on the page ground, where the light values stand. */
-  --scrim-2-a930: rgba(45, 53, 50, 0.93);
-  --scrim-2-a770: rgba(45, 53, 50, 0.77);
+  --scrim-inset-rgb: 45, 53, 50;
   --logo-mark: #f2f5f3;
   --shadow-hard: #0c100e;
   /* The canvas palette is NOT re-entered here: a canvas paints outside the
@@ -506,7 +477,7 @@
   --accent-wash-09: var(--accent-wash);
   --form-wash-14: var(--accent-veil);
   --accent-wash-16: var(--accent-veil);
-  --shadow-panel: 0 30px 70px var(--shadow-a600);
+  --shadow-panel: 0 30px 70px var(--shadow-drop);
   /* `color` is an inherited *resolved* value, not a token reference: anything in
      here without a `color` of its own would otherwise keep the page ink it
      inherited from `html`. Re-entering it is what actually flips the subtree,
@@ -514,8 +485,10 @@
   color: var(--ink-1);
 }
 
-/* The two blocks that have no surface of their own — they inherit the page. */
-:root[data-theme='light'] :is(.hero, .article-hero.canvas-variant, .kompute-feature, .kaos-feature) {
+/* Blocks with no surface of their own would otherwise inherit the page. They opt
+   into the plate beside the role, on the same element: `data-surface-plate` is
+   only ever valid together with `data-surface="dark"`, which the ratchet checks. */
+:root[data-theme='light'] [data-surface='dark'][data-surface-plate] {
   background: var(--bg-panel);
   color: var(--ink-1);
 }

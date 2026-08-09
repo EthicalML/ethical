@@ -6,7 +6,7 @@ const initialProject = menus.oss.items![0]!;
 
 <mega-menu>
   <div class="menu-wrap">
-    <div class="mega-panel" data-menu-panel aria-hidden="true">
+    <div class="mega-panel" data-menu-panel data-surface="dark" aria-hidden="true">
       {
         Object.entries(menus).map(([id, menu]) => (
           <div class:list={['mega-panel-body', id === 'overview' && 'is-active']} data-menu-body={id}>
@@ -97,8 +97,8 @@ const initialProject = menus.oss.items![0]!;
                     ))}
                   </footer>
                 </div>
-                <div class="oss-menu-preview">
-                  <nav-preview mode={initialProject.key} data-surface="dark">
+                <div class="oss-menu-preview" data-surface="dark">
+                  <nav-preview mode={initialProject.key}>
                     <canvas aria-hidden="true" />
                   </nav-preview>
                   <p>

@@ -465,7 +465,7 @@ open-source-showcase {
 }
 .oss-carousel-bubbles button {
   background-clip: content-box;
-  background-color: var(--ink-wash-a280);
+  background-color: rgba(var(--ink-wash-rgb), calc(0.28 * var(--ink-wash-lift)));
   border: 0;
   border-radius: 999px;
   box-sizing: content-box;
@@ -479,10 +479,10 @@ open-source-showcase {
   width: 8px;
 }
 .oss-carousel-bubbles button:hover {
-  background-color: var(--ink-wash-a450);
+  background-color: rgba(var(--ink-wash-rgb), calc(0.45 * var(--ink-wash-lift)));
 }
 .oss-carousel-bubbles button.active {
-  background-color: var(--ink-wash-a650);
+  background-color: rgba(var(--ink-wash-rgb), calc(0.65 * var(--ink-wash-lift)));
   width: 48px;
 }
 /* Vertical chevron compositions at the track edges: a single chevron centred

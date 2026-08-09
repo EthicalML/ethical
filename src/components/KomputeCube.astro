@@ -5,12 +5,12 @@ interface Props {
   surface?: 'dark' | 'page';
 }
 
-/* `surface` is the hardcoded label for what this mount sits on: the light theme
-   keeps whole blocks dark, so a cube inside one must keep painting light-on-dark.
-   Both embedded callers pass the same props but sit on different surfaces —
-   `ArticleHero` on the dark hero, `ProjectPortal` on paper — so the caller says
-   which, and canvas never sniffs its own backdrop. */
-const { embedded = false, backdrop = false, surface = 'dark' } = Astro.props;
+/* `surface` overrides the surface this mount would otherwise inherit from the
+   nearest `data-surface` ancestor. Both embedded callers pass the same props but
+   sit on different surfaces: `ArticleHero` inside a block that declares itself
+   dark, so it says nothing, and `ProjectPortal` on paper inside no block at all,
+   which is already `page`. Canvas never sniffs its own backdrop. */
+const { embedded = false, backdrop = false, surface } = Astro.props;
 ---
 
 {
