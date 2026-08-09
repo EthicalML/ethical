@@ -80,3 +80,11 @@ The achievements card and StatBand print "30+" per owner instruction; the record
 ## LLM-based survey
 
 I want to follow on from the State of Production ML 2025, but now for 2026. Instead of asking respondents, I want to do a slight twist on this: collect, through research, the ML stack from various companies from their public blog posts, etc. We would be able to build a report based on all of that. Right now, this could be a more meaningful approach as opposed to what could be a biassed survey response.
+
+## Backlink every newsletter issue to the talks and events page
+
+Each issue carries an events block, but nothing in it points back to `/talks-and-events/`, so the archive of talks and the open calls for papers are reachable only from the site navigation. Add a backlink from the events block of every issue — new issues from the template, and the archive in a single pass — so a reader who finds an issue through search lands on the events page rather than a dead end. The events block itself is still hand-maintained copy; generating it from the events collection is the related open item, and doing both in one pass avoids editing 399 issues twice.
+
+## Issue 400: the Production ML Across 2015-2035 talk
+
+Written and cut from issue 399 at the last minute to make room for the HackerNoon series feature and the website relaunch. It is the PyCon DE & PyData 2026 talk, https://www.youtube.com/watch?v=I1GvlW1H4WI, covering production ML from 2015 to 2035: the 2015-2023 evolution and the shift of engineering effort from training to inference and the application layer, then monitoring, stack alignment, shorter production timelines, autonomous operational patterns, platform complexity and operational debt. The full section prose is in the git history of `src/content/newsletter/399.md` — recover it from there rather than rewriting, and lead issue 400 with it.
