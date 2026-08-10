@@ -354,4 +354,4 @@ Use these widths for CSS media queries. A component that needs responsive client
 3. For a new token, add it to `:root` when at least two owners need the same semantic value, or when the value must change between themes. A theme-dependent value is always a token, however few owners it has: a literal has nowhere to flip to under `:root[data-theme='light']`. Otherwise keep the value local.
 4. If an override seems necessary, find the existing owner first and change the original rule or component API. Add a cross-owner rule to `tokens.css` only when the relationship itself is shared and document that reason here.
 
-<!-- styles-hash: da4e1d80c962dfd5c652bcbaf28219f26aebbd8f0005e8d568d33d3a217b3bfe -->
+<!-- styles-hash: 58f8efc6ecf7a6f9346a5246f09873c8cd1f222867ec269f0bde3222aa34dea5 -->
