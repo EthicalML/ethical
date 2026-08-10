@@ -27,13 +27,30 @@ import MobileDrawer from './MobileDrawer.astro';
         }
       </nav>
       <div class="nav-right">
-        <button class="search-trigger" type="button" data-command-palette-open aria-label="Search the site">
-          <span aria-hidden="true">⌘K</span>
-        </button>
         <button class="nav-trigger" type="button" aria-expanded="false" data-menu-trigger="about" data-menu-width={menus.about.width}>
           {menus.about.label}<span class="caret" aria-hidden="true">▾</span>
         </button>
-        <a class="join-pill" href={join.href}>{join.label}</a>
+        <button class="search-trigger" type="button" data-command-palette-open aria-label="Search the site">
+          <svg
+            class="search-icon"
+            viewBox="0 0 24 24"
+            width="15"
+            height="15"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.4"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <circle cx="10.75" cy="10.75" r="6"></circle>
+            <path d="M15.3 15.3 20 20"></path>
+          </svg>
+          <kbd class="search-keys" aria-hidden="true">⌘K</kbd>
+        </button>
+        <a class="join-pill" href={join.href}>
+          <span class="join-label-full">{join.label}</span>
+          <span class="join-label-short">{join.short}</span>
+        </a>
         <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label="Light mode">
           <svg
             class="theme-icon theme-icon-sun"
@@ -305,24 +322,57 @@ import MobileDrawer from './MobileDrawer.astro';
     margin-left: 0;
   }
 
+  .join-label-short {
+    display: none;
+  }
+
+  /* Two glyphs, not one: the lens says "search" without being read, and the keycap
+     teaches the shortcut. Square corners and a 34px box put it on the join pill's
+     baseline grid, so the right-hand controls read as one row of same-cut buttons
+     rather than a pill floating beside a rectangle. */
   .search-trigger {
-    background: none;
-    border: 1px solid var(--hairline);
-    border-radius: 4px;
+    align-items: center;
+    background: var(--wash-1);
+    border: 1px solid var(--hairline-card);
+    border-radius: 0;
     color: var(--text-2);
     cursor: pointer;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    padding: 5px 8px;
+    display: inline-flex;
+    gap: 6px;
+    padding: 6px 5px 6px 9px;
     transition:
+      background-color 0.2s ease,
       border-color 0.2s ease,
       color 0.2s ease;
   }
 
+  .search-icon {
+    display: block;
+  }
+
+  .search-keys {
+    background: var(--wash-3);
+    border-radius: 2px;
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    padding: 5px 6px;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+  }
+
   .search-trigger:hover {
+    background: var(--wash-2);
     border-color: var(--accent-edge);
     color: var(--accent-ink);
+  }
+
+  .search-trigger:hover .search-keys {
+    background: var(--wash-4);
+    color: var(--text-2);
   }
 
   /* Accent text and strokes take --accent-ink, never --accent: the bright mint is
@@ -372,7 +422,41 @@ import MobileDrawer from './MobileDrawer.astro';
     display: none;
   }
 
-  @media (max-width: 950px) {
+  /* The desktop row's intrinsic minimum sat above the drawer breakpoint, so every
+     width between the two scrolled the page sideways. This tier spends the cheapest
+     levers — the row's own margins, then the search keycap, then the join pill's
+     label and padding — to pull that minimum from 1155 down to 1009. No nav label
+     is touched, so the menu reads the same the whole way down. Nav collapse sits at
+     1040 rather than 1009 so a wider mono fallback cannot close the gap. */
+  @media (max-width: 1180px) {
+    .header-row {
+      gap: 18px;
+      padding: 18px 28px;
+    }
+
+    .search-keys {
+      display: none;
+    }
+
+    .search-trigger {
+      padding: 6px 8px;
+    }
+
+    .join-pill {
+      letter-spacing: 0.06em;
+      padding: 9px 12px;
+    }
+
+    .join-label-full {
+      display: none;
+    }
+
+    .join-label-short {
+      display: inline;
+    }
+  }
+
+  @media (max-width: 1040px) {
     .header-row {
       align-items: flex-start;
       flex-wrap: wrap;
@@ -527,7 +611,7 @@ import MobileDrawer from './MobileDrawer.astro';
      sticky header off screen with it by however far the page was scrolled. The
      toggle that closes the drawer lives in this header, so while the drawer is
      open the header is pinned to the viewport and lifted over it. */
-  @media (max-width: 950px) {
+  @media (max-width: 1040px) {
     body.mobile-nav-open .site-header {
       inset-inline: 0;
       position: fixed;

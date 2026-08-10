@@ -266,7 +266,7 @@ Search by the surface name or representative selector below before adding a rule
 | `RegulationGrid.astro`                                                            | Policy regulation catalogue and themes                                                                 | `.regulation-catalogue`, `.regulation-grid`                                    |
 | `RequestPath.astro`                                                               | KAOS request-path player and scenario controls                                                         | `request-path`, `.scenario-picker`, `.request-stage`                           |
 | `SequencePipeline.astro`                                                          | Kompute sequence pipeline player                                                                       | `sequence-pipeline`, `.pipeline-heading`, `.pipeline-stage`                    |
-| `SiteHeader.astro`                                                                | Persistent header shell, wordmark, desktop navigation triggers, search trigger and right-hand controls | `.site-header`, `.header-row`, `.primary-nav`, `.nav-right`                    |
+| `SiteHeader.astro`                                                                | Persistent header shell, wordmark, desktop navigation triggers, search trigger and right-hand controls | `.site-header`, `.header-row`, `.primary-nav`, `.nav-right`, `.search-trigger` |
 | `MegaMenu.astro`                                                                  | Desktop mega-menu panels, project preview and initiative panes                                         | `.mega-panel`, `.oss-menu`, `.initiative-menu`                                 |
 | `MobileDrawer.astro`                                                              | Mobile navigation drawer, accordion sections and drawer controls                                       | `.mobile-drawer`, `.mobile-nav`, `.mobile-menu-section`                        |
 | `SplitList.astro`                                                                 | Reusable split-list columns                                                                            | `.split-list ul`                                                               |
@@ -339,11 +339,15 @@ Search by the surface name or representative selector below before adding a rule
 
 ## Breakpoints
 
-| Name    |   Width | Use                                                                                               |
-| ------- | ------: | ------------------------------------------------------------------------------------------------- |
-| Wide    | `950px` | Switch desktop navigation, multi-column compositions and full desktop widgets to compact layouts. |
-| Compact | `600px` | Stack dense rows, simplify grids and tighten mobile spacing.                                      |
-| Narrow  | `420px` | Handle the smallest supported viewport where compact rules still need a final adjustment.         |
+| Name         |    Width | Use                                                                                                                                       |
+| ------------ | -------: | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Header snug  | `1180px` | Compress the header's own controls — row padding and gap, the search keycap, the join label — while the full desktop navigation stays up.  |
+| Nav collapse | `1040px` | Swap the desktop navigation for the drawer. Owned by `SiteHeader`, `MegaMenu` and `MobileDrawer` together; see the note below.             |
+| Wide         |  `950px` | Switch multi-column compositions and full desktop widgets to compact layouts. Layout only — the navigation no longer turns over here.      |
+| Compact      |  `600px` | Stack dense rows, simplify grids and tighten mobile spacing.                                                                               |
+| Narrow       |  `420px` | Handle the smallest supported viewport where compact rules still need a final adjustment.                                                  |
+
+Nav collapse and Wide were the same number until the header row outgrew it. The desktop row has an intrinsic minimum — the wordmark, five menu triggers and the right-hand controls cannot shrink past it — and when that minimum sits above the collapse width, every viewport in between scrolls the page sideways. Nav collapse must therefore stay above the measured row minimum, with enough margin that a font fallback rendering the mono wider cannot close the gap. Move it only against a fresh measurement, and move all four `@media` blocks plus `MobileDrawer`'s `matchMedia` together: a toggle that appears while the drawer is still `display: none` opens nothing.
 
 Use these widths for CSS media queries. A component that needs responsive client behaviour must keep its `matchMedia` condition beside that behaviour and align it with the CSS boundary whenever the states represent the same layout switch.
 
@@ -354,4 +358,4 @@ Use these widths for CSS media queries. A component that needs responsive client
 3. For a new token, add it to `:root` when at least two owners need the same semantic value, or when the value must change between themes. A theme-dependent value is always a token, however few owners it has: a literal has nowhere to flip to under `:root[data-theme='light']`. Otherwise keep the value local.
 4. If an override seems necessary, find the existing owner first and change the original rule or component API. Add a cross-owner rule to `tokens.css` only when the relationship itself is shared and document that reason here.
 
-<!-- styles-hash: 58f8efc6ecf7a6f9346a5246f09873c8cd1f222867ec269f0bde3222aa34dea5 -->
+<!-- styles-hash: 1b904480ab7cabf7e4675d6760e26a4ab272fb195f740a03fbeedddd1d799dc4 -->

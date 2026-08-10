@@ -56,7 +56,10 @@ const talks = [
     border-top: 1px solid var(--hairline);
     display: grid;
     gap: 44px;
-    grid-template-columns: 1.15fr 0.85fr 250px;
+    /* minmax(0, …) not a bare fr: an fr track's automatic minimum is min-content,
+       so the longest unbreakable link in a column pushes the grid past the page
+       instead of the column shrinking to fit. */
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr) 250px;
     padding: 44px 48px 34px;
   }
 
