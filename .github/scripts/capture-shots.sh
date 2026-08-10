@@ -94,6 +94,16 @@ fi
 # pass, the second an honest connection refusal; both were observed.
 VERIFY_BASE_URL="http://127.0.0.1:$port" npm run verify:shots:all -- --theme "$theme" > /dev/null
 
+# Dark is the default theme and writes out/<viewport>; every other theme gets
+# its own tree, out/<theme>/<viewport>, so it can never overwrite the dark
+# baseline. The comparison step addresses <destination>/<viewport> either way,
+# so the theme level is unwrapped here rather than taught to every caller.
+captured="scripts/verify/out"
+if [ -d "$captured/$theme" ]; then
+  captured="$captured/$theme"
+fi
+
 mkdir -p "$(dirname "$destination")"
 rm -rf "$destination"
-mv scripts/verify/out "$destination"
+mv "$captured" "$destination"
+rm -rf scripts/verify/out
