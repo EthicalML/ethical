@@ -113,4 +113,6 @@ for (const route of routes) {
 
 await writeFile(new URL('manifest.json', outputDir), `${JSON.stringify(manifest, null, 2)}\n`);
 await browser.close();
-console.log(JSON.stringify({ theme, output: outputDir.pathname, blocked, routes: manifest }, null, 2));
+console.log(
+  JSON.stringify({ theme, output: outputDir.pathname, blocked, routes: manifest }, null, 2),
+);

@@ -76,3 +76,12 @@ Each issue carries an events block, but nothing in it points back to `/talks-and
 ## Issue 400: the Production ML Across 2015-2035 talk
 
 Written and cut from issue 399 at the last minute to make room for the HackerNoon series feature and the website relaunch. It is the PyCon DE & PyData 2026 talk, https://www.youtube.com/watch?v=I1GvlW1H4WI, covering production ML from 2015 to 2035: the 2015-2023 evolution and the shift of engineering effort from training to inference and the application layer, then monitoring, stack alignment, shorter production timelines, autonomous operational patterns, platform complexity and operational debt. The full section prose is in the git history of `src/content/newsletter/399.md` — recover it from there rather than rewriting, and lead issue 400 with it.
+
+## Low priority — event banner artwork loads eagerly
+
+The talks page has only five `<img>` elements, all correctly lazy and none above the fold, but the event banners render their artwork as SVG `<image href>`, and SVG images have no `loading` attribute. Every banner in the archive therefore fetches on load, so a visitor who never scrolls past the fold still pays for all of it — measured at roughly 2.3 MB of conference artwork on `/talks-and-events/`.
+
+Fixable without changing anything anyone sees: render the photograph as an HTML `<img>` layer behind the generated SVG rather than inside it, or gate the banner on an `IntersectionObserver`. The generated ground and motifs are cheap and can stay eager; it is only the remote photograph that is worth deferring.
+
+Explicitly NOT in scope: the reel mounts the active talk's player eagerly, which costs about 1 MB and sets two third-party cookies before any interaction. That is deliberate — it is what makes pressing play instant — and the owner has decided to keep it (2026-08-10). Do not "optimise" it away.
+
