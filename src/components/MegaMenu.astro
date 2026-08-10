@@ -600,6 +600,8 @@ const initialProject = menus.oss.items![0]!;
     line-height: 1.45;
   }
 
+  /* Nav collapse; see the note in SiteHeader.astro. Hiding the desktop panel and
+     showing the drawer toggle are the same switch and share this number. */
   @media (max-width: 1040px) {
     .mega-panel {
       display: none;
