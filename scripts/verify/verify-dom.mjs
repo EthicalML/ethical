@@ -597,6 +597,13 @@ for (const route of routes) {
         };
       }),
       touchTargets: touchTargets.map(touchTarget),
+      // A label on its own line inside an MDX anchor compiles to a paragraph
+      // inside it, which turns a button into a full-width block with the label
+      // adrift. Prettier reflows single-line anchors, so the convention alone
+      // cannot hold this: it has to be checked in the output.
+      blockInsideButton: Array.from(document.querySelectorAll('a.button, button.button'))
+        .filter((element) => element.querySelector('p, div'))
+        .map((element) => element.textContent.trim().slice(0, 40)),
       homepage:
         location.pathname === '/'
           ? {
@@ -761,6 +768,10 @@ for (const route of routes) {
   )
     failures.push('built 404 artifact is missing its expected content or home link');
   if (errors.length > 0) failures.push(`${errors.length} page/console error(s)`);
+  if (checks.blockInsideButton.length > 0)
+    failures.push(
+      `button(s) wrapping a block element: ${checks.blockInsideButton.join(', ')} — use {'Label'} so the label cannot become a paragraph`,
+    );
   if (checks.unrevealed.length > 0)
     failures.push(`${checks.unrevealed.length} reveal target(s) did not fire`);
   if (checks.pageHeight >= 20000)
