@@ -87,7 +87,12 @@ if [ "$served" != "$ondisk" ]; then
   exit 1
 fi
 
-npm run verify:shots:all -- --theme "$theme" > /dev/null
+# The sweep must photograph THIS server. It defaults to :4126, so without
+# being told the port the light leg (which serves :4127) photographs whatever
+# else happens to hold :4126 — the dark leg's build when both land on one
+# runner, and nothing at all when they do not. The first is a silently wrong
+# pass, the second an honest connection refusal; both were observed.
+VERIFY_BASE_URL="http://127.0.0.1:$port" npm run verify:shots:all -- --theme "$theme" > /dev/null
 
 mkdir -p "$(dirname "$destination")"
 rm -rf "$destination"
