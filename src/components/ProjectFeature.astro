@@ -1,0 +1,167 @@
+---
+import { getCollection } from 'astro:content';
+import { isExternalHref } from '../utils/external-links.mjs';
+
+// A project feature: copy on one side, a live widget on the other. The homepage open-source
+// section and every project on /open-source/ render through this, so the two surfaces cannot
+// drift apart. Two variants ship, differing only in proportion and in what the copy column
+// carries: `metrics` is the Kompute shape (a metric grid and tags beside a fixed-height canvas),
+// `panel` the KAOS shape (a capability table beside a windowed panel).
+
+interface Action {
+  label: string;
+  href: string;
+  kind: string;
+}
+
+interface Props {
+  variant?: 'metrics' | 'panel';
+  figure?: string;
+  affiliation?: string;
+  title: string;
+  text: string;
+  /** View-transition group shared with the destination page's hero heading. */
+  morph?: string;
+  /** The action whose href morphs into that hero; matched against `Action.href`. */
+  morphHref?: string;
+  /** Repository in `src/content/repos-metrics.yaml` whose figures this card carries. */
+  metricId?: string;
+  /** `grid` is the stacked value-over-label block, `line` the single mono statline. */
+  metricStyle?: 'grid' | 'line';
+  rows?: Array<{ name: string; detail: string }>;
+  tags?: string[];
+  actions?: Action[];
+}
+
+const {
+  variant = 'metrics',
+  figure,
+  affiliation,
+  title,
+  text,
+  morph,
+  morphHref,
+  metricId,
+  metricStyle = 'grid',
+  rows = [],
+  tags = [],
+  actions = [],
+} = Astro.props;
+const panel = variant === 'panel';
+const metricEntries = await getCollection('metrics');
+const metrics = metricId ? (metricEntries.find(({ id }) => id === metricId)?.data.values ?? []) : [];
+const grid = metricStyle === 'grid' ? metrics : [];
+const statline = metricStyle === 'line' ? metrics.map(({ value, label }) => (label ? `${value} ${label}` : value)) : [];
+---
+
+<article class:list={[panel ? 'kaos-feature' : 'kompute-feature']} data-project-feature data-surface="dark" data-surface-plate data-reveal>
+  <div class:list={[!panel && 'oss-copy']}>
+    {
+      (figure || affiliation) && (
+        <p class="figure-label">
+          {figure && <span>{figure}</span>}
+          {affiliation && <span>{affiliation}</span>}
+        </p>
+      )
+    }
+    <h3 data-morph-source={morph} data-morph-name={morph}>{title}</h3>
+    <p>{text}</p>
+    <slot name="note" />
+
+    {
+      grid.length > 0 && (
+        <div class="oss-metrics">
+          {grid.map(({ value, label }) => (
+            <div>
+              <>
+                <strong>{value}</strong>
+                <span>{label}</span>
+              </>
+            </div>
+          ))}
+        </div>
+      )
+    }
+
+    {
+      rows.length > 0 && (
+        <div class="kaos-capabilities">
+          {rows.map(({ name, detail }) => (
+            <div>
+              <>
+                <span>{name}</span>
+                <strong>{detail}</strong>
+              </>
+            </div>
+          ))}
+        </div>
+      )
+    }
+
+    {
+      statline.length > 0 && (
+        <div class="oss-statline">
+          {statline.map((stat) => (
+            <span>{stat}</span>
+          ))}
+        </div>
+      )
+    }
+    {
+      tags.length > 0 && (
+        <div class="oss-tags">
+          {tags.map((tag) => (
+            <span>{tag}</span>
+          ))}
+        </div>
+      )
+    }
+
+    {
+      actions.length > 0 && (
+        <div class="actions">
+          {actions.map(({ label, href, kind }) => (
+            <a
+              class:list={['button', kind]}
+              href={href}
+              target={isExternalHref(href) ? '_blank' : undefined}
+              rel={isExternalHref(href) ? 'noopener noreferrer' : undefined}
+              data-morph-pair={morph && href === morphHref ? morph : undefined}
+            >
+              {label}
+            </a>
+          ))}
+        </div>
+      )
+    }
+  </div>
+  <slot />
+</article>
+
+<!-- The sheet is global because the widget column and the optional note paragraph are slotted:
+     they carry the consumer's style scope, not this component's, so scoped rules would never
+     reach `.fixed-canvas`, `.kaos-panel` or the note. It is also the single owner of
+     `.figure-label` and `.oss-statline`, which `OpenSourceShowcase.astro`'s carousel cards reuse. -->
+<style is:global>
+  @import './ProjectFeature.css';
+</style>
+
+<script>
+  import { bindMorphPairs } from '../shared/MorphPairs';
+
+  // Each card binds its own morph pair against its own subtree, so a page may hold several
+  // without their sources and triggers crossing. The card is the root the pair is looked up in,
+  // which is why the binding lives here rather than with either consumer.
+  const bound = new WeakSet<Element>();
+
+  const bindCards = () => {
+    document.querySelectorAll<HTMLElement>('[data-project-feature]').forEach((card) => {
+      if (bound.has(card)) return;
+      bound.add(card);
+      bindMorphPairs(card, new AbortController().signal);
+    });
+  };
+
+  bindCards();
+  document.addEventListener('astro:page-load', bindCards);
+</script>

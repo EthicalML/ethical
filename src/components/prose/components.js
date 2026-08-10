@@ -15,7 +15,6 @@ export { default as NetworkDirectory } from '../NetworkDirectory.astro';
 export { default as RecentIssuesRail } from '../RecentIssuesRail.astro';
 export { default as OpenSourceShowcase } from '../OpenSourceShowcase.astro';
 export { default as PartnerDirectory } from '../PartnerDirectory.astro';
-export { default as ProjectPortal } from '../ProjectPortal.astro';
 export { default as PrinciplesExplorer } from '../PrinciplesExplorer.astro';
 export { default as SurveyExplorer } from '../SurveyExplorerIsland.astro';
 export { default as SurveyReport } from '../SurveyReportIsland.astro';

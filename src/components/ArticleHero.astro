@@ -2,6 +2,7 @@
 import ArticleHeroCanvas from './ArticleHeroCanvas.astro';
 import KaosArchitecture from './KaosArchitecture.astro';
 import KomputeCube from './KomputeCube.astro';
+import OpenSourceHeroCanvas from './OpenSourceHeroCanvas.astro';
 import PolicyHeroCanvas from './PolicyHeroCanvas.astro';
 
 const { eyebrow, title, intro, canvas = false, transitionName } = Astro.props;
@@ -16,6 +17,7 @@ const { eyebrow, title, intro, canvas = false, transitionName } = Astro.props;
   {canvas === 'kaos' ? <KaosArchitecture embedded backdrop /> : canvas === true && <ArticleHeroCanvas />}
   {canvas === 'kompute' && <KomputeCube embedded backdrop />}
   {canvas === 'policy' && <PolicyHeroCanvas />}
+  {canvas === 'open-source' && <OpenSourceHeroCanvas />}
   <p class="eyebrow">{eyebrow}</p>
   <h1 transition:name={transitionName} style={transitionName ? `view-transition-name: ${transitionName}` : undefined}>{title}</h1>
   {intro && <p>{intro}</p>}
@@ -56,7 +58,7 @@ const { eyebrow, title, intro, canvas = false, transitionName } = Astro.props;
     z-index: 1;
   }
 
-  .article-hero.canvas-variant > :not(canvas, .kaos-architecture-mount, .kompute-canvas-mount, .policy-citadel-mount) {
+  .article-hero.canvas-variant > :not(canvas, .kaos-architecture-mount, .kompute-canvas-mount, .policy-citadel-mount, .oss-lattice-mount) {
     position: relative;
     z-index: 2;
   }
@@ -94,7 +96,8 @@ const { eyebrow, title, intro, canvas = false, transitionName } = Astro.props;
     width: 100%;
   }
 
-  .article-hero.canvas-variant > .policy-citadel-mount {
+  .article-hero.canvas-variant > .policy-citadel-mount,
+  .article-hero.canvas-variant > .oss-lattice-mount {
     display: contents;
   }
 

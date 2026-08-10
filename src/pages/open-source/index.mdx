@@ -4,41 +4,167 @@ description: Openly licensed software for agent orchestration, GPU compute, expl
 composed: true
 layout: ../../layouts/ProseLayout.astro
 projects:
-  - pills: [v0.7.0, APACHE-2.0, K8S ≥1.28]
+  kaos:
+    figure: FIG 01 — AGENT CONTROL PLANE
     title: K8s Agent OS
-    rail: KAOS
-    subtitle: Deploy, manage and orchestrate AI agents on Kubernetes.
-    visual: kaos
-    href: /open-source/kaos/
-  - pills: [LINUX FOUNDATION, APACHE-2.0, 2.5K STARS]
+    text: An open-source control plane for deploying, managing and orchestrating AI agents on Kubernetes, with scoped credentials, sandboxed execution, budget and time-horizon limits, human approval gates and a replayable audit trail.
+    tags: [v0.7.0, APACHE-2.0, K8S ≥1.28]
+    actions:
+      - label: Read the design
+        href: /open-source/kaos/
+        kind: primary
+      - label: View on GitHub
+        href: https://github.com/axsaucedo/kaos
+        kind: ''
+  kompute:
+    figure: FIG 02 — GPU COMPUTE
+    affiliation: LINUX FOUNDATION AI & DATA
     title: Kompute
-    subtitle: The general-purpose GPU compute framework for cross-vendor graphics cards, hosted by LF AI & Data.
-    visual: kompute
-    href: /open-source/kompute/
-  - pills: [ALPHA, MIT, 1.3K STARS]
+    text: The general-purpose GPU compute framework for cross-vendor graphics cards, built on Vulkan and hosted by LF AI & Data. It supports asynchronous, mobile-enabled GPU processing.
+    tags: [LINUX FOUNDATION, APACHE-2.0]
+    actions:
+      - label: Open the project
+        href: /open-source/kompute/
+        kind: primary
+      - label: View on GitHub
+        href: https://github.com/KomputeProject/kompute
+        kind: ''
+  xai:
+    figure: FIG 03 — EXPLAINABILITY PIPELINE
     title: XAI
-    subtitle: An explainability toolbox for machine learning, across data, model and production.
-    visual: xai
-    href: /open-source/xai/
-  - pills: [COMMUNITY, 20.8K STARS]
+    text: An explainability toolbox for machine learning across data analysis, model evaluation and production monitoring, pairing the technical tools with the organisational process around them.
+    tags: [ALPHA, MIT]
+    actions:
+      - label: Open the framework
+        href: /open-source/xai/
+        kind: primary
+      - label: View on GitHub
+        href: https://github.com/EthicalML/xai
+        kind: ''
+  productionMl:
+    figure: FIG 04 — ECOSYSTEM CATALOGUE
     title: Awesome Production Machine Learning
-    rail: Prod ML List
-    subtitle: 'The community catalogue of production ML tooling: 24 categories, 550+ libraries.'
-    visual: production-ml
-    href: /open-source/production-ml-list/
+    text: 'The community catalogue of production ML and MLOps tooling, curated weekly: 24 categories and more than 550 libraries, from serving and orchestration to explainability and ML security.'
+    tags: [COMMUNITY, CURATED WEEKLY]
+    actions:
+      - label: Browse the catalogue
+        href: /open-source/production-ml-list/
+        kind: primary
+      - label: View on GitHub
+        href: https://github.com/EthicalML/awesome-production-machine-learning
+        kind: ''
+  aiGuidelines:
+    figure: FIG 05 — REGULATION CATALOGUE
+    title: Awesome AI Regulation, Principles & Guidelines
+    text: An open catalogue mapping the ecosystem of guidelines, principles, codes of ethics, standards and regulation being put in place around artificial intelligence, from national law across fifteen economic areas to practical checklists.
+    tags: [COMMUNITY, POLICY]
+    actions:
+      - label: Open the catalogue
+        href: /open-source/ai-guidelines/
+        kind: primary
+      - label: View on GitHub
+        href: https://github.com/EthicalML/awesome-artificial-intelligence-regulation
+        kind: ''
 ---
 
-import { ArticleHero, CenteredCTA, ProjectPortal } from '../../components/prose/components.js';
+import { AnimationWindow, ArticleHero, CenteredCTA } from '../../components/prose/components.js';
+import CategoryMosaic from '../../components/CategoryMosaic.astro';
+import KaosGraph from '../../components/KaosGraph.astro';
+import KomputeCube from '../../components/KomputeCube.astro';
+import ProjectFeature from '../../components/ProjectFeature.astro';
+import XaiPipeline from '../../components/XaiPipeline.astro';
 
 <ArticleHero
-  canvas
+  canvas="open-source"
   eyebrow="OPEN SOURCE / BUILT IN PUBLIC"
   title="Open-source software and tools"
-  intro="Openly licensed software for agent orchestration, GPU compute, explainability and production ML. Built in public, governed in the open, used in production."
+  intro="Openly licensed software for agent orchestration, GPU compute, explainability and production ML, alongside the two community catalogues the Institute maintains. Built in public, governed in the open, used in production."
 />
 
-The Institute also maintains an open [catalogue of AI regulations, principles and guidelines](/open-source/ai-guidelines/) spanning national law, standards and practical checklists.
+<section className="oss-projects" aria-label="Open-source projects">
+  <ProjectFeature
+    variant="panel"
+    figure={frontmatter.projects.kaos.figure}
+    title={frontmatter.projects.kaos.title}
+    text={frontmatter.projects.kaos.text}
+    morph="kaos-title"
+    morphHref="/open-source/kaos/"
+    metricId="kaos"
+    metricStyle="line"
+    tags={frontmatter.projects.kaos.tags}
+    actions={frontmatter.projects.kaos.actions}
+  >
+    <div class="kaos-panel windowed" data-surface="dark">
+      <AnimationWindow title="agent run — live orchestration" class="kaos-showcase-window" chromeOnly>
+        <KaosGraph panel />
+      </AnimationWindow>
+    </div>
+  </ProjectFeature>
 
-<ProjectPortal projects={frontmatter.projects} />
+<ProjectFeature
+  figure={frontmatter.projects.kompute.figure}
+  affiliation={frontmatter.projects.kompute.affiliation}
+  title={frontmatter.projects.kompute.title}
+  text={frontmatter.projects.kompute.text}
+  morph="kompute-title"
+  morphHref="/open-source/kompute/"
+  metricId="kompute"
+  metricStyle="line"
+  tags={frontmatter.projects.kompute.tags}
+  actions={frontmatter.projects.kompute.actions}
+>
+  <div class="fixed-canvas cube-mount">
+    <KomputeCube embedded backdrop />
+  </div>
+</ProjectFeature>
+
+<ProjectFeature
+  figure={frontmatter.projects.xai.figure}
+  title={frontmatter.projects.xai.title}
+  text={frontmatter.projects.xai.text}
+  morph="xai-title"
+  morphHref="/open-source/xai/"
+  metricId="xai"
+  metricStyle="line"
+  tags={frontmatter.projects.xai.tags}
+  actions={frontmatter.projects.xai.actions}
+>
+  <div class="fixed-canvas">
+    <XaiPipeline />
+  </div>
+</ProjectFeature>
+
+<ProjectFeature
+  figure={frontmatter.projects.productionMl.figure}
+  title={frontmatter.projects.productionMl.title}
+  text={frontmatter.projects.productionMl.text}
+  morph="production-ml-title"
+  morphHref="/open-source/production-ml-list/"
+  metricId="ecosystem"
+  metricStyle="line"
+  tags={frontmatter.projects.productionMl.tags}
+  actions={frontmatter.projects.productionMl.actions}
+>
+  <div class="fixed-canvas">
+    <CategoryMosaic set="production-ml" />
+  </div>
+</ProjectFeature>
+
+  <ProjectFeature
+    figure={frontmatter.projects.aiGuidelines.figure}
+    title={frontmatter.projects.aiGuidelines.title}
+    text={frontmatter.projects.aiGuidelines.text}
+    morph="ai-guidelines-title"
+    morphHref="/open-source/ai-guidelines/"
+    metricId="ai-guidelines"
+    metricStyle="line"
+    tags={frontmatter.projects.aiGuidelines.tags}
+    actions={frontmatter.projects.aiGuidelines.actions}
+  >
+    <div class="fixed-canvas">
+      <CategoryMosaic set="ai-guidelines" />
+    </div>
+  </ProjectFeature>
+</section>
 
 <CenteredCTA eyebrow="CONTRIBUTE" heading="Contribute to the open-source projects." href="/contact/" label="Start a conversation" />

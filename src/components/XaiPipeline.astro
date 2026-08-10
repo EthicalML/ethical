@@ -1,0 +1,26 @@
+---
+// The three-checkpoint explainability pipeline the header's nav preview draws, as a standalone
+// mount.
+interface Props {
+  surface?: 'dark' | 'page';
+}
+
+const { surface } = Astro.props;
+---
+
+<xai-pipeline data-surface={surface} aria-hidden="true">
+  <canvas></canvas>
+</xai-pipeline>
+
+<script>
+  import '../shared/canvas/XaiPipeline';
+</script>
+
+<style>
+  xai-pipeline,
+  canvas {
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+</style>

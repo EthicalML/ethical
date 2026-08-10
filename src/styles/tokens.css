@@ -1265,6 +1265,22 @@ main > .home-section:nth-last-child(1 of .home-section) { padding-bottom: var(--
   .stat-band.four-stat .stat:last-child { grid-column: auto; }
 }
 
+/* The open-source project list: the five feature cards stacked. The page composes cards it does
+   not own, so the spacing between them lives here rather than in `ProjectFeature`. */
+.oss-projects {
+  display: grid;
+  gap: 26px;
+  padding: 0 48px 96px;
+}
+
+@media (max-width: 950px) {
+  .oss-projects { gap: 18px; padding: 0 24px 72px; }
+}
+
+@media (max-width: 600px) {
+  .oss-projects { padding: 0 18px 60px; }
+}
+
 .policy-section {
   padding: 88px 48px 96px;
 }
