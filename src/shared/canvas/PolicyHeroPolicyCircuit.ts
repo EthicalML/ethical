@@ -1,21 +1,15 @@
+import { CanvasEngine, type CanvasDraw, rgba, type Rgb, surfaceOf } from './CanvasEngine';
 import {
-  CanvasEngine,
-  type CanvasDraw,
-  type CanvasPalette,
-  rgba,
-  rgbCss,
-  type Rgb,
-  surfaceOf,
-} from './CanvasEngine';
-import {
+  clamp,
   createIso,
+  drawGlow,
   drawIsoCube,
   drawIsoGrid,
-  type CubeStyle,
   type IsoPoint,
   lerpPoint,
-} from './PolicyHeroIso';
-import { clamp, drawGlow } from './PolicyHeroShared';
+  plateStyle,
+  styleAt,
+} from './IsoKit';
 
 // A policy citadel: the five policy towers form the core, ringed by a fortified district of
 // perimeter ramparts, cardinal gates and corner bastions, wired to the core by radial conduits
@@ -180,87 +174,6 @@ const HALF = 0.5;
 const CUBE_H = 0.9;
 const BEAT = 2.0;
 const RING_GY = 0.28;
-
-/* Cold-to-hot cube palette, interpolated by a district's hover heat so it eases
-   in and out. These are numeric channel triplets rather than colour strings, so
-   no colour grep finds them — they are listed per theme here deliberately.
-   Faces are near-black under dark and near-white under light; the cold edge is a
-   desaturated hairline, the hot edge is the accent. */
-interface CubeTone {
-  top: Rgb;
-  right: Rgb;
-  left: Rgb;
-  edge: Rgb;
-  edgeA: number;
-  edgeW: number;
-}
-
-const COLD_DARK: CubeTone = {
-  top: [32, 37, 34],
-  right: [20, 23, 21],
-  left: [13, 15, 14],
-  edge: [150, 170, 158],
-  edgeA: 0.15,
-  edgeW: 1,
-};
-const HOT_DARK: CubeTone = {
-  top: [40, 55, 46],
-  right: [25, 36, 30],
-  left: [16, 25, 21],
-  edge: [94, 230, 160],
-  edgeA: 0.6,
-  edgeW: 1.2,
-};
-const COLD_LIGHT: CubeTone = {
-  top: [233, 234, 230],
-  right: [216, 219, 214],
-  left: [199, 203, 198],
-  edge: [78, 92, 84],
-  edgeA: 0.28,
-  edgeW: 1,
-};
-const HOT_LIGHT: CubeTone = {
-  top: [214, 240, 226],
-  right: [193, 227, 209],
-  left: [172, 213, 192],
-  edge: [18, 103, 59],
-  edgeA: 0.7,
-  edgeW: 1.2,
-};
-
-const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-const mix = (a: Rgb, b: Rgb, t: number): Rgb => [
-  Math.round(lerp(a[0], b[0], t)),
-  Math.round(lerp(a[1], b[1], t)),
-  Math.round(lerp(a[2], b[2], t)),
-];
-
-const styleAt = (heat: number, palette: CanvasPalette): CubeStyle => {
-  const t = clamp(heat);
-  const cold = palette.onLight ? COLD_LIGHT : COLD_DARK;
-  const hot = palette.onLight ? HOT_LIGHT : HOT_DARK;
-  return {
-    top: rgbCss(mix(cold.top, hot.top, t)),
-    right: rgbCss(mix(cold.right, hot.right, t)),
-    left: rgbCss(mix(cold.left, hot.left, t)),
-    edge: rgba(mix(cold.edge, hot.edge, t), lerp(cold.edgeA, hot.edgeA, t)),
-    edgeWidth: lerp(cold.edgeW, hot.edgeW, t),
-  };
-};
-
-/* Ground plates take the palette's three isometric faces: the darkest surfaces
-   under dark, the lightest under light, and editable from `tokens.css` because
-   `--canvas-surface-{1,2,3}` is where they now live. */
-const plateStyle = (palette: CanvasPalette): CubeStyle => {
-  const [top, right, left] = palette.surface;
-  return {
-    top: rgba(top, 0.94),
-    right: rgba(right, 0.94),
-    left: rgba(left, 0.94),
-    edge: rgba(palette.accentInk, 0.1),
-    edgeWidth: 1,
-  };
-};
 
 /* Three off-token bright greens carry the "live signal" read: conduit packets,
    payload text and the rising phrase. Under light they collapse onto the accent

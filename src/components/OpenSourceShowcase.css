@@ -8,111 +8,6 @@
   max-width: 780px;
 }
 
-.kompute-feature,
-.kaos-feature {
-  align-items: center;
-  background: radial-gradient(90% 120% at 78% 40%, var(--accent-wash-09), transparent 62%);
-  border: 1px solid var(--hairline-card);
-  border-radius: var(--radius-card-lg);
-  display: grid;
-  gap: 40px;
-  grid-template-columns: 1fr 1fr;
-  overflow: hidden;
-}
-
-.oss-copy {
-  padding: 48px 0 48px 44px;
-}
-
-.oss-copy > .figure-label {
-  padding-right: 44px;
-}
-
-.figure-label {
-  color: var(--text-4);
-  display: flex;
-  font: var(--mono-10)/1 var(--font-mono);
-  justify-content: space-between;
-  letter-spacing: 0.12em;
-  margin: 0;
-}
-
-.oss-copy h3,
-.kaos-feature h3 {
-  font: 300 38px/1.08 var(--font-display);
-  margin: 16px 0 0;
-}
-
-.oss-copy > p:not(.figure-label) {
-  color: var(--text-2);
-  font-size: 15px;
-  line-height: 1.62;
-  margin: 12px 0 0;
-  max-width: 460px;
-}
-
-.kaos-feature > div > p:not(.figure-label) {
-  color: var(--ink-3);
-  font-size: 15.5px;
-  line-height: 1.62;
-  margin: 14px 0 0;
-  max-width: 520px;
-}
-
-.oss-metrics {
-  border-block: 1px solid var(--hairline-card);
-  display: grid;
-  gap: 16px 28px;
-  grid-template-columns: 1fr 1fr;
-  margin-top: 26px;
-  padding: 18px 44px 18px 0;
-}
-
-.oss-metrics div {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.oss-metrics strong {
-  font: 300 26px/1 var(--font-display);
-}
-
-.oss-metrics span,
-.oss-statline {
-  color: var(--text-3);
-  font: var(--mono-10)/1.4 var(--font-mono);
-  letter-spacing: 0.08em;
-}
-
-.oss-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 20px;
-}
-
-.oss-tags span {
-  border: 1px solid var(--hairline-strong);
-  border-radius: var(--radius-pill);
-  color: var(--text-2);
-  font: var(--mono-10-5)/1 var(--font-mono);
-  padding: 8px 12px;
-}
-
-.oss-copy > .actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 22px;
-}
-
-.fixed-canvas {
-  height: 440px;
-  min-height: 220px;
-  position: relative;
-}
-
 .oss-card {
   background: linear-gradient(180deg, var(--wash-2), transparent);
   border: 1px solid var(--hairline-card);
@@ -228,82 +123,14 @@
   line-height: 1.62;
 }
 
-.oss-statline {
-  border-top: 1px solid var(--hairline);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 20px;
-  margin-top: 18px;
-  padding: 14px 0;
-}
-
 .oss-card > a {
   color: var(--accent-ink);
   font-size: 14px;
 }
 
-.kaos-feature {
-  background: radial-gradient(80% 140% at 88% 8%, var(--accent-wash), transparent 60%);
-  gap: 44px;
-  grid-template-columns: 1fr 1.05fr;
-  margin-top: 26px;
-  padding: 44px;
-}
-
-.kaos-feature h3 {
-  font-size: 40px;
-  line-height: 1.06;
-}
-
-.kaos-capabilities {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 22px;
-}
-
-.kaos-capabilities div {
-  border-bottom: 1px solid var(--hairline);
-  display: grid;
-  font-size: 13.5px;
-  gap: 14px;
-  grid-template-columns: 150px 1fr;
-  padding-bottom: 8px;
-}
-
-.kaos-capabilities span {
-  color: var(--text-3);
-  font: var(--mono-10-5)/normal var(--font-mono);
-  padding-top: 2px;
-}
-
-.kaos-capabilities strong {
-  color: var(--ink-2);
-  font-weight: 400;
-}
-
-@media (max-width: 950px) {
-  .kompute-feature,
-  .kaos-feature {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 950px) {
-  .oss-copy {
-    padding: 32px;
-  }
-}
-
 @media (max-width: 950px) {
   .open-source-prototype {
     padding-inline: 24px;
-  }
-}
-
-@media (max-width: 950px) {
-  .kaos-feature {
-    padding: 26px;
   }
 }
 
@@ -317,63 +144,14 @@
 }
 
 @media (max-width: 950px) {
-  .open-source-prototype,
-  .kompute-feature,
-  .kaos-feature,
-  .oss-copy {
+  .open-source-prototype {
     padding: 32px;
   }
 }
 
-@media (max-width: 950px) {
-  .oss-copy > .figure-label,
-  .oss-metrics {
-    padding-right: 0;
-  }
-}
-
-@media (max-width: 950px) {
-  .fixed-canvas {
-    height: 320px;
-  }
-}
-
-@media (max-width: 950px) {
-  .kaos-feature {
-    padding: 30px;
-  }
-}
-
 @media (max-width: 600px) {
-  .kompute-feature,
-  .oss-card,
-  .kaos-feature {
+  .oss-card {
     border-radius: var(--radius-card);
-  }
-}
-
-@media (max-width: 600px) {
-  .oss-copy {
-    padding: 26px 22px;
-  }
-}
-
-@media (max-width: 600px) {
-  .figure-label {
-    flex-wrap: wrap;
-    gap: 8px 16px;
-  }
-}
-
-@media (max-width: 600px) {
-  .oss-metrics {
-    gap: 16px;
-  }
-}
-
-@media (max-width: 600px) {
-  .fixed-canvas {
-    height: 260px;
   }
 }
 
@@ -386,18 +164,6 @@
 @media (max-width: 600px) {
   .oss-preview {
     padding: 18px;
-  }
-}
-
-@media (max-width: 600px) {
-  .kaos-feature {
-    padding: 22px;
-  }
-}
-
-@media (max-width: 600px) {
-  .kaos-capabilities div {
-    grid-template-columns: 1fr;
   }
 }
 
@@ -431,38 +197,35 @@
 open-source-showcase {
   display: block;
 }
-.kaos-panel.windowed {
-  background: transparent;
-  border: 0;
-  padding: 0;
-}
-:global(.kaos-showcase-window .kaos-canvas-mount) {
-  height: 430px;
-  margin-top: 0;
-}
 
 /* The intro shares the title's measure so the section head reads as one block. */
+
 .section-intro {
   max-width: 760px;
 }
 
 /* Flagship carousel: position bubbles in the inter-card gap above a snap track
    flanked by full-height chevron compositions. */
+
 .oss-carousel {
   margin-top: 0;
   scroll-margin-top: 124px;
 }
+
 .oss-carousel-stage {
   position: relative;
 }
+
 /* Position bubbles: round dots in the 26px inter-card gap band; only the
    active one stretches into a longer bar. Click travels, active follows. */
+
 .oss-carousel-bubbles {
   align-items: center;
   display: flex;
   gap: 12px;
   height: 26px;
 }
+
 .oss-carousel-bubbles button {
   background-clip: content-box;
   background-color: rgba(var(--ink-wash-rgb), calc(0.28 * var(--ink-wash-lift)));
@@ -478,19 +241,23 @@ open-source-showcase {
     width 0.18s ease;
   width: 8px;
 }
+
 .oss-carousel-bubbles button:hover {
   background-color: rgba(var(--ink-wash-rgb), calc(0.45 * var(--ink-wash-lift)));
 }
+
 .oss-carousel-bubbles button.active {
   background-color: rgba(var(--ink-wash-rgb), calc(0.65 * var(--ink-wash-lift)));
   width: 48px;
 }
+
 /* Vertical chevron compositions at the track edges: a single chevron centred
    between two gradient lines spanning the full track height, in the strategy
    section's accent line colour; hover takes its neon treatment and a press
    energises the lines. Always enabled: past either end the press wraps to the
    opposite end. The invisible ::before widens the hover/click surface well
    beyond the visible composition. */
+
 .oss-carousel-edge {
   align-items: center;
   background: transparent;
@@ -511,18 +278,22 @@ open-source-showcase {
   width: 44px;
   z-index: 1;
 }
+
 /* The outer side sits at the viewport edge, so the extra surface reaches
    inward over the track edge. */
+
 .oss-carousel-edge.prev::before {
   content: '';
   inset: 0 -36px 0 -8px;
   position: absolute;
 }
+
 .oss-carousel-edge.next::before {
   content: '';
   inset: 0 -8px 0 -36px;
   position: absolute;
 }
+
 .oss-carousel-edge b {
   background: linear-gradient(180deg, transparent, var(--accent-edge), transparent);
   flex: 1;
@@ -532,31 +303,39 @@ open-source-showcase {
     box-shadow 0.2s ease;
   width: 1px;
 }
+
 .oss-carousel-edge i {
   display: flex;
   font-style: normal;
   padding: 8px 0;
 }
+
 .oss-carousel-edge svg {
   display: block;
 }
+
 .oss-carousel-edge.prev {
   left: -46px;
 }
+
 .oss-carousel-edge.next {
   right: -46px;
 }
+
 .oss-carousel-edge:hover {
   color: var(--accent-ink);
 }
+
 .oss-carousel-edge:hover b {
   background: linear-gradient(180deg, transparent, var(--accent-ink), transparent);
   box-shadow: 0 0 14px var(--accent-edge);
 }
+
 .oss-carousel-edge.pressed b,
 .oss-carousel-edge:active b {
   animation: edge-energise 0.35s ease;
 }
+
 @keyframes edge-energise {
   0% {
     box-shadow: 0 0 0 rgba(94, 230, 160, 0);
@@ -569,6 +348,7 @@ open-source-showcase {
     box-shadow: 0 0 14px var(--accent-edge);
   }
 }
+
 .oss-carousel-track {
   display: flex;
   gap: 26px;
@@ -576,11 +356,14 @@ open-source-showcase {
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
 }
+
 .oss-carousel-track::-webkit-scrollbar {
   display: none;
 }
+
 /* Card shell styles are global (.oss-card in tokens.css); the carousel only
    adds the flex/snap geometry and the bottom-pinned actions row. */
+
 .oss-card {
   display: flex;
   flex: 0 0 calc(50% - 13px);
@@ -588,15 +371,19 @@ open-source-showcase {
   min-width: 0;
   scroll-snap-align: start;
 }
+
 .oss-card > .eyebrow {
   margin-top: 24px;
 }
+
 .oss-card > .eyebrow + h3 {
   margin-top: 8px;
 }
+
 /* Teaser lead-in: a static thin card with stacked display type and a plain
    arrow glyph; not a control, no hover state, no accent. It bundles with the
    survey card into the single first snap stop. */
+
 .oss-card.teaser-card {
   align-items: flex-start;
   color: var(--text-1);
@@ -604,9 +391,11 @@ open-source-showcase {
   justify-content: space-between;
   text-align: left;
 }
+
 /* The survey card is part of the bundle, never its own desktop snap stop. The
    penultimate card snaps centered so its stop stays distinct from the track
    end, where it and the last card would otherwise share one clamped position. */
+
 @media (min-width: 901px) {
   .oss-card.survey-card {
     scroll-snap-align: none;
@@ -615,50 +404,61 @@ open-source-showcase {
     scroll-snap-align: center;
   }
 }
+
 .teaser-card span {
   font: 300 24px/1.2 var(--font-display);
   letter-spacing: -0.01em;
 }
+
 .teaser-card i {
   color: var(--text-3);
   font-size: 26px;
   font-style: normal;
 }
+
 /* Survey card: two thirds of the row so the next card peeks from the right; the
    interactive island sits in the inner panel with the siblings' top-right glow. */
+
 .oss-card.survey-card {
   flex-basis: calc(66.666% - 13px);
 }
+
 .survey-preview {
   background: radial-gradient(70% 100% at 85% 0%, var(--accent-wash-16), var(--bg-inset) 70%);
 }
+
 .oss-card .actions {
   margin-top: auto;
   padding-top: 22px;
 }
 
 /* Initiative previews, restored from the retired reports section cards. */
+
 .initiative-preview {
   background: radial-gradient(70% 100% at 70% 0%, var(--accent-wash-16), var(--bg-inset) 70%);
   border: 1px solid var(--hairline-card);
   border-radius: var(--radius-card);
   padding: 22px;
 }
+
 .initiative-preview header {
   align-items: center;
   display: flex;
   justify-content: space-between;
 }
+
 .initiative-preview header span {
   color: var(--text-3);
   font: var(--mono-10) / 1 var(--font-mono);
   letter-spacing: 0.1em;
 }
+
 .initiative-preview h4 {
   font-size: 19px;
   font-weight: 400;
   margin: 5px 0 20px;
 }
+
 .initiative-preview > p {
   align-items: center;
   border-bottom: 1px solid var(--hairline);
@@ -668,31 +468,38 @@ open-source-showcase {
   margin: 0;
   padding: 8px 0;
 }
+
 .initiative-preview > p span,
 .initiative-preview > p i {
   color: var(--text-3);
   font: normal var(--mono-10) / 1 var(--font-mono);
 }
+
 .initiative-preview > p i {
   margin-inline-start: auto;
 }
+
 .mlsecops-preview {
   background: var(--bg-inset);
 }
+
 .mlsecops-preview header {
   border-bottom: 1px solid var(--hairline);
   padding-bottom: 10px;
 }
+
 .mlsecops-preview > p {
   display: grid;
   grid-template-columns: 1fr 1.2fr;
 }
+
 .mlsecops-preview > p strong {
   font-weight: 400;
 }
 
 /* Mobile stays a carousel: near-full-width cards with the next edge peeking;
    the edge zones shrink into the section's own side padding. */
+
 @media (max-width: 950px) {
   .oss-card,
   .oss-card.survey-card {
@@ -716,6 +523,7 @@ open-source-showcase {
     right: -35px;
   }
 }
+
 @media (max-width: 600px) {
   .oss-carousel-edge {
     width: 44px;
@@ -727,6 +535,7 @@ open-source-showcase {
     right: -32px;
   }
 }
+
 @media (prefers-reduced-motion: reduce) {
   .oss-carousel-bubbles button {
     transition: none;

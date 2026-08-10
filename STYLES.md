@@ -202,7 +202,7 @@ pair is now compared by `npm run check:ratchet` rather than by memory.
 
 ## Global stylesheet
 
-`src/styles/tokens.css` is 1,299 lines. The counts below are from the current parsed stylesheet: a rule is a CSS style rule or `@font-face` rule, keyframe step selectors are excluded, and declarations inside keyframes are included.
+`src/styles/tokens.css` is 1,315 lines. The counts below are from the current parsed stylesheet: a rule is a CSS style rule or `@font-face` rule, keyframe step selectors are excluded, and declarations inside keyframes are included.
 
 | Category                             | Rules | Declarations | Contents                                                                                                                              |
 | ------------------------------------ | ----: | -----------: | ------------------------------------------------------------------------------------------------------------------------------------- |
@@ -216,7 +216,7 @@ pair is now compared by `npm run check:ratchet` rather than by memory.
 | Responsive foundation                |     7 |            8 | Global section, typography, primitive and form adjustments at the named breakpoints.                                                  |
 | Cross-surface and canvas integration |    73 |          151 | Canvas mount contracts, homepage section composition, shared composed-page clusters and rules spanning a page plus a child component. |
 | Theme overrides                      |     1 |          104 | Every theme-dependent token's light value on `:root[data-theme='light']`.                                                             |
-| Total                                |   251 |          693 | Global CSS only.                                                                                                                      |
+| Total                                |   256 |          699 | Global CSS only.                                                                                                                      |
 
 ## Component and page owners
 
@@ -229,6 +229,7 @@ Search by the surface name or representative selector below before adding a rule
 | `AnimationWindow.astro`                                                           | Reusable playback window chrome                                                                        | `animation-window`, `.window-header`, `.traffic-lights`                        |
 | `ArticleHero.astro`                                                               | Article and framework heroes, including canvas variants                                                | `.article-hero`, `.hero-canvas`                                                |
 | `CategoryAtlas.astro`                                                             | Production ML category atlas                                                                           | `.category-atlas`, `.atlas-field`, `.atlas-tile`                               |
+| `CategoryMosaic.astro` | Catalogue mosaic canvas host | `category-mosaic`, `canvas` |
 | `CenteredCTA.astro`                                                               | Centred call-to-action section                                                                         | `.center-cta`                                                                  |
 | `ChannelLinks.astro`                                                              | Network channel link rows                                                                              | `.channel-links a`                                                             |
 | `CodeTabs.astro`                                                                  | Kompute code tabs, toolbar and copy controls                                                           | `code-tabs`, `.code-toolbar`, `[data-code-panel]`                              |
@@ -259,7 +260,7 @@ Search by the surface name or representative selector below before adding a rule
 | `ProcurementFlow.astro`                                                           | AI-RFX procurement flow                                                                                | `.procurement-flow`                                                            |
 | `ProductionMlCatalogue.astro`                                                     | Production ML catalogue and category details                                                           | `.production-catalogue`, `.catalogue-grid`                                     |
 | `ProjectLinks.astro`                                                              | Project resource link buttons                                                                          | `.project-links`                                                               |
-| `ProjectPortal.astro`                                                             | Open-source project portal and activity panels                                                         | `.project-portal`, `.portal-rail`, `.portal-stage`                             |
+| `ProjectFeature.astro` / `ProjectFeature.css` | Project feature card: copy column, metrics, tags and widget column | `.kompute-feature`, `.kaos-feature`, `.oss-copy`, `.figure-label` |
 | `QuickstartTerminal.astro`                                                        | KAOS quickstart terminal playback                                                                      | `.quickstart-window`, `quickstart-terminal`, `.terminal-body`                  |
 | `RecentIssuesRail.astro`                                                          | Recent newsletter issue rail                                                                           | `.recent-issues-rail`                                                          |
 | `RegulationGrid.astro`                                                            | Policy regulation catalogue and themes                                                                 | `.regulation-catalogue`, `.regulation-grid`                                    |
@@ -275,6 +276,7 @@ Search by the surface name or representative selector below before adding a rule
 | `SurveyExplorerIsland.astro`, `SurveyExplorerIsland.css` and `SurveyExplorer.tsx` | Homepage survey explorer tabs, year controls, bars and focus panel                                     | `.survey-island`, `.survey-toolbar`, `.survey-bars`, `.survey-focus`           |
 | `SurveyReportApp.module.css`                                                      | 2024 and 2025 report scrollytelling, charts and comparison controls                                    | `.report`, `.chapterSwitcher`, `.barRow`, `.compareToggle`                     |
 | `TalkCard.astro`                                                                  | Individual talk card                                                                                   | `.talk-card`                                                                   |
+| `XaiPipeline.astro` | Explainability pipeline canvas host | `xai-pipeline`, `canvas` |
 | `XaiProcess.astro`                                                                | XAI process player                                                                                     | `xai-process`, `.process-heading`, `.process-stage`                            |
 | `prose/CTA.astro`                                                                 | MDX CTA block                                                                                          | `.cta-only`, `.cta-block`                                                      |
 | `prose/CapabilityTable.astro`                                                     | MDX capability table                                                                                   | `.capability-table`                                                            |
@@ -287,6 +289,7 @@ Search by the surface name or representative selector below before adding a rule
 | `pages/newsletter/[issue].astro`                                                  | Newsletter issue meta bar, article deck and issue navigation                                           | `newsletter-meta-bar`, `.issue-meta`, `.newsletter-page`                       |
 | `pages/newsletter/index.astro`                                                    | Newsletter archive latest card and issue grid                                                          | `.latest-card`, `.issue-grid`                                                  |
 | `pages/partners.mdx`                                                              | Partners page policy feature and list heading                                                          | `.policy-feature`, `.partner-list-heading`                                     |
+| `pages/open-source/index.mdx` | Open-source project list composition | `.oss-projects` |
 | `pages/policy.mdx`                                                                | Policy page work grid composition                                                                      | `.policy-work`                                                                 |
 | `EventArchive.astro`                                                              | Talks and events archive: filter control, card grid and empty state                                    | `.event-archive`, `.archive-controls`, `.archive-grid`                         |
 | `EventBanner.astro`                                                               | Generated event artwork and its optional photograph                                                    | `.event-banner`                                                                |
@@ -315,6 +318,7 @@ Search by the surface name or representative selector below before adding a rule
 | Root, principle and newsletter view-transition selectors and keyframes                           | Their endpoints cross layouts, pages and persisted header chrome.                                                  |
 | `SiteHeader.astro` global `.site-header` transition name                                         | The persisted node keeps its previous page scope across a route swap, so its transition name must remain unscoped. |
 | `MegaMenu.astro` global `om-swap` keyframes                                                      | The mega-menu script assigns this animation by name at runtime, outside Astro's scoped keyframe rewriting.         |
+| `ProjectFeature.css` in full (`.kompute-feature`, `.kaos-feature`, `.oss-copy`, `.figure-label`, `.oss-statline`) | The card's widget column and note paragraph are slotted, so they carry the consumer's scope rather than the card's; the sheet is also the single owner of the two rules `OpenSourceShowcase.astro`'s carousel cards reuse. |
 | `.fixed-canvas canvas`, `.kaos-canvas-mount canvas`, `.kaos-architecture-mount canvas`           | The canvas sizing contract has multiple unrelated hosts.                                                           |
 | `.kaos-canvas-mount`, `.kaos-architecture-mount`, `kaos-graph`, `kaos-architecture`              | Shared KAOS canvas elements are embedded by multiple owners.                                                       |
 | `.home-section` and its final-section rule                                                       | Page sections are composed through several homepage components and hydration adds non-section siblings.            |
@@ -350,4 +354,4 @@ Use these widths for CSS media queries. A component that needs responsive client
 3. For a new token, add it to `:root` when at least two owners need the same semantic value, or when the value must change between themes. A theme-dependent value is always a token, however few owners it has: a literal has nowhere to flip to under `:root[data-theme='light']`. Otherwise keep the value local.
 4. If an override seems necessary, find the existing owner first and change the original rule or component API. Add a cross-owner rule to `tokens.css` only when the relationship itself is shared and document that reason here.
 
-<!-- styles-hash: 58ed28968cb67e29a09c604c015be1e917ec1707ecd4b2faf0d4fa37c674b23b -->
+<!-- styles-hash: 58f8efc6ecf7a6f9346a5246f09873c8cd1f222867ec269f0bde3222aa34dea5 -->

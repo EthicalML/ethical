@@ -349,3 +349,28 @@ export const report = buildSurveyReport(surveyCsv);
 `src/shared/canvas/PhraseTerrain.ts`. A shared canvas custom element (`<phrase-terrain>` wrapping a `.hero-canvas`) rendering a slowly rotating sphere of short text phrases with depth fade, a band sweep, and a cursor gravity field (window-level pointer tracking; nearby phrases pull toward the cursor, brighten and resolve to white). `setPhrases(list)` swaps the phrase set with a ~400ms crossfade; with no list it defaults to the policy corpus fragments (`utils/PolicyCorpus` via `PolicyHeroShared`). Honors the canvas mount contract (IntersectionObserver gating, reduced-motion static frame, teardown on disconnect).
 
 Currently unwired: kept for a future home after the policy hero and record studies retired (the owner wants it reused, not discarded). To mount it, import the module and render `<phrase-terrain><canvas class="hero-canvas" aria-hidden="true"></canvas></phrase-terrain>`.
+
+## ProjectFeature
+
+`src/components/ProjectFeature.astro` / `ProjectFeature.css`. The project feature card: a copy column (figure label, optional affiliation, heading, body, optional metric block, capability rows, tags and actions) beside a slotted widget column. The homepage open-source section and every project on `/open-source/` render through it, so the two surfaces cannot drift apart.
+
+### Props
+
+| Prop                       | Type                                   | Notes                                                                                                                          |
+| -------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `variant`                  | `'metrics' \| 'panel'`                 | `metrics` is the Kompute proportion (equal columns, fixed-height canvas); `panel` the KAOS one (wider widget column, padding). |
+| `figure` / `affiliation`   | `string`                               | The two ends of the figure label. Either may be omitted; both omitted drops the label.                                         |
+| `title` / `text`           | `string`                               | Required heading and body paragraph.                                                                                           |
+| `morph` / `morphHref`      | `string`                               | View-transition group shared with the destination hero's `transitionName`, and the action href that carries it.                |
+| `metricId` / `metricStyle` | `string`, `'grid' \| 'line'`           | Repository id in `src/content/repos-metrics.yaml`; `grid` renders the value-over-label block, `line` the single mono statline. |
+| `rows`                     | `Array<{ name; detail }>`              | Capability table, used by the KAOS shape.                                                                                      |
+| `tags` / `actions`         | `string[]`, `Array<{label;href;kind}>` | Pills and buttons; external hrefs get `target`/`rel` automatically.                                                            |
+
+The default slot is the widget column, and a `note` slot adds a second copy paragraph after the body. Both are slotted, so the stylesheet is applied globally — see the note in the component and the entry in `STYLES.md`.
+
+## Canvas widget mounts
+
+- `src/components/CategoryMosaic.astro` (`<category-mosaic>`, `src/shared/canvas/CategoryMosaic.ts`). The twinkling catalogue mosaic the header's nav preview draws, as a standalone mount. `set` chooses the tile set: `production-ml` (24 categories) or `ai-guidelines` (regulation themes and economic areas). Adding a set means adding a tile list and registering it in `TILE_SETS`.
+- `src/components/XaiPipeline.astro` (`<xai-pipeline>`, `src/shared/canvas/XaiPipeline.ts`). The three-checkpoint explainability pipeline with its travelling packet and feedback loop, likewise shared with the nav preview.
+- `src/components/OpenSourceHeroCanvas.astro` (`<open-source-hero-lattice>`, `src/shared/canvas/OpenSourceHeroLattice.ts`). The `/open-source/` hero: five project pads around a shared hub, ringed by an orbit of contributors that send a packet inward on each beat. Built on `src/shared/canvas/IsoKit.ts`, the isometric vocabulary it shares with the policy citadel; `data-scale`, `data-center-x` and `data-center-y` tune an embed.
+- `src/shared/canvas/CategoryConstellation.ts` (`<category-constellation>`) is currently unwired: its only consumer was `ProjectPortal`, retired when `/open-source/` moved to feature cards.

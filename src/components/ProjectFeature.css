@@ -1,0 +1,264 @@
+/* The project feature card: a two-column block with copy on one side and a live widget on the
+   other. The homepage open-source section and every project on /open-source/ render through
+   `ProjectFeature.astro`, so the rules live with the card rather than with either consumer.
+
+   This sheet is applied globally (see the note in the component), which also makes it the single
+   owner of `.figure-label` and `.oss-statline` — `OpenSourceShowcase.astro`'s carousel cards
+   reuse both and no longer carry their own copy. */
+
+.kompute-feature,
+.kaos-feature {
+  align-items: center;
+  background: radial-gradient(90% 120% at 78% 40%, var(--accent-wash-09), transparent 62%);
+  border: 1px solid var(--hairline-card);
+  border-radius: var(--radius-card-lg);
+  display: grid;
+  gap: 40px;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+}
+
+.oss-copy {
+  padding: 48px 0 48px 44px;
+}
+
+.oss-copy > .figure-label {
+  padding-right: 44px;
+}
+
+.figure-label {
+  color: var(--text-4);
+  display: flex;
+  font: var(--mono-10)/1 var(--font-mono);
+  justify-content: space-between;
+  letter-spacing: 0.12em;
+  margin: 0;
+}
+
+.oss-copy h3,
+.kaos-feature h3 {
+  font: 300 38px/1.08 var(--font-display);
+  margin: 16px 0 0;
+}
+
+.oss-copy > p:not(.figure-label) {
+  color: var(--text-2);
+  font-size: 15px;
+  line-height: 1.62;
+  margin: 12px 0 0;
+  max-width: 460px;
+}
+
+.kaos-feature > div > p:not(.figure-label) {
+  color: var(--ink-3);
+  font-size: 15.5px;
+  line-height: 1.62;
+  margin: 14px 0 0;
+  max-width: 520px;
+}
+
+.oss-metrics {
+  border-block: 1px solid var(--hairline-card);
+  display: grid;
+  gap: 16px 28px;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 26px;
+  padding: 18px 44px 18px 0;
+}
+
+.oss-metrics div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.oss-metrics strong {
+  font: 300 26px/1 var(--font-display);
+}
+
+.oss-metrics span,
+.oss-statline {
+  color: var(--text-3);
+  font: var(--mono-10)/1.4 var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+.oss-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.oss-tags span {
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-pill);
+  color: var(--text-2);
+  font: var(--mono-10-5)/1 var(--font-mono);
+  padding: 8px 12px;
+}
+
+.oss-copy > .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.fixed-canvas {
+  height: 440px;
+  min-height: 220px;
+  position: relative;
+}
+
+.oss-statline {
+  border-top: 1px solid var(--hairline);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin-top: 18px;
+  padding: 14px 0;
+}
+
+.kaos-feature {
+  background: radial-gradient(80% 140% at 88% 8%, var(--accent-wash), transparent 60%);
+  gap: 44px;
+  grid-template-columns: 1fr 1.05fr;
+  margin-top: 26px;
+  padding: 44px;
+}
+
+.kaos-feature h3 {
+  font-size: 40px;
+  line-height: 1.06;
+}
+
+.kaos-capabilities {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 22px;
+}
+
+.kaos-capabilities div {
+  border-bottom: 1px solid var(--hairline);
+  display: grid;
+  font-size: 13.5px;
+  gap: 14px;
+  grid-template-columns: 150px 1fr;
+  padding-bottom: 8px;
+}
+
+.kaos-capabilities span {
+  color: var(--text-3);
+  font: var(--mono-10-5)/normal var(--font-mono);
+  padding-top: 2px;
+}
+
+.kaos-capabilities strong {
+  color: var(--ink-2);
+  font-weight: 400;
+}
+
+@media (max-width: 950px) {
+  .kompute-feature,
+  .kaos-feature {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 950px) {
+  .oss-copy {
+    padding: 32px;
+  }
+}
+
+@media (max-width: 950px) {
+  .kaos-feature {
+    padding: 26px;
+  }
+}
+
+@media (max-width: 950px) {
+  .kompute-feature,
+  .kaos-feature,
+  .oss-copy {
+    padding: 32px;
+  }
+}
+
+@media (max-width: 950px) {
+  .oss-copy > .figure-label,
+  .oss-metrics {
+    padding-right: 0;
+  }
+}
+
+@media (max-width: 950px) {
+  .fixed-canvas {
+    height: 320px;
+  }
+}
+
+@media (max-width: 950px) {
+  .kaos-feature {
+    padding: 30px;
+  }
+}
+
+@media (max-width: 600px) {
+  .kompute-feature,
+  .kaos-feature {
+    border-radius: var(--radius-card);
+  }
+}
+
+@media (max-width: 600px) {
+  .oss-copy {
+    padding: 26px 22px;
+  }
+}
+
+@media (max-width: 600px) {
+  .figure-label {
+    flex-wrap: wrap;
+    gap: 8px 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .oss-metrics {
+    gap: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .fixed-canvas {
+    height: 260px;
+  }
+}
+
+@media (max-width: 600px) {
+  .kaos-feature {
+    padding: 22px;
+  }
+}
+
+@media (max-width: 600px) {
+  .kaos-capabilities div {
+    grid-template-columns: 1fr;
+  }
+}
+
+.kaos-panel.windowed {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+/* The window and its canvas mount are slotted in by the consumer, so this selector reaches
+   across into their markup; the sheet is already global, so no `:global()` wrapper is needed. */
+.kaos-showcase-window .kaos-canvas-mount {
+  height: 430px;
+  margin-top: 0;
+}

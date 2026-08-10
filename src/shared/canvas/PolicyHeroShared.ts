@@ -1,5 +1,3 @@
-import { rgba, type Rgb } from './CanvasEngine';
-
 export const POLICY_FRAGMENTS = [
   'eight (8) out of twelve (12) initial recommendations',
   'narrowness is maintained rather than merely declared',
@@ -42,7 +40,6 @@ export interface SphereDot {
   seed: number;
 }
 
-export const clamp = (value: number) => Math.max(0, Math.min(1, value));
 export const smooth = (value: number) => value * value * (3 - 2 * value);
 
 export const hash = (index: number, salt = 0) => {
@@ -59,20 +56,4 @@ export const spherePoint = (dot: SphereDot, rotation: number) => {
     y: Math.sin(dot.latitude) * radius,
     z: latitudeRadius * Math.sin(longitude) * radius,
   };
-};
-
-export const drawGlow = (
-  context: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  radius: number,
-  alpha: number,
-  color: Rgb,
-) => {
-  const glow = context.createRadialGradient(x, y, 0, x, y, radius);
-  glow.addColorStop(0, rgba(color, alpha));
-  glow.addColorStop(0.42, rgba(color, alpha * 0.28));
-  glow.addColorStop(1, rgba(color, 0));
-  context.fillStyle = glow;
-  context.fillRect(x - radius, y - radius, radius * 2, radius * 2);
 };
