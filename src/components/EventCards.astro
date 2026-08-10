@@ -1,0 +1,138 @@
+---
+import EventBanner from './EventBanner.astro';
+import { loadEvents, openCfps, eventDate, daysUntil, type Event } from '../utils/Events';
+
+interface Props {
+  /** Event names in the order they should lead; anything else follows by date. */
+  names?: string[];
+  empty?: string;
+}
+
+const { names = [], empty } = Astro.props;
+const today = new Date();
+const { upcoming } = await loadEvents(today);
+
+// One list, not two: an event we speak at is a recommendation with a marker on
+// it, and splitting them meant the same card twice or an arbitrary demotion.
+const order = new Map(names.map((name, index) => [name, index]));
+const events: Event[] = [...upcoming].sort(
+  (left, right) =>
+    (order.get(left.name) ?? Number.MAX_SAFE_INTEGER) - (order.get(right.name) ?? Number.MAX_SAFE_INTEGER) || left.start.getTime() - right.start.getTime(),
+);
+---
+
+{
+  events.length === 0 && empty ? (
+    <p class="cards-empty">{empty}</p>
+  ) : (
+    <div class="event-cards">
+      {events.map((event) => (
+        <a class="event-card" href={event.url} target="_blank" rel="noopener noreferrer" data-reveal>
+          <span class="card-banner">
+            {openCfps(event, today).map((cfp) => (
+              <span class="banner-pill">CFP · {daysUntil(cfp.deadline!, today)} DAYS</span>
+            ))}
+            {(event.talks ?? []).length > 0 && <span class="banner-pill speaking">SPEAKING</span>}
+            <EventBanner slug={event.slug} series={event.series} label={event.series.toUpperCase()} topic={event.topics?.[0]} image={event.image} />
+          </span>
+          <span class="card-body">
+            <span class="card-date">{eventDate(event)}</span>
+            <span class="card-name">{event.name}</span>
+            {event.location && <span class="card-where">{event.location}</span>}
+            {(event.talks ?? []).map((talk) => (
+              <span class="card-talk">{talk.title}</span>
+            ))}
+          </span>
+        </a>
+      ))}
+    </div>
+  )
+}
+
+<style>
+  .event-cards {
+    display: grid;
+    gap: var(--space-20);
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    margin: var(--space-34) 0 var(--space-26);
+  }
+  .event-card {
+    border: 1px solid var(--hairline);
+    color: inherit;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    text-decoration: none;
+    transition:
+      border-color 0.4s ease,
+      transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .event-card:hover {
+    border-color: var(--accent-edge, var(--hairline-strong));
+    transform: translateY(-3px);
+  }
+  .card-banner {
+    aspect-ratio: 16 / 9;
+    display: block;
+    overflow: hidden;
+    position: relative;
+  }
+  .banner-pill {
+    backdrop-filter: blur(6px);
+    background: rgba(19, 20, 20, 0.72);
+    border: 1px solid var(--accent-edge, var(--hairline-strong));
+    color: var(--accent, var(--text-1));
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    padding: 4px var(--space-8);
+    bottom: var(--space-12);
+    position: absolute;
+    right: var(--space-12);
+    z-index: 2;
+  }
+  .banner-pill.speaking {
+    border-color: var(--hairline-strong);
+    color: var(--text-1);
+    left: var(--space-12);
+    right: auto;
+  }
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding: var(--space-14);
+  }
+  .card-date {
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .card-name {
+    color: var(--text-1);
+    font-size: 0.92rem;
+    line-height: 1.3;
+  }
+  .card-where {
+    color: var(--text-2);
+    font-size: 0.8rem;
+  }
+  .card-talk {
+    border-top: 1px solid var(--hairline);
+    color: var(--text-3);
+    font-size: 0.78rem;
+    margin-top: var(--space-8);
+    padding-top: var(--space-8);
+  }
+  .cards-empty {
+    color: var(--text-2);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .event-card,
+    .event-card:hover {
+      transform: none;
+      transition: none;
+    }
+  }
+</style>

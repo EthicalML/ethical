@@ -39,6 +39,22 @@ const context = await browser.newContext({
   colorScheme: theme,
 });
 await applyTheme(context, theme);
+
+// Photograph this build, not the internet. The pages legitimately pull remote
+// artwork and an embedded player, which makes the sweep depend on hosts the
+// gate has no business testing: they are slow or unreachable from a runner, so
+// the page never reaches networkidle, and their content changes under us, so a
+// diff can appear with no commit behind it. Both sides of a parity run are
+// captured by this same code, so blocking is symmetric and what remains is
+// exactly the output we produced.
+let blocked = 0;
+await context.route('**/*', (route) => {
+  const host = new URL(route.request().url()).hostname;
+  if (host === '127.0.0.1' || host === 'localhost') return route.continue();
+  blocked += 1;
+  return route.abort();
+});
+
 const manifest = {};
 
 for (const route of routes) {
@@ -97,4 +113,6 @@ for (const route of routes) {
 
 await writeFile(new URL('manifest.json', outputDir), `${JSON.stringify(manifest, null, 2)}\n`);
 await browser.close();
-console.log(JSON.stringify({ theme, output: outputDir.pathname, routes: manifest }, null, 2));
+console.log(
+  JSON.stringify({ theme, output: outputDir.pathname, blocked, routes: manifest }, null, 2),
+);

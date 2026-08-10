@@ -91,6 +91,58 @@ export const NEWSLETTER_TAGS = [
   'reinforcement-learning',
 ] as const;
 
+export const EVENT_TOPICS = [
+  'ai-agents',
+  'ai-infrastructure',
+  'ai-policy',
+  'cloud-native',
+  'data-engineering',
+  'general-tech',
+  'llms',
+  'ml-security',
+  'mlops',
+  'python',
+  'research',
+] as const;
+
+const events = defineCollection({
+  loader: file('./src/content/events.yaml'),
+  schema: z.object({
+    slug: z.string(),
+    name: z.string(),
+    series: z.string(),
+    url: z.url(),
+    // Site-absolute path to a committed banner derivative, not a remote URL.
+    // Absent means the generated SVG banner is used instead.
+    image: z.string().optional(),
+    start: z.date(),
+    end: z.date().optional(),
+    location: z.string().optional(),
+    topics: z.array(z.enum(EVENT_TOPICS)).optional(),
+    cfps: z
+      .array(
+        z.object({
+          track: z.string().optional(),
+          url: z.url().optional(),
+          deadline: z.date().optional(),
+        }),
+      )
+      .optional(),
+    talks: z
+      .array(
+        z.object({
+          title: z.string(),
+          track: z.string().optional(),
+          url: z.url().optional(),
+          context: z.string().optional(),
+          video: z.url().optional(),
+          image: z.string().optional(),
+        }),
+      )
+      .optional(),
+  }),
+});
+
 const newsletter = defineCollection({
   loader: glob({ pattern: '*.md', base: './src/content/newsletter' }),
   schema: z.object({
@@ -111,4 +163,12 @@ const policyProducts = defineCollection({
   }),
 });
 
-export const collections = { metrics, newsletter, partners, policyProducts, principles, survey };
+export const collections = {
+  events,
+  metrics,
+  newsletter,
+  partners,
+  policyProducts,
+  principles,
+  survey,
+};

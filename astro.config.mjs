@@ -45,6 +45,8 @@ export default defineConfig({
     preview: { allowedHosts: ['ethical.institute', 'localhost', '127.0.0.1'] },
   },
   redirects: {
+    '/talks/': '/talks-and-events/',
+    '/talks.html': '/talks-and-events/',
     '/principles.html': '/principles/',
     '/security.html': '/frameworks/security/',
     '/rfx.html': '/frameworks/ai-rfx/',
@@ -76,5 +78,10 @@ export default defineConfig({
   markdown: {
     processor: unified({ rehypePlugins: [rehypeExternalLinks, rehypeSectionize] }),
   },
-  integrations: [mdx(), preact(), sitemap()],
+  integrations: [
+    mdx(),
+    preact(),
+    // Prototypes are working sketches, not pages anyone should find in search.
+    sitemap({ filter: (page) => !page.includes('/prototypes/') }),
+  ],
 });

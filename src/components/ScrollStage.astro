@@ -1,0 +1,137 @@
+---
+/**
+ * Scroll drives state: a sticky stage on one side, steps scrolling past on the
+ * other, and whichever step is nearest an activation line becomes the active
+ * one. This is the device the state-of-production-ML report uses, lifted to a
+ * custom element so a prototype can put anything on the stage — a map, a
+ * timeline, a video.
+ *
+ * Markup contract, both slots supplied by the page:
+ *   [data-stage-item] — one per stage state, keyed by index
+ *   [data-stage-step] — one per scrolling step, keyed by index
+ * The element sets data-active on the matching item and step.
+ */
+interface Props {
+  /** Fraction of viewport height the activation line sits at. */
+  line?: number;
+  class?: string;
+}
+
+const { line = 0.45, class: className } = Astro.props;
+---
+
+<scroll-stage class:list={['scroll-stage', className]} data-line={line}>
+  <div class="stage-sticky">
+    <slot name="stage" />
+  </div>
+  <div class="stage-steps">
+    <slot name="steps" />
+  </div>
+</scroll-stage>
+
+<style>
+  .scroll-stage {
+    display: grid;
+    gap: var(--space-48);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 460px);
+  }
+  .stage-sticky {
+    align-self: start;
+    height: min(78vh, 640px);
+    position: sticky;
+    top: 96px;
+  }
+  .stage-steps {
+    display: flex;
+    flex-direction: column;
+    /* Room past the last step so it can still reach the activation line. Without
+       it the final state is unreachable: the page runs out of scroll first. */
+    padding-bottom: 45vh;
+  }
+  /* Without a working scroll driver every step should still be readable, so the
+     fallback is simply all of them stacked. */
+  @media (max-width: 999px), (prefers-reduced-motion: reduce) {
+    .scroll-stage {
+      grid-template-columns: 1fr;
+    }
+    .stage-sticky {
+      height: auto;
+      position: static;
+    }
+  }
+</style>
+
+<script>
+  class ScrollStage extends HTMLElement {
+    private controller = new AbortController();
+    private frame = 0;
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const { signal } = this.controller;
+      const items = Array.from(this.querySelectorAll<HTMLElement>('[data-stage-item]'));
+      const steps = Array.from(this.querySelectorAll<HTMLElement>('[data-stage-step]'));
+      if (!items.length || !steps.length) return;
+
+      const desktop = matchMedia('(min-width: 1000px)');
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+      const line = Number(this.dataset.line ?? '0.45');
+
+      const setActive = (index: number) => {
+        items.forEach((item, position) => {
+          item.dataset.active = position === index ? '1' : '0';
+        });
+        steps.forEach((step, position) => {
+          step.dataset.active = position === index ? '1' : '0';
+        });
+      };
+
+      const update = () => {
+        this.frame = 0;
+        const activation = innerHeight * line;
+        let nearest = 0;
+        let best = Infinity;
+        steps.forEach((step, index) => {
+          const bounds = step.getBoundingClientRect();
+          const distance = Math.abs(bounds.top + bounds.height / 2 - activation);
+          if (distance < best) {
+            best = distance;
+            nearest = index;
+          }
+        });
+        setActive(nearest);
+      };
+
+      const schedule = () => {
+        if (this.frame) return;
+        this.frame = requestAnimationFrame(update);
+      };
+
+      const sync = () => {
+        const live = desktop.matches && !reduced.matches;
+        this.dataset.live = live ? '1' : '0';
+        // Off the scroll driver every state is shown at once, so nothing is
+        // reachable only by scrolling.
+        if (live) {
+          update();
+        } else {
+          items.forEach((item) => (item.dataset.active = '1'));
+          steps.forEach((step) => (step.dataset.active = '1'));
+        }
+      };
+
+      addEventListener('scroll', () => this.dataset.live === '1' && schedule(), { passive: true, signal });
+      addEventListener('resize', sync, { signal });
+      desktop.addEventListener('change', sync, { signal });
+      reduced.addEventListener('change', sync, { signal });
+      sync();
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+      if (this.frame) cancelAnimationFrame(this.frame);
+    }
+  }
+
+  if (!customElements.get('scroll-stage')) customElements.define('scroll-stage', ScrollStage);
+</script>

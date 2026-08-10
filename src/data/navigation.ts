@@ -42,7 +42,7 @@ export const menus: Record<string, Menu> = {
       { number: '03', title: 'Open source & tools', href: '/#opensource' },
       { number: '04', title: 'Reports & data', href: '/#reports' },
       { number: '05', title: 'Network & newsletter', href: '/#join' },
-      { number: '06', title: 'Talks & keynotes', href: '/talks/' },
+      { number: '06', title: 'Talks & keynotes', href: '/talks-and-events/' },
       { number: '07', title: 'Contact the Institute', href: '/contact/' },
     ],
   },
@@ -244,7 +244,7 @@ export const menus: Record<string, Menu> = {
           {
             title: 'Talks & events',
             description: 'Keynotes, conference talks and roundtables',
-            href: '/talks/',
+            href: '/talks-and-events/',
           },
           { title: 'Partners', description: 'Institutional collaboration', href: '/partners/' },
           {

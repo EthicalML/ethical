@@ -1,0 +1,63 @@
+---
+// PROTOTYPE F — "The reel". The stage holds the talk itself: scroll swaps the
+// still, and the active one offers to play in place. Closest to what a
+// programme chair actually wants, which is to watch someone speak.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TalkReel from '../../components/TalkReel.astro';
+import SpeakingEnquiry from '../../components/SpeakingEnquiry.astro';
+---
+
+<BaseLayout frontmatter={{ title: 'Speaking — prototype F', description: 'Prototype.', noindex: true }}>
+  <div class="rl-wash" aria-hidden="true"></div>
+  <main class="reel">
+    <header class="rl-head">
+      <p class="eyebrow">SPEAKING</p>
+      <h1>Talks on the record</h1>
+      <p class="lede">Scroll the reel. Press play on any of them without leaving the page.</p>
+    </header>
+
+    <TalkReel />
+
+    <section class="rl-close-cta">
+      <h2>Want one of these for your stage?</h2>
+      <button class="button primary" type="button" data-enquiry-open>Contact for speaking opportunities</button>
+    </section>
+    <SpeakingEnquiry />
+  </main>
+</BaseLayout>
+
+<style>
+  /* The page takes its colour from the talk on screen. The wash is the same
+     ground the generated banner uses, blurred to a haze and held at low alpha:
+     the ceiling is the palette itself, which is dark by construction, rather
+     than a brightness filter bolted on after. */
+  .rl-wash {
+    background: radial-gradient(120% 80% at 30% 0%, var(--wash, transparent), transparent 70%);
+    filter: blur(90px);
+    inset: -20vh -10vw;
+    opacity: 0;
+    pointer-events: none;
+    position: fixed;
+    transition:
+      background 1.1s ease,
+      opacity 1.1s ease;
+    z-index: -1;
+  }
+  .rl-wash[data-on='1'] {
+    opacity: 0.85;
+  }
+  .rl-head {
+    padding: var(--space-56) var(--space-40) var(--space-26);
+  }
+  .rl-head h1 {
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    margin: var(--space-8) 0 var(--space-12);
+  }
+  .lede {
+    color: var(--text-2);
+  }
+  .rl-close-cta {
+    border-top: 1px solid var(--hairline);
+    padding: var(--space-48) var(--space-40);
+  }
+</style>

@@ -90,7 +90,11 @@ The default tolerance is zero differing pixels. Only use `--tolerance` for docum
 
 Every entry is echoed with its reason into the JSON report and cropped into `<diff-dir>/allow/<route>-<n>.png`, so review is per-difference and visual. Allowlist routes that produce no difference at all are reported as `unusedAllowlistRoutes` and fail the run. Omitting `--allow` leaves the gate exactly as it is: zero pixels, no exceptions.
 
+`npm run verify:events` is the exception: it reads `src/content/events.yaml` and the `featured` list in `src/pages/talks.mdx` statically, so it needs neither a build nor a server.
+
 ## Reviewed checks
+
+- Events data: asserts every `featured` name resolves to exactly one event, caps the featured list at ten, and rejects duplicate event names, a talk video claimed by two events, and a CFP whose deadline falls after its own event starts. Prints total, upcoming, past, with-talk, with-video, featured counts and the topic distribution.
 
 - HTTP status: asserts every requested route resolves successfully so a visually plausible error page cannot pass.
 - Page and console errors: catches runtime failures that static build success cannot expose.

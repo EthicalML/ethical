@@ -87,8 +87,23 @@ if [ "$served" != "$ondisk" ]; then
   exit 1
 fi
 
-npm run verify:shots:all -- --theme "$theme" > /dev/null
+# The sweep must photograph THIS server. It defaults to :4126, so without
+# being told the port the light leg (which serves :4127) photographs whatever
+# else happens to hold :4126 — the dark leg's build when both land on one
+# runner, and nothing at all when they do not. The first is a silently wrong
+# pass, the second an honest connection refusal; both were observed.
+VERIFY_BASE_URL="http://127.0.0.1:$port" npm run verify:shots:all -- --theme "$theme" > /dev/null
+
+# Dark is the default theme and writes out/<viewport>; every other theme gets
+# its own tree, out/<theme>/<viewport>, so it can never overwrite the dark
+# baseline. The comparison step addresses <destination>/<viewport> either way,
+# so the theme level is unwrapped here rather than taught to every caller.
+captured="scripts/verify/out"
+if [ -d "$captured/$theme" ]; then
+  captured="$captured/$theme"
+fi
 
 mkdir -p "$(dirname "$destination")"
 rm -rf "$destination"
-mv scripts/verify/out "$destination"
+mv "$captured" "$destination"
+rm -rf scripts/verify/out
