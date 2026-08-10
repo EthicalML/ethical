@@ -12,23 +12,15 @@ const events: Event[] = [...upcoming, ...past];
 
 const topicCounts = new Map<string, number>();
 for (const event of all) for (const topic of event.topics ?? []) topicCounts.set(topic, (topicCounts.get(topic) ?? 0) + 1);
-const topics = [...topicCounts.entries()].sort(
-  (left, right) => right[1] - left[1] || left[0].localeCompare(right[0]),
-);
+const topics = [...topicCounts.entries()].sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]));
 
 /** The image a card leads with: a talk still, then the event's own art, then the generated mark. */
-const leadImage = (event: Event) =>
-  (event.talks ?? []).find((talk) => talk.image)?.image ?? event.image;
+const leadImage = (event: Event) => (event.talks ?? []).find((talk) => talk.image)?.image ?? event.image;
 ---
 
 <event-finder class="event-archive">
   <div class="finder-bar">
-    <input
-      data-finder-input
-      type="search"
-      placeholder="Search by name, city or year"
-      aria-label="Search events by name, city or year"
-    />
+    <input data-finder-input type="search" placeholder="Search by name, city or year" aria-label="Search events by name, city or year" />
     <div class="finder-modes" role="group" aria-label="Filter events">
       <button type="button" data-finder-mode="all" class="active">All</button>
       <button type="button" data-finder-mode="ours">We spoke</button>
@@ -62,13 +54,7 @@ const leadImage = (event: Event) =>
           data-text={`${event.name} ${event.location ?? ''} ${event.start.getFullYear()} ${(event.talks ?? []).map((talk) => talk.title).join(' ')}`.toLowerCase()}
         >
           <span class="card-art">
-            <EventBanner
-              slug={event.slug}
-              series={event.series}
-              label={event.series.toUpperCase()}
-              topic={event.topics?.[0]}
-              image={leadImage(event)}
-            />
+            <EventBanner slug={event.slug} series={event.series} label={event.series.toUpperCase()} topic={event.topics?.[0]} image={leadImage(event)} />
             {recordings(event).length > 0 && <span class="card-flag">WATCH</span>}
             {openCfps(event, today).length > 0 && <span class="card-flag cfp">CFP OPEN</span>}
           </span>
@@ -319,9 +305,7 @@ const leadImage = (event: Event) =>
           () => {
             const topic = button.dataset.finderTopic ?? null;
             activeTopic = activeTopic === topic ? null : topic;
-            topicButtons.forEach((other) =>
-              other.classList.toggle('active', other.dataset.finderTopic === activeTopic),
-            );
+            topicButtons.forEach((other) => other.classList.toggle('active', other.dataset.finderTopic === activeTopic));
             apply();
           },
           { signal },

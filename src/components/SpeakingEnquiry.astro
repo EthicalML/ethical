@@ -34,8 +34,7 @@ const { rail = true, label = 'Invite me to speak' } = Astro.props;
     </div>
     <h2>Tell me about the event</h2>
     <p class="enquiry-intro">
-      Keynotes and technical talks on production ML, agentic systems and AI security. Most dates are
-      booked three to six months ahead.
+      Keynotes and technical talks on production ML, agentic systems and AI security. Most dates are booked three to six months ahead.
     </p>
     <form class="enquiry-form" data-enquiry-form>
       <label>
@@ -223,9 +222,7 @@ const { rail = true, label = 'Invite me to speak' } = Astro.props;
         if (open) panel.querySelector<HTMLInputElement>('input')?.focus();
       };
 
-      document.querySelectorAll('[data-enquiry-open]').forEach((button) =>
-        button.addEventListener('click', () => setOpen(true), { signal }),
-      );
+      document.querySelectorAll('[data-enquiry-open]').forEach((button) => button.addEventListener('click', () => setOpen(true), { signal }));
       this.querySelector('[data-enquiry-close]')?.addEventListener('click', () => setOpen(false), { signal });
       scrim.addEventListener('click', () => setOpen(false), { signal });
       // Escape closes, because a panel that traps you is worse than no panel.

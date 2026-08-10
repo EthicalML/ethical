@@ -20,8 +20,7 @@ const { lines = ['Cueing the recording', 'Fetching the stream', 'Almost there'] 
     <canvas></canvas>
   </form-send-iso>
   <p class="loader-line">
-    <span class="loader-text" data-loader-text></span><span class="loader-cursor" aria-hidden="true"
-    ></span>
+    <span class="loader-text" data-loader-text></span><span class="loader-cursor" aria-hidden="true"></span>
   </p>
 </video-loader>
 
@@ -115,9 +114,7 @@ const { lines = ['Cueing the recording', 'Fetching the stream', 'Almost there'] 
     connectedCallback() {
       this.controller = new AbortController();
       const output = this.querySelector<HTMLElement>('[data-loader-text]');
-      const iso = this.querySelector<HTMLElement & { progress: number; settled: boolean }>(
-        '[data-loader-iso]',
-      );
+      const iso = this.querySelector<HTMLElement & { progress: number; settled: boolean }>('[data-loader-iso]');
       const lines: string[] = JSON.parse(this.dataset.lines ?? '[]');
       if (!output || !lines.length) return;
       const reduced = matchMedia('(prefers-reduced-motion: reduce)');

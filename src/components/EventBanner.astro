@@ -33,7 +33,6 @@ function hash(value: string): number {
   return out >>> 0;
 }
 
-
 // The figure is seeded by the series and its placement by the edition, so
 // KubeCon reads as KubeCon across years while no two editions sit identically.
 const seed = hash(slug);
@@ -77,51 +76,32 @@ const polygon = Array.from({ length: count + 2 }, (_, index) => {
   {
     image && (
       <g class="plate">
-        <image
-          href={image}
-          x="180"
-          y="108"
-          width="840"
-          height="504"
-          preserveAspectRatio="xMidYMid slice"
-        />
+        <image href={image} x="180" y="108" width="840" height="504" preserveAspectRatio="xMidYMid slice" />
         <rect x="180" y="108" width="840" height="504" fill="none" stroke={ink} stroke-width="3" opacity="0.55" />
       </g>
     )
   }
   <g class="motif">
-
-  {
-    motif === 0 &&
-      ring.map((r) => <circle cx={x} cy={y} r={r} fill="none" stroke={ink} stroke-width={weight} opacity="0.7" />)
-  }
-  {motif === 1 && dots.map((dot) => <circle cx={dot.cx} cy={dot.cy} r={dot.r} fill={ink} opacity="0.55" />)}
-  {
-    motif === 2 && (
-      <path
-        d={`M-40 ${y} C ${180 + count * 40} ${y - amplitude}, ${460 + count * 30} ${y + amplitude}, 800 ${y - amplitude / 2} S 1180 ${y + amplitude / 3}, 1240 ${y}`}
-        fill="none"
-        stroke={ink}
-        stroke-width={weight}
-        opacity="0.8"
-      />
-    )
-  }
-  {motif === 3 && <polygon points={polygon} fill="none" stroke={ink} stroke-width={weight} opacity="0.75" />}
-  {
-    motif === 4 &&
-      Array.from({ length: Math.ceil(1400 / spacing) }, (_, index) => (
-        <line
-          x1={-120 + index * spacing}
-          y1="760"
-          x2={-120 + index * spacing + (tilt - 180)}
-          y2="-40"
+    {motif === 0 && ring.map((r) => <circle cx={x} cy={y} r={r} fill="none" stroke={ink} stroke-width={weight} opacity="0.7" />)}
+    {motif === 1 && dots.map((dot) => <circle cx={dot.cx} cy={dot.cy} r={dot.r} fill={ink} opacity="0.55" />)}
+    {
+      motif === 2 && (
+        <path
+          d={`M-40 ${y} C ${180 + count * 40} ${y - amplitude}, ${460 + count * 30} ${y + amplitude}, 800 ${y - amplitude / 2} S 1180 ${y + amplitude / 3}, 1240 ${y}`}
+          fill="none"
           stroke={ink}
           stroke-width={weight}
-          opacity="0.45"
+          opacity="0.8"
         />
-      ))
-  }
+      )
+    }
+    {motif === 3 && <polygon points={polygon} fill="none" stroke={ink} stroke-width={weight} opacity="0.75" />}
+    {
+      motif === 4 &&
+        Array.from({ length: Math.ceil(1400 / spacing) }, (_, index) => (
+          <line x1={-120 + index * spacing} y1="760" x2={-120 + index * spacing + (tilt - 180)} y2="-40" stroke={ink} stroke-width={weight} opacity="0.45" />
+        ))
+    }
 
     {
       motif === 5 && (
@@ -137,7 +117,13 @@ const polygon = Array.from({ length: count + 2 }, (_, index) => {
     }
   </g>
   <path d="M0 719H1200" stroke={ink} stroke-width="2" opacity="0.5"></path>
-  {label && <text x="56" y="92" fill="#f4f2ee" font-family="monospace" font-size="30" opacity="0.85">{label}</text>}
+  {
+    label && (
+      <text x="56" y="92" fill="#f4f2ee" font-family="monospace" font-size="30" opacity="0.85">
+        {label}
+      </text>
+    )
+  }
 </svg>
 
 <style>

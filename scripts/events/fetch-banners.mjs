@@ -47,7 +47,6 @@ const minBackgroundHeight = 300;
 // is its logo still gets it, but anything else on the page is tried first.
 const logoPattern = /logo|icon|favicon|sprite|avatar|badge/i;
 
-
 function parseArgs(argv) {
   const options = {};
   for (let index = 0; index < argv.length; index += 1) {
@@ -340,7 +339,6 @@ async function loadSharp() {
   return sharpModule;
 }
 
-
 // Dimensions and format from the bytes themselves, never from the URL or the
 // Content-Type header: both lie, and a "banner.jpg" that is really a 16x16 ICO
 // has to be rejected on what it is.
@@ -390,7 +388,10 @@ async function gate(candidate, tmpPath) {
   const long = Math.max(meta.width, meta.height);
   const ratio = long / Math.min(meta.width, meta.height);
   if (long < minLongEdge) {
-    return { ok: false, reason: `${meta.width}x${meta.height} under the ${minLongEdge}px long edge` };
+    return {
+      ok: false,
+      reason: `${meta.width}x${meta.height} under the ${minLongEdge}px long edge`,
+    };
   }
   if (ratio < minRatio || ratio > maxRatio) {
     return { ok: false, reason: `aspect ${ratio.toFixed(2)}:1 outside ${minRatio}-${maxRatio}:1` };
@@ -477,7 +478,9 @@ async function fetchBanner(event, { dryRun, deep, tmpDir }) {
   reasons.push(...picked.reasons);
   if (!picked.winner) {
     if (metaFallback) {
-      return accepted(metaFallback.candidate, metaFallback.note, { pass: 'meta (deep found none)' });
+      return accepted(metaFallback.candidate, metaFallback.note, {
+        pass: 'meta (deep found none)',
+      });
     }
     return { status: 'rejected', reason: reasons.join('; ') || 'no usable candidate' };
   }
@@ -530,7 +533,9 @@ async function main() {
       result.status === 'accepted'
         ? `[${result.pass}] ${result.note} -> ${result.value}` +
           (result.alt ? ` (alt: "${result.alt}")` : '') +
-          (result.displaced ? `\n  demoted as furniture, would otherwise have won: ${result.displaced}` : '')
+          (result.displaced
+            ? `\n  demoted as furniture, would otherwise have won: ${result.displaced}`
+            : '')
         : result.reason;
     console.log(`${event.slug}: ${result.status} — ${detail}`);
   }

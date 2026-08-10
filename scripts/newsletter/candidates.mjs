@@ -852,7 +852,11 @@ function mapRedditListing(payload, perSub) {
   }
   // Listings arrive already ranked by the `top` sort, so the slice is the
   // subreddit's top N for the week.
-  return { hits: hits.slice(0, perSub), selfPosts, available: payload?.data?.children?.length ?? 0 };
+  return {
+    hits: hits.slice(0, perSub),
+    selfPosts,
+    available: payload?.data?.children?.length ?? 0,
+  };
 }
 
 async function fetchReddit({ perSub, subreddits: subs }) {
@@ -980,7 +984,12 @@ async function fetchRssFeed(feed, cutoff) {
 }
 
 function titleFromSlug(url) {
-  const slug = url.replace(/[?#].*$/, '').replace(/\/+$/, '').split('/').pop() ?? '';
+  const slug =
+    url
+      .replace(/[?#].*$/, '')
+      .replace(/\/+$/, '')
+      .split('/')
+      .pop() ?? '';
   return slug
     .split('-')
     .filter(Boolean)

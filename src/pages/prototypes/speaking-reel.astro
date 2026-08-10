@@ -5,12 +5,9 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import TalkReel from '../../components/TalkReel.astro';
 import SpeakingEnquiry from '../../components/SpeakingEnquiry.astro';
-
 ---
 
-<BaseLayout
-  frontmatter={{ title: 'Speaking — prototype F', description: 'Prototype.', noindex: true }}
->
+<BaseLayout frontmatter={{ title: 'Speaking — prototype F', description: 'Prototype.', noindex: true }}>
   <div class="rl-wash" aria-hidden="true"></div>
   <main class="reel">
     <header class="rl-head">
@@ -30,7 +27,6 @@ import SpeakingEnquiry from '../../components/SpeakingEnquiry.astro';
 </BaseLayout>
 
 <style>
-
   /* The page takes its colour from the talk on screen. The wash is the same
      ground the generated banner uses, blurred to a haze and held at low alpha:
      the ceiling is the palette itself, which is dark by construction, rather
@@ -59,7 +55,6 @@ import SpeakingEnquiry from '../../components/SpeakingEnquiry.astro';
   }
   .lede {
     color: var(--text-2);
-  }
   }
   .rl-close-cta {
     border-top: 1px solid var(--hairline);

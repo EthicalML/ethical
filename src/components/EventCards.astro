@@ -17,8 +17,7 @@ const { upcoming } = await loadEvents(today);
 const order = new Map(names.map((name, index) => [name, index]));
 const events: Event[] = [...upcoming].sort(
   (left, right) =>
-    (order.get(left.name) ?? Number.MAX_SAFE_INTEGER) - (order.get(right.name) ?? Number.MAX_SAFE_INTEGER) ||
-    left.start.getTime() - right.start.getTime(),
+    (order.get(left.name) ?? Number.MAX_SAFE_INTEGER) - (order.get(right.name) ?? Number.MAX_SAFE_INTEGER) || left.start.getTime() - right.start.getTime(),
 );
 ---
 
@@ -30,19 +29,11 @@ const events: Event[] = [...upcoming].sort(
       {events.map((event) => (
         <a class="event-card" href={event.url} target="_blank" rel="noopener noreferrer" data-reveal>
           <span class="card-banner">
-            {
-              openCfps(event, today).map((cfp) => (
-                <span class="banner-pill">CFP · {daysUntil(cfp.deadline!, today)} DAYS</span>
-              ))
-            }
+            {openCfps(event, today).map((cfp) => (
+              <span class="banner-pill">CFP · {daysUntil(cfp.deadline!, today)} DAYS</span>
+            ))}
             {(event.talks ?? []).length > 0 && <span class="banner-pill speaking">SPEAKING</span>}
-            <EventBanner
-              slug={event.slug}
-              series={event.series}
-              label={event.series.toUpperCase()}
-              topic={event.topics?.[0]}
-              image={event.image}
-            />
+            <EventBanner slug={event.slug} series={event.series} label={event.series.toUpperCase()} topic={event.topics?.[0]} image={event.image} />
           </span>
           <span class="card-body">
             <span class="card-date">{eventDate(event)}</span>
@@ -139,5 +130,9 @@ const events: Event[] = [...upcoming].sort(
   }
   @media (prefers-reduced-motion: reduce) {
     .event-card,
-  
+    .event-card:hover {
+      transform: none;
+      transition: none;
+    }
+  }
 </style>

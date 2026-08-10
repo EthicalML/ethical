@@ -21,11 +21,7 @@ interface Props {
   contactLabel?: string;
 }
 
-const {
-  titles = [],
-  contactHref = '/contact/?interest=speaking#contact',
-  contactLabel = 'Contact for speaking opportunities',
-} = Astro.props;
+const { titles = [], contactHref = '/contact/?interest=speaking#contact', contactLabel = 'Contact for speaking opportunities' } = Astro.props;
 
 const today = new Date();
 const { all } = await loadEvents(today);
@@ -38,80 +34,67 @@ const every = all
 // than silently reordered, so a typo shows up as a missing frame.
 const order = new Map(titles.map((title, index) => [title, index]));
 const reel = titles.length
-  ? every
-      .filter(({ talk }) => order.has(talk.title))
-      .sort((left, right) => order.get(left.talk.title)! - order.get(right.talk.title)!)
+  ? every.filter(({ talk }) => order.has(talk.title)).sort((left, right) => order.get(left.talk.title)! - order.get(right.talk.title)!)
   : every;
 
 const videoId = (url?: string) => (url ?? '').match(/[?&]v=([\w-]+)/)?.[1] ?? '';
 ---
 
-    <ScrollStage class="rl-stage" line={0.42}>
-      <div slot="stage" class="rl-screen">
-        {
-          reel.map(({ event, talk }) => (
-            <figure
-              class="rl-frame"
-              data-stage-item
-              data-video-id={videoId(talk.video)}
-              data-tint={tintFor(event.topics?.[0], event.slug)[0]}
-            >
-              {event.image && <img class="rl-backdrop" src={event.image} alt="" loading="lazy" />}
-              <span class="rl-inset" data-inset>
-                {talk.image ? (
-                  <img src={talk.image} alt="" loading="lazy" />
-                ) : (
-                  <EventBanner
-                    slug={event.slug}
-                    series={event.series}
-                    label={event.series.toUpperCase()}
-                    topic={event.topics?.[0]}
-                    image={event.image}
-                  />
-                )}
-              </span>
-              <figcaption>
-                <span class="rl-venue">
-                  {event.name} · {eventDate(event)}
-                </span>
-                <span class="rl-title">{talk.title}</span>
-                <span class="rl-actions">
-                  <a class="button" href={talk.video} target="_blank" rel="noopener noreferrer">
-                    Open video
-                  </a>
-                  <a class="button primary" href={contactHref}>
-                    {contactLabel}
-                  </a>
-                </span>
-              </figcaption>
-            </figure>
-          ))
-        }
-        <div class="rl-live" data-live-embed></div>
-        <div class="rl-loading" data-loading-slot>
-          <VideoLoader />
-        </div>
-      </div>
-
-      <div slot="steps">
-        {
-          reel.map(({ event, talk }) => (
-            <section class="rl-step" data-stage-step>
-              <p class="rl-step-date">{eventDate(event)}</p>
-              <h2>{talk.title}</h2>
-              <p class="rl-step-venue">
-                {event.name}
-                {event.location && ` · ${event.location}`}
-                {talk.track && ` · ${talk.track}`}
-              </p>
-              <a class="text-link" href={talk.video} target="_blank" rel="noopener noreferrer">
-                Watch on YouTube
+<ScrollStage class="rl-stage" line={0.42}>
+  <div slot="stage" class="rl-screen">
+    {
+      reel.map(({ event, talk }) => (
+        <figure class="rl-frame" data-stage-item data-video-id={videoId(talk.video)} data-tint={tintFor(event.topics?.[0], event.slug)[0]}>
+          {event.image && <img class="rl-backdrop" src={event.image} alt="" loading="lazy" />}
+          <span class="rl-inset" data-inset>
+            {talk.image ? (
+              <img src={talk.image} alt="" loading="lazy" />
+            ) : (
+              <EventBanner slug={event.slug} series={event.series} label={event.series.toUpperCase()} topic={event.topics?.[0]} image={event.image} />
+            )}
+          </span>
+          <figcaption>
+            <span class="rl-venue">
+              {event.name} · {eventDate(event)}
+            </span>
+            <span class="rl-title">{talk.title}</span>
+            <span class="rl-actions">
+              <a class="button" href={talk.video} target="_blank" rel="noopener noreferrer">
+                Open video
               </a>
-            </section>
-          ))
-        }
-      </div>
-    </ScrollStage>
+              <a class="button primary" href={contactHref}>
+                {contactLabel}
+              </a>
+            </span>
+          </figcaption>
+        </figure>
+      ))
+    }
+    <div class="rl-live" data-live-embed></div>
+    <div class="rl-loading" data-loading-slot>
+      <VideoLoader />
+    </div>
+  </div>
+
+  <div slot="steps">
+    {
+      reel.map(({ event, talk }) => (
+        <section class="rl-step" data-stage-step>
+          <p class="rl-step-date">{eventDate(event)}</p>
+          <h2>{talk.title}</h2>
+          <p class="rl-step-venue">
+            {event.name}
+            {event.location && ` · ${event.location}`}
+            {talk.track && ` · ${talk.track}`}
+          </p>
+          <a class="text-link" href={talk.video} target="_blank" rel="noopener noreferrer">
+            Watch on YouTube
+          </a>
+        </section>
+      ))
+    }
+  </div>
+</ScrollStage>
 
 <style>
   .rl-stage {
@@ -386,9 +369,7 @@ const videoId = (url?: string) => (url ?? '').match(/[?&]v=([\w-]+)/)?.[1] ?? ''
     };
 
     const observer = new MutationObserver(sync);
-    frames.forEach((frame) =>
-      observer.observe(frame, { attributes: true, attributeFilter: ['data-active'] }),
-    );
+    frames.forEach((frame) => observer.observe(frame, { attributes: true, attributeFilter: ['data-active'] }));
     sync();
   }
 </script>

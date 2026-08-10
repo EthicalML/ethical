@@ -22,40 +22,23 @@ import { ArticleHero, EventCards, EventArchive, TalkReel } from '../components/p
 <section className="cluster-section upcoming-section" data-reveal>
   <p className="eyebrow">UPCOMING</p>
   <h2>Where to be this year</h2>
-  <p>
-    A personal selection of the events worth the trip, marked where we are on the programme or a
-    call for papers is still open.
-  </p>
-  <EventCards
-    names={frontmatter.featured}
-    empty="No public dates right now — announcements go out first through the ML Engineer newsletter."
-  />
-  <a className="button primary" href="/newsletter/">Subscribe to newsletter</a>
+  <p>A personal selection of the events worth the trip, marked where we are on the programme or a call for papers is still open.</p>
+  <EventCards names={frontmatter.featured} empty="No public dates right now — announcements go out first through the ML Engineer newsletter." />
+  <a className="button primary" href="/newsletter/">
+    Subscribe to newsletter
+  </a>
 </section>
 
 <section className="cluster-section reel-section" data-reveal>
   <p className="eyebrow">FEATURED TALKS</p>
   <h2>Three worth watching</h2>
-  <p>
-    Scroll through them, or press play on any one without leaving the page. Every other recording
-    is in the archive below.
-  </p>
-  <TalkReel
-    titles={[
-      'The State of GenAI 2025',
-      'Production ML across 2015-2035',
-      'The State of Production Machine Learning in 2024',
-    ]}
-  />
+  <p>Scroll through them, or press play on any one without leaving the page. Every other recording is in the archive below.</p>
+  <TalkReel titles={['The State of GenAI 2025', 'Production ML across 2015-2035', 'The State of Production Machine Learning in 2024']} />
 </section>
 
 <section className="cluster-section archive-section" data-reveal>
   <p className="eyebrow">ARCHIVE</p>
   <h2>Every talk and event</h2>
-  <p>
-    What is ahead, then everything behind. Search by name, city or year, or filter by topic, and
-    every talk we have a recording of is linked.
-  </p>
+  <p>What is ahead, then everything behind. Search by name, city or year, or filter by topic, and every talk we have a recording of is linked.</p>
   <EventArchive />
 </section>
-
