@@ -132,7 +132,7 @@ import { menus } from '../data/navigation';
         },
         { signal },
       );
-      matchMedia('(min-width: 951px)').addEventListener(
+      matchMedia('(min-width: 1041px)').addEventListener(
         'change',
         (event) => {
           if (event.matches) this.closeMenu();
@@ -195,7 +195,7 @@ import { menus } from '../data/navigation';
     }
   }
 
-  @media (max-width: 950px) {
+  @media (max-width: 1040px) {
     .mobile-drawer {
       background: var(--bg-panel);
       display: block;
