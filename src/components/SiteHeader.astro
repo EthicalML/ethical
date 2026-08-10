@@ -456,6 +456,11 @@ import MobileDrawer from './MobileDrawer.astro';
     }
   }
 
+  /* Nav collapse: the desktop row swaps for the drawer. One of five copies that
+     must agree — the sticky-header block below, MegaMenu.astro, MobileDrawer.astro's
+     block and its `matchMedia`. Move them together: a toggle that appears while the
+     drawer is still `display: none` opens nothing at all. Above the row's measured
+     minimum by design; see the Breakpoints table in STYLES.md. */
   @media (max-width: 1040px) {
     .header-row {
       align-items: flex-start;
@@ -611,6 +616,7 @@ import MobileDrawer from './MobileDrawer.astro';
      sticky header off screen with it by however far the page was scrolled. The
      toggle that closes the drawer lives in this header, so while the drawer is
      open the header is pinned to the viewport and lifted over it. */
+  /* Nav collapse; see the note on the first 1040px block above. */
   @media (max-width: 1040px) {
     body.mobile-nav-open .site-header {
       inset-inline: 0;

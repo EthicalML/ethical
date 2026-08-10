@@ -132,7 +132,15 @@ import { menus } from '../data/navigation';
         },
         { signal },
       );
-      matchMedia('(min-width: 1041px)').addEventListener(
+      // The negation of the CSS boundary, not `min-width: 1041px`. Two numbers
+      // have to be kept in step by hand, and they do not quite meet: at a
+      // fractional width like 1040.5 — browser zoom, fractional DPI — neither
+      // `max-width: 1040px` nor `min-width: 1041px` matches, so the CSS shows the
+      // desktop header while this listener still believes it is mobile and never
+      // closes the drawer. `not all and` is the exact complement and cannot drift.
+      // Nav collapse is written in five places that must agree; the others are
+      // the `@media` block below, two in SiteHeader.astro and one in MegaMenu.astro.
+      matchMedia('not all and (max-width: 1040px)').addEventListener(
         'change',
         (event) => {
           if (event.matches) this.closeMenu();
@@ -195,6 +203,8 @@ import { menus } from '../data/navigation';
     }
   }
 
+  /* Nav collapse; see the note in SiteHeader.astro. This block and the `matchMedia`
+     above are the same boundary from two sides — the listener negates this query. */
   @media (max-width: 1040px) {
     .mobile-drawer {
       background: var(--bg-panel);
