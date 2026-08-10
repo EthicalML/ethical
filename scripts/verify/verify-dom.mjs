@@ -157,6 +157,41 @@ for (const route of routes) {
 
   let homepageInteractions = null;
   if (route === '/') {
+    await page.evaluate(() => scrollTo(0, 0));
+    await page.waitForTimeout(100);
+    await page.evaluate(() => {
+      const originalClearRect = CanvasRenderingContext2D.prototype.clearRect;
+      window.__heroCyclePaints = 0;
+      CanvasRenderingContext2D.prototype.clearRect = function (...parameters) {
+        if (this.canvas.closest('hero-cycle')) window.__heroCyclePaints += 1;
+        return originalClearRect.apply(this, parameters);
+      };
+    });
+    await page.waitForTimeout(300);
+    const visibleStart = await page.evaluate(() => window.__heroCyclePaints);
+    await page.waitForTimeout(400);
+    const visibleEnd = await page.evaluate(() => window.__heroCyclePaints);
+    await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
+    await page.waitForTimeout(300);
+    const offscreenEnd = await page.evaluate(() => window.__heroCyclePaints);
+    // Hiding the tab while the canvas is already paused offscreen must not start
+    // a second loop: the two pause causes share one frame handle, so whichever
+    // resumes has to cancel the in-flight frame before requesting another.
+    await page.evaluate(() => {
+      Object.defineProperty(document, 'hidden', { configurable: true, value: true });
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    await page.waitForTimeout(250);
+    await page.evaluate(() => {
+      Object.defineProperty(document, 'hidden', { configurable: true, value: false });
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    await page.waitForTimeout(250);
+    const hiddenEnd = await page.evaluate(() => window.__heroCyclePaints);
+    await page.evaluate(() => scrollTo(0, 0));
+    const resumedStart = await page.evaluate(() => window.__heroCyclePaints);
+    await page.waitForTimeout(400);
+    const resumedEnd = await page.evaluate(() => window.__heroCyclePaints);
     homepageInteractions = await page.evaluate(async () => {
       const section = document.querySelector('#principles');
       const detail = document.querySelector('.principle-detail-wrap');
@@ -184,6 +219,12 @@ for (const route of routes) {
         formWash: getComputedStyle(document.querySelector('#join form')).backgroundImage,
       };
     });
+    homepageInteractions.heroCyclePlayback = {
+      visibleFrames: visibleEnd - visibleStart,
+      offscreenFrames: offscreenEnd - visibleEnd,
+      hiddenFrames: hiddenEnd - offscreenEnd,
+      resumedFrames: resumedEnd - resumedStart,
+    };
     const xaiPreview = page.locator('.xai-preview');
     const firstXaiFrame = await xaiPreview.screenshot();
     await page.waitForTimeout(350);
@@ -193,6 +234,49 @@ for (const route of routes) {
     await page.evaluate(() => scrollTo(0, 0));
     await page.waitForTimeout(300);
     if (isMobile) {
+      await page.evaluate(() => scrollTo(0, 2000));
+      await page.waitForTimeout(200);
+      const lockedScroll = await page.evaluate(() => scrollY);
+      await page.locator('[data-mobile-menu-open]').click();
+      await page.waitForTimeout(400);
+      homepageInteractions.mobileDrawerScrolled = await page.evaluate((expectedScroll) => {
+        const drawer = document.querySelector('[data-mobile-menu]');
+        const header = document.querySelector('.site-header');
+        const siteHeader = drawer.closest('site-header');
+        return {
+          expectedScroll,
+          ariaHidden: drawer.getAttribute('aria-hidden'),
+          bodyPosition: getComputedStyle(document.body).position,
+          bodyTop: document.body.style.top,
+          drawerTop: drawer.getBoundingClientRect().top,
+          drawerZIndex: getComputedStyle(drawer).zIndex,
+          headerZIndex: getComputedStyle(header).zIndex,
+          parent: drawer.closest('mobile-drawer').parentElement.localName,
+          persist: siteHeader?.getAttribute('data-astro-transition-persist'),
+          paintsOnTop: Boolean(
+            document.elementFromPoint(innerWidth / 2, 1)?.closest('[data-mobile-menu]'),
+          ),
+          scrollLocked: document.body.classList.contains('mobile-nav-open'),
+        };
+      }, lockedScroll);
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(100);
+      homepageInteractions.mobileDrawerScrolled.closed = await page.evaluate(() => ({
+        bodyTop: document.body.style.top,
+        scrollY,
+        scrollUnlocked: !document.body.classList.contains('mobile-nav-open'),
+      }));
+      await page.locator('[data-mobile-menu-open]').click();
+      await page.setViewportSize({ width: 1000, height: viewport.height });
+      await page.waitForTimeout(100);
+      homepageInteractions.mobileDrawerScrolled.desktopResize = await page.evaluate(() => ({
+        ariaHidden: document.querySelector('[data-mobile-menu]').getAttribute('aria-hidden'),
+        bodyTop: document.body.style.top,
+        scrollUnlocked: !document.body.classList.contains('mobile-nav-open'),
+      }));
+      await page.setViewportSize(viewport);
+      await page.evaluate(() => scrollTo(0, 0));
+      await page.waitForTimeout(300);
       await page.locator('[data-mobile-menu-open]').click();
       await page.waitForTimeout(400);
       await page.locator('[data-mobile-accordion]').first().click();
@@ -749,6 +833,16 @@ for (const route of routes) {
       failures.push('homepage principle pills or Read principle targets are incomplete');
     if (!checks.homepage.xaiFramesChanged)
       failures.push('homepage XAI scan pixels do not change over time');
+    const heroPlayback = checks.homepage.heroCyclePlayback;
+    if (
+      !heroPlayback ||
+      heroPlayback.visibleFrames < 10 ||
+      heroPlayback.offscreenFrames > 1 ||
+      heroPlayback.hiddenFrames !== 0 ||
+      heroPlayback.resumedFrames < 10 ||
+      heroPlayback.resumedFrames > heroPlayback.visibleFrames * 1.5 + 2
+    )
+      failures.push('homepage hero cycle does not pause or resume correctly');
     const expectedHomeSections = isMobile
       ? [
           ['strategy', '0px', '96px'],
@@ -827,6 +921,28 @@ for (const route of routes) {
       const expectedStatColumns = viewport.width <= 600 ? 2 : 3;
       const expectedPhaseColumns = viewport.width <= 600 ? 1 : 2;
       const nav = checks.homepage.mobileNav;
+      const scrolledDrawer = checks.homepage.mobileDrawerScrolled;
+      if (
+        !scrolledDrawer ||
+        scrolledDrawer.expectedScroll <= 0 ||
+        scrolledDrawer.ariaHidden !== 'false' ||
+        scrolledDrawer.bodyPosition !== 'fixed' ||
+        scrolledDrawer.bodyTop !== `-${scrolledDrawer.expectedScroll}px` ||
+        Math.abs(scrolledDrawer.drawerTop) > 0.5 ||
+        scrolledDrawer.drawerZIndex !== '80' ||
+        scrolledDrawer.headerZIndex !== '60' ||
+        scrolledDrawer.parent !== 'site-header' ||
+        scrolledDrawer.persist !== 'site-header' ||
+        !scrolledDrawer.paintsOnTop ||
+        !scrolledDrawer.scrollLocked ||
+        Math.abs(scrolledDrawer.closed.scrollY - scrolledDrawer.expectedScroll) > 1 ||
+        scrolledDrawer.closed.bodyTop !== '' ||
+        !scrolledDrawer.closed.scrollUnlocked ||
+        scrolledDrawer.desktopResize.ariaHidden !== 'true' ||
+        scrolledDrawer.desktopResize.bodyTop !== '' ||
+        !scrolledDrawer.desktopResize.scrollUnlocked
+      )
+        failures.push('mobile drawer does not remain viewport-fixed after opening while scrolled');
       if (
         !nav ||
         nav.accordionCount !== 6 ||

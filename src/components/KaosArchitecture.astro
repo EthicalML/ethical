@@ -9,9 +9,9 @@ interface Props {
   surface?: 'dark' | 'page';
 }
 
-/* `surface`: see KomputeCube.astro. The panel mount sits on paper in the portal;
-   every other mount sits inside an inverted block. */
-const { embedded = false, panel = false, backdrop = false, transitionName, morphSource, variant = 'ambient', surface = 'dark' } = Astro.props;
+/* `surface`: see KomputeCube.astro. Every mount either sits inside a block that
+   declares the dark role or on the page ground, so no caller needs to override. */
+const { embedded = false, panel = false, backdrop = false, transitionName, morphSource, variant = 'ambient', surface } = Astro.props;
 const transitionStyle = transitionName ? `view-transition-name: ${transitionName}` : undefined;
 ---
 

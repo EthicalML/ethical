@@ -7,7 +7,12 @@ import PolicyHeroCanvas from './PolicyHeroCanvas.astro';
 const { eyebrow, title, intro, canvas = false, transitionName } = Astro.props;
 ---
 
-<header class:list={['article-hero', canvas && 'canvas-variant', canvas === 'kompute' && 'kompute-variant']} data-reveal>
+<header
+  class:list={['article-hero', canvas && 'canvas-variant', canvas === 'kompute' && 'kompute-variant']}
+  data-surface={canvas ? 'dark' : undefined}
+  data-surface-plate={canvas ? '' : undefined}
+  data-reveal
+>
   {canvas === 'kaos' ? <KaosArchitecture embedded backdrop /> : canvas === true && <ArticleHeroCanvas />}
   {canvas === 'kompute' && <KomputeCube embedded backdrop />}
   {canvas === 'policy' && <PolicyHeroCanvas />}
@@ -43,7 +48,7 @@ const { eyebrow, title, intro, canvas = false, transitionName } = Astro.props;
   }
 
   .article-hero.canvas-variant::after {
-    background: linear-gradient(90deg, var(--scrim-2-a930) 0%, var(--scrim-2-a770) 35%, transparent 72%);
+    background: linear-gradient(90deg, rgba(var(--scrim-inset-rgb), 0.93) 0%, rgba(var(--scrim-inset-rgb), 0.77) 35%, transparent 72%);
     content: '';
     inset: 0;
     pointer-events: none;

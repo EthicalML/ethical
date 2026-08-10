@@ -6,7 +6,7 @@ import MobileDrawer from './MobileDrawer.astro';
 ---
 
 <site-header transition:persist="site-header">
-  <header class="site-header">
+  <header class="site-header" data-surface="dark">
     <div class="header-row">
       <a class="wordmark" href="/">
         <span>{wordmark.primary}</span>
@@ -64,14 +64,14 @@ import MobileDrawer from './MobileDrawer.astro';
             <path d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a6.75 6.75 0 0 0 10.7 10.7z"></path>
           </svg>
         </button>
-        <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" data-mobile-menu-open>
-          <span>Menu</span><i aria-hidden="true"></i>
+        <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Menu" data-mobile-menu-open>
+          <i aria-hidden="true"></i>
         </button>
       </div>
     </div>
     <MegaMenu />
-    <MobileDrawer />
   </header>
+  <MobileDrawer />
   <CommandPalette />
 </site-header>
 
@@ -84,6 +84,7 @@ import MobileDrawer from './MobileDrawer.astro';
 
   interface MobileDrawerElement extends HTMLElement {
     openMenu(openButton: HTMLButtonElement): void;
+    closeMenu(): void;
   }
 
   class SiteHeaderElement extends HTMLElement {
@@ -198,7 +199,17 @@ import MobileDrawer from './MobileDrawer.astro';
       const drawer = this.querySelector<MobileDrawerElement>('mobile-drawer');
       const openButton = this.querySelector<HTMLButtonElement>('[data-mobile-menu-open]');
       if (!drawer || !openButton) return;
-      openButton.addEventListener('click', () => drawer.openMenu(openButton), { signal: this.controller.signal });
+      // One button owns both directions now, so it has to read its own state:
+      // calling openMenu again while open would relock the scroll at the top of
+      // the page and lose the position the drawer is holding.
+      openButton.addEventListener(
+        'click',
+        () => {
+          if (openButton.getAttribute('aria-expanded') === 'true') drawer.closeMenu();
+          else drawer.openMenu(openButton);
+        },
+        { signal: this.controller.signal },
+      );
     }
   }
 
@@ -430,21 +441,20 @@ import MobileDrawer from './MobileDrawer.astro';
       position: static;
     }
 
+    /* The toggle is now the only mobile menu control, opening and closing the
+       drawer from one place, so it is square and label-free: the word made the
+       button change width between its two states, which read as a jump. */
     .mobile-menu-toggle {
       align-items: center;
       background: transparent;
       border: 1px solid var(--hairline-card);
-      border-radius: var(--radius-pill);
+      border-radius: 50%;
       color: var(--text-1);
       cursor: pointer;
       display: inline-flex;
-      font: var(--mono-9)/1 var(--font-mono);
-      gap: 9px;
+      height: 44px;
       justify-content: center;
-      letter-spacing: 0.1em;
-      min-height: 44px;
-      padding: 0 13px;
-      text-transform: uppercase;
+      width: 44px;
     }
 
     .mobile-menu-toggle i,
@@ -458,6 +468,7 @@ import MobileDrawer from './MobileDrawer.astro';
 
     .mobile-menu-toggle i {
       position: relative;
+      transition: background-color var(--duration-3) var(--ease-reveal);
     }
 
     .mobile-menu-toggle i::before,
@@ -465,6 +476,9 @@ import MobileDrawer from './MobileDrawer.astro';
       content: '';
       left: 0;
       position: absolute;
+      transition:
+        top var(--duration-3) var(--ease-reveal),
+        transform var(--duration-3) var(--ease-reveal);
     }
 
     .mobile-menu-toggle i::before {
@@ -473,6 +487,22 @@ import MobileDrawer from './MobileDrawer.astro';
 
     .mobile-menu-toggle i::after {
       top: 5px;
+    }
+
+    /* Open state: the middle bar drops out and the outer two close onto the
+       centre line as the X, so the same three strokes carry both icons. */
+    .mobile-menu-toggle[aria-expanded='true'] i {
+      background-color: transparent;
+    }
+
+    .mobile-menu-toggle[aria-expanded='true'] i::before {
+      top: 0;
+      transform: rotate(45deg);
+    }
+
+    .mobile-menu-toggle[aria-expanded='true'] i::after {
+      top: 0;
+      transform: rotate(-45deg);
     }
   }
 
@@ -484,11 +514,6 @@ import MobileDrawer from './MobileDrawer.astro';
     .nav-right .join-pill {
       padding-inline: 11px;
     }
-
-    .mobile-menu-toggle {
-      font-size: 0;
-      padding-inline: 13px;
-    }
   }
 </style>
 
@@ -496,5 +521,18 @@ import MobileDrawer from './MobileDrawer.astro';
   /* Persisted header chrome must keep its transition name across page scope changes. */
   .site-header {
     view-transition-name: site-header;
+  }
+
+  /* The drawer's scroll lock fixes the body at a negative offset, which drags a
+     sticky header off screen with it by however far the page was scrolled. The
+     toggle that closes the drawer lives in this header, so while the drawer is
+     open the header is pinned to the viewport and lifted over it. */
+  @media (max-width: 950px) {
+    body.mobile-nav-open .site-header {
+      inset-inline: 0;
+      position: fixed;
+      top: 0;
+      z-index: 90;
+    }
   }
 </style>

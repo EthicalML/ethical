@@ -129,7 +129,9 @@ grep -E "^RESULT:" ./tmp/codex-pr-<n>.log | tail -1
 tail -3 ./tmp/codex-pr-<n>.log
 ```
 
-If no `RESULT:` line is found, or the log ends in `codex exec failed` / `stream error`, treat the run as `blocked` and rely on the Phase 1.4 `gh` verification to classify the real PR state.
+If no `RESULT:` line is found, **or the line still contains `<` or `>`** (the child echoed the template instead of filling it in — this has happened), or the log ends in `codex exec failed` / `stream error`, treat the child's self-report as absent and classify the PR from the Phase 1.4 `gh` verification alone.
+
+That fallback is a safety net, not a substitute. `gh` plus the parity JSON is always the ground truth, so a malformed `RESULT:` never causes a wrong classification — but it does mean the child failed its contract, so note it in the ledger row. A run where most children cannot emit a well-formed result is a signal the brief needs tightening, not something to absorb silently.
 
 ### 4. Post-checks — independent verification (gh is the ground truth)
 

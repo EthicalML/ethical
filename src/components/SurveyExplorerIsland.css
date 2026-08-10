@@ -77,7 +77,7 @@
 
 .survey-island .survey-bars i b,
 .survey-island .survey-bars i em {
-  background: var(--ink-wash-a420);
+  background: rgba(var(--ink-wash-rgb), calc(0.42 * var(--ink-wash-lift)));
   border-radius: 0;
   display: block;
   height: 14px;
@@ -89,7 +89,7 @@
 }
 
 .survey-island .survey-bars i em {
-  background: var(--ink-wash-a190);
+  background: rgba(var(--ink-wash-rgb), calc(0.19 * var(--ink-wash-lift)));
   height: 8px;
 }
 

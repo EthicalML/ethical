@@ -17,11 +17,66 @@ env:
   PLAYWRIGHT_VERSION: 1.62.1
 
 jobs:
+  # One cheap job decides what the rest are for, so a documentation change does
+  # not build the site four times. The classification is deliberately generous:
+  # a wrongly included path costs a few runner minutes, a wrongly excluded one
+  # lets a real regression through, so anything ambiguous belongs in both lists.
+  # `.github/workflows` is in both, since a change to the gates has to be run by
+  # the gates. The visual job keeps its own narrower scope check on top of this.
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+      lint: ${{ steps.filter.outputs.lint }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: Classify the change against the merge base
+        id: filter
+        # Explicit because the pathspec lists are deliberately word-split when
+        # unquoted, which bash does and some shells do not.
+        shell: bash
+        env:
+          # What a build, the ratchet, the motion gate and the sweep read.
+          CODE_PATHS: src public scripts package.json package-lock.json astro.config.mjs tsconfig.json .tool-versions STYLES.md .github/workflows
+          # What `npm run lint` and `npm run format:check` actually cover.
+          LINT_PATHS: src scripts astro.config.mjs eslint.config.mjs prettier.config.mjs package.json package-lock.json tsconfig.json AGENTS.md README.md .github/workflows
+        run: |
+          # Anything that is not a pull request has no merge base to diff, so it
+          # runs everything rather than guessing.
+          if [ "${{ github.event_name }}" != 'pull_request' ]; then
+            echo 'Not a pull request; running every job.'
+            echo 'code=true' >> "$GITHUB_OUTPUT"
+            echo 'lint=true' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git fetch --no-tags --prune origin "$GITHUB_BASE_REF"
+          base=$(git merge-base "origin/$GITHUB_BASE_REF" HEAD)
+          echo "Merge base: $base"
+          git diff --name-only "$base" HEAD | sed 's/^/  /'
+          for group in code lint; do
+            case "$group" in
+              code) paths="$CODE_PATHS" ;;
+              lint) paths="$LINT_PATHS" ;;
+            esac
+            # shellcheck disable=SC2086
+            if [ -n "$(git diff --name-only "$base" HEAD -- $paths)" ]; then
+              echo "$group=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "$group=false" >> "$GITHUB_OUTPUT"
+              echo "Nothing under the $group paths changed; skipping those jobs."
+            fi
+          done
+
   lint:
+    needs: changes
+    if: needs.changes.outputs.lint == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .tool-versions
           cache: npm
@@ -29,20 +84,24 @@ jobs:
       - run: npm run lint
       - run: npm run format:check
   typecheck:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .tool-versions
           cache: npm
       - run: npm ci
       - run: npm run check:ratchet
   build:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .tool-versions
           cache: npm
@@ -57,10 +116,12 @@ jobs:
   # This gate drives real client-side navigations and asserts the arrival is a
   # single motion. It is required, and it is cheap enough to stay that way.
   motion:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .tool-versions
           cache: npm
@@ -80,15 +141,31 @@ jobs:
           echo "the built site never came up on :4126" >&2
           exit 1
       - run: npm run verify:motion:all
+      # Canvas paints outside the cascade, so its colours come from the surface a
+      # mount sits on rather than the active theme. The screenshot gate masks every
+      # canvas and only runs dark, where both surfaces resolve identically — so this
+      # is the only check that can see a mount painting for the wrong backdrop.
+      - run: npm run verify:canvas-surface
 
   # Pixel parity against the PR's merge base. No baselines are committed — the
   # job builds and photographs both sides itself, so it cannot go stale and
   # cannot be blessed by hand. What it does with the answer depends on the
   # labels; see PARITY_MODE below.
   visual:
+    needs: changes
     runs-on: ubuntu-latest
+    # One definition, one leg per theme, run concurrently. Light is where a
+    # theme-only regression can hide: dark is the default everyone develops in,
+    # so a light-only mistake is invisible until someone flips the toggle.
+    # fail-fast is off because a dark failure must not cancel the light leg —
+    # that would withhold the answer the leg exists to give.
+    strategy:
+      fail-fast: false
+      matrix:
+        theme: [dark, light]
     if: >-
       github.event_name == 'pull_request' &&
+      needs.changes.outputs.code == 'true' &&
       !contains(github.event.pull_request.labels.*.name, 'visual-change')
     permissions:
       contents: read
@@ -99,9 +176,15 @@ jobs:
       # Everything else measures and reports without failing.
       PARITY_MODE: >-
         ${{ contains(github.event.pull_request.labels.*.name, 'dependencies') && 'enforce' || 'report' }}
-      COMMENT_MARKER: '<!-- merge-base-visual-parity -->'
+      # Per theme: the comment updater matches on this marker and takes the
+      # last hit, so one marker across two legs means they overwrite each other
+      # and you read one theme's result believing it covers both.
+      COMMENT_MARKER: '<!-- merge-base-visual-parity-${{ matrix.theme }} -->'
+      # Separate ports: both legs can land on one runner, and a held port makes
+      # the second sweep photograph the first build — a silently wrong pass.
+      SHOT_PORT: ${{ matrix.theme == 'light' && '4127' || '4126' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
@@ -120,7 +203,7 @@ jobs:
             echo "$changed"
             echo "run=true" >> "$GITHUB_OUTPUT"
           fi
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         if: steps.scope.outputs.run == 'true'
         with:
           node-version-file: .tool-versions
@@ -161,8 +244,8 @@ jobs:
       - name: Capture both builds
         if: steps.scope.outputs.run == 'true'
         run: |
-          .github/scripts/capture-shots.sh "$RUNNER_TEMP/dist-base" "$RUNNER_TEMP/shots/base"
-          .github/scripts/capture-shots.sh "$RUNNER_TEMP/dist-head" "$RUNNER_TEMP/shots/head"
+          .github/scripts/capture-shots.sh "$RUNNER_TEMP/dist-base" "$RUNNER_TEMP/shots/base" "${{ matrix.theme }}" "$SHOT_PORT"
+          .github/scripts/capture-shots.sh "$RUNNER_TEMP/dist-head" "$RUNNER_TEMP/shots/head" "${{ matrix.theme }}" "$SHOT_PORT"
       - name: Compare
         if: steps.scope.outputs.run == 'true'
         id: compare
@@ -183,6 +266,7 @@ jobs:
           node scripts/verify/parity-summary.mjs \
             --mode "$PARITY_MODE" \
             --marker "$COMMENT_MARKER" \
+            --title "Visual parity — ${{ matrix.theme == 'light' && 'light theme ☀️' || 'dark theme 🌙' }}" \
             --out "$RUNNER_TEMP/parity/comment.md" \
             --verdict "$RUNNER_TEMP/parity/verdict.txt" \
             "1440x1000=$RUNNER_TEMP/parity/report-1440.json" \
@@ -208,7 +292,7 @@ jobs:
           fi
       - name: Upload the diffs
         if: steps.scope.outputs.run == 'true' && steps.summary.outputs.verdict == 'moved'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: visual-parity-diffs
           path: ${{ runner.temp }}/parity

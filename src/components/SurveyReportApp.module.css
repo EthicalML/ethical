@@ -6,7 +6,7 @@
 }
 
 .app * {
-  scrollbar-color: var(--warn-a580) var(--ink-wash-a040);
+  scrollbar-color: var(--warn-a580) rgba(var(--ink-wash-rgb), calc(0.04 * var(--ink-wash-lift)));
   scrollbar-width: thin;
 }
 
@@ -16,7 +16,7 @@
 }
 
 .app *::-webkit-scrollbar-track {
-  background: var(--ink-wash-a040);
+  background: rgba(var(--ink-wash-rgb), calc(0.04 * var(--ink-wash-lift)));
 }
 
 .app *::-webkit-scrollbar-thumb {
@@ -86,7 +86,7 @@
 .chapterSwitcher {
   align-items: stretch;
   backdrop-filter: blur(15px);
-  background: var(--scrim-1-a940);
+  background: rgba(var(--scrim-page-rgb), 0.94);
   border-bottom: 1px solid var(--hairline);
   border-top: 1px solid var(--hairline);
   display: grid;
@@ -402,7 +402,7 @@
 }
 
 .barTrack {
-  background: var(--ink-wash-a065);
+  background: rgba(var(--ink-wash-rgb), calc(0.065 * var(--ink-wash-lift)));
   height: 6px;
   overflow: visible;
   position: relative;
@@ -411,7 +411,7 @@
 .comparedTrack {
   background: linear-gradient(
     to bottom,
-    var(--ink-wash-a065) 0 6px,
+    rgba(var(--ink-wash-rgb), calc(0.065 * var(--ink-wash-lift))) 0 6px,
     transparent 6px 9px,
     var(--warn-a085) 9px 12px
   );
@@ -505,8 +505,15 @@
 
 .stageChart::before {
   background-image:
-    linear-gradient(var(--ink-wash-a040) 1px, transparent 1px),
-    linear-gradient(90deg, var(--ink-wash-a040) 1px, transparent 1px);
+    linear-gradient(
+      rgba(var(--ink-wash-rgb), calc(0.04 * var(--ink-wash-lift))) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(var(--ink-wash-rgb), calc(0.04 * var(--ink-wash-lift))) 1px,
+      transparent 1px
+    );
   background-size:
     100% 76px,
     12.5% 100%;
@@ -869,7 +876,7 @@
 
   .questionRail {
     backdrop-filter: blur(12px);
-    background: var(--scrim-1-a940);
+    background: rgba(var(--scrim-page-rgb), 0.94);
     border-bottom: 1px solid var(--hairline);
     margin: 0 -20px;
     padding: 9px 20px;

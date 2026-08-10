@@ -9,61 +9,102 @@ has nowhere to flip to under `:root[data-theme='light']`, so a literal is a bug 
 "never a token" list at the end of this section.
 
 There are seven colour families. Each family has a small semantic ladder — **use a ladder rung for
-new work, always.** The ladder is the ramp: sixteen job-named rungs, each named for what it does
-rather than for a number.
+new work, always.** The ladder is the ramp: job-named rungs, each named for what it does rather than
+for a number.
 
-| Job      | Rungs                                                                                                                    |
-| -------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Text     | `--ink-1` primary · `--ink-2` emphasis · `--ink-3` secondary · `--ink-4` tertiary · `--ink-5` metadata · `--ink-6` faint |
-| Surfaces | `--bg-base` page · `--bg-panel` panel · `--bg-inset` inset                                                               |
-| Borders  | `--hairline` subtle · `--hairline-card` visible · `--hairline-strong` strong                                             |
-| Fills    | `--wash-1` zebra · `--wash-2` resting · `--wash-3` hover · `--wash-4` pressed                                            |
-| Accent   | `--accent-ink` ink · `--accent` fill · `--accent-wash` / `--accent-veil` tint · `--accent-line` / `--accent-edge` rule   |
+| Job      | Rungs                                                                                                                                                                                                              |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Text     | `--ink-1` primary · `--ink-2` emphasis · `--ink-3` secondary · `--ink-4` tertiary · `--ink-5` metadata · `--ink-6` faint                                                                                           |
+| Surfaces | `--bg-base` page · `--bg-panel` panel · `--bg-inset` inset                                                                                                                                                         |
+| Borders  | `--hairline` subtle · `--hairline-card` visible · `--hairline-strong` strong                                                                                                                                       |
+| Fills    | `--wash-1` zebra · `--wash-2` resting · `--wash-3` hover · `--wash-4` pressed                                                                                                                                      |
+| Accent   | `--accent-ink` ink · `--accent` fill · `--accent-wash` / `--accent-veil` tint · `--accent-line` / `--accent-edge` rule                                                                                             |
+| Depth    | `--scrim-page-rgb` / `--scrim-inset-rgb` / `--scrim-stage-rgb` / `--scrim-modal-rgb` what a fade fades toward · `--ink-wash-rgb` + `--ink-wash-lift` ink as a mark · `--shadow-drop` raised · `--shadow-lift` tile |
 
 The `-a###` tokens beside each ladder are the same family at an off-ladder alpha (the digits are
 permille, so `-a420` is `alpha 0.42`). **That namespace is closed.** They are historical: they are a
 1:1 capture of every alpha literal the dark theme already shipped, and every one that could be
-collapsed onto a rung or a neighbour inside a measured 3/255 budget has been. The 46 that remain are
+collapsed onto a rung or a neighbour inside a measured 3/255 budget has been. The 21 that remain are
 grandfathered by name in `scripts/verify/token-alpha-allowlist.json`, and `npm run check:ratchet`
 fails on any `-a###` that is not on that list — declared or merely referenced. Adding a colour means
 adding a _job_, not an alpha. Treat the survivors as members of the nearest rung.
 
-### Why 46 survive
+### Why 21 survive
 
-Every survivor belongs to a family with **no ladder to point at**. The four ladder families — ink,
-wash, hairline and accent — are fully collapsed: every off-ladder alpha in them now _is_ a rung.
-What is left is `--ink-wash-*` (a surface tint with no named steps), the scrim depths, the shadow
-ramp, and the identity hues `--warn`, `--violet`, `--glitch-red`, `--glitch-blue` and `--indigo`,
-whose distinct steps may be carrying real meaning rather than drift. Plus `--ink-a050`/`--ink-a030`,
-the ghost glyphs. Giving those families ladders is the obvious next reduction and is not blocked by
-pixels — only by needing to name their jobs.
+Nineteen of the twenty-one are **identity hues** — `--warn`, `--violet`, `--glitch-red`,
+`--glitch-blue`, `--indigo` — and their steps are jobs, not drift. Read the call sites and each one
+lands on a rung of the accent's ladder: `--warn-a085` is the hatch wash, `--warn-a120` the resting
+toggle fill, `--warn-a220` the chip veil, `--warn-a250` and `--warn-a290` inactive rules, `--warn-a480`
+a visible border, `--warn-a580` the solid bar and scrollbar thumb, `--warn-a700` the 9px bloom under
+the active bar. Violet is the same shape across the memory lifecycle: `-a032` and `-a080` fills and
+glows, `-a190` and `-a280` borders, `-a550` the active border.
 
-**Do not propose collapsing this invisibly.** Ink sits 244 channel levels above the darkest surface,
-so `Δα 0.01` is already `2.44/255` before rendering and ~`3/255` after glyph antialiasing, and the
-smallest step present anywhere in the data is `Δα 0.01`. Measured, the budget-to-survivor curve is
-`2→92 · 3→86 · 5→72 · 8→60 · 12→47`: reaching a sixteen-value ladder needs roughly a **60/255**
-budget. The way this palette actually collapsed was the opposite of a zero-pixel merge — alias each
-token to its rung _by job_, have the resulting colour move reviewed by eye, then delete the
-redundant names at tolerance 0.
+The pairs that _do_ share a job cannot merge inside the budget, and the arithmetic is the same one
+that governs ink. A bright hue on a near-black ground moves `Δα × ~215` channel levels: collapsing
+`--warn-a250` into `--warn-a290` is **8.5/255**, `--warn-a120` into `--warn-a085` is **7.5/255**,
+`--violet-a190` into `--violet-a280` is **19/255**. All are outside the 3/255 budget, so they were
+reconsidered rather than accepted. **In light they already are one rung** — light declares
+`--warn-a290`, `--warn-a250` and `--warn-a220` as the same value — which is the honest summary: light
+has one warn line and dark has three strengths of one, and only dark has a baseline to protect.
 
-**In light they are the rung.** `--ink-wash-a180` and `--ink-wash-a200` resolve to the same light
-value; the same holds in every family that still has `-a###` members. Light has no baseline to preserve, so it gets the clean
-ladder and dark keeps its (near-)exact historical appearance. Practically: an `-a###` token needs a
-light value only when it is added, and it is always a copy of its rung's. The single exception is
-`--ink-a050`/`--ink-a030`, ink below the ladder's floor — deliberately ghosted glyphs, which take
-the wash curve rather than `--ink-6` so they stay ghosts, and which are excluded from merging for
-the same reason.
+Plus `--ink-a050`/`--ink-a030`, the ghost glyphs, excluded deliberately (see below).
 
-| Family                                                                                           | Dark base                                                                          | What each step is for                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--ink-1` … `--ink-6`                                                                            | `rgba(244, 242, 238, α)`                                                           | Foreground. 1 headings and primary body · 2 emphasised body, active nav · 3 secondary copy and standfirsts · 4 tertiary copy, captions, table cells · 5 metadata and mono eyebrows, **large/UI only** · 6 disabled text and decorative glyphs.                                                                                                                                                                                                                                          |
-| `--ink-wash-a###`                                                                                | same RGB, low alpha                                                                | The ink colour used as a _surface_ tint or SVG fill rather than as ink. Flips to a black-based wash, not to the light ink colour.                                                                                                                                                                                                                                                                                                                                                       |
-| `--wash-1` … `--wash-4`                                                                          | `rgba(255, 255, 255, α)`                                                           | Surface lift above the panel underneath. 1 barely-there zebra stripe · 2 resting card or field fill · 3 hover fill · 4 pressed or selected fill. **This is the one family that is not a tint of the theme's ink.** Lift is toward the light source in both themes, so in light rungs 1–2 go _up_ toward paper white and only 3–4 tint down into ink. Flipping all four to a dark tint sinks every card and field into the panel it should sit on — that is what "grey soup" looks like. |
-| `--hairline`, `--hairline-card`, `--hairline-strong`, `--hairline-a###`                          | `rgba(255, 255, 255, α)`                                                           | White used as a **border**. Separate from `--wash-*` because a light theme needs a heavier hairline than it needs a wash.                                                                                                                                                                                                                                                                                                                                                               |
-| `--accent-wash`, `--accent-veil`, `--accent-line`, `--accent-edge`, `--accent-ink`, `--accent`   | `rgba(94, 230, 160, α)`                                                            | wash: section tint and callout background · veil: chip fill, hover fill, selection · line: subtle rule, inactive underline · edge: visible border and focus ring · **`--accent-ink`: accent text, icon strokes and borders** · `--accent`: solid fills, dots and marks, paired with `--accent-on`.                                                                                                                                                                                      |
-| `--scrim-1-a###` … `--scrim-5-a###`                                                              | near-black, depth 1 lightest to 5 deepest                                          | Page-canvas fades and overlay scrims that sit _over_ content. Every one of them inverts under a light theme.                                                                                                                                                                                                                                                                                                                                                                            |
-| `--warn`, `--glitch-red`, `--glitch-blue`, `--violet`, `--indigo`, each with `-fill` and `-a###` | amber `#e8b45c`, red `#ff5a6e`, blue `#4ac7ff`, violet `#b694ff`, indigo `#7aa2ff` | Semantic hues: identity colours outside the accent family — the survey report and the XAI window are amber, the memory lifecycle is violet, the sequence pipeline is blue. Each follows the accent's ink/fill split, and the alpha ladder uses the accent's rungs.                                                                                                                                                                                                                      |
-| `--shadow-a###`, `--shadow-panel`                                                                | `rgba(0, 0, 0, α)`                                                                 | Drop shadows. Alphas cannot be scaled between themes — a light theme re-authors the shadow, it does not reuse the dark alpha. `--shadow-hard` is the same idea as a raw colour rather than a box-shadow, because the canvas modules cannot consume a shadow list.                                                                                                                                                                                                                       |
+**What the last collapse did, and why those three families were different.** `--scrim-*` (12),
+`--ink-wash-*` (9) and `--shadow-*` (4) retired all 25 of their names. Not by merging colours — by
+noticing that their alphas were never jobs in the first place:
+
+- **Scrims.** Twelve tokens spelled four colours at nine alphas because a gradient's _stops_ had each
+  been given a name. A fade is one job; its stops are positions in it. The alpha went back to the
+  call site (`rgba(var(--scrim-page-rgb), 0.72)`) and what remains is the four surfaces a scrim can
+  fade toward — which is the only part that inverts under light, and therefore the only part that
+  had to be a token. Zero pixels, except the fourth depth, which was near enough the third to absorb
+  (measured 1.3/255 at its heaviest stop).
+- **Ink used as a mark.** Nine steps, no jobs: bar tracks, grid rules, indicator bars, carousel dots,
+  each composing whatever alpha its mark needed. Same move — `--ink-wash-rgb` plus the alpha at the
+  mark. The nine light values turned out to be nothing but their dark alpha times 1.32, so that
+  factor is now `--ink-wash-lift` rather than nine hand-tuned numbers. Zero pixels in dark; light
+  lands within 0.7/255 of the values it replaced.
+- **Shadows.** The three deep steps (.60/.55/.50) were one job at three hand-typed strengths and
+  became `--shadow-drop`; `--shadow-lift` is the tile shadow. Two rungs now.
+
+  **The budget argument for that merge was wrong, and the merge was kept anyway — knowingly.** It
+  read `Δα × 19`, black over `--bg-base`, giving 1.9/255 for .50 → .60. But these shadows fall
+  under dropdowns and modals, on a scrimmed overlay rather than the raw page, and measured on real
+  captures of the command palette the change is **45/255 across ~337k pixels**. Far outside the
+  3/255 budget. It survives because the owner compared the two side by side and could not see any
+  difference — 45/255 spread through a soft gradient reads as nothing — not because it was small.
+
+  **Nothing measured it at the time, and nothing would today.** No screenshot in `routes.json`
+  opens a menu or a modal, so the entire shadow family is unpainted in every capture. `verify:parity`
+  reported `0/255` for shadows throughout, which meant "no capture paints them", not "safe". If you
+  change a shadow, compare it by hand with the palette or a mega menu open; the sweep will agree
+  with you whatever you do.
+
+**Do not propose collapsing the rest invisibly.** Ink sits 244 channel levels above the darkest
+surface, so `Δα 0.01` is already `2.44/255` before rendering and ~`3/255` after glyph antialiasing,
+and the smallest step present anywhere in the data is `Δα 0.01`. Measured, the budget-to-survivor
+curve is `2→92 · 3→86 · 5→72 · 8→60 · 12→47`: reaching a sixteen-value ladder needs roughly a
+**60/255** budget. Where a merge is genuinely wanted, the method is the opposite of a zero-pixel
+merge — alias each token to its rung _by job_, have the resulting colour move reviewed by eye, then
+delete the redundant names at tolerance 0.
+
+**In light they are the rung.** The light theme declares several identity-hue steps at one value.
+Light has no baseline to preserve, so it gets the clean ladder and dark keeps its (near-)exact
+historical appearance. Practically: an `-a###` token needs a light value only when it is added, and
+it is always a copy of its rung's. The single exception is `--ink-a050`/`--ink-a030`, ink below the
+ladder's floor — deliberately ghosted glyphs, which take the wash curve rather than `--ink-6` so they
+stay ghosts, and which are excluded from merging for the same reason.
+
+| Family                                                                                           | Dark base                                                                          | What each step is for                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `--ink-1` … `--ink-6`                                                                            | `rgba(244, 242, 238, α)`                                                           | Foreground. 1 headings and primary body · 2 emphasised body, active nav · 3 secondary copy and standfirsts · 4 tertiary copy, captions, table cells · 5 metadata and mono eyebrows, **large/UI only** · 6 disabled text and decorative glyphs.                                                                                                                                                                                                                                                                                             |
+| `--ink-wash-rgb`, `--ink-wash-lift`                                                              | `244, 242, 238`                                                                    | The ink colour used as a _surface_ tint, mark or SVG fill rather than as ink, composed at the call site: `rgba(var(--ink-wash-rgb), calc(0.42 * var(--ink-wash-lift)))`. Flips to a slate wash, not to the light ink colour, and `--ink-wash-lift` (1 on dark, 1.32 on paper) is the whole of what light does differently.                                                                                                                                                                                                                 |
+| `--wash-1` … `--wash-4`                                                                          | `rgba(255, 255, 255, α)`                                                           | Surface lift above the panel underneath. 1 barely-there zebra stripe · 2 resting card or field fill · 3 hover fill · 4 pressed or selected fill. **This is the one family that is not a tint of the theme's ink.** Lift is toward the light source in both themes, so in light rungs 1–2 go _up_ toward paper white and only 3–4 tint down into ink. Flipping all four to a dark tint sinks every card and field into the panel it should sit on — that is what "grey soup" looks like.                                                    |
+| `--hairline`, `--hairline-card`, `--hairline-strong`                                             | `rgba(255, 255, 255, 0.07 / 0.10 / 0.18)`                                          | White used as a **border**. Separate from `--wash-*` because a light theme needs a heavier hairline than it needs a wash. All three are load-bearing: `strong` is the _control_ border (`.button`, `input`, the checkbox, `.oss-tags span`) and `card` is the panel border, and they sit side by side constantly — measured, a button edge and a card edge are 23px apart on `/` and on `/principles/`, 21px on `/open-source/kaos/`, with 80 strong and 122 card borders on the homepage alone. Two names, one job, is not the situation. |
+| `--accent-wash`, `--accent-veil`, `--accent-line`, `--accent-edge`, `--accent-ink`, `--accent`   | `rgba(94, 230, 160, α)`                                                            | wash: section tint and callout background · veil: chip fill, hover fill, selection · line: subtle rule, inactive underline · edge: visible border and focus ring · **`--accent-ink`: accent text, icon strokes and borders** · `--accent`: solid fills, dots and marks, paired with `--accent-on`.                                                                                                                                                                                                                                         |
+| `--scrim-page-rgb`, `--scrim-inset-rgb`, `--scrim-stage-rgb`, `--scrim-modal-rgb`                | near-black; page lightest, modal deepest                                           | What a page-canvas fade or an overlay scrim fades _toward_. The stop alpha belongs to the gradient, so it is written at the call site: `rgba(var(--scrim-page-rgb), 0.72)`. All four invert under a light theme; a scrim inside an inverted block fades toward the block, which is why the role rule re-enters `--scrim-inset-rgb`.                                                                                                                                                                                                        |
+| `--warn`, `--glitch-red`, `--glitch-blue`, `--violet`, `--indigo`, each with `-fill` and `-a###` | amber `#e8b45c`, red `#ff5a6e`, blue `#4ac7ff`, violet `#b694ff`, indigo `#7aa2ff` | Semantic hues: identity colours outside the accent family — the survey report and the XAI window are amber, the memory lifecycle is violet, the sequence pipeline is blue. Each follows the accent's ink/fill split, and the alpha ladder uses the accent's rungs.                                                                                                                                                                                                                                                                         |
+| `--shadow-drop`, `--shadow-lift`, `--shadow-panel`                                               | `rgba(0, 0, 0, 0.6 / 0.22)`                                                        | Drop shadows: `drop` under a raised panel or overlay, `lift` under a tile. Alphas cannot be scaled between themes — a light theme re-authors the shadow, it does not reuse the dark alpha. `--shadow-hard` is the same idea as a raw colour rather than a box-shadow, because the canvas modules cannot consume a shadow list.                                                                                                                                                                                                             |
 
 `--text-1` … `--text-4` are aliases over `--ink-1`, `--ink-3`, `--ink-4` and `--ink-5`; `--accent-wash-07`,
 `--accent-wash-09`, `--form-wash-14` and `--accent-wash-16` are aliases over the accent ladder. Use
@@ -95,12 +136,32 @@ Two refinements the light block forced:
 Each theme also declares `color-scheme`, which is what themes the native controls no stylesheet can
 reach: form field internals, scrollbars, the caret and the spellcheck underline.
 
-### The canvas palette and the surface label
+### The inverted surface role
 
-The light theme keeps **whole blocks dark** on a light page — one selector list in `tokens.css`:
-the header and its menus and drawer, `.hero`, `.article-hero.canvas-variant`, `.kompute-feature`,
-`.kaos-feature`, `.map-stage`, `.kaos-panel`, `.palette-panel`. Depth on paper comes from inverting
-sections, not from shading cards.
+The light theme keeps **whole blocks dark** on a light page: the header and its menus and drawer,
+both heroes, `.kompute-feature`, `.kaos-feature`, `.map-stage`, `.kaos-panel`, `.palette-panel`.
+Depth on paper comes from inverting sections, not from shading cards.
+
+Membership is a **role declared at the block**: `data-surface="dark"` on the element that owns it.
+One rule in `tokens.css` keys off that attribute and re-enters the ink, wash, hairline, accent and
+surface rungs at their on-dark values for the subtree. A block whose own background is the page's
+adds `data-surface-plate` beside the role, which paints the panel plate under it; the plate is never
+valid without the role.
+
+This used to be a hand-maintained selector list in `tokens.css`, with a second hand-maintained
+`data-surface` label on every canvas mount inside those blocks. Two lists, in two files, nothing
+holding them together — and a block missing from either renders wrong **in light only**, invisible
+to anyone working in the default theme. `npm run check:ratchet` now fails if a light-theme rule
+selects blocks by class instead of by the role, if `data-surface-plate` appears without it, or if a
+`data-surface` value is anything but `dark` or `page`.
+
+Those are spelling checks: they prove the attribute is used consistently, not that any mount
+resolves to the surface it is really sitting on. `npm run verify:canvas-surface` proves that —
+it loads every route in **light**, walks up from each canvas to the first opaque background, and
+fails if the resolved surface disagrees with what is painted there. Light is the only theme
+where the question has an answer: under dark the page ground _is_ the inverted colour, so a
+mount on the wrong surface looks correct either way. It runs in CI beside the motion gate,
+because it needs a browser and a build.
 
 Canvas paints outside the cascade, so a canvas cannot inherit those re-entered rungs. It therefore
 takes its colours from the **surface it sits on, not from the active theme**, via two token sets on
@@ -108,15 +169,19 @@ takes its colours from the **surface it sits on, not from the active theme**, vi
 the inverted blocks. Under dark the page _is_ that surface and the two sets are identical, which is
 what keeps dark pixel-exact.
 
-Which set a mount takes is a **hardcoded label**, never inferred: `data-surface="dark" | "page"` on
-the mount element, read once at construction by `surfaceOf()`. Nothing sniffs its own backdrop —
-that breaks on transparent parents, gradients and canvases that straddle two surfaces. Today only
-five mounts are `page`: the homepage policy circuit, the three `/open-source/` portal visuals and the
-form-send overlay. Everything else sits inside an inverted block and barely changes between themes.
+Which set a mount takes is **the same declaration**, never inferred: `surfaceOf()` reads the nearest
+ancestor carrying `data-surface`, which for most mounts is the inverted block itself. So the CSS
+treatment and the canvas palette cannot disagree — there is only one thing to declare, and moving a
+block moves both. Nothing sniffs its own backdrop; that breaks on transparent parents, gradients and
+canvases that straddle two surfaces. A mount whose ancestry would answer wrong overrides it on
+itself, which is what the five `page` mounts do: the homepage policy circuit, the three
+`/open-source/` portal visuals and the form-send overlay. The three `KaosGraph` mounts that sit on
+the page ground while painting on-dark artwork declare `dark` on themselves and therefore take the
+plate treatment with it.
 
-**Two things must stay in step with the list above.** The `--canvas-dark-*` values in the light
-block restate the inverted-block values — change one, change both. And if a component ever moves a
-canvas from a dark block onto the page ground, its `data-surface` label must move with it.
+**One thing still has to stay in step.** The `--canvas-dark-*` values on `:root` restate the role
+rule's values, because a canvas cannot read the block it sits in — change one, change both. That
+pair is now compared by `npm run check:ratchet` rather than by memory.
 
 ### Never a token
 
@@ -137,7 +202,7 @@ canvas from a dark block onto the page ground, its `data-surface` label must mov
 
 ## Global stylesheet
 
-`src/styles/tokens.css` is 1,326 lines. The counts below are from the current parsed stylesheet: a rule is a CSS style rule or `@font-face` rule, keyframe step selectors are excluded, and declarations inside keyframes are included.
+`src/styles/tokens.css` is 1,299 lines. The counts below are from the current parsed stylesheet: a rule is a CSS style rule or `@font-face` rule, keyframe step selectors are excluded, and declarations inside keyframes are included.
 
 | Category                             | Rules | Declarations | Contents                                                                                                                              |
 | ------------------------------------ | ----: | -----------: | ------------------------------------------------------------------------------------------------------------------------------------- |
@@ -151,7 +216,7 @@ canvas from a dark block onto the page ground, its `data-surface` label must mov
 | Responsive foundation                |     7 |            8 | Global section, typography, primitive and form adjustments at the named breakpoints.                                                  |
 | Cross-surface and canvas integration |    73 |          151 | Canvas mount contracts, homepage section composition, shared composed-page clusters and rules spanning a page plus a child component. |
 | Theme overrides                      |     1 |          104 | Every theme-dependent token's light value on `:root[data-theme='light']`.                                                             |
-| Total                                |   251 |          674 | Global CSS only.                                                                                                                      |
+| Total                                |   251 |          693 | Global CSS only.                                                                                                                      |
 
 ## Component and page owners
 
@@ -183,7 +248,7 @@ Search by the surface name or representative selector below before adding a rule
 | `NetworkDirectory.astro`                                                          | Network member directory and wordmarks                                                                 | `.network-directory`, `.member-wordmarks`                                      |
 | `NewsletterLatestCard.astro`                                                      | Reusable latest-newsletter card                                                                        | `.newsletter-latest-card`, `.latest-title`                                     |
 | `NewsletterSubscribe.astro`                                                       | Newsletter subscription form                                                                           | `newsletter-subscribe`, `.subscribe-field`, `.subscribe-status`                |
-| `OpenSourceShowcase.astro` / `OpenSourceShowcase.css`                            | Homepage flagship initiative carousel, KAOS and survey showcase cards                                  | `.open-source-prototype`, `.showcase-track`, `.carousel-edge`, `.kaos-feature` |
+| `OpenSourceShowcase.astro` / `OpenSourceShowcase.css`                             | Homepage flagship initiative carousel, KAOS and survey showcase cards                                  | `.open-source-prototype`, `.showcase-track`, `.carousel-edge`, `.kaos-feature` |
 | `PartnerDirectory.astro`                                                          | Partner directory entries and logos                                                                    | `.partner-directory`, `.partner-entry`, `.partner-logo`                        |
 | `PhaseCardGrid.astro`                                                             | Homepage strategy phase cards                                                                          | `.strategy`, `.phase-grid`, `.phase-card`, `.phase-rule`                       |
 | `PolicyMandates.astro`                                                            | Policy mandate cards                                                                                   | `.mandate-grid`, `.mandate-row`                                                |
@@ -285,4 +350,4 @@ Use these widths for CSS media queries. A component that needs responsive client
 3. For a new token, add it to `:root` when at least two owners need the same semantic value, or when the value must change between themes. A theme-dependent value is always a token, however few owners it has: a literal has nowhere to flip to under `:root[data-theme='light']`. Otherwise keep the value local.
 4. If an override seems necessary, find the existing owner first and change the original rule or component API. Add a cross-owner rule to `tokens.css` only when the relationship itself is shared and document that reason here.
 
-<!-- styles-hash: 0fd2f2846169e638e1c69175c258d5eb71f2af3af483c54b534b93bc6bc3bbad -->
+<!-- styles-hash: 58ed28968cb67e29a09c604c015be1e917ec1707ecd4b2faf0d4fa37c674b23b -->
