@@ -88,12 +88,7 @@
     'logo': 'numfocus-logo.png',
     'detail': 'Kompute is cross-vendor GPU acceleration work maintained alongside Linux Foundation AI & Data and NumFOCUS.',
     'links':
-      [
-        {
-          'label': 'Case Study',
-          'url': 'https://numfocus.org/case-studies/ethics-in-ai-ml',
-        },
-      ],
+      [{ 'label': 'Case Study', 'url': 'https://numfocus.org/case-studies/ethics-in-ai-ml' }],
   },
   {
     'name': 'TUM / TUM IEAI',
