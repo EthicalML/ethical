@@ -93,6 +93,15 @@ function autoRespond(data, interestFlags) {
   const chosen = INTERESTS.filter((interest, i) => interestFlags[i]);
 
   const blocks = [];
+  // A submission with no interest ticked is someone using the contact form to
+  // send a plain message. It used to produce an internal notification and no
+  // reply at all, so the sender heard nothing back and had no way to tell the
+  // message had arrived.
+  if (!chosen.length) {
+    blocks.push(
+      'Your message has reached us directly and we read every one. We reply to the ones that need a reply, so if yours does, expect to hear from us; there is nothing further you need to do in the meantime.',
+    );
+  }
   if (chosen.indexOf('network') !== -1) {
     blocks.push(
       'Ethical AI Network application: applications are reviewed on a rolling basis and we receive a high volume of them, so we reply to successful applicants within 4 weeks. If you have not heard from us by then, the application was unfortunately not successful this time. Membership is contribution-driven, so you can read how it works at https://ethical.institute/membership/ and strengthen a future application. Thank you for taking the time to apply!',
@@ -120,13 +129,22 @@ function autoRespond(data, interestFlags) {
   // silence. blocks.length is still the guard, for a submission that selected
   // no interest at all.
   if (blocks.length) {
-    const replySubject = 'Submission Information - The Institute for Ethical AI Alignment & Safety';
-    const replyBody =
-      'Hi ' +
-      name +
-      '! Thank you for your submission.\n\nImportant info about your response:\n\n' +
-      blocks.join('\n\n') +
-      '\n';
+    // A pure newsletter signup is a subscription confirmation, not a response
+    // to a form, and "Submission Information" reads like neither a welcome nor
+    // anything the subscriber asked for. Keyed on the chosen interest rather
+    // than on data.variant so a newsletter-only tick on the contact form is
+    // recognised as the same thing.
+    const newsletterOnly = chosen.length === 1 && chosen[0] === 'newsletter';
+    const replySubject = newsletterOnly
+      ? "You're subscribed to The Machine Learning Engineer newsletter"
+      : 'Submission Information - The Institute for Ethical AI Alignment & Safety';
+    const replyBody = newsletterOnly
+      ? 'Hi ' + name + '!\n\n' + blocks.join('\n\n') + '\n'
+      : 'Hi ' +
+        name +
+        '! Thank you for your submission.\n\nImportant info about your response:\n\n' +
+        blocks.join('\n\n') +
+        '\n';
     MailApp.sendEmail(email, replySubject, replyBody);
   }
 
