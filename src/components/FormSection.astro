@@ -320,19 +320,35 @@ const settleMs = 2500;
       try {
         if (endpoint) {
           // The receiver answers through a redirect chain that has taken up to
-          // 15 seconds, and mode: no-cors makes its reply unreadable anyway, so
-          // waiting the whole way buys no information the confirmation could
-          // use. Stop waiting after a settle window instead: keepalive carries
-          // the request to completion even if the visitor leaves the page, and
-          // a rejection inside the window still surfaces as an error.
-          const sent = fetch(endpoint, {
-            method: 'POST',
-            mode: 'no-cors',
-            keepalive: true,
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(payload),
-          });
-          await Promise.race([sent, new Promise((resolve) => window.setTimeout(resolve, settleMs))]);
+          // 15 seconds, but its reply is readable and worth waiting for: both
+          // hops return access-control-allow-origin: *, and text/plain is a
+          // CORS-safelisted content type so no preflight is triggered (the
+          // receiver answers OPTIONS with 405). mode: no-cors was throwing away
+          // an answer it was willing to give, which left the confirmation
+          // asserting a delivery it had no evidence of.
+          //
+          // Promise.all, not race: the settle window is the animation's floor,
+          // not a deadline to declare success at. The abort is the ceiling, so
+          // a receiver that never answers ends as an error rather than hanging.
+          const abort = new AbortController();
+          const cutoff = window.setTimeout(() => abort.abort(), 15000);
+          const [response] = await Promise.all([
+            fetch(endpoint, {
+              method: 'POST',
+              keepalive: true,
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify(payload),
+              signal: abort.signal,
+            }),
+            new Promise((resolve) => window.setTimeout(resolve, settleMs)),
+          ]);
+          window.clearTimeout(cutoff);
+          if (!response.ok) throw new Error(`receiver replied ${response.status}`);
+          // Quarantined means the row went to the quarantine tab as suspected
+          // automation: no Brevo call, no autoresponse. Confirming it would
+          // tell the sender their submission landed when it did not.
+          const result = await response.json();
+          if (result.quarantined) throw new Error('held as suspected automation');
         }
         // The fields leave under their own staggered exit before the
         // confirmation takes the space, so the swap is a handover rather than a
