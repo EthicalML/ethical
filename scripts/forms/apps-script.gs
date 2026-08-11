@@ -210,6 +210,55 @@ function myIp() {
   console.log(UrlFetchApp.fetch('https://api.ipify.org').getContentText());
 }
 
+// Weekly probe against Brevo, run from a time-driven trigger. Brevo's
+// authorised-IP restriction auto-activates on accounts with no newly detected
+// IP for 30 days, and that is what silently dropped every newsletter signup
+// until August 2026. addToBrevo now reports its own failures, but only when
+// somebody submits the form: a quiet week hides the outage until an issue goes
+// out to a list that stopped growing.
+//
+// It has to run here rather than from a laptop or a CI box. The restriction is
+// evaluated per source IP, so a probe from anywhere with an allowlisted address
+// would pass while Apps Script's Google egress pool is still being rejected.
+// Only a call made from this runtime tests the path the signups actually take.
+//
+// Install once: Triggers (clock icon) → Add trigger → weeklyBrevoHealthCheck,
+// time-driven, week timer. Reports only on failure, so silence is the healthy
+// state.
+function weeklyBrevoHealthCheck() {
+  const props = PropertiesService.getScriptProperties();
+  const apiKey = props.getProperty('BREVO_API_KEY');
+  const listId = Number(props.getProperty('BREVO_LIST_ID'));
+  if (!apiKey || !(listId > 0)) {
+    MailApp.sendEmail(
+      NOTIFY_EMAIL,
+      '[EthicalML] Brevo health check: not configured',
+      'BREVO_API_KEY or BREVO_LIST_ID is missing from Script Properties, so newsletter opt-ins are not reaching Brevo.',
+    );
+    return;
+  }
+  const res = UrlFetchApp.fetch('https://api.brevo.com/v3/contacts/lists/' + listId, {
+    method: 'get',
+    headers: { 'api-key': apiKey },
+    muteHttpExceptions: true,
+  });
+  const code = res.getResponseCode();
+  if (code >= 200 && code < 300) return;
+  const body = res.getContentText();
+  const blocked = body.indexOf('unrecognised') !== -1 || body.indexOf('authorised_ips') !== -1;
+  MailApp.sendEmail(
+    NOTIFY_EMAIL,
+    '[EthicalML] Brevo health check FAILED (' + code + ')',
+    (blocked
+      ? "Brevo's authorised-IP restriction is blocking this script again, so newsletter signups are being dropped in silence.\n\nDeactivate IP blocking at https://app.brevo.com/security/authorised_ips (Settings > Security > Authorised IPs). Allowlisting will not work: Apps Script has no static egress IP.\n\n"
+      : 'The Brevo API is not answering this script successfully, so newsletter signups may be dropping.\n\n') +
+      'HTTP ' +
+      code +
+      '\n\n' +
+      body,
+  );
+}
+
 function reply(value) {
   return ContentService.createTextOutput(JSON.stringify(value)).setMimeType(
     ContentService.MimeType.JSON,
