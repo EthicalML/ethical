@@ -110,7 +110,7 @@ export const contactFormCopy: FormSectionCopy = {
       'We only use your details to reply and to send what you asked for. Unsubscribe any time.',
     confirmation: 'Thank you. Your details have been sent to the Institute.',
     demoConfirmation: 'The form is in demo mode. No endpoint is configured and nothing was sent.',
-    error: 'We could not send your details. Please try again or email hello@ethical.institute.',
+    error: 'We could not send your details. Please try again or email a@ethical.institute.',
   },
 };
 
