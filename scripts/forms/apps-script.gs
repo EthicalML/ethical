@@ -11,6 +11,23 @@ const QUARANTINE_TAB = '2026 Quarantine';
 // interest there means adding it here and inserting a column in both tabs.
 const INTERESTS = ['network', 'newsletter', 'frameworks'];
 
+// Minimum time on the page before a submission is trusted, per form variant.
+// The dwell check exists to catch scripted posts that fill and submit instantly,
+// so the bar has to scale with how much there is to fill in: the contact form
+// asks for five fields, the newsletter form asks for an email address and
+// nothing else, and holding both to the same 3s made honest one-field
+// submissions look like bots. The newsletter form also plays a 1.5s send
+// animation before it posts, so a real visitor clears 1500 without waiting.
+//
+// Deliberately server-side. The page sends its own minimumSubmissionMs and this
+// ignores it: a threshold the client can name is a threshold a bot can set to
+// zero. variant is client-supplied too, so a bot can claim the lower bar by
+// posting variant: 'newsletter-subscribe' — accepted, because 1500 vs 3000
+// barely inconveniences a bot, while the honeypot and the per-client and
+// hourly throttles are what actually carry the load here.
+const MINIMUM_SUBMISSION_MS = { 'newsletter-subscribe': 1500 };
+const DEFAULT_MINIMUM_SUBMISSION_MS = 3000;
+
 function doPost(e) {
   const data = JSON.parse(e.postData.contents || '{}');
   if (data.website) return reply({ ok: true });
@@ -32,9 +49,10 @@ function doPost(e) {
   // Both numbers are client-supplied either way, so nothing is lost by trusting
   // the one that is internally consistent.
   const elapsedMs = Number(data.elapsedMs);
+  const minimumMs = MINIMUM_SUBMISSION_MS[data.variant] || DEFAULT_MINIMUM_SUBMISSION_MS;
   const suspect =
     !Number.isFinite(elapsedMs) ||
-    elapsedMs < 3000 ||
+    elapsedMs < minimumMs ||
     clientCount > 5 ||
     volumeCount > 100 ||
     fields.some((value) => String(value || '').length > 500);
@@ -64,7 +82,12 @@ const NOTIFY_EMAIL = 'axsauze@gmail.com';
 function autoRespond(data, interestFlags) {
   const email = String(data.email || '').trim();
   if (!email || email.indexOf('@') === -1) return;
-  const name = String(data.name || '').trim() || 'there';
+  // Two names, deliberately. The greeting needs a fallback for the newsletter
+  // form, which posts no name at all; the internal notification needs the raw
+  // value, or the 'there' placeholder leaks into its subject and Name line and
+  // a nameless subscriber is reported as being called "there".
+  const rawName = String(data.name || '').trim();
+  const name = rawName || 'there';
   const organisation = String(data.organisation || '').trim();
   const info = String(data.furtherInformation || '').trim();
   const chosen = INTERESTS.filter((interest, i) => interestFlags[i]);
@@ -73,6 +96,11 @@ function autoRespond(data, interestFlags) {
   if (chosen.indexOf('network') !== -1) {
     blocks.push(
       'Ethical AI Network application: applications are reviewed on a rolling basis and we receive a high volume of them, so we reply to successful applicants within 4 weeks. If you have not heard from us by then, the application was unfortunately not successful this time. Membership is contribution-driven, so you can read how it works at https://ethical.institute/membership/ and strengthen a future application. Thank you for taking the time to apply!',
+    );
+  }
+  if (chosen.indexOf('newsletter') !== -1) {
+    blocks.push(
+      'The Machine Learning Engineer newsletter: you are subscribed. Issues go out weekly with curated ML engineering reading, and every past issue is archived at https://ethical.institute/newsletter/. Every issue carries an unsubscribe link, so you can leave whenever you like.',
     );
   }
   if (chosen.indexOf('frameworks') !== -1) {
@@ -84,9 +112,13 @@ function autoRespond(data, interestFlags) {
         '* ML Maturity Model (Web Format) https://ethical.institute/frameworks/maturity-model/',
     );
   }
-  // Newsletter-only submissions get no autoresponse: Brevo handles that
-  // subscription and its own emails. The reply goes out only when there is a
-  // network or frameworks block to deliver.
+  // Every interest now contributes a block, so a newsletter-only submission is
+  // answered too. It previously was not, on the assumption that Brevo would
+  // send its own confirmation: adding a contact through POST /v3/contacts sends
+  // nothing at all unless a welcome automation or double opt-in workflow is
+  // configured on the list, and none is, so subscribers were being added in
+  // silence. blocks.length is still the guard, for a submission that selected
+  // no interest at all.
   if (blocks.length) {
     const replySubject = 'Submission Information - The Institute for Ethical AI Alignment & Safety';
     const replyBody =
@@ -100,8 +132,9 @@ function autoRespond(data, interestFlags) {
 
   const role = String(data.role || '').trim();
   const tag = chosen.length ? chosen.join(',').toUpperCase() : 'OTHER';
-  const subject = `[EthicalML] [${tag}]: ${organisation || 'no organisation'}, ${role || name}`;
-  const body = `${subject}\n\nName: ${name}\nEmail: ${email}\nRole: ${role}\nPage: ${data.page || ''}\n\n${info}`;
+  const who = role || rawName || email;
+  const subject = `[EthicalML] [${tag}]: ${organisation || 'no organisation'}, ${who}`;
+  const body = `${subject}\n\nName: ${rawName || '-'}\nEmail: ${email}\nRole: ${role || '-'}\nPage: ${data.page || ''}\n\n${info}`;
   MailApp.sendEmail(NOTIFY_EMAIL, subject, body);
 }
 
@@ -116,18 +149,47 @@ function addToBrevo(email) {
   const props = PropertiesService.getScriptProperties();
   const apiKey = props.getProperty('BREVO_API_KEY');
   const listId = Number(props.getProperty('BREVO_LIST_ID'));
-  if (!apiKey || !Number.isFinite(listId)) return;
+  // listId > 0 rather than Number.isFinite: a missing property reads as null,
+  // Number(null) is 0, and isFinite(0) is true, so the old guard let an unset
+  // BREVO_LIST_ID through and posted listIds: [0] for Brevo to reject.
+  if (!apiKey || !(listId > 0)) {
+    console.error('Brevo not configured: apiKey=%s listId=%s', !!apiKey, listId);
+    return;
+  }
   try {
-    UrlFetchApp.fetch('https://api.brevo.com/v3/contacts', {
+    const res = UrlFetchApp.fetch('https://api.brevo.com/v3/contacts', {
       method: 'post',
       contentType: 'application/json',
       headers: { 'api-key': apiKey },
       payload: JSON.stringify({ email: email, updateEnabled: true, listIds: [listId] }),
       muteHttpExceptions: true,
     });
+    const code = res.getResponseCode();
+    if (code < 200 || code >= 300) {
+      console.error('Brevo %s for %s: %s', code, email, res.getContentText());
+      MailApp.sendEmail(
+        NOTIFY_EMAIL,
+        '[EthicalML] Brevo subscribe failed',
+        code + ' for ' + email + '\n\n' + res.getContentText(),
+      );
+    }
   } catch (err) {
-    // Ignored: the submission is already recorded in the sheet.
+    // Logged, not rethrown: the submission is already recorded in the sheet.
+    console.error('Brevo threw for %s: %s', email, err);
   }
+}
+
+// Run straight from the Apps Script editor to see the real Brevo response
+// without going through the form. Check Executions for the logged output.
+function testBrevo() {
+  addToBrevo('axsauze+brevotest@gmail.com');
+}
+
+// Reports the egress IP of this execution. Apps Script has no static outbound
+// address, so running it repeatedly returns different IPs from Google's shared
+// pool: that is why Brevo's authorised-IP list cannot be made to fit it.
+function myIp() {
+  console.log(UrlFetchApp.fetch('https://api.ipify.org').getContentText());
 }
 
 function reply(value) {
