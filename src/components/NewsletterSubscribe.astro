@@ -49,6 +49,34 @@ const { id } = Astro.props;
   .subscribe-field {
     flex: 1;
   }
+  /* Not decoration. The receiver quarantines anything submitted faster than
+     its dwell threshold, and a form asking for one field is trivial to beat:
+     this is that window made visible, with the field settling first and the
+     button arriving last so the moment it becomes usable is the moment the
+     submission would be trusted. The script holds the button inert for the
+     same duration, so the two cannot drift apart. */
+  @keyframes subscribe-enter {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .subscribe-field {
+    animation: subscribe-enter 900ms cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
+  }
+  button[type='submit'] {
+    animation: subscribe-enter 900ms cubic-bezier(0.2, 0.7, 0.3, 1) 600ms backwards;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .subscribe-field,
+    button[type='submit'] {
+      animation: none;
+    }
+  }
   .subscribe-field input {
     background: var(--wash-2);
     border: 1px solid var(--hairline);
@@ -212,6 +240,22 @@ const { id } = Astro.props;
       const label = this.querySelector<HTMLElement>('[data-subscribe-label]');
       if (!form || !note || !terminal || !button || !label) return;
 
+      // Hold the button inert until the entrance animation lands, so the form
+      // cannot be submitted inside the receiver's dwell threshold. Skipped
+      // under reduced motion, where there is no animation to wait for and the
+      // visitor still has to type an address first. A scripted post ignores
+      // this entirely, which is fine: the honeypot and the throttles are what
+      // it has to get past.
+      const ENTER_MS = 1500;
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        button.disabled = true;
+        this.timers.push(
+          window.setTimeout(() => {
+            button.disabled = false;
+          }, ENTER_MS),
+        );
+      }
+
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
         const data = new FormData(form);
@@ -259,14 +303,38 @@ const { id } = Astro.props;
 
         try {
           if (endpoint) {
-            const sent = fetch(endpoint, {
-              method: 'POST',
-              mode: 'no-cors',
-              keepalive: true,
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify(payload),
-            });
-            await Promise.race([sent, new Promise((resolve) => window.setTimeout(resolve, settleMs))]);
+            // The reply is readable, so read it. Both hops of the receiver's
+            // redirect chain return access-control-allow-origin: *, and
+            // text/plain is a CORS-safelisted content type so nothing triggers
+            // a preflight (which the receiver would answer with 405). mode:
+            // no-cors was discarding an answer it was willing to give, which is
+            // what made every outcome look like success.
+            //
+            // Promise.all, not race: the settle window is the animation's
+            // minimum, not a deadline to declare victory at. A race resolved on
+            // whichever came first and called it success either way.
+            const abort = new AbortController();
+            const cutoff = window.setTimeout(() => abort.abort(), 15000);
+            const [response] = await Promise.all([
+              fetch(endpoint, {
+                method: 'POST',
+                keepalive: true,
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload),
+                signal: abort.signal,
+              }),
+              new Promise((resolve) => window.setTimeout(resolve, settleMs)),
+            ]);
+            window.clearTimeout(cutoff);
+            if (!response.ok) throw new Error(`receiver replied ${response.status}`);
+            // Quarantined means held as suspected automation: the row goes to
+            // the quarantine tab and never reaches Brevo, so from the
+            // subscriber's side nothing happened. Reporting it as success is
+            // the lie this whole change exists to remove, and retrying is the
+            // fix for its usual cause, a submission faster than the dwell
+            // threshold.
+            const result = await response.json();
+            if (result.quarantined) throw new Error('held as suspected automation');
           } else {
             await new Promise((resolve) => window.setTimeout(resolve, settleMs));
           }
