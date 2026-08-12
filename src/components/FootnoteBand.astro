@@ -6,7 +6,7 @@ const footer = {
     eyebrow: 'ABOUT THE INSTITUTE',
     text: 'An independent research institute working to ensure that frontier AI is safe, aligned and accountable to people and society.',
   },
-  talksEyebrow: 'TALKS & KEYNOTES',
+  publicationsEyebrow: 'FROM THE INSTITUTE',
   elsewhere: {
     eyebrow: 'ELSEWHERE',
     links: [
@@ -17,9 +17,11 @@ const footer = {
     ],
   },
 };
-const talks = [
-  { kind: 'TALK', title: 'NeurIPS 2023 Workshop Keynote' },
-  { kind: 'TALK', title: 'KubeCon Europe Keynote' },
+const publications = [
+  { kind: 'BLOG', title: 'Production ML, agentic systems & AI safety', href: '/blog/' },
+  { kind: 'WEEKLY', title: 'The Machine Learning Engineer newsletter', href: '/newsletter/' },
+  { kind: 'TALKS', title: 'Keynotes, conference talks & events', href: '/talks-and-events/' },
+  { kind: 'OSS', title: 'Open source projects & curated lists', href: '/open-source/' },
 ];
 ---
 
@@ -29,18 +31,17 @@ const talks = [
     <AffiliationMarquee />
   </div>
   <div class="footnote-talks">
-    <p class="eyebrow">{footer.talksEyebrow}</p>{
-      talks.map((talk) => (
-        <a href="/talks-and-events/">
+    <p class="eyebrow">{footer.publicationsEyebrow}</p>{
+      publications.map((publication) => (
+        <a href={publication.href}>
           <>
-            <small>{talk.kind}</small>
-            <span>{talk.title}</span>
+            <small>{publication.kind}</small>
+            <span>{publication.title}</span>
             <b>↗</b>
           </>
         </a>
       ))
     }
-    <a class="footnote-all-talks" href="/talks-and-events/">All talks</a>
   </div>
   <div class="footnote-elsewhere">
     <p class="eyebrow">{footer.elsewhere.eyebrow}</p><div class="footnote-links">
@@ -108,7 +109,7 @@ const talks = [
     flex: none;
     font: 9.5px var(--font-mono);
     letter-spacing: 0.1em;
-    width: 34px;
+    width: 52px;
   }
 
   .footnote-talks a span {
@@ -126,14 +127,6 @@ const talks = [
     flex-direction: column;
     gap: 7px;
     margin-top: 12px;
-  }
-
-  .footnote-all-talks {
-    color: var(--accent-ink);
-    font: var(--mono-10)/1 var(--font-mono);
-    letter-spacing: 0.08em;
-    margin-top: 14px;
-    text-transform: uppercase;
   }
 
   .footnote-band .footnote-legal {

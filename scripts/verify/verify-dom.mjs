@@ -640,13 +640,12 @@ for (const route of routes) {
               ),
               /* Was `.footnote-band .standards a`, which has never matched anything
                  in the built site — `.some()` over an empty list is always false, so
-                 the tier it meant to guard was unasserted. The mono tier that does
-                 exist in the band is the two utility links; the count is asserted so
-                 a rename cannot make this vacuous again. */
+                 the tier it meant to guard was unasserted. The mono tier that exists
+                 in the band is the legal privacy link (the all-talks link was retired
+                 with the publications list, 2026-08-12); the count is asserted so a
+                 rename cannot make this vacuous again. */
               footnoteStandards: [
-                ...document.querySelectorAll(
-                  '.footnote-band .footnote-all-talks, .footnote-band .footnote-legal a',
-                ),
+                ...document.querySelectorAll('.footnote-band .footnote-legal a'),
               ].map((link) => {
                 const style = getComputedStyle(link);
                 return {
@@ -878,7 +877,7 @@ for (const route of routes) {
     )
       failures.push('homepage major-section divider or spacing rhythm is inconsistent');
     if (
-      checks.homepage.footnoteStandards.length !== 2 ||
+      checks.homepage.footnoteStandards.length !== 1 ||
       checks.homepage.footnoteStandards.some(
         ({ color, fontFamily, fontSize }) =>
           !sameHue(color, tokens['--text-1']) ||

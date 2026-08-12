@@ -55,9 +55,6 @@ sectionByRoute.set('/open-source/ai-guidelines/', menus.oss.label);
 const excludedFromLlms = [
   (route: string) => route === '/',
   (route: string) => route === '/privacy/',
-  // Unlinked until the blog's navigation entry lands with the design pass;
-  // sections here derive from the menus, so it cannot be assigned before then.
-  (route: string) => route === '/blog/',
   (route: string) => /^\/principles\/\d+\/$/.test(route),
   (route: string) => /^\/newsletter\/\d+\/$/.test(route),
 ];
@@ -72,9 +69,10 @@ const list = (surfaces: Surface[]) =>
     .join('\n');
 
 export const GET: APIRoute = async () => {
-  const [issues, principles] = await Promise.all([
+  const [issues, principles, blogPosts] = await Promise.all([
     getCollection('newsletter'),
     getCollection('principles'),
+    getCollection('blog'),
   ]);
   const staticAstroRoutes = Object.keys(astroPageModules)
     .filter(
@@ -105,7 +103,7 @@ export const GET: APIRoute = async () => {
   }
 
   const surfaces: Surface[] = [...sectionByRoute].flatMap(([href, section]) => {
-    if (isExcluded(href) || href === '/newsletter/') return [];
+    if (isExcluded(href) || href === '/newsletter/' || href === '/blog/') return [];
     const metadata = pageMetadata.get(href);
     if (!metadata?.title || !metadata.description) {
       throw new Error(`llms.txt cannot find title and description frontmatter for: ${href}`);
@@ -128,6 +126,23 @@ export const GET: APIRoute = async () => {
     description: `${issues.length} issues, ${firstIssue.data.date.toISOString().slice(0, 10)} to ${lastIssue.data.date.toISOString().slice(0, 10)}.`,
     href: '/newsletter/',
     section: newsletterSection,
+  });
+
+  const datedPosts = blogPosts.sort(
+    (first, second) => first.data.date.getTime() - second.data.date.getTime(),
+  );
+  const firstPost = datedPosts[0];
+  const lastPost = datedPosts.at(-1);
+  const blogTitle = itemsIn(menus.network).find(({ href }) => href === '/blog/')?.title;
+  const blogSection = sectionByRoute.get('/blog/');
+  if (!firstPost || !lastPost || !blogTitle || !blogSection) {
+    throw new Error('llms.txt cannot derive the blog archive entry');
+  }
+  surfaces.push({
+    title: 'Production ML, responsible AI and alignment blog',
+    description: `${blogPosts.length} long-form articles, ${firstPost.data.date.toISOString().slice(0, 10)} to ${lastPost.data.date.toISOString().slice(0, 10)}.`,
+    href: '/blog/',
+    section: blogSection,
   });
 
   const homepage = pageMetadata.get('/');

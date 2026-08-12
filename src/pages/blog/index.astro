@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
-import ProseLayout from '../../layouts/ProseLayout.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
 import { blogHref, blogSourceLabel, publishedBlogEntries } from '../../utils/blog';
 
 const frontmatter = {
@@ -11,29 +12,37 @@ const posts = publishedBlogEntries(await getCollection('blog')).sort((first, sec
 const formatDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 ---
 
-<ProseLayout frontmatter={frontmatter}>
-  <div class="blog-list">
-    {
-      posts.map((post) => {
-        const source = blogSourceLabel(post.data.source);
-        return (
-          <article class="blog-card" data-reveal>
-            <p class="blog-date">
-              {formatDate(post.data.originalDate ?? post.data.date)}
-              {post.data.originalDate && <span>Published here {formatDate(post.data.date)}</span>}
-            </p>
-            <h2>
-              <a href={blogHref(post)}>{post.data.title}</a>
-            </h2>
-            {post.data.summary && <p class="blog-summary">{post.data.summary}</p>}
-            {source && <p class="blog-source">Originally published on {source}</p>}
-            {post.data.tags?.length ? <p class="blog-tags">{post.data.tags.join(' · ')}</p> : null}
-          </article>
-        );
-      })
-    }
-  </div>
-</ProseLayout>
+<BaseLayout frontmatter={frontmatter}>
+  <article class="blog-archive">
+    <Hero
+      status="THE INSTITUTE — BLOG"
+      title={['Production ML,', 'Agentic Systems', 'AI Safety']}
+      subtitle_lines={['Long-form writing and tutorials from The Institute', 'on building, deploying and aligning']}
+      beneficiaries={['production machine learning.', 'agentic systems.', 'GPU compute.', 'frontier AI.']}
+    />
+    <div class="blog-list">
+      {
+        posts.map((post) => {
+          const source = blogSourceLabel(post.data.source);
+          return (
+            <article class="blog-card" data-reveal>
+              <p class="blog-date">
+                {formatDate(post.data.originalDate ?? post.data.date)}
+                {post.data.originalDate && <span>Published here {formatDate(post.data.date)}</span>}
+              </p>
+              <h2>
+                <a href={blogHref(post)}>{post.data.title}</a>
+              </h2>
+              {post.data.summary && <p class="blog-summary">{post.data.summary}</p>}
+              {source && <p class="blog-source">Originally published on {source}</p>}
+              {post.data.tags?.length ? <p class="blog-tags">{post.data.tags.join(' · ')}</p> : null}
+            </article>
+          );
+        })
+      }
+    </div>
+  </article>
+</BaseLayout>
 
 <style>
   .blog-list {

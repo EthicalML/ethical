@@ -227,6 +227,11 @@ export const menus: Record<string, Menu> = {
             href: '/newsletter/',
           },
           {
+            title: 'Blog',
+            description: 'Long-form writing on production ML, agentic systems and AI safety',
+            href: '/blog/',
+          },
+          {
             title: 'Ethical AI Network',
             description: 'Members across engineering, research, policy and standards',
             href: '/network/',
