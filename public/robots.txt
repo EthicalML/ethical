@@ -1,4 +1,86 @@
+# The Institute publishes to be read, by people and by machines alike. Every
+# crawler is welcome on every path; the groups below only make that explicit for
+# the AI crawlers that look for their own name and treat its absence as a reason
+# to be cautious. Removing a group does not block that crawler — it falls back to
+# the wildcard above. To actually block one, give it its own `Disallow: /`.
+
 User-agent: *
+Allow: /
+
+# OpenAI — training, search index, and user-initiated fetches
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+# Anthropic — current and historical agent names
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+# Perplexity
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+# Google — Gemini and Vertex AI grounding, separate from Googlebot's own policy
+User-agent: Google-Extended
+Allow: /
+
+# Apple Intelligence
+User-agent: Applebot-Extended
+Allow: /
+
+# Common Crawl, the corpus behind a large share of open training sets
+User-agent: CCBot
+Allow: /
+
+# Meta
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+# Amazon
+User-agent: Amazonbot
+Allow: /
+
+# ByteDance
+User-agent: Bytespider
+Allow: /
+
+# Mistral, Cohere, DuckDuckGo's assistant, You.com, Diffbot
+User-agent: MistralAI-User
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: DuckAssistBot
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+User-agent: Diffbot
 Allow: /
 
 Sitemap: https://ethical.institute/sitemap-index.xml
