@@ -101,17 +101,20 @@ const ariaSentence = [missionLine1, missionLine2, initialBeneficiary].filter(Boo
     }
     <h1>
       {
-        titleLines.map((line, index) =>
-          index !== titleLines.length - 1 ? (
-            <span>{line}</span>
-          ) : longform ? (
-            <em>{line}</em>
-          ) : (
-            <em class="glitch" data-text={line}>
-              {line}
-            </em>
-          ),
-        )
+        titleLines.map((line, index) => (
+          <>
+            {index > 0 && ' '}
+            {index !== titleLines.length - 1 ? (
+              <span>{line}</span>
+            ) : longform ? (
+              <em>{line}</em>
+            ) : (
+              <em class="glitch" data-text={line}>
+                {line}
+              </em>
+            )}
+          </>
+        ))
       }
     </h1>
     <type-writer data-beneficiaries={JSON.stringify(effectiveBeneficiaries)}>

@@ -44,7 +44,7 @@ export const contactFormCopy: FormSectionCopy = {
   homeEyebrow: '05 — NETWORK & NEWSLETTER',
   contactEyebrow: 'ONE FORM / MANY WAYS IN',
   intro:
-    'Responsible technology requires changes to models and to the systems around them. Membership includes the Ethical AI Network and the Machine Learning Engineer newsletter.',
+    'Safe, accountable technology requires changes to models and to the systems around them. Membership includes the Ethical AI Network and the Machine Learning Engineer newsletter.',
   sectorEyebrow: 'WHO IS HERE',
   issuesEyebrow: 'RECENT ISSUES',
   form: {

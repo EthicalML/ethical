@@ -1,8 +1,10 @@
 ---
 title: The State of Production ML in 2025
+seoTitle: The State of Production ML 2025 — MLOps Practitioner Survey
 description: Practitioner-reported production machine learning practices, tools, organisational context and demographics from the 2025 survey.
 composed: true
 article: true
+datePublished: 2025-12-01
 layout: ../../layouts/ProseLayout.astro
 chapters:
   - slug: context
@@ -149,14 +151,6 @@ export const report = buildSurveyComparison(survey2025Csv, survey2024Csv);
   intro="What 135 practitioners report from production: LLM and time series work surged, monitoring remains the top challenge at 42%, PyTorch edged ahead of scikit-learn, and AI risk and governance functions doubled year on year. Every answer compares against the 2024 baseline as you move through the chapters."
 />
 
-<SurveyEvidence
-  edition={2025}
-  sample={135}
-  fieldDates="31 August to 1 December 2025"
-  methodology="This self-selected practitioner survey reports the nonblank response base for each question. Percentages use that question-level base, and totals can exceed 100% where respondents could select more than one answer. Findings describe the respondents and are not population estimates."
-  citation="The Institute for Ethical AI Alignment & Safety (2025), The State of Production ML in 2025, https://ethical.institute/reports/state-of-ml-2025/."
-/>
-
 <SurveyReport
   report={report}
   year={2025}
@@ -164,4 +158,12 @@ export const report = buildSurveyComparison(survey2025Csv, survey2024Csv);
   findings={frontmatter.findings}
   stats={frontmatter.stats}
   methodology={frontmatter.methodology}
+/>
+
+<SurveyEvidence
+  edition={2025}
+  sample={135}
+  fieldDates="31 August to 1 December 2025"
+  methodology="This self-selected practitioner survey reports the nonblank response base for each question. Percentages use that question-level base, and totals can exceed 100% where respondents could select more than one answer. Findings describe the respondents and are not population estimates."
+  citation="The Institute for Ethical AI Alignment & Safety (2025), The State of Production ML in 2025, https://ethical.institute/reports/state-of-ml-2025/."
 />

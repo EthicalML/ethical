@@ -17,6 +17,14 @@ import rehypeSectionize from './src/plugins/rehype-sectionize.mjs';
 // rendered page entirely.
 const { FORM_ENDPOINT = '' } = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), '');
 const formToken = FORM_ENDPOINT ? Buffer.from(FORM_ENDPOINT, 'utf8').toString('base64') : '';
+const newsletterLastmod = new Map(
+  globSync('src/content/newsletter/*.md').flatMap((filename) => {
+    const date = readFileSync(filename, 'utf8').match(/^date:\s*(\d{4}-\d{2}-\d{2})\s*$/m)?.[1];
+    return date
+      ? [[`https://ethical.institute/newsletter/${basename(filename, '.md')}/`, date]]
+      : [];
+  }),
+);
 const newsletterRedirects = Object.fromEntries(
   globSync('src/content/newsletter/*.md')
     .map((filename) => basename(filename, '.md'))
@@ -97,6 +105,10 @@ export default defineConfig({
     sitemap({
       filter: (page) =>
         !page.includes('/prototypes/') && !republishedBlogPaths.has(new URL(page).pathname),
+      serialize(item) {
+        const lastmod = newsletterLastmod.get(item.url);
+        return lastmod ? { ...item, lastmod } : item;
+      },
     }),
   ],
 });

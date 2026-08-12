@@ -1,0 +1,28 @@
+---
+// Person JSON-LD for the people a page introduces by name. Renders no markup:
+// structured data is valid anywhere in the document, and emitting it beside the
+// bios keeps the claim next to the copy that supports it rather than in a head
+// mechanism this page does not have.
+import { authors } from '../../data/authors';
+
+interface Props {
+  names: string[];
+}
+
+const { names } = Astro.props;
+const graph = names.map((name) => {
+  const author = authors[name];
+  if (!author) throw new Error(`PersonSchema: no author record named "${name}"`);
+  return {
+    '@type': 'Person',
+    name: author.name,
+    jobTitle: author.role,
+    url: new URL(author.aboutAnchor, Astro.site).href,
+    ...(author.affiliation ? { affiliation: { '@type': 'Organization', name: author.affiliation } } : {}),
+    sameAs: author.sameAs,
+  };
+});
+const schema = { '@context': 'https://schema.org', '@graph': graph };
+---
+
+<script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />

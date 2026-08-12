@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Hero from '../../components/Hero.astro';
 import NewsletterSubscribe from '../../components/NewsletterSubscribe.astro';
 import ArticleBody from '../../components/ArticleBody.astro';
+import { authors } from '../../data/authors';
 
 export async function getStaticPaths() {
   const entries = await getCollection('newsletter');
@@ -23,6 +24,9 @@ export async function getStaticPaths() {
 }
 
 const { entry, numbers, related } = Astro.props;
+// Every issue is written by the newsletter's author; the byline names a person
+// rather than leaving the archive attributed to nobody.
+const author = authors['Alejandro Saucedo'];
 const { Content } = await render(entry);
 const issue = entry.data.issue;
 const barDate = entry.data.date
@@ -39,9 +43,14 @@ const truncateDescription = (value: string, maxLength = 160) => {
   const candidate = value.slice(0, maxLength - 1).trimEnd();
   return `${candidate.slice(0, candidate.lastIndexOf(' ')).replace(/[,:;]+$/, '')}…`;
 };
+const issueTitleFallback = `The ML Engineer — Issue #${issue}`;
+const issueTitleSuffix = ` — The ML Engineer #${issue}`;
+const topicLeadSource = entry.data.summary?.split(',').slice(0, 2).join(',').trim();
+const topicLeadLimit = Math.min(45, 65 - issueTitleSuffix.length);
+const topicLead = topicLeadSource ? truncateDescription(topicLeadSource, topicLeadLimit).replace(/…$/, '') : undefined;
 
 const frontmatter = {
-  title: `The ML Engineer — Issue #${issue}`,
+  title: topicLead ? `${topicLead}${issueTitleSuffix}` : issueTitleFallback,
   description: truncateDescription(
     entry.data.summary ?? 'The Machine Learning Engineer newsletter: curated articles, tutorials and insights from experienced machine learning professionals.',
   ),
@@ -109,6 +118,9 @@ const frontmatter = {
             </blockquote>
           )
         }
+        <p class="issue-byline" data-reveal>
+          Posted by <a href={author.aboutAnchor}>{author.name}</a>
+        </p>
         <ArticleBody class="issue-body">
           <Content />
         </ArticleBody>
@@ -356,6 +368,20 @@ const frontmatter = {
   }
   .issue-subscribe.has-syndication {
     margin-bottom: 18px;
+  }
+  /* Same mono metadata tier as the syndication label below the issue. */
+  .issue-byline {
+    color: var(--text-4);
+    font-family: var(--font-mono);
+    font-size: var(--mono-9);
+    letter-spacing: 0.12em;
+    margin: 20px auto 0;
+    max-width: 645px;
+    padding: 0 24px;
+    text-transform: uppercase;
+  }
+  .issue-byline a {
+    color: var(--accent-ink);
   }
   .issue-syndication {
     align-items: center;

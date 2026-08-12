@@ -28,7 +28,7 @@ hero:
     href: '#contact'
 evidence:
   - value: '09'
-    label: RESPONSIBLE AI PRINCIPLES
+    label: AI ALIGNMENT & SAFETY PRINCIPLES
   - value: '393'
     label: NEWSLETTER ISSUES PUBLISHED
   - value: 70k+
@@ -241,13 +241,23 @@ import FormSection from '../components/FormSection.astro';
 import PolicySection from '../components/PolicySection.astro';
 import { contactFormCopy, contactFormTitle, networkSectors, networkStats } from '../data/contactForm';
 
+<script
+  type="application/ld+json"
+  set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'The Institute for Ethical AI Alignment & Safety',
+    url: 'https://ethical.institute/',
+  })}
+/>
+
 <Hero {...frontmatter.hero} />
 
 <StatBand stats={frontmatter.evidence} />
 
 <AffiliationMarquee />
 
-<PhaseCardGrid cards={frontmatter.phases} eyebrow="01 — THE FOUR-PHASE RESPONSIBLE AI STRATEGY" heading="From individual practice to national regulation." />
+<PhaseCardGrid cards={frontmatter.phases} eyebrow="01 — THE FOUR-PHASE AI SAFETY STRATEGY" heading="From individual practice to national regulation." />
 
 <PrinciplesExplorer
   homepage
