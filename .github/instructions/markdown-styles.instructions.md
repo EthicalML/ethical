@@ -14,7 +14,7 @@ Every markdown element the site styles, what it looks like, and the constraints 
 
 ## Headings
 
-`## Heading` is not a plain heading: `rehype-sectionize` turns each one into a section wrapper. On prose pages it produces a numbered `.prose-section` with a generated eyebrow; in newsletter issues and blog posts it produces a bare `.article-section` carrying the surface class and reveal trigger, and the heading itself renders as a large serif display line above a hairline rule. Use `##` only where that sectioning treatment is intended, and never hand-author the generated eyebrow or wrapper.
+`## Heading` is not a plain heading: `rehype-sectionize` turns each one into a section wrapper. On prose pages it produces a numbered `.prose-section` with a generated eyebrow; in newsletter issues and blog posts it produces a bare `.article-section` carrying the surface class, with the reveal trigger stamped on every block element inside it so long sections appear block by block, and the heading itself renders as a large serif display line above a hairline rule. Use `##` only where that sectioning treatment is intended, and never hand-author the generated eyebrow or wrapper.
 
 `### Subheading` renders as a small uppercase mono label with wide letter-spacing. It is the label-level heading, not a smaller title; do not use it for a paragraph that needs a sentence-case heading.
 

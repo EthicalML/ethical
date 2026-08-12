@@ -4,16 +4,22 @@ function textContent(node) {
 }
 
 // Newsletter issues are archive records with their own editorial treatment:
-// each h2 section (and the leading intro block) is wrapped in a bare
-// reveal-carrying section, without the numbered prose-page chrome.
+// each h2 section (and the leading intro block) is wrapped in a bare section
+// without the numbered prose-page chrome. The reveal trigger sits on every
+// block element rather than the section wrapper, so long sections appear
+// paragraph by paragraph as they scroll in (owner call 2026-08-12).
 function sectionizeBare(tree, surfaceClass) {
   const output = [];
   let section;
+  const stamp = (node) => {
+    if (node.type === 'element') node.properties = { ...node.properties, dataReveal: '' };
+    return node;
+  };
   const wrap = (node) => ({
     type: 'element',
     tagName: 'section',
-    properties: { className: ['article-section', surfaceClass], dataReveal: '' },
-    children: [node],
+    properties: { className: ['article-section', surfaceClass] },
+    children: [stamp(node)],
   });
 
   for (const node of tree.children) {
@@ -21,7 +27,7 @@ function sectionizeBare(tree, surfaceClass) {
       section = wrap(node);
       output.push(section);
     } else if (section) {
-      section.children.push(node);
+      section.children.push(stamp(node));
     } else if (node.type === 'element') {
       section = wrap(node);
       output.push(section);

@@ -36,10 +36,6 @@ The reading room renders each publication as page images with the canonical PDF 
 
 Every composed MDX page imports through the `src/components/prose/components.js` barrel, and Vite bundles all prose-component CSS into one 110,215-byte chunk, so importing one component ships everyone's CSS. `TalksGrid` proved it: zero consumers, markup never rendered, CSS still in the bundle. `/policy/` and `/open-source/` therefore download 188,709 bytes of CSS against 35,339 for `/privacy/`, roughly 150KB each of stylesheet they never use. Test whether direct component imports on one composed page split the chunk before doing the whole set. This is a serving optimisation with no maintenance benefit, so it only earns time if the fix is close to trivial.
 
-## Reveal thresholds: switch from % to fixed pixels
-
-The reveal system (src/shared/Reveal.ts) fires at a percentage of element height (REVEAL_RATIO 0.45, TALL_REVEAL_VH fallback). Owner call 2026-08-06: percentage is the wrong model for most elements — a tall section needs hundreds of scrolled pixels before it fires while a short one fires almost immediately. Switch to a fixed pixel threshold (element reveals once ~N px of it are visible) for most targets, keeping percentage/bespoke behaviour only for the few widgets that need it. Audit the Motion table entries when doing this.
-
 ## Newsletter pass (next up)
 
 Owner has ideas for the newsletter beyond the carried-over archive (396 issues live under /mle/, recent-issues rail derives from the filenames, /mle.html redirects to /network/). Scope to be defined by owner.
