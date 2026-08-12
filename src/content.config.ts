@@ -150,6 +150,7 @@ const newsletter = defineCollection({
     date: z.date().optional(),
     summary: z.string().optional(),
     tags: z.array(z.enum(NEWSLETTER_TAGS)).max(3).optional(),
+    syndication: z.array(z.object({ name: z.string(), url: z.url() })).optional(),
   }),
 });
 

@@ -47,6 +47,7 @@ const frontmatter = {
   article: true,
   articleHeadline: `The Machine Learning Engineer Issue #${issue}`,
   datePublished: entry.data.date?.toISOString().slice(0, 10),
+  sameAs: entry.data.syndication?.map(({ url }) => url),
 };
 ---
 
@@ -108,7 +109,21 @@ const frontmatter = {
         <div class="issue-body">
           <Content />
         </div>
-        <p class="issue-subscribe" data-reveal>Enjoy The ML Engineer? <a href="/newsletter/#subscribe">Subscribe to receive the next issue</a>.</p>
+        <p class:list={['issue-subscribe', { 'has-syndication': entry.data.syndication?.length }]} data-reveal>
+          Enjoy The ML Engineer? <a href="/newsletter/#subscribe">Subscribe to receive the next issue</a>.
+        </p>
+        {
+          entry.data.syndication?.length ? (
+            <div class="issue-syndication" data-reveal>
+              <span>Also published on</span>
+              {entry.data.syndication.map(({ name, url }) => (
+                <a class="issue-tag" href={url} target="_blank" rel="noopener noreferrer">
+                  {name}
+                </a>
+              ))}
+            </div>
+          ) : null
+        }
       </div>
       {
         related.length > 0 && (
@@ -457,6 +472,26 @@ const frontmatter = {
   .issue-subscribe a {
     border-bottom: 1px solid var(--accent-line);
     color: var(--accent-ink);
+  }
+  .issue-subscribe.has-syndication {
+    margin-bottom: 18px;
+  }
+  .issue-syndication {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 auto 56px;
+    max-width: 645px;
+    padding: 0 24px;
+  }
+  .issue-syndication > span {
+    color: var(--text-4);
+    font-family: var(--font-mono);
+    font-size: var(--mono-9);
+    letter-spacing: 0.12em;
+    margin-right: 4px;
+    text-transform: uppercase;
   }
   @media (max-width: 950px) {
     .issue-body {

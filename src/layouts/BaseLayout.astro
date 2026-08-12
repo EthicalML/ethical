@@ -26,6 +26,7 @@ const article = frontmatter.article
       '@type': 'Article',
       headline: frontmatter.articleHeadline ?? title,
       ...(frontmatter.datePublished ? { datePublished: frontmatter.datePublished } : {}),
+      ...(frontmatter.sameAs?.length ? { sameAs: frontmatter.sameAs } : {}),
       author: {
         '@type': 'Organization',
         name: organization.name,
