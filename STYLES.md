@@ -287,7 +287,7 @@ Search by the surface name or representative selector below before adding a rule
 | `ProseLayout.astro`                                                               | Standard article prose shell                                                                           | `.prose-content`                                                               |
 | `pages/network.mdx`                                                               | Network page join introduction                                                                         | `.join-intro`                                                                  |
 | `pages/newsletter/[issue].astro`                                                  | Newsletter issue meta bar, article deck and issue navigation                                           | `newsletter-meta-bar`, `.issue-meta`, `.newsletter-page`                       |
-| `pages/newsletter/index.astro`                                                    | Newsletter archive latest card and issue grid                                                          | `.latest-card`, `.issue-grid`                                                  |
+| `pages/newsletter/index.astro`                                                    | Newsletter archive feed link, latest card and issue grid                                               | `.rss-link`, `.latest-card`, `.issue-grid`                                     |
 | `pages/partners.mdx`                                                              | Partners page policy feature and list heading                                                          | `.policy-feature`, `.partner-list-heading`                                     |
 | `pages/open-source/index.mdx` | Open-source project list composition | `.oss-projects` |
 | `pages/policy.mdx`                                                                | Policy page work grid composition                                                                      | `.policy-work`                                                                 |
@@ -358,4 +358,4 @@ Use these widths for CSS media queries. A component that needs responsive client
 3. For a new token, add it to `:root` when at least two owners need the same semantic value, or when the value must change between themes. A theme-dependent value is always a token, however few owners it has: a literal has nowhere to flip to under `:root[data-theme='light']`. Otherwise keep the value local.
 4. If an override seems necessary, find the existing owner first and change the original rule or component API. Add a cross-owner rule to `tokens.css` only when the relationship itself is shared and document that reason here.
 
-<!-- styles-hash: 89742a1b9664efa2692f15ff6d8a94d8749bbc73e6bd4f2009d08f4f826d7257 -->
+<!-- styles-hash: 62f1cc4b1a111fda460c4d897150c9df0fc45e18e2494eb7d8e954a03d757954 -->

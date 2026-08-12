@@ -3,12 +3,8 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Hero from '../../components/Hero.astro';
 import NewsletterSubscribe from '../../components/NewsletterSubscribe.astro';
+import { newsletterArchiveFrontmatter as frontmatter } from './rss.xml';
 
-const frontmatter = {
-  title: 'The ML Engineer — Newsletter archive',
-  description:
-    'The Machine Learning Engineer newsletter archive: weekly curated articles, tutorials and insights from experienced machine learning professionals since 2018.',
-};
 const issues = (await getCollection('newsletter')).sort(
   (first, second) => (second.data.date?.getTime() ?? 0) - (first.data.date?.getTime() ?? 0) || second.data.issue - first.data.issue,
 );
@@ -33,6 +29,7 @@ const issueLabel = (entry: (typeof issues)[number]) => [`Issue ${entry.data.issu
       beneficiaries={['production machine learning.', 'MLOps at scale.', 'agentic systems.', 'ML security.', 'AI safety.']}
     >
       <NewsletterSubscribe id="subscribe" slot="actions" />
+      <a class="rss-link" href="/newsletter/rss.xml" slot="actions" data-astro-reload>RSS</a>
     </Hero>
 
     {
@@ -99,6 +96,11 @@ const issueLabel = (entry: (typeof issues)[number]) => [`Issue ${entry.data.issu
 </BaseLayout>
 
 <style>
+  .rss-link {
+    align-self: center;
+    font-family: var(--font-mono);
+    font-size: var(--body-14);
+  }
   .latest-card {
     align-items: center;
     background: linear-gradient(180deg, var(--wash-2), transparent);
