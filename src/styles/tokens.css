@@ -86,6 +86,7 @@
   --accent-veil: rgba(94, 230, 160, 0.16);
   --accent-line: rgba(94, 230, 160, 0.28);
   --accent-edge: rgba(94, 230, 160, 0.45);
+  --rss: #f26522;
   /* accent — off-ladder steps */
   /* ---- scrim: what a fade fades TOWARD -------------------------------------
      Twelve tokens used to spell out four colours at nine alphas, because a
@@ -323,6 +324,7 @@
   --accent-veil: rgba(10, 151, 137, 0.18);
   --accent-line: rgba(5, 98, 89, 0.35);
   --accent-edge: rgba(5, 98, 89, 0.55);
+  --rss: #a83b00;
   /* The fill form: the design teal as designed. `--accent-on` is unchanged from
      `:root` — the near-black reads 5.16:1 on it, white would read 3.62:1. */
   --accent: #0a9789;

@@ -2,6 +2,9 @@ import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
 import type { APIContext } from 'astro';
 
+// Preserve headroom under the 8 MB reader ceiling as one issue is added each week.
+const wholeTextIssueLimit = 100;
+
 const absolutiseReferences = (html: string, site: URL) =>
   html.replace(
     /\b(href|src)=(['"])(?![a-z][a-z\d+.-]*:|#)([^'"]*)\2/gi,
@@ -25,13 +28,15 @@ export async function GET(context: APIContext) {
     description:
       'The Machine Learning Engineer newsletter archive: weekly curated articles, tutorials and insights from experienced machine learning professionals since 2018.',
     site,
-    items: issues.map((entry) => ({
+    items: issues.map((entry, index) => ({
       title: `The ML Engineer — Issue #${entry.data.issue}`,
       link: `/newsletter/${entry.data.issue}/`,
       pubDate: entry.data.date,
       description: entry.data.summary,
       categories: entry.data.tags,
-      content: absolutiseReferences(entry.rendered!.html, site),
+      ...(index < wholeTextIssueLimit
+        ? { content: absolutiseReferences(entry.rendered!.html, site) }
+        : {}),
     })),
     customData: '<language>en</language>',
   });

@@ -33,7 +33,6 @@ const issueLabel = (entry: (typeof issues)[number]) => [`Issue ${entry.data.issu
       beneficiaries={['production machine learning.', 'MLOps at scale.', 'agentic systems.', 'ML security.', 'AI safety.']}
     >
       <NewsletterSubscribe id="subscribe" slot="actions" />
-      <a class="rss-link" href="/newsletter/rss.xml" slot="actions" data-astro-reload>RSS</a>
     </Hero>
 
     {
@@ -73,7 +72,10 @@ const issueLabel = (entry: (typeof issues)[number]) => [`Issue ${entry.data.issu
             ))
           }
         </div>
-        <p class="finder-hint">Full-text search lives in <button type="button" class="finder-palette" data-command-palette-open>⌘K</button></p>
+        <p class="finder-hint">
+          <span>Full-text search lives in <button type="button" class="finder-palette" data-command-palette-open>⌘K</button></span>
+          <a class="rss-link" href="/newsletter/rss.xml" data-astro-reload>RSS</a>
+        </p>
       </div>
       <div class="issue-list" data-reveal>
         {
@@ -100,11 +102,6 @@ const issueLabel = (entry: (typeof issues)[number]) => [`Issue ${entry.data.issu
 </BaseLayout>
 
 <style>
-  .rss-link {
-    align-self: center;
-    font-family: var(--font-mono);
-    font-size: var(--body-14);
-  }
   .latest-card {
     align-items: center;
     background: linear-gradient(180deg, var(--wash-2), transparent);
@@ -246,12 +243,26 @@ const issueLabel = (entry: (typeof issues)[number]) => [`Issue ${entry.data.issu
     color: var(--accent-ink);
   }
   .finder-hint {
+    align-items: center;
     color: var(--text-3);
+    display: flex;
     flex-basis: 100%;
     font-family: var(--font-mono);
     font-size: var(--mono-10);
+    justify-content: space-between;
     letter-spacing: 0.1em;
     margin: 0;
+  }
+  .rss-link {
+    border: 1px solid var(--rss);
+    border-radius: var(--radius-pill);
+    color: var(--rss);
+    font-family: var(--font-mono);
+    font-size: var(--mono-9);
+    padding: 6px 10px;
+  }
+  .rss-link:hover {
+    opacity: 1;
   }
   .finder-palette {
     background: none;
