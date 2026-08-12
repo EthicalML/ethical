@@ -37,6 +37,16 @@
   margin-block: 0 18px;
 }
 
+/* A markdown `>` quote wraps its text in a paragraph, which the body-copy rule
+   above would otherwise restyle back to body size. Inherit the pull-quote
+   treatment (see .prose-quote in tokens.css) so a quote in the body reads
+   exactly like the article deck. */
+.article-body blockquote p {
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+}
+
 .article-body h2 {
   border-top: 1px solid var(--hairline);
   font: 300 var(--display-30) / 1.15 var(--font-display);
