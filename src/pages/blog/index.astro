@@ -4,7 +4,7 @@ import ProseLayout from '../../layouts/ProseLayout.astro';
 import { blogHref, blogSourceLabel, hasBlogBody, publishedBlogEntries } from '../../utils/blog';
 
 const frontmatter = {
-  title: 'Blog',
+  title: 'Production ML, responsible AI and alignment blog',
   description: 'Writing from The Institute for Ethical AI Alignment & Safety on production machine learning, responsible AI and AI safety.',
 };
 const posts = publishedBlogEntries(await getCollection('blog')).sort((first, second) => second.data.date.getTime() - first.data.date.getTime());

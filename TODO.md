@@ -88,7 +88,7 @@ Each issue carries an events block, but nothing in it points back to `/talks-and
 
 ## Issue 400: the Production ML Across 2015-2035 talk
 
-Written and cut from issue 399 at the last minute to make room for the HackerNoon series feature and the website relaunch. It is the PyCon DE & PyData 2026 talk, https://www.youtube.com/watch?v=I1GvlW1H4WI, covering production ML from 2015 to 2035: the 2015-2023 evolution and the shift of engineering effort from training to inference and the application layer, then monitoring, stack alignment, shorter production timelines, autonomous operational patterns, platform complexity and operational debt. The full section prose is in the git history of `src/content/newsletter/399.md` — recover it from there rather than rewriting, and lead issue 400 with it.
+Written and cut from issue 399 at the last minute to make room for the HackerNoon series feature and the website relaunch. It is the PyCon DE & PyData 2026 talk, https://www.youtube.com/watch?v=I1GvlW1H4WI, covering production ML from 2015 to 2035: the 2015-2023 evolution and the shift of engineering effort from training to inference and the application layer, then monitoring, stack alignment, shorter production timelines, autonomous operational patterns, platform complexity and operational debt. The recovered full section now lives at `/blog/production-ml-across-2015-2035/`; lead issue 400 by linking to or lightly adapting that post rather than duplicating it.
 
 ## Low priority — event banner artwork loads eagerly
 
