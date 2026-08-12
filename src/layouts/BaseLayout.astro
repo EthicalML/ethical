@@ -9,7 +9,8 @@ const metaDescription = 'An independent research institute working to ensure tha
 const ogImage = '/images/banner.jpg';
 const { frontmatter = {} } = Astro.props;
 const title = frontmatter.title ?? 'The Institute for Ethical AI Alignment & Safety';
-const description = frontmatter.description ?? metaDescription;
+const seoTitle = frontmatter.seoTitle ?? title;
+const description = frontmatter.seoDescription ?? frontmatter.description ?? metaDescription;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const socialImage = new URL(frontmatter.image ?? ogImage, Astro.site);
 const organization = {
@@ -49,12 +50,12 @@ const article = frontmatter.article
     <link rel="icon" href="/favicon.png" type="image/png" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="The Institute for Ethical AI Alignment & Safety" />
-    <meta property="og:title" content={title} />
+    <meta property="og:title" content={seoTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={socialImage} />
     <meta property="og:url" content={canonical} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
+    <meta name="twitter:title" content={seoTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={socialImage} />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(organization)} />
@@ -171,7 +172,7 @@ const article = frontmatter.article
         });
       });
     </script>
-    <title>{title}</title>
+    <title>{seoTitle}</title>
   </head>
   <body>
     <SiteHeader />
