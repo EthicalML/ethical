@@ -49,6 +49,12 @@ Owner has ideas for the newsletter beyond the carried-over archive (396 issues l
 Six homepage scroll-effect variants sit in the open PR #12, paused for owner decision: pick a variant to land or close the PR.
 
 
+## Blog posts to write
+
+Queued posts for the new blog. Each lands as a draft or future-dated entry through the normal publish flow; the list will grow.
+
+- Announcement: the newsletter redesign and the new RSS feed (PR #69). Cover the rebuilt archive under the Astro site and the feed addition; publish once the blog itself is live and linked.
+
 ## Blog follow-up: RSS feeds and newsletter cross-publishing
 
 Once the blog ships, give it its own feed at `/blog/rss.xml`, fully separate from a newsletter feed at `/mle/rss.xml` (this absorbs the old deferred "RSS (later)" item): the audiences and cadences differ, both derive trivially from their content collections via `@astrojs/rss`, and nothing is gained by combining them. Separately decide whether new blog posts get surfaced in the weekly newsletter issues (a featured section or link block); that half is editorial, not build work, and needs an owner call on placement and cadence.
