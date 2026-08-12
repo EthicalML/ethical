@@ -67,6 +67,9 @@ Explore a Martin Fowler bliki-style stream of short opinion posts alongside full
 Queued posts for the new blog. Each lands as a draft or future-dated entry through the normal publish flow; the list will grow.
 
 - Announcement: the newsletter redesign and the new RSS feed (PR #69). Cover the rebuilt archive under the Astro site and the feed addition; publish once the blog itself is live and linked.
+- Production ML monitoring, conceptual rewrite (owner call 2026-08-12): not a 1-1 republication of the 2020 KDnuggets/TDS piece because its Seldon Core implementation is archive tech; write a version centred on the concepts (outliers, drift, explainers, statistical performance) that references the KDnuggets and Towards Data Science originals.
+- The top risks posed by AI and how to safeguard against them: the 2020 ITProPortal piece is dead on the live web (Wayback only); rather than recover it, treat the topic as a fresh post updated for the frontier-AI era.
+- Per-project posts for the open-source portfolio (owner call 2026-08-12): the GitHub repos do not enter the blog as feature-cards; instead each major project (Kompute, awesome-production-machine-learning, the regulation list, KAOS, fml/sml-security, the agentic lists) earns an authored post that tells its story and backlinks the repo and its existing /open-source/ page.
 
 ## Blog follow-up: RSS feeds and newsletter cross-publishing
 
