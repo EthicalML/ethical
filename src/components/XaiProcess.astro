@@ -14,17 +14,17 @@ interface Props {
 const { steps }: Props = Astro.props;
 ---
 
-<AnimationWindow class="xai-process-window" title="responsible-ml.process">
+<AnimationWindow class="xai-process-window" title="ml-safety.process">
   <xai-process data-stage="0">
     <div class="process-heading">
       <div>
         <p class="eyebrow">TOOL + PROCESS</p>
-        <h3>Responsible ML is a continuous workflow</h3>
+        <h3>Safe and aligned ML is a continuous workflow</h3>
       </div>
       <p aria-live="polite"><i aria-hidden="true"></i><span data-process-state>Inspect the data before training</span></p>
     </div>
 
-    <div class="process-flow" aria-label="Three-step responsible machine learning workflow">
+    <div class="process-flow" aria-label="Three-step machine learning safety workflow">
       <div class="model-packet" aria-hidden="true"><span>ML</span></div>
       {
         steps.map(({ number, title, checkpoint }, index) => (
@@ -56,7 +56,7 @@ const { steps }: Props = Astro.props;
     </div>
 
     <div class="feedback-loop">
-      <span>RESPONSIBLE AI PRINCIPLES</span>
+      <span>AI ALIGNMENT & SAFETY PRINCIPLES</span>
       <i aria-hidden="true"></i>
       <b>Applied at every checkpoint</b>
       <i aria-hidden="true"></i>
