@@ -38,6 +38,8 @@ const newsletterRedirects = Object.fromEntries(
 const republishedBlogPaths = new Set(
   globSync('src/content/blog/*/index.md')
     .filter((filename) => {
+      // Regex parse because collections are not loadable at config time; the venue list
+      // must be kept in step with the `source` enum in src/content.config.ts by hand.
       const frontmatter = readFileSync(filename, 'utf8').match(/^---\n([\s\S]*?)\n---/)?.[1] ?? '';
       return /^source:\s*['"]?(?:linkedin|hackernoon|external)['"]?\s*$/m.test(frontmatter);
     })
