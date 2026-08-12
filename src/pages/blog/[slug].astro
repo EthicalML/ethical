@@ -1,30 +1,50 @@
 ---
 import { getCollection, render } from 'astro:content';
-import ProseLayout from '../../layouts/ProseLayout.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleBody from '../../components/ArticleBody.astro';
 import { blogHref, blogSlug, hasBlogBody, publishedBlogEntries, type BlogEntry } from '../../utils/blog';
 
 export async function getStaticPaths() {
   const entries = publishedBlogEntries(await getCollection('blog'));
   const localEntries = entries.filter(hasBlogBody);
+  const linkedPost = (post: BlogEntry) => ({
+    external: !hasBlogBody(post),
+    href: blogHref(post),
+    title: post.data.title,
+  });
   const related = (of: BlogEntry) =>
     entries
       .filter((other) => other.id !== of.id && other.data.tags?.some((tag) => of.data.tags?.includes(tag)))
       .sort((first, second) => second.data.date.getTime() - first.data.date.getTime())
       .slice(0, 3)
-      .map((other) => ({
-        external: !hasBlogBody(other),
-        href: blogHref(other),
-        title: other.data.title,
-      }));
-  return localEntries.map((entry) => ({ params: { slug: blogSlug(entry) }, props: { entry, related: related(entry) } }));
+      .map(linkedPost);
+  const seriesNavigation = (of: BlogEntry) => {
+    if (!of.data.series) return undefined;
+    const posts = entries
+      .filter((other) => other.data.series === of.data.series)
+      .sort((first, second) => first.data.date.getTime() - second.data.date.getTime());
+    const position = posts.findIndex((post) => post.id === of.id);
+    return {
+      name: of.data.series,
+      position: position + 1,
+      total: posts.length,
+      previous: position > 0 ? linkedPost(posts[position - 1]) : undefined,
+      next: position < posts.length - 1 ? linkedPost(posts[position + 1]) : undefined,
+    };
+  };
+  return localEntries.map((entry) => ({
+    params: { slug: blogSlug(entry) },
+    props: { entry, related: related(entry), seriesNavigation: seriesNavigation(entry) },
+  }));
 }
 
-const { entry, related } = Astro.props;
+const { entry, related, seriesNavigation } = Astro.props;
 const { Content } = await render(entry);
 const publishedDate = entry.data.originalDate ?? entry.data.date;
 const frontmatter = {
   title: entry.data.title,
   description: entry.data.summary,
+  eyebrow: entry.data.series ?? 'THE INSTITUTE BLOG',
   image: entry.data.image,
   canonical: entry.data.source !== 'original' ? entry.data.url : undefined,
   article: true,
@@ -35,41 +55,85 @@ const frontmatter = {
 const formatDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 ---
 
-<ProseLayout frontmatter={frontmatter}>
-  <div class="blog-meta">
-    <p>
-      <time datetime={publishedDate.toISOString().slice(0, 10)}>{formatDate(publishedDate)}</time>
-      <span>{entry.data.authors.join(', ')}</span>
-    </p>
-    {entry.data.originalDate && <p>Published here {formatDate(entry.data.date)}</p>}
-    {entry.data.tags?.length ? <p class="blog-tags">{entry.data.tags.join(' · ')}</p> : null}
-  </div>
-  <div class="blog-body"><Content /></div>
-  {
-    related.length > 0 && (
-      <aside class="blog-related" data-reveal>
-        <p class="eyebrow">RELATED</p>
-        <ul>
-          {related.map((post) => (
-            <li>
-              <a href={post.href} target={post.external ? '_blank' : undefined} rel={post.external ? 'noopener noreferrer' : undefined}>
-                {post.title}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </aside>
-    )
-  }
-</ProseLayout>
+<BaseLayout frontmatter={frontmatter}>
+  <article class="blog-post">
+    <div class="blog-meta" data-reveal>
+      <p>
+        <time datetime={publishedDate.toISOString().slice(0, 10)}>{formatDate(publishedDate)}</time>
+        <span>{entry.data.authors.join(', ')}</span>
+      </p>
+      {entry.data.originalDate && <p>Published here {formatDate(entry.data.date)}</p>}
+      {entry.data.tags?.length ? <p class="blog-tags">{entry.data.tags.join(' · ')}</p> : null}
+    </div>
+    {
+      entry.data.summary && (
+        <blockquote class="prose-quote blog-lede" data-reveal>
+          {entry.data.summary}
+        </blockquote>
+      )
+    }
+    {
+      seriesNavigation && seriesNavigation.total > 1 && (
+        <nav class="blog-series-nav" aria-label={`${seriesNavigation.name} series`} data-reveal>
+          {seriesNavigation.previous ? (
+            <a
+              href={seriesNavigation.previous.href}
+              target={seriesNavigation.previous.external ? '_blank' : undefined}
+              rel={seriesNavigation.previous.external ? 'noopener noreferrer' : undefined}
+            >
+              <span>Previous in series</span>
+              <strong>{seriesNavigation.previous.title}</strong>
+            </a>
+          ) : (
+            <span />
+          )}
+          <p>
+            <span>{seriesNavigation.name}</span>
+            <strong>
+              {seriesNavigation.position} of {seriesNavigation.total}
+            </strong>
+          </p>
+          {seriesNavigation.next ? (
+            <a
+              href={seriesNavigation.next.href}
+              target={seriesNavigation.next.external ? '_blank' : undefined}
+              rel={seriesNavigation.next.external ? 'noopener noreferrer' : undefined}
+            >
+              <span>Next in series</span>
+              <strong>{seriesNavigation.next.title}</strong>
+            </a>
+          ) : (
+            <span />
+          )}
+        </nav>
+      )
+    }
+    <ArticleBody class="blog-body"><Content /></ArticleBody>
+    {
+      related.length > 0 && (
+        <aside class="blog-related" data-reveal>
+          <p class="eyebrow">RELATED</p>
+          <ul>
+            {related.map((post) => (
+              <li>
+                <a href={post.href} target={post.external ? '_blank' : undefined} rel={post.external ? 'noopener noreferrer' : undefined}>
+                  {post.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </aside>
+      )
+    }
+  </article>
+</BaseLayout>
 
 <style>
   .blog-meta,
-  .blog-body,
   .blog-related {
     margin-inline: auto;
-    max-width: 840px;
-    padding-inline: 48px;
+    max-width: 645px;
+    padding-inline: 24px;
   }
   .blog-meta {
     border-bottom: 1px solid var(--hairline);
@@ -89,17 +153,61 @@ const formatDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'nume
   .blog-meta span {
     margin-left: 14px;
   }
-  .blog-body {
-    padding-bottom: 72px;
-    padding-top: 36px;
+  .blog-lede {
+    border-bottom: 1px solid var(--hairline);
+    margin: 34px auto 0;
+    padding-bottom: 30px;
   }
-  .blog-body :global(p),
-  .blog-body :global(li) {
+  .blog-series-nav {
+    align-items: stretch;
+    border-bottom: 1px solid var(--hairline);
+    display: grid;
+    gap: 12px;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    margin: 0 auto;
+    max-width: 645px;
+    padding: 18px 0;
+  }
+  .blog-series-nav > a {
+    border: 1px solid var(--hairline-card);
+    border-radius: 6px;
+    display: grid;
+    gap: 5px;
+    padding: 11px 13px;
+  }
+  .blog-series-nav > a:last-child {
+    text-align: right;
+  }
+  .blog-series-nav > a:hover {
+    border-color: var(--accent-edge);
+    opacity: 1;
+  }
+  .blog-series-nav span,
+  .blog-series-nav p {
+    color: var(--text-4);
+    font-family: var(--font-mono);
+    font-size: var(--mono-9);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .blog-series-nav p {
+    align-self: center;
+    margin: 0;
+    text-align: center;
+  }
+  .blog-series-nav p span,
+  .blog-series-nav p strong {
+    display: block;
+  }
+  .blog-series-nav p strong {
+    color: var(--accent-ink);
+    margin-top: 5px;
+  }
+  .blog-series-nav a strong {
     color: var(--text-2);
-    font-size: var(--body-16);
-    line-height: 1.7;
+    font-size: var(--body-14);
+    line-height: 1.4;
   }
-  .blog-body :global(a),
   .blog-related a {
     color: var(--accent-ink);
   }
@@ -116,22 +224,27 @@ const formatDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'nume
   .blog-related li {
     margin-top: 10px;
   }
-  @media (max-width: 950px) {
-    .blog-meta,
-    .blog-body,
-    .blog-related {
-      padding-inline: 24px;
-    }
-  }
   @media (max-width: 600px) {
     .blog-meta,
-    .blog-body,
     .blog-related {
       padding-inline: 18px;
     }
     .blog-meta span {
       display: block;
       margin: 7px 0 0;
+    }
+    .blog-series-nav {
+      grid-template-columns: 1fr;
+      margin-inline: 18px;
+    }
+    .blog-series-nav > span {
+      display: none;
+    }
+    .blog-series-nav > a:last-child {
+      text-align: left;
+    }
+    .blog-series-nav p {
+      grid-row: 1;
     }
   }
 </style>

@@ -2,18 +2,28 @@
 
 Documented reusable components for composed pages. An API change to a component documented here updates this file in the same change. Pages own their content; these components arrange supplied data and never hide owner-editable copy.
 
+## ArticleBody
+
+`src/components/ArticleBody.astro` with `ArticleBody.css`. The shared long-form Markdown body wrapper for newsletter issues and blog posts. It owns the 645px reading measure, issue-style headings, body copy, lists, links, images and code-window chrome. Blog tables additionally arrive wrapped by `rehype-sectionize` in `.article-table-scroll`, which supplies contained horizontal scrolling and the compact table treatment. Pass the surface identity through the optional `class` prop (`issue-body` or `blog-body`) and render the collection's `<Content />` in the default slot. Summary decks, metadata, navigation and related links remain with the consuming page.
+
+### Props
+
+| Prop    | Type      | Notes                                                                                    |
+| ------- | --------- | ---------------------------------------------------------------------------------------- |
+| `class` | `string?` | Surface identity for page-specific integration; the wrapper always adds `.article-body`. |
+
 ## LinkCardGrid
 
 `src/components/LinkCardGrid.astro`. A responsive grid shell for collections of linked cards that carry a short label, title and trailing detail. It establishes the standard three-column layout, collapses to two columns at the wide breakpoint and one at the compact breakpoint, and leaves card content and card-specific presentation with the consumer. `FrameworkCards`, `FrameworkLinkCards` and `RegulationGrid` compose it; their local CSS records only meaningful differences such as gap size or an earlier single-column collapse.
 
 ### Props
 
-| Prop | Type | Notes |
-| --- | --- | --- |
-| `as` | `'div' \| 'nav'` | Root semantic element; defaults to `div`. Use `nav` only for a genuine navigation collection. |
-| `class` | `string?` | Consumer-owned class for local card presentation and small layout overrides. |
-| `ariaLabel` | `string?` | Accessible label for a `nav` root. |
-| `reveal` | `boolean?` | Adds the standard `data-reveal` hook when the grid itself owns its entrance. |
+| Prop        | Type             | Notes                                                                                         |
+| ----------- | ---------------- | --------------------------------------------------------------------------------------------- |
+| `as`        | `'div' \| 'nav'` | Root semantic element; defaults to `div`. Use `nav` only for a genuine navigation collection. |
+| `class`     | `string?`        | Consumer-owned class for local card presentation and small layout overrides.                  |
+| `ariaLabel` | `string?`        | Accessible label for a `nav` root.                                                            |
+| `reveal`    | `boolean?`       | Adds the standard `data-reveal` hook when the grid itself owns its entrance.                  |
 
 Pass the cards as children in a direct repeated structure. The consumer owns label, title, detail, optional metadata and link semantics, so the grid does not accumulate content-mode props. `FrameworkCards`, for example, supplies its status pill and principle chips inside each card.
 

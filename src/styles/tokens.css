@@ -709,13 +709,13 @@ dd { margin: 6px 0 0; }
 }
 .prose-section > ul { padding-left: 20px; }
 .prose-section > ul li { margin-bottom: 8px; }
-/* Pull quote: every markdown `>` blockquote and the newsletter deck. Serif
+/* Pull quote: every markdown `>` blockquote and the article summary decks. Serif
    italic with an oversized quote mark hanging in the left margin; the right
    padding mirrors the left so the measure stays optically centred. */
 .prose-quote,
 .prose-section blockquote,
 .prose-body blockquote,
-.issue-body blockquote {
+.article-body blockquote {
   border: 0;
   color: var(--text-2);
   font: italic 300 21px/1.65 var(--font-display);
@@ -729,7 +729,7 @@ dd { margin: 6px 0 0; }
 .prose-quote::before,
 .prose-section blockquote::before,
 .prose-body blockquote::before,
-.issue-body blockquote::before {
+.article-body blockquote::before {
   color: var(--accent-edge);
   content: '\201C';
   font: 400 64px/1 var(--font-display);
@@ -740,16 +740,16 @@ dd { margin: 6px 0 0; }
 .prose-quote > p:last-child,
 .prose-section blockquote > p:last-child,
 .prose-body blockquote > p:last-child,
-.issue-body blockquote > p:last-child { margin-bottom: 0; }
+.article-body blockquote > p:last-child { margin-bottom: 0; }
 @media (max-width: 600px) {
   .prose-quote,
   .prose-section blockquote,
   .prose-body blockquote,
-  .issue-body blockquote { font-size: 18px; padding: 0 34px; }
+  .article-body blockquote { font-size: 18px; padding: 0 34px; }
   .prose-quote::before,
   .prose-section blockquote::before,
   .prose-body blockquote::before,
-  .issue-body blockquote::before { font-size: 48px; left: 4px; }
+  .article-body blockquote::before { font-size: 48px; left: 4px; }
 }
 .prose-block {
   background: linear-gradient(180deg, var(--wash-2), transparent);
