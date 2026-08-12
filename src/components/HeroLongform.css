@@ -1,34 +1,35 @@
 /* Longform hero title mode: full-length article titles on the flagship hero.
    Imported only by the surfaces that use it (blog posts), so the classic
-   display mode ships none of these bytes. The wide measure holds until the
-   Wide breakpoint (950px), where the hero's compact behaviour takes over. */
+   display mode ships none of these bytes.
+
+   The width is the first variable and the type size the second: the copy
+   column widens from the classic ~685px grid track to up to 980px, and the
+   title holds the display-72 scale unless the longest balanced line cannot
+   fit at that measure, in which case the component computes a smaller size
+   and passes it as --longform-title-size (never below 40px). Below the Wide
+   breakpoint (950px) the hero is block layout and the classic compact
+   clamps take over. */
+
+.hero[data-title-mode='longform'] {
+  grid-template-columns: minmax(0, 980px) minmax(0, 1fr);
+}
 
 .hero[data-title-mode='longform'] .hero-copy {
   max-width: 980px;
 }
 
 .hero[data-title-mode='longform'] h1 {
-  font-size: var(--display-44);
+  font-size: var(--longform-title-size, var(--display-72));
   letter-spacing: -0.015em;
-  line-height: 1.12;
-}
-
-.hero[data-title-mode='longform'][data-title-tier='long'] h1 {
-  font-size: var(--display-38);
+  line-height: 1.08;
 }
 
 @media (max-width: 950px) {
   .hero[data-title-mode='longform'] .hero-copy {
-    max-width: 660px;
+    max-width: 680px;
   }
 
   .hero[data-title-mode='longform'] h1 {
-    font-size: var(--display-34);
-  }
-}
-
-@media (max-width: 600px) {
-  .hero[data-title-mode='longform'] h1 {
-    font-size: var(--display-30);
+    font-size: clamp(38px, 6.5vw, 56px);
   }
 }

@@ -60,7 +60,12 @@ if (longform && title.length > 110) {
   console.warn(`[Hero] longform title exceeds the 110-character budget (${title.length}): ${title}`);
 }
 const titleLines = longform ? balanceLines(title, 3) : title;
-const titleTier = longform && title.length > 70 ? 'long' : undefined;
+// Width first, size second: the longform column offers up to 980px, and the
+// title keeps the classic 72px display scale unless the longest balanced line
+// cannot fit at that measure (average display advance is close to 0.52em).
+// The floor is 40px; the 110-character warning above fires long before it.
+const longestLine = longform ? Math.max(...titleLines.map((line) => line.length)) : 0;
+const longformSize = longform ? Math.round(Math.min(72, Math.max(40, 980 / (0.52 * longestLine)))) : undefined;
 ---
 
 <header
@@ -70,7 +75,7 @@ const titleTier = longform && title.length > 70 ? 'long' : undefined;
   data-reveal
   data-pagefind-ignore
   data-title-mode={longform ? 'longform' : undefined}
-  data-title-tier={titleTier}
+  style={longformSize && longformSize < 72 ? `--longform-title-size: ${longformSize}px` : undefined}
 >
   <hero-cycle><canvas class="hero-canvas" aria-hidden="true"></canvas></hero-cycle>
   <div class="hero-copy">
