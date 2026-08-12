@@ -47,10 +47,13 @@ Owner has ideas for the newsletter beyond the carried-over archive (396 issues l
 Six homepage scroll-effect variants sit in the open PR #12, paused for owner decision: pick a variant to land or close the PR.
 
 
+## Blog follow-up: RSS feeds and newsletter cross-publishing
+
+Once the blog ships, give it its own feed at `/blog/rss.xml`, fully separate from a newsletter feed at `/mle/rss.xml` (this absorbs the old deferred "RSS (later)" item): the audiences and cadences differ, both derive trivially from their content collections via `@astrojs/rss`, and nothing is gained by combining them. Separately decide whether new blog posts get surfaced in the weekly newsletter issues (a featured section or link block); that half is editorial, not build work, and needs an owner call on placement and cadence.
+
 ## Deferred
 
 - Anti-LLM style pass — needs owner to supply the style guidance it was waiting on, or downgrade to a plain owner-led copy review
-- RSS (later)
 - Astro showcase (later)
 
 ## Policy/Industry library follow-ups
