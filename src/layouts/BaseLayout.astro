@@ -10,7 +10,7 @@ const ogImage = '/images/banner.jpg';
 const { frontmatter = {} } = Astro.props;
 const title = frontmatter.title ?? 'The Institute for Ethical AI Alignment & Safety';
 const description = frontmatter.description ?? metaDescription;
-const canonical = new URL(Astro.url.pathname, Astro.site);
+const canonical = new URL(frontmatter.canonical ?? Astro.url.pathname, Astro.site);
 const socialImage = new URL(frontmatter.image ?? ogImage, Astro.site);
 const organization = {
   '@context': 'https://schema.org',
@@ -27,11 +27,15 @@ const article = frontmatter.article
       headline: frontmatter.articleHeadline ?? title,
       ...(frontmatter.datePublished ? { datePublished: frontmatter.datePublished } : {}),
       ...(frontmatter.sameAs?.length ? { sameAs: frontmatter.sameAs } : {}),
-      author: {
-        '@type': 'Organization',
-        name: organization.name,
-        url: organization.url,
-      },
+      author: frontmatter.articleAuthors?.length
+        ? frontmatter.articleAuthors.length === 1
+          ? { '@type': 'Person', name: frontmatter.articleAuthors[0] }
+          : frontmatter.articleAuthors.map((name: string) => ({ '@type': 'Person', name }))
+        : {
+            '@type': 'Organization',
+            name: organization.name,
+            url: organization.url,
+          },
     }
   : undefined;
 ---

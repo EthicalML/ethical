@@ -1,0 +1,137 @@
+---
+import { getCollection, render } from 'astro:content';
+import ProseLayout from '../../layouts/ProseLayout.astro';
+import { blogHref, blogSlug, hasBlogBody, publishedBlogEntries, type BlogEntry } from '../../utils/blog';
+
+export async function getStaticPaths() {
+  const entries = publishedBlogEntries(await getCollection('blog'));
+  const localEntries = entries.filter(hasBlogBody);
+  const related = (of: BlogEntry) =>
+    entries
+      .filter((other) => other.id !== of.id && other.data.tags?.some((tag) => of.data.tags?.includes(tag)))
+      .sort((first, second) => second.data.date.getTime() - first.data.date.getTime())
+      .slice(0, 3)
+      .map((other) => ({
+        external: !hasBlogBody(other),
+        href: blogHref(other),
+        title: other.data.title,
+      }));
+  return localEntries.map((entry) => ({ params: { slug: blogSlug(entry) }, props: { entry, related: related(entry) } }));
+}
+
+const { entry, related } = Astro.props;
+const { Content } = await render(entry);
+const publishedDate = entry.data.originalDate ?? entry.data.date;
+const frontmatter = {
+  title: entry.data.title,
+  description: entry.data.summary,
+  image: entry.data.image,
+  canonical: entry.data.source !== 'original' ? entry.data.url : undefined,
+  article: true,
+  articleHeadline: entry.data.title,
+  articleAuthors: entry.data.authors,
+  datePublished: publishedDate.toISOString().slice(0, 10),
+};
+const formatDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<ProseLayout frontmatter={frontmatter}>
+  <div class="blog-meta">
+    <p>
+      <time datetime={publishedDate.toISOString().slice(0, 10)}>{formatDate(publishedDate)}</time>
+      <span>{entry.data.authors.join(', ')}</span>
+    </p>
+    {entry.data.originalDate && <p>Published here {formatDate(entry.data.date)}</p>}
+    {entry.data.tags?.length ? <p class="blog-tags">{entry.data.tags.join(' · ')}</p> : null}
+  </div>
+  <div class="blog-body"><Content /></div>
+  {
+    related.length > 0 && (
+      <aside class="blog-related" data-reveal>
+        <p class="eyebrow">RELATED</p>
+        <ul>
+          {related.map((post) => (
+            <li>
+              <a href={post.href} target={post.external ? '_blank' : undefined} rel={post.external ? 'noopener noreferrer' : undefined}>
+                {post.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </aside>
+    )
+  }
+</ProseLayout>
+
+<style>
+  .blog-meta,
+  .blog-body,
+  .blog-related {
+    margin-inline: auto;
+    max-width: 840px;
+    padding-inline: 48px;
+  }
+  .blog-meta {
+    border-bottom: 1px solid var(--hairline);
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: var(--mono-10);
+    letter-spacing: 0.08em;
+    padding-bottom: 24px;
+    text-transform: uppercase;
+  }
+  .blog-meta p {
+    margin: 0 0 8px;
+  }
+  .blog-meta p:last-child {
+    margin-bottom: 0;
+  }
+  .blog-meta span {
+    margin-left: 14px;
+  }
+  .blog-body {
+    padding-bottom: 72px;
+    padding-top: 36px;
+  }
+  .blog-body :global(p),
+  .blog-body :global(li) {
+    color: var(--text-2);
+    font-size: var(--body-16);
+    line-height: 1.7;
+  }
+  .blog-body :global(a),
+  .blog-related a {
+    color: var(--accent-ink);
+  }
+  .blog-related {
+    border-top: 1px solid var(--hairline);
+    padding-bottom: 96px;
+    padding-top: 28px;
+  }
+  .blog-related ul {
+    list-style: none;
+    margin: 18px 0 0;
+    padding: 0;
+  }
+  .blog-related li {
+    margin-top: 10px;
+  }
+  @media (max-width: 950px) {
+    .blog-meta,
+    .blog-body,
+    .blog-related {
+      padding-inline: 24px;
+    }
+  }
+  @media (max-width: 600px) {
+    .blog-meta,
+    .blog-body,
+    .blog-related {
+      padding-inline: 18px;
+    }
+    .blog-meta span {
+      display: block;
+      margin: 7px 0 0;
+    }
+  }
+</style>

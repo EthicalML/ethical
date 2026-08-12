@@ -1,0 +1,99 @@
+---
+import { getCollection } from 'astro:content';
+import ProseLayout from '../../layouts/ProseLayout.astro';
+import { blogHref, blogSourceLabel, hasBlogBody, publishedBlogEntries } from '../../utils/blog';
+
+const frontmatter = {
+  title: 'Blog',
+  description: 'Writing from The Institute for Ethical AI Alignment & Safety on production machine learning, responsible AI and AI safety.',
+};
+const posts = publishedBlogEntries(await getCollection('blog')).sort((first, second) => second.data.date.getTime() - first.data.date.getTime());
+const formatDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<ProseLayout frontmatter={frontmatter}>
+  <div class="blog-list">
+    {
+      posts.map((post) => {
+        const external = !hasBlogBody(post);
+        const source = blogSourceLabel(post.data.source);
+        return (
+          <article class="blog-card" data-reveal>
+            <p class="blog-date">
+              {formatDate(post.data.originalDate ?? post.data.date)}
+              {post.data.originalDate && <span>Published here {formatDate(post.data.date)}</span>}
+            </p>
+            <h2>
+              <a href={blogHref(post)} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
+                {post.data.title}
+              </a>
+            </h2>
+            {post.data.summary && <p class="blog-summary">{post.data.summary}</p>}
+            {source && <p class="blog-source">Originally published on {source}</p>}
+            {post.data.tags?.length ? <p class="blog-tags">{post.data.tags.join(' · ')}</p> : null}
+          </article>
+        );
+      })
+    }
+  </div>
+</ProseLayout>
+
+<style>
+  .blog-list {
+    margin: 0 auto;
+    max-width: 840px;
+    padding: 0 48px 96px;
+  }
+  .blog-card {
+    border-top: 1px solid var(--hairline);
+    padding: 32px 0;
+  }
+  .blog-card h2 {
+    font: 300 var(--display-38) / 1.12 var(--font-display);
+    margin: 10px 0 14px;
+  }
+  .blog-card h2 a {
+    color: var(--text-1);
+  }
+  .blog-card h2 a:hover {
+    color: var(--accent-ink);
+    opacity: 1;
+  }
+  .blog-date,
+  .blog-source,
+  .blog-tags {
+    color: var(--text-4);
+    font-family: var(--font-mono);
+    font-size: var(--mono-10);
+    letter-spacing: 0.08em;
+    margin: 0;
+    text-transform: uppercase;
+  }
+  .blog-date span {
+    margin-left: 12px;
+  }
+  .blog-summary {
+    color: var(--text-2);
+    font-size: var(--body-16);
+    line-height: 1.65;
+    margin: 0 0 14px;
+  }
+  .blog-source {
+    color: var(--text-3);
+    margin-bottom: 10px;
+  }
+  @media (max-width: 950px) {
+    .blog-list {
+      padding-inline: 24px;
+    }
+  }
+  @media (max-width: 600px) {
+    .blog-list {
+      padding: 0 18px 72px;
+    }
+    .blog-date span {
+      display: block;
+      margin: 6px 0 0;
+    }
+  }
+</style>
