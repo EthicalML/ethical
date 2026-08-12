@@ -1,5 +1,5 @@
 import { defineConfig } from 'astro/config';
-import { existsSync, globSync } from 'node:fs';
+import { existsSync, globSync, readFileSync } from 'node:fs';
 import { basename, resolve } from 'node:path';
 import { loadEnv } from 'vite';
 import mdx from '@astrojs/mdx';
@@ -17,6 +17,14 @@ import rehypeSectionize from './src/plugins/rehype-sectionize.mjs';
 // rendered page entirely.
 const { FORM_ENDPOINT = '' } = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), '');
 const formToken = FORM_ENDPOINT ? Buffer.from(FORM_ENDPOINT, 'utf8').toString('base64') : '';
+const newsletterLastmod = new Map(
+  globSync('src/content/newsletter/*.md').flatMap((filename) => {
+    const date = readFileSync(filename, 'utf8').match(/^date:\s*(\d{4}-\d{2}-\d{2})\s*$/m)?.[1];
+    return date
+      ? [[`https://ethical.institute/newsletter/${basename(filename, '.md')}/`, date]]
+      : [];
+  }),
+);
 const newsletterRedirects = Object.fromEntries(
   globSync('src/content/newsletter/*.md')
     .map((filename) => basename(filename, '.md'))
@@ -82,6 +90,12 @@ export default defineConfig({
     mdx(),
     preact(),
     // Prototypes are working sketches, not pages anyone should find in search.
-    sitemap({ filter: (page) => !page.includes('/prototypes/') }),
+    sitemap({
+      filter: (page) => !page.includes('/prototypes/'),
+      serialize(item) {
+        const lastmod = newsletterLastmod.get(item.url);
+        return lastmod ? { ...item, lastmod } : item;
+      },
+    }),
   ],
 });

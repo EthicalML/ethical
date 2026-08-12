@@ -35,8 +35,8 @@
   margin: 0;
 }
 
-.oss-copy h3,
-.kaos-feature h3 {
+.oss-copy h2,
+.kaos-feature h2 {
   font: 300 38px/1.08 var(--font-display);
   margin: 16px 0 0;
 }
@@ -128,7 +128,7 @@
   padding: 44px;
 }
 
-.kaos-feature h3 {
+.kaos-feature h2 {
   font-size: 40px;
   line-height: 1.06;
 }

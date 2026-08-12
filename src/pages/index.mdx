@@ -241,6 +241,16 @@ import FormSection from '../components/FormSection.astro';
 import PolicySection from '../components/PolicySection.astro';
 import { contactFormCopy, contactFormTitle, networkSectors, networkStats } from '../data/contactForm';
 
+<script
+  type="application/ld+json"
+  set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'The Institute for Ethical AI Alignment & Safety',
+    url: 'https://ethical.institute/',
+  })}
+/>
+
 <Hero {...frontmatter.hero} />
 
 <StatBand stats={frontmatter.evidence} />

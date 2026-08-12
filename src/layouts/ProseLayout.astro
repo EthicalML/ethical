@@ -9,10 +9,12 @@ const { frontmatter } = Astro.props;
       <slot />
     ) : (
       <article class:list={['prose-page', frontmatter.eyebrow && 'has-outer-header']}>
-        <header class="prose-header" data-reveal>
-          <p class="eyebrow">{frontmatter.eyebrow ?? 'THE INSTITUTE'}</p>
-          <h1>{frontmatter.title}</h1>
-        </header>
+        {!frontmatter.eyebrow && (
+          <header class="prose-header" data-reveal>
+            <p class="eyebrow">THE INSTITUTE</p>
+            <h1>{frontmatter.title}</h1>
+          </header>
+        )}
         <div class="prose-content">
           <slot />
         </div>
