@@ -8,8 +8,6 @@ tags: [agents, memory, kubernetes]
 series: 'Whose Memory Is It?'
 ---
 
-_This is a 4-part series on how agents remember: building short-, medium- and long-term memory that scales across users, agents, and kubernetes clusters._
-
 Alice and bob are talking to the same agents. Alice interacts with various agents for infra management. Bob interacts with various agents for app development. Both are able to build on learnings from the last month. But how far should this go? Should Alice be able to recall memories from Bob's interactions? Should a user allow a single agent to recall memories from across their agents?
 
 > This captures the design choices required in multi-tenancy for agentic memory management

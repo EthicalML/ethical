@@ -7,8 +7,6 @@ source: external
 url: 'https://medium.com/data-science/beyond-cuda-gpu-accelerated-python-for-machine-learning-in-cross-vendor-graphics-cards-made-simple-6cc828a45cc3'
 ---
 
-_A practical deep dive into GPU Accelerated Python on cross-vendor graphics cards (AMD, Qualcomm, NVIDIA & friends) building machine learning algorithms using the Kompute Python Framework and the Vulkan SDK_
-
 Machine learning algorithms — together with many other advanced data processing paradigms — fit incredibly well to the parallel-architecture that GPU computing offers. This has driven massive growth in the advancement and adoption of graphics cards for accelerated computing in recent years. This has also driven exciting research around techniques that optimize towards concurrency, such as [model parallelism](https://mxnet.apache.org/versions/1.7/api/faq/model_parallel_lstm.html) and [data parallelism](https://en.wikipedia.org/wiki/Data_parallelism).
 
 In this article you’ll learn how to write your own GPU accelerated algorithms in Python, which you will be able to run on virtually any GPU hardware — including non-NVIDIA GPUs. We’ll introduce core concepts and show how you can get started with the [**Kompute Python framework**](https://github.com/axsaucedo/vulkan-kompute#vulkan-kompute)**with**only a handful of lines of code.
@@ -35,7 +33,7 @@ There are two parts to the Python framework we will be using today, both which a
 
 ![Image 4](./image-03.png)
 
-Playing “where’s waldo” with Khronos Membership (Image by Vincent Hindriksen via [StreamHPC](https://streamhpc.com/blog/2017-05-04/what-is-khronos-as-of-today/))
+_Playing “where’s waldo” with Khronos Membership (Image by Vincent Hindriksen via [StreamHPC](https://streamhpc.com/blog/2017-05-04/what-is-khronos-as-of-today/))_
 
 The **Vulkan**SDK is an Open Source project led by the [Khronos Group](https://www.khronos.org/), a consortium consisting of numerous tech companies that have come together to work towards defining and advancing the open standards for mobile and desktop media (and compute) technologies.
 
@@ -47,7 +45,7 @@ As you can imagine, the Vulkan SDK provides very low-level C / C++ access to GPU
 
 ![Image 5](./image-04.png)
 
-Kompute [Documentation](https://ethicalml.github.io/vulkan-kompute/) (Image by Author)
+_Kompute [Documentation](https://ethicalml.github.io/vulkan-kompute/) (Image by Author)_
 
 ## Installing the Python Kompute Package
 
@@ -133,7 +131,7 @@ In machine learning we always have two stages, training and inference. In the di
 
 ![Image 6](./image-05.png)
 
-Data Science Process (Image by Author)
+_Data Science Process (Image by Author)_
 
 In this case we will have an input dataset `X` , where each element is a pair `xi` and `xj` . Our input data will be the following:
 
@@ -286,7 +284,7 @@ We will be using a few more advanced components from Kompute, which can be more 
 
 ![Image 14](./image-13.jpg)
 
-Kompute [Architecture Design](https://ethicalml.github.io/vulkan-kompute/overview/reference.html) (Image by Author)
+_Kompute [Architecture Design](https://ethicalml.github.io/vulkan-kompute/overview/reference.html) (Image by Author)_
 
 At the core of Kompute are Kompute “Sequences” and “Operations”, which are used for GPU actions. A Kompute Section can record and execute a batch of Kompute Operations for more efficient processing. In this example we will be leveraging Sequences to manage more efficient execution of the machine learning processing.
 

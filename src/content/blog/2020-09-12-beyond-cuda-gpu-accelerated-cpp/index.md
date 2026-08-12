@@ -7,8 +7,6 @@ source: external
 url: 'https://medium.com/data-science/machine-learning-and-data-processing-in-the-gpu-with-vulkan-kompute-c9350e5e5d3a'
 ---
 
-_A hands on introduction into GPU computing with practical machine learning examples using the Kompute Framework & the Vulkan SDK_
-
 Machine learning, together with many other advanced data processing paradigms, fits incredibly well to the parallel-processing architecture that GPU computing offers.
 
 ![Image 2](./image-01.png)
@@ -39,7 +37,7 @@ Before diving right in, it is worth introducing the core framework that is makin
 
 ![Image 4](./image-03.png)
 
-Playing “where’s waldo” with Khronos Membership (Image by Vincent Hindriksen via [StreamHPC](https://streamhpc.com/blog/2017-05-04/what-is-khronos-as-of-today/))
+_Playing “where’s waldo” with Khronos Membership (Image by Vincent Hindriksen via [StreamHPC](https://streamhpc.com/blog/2017-05-04/what-is-khronos-as-of-today/))_
 
 Vulkan is an Open Source project led by the [Khronos Group](https://www.khronos.org/), a consortium of a very large number of tech companies who have come together to work towards defining and advancing the open standards for mobile and desktop media (and compute) technologies. On the left you can see the broad range of Khronos Members.
 
@@ -55,7 +53,7 @@ This can actually be seen across many new and renowned machine learning & deep l
 
 ![Image 5](./image-04.png)
 
-Kompute [Documentation](https://ethicalml.github.io/vulkan-kompute/) (Image by Author)
+_Kompute [Documentation](https://ethicalml.github.io/vulkan-kompute/) (Image by Author)_
 
 Kompute was not built to hide any of the core Vulkan concepts — the Vulkan API is very well designed —instead it augments Vulkan’s Computing capabilities with a BYOV (bring your own Vulkan) design, enabling developers by reducing boilerplate code required and automating some of the more common workflows involved in writing Vulkan applications.
 
@@ -74,7 +72,7 @@ To build our first simple array-multiplication GPU computing application using K
 
 ![Image 6](./image-05.jpg)
 
-Kompute [Architecture Design](https://ethicalml.github.io/vulkan-kompute/overview/reference.html) (Image by Author)
+_Kompute [Architecture Design](https://ethicalml.github.io/vulkan-kompute/overview/reference.html) (Image by Author)_
 
 At the core of Kompute are “Kompute Operations”, which are used for GPU actions, as well as “Kompute Tensor” operations to handle the GPU data and memory. More specifically, this diagram shows the relationship between Kompute components (including explicit memory ownership).
 
@@ -152,7 +150,7 @@ In machine learning we always have two stages, training and inference. In the di
 
 ![Image 7](./image-06.png)
 
-Data Science Process (Image by Author)
+_Data Science Process (Image by Author)_
 
 In this case we will have an input dataset `X` , where each element is a pair `xi` and `xj` . Our input data will be the following:
 

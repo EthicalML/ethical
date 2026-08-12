@@ -10,8 +10,6 @@ syndication:
     url: 'https://www.linkedin.com/pulse/autonomous-agentic-systems-scale-practical-guide-agents-saucedo-ialvf'
 ---
 
-_A practical guide to designing, operating and scaling “always-on” agents: from basic Agentic Loops to Scalable Autonomous Agentic Systems._
-
 The pattern of “always-on” autonomous agents that work proactively in the background has been taking over the agentic systems space.
 
 This pattern was launched to massive popularity by [OpenClaw](https://clawdocs.org/?ref=hackernoon.com), as it basically moved the field away from purely Chat-based interactions (aka request-response), and towards agents that proactively take over tasks autonomously in the background (aka an infinite loop).

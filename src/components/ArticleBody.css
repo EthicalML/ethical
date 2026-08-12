@@ -121,8 +121,46 @@
 .article-body img {
   border: 1px solid var(--hairline-card);
   border-radius: var(--radius-card);
+  display: block;
   height: auto;
+  margin-inline: auto;
   max-width: 100%;
+}
+
+/* A caption authored as an italic-only paragraph directly after an image
+   reads Medium-style: small, centred and muted. */
+.article-body p:has(> img:only-child) + p:has(> em:only-child) {
+  color: var(--text-3);
+  font-size: 13.5px;
+  line-height: 1.6;
+  margin-top: -10px;
+  text-align: center;
+}
+
+/* Code and the committed dark diagrams keep their dark chrome in the light
+   theme (owner call 2026-08-12): the Shiki palette and the SVGs are authored
+   for the dark surface and have no light rendition. */
+:root[data-theme='light'] .article-body pre.astro-code {
+  background: #0f100f !important;
+  border-color: rgb(255 255 255 / 14%);
+}
+
+:root[data-theme='light'] .article-body pre.astro-code::before {
+  background:
+    radial-gradient(circle at 16px 15px, var(--glitch-red) 3.5px, transparent 4.5px),
+    radial-gradient(circle at 29px 15px, var(--warn) 3.5px, transparent 4.5px),
+    radial-gradient(circle at 42px 15px, var(--accent) 3.5px, transparent 4.5px),
+    rgb(255 255 255 / 5%);
+  border-bottom-color: rgb(255 255 255 / 14%);
+}
+
+:root[data-theme='light'] .article-body pre.astro-code::after {
+  color: rgb(255 255 255 / 55%);
+}
+
+:root[data-theme='light'] .article-body img[src$='.svg'] {
+  background: #0f100f;
+  border-color: rgb(255 255 255 / 14%);
 }
 
 .article-body img:not([width]) {

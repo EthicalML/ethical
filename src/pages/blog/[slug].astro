@@ -5,13 +5,11 @@ import ArticleBody from '../../components/ArticleBody.astro';
 import Hero from '../../components/Hero.astro';
 import '../../components/HeroLongform.css';
 import { authors } from '../../data/authors';
-import { blogHref, blogSlug, hasBlogBody, publishedBlogEntries, type BlogEntry } from '../../utils/blog';
+import { blogHref, blogSlug, publishedBlogEntries, type BlogEntry } from '../../utils/blog';
 
 export async function getStaticPaths() {
   const entries = publishedBlogEntries(await getCollection('blog'));
-  const localEntries = entries.filter(hasBlogBody);
   const linkedPost = (post: BlogEntry) => ({
-    external: !hasBlogBody(post),
     href: blogHref(post),
     title: post.data.title,
   });
@@ -35,7 +33,7 @@ export async function getStaticPaths() {
       next: position < posts.length - 1 ? linkedPost(posts[position + 1]) : undefined,
     };
   };
-  return localEntries.map((entry) => ({
+  return entries.map((entry) => ({
     params: { slug: blogSlug(entry) },
     props: { entry, related: related(entry), seriesNavigation: seriesNavigation(entry) },
   }));
@@ -68,7 +66,7 @@ const bylineAuthors = entry.data.authors.map((name) => ({ name, anchor: authors[
     <Hero status="THE INSTITUTE — BLOG" title={entry.data.title} subtitle_lines={entry.data.summary ?? entry.data.title} />
     <div class="blog-meta" data-reveal>
       {
-        seriesNavigation?.previous && !seriesNavigation.previous.external ? (
+        seriesNavigation?.previous ? (
           <a class="blog-step" href={seriesNavigation.previous.href} aria-label={`Previous in series, part ${seriesNavigation.position - 1}`}>
             <i aria-hidden="true">‹</i>
             <span>Part {seriesNavigation.position - 1}</span>
@@ -90,7 +88,7 @@ const bylineAuthors = entry.data.authors.map((name) => ({ name, anchor: authors[
         {entry.data.tags?.map((tag) => <span class="blog-tag">{tag}</span>)}
       </div>
       {
-        seriesNavigation?.next && !seriesNavigation.next.external ? (
+        seriesNavigation?.next ? (
           <a class="blog-step" href={seriesNavigation.next.href} aria-label={`Next in series, part ${seriesNavigation.position + 1}`}>
             <span>Part {seriesNavigation.position + 1}</span>
             <i aria-hidden="true">›</i>
@@ -131,9 +129,7 @@ const bylineAuthors = entry.data.authors.map((name) => ({ name, anchor: authors[
           <ul>
             {related.map((post) => (
               <li>
-                <a href={post.href} target={post.external ? '_blank' : undefined} rel={post.external ? 'noopener noreferrer' : undefined}>
-                  {post.title}
-                </a>
+                <a href={post.href}>{post.title}</a>
               </li>
             ))}
           </ul>
@@ -268,21 +264,36 @@ const bylineAuthors = entry.data.authors.map((name) => ({ name, anchor: authors[
     color: var(--accent-ink);
     opacity: 1;
   }
-  .blog-related a {
-    color: var(--accent-ink);
-  }
   .blog-related {
     border-top: 1px solid var(--hairline);
     padding-bottom: 96px;
     padding-top: 28px;
   }
   .blog-related ul {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
     list-style: none;
     margin: 18px 0 0;
     padding: 0;
   }
   .blog-related li {
-    margin-top: 10px;
+    display: grid;
+    margin: 0;
+  }
+  .blog-related a {
+    border: 1px solid var(--hairline-card);
+    border-radius: 6px;
+    color: var(--text-2);
+    display: block;
+    font-size: var(--body-14);
+    line-height: 1.45;
+    padding: 12px 14px;
+  }
+  .blog-related a:hover {
+    border-color: var(--accent-edge);
+    color: var(--accent-ink);
+    opacity: 1;
   }
   @media (max-width: 600px) {
     .blog-related {

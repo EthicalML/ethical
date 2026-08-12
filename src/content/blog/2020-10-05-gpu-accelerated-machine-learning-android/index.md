@@ -7,8 +7,6 @@ source: external
 url: 'https://medium.com/data-science/gpu-accelerated-machine-learning-in-your-mobile-applications-using-the-android-ndk-vulkan-kompute-1e9da37b7617'
 ---
 
-_A hands on tutorial that teaches you how to leverage your on-device phone GPU for accelerated data processing and machine learning. You will learn how to build a simple Android App using the Native Development Kit (NDK), the Kompute framework and the Vulkan SDK._
-
 Kompute in Android NDK (Image by Author)
 
 Some smartphones nowadays pack laptop-level hardware — carrying up to 16GB RAM, high-speed multi-core CPUs, and GPUs that can render high-performance complex graphical applications on 4k displays.

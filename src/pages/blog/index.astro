@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import ProseLayout from '../../layouts/ProseLayout.astro';
-import { blogHref, blogSourceLabel, hasBlogBody, publishedBlogEntries } from '../../utils/blog';
+import { blogHref, blogSourceLabel, publishedBlogEntries } from '../../utils/blog';
 
 const frontmatter = {
   title: 'Production ML, responsible AI and alignment blog',
@@ -15,7 +15,6 @@ const formatDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'nume
   <div class="blog-list">
     {
       posts.map((post) => {
-        const external = !hasBlogBody(post);
         const source = blogSourceLabel(post.data.source);
         return (
           <article class="blog-card" data-reveal>
@@ -24,9 +23,7 @@ const formatDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'nume
               {post.data.originalDate && <span>Published here {formatDate(post.data.date)}</span>}
             </p>
             <h2>
-              <a href={blogHref(post)} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
-                {post.data.title}
-              </a>
+              <a href={blogHref(post)}>{post.data.title}</a>
             </h2>
             {post.data.summary && <p class="blog-summary">{post.data.summary}</p>}
             {source && <p class="blog-source">Originally published on {source}</p>}

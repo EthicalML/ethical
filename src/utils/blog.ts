@@ -5,11 +5,9 @@ export type BlogEntry = CollectionEntry<'blog'>;
 export const blogSlug = (entry: BlogEntry) =>
   entry.id.replace(/\/index(?:\.md)?$/, '').replace(/^\d{4}-\d{2}-\d{2}-/, '');
 
-export const hasBlogBody = (entry: BlogEntry) => Boolean(entry.body?.trim());
-
 export const assertUniqueBlogSlugs = (entries: BlogEntry[]) => {
   const foldersBySlug = new Map<string, string[]>();
-  for (const entry of entries.filter(hasBlogBody)) {
+  for (const entry of entries) {
     const slug = blogSlug(entry);
     const folder = entry.id.replace(/\/index(?:\.md)?$/, '');
     foldersBySlug.set(slug, [...(foldersBySlug.get(slug) ?? []), folder]);
@@ -28,8 +26,7 @@ export const publishedBlogEntries = (entries: BlogEntry[], now = new Date()) => 
     : entries;
 };
 
-export const blogHref = (entry: BlogEntry) =>
-  hasBlogBody(entry) ? `/blog/${blogSlug(entry)}/` : entry.data.url!;
+export const blogHref = (entry: BlogEntry) => `/blog/${blogSlug(entry)}/`;
 
 const sourceLabels: Partial<Record<BlogEntry['data']['source'], string>> = {
   linkedin: 'LinkedIn',

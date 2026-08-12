@@ -12,10 +12,6 @@ syndication:
     url: 'https://www.linkedin.com/pulse/monitoring-kaos-observability-multi-agent-ai-systems-saucedo-t5qjf'
 ---
 
-_A practical guide to adding production-grade observability to multi-agent AI systems with the K8s Agent Orchestration System using OpenTelemetry and SigNoz_
-
----
-
 You’ve built an AI agent that works in your laptop. It automatically chains tools together, delegates tasks to specialist sub-agents, and produces sound results.
 
 Then you deploy it to production:

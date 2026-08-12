@@ -8,8 +8,6 @@ tags: [agents, memory, kubernetes]
 series: 'Whose Memory Is It?'
 ---
 
-_This is a 4-part series on how agents remember: building short-, medium- and long-term memory that scales across users, agents, and kubernetes clusters._
-
 LLMs are stateless by design, and without added memory logic every session starts from zero.
 
 A number of dedicated memory layers have emerged (and continue emerging almost daily) to tackle this, each with different approaches and tradeoffs. Which one should you adopt?

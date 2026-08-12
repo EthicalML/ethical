@@ -7,8 +7,6 @@ source: external
 url: 'https://medium.com/data-science/parallelizing-heavy-gpu-workloads-via-multi-queue-operations-50a38b15a1dc'
 ---
 
-_Achieving 2x+ performance improvements on GPU-intensive workloads by leveraging multi-queue operation parallelism using Kompute and the Vulkan SDK_
-
 GPUs have proven [extremely useful for highly parallelizable data processing use-cases](https://arxiv.org/abs/1802.09941). The computational paradigms found in machine learning & deep learning for example fit extremely well to [the processing architecture graphics cards provide](http://cs149.stanford.edu/fall19/lecture/gpuarch/).
 
 However, when it comes to multiple GPU workloads, one would assume that these would be processed concurrently, but this is not the case. Whilst a single GPU compute workload is parallelized across the numerous GPU cores, multiple workloads are run one by one sequentially. That is of course **until recent improvements in graphics card architectures**which are now enabling for hardware parallelization across multiple workloads. This can be achieved by submitting the workloads to different underlying physical GPU “queue families” that support concurrency. Practical tecniques in machine learning that would benefit from this include [model parallelism](https://mxnet.apache.org/versions/1.7/api/faq/model_parallel_lstm) and [data parallelism](https://en.wikipedia.org/wiki/Data_parallelism).
@@ -30,7 +28,7 @@ You can find the [**full code in this file**](https://github.com/EthicalML/vulka
 
 ![Image 2](./image-01.png)
 
-Khronos Membership (Image by Vincent Hindriksen via [StreamHPC](https://streamhpc.com/blog/2017-05-04/what-is-khronos-as-of-today/))
+_Khronos Membership (Image by Vincent Hindriksen via [StreamHPC](https://streamhpc.com/blog/2017-05-04/what-is-khronos-as-of-today/))_
 
 [**The Vulkan SDK**](<https://en.wikipedia.org/wiki/Vulkan_(API)>)is an Open Source project led by the [**Khronos Group**](https://www.khronos.org/), which enables for highly optimized cross-vendor/cross-platform GPU processing.
 
@@ -38,7 +36,7 @@ Khronos Membership (Image by Vincent Hindriksen via [StreamHPC](https://streamhp
 
 ![Image 3](./image-02.gif)
 
-The “Komputer” from [Kompute Repo](https://github.com/EthicalML/vulkan-kompute) (Image by Author)
+_The “Komputer” from [Kompute Repo](https://github.com/EthicalML/vulkan-kompute) (Image by Author)_
 
 ## Asynchronous vs Parallel Processing
 
@@ -46,7 +44,7 @@ Before diving into the code, it is important to disambiguate two concepts — **
 
 ![Image 4](./image-03.png)
 
-Simplified Vulkan Architecture (Image by Author)
+_Simplified Vulkan Architecture (Image by Author)_
 
 The way parallel workloads are submitted for processing when using the **Vulkan SDK**through **GPU Queues**. This can be visualised in the simplified Vulkan Architecture diagram (pipeline and descriptor components were left out for simplicity).
 
@@ -132,7 +130,7 @@ In order to show a useful example, we will dive into how this would be achieved 
 
 ![Image 6](./image-05.png)
 
-Conceptual Overview of Queues in NVIDIA 1650 (Image by Author)
+_Conceptual Overview of Queues in NVIDIA 1650 (Image by Author)_
 
 The NVIDIA 1650 GPU has 3 queue families. Using `G` for GRAPHICS, `T` for TRANSFER and `C` for COMPUTE capabilities, the NVIDIA 1650 has a `G+T+C` family in `familyIndex 0`with 16 queues, a `T` family on `familyIndex 1` with 2 queues, and a `T+C` family on `familyIndex 2` with 8 queues.
 
@@ -144,7 +142,7 @@ So far we have been submitting all GPU workloads to a single queue, namely the G
 
 ![Image 7](./image-06.png)
 
-Operation Execution in Parallel through Multiple Family Queues (Image by Author)
+_Operation Execution in Parallel through Multiple Family Queues (Image by Author)_
 
 In order for us to do this, we will need to modify three key things:
 
