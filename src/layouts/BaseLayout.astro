@@ -4,11 +4,12 @@ import '../styles/prose.css';
 import { ClientRouter } from 'astro:transitions';
 import SiteHeader from '../components/SiteHeader.astro';
 import FootnoteBand from '../components/FootnoteBand.astro';
+import { siteTitle } from '../data/navigation';
 
 const metaDescription = 'An independent research institute working to ensure that frontier AI is safe, aligned and accountable to people and society.';
 const ogImage = '/images/banner.jpg';
 const { frontmatter = {} } = Astro.props;
-const title = frontmatter.title ?? 'The Institute for Ethical AI Alignment & Safety';
+const title = frontmatter.title ?? siteTitle;
 const seoTitle = frontmatter.seoTitle ?? title;
 const description = frontmatter.seoDescription ?? frontmatter.description ?? metaDescription;
 const canonical = new URL(frontmatter.canonicalPath ?? Astro.url.pathname, Astro.site);
@@ -16,7 +17,7 @@ const socialImage = new URL(frontmatter.image ?? ogImage, Astro.site);
 const organization = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'The Institute for Ethical AI Alignment & Safety',
+  name: siteTitle,
   alternateName: 'The Institute for Ethical AI & Machine Learning',
   url: 'https://ethical.institute/',
   logo: new URL('/favicon.png', Astro.site).href,
