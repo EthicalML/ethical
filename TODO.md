@@ -6,6 +6,8 @@ Six-phase programme, owner-approved direction (2026-08-07). Phases 1-5 are the a
 
 Phase 6 — LLM-optimized serving (owner direction, proven pattern from industry startups): serve different, LLM-optimized content to AI crawlers (GPTBot, ClaudeBot, PerplexityBot) — never to Googlebot, so classic SEO cloaking risk does not apply. Staged: first, plain markdown text renditions of key pages served to AI user-agents; then expanded curated LLM-specific content designed for ingestion into training and RAG corpora, richer than the human pages. Requires an edge layer in front of GitHub Pages (Cloudflare Worker routing by user-agent); the markdown renditions can be generated at build time from the same MDX sources.
 
+Moving the nameservers to Cloudflare would also allow **real 301 redirects** for the legacy `/mle/N.html` URLs, configurable through the Cloudflare API once keys are available. GitHub Pages can only serve the current meta-refresh redirect pages, which Google documents as permanent redirects, so this would be an improvement rather than a repair.
+
 ## OpenSourceShowcase: two dead selectors
 
 `OpenSourceShowcase.css` carries two `.open-source-showcase` rules that match nothing: the component's root is the `open-source-showcase` custom element carrying `.open-source-prototype`. Deleting them is not purely mechanical, because the padding they were meant to apply may be intended and currently comes from elsewhere, so it needs a visually reviewed change rather than a blind removal. Found during the 2026-08-08 colocation pass.
@@ -87,4 +89,3 @@ The talks page has only five `<img>` elements, all correctly lazy and none above
 Fixable without changing anything anyone sees: render the photograph as an HTML `<img>` layer behind the generated SVG rather than inside it, or gate the banner on an `IntersectionObserver`. The generated ground and motifs are cheap and can stay eager; it is only the remote photograph that is worth deferring.
 
 Explicitly NOT in scope: the reel mounts the active talk's player eagerly, which costs about 1 MB and sets two third-party cookies before any interaction. That is deliberate — it is what makes pressing play instant — and the owner has decided to keep it (2026-08-10). Do not "optimise" it away.
-

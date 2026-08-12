@@ -130,6 +130,7 @@ Show the owner the five drafted sections, flagging any article whose grounding n
 
 ```
 node scripts/newsletter/candidates.mjs mark used <url>...
+node --env-file=.env scripts/newsletter/backlinks.mjs status --recent 4
 ```
 
-Do not run this before publication.
+Do not run these before publication. If the backlink status is incomplete, report the missing platforms and offer to run `node --env-file=.env scripts/newsletter/backlinks.mjs sync --recent 4`.
