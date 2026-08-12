@@ -3,8 +3,12 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Hero from '../../components/Hero.astro';
 import NewsletterSubscribe from '../../components/NewsletterSubscribe.astro';
-import { newsletterArchiveFrontmatter as frontmatter } from './rss.xml';
 
+const frontmatter = {
+  title: 'The ML Engineer — Newsletter archive',
+  description:
+    'The Machine Learning Engineer newsletter archive: weekly curated articles, tutorials and insights from experienced machine learning professionals since 2018.',
+};
 const issues = (await getCollection('newsletter')).sort(
   (first, second) => (second.data.date?.getTime() ?? 0) - (first.data.date?.getTime() ?? 0) || second.data.issue - first.data.issue,
 );
