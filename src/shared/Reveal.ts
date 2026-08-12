@@ -1,7 +1,7 @@
-// Global reveal trigger: every [data-reveal] element fires once REVEAL_PX
-// pixels of it have entered the viewport, so tall and short sections need the
-// same scroll distance to appear. Elements shorter than the threshold fire at
-// SHORT_REVEAL_RATIO of their own height instead. A threshold that the
+// Global reveal trigger: every [data-reveal] element fires once the smaller of
+// REVEAL_PX pixels or SHORT_REVEAL_RATIO of its own height has entered the
+// viewport, so tall sections need a fixed scroll distance and no element ever
+// has to be more than 60% on screen to appear. A threshold that the
 // remaining page can never reach fires while the element is visible, so
 // nothing at the foot of a short page stays hidden.
 // `data-reveal="trigger"` elements receive only the timing signal
@@ -111,7 +111,11 @@ export class Reveal {
     this.targets.forEach((target) => {
       if (target.dataset.revealed === '1') return;
       const rect = target.getBoundingClientRect();
-      const needed = rect.height >= REVEAL_PX ? REVEAL_PX : rect.height * SHORT_REVEAL_RATIO;
+      // Whichever is smaller: the fixed distance, or 60% of the element's own
+      // height. A hard 100px floor for anything taller made elements just over
+      // the threshold (a 108px stat band, a 141px marquee) wait until they
+      // were almost fully on screen before firing.
+      const needed = Math.min(REVEAL_PX, rect.height * SHORT_REVEAL_RATIO);
       const visible = Math.min(rect.bottom, innerHeight) - Math.max(rect.top, 0);
       if (atBottom || visible >= needed) {
         this.reveal(target);
