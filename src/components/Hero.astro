@@ -7,6 +7,10 @@ interface HeroButton {
 interface Props {
   status: string;
   status_href?: string;
+  // The client router swaps responses into the current document, which a feed
+  // or any other non-HTML target cannot survive. Set this when status_href
+  // points at one.
+  status_reload?: boolean;
   title: string[];
   subtitle_lines: string[];
   beneficiaries?: string[];
@@ -15,7 +19,17 @@ interface Props {
   secondary_button?: HeroButton;
 }
 
-const { status, status_href, title, subtitle_lines, beneficiaries = [], typewriter_underline = false, primary_button, secondary_button }: Props = Astro.props;
+const {
+  status,
+  status_href,
+  status_reload = false,
+  title,
+  subtitle_lines,
+  beneficiaries = [],
+  typewriter_underline = false,
+  primary_button,
+  secondary_button,
+}: Props = Astro.props;
 const hasActionsSlot = Astro.slots.has('actions');
 const initialBeneficiary = beneficiaries[0];
 const [missionLine1, missionLine2] = subtitle_lines;
@@ -27,7 +41,7 @@ const ariaSentence = [...subtitle_lines, initialBeneficiary].filter(Boolean).joi
   <div class="hero-copy">
     {
       status_href ? (
-        <a class="status-pill" href={status_href}>
+        <a class="status-pill" href={status_href} data-astro-reload={status_reload ? '' : undefined}>
           <span aria-hidden="true" />
           {status}
         </a>

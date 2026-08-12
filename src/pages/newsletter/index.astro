@@ -27,7 +27,9 @@ const issueLabel = (entry: (typeof issues)[number]) => [`Issue ${entry.data.issu
 <BaseLayout frontmatter={frontmatter}>
   <article class="newsletter-archive">
     <Hero
-      status="THE ML ENGINEER — WEEKLY NEWSLETTER"
+      status="THE ML ENGINEER — SUBSCRIBE VIA RSS"
+      status_href="/newsletter/rss.xml"
+      status_reload
       title={['The Machine', 'Learning Engineer', 'Newsletter']}
       subtitle_lines={['Join 70k+ AI professionals receiving weekly curated', 'articles, tutorials and blog posts on']}
       beneficiaries={['production machine learning.', 'MLOps at scale.', 'agentic systems.', 'ML security.', 'AI safety.']}
