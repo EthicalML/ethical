@@ -52,6 +52,7 @@ Owner review 2026-08-12: most page heroes are boring, especially the ones with n
 - Quality: audit the existing canvas scenes against the policy one the owner rates; upgrade or retire the weak ones.
 - Variation: the flagship `Hero` cycles three scenes (planes, sphere, contour) but every surface gets the same default; consider per-surface defaults and deterministic per-post scene seeding (hash of slug picks scene and parameters) so repeated visits do not feel identical. Seeding must stay deterministic for the screenshot gates.
 - Structure: extract shared hero primitives (status pill, glitch title line, typewriter subtitle, canvas mount) as owned components composed by both `Hero` and `ArticleHero`, so fixes propagate without unifying the two species into one prop-matrix mega-component (rejected 2026-08-12: it couples 25 surfaces into one blast radius).
+- Interactive graph widgets (owner ask 2026-08-12): explore hero widgets, possibly 3D, that are interactive graphs in the spirit of the visualisations on https://www.theforecastingcompany.com/en, which the owner rates highly. The reference's graphs are client-rendered and not inspectable from fetched markup, so the exploration must start with the owner walking through the reference (screenshots or live) to pin down which behaviours appeal, per the no-unseen-design-references rule, before any prototyping.
 
 ## Blog follow-up: proactive weekly content proposals
 
