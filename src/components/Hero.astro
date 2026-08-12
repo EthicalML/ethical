@@ -41,7 +41,7 @@ const ariaSentence = [...subtitle_lines, initialBeneficiary].filter(Boolean).joi
     <h1>
       {
         title.map((line, index) =>
-          index === 2 ? (
+          index === title.length - 1 ? (
             <em class="glitch" data-text={line}>
               {line}
             </em>
@@ -181,6 +181,11 @@ const ariaSentence = [...subtitle_lines, initialBeneficiary].filter(Boolean).joi
         outputs.forEach((output) => setText(output, ''));
         for (let index = 0; index < initialLines.length; index += 1) {
           await type(outputs[index], initialLines[index], 'initial');
+        }
+
+        if (beneficiaries.length <= 1) {
+          setPhase('dwell');
+          return;
         }
 
         let beneficiaryIndex = 0;

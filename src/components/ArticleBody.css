@@ -12,6 +12,24 @@
   max-width: 645px;
 }
 
+/* Media elements break out to the 780px deck measure (see .prose-quote in
+   tokens.css) so inline quotes, diagrams, code and tables read as one width
+   with the article lede rather than the narrower text measure. */
+.article-body .article-section > blockquote,
+.article-body .article-section > pre.astro-code,
+.article-body .article-section > .article-table-scroll,
+.article-body .article-section > p:has(> img:only-child) {
+  max-width: 780px;
+}
+
+/* A body that opens with a heading already sits under the lede's bottom rule;
+   drop the first section separator so the two hairlines never stack. */
+.article-body .article-section:first-child > h2:first-child {
+  border-top: 0;
+  margin-top: 0;
+  padding-top: 0;
+}
+
 .article-body p {
   color: var(--text-2);
   font-size: var(--body-16-5);
@@ -110,7 +128,7 @@
   border: 1px solid var(--hairline-card);
   border-radius: var(--radius-card);
   margin-block: 0 24px;
-  max-width: 645px;
+  max-width: 780px;
   overflow-x: auto;
 }
 
