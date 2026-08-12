@@ -162,6 +162,7 @@ const blog = defineCollection({
       date: z.date(),
       summary: z.string().optional(),
       tags: z.array(z.string()).max(5).optional(),
+      syndication: z.array(z.object({ name: z.string(), url: z.url() })).optional(),
       series: z.string().optional(),
       authors: z.array(z.string()).default(['Alejandro Saucedo']),
       source: z.enum(['original', 'linkedin', 'hackernoon', 'external']).default('original'),

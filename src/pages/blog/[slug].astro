@@ -113,6 +113,18 @@ const bylineAuthors = entry.data.authors.map((name) => ({ name, anchor: authors[
     </p>
     <ArticleBody class="blog-body"><Content /></ArticleBody>
     {
+      entry.data.syndication?.length ? (
+        <div class="blog-syndication" data-reveal>
+          <span>Also published on</span>
+          {entry.data.syndication.map(({ name, url }) => (
+            <a class="blog-syndication-link" href={url} target="_blank" rel="noopener noreferrer">
+              {name}
+            </a>
+          ))}
+        </div>
+      ) : null
+    }
+    {
       related.length > 0 && (
         <aside class="blog-related" data-reveal>
           <p class="eyebrow">RELATED</p>
@@ -219,6 +231,43 @@ const bylineAuthors = entry.data.authors.map((name) => ({ name, anchor: authors[
   .blog-byline a {
     color: var(--accent-ink);
   }
+  .blog-syndication {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 auto 56px;
+    max-width: 645px;
+    padding: 0 24px;
+  }
+  .blog-syndication > span {
+    color: var(--text-4);
+    font-family: var(--font-mono);
+    font-size: var(--mono-9);
+    letter-spacing: 0.12em;
+    margin-right: 4px;
+    text-transform: uppercase;
+  }
+  .blog-syndication-link {
+    border: 1px solid var(--hairline-card);
+    border-radius: var(--radius-pill);
+    color: var(--text-3);
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: var(--mono-9);
+    letter-spacing: 0.12em;
+    padding: 7px 11px;
+    text-transform: uppercase;
+    transition:
+      border-color 0.2s ease,
+      color 0.2s ease;
+    white-space: nowrap;
+  }
+  .blog-syndication-link:hover {
+    border-color: var(--accent-edge);
+    color: var(--accent-ink);
+    opacity: 1;
+  }
   .blog-related a {
     color: var(--accent-ink);
   }
@@ -237,6 +286,9 @@ const bylineAuthors = entry.data.authors.map((name) => ({ name, anchor: authors[
   }
   @media (max-width: 600px) {
     .blog-related {
+      padding-inline: 18px;
+    }
+    .blog-syndication {
       padding-inline: 18px;
     }
     .blog-meta {
