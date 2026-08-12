@@ -1,0 +1,34 @@
+/* Longform hero title mode: full-length article titles on the flagship hero.
+   Imported only by the surfaces that use it (blog posts), so the classic
+   display mode ships none of these bytes. The wide measure holds until the
+   Wide breakpoint (950px), where the hero's compact behaviour takes over. */
+
+.hero[data-title-mode='longform'] .hero-copy {
+  max-width: 980px;
+}
+
+.hero[data-title-mode='longform'] h1 {
+  font-size: var(--display-44);
+  letter-spacing: -0.015em;
+  line-height: 1.12;
+}
+
+.hero[data-title-mode='longform'][data-title-tier='long'] h1 {
+  font-size: var(--display-38);
+}
+
+@media (max-width: 950px) {
+  .hero[data-title-mode='longform'] .hero-copy {
+    max-width: 660px;
+  }
+
+  .hero[data-title-mode='longform'] h1 {
+    font-size: var(--display-34);
+  }
+}
+
+@media (max-width: 600px) {
+  .hero[data-title-mode='longform'] h1 {
+    font-size: var(--display-30);
+  }
+}

@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ArticleBody from '../../components/ArticleBody.astro';
 import Hero from '../../components/Hero.astro';
+import '../../components/HeroLongform.css';
 import { blogHref, blogSlug, hasBlogBody, publishedBlogEntries, type BlogEntry } from '../../utils/blog';
 
 export async function getStaticPaths() {
@@ -42,10 +43,11 @@ export async function getStaticPaths() {
 const { entry, related, seriesNavigation } = Astro.props;
 const { Content } = await render(entry);
 const publishedDate = entry.data.originalDate ?? entry.data.date;
+// No `eyebrow`: the hero below is the page's only visible h1, so BaseLayout
+// must not render its own page header on top of it.
 const frontmatter = {
   title: entry.data.title,
   description: entry.data.summary,
-  eyebrow: entry.data.series ?? 'THE INSTITUTE BLOG',
   image: entry.data.image,
   canonical: entry.data.source !== 'original' ? entry.data.url : undefined,
   article: true,
@@ -54,35 +56,13 @@ const frontmatter = {
   datePublished: publishedDate.toISOString().slice(0, 10),
 };
 const formatDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-
-// The hero reuses the newsletter's three-line display: a short base title split
-// across the first lines and the closing line carrying the glitch treatment
-// (the series part number where one exists, mirroring the issue number).
-const balanceLines = (text: string, lines: number): string[] => {
-  const words = text.split(' ');
-  const target = Math.ceil(text.length / lines);
-  const out: string[] = [];
-  let current = '';
-  for (const word of words) {
-    if (current && current.length + word.length + 1 > target && out.length < lines - 1) {
-      out.push(current);
-      current = word;
-    } else {
-      current = current ? `${current} ${word}` : word;
-    }
-  }
-  out.push(current);
-  return out;
-};
-const baseTitle = (entry.data.series ?? entry.data.title).replace(/\s*\(Part \d+\)\s*$/i, '');
-const heroTitle = seriesNavigation ? [...balanceLines(baseTitle, 2), `Part ${seriesNavigation.position}`] : balanceLines(baseTitle, 3);
 ---
 
 <BaseLayout frontmatter={frontmatter}>
   <article class="blog-post">
     <Hero
       status="THE INSTITUTE — BLOG"
-      title={heroTitle}
+      title={entry.data.title}
       subtitle_lines={['Long-form writing from The Institute on production', 'machine learning, agentic systems and']}
       beneficiaries={['responsible AI.']}
     />

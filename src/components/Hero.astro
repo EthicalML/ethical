@@ -11,7 +11,11 @@ interface Props {
   // or any other non-HTML target cannot survive. Set this when status_href
   // points at one.
   status_reload?: boolean;
-  title: string[];
+  // An array renders the classic three-line display title with the glitch
+  // closing line. A plain string selects the longform mode: the full title is
+  // balanced across up to three lines at a wider measure, with the last line
+  // in the accent ink and no glitch animation.
+  title: string[] | string;
   subtitle_lines: string[];
   beneficiaries?: string[];
   typewriter_underline?: boolean;
@@ -34,9 +38,40 @@ const hasActionsSlot = Astro.slots.has('actions');
 const initialBeneficiary = beneficiaries[0];
 const [missionLine1, missionLine2] = subtitle_lines;
 const ariaSentence = [...subtitle_lines, initialBeneficiary].filter(Boolean).join(' ');
+
+const balanceLines = (text: string, lines: number): string[] => {
+  const words = text.split(' ');
+  const target = Math.ceil(text.length / lines);
+  const out: string[] = [];
+  let current = '';
+  for (const word of words) {
+    if (current && current.length + word.length + 1 > target && out.length < lines - 1) {
+      out.push(current);
+      current = word;
+    } else {
+      current = current ? `${current} ${word}` : word;
+    }
+  }
+  out.push(current);
+  return out;
+};
+const longform = typeof title === 'string';
+if (longform && title.length > 110) {
+  console.warn(`[Hero] longform title exceeds the 110-character budget (${title.length}): ${title}`);
+}
+const titleLines = longform ? balanceLines(title, 3) : title;
+const titleTier = longform && title.length > 70 ? 'long' : undefined;
 ---
 
-<header class="hero" data-surface="dark" data-surface-plate data-reveal data-pagefind-ignore>
+<header
+  class="hero"
+  data-surface="dark"
+  data-surface-plate
+  data-reveal
+  data-pagefind-ignore
+  data-title-mode={longform ? 'longform' : undefined}
+  data-title-tier={titleTier}
+>
   <hero-cycle><canvas class="hero-canvas" aria-hidden="true"></canvas></hero-cycle>
   <div class="hero-copy">
     {
@@ -54,13 +89,15 @@ const ariaSentence = [...subtitle_lines, initialBeneficiary].filter(Boolean).joi
     }
     <h1>
       {
-        title.map((line, index) =>
-          index === title.length - 1 ? (
+        titleLines.map((line, index) =>
+          index !== titleLines.length - 1 ? (
+            <span>{line}</span>
+          ) : longform ? (
+            <em>{line}</em>
+          ) : (
             <em class="glitch" data-text={line}>
               {line}
             </em>
-          ) : (
-            <span>{line}</span>
           ),
         )
       }

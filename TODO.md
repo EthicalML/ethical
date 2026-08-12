@@ -48,6 +48,14 @@ Owner has ideas for the newsletter beyond the carried-over archive (396 issues l
 
 Six homepage scroll-effect variants sit in the open PR #12, paused for owner decision: pick a variant to land or close the PR.
 
+## Hero family: coverage, variation and primitive extraction
+
+Owner review 2026-08-12: most page heroes are boring, especially the ones with no canvas animation behind them; even among the animated ones only a subset (the policy canvas notably) land well. This is a site-wide programme, deliberately decoupled from the blog build. Scope to design with owner:
+
+- Coverage: the `ArticleHero` pages without any canvas variant read as hero-less; decide which of the 21 utility pages earn a canvas (existing scenes: kaos, kompute, policy, open-source, generic) and whether new cheap scenes are worth building.
+- Quality: audit the existing canvas scenes against the policy one the owner rates; upgrade or retire the weak ones.
+- Variation: the flagship `Hero` cycles three scenes (planes, sphere, contour) but every surface gets the same default; consider per-surface defaults and deterministic per-post scene seeding (hash of slug picks scene and parameters) so repeated visits do not feel identical. Seeding must stay deterministic for the screenshot gates.
+- Structure: extract shared hero primitives (status pill, glitch title line, typewriter subtitle, canvas mount) as owned components composed by both `Hero` and `ArticleHero`, so fixes propagate without unifying the two species into one prop-matrix mega-component (rejected 2026-08-12: it couples 25 surfaces into one blast radius).
 
 ## Blog follow-up: proactive weekly content proposals
 
