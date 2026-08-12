@@ -55,6 +55,9 @@ sectionByRoute.set('/open-source/ai-guidelines/', menus.oss.label);
 const excludedFromLlms = [
   (route: string) => route === '/',
   (route: string) => route === '/privacy/',
+  // Unlinked until the blog's navigation entry lands with the design pass;
+  // sections here derive from the menus, so it cannot be assigned before then.
+  (route: string) => route === '/blog/',
   (route: string) => /^\/principles\/\d+\/$/.test(route),
   (route: string) => /^\/newsletter\/\d+\/$/.test(route),
 ];

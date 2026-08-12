@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import ArticleBody from '../../components/ArticleBody.astro';
 import Hero from '../../components/Hero.astro';
 import '../../components/HeroLongform.css';
+import { authors } from '../../data/authors';
 import { blogHref, blogSlug, hasBlogBody, publishedBlogEntries, type BlogEntry } from '../../utils/blog';
 
 export async function getStaticPaths() {
@@ -55,56 +56,61 @@ const frontmatter = {
   articleAuthors: entry.data.authors,
   datePublished: publishedDate.toISOString().slice(0, 10),
 };
-const formatDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+// Same dd/mm/yy chip format as the newsletter issue meta bar.
+const barDate = [publishedDate.getDate(), publishedDate.getMonth() + 1, publishedDate.getFullYear() % 100]
+  .map((part) => String(part).padStart(2, '0'))
+  .join('/');
+const bylineAuthors = entry.data.authors.map((name) => ({ name, anchor: authors[name]?.aboutAnchor }));
 ---
 
 <BaseLayout frontmatter={frontmatter}>
   <article class="blog-post">
     <Hero status="THE INSTITUTE — BLOG" title={entry.data.title} subtitle_lines={entry.data.summary ?? entry.data.title} />
     <div class="blog-meta" data-reveal>
-      <p>
-        <time datetime={publishedDate.toISOString().slice(0, 10)}>{formatDate(publishedDate)}</time>
-        <span>{entry.data.authors.join(', ')}</span>
-      </p>
-      {entry.data.originalDate && <p>Published here {formatDate(entry.data.date)}</p>}
-      {entry.data.tags?.length ? <p class="blog-tags">{entry.data.tags.join(' · ')}</p> : null}
+      {
+        seriesNavigation?.previous && !seriesNavigation.previous.external ? (
+          <a class="blog-step" href={seriesNavigation.previous.href} aria-label={`Previous in series, part ${seriesNavigation.position - 1}`}>
+            <i aria-hidden="true">‹</i>
+            <span>Part {seriesNavigation.position - 1}</span>
+          </a>
+        ) : (
+          <span class="blog-step" aria-hidden="true" />
+        )
+      }
+      <div class="blog-chips">
+        {
+          seriesNavigation && (
+            <span class="blog-chip blog-series-chip">
+              Part {seriesNavigation.position} of {seriesNavigation.total}
+            </span>
+          )
+        }
+        <span class="blog-chip">{barDate}</span>
+        {entry.data.tags?.length ? <span class="chip-rule" aria-hidden="true" /> : null}
+        {entry.data.tags?.map((tag) => <span class="blog-tag">{tag}</span>)}
+      </div>
+      {
+        seriesNavigation?.next && !seriesNavigation.next.external ? (
+          <a class="blog-step" href={seriesNavigation.next.href} aria-label={`Next in series, part ${seriesNavigation.position + 1}`}>
+            <span>Part {seriesNavigation.position + 1}</span>
+            <i aria-hidden="true">›</i>
+          </a>
+        ) : (
+          <span class="blog-step" aria-hidden="true" />
+        )
+      }
     </div>
-    {
-      seriesNavigation && seriesNavigation.total > 1 && (
-        <nav class="blog-series-nav" aria-label={`${seriesNavigation.name} series`} data-reveal>
-          {seriesNavigation.previous ? (
-            <a
-              href={seriesNavigation.previous.href}
-              target={seriesNavigation.previous.external ? '_blank' : undefined}
-              rel={seriesNavigation.previous.external ? 'noopener noreferrer' : undefined}
-            >
-              <span>Previous in series</span>
-              <strong>{seriesNavigation.previous.title}</strong>
-            </a>
-          ) : (
-            <span />
-          )}
-          <p>
-            <span>{seriesNavigation.name}</span>
-            <strong>
-              {seriesNavigation.position} of {seriesNavigation.total}
-            </strong>
-          </p>
-          {seriesNavigation.next ? (
-            <a
-              href={seriesNavigation.next.href}
-              target={seriesNavigation.next.external ? '_blank' : undefined}
-              rel={seriesNavigation.next.external ? 'noopener noreferrer' : undefined}
-            >
-              <span>Next in series</span>
-              <strong>{seriesNavigation.next.title}</strong>
-            </a>
-          ) : (
-            <span />
-          )}
-        </nav>
-      )
-    }
+    <p class="blog-byline" data-reveal>
+      Posted by{' '}
+      {
+        bylineAuthors.map(({ name, anchor }, index) => (
+          <>
+            {index > 0 && ', '}
+            {anchor ? <a href={anchor}>{name}</a> : name}
+          </>
+        ))
+      }
+    </p>
     <ArticleBody class="blog-body"><Content /></ArticleBody>
     {
       related.length > 0 && (
@@ -126,79 +132,92 @@ const formatDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'nume
 </BaseLayout>
 
 <style>
-  .blog-meta,
+  /* The meta bar, chips, steps and byline mirror the newsletter issue meta
+     treatment so the two article surfaces read identically; the shared
+     primitive extraction is recorded in TODO.md (hero family programme). */
   .blog-related {
     margin-inline: auto;
     max-width: 645px;
     padding-inline: 24px;
   }
   .blog-meta {
-    border-bottom: 1px solid var(--hairline);
-    color: var(--text-3);
-    font-family: var(--font-mono);
-    font-size: var(--mono-10);
-    letter-spacing: 0.08em;
-    padding-bottom: 24px;
-    text-transform: uppercase;
-  }
-  .blog-meta p {
-    margin: 0 0 8px;
-  }
-  .blog-meta p:last-child {
-    margin-bottom: 0;
-  }
-  .blog-meta span {
-    margin-left: 14px;
-  }
-  .blog-series-nav {
-    align-items: stretch;
-    border-bottom: 1px solid var(--hairline);
+    align-items: center;
+    background: var(--bg-inset);
+    border-block: 1px solid var(--hairline);
     display: grid;
     gap: 12px;
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-    margin: 0 auto;
-    max-width: 645px;
-    padding: 18px 0;
+    grid-template-columns: minmax(72px, 1fr) auto minmax(72px, 1fr);
+    margin-top: 34px;
+    padding: 16px 24px;
   }
-  .blog-series-nav > a {
-    border: 1px solid var(--hairline-card);
-    border-radius: 6px;
-    display: grid;
-    gap: 5px;
-    padding: 11px 13px;
+  .blog-chips {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
   }
-  .blog-series-nav > a:last-child {
-    text-align: right;
+  .blog-chip {
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-pill);
+    color: var(--text-2);
+    font-family: var(--font-mono);
+    font-size: var(--mono-10);
+    letter-spacing: 0.12em;
+    padding: 8px 14px;
   }
-  .blog-series-nav > a:hover {
+  .blog-chip.blog-series-chip {
     border-color: var(--accent-edge);
-    opacity: 1;
+    color: var(--accent-ink);
   }
-  .blog-series-nav span,
-  .blog-series-nav p {
+  .blog-tag {
+    border: 1px solid var(--hairline-card);
+    border-radius: var(--radius-pill);
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: var(--mono-9);
+    letter-spacing: 0.12em;
+    padding: 7px 11px;
+    text-transform: uppercase;
+  }
+  .chip-rule {
+    align-self: center;
+    background: rgba(var(--ink-wash-rgb), calc(0.22 * var(--ink-wash-lift)));
+    flex: none;
+    height: 22px;
+    margin: 0 3px;
+    width: 1px;
+  }
+  .blog-step {
+    align-items: center;
+    color: var(--text-2);
+    display: inline-flex;
+    font-family: var(--font-mono);
+    font-size: var(--mono-11);
+    gap: 7px;
+    justify-self: start;
+    letter-spacing: 0.08em;
+    padding: 6px 2px;
+    transition: color 0.2s ease;
+  }
+  .blog-step:last-child {
+    justify-self: end;
+  }
+  a.blog-step:hover {
+    color: var(--accent-ink);
+  }
+  .blog-byline {
     color: var(--text-4);
     font-family: var(--font-mono);
     font-size: var(--mono-9);
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
+    margin: 20px auto 0;
+    max-width: 645px;
+    padding: 0 24px;
     text-transform: uppercase;
   }
-  .blog-series-nav p {
-    align-self: center;
-    margin: 0;
-    text-align: center;
-  }
-  .blog-series-nav p span,
-  .blog-series-nav p strong {
-    display: block;
-  }
-  .blog-series-nav p strong {
+  .blog-byline a {
     color: var(--accent-ink);
-    margin-top: 5px;
-  }
-  .blog-series-nav a strong {
-    color: var(--text-2);
-    font-size: var(--body-14);
-    line-height: 1.4;
   }
   .blog-related a {
     color: var(--accent-ink);
@@ -217,26 +236,14 @@ const formatDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'nume
     margin-top: 10px;
   }
   @media (max-width: 600px) {
-    .blog-meta,
     .blog-related {
       padding-inline: 18px;
     }
-    .blog-meta span {
-      display: block;
-      margin: 7px 0 0;
+    .blog-meta {
+      padding: 12px 16px;
     }
-    .blog-series-nav {
-      grid-template-columns: 1fr;
-      margin-inline: 18px;
-    }
-    .blog-series-nav > span {
+    .blog-step span {
       display: none;
-    }
-    .blog-series-nav > a:last-child {
-      text-align: left;
-    }
-    .blog-series-nav p {
-      grid-row: 1;
     }
   }
 </style>
