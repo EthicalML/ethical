@@ -147,8 +147,8 @@ const newsletter = defineCollection({
   loader: glob({ pattern: '*.md', base: './src/content/newsletter' }),
   schema: z.object({
     issue: z.number().int().positive(),
-    date: z.date().optional(),
-    summary: z.string().optional(),
+    date: z.date(),
+    summary: z.string(),
     tags: z.array(z.enum(NEWSLETTER_TAGS)).max(3).optional(),
     syndication: z.array(z.object({ name: z.string(), url: z.url() })).optional(),
   }),

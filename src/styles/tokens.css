@@ -534,6 +534,10 @@ button.nav-trigger {
   margin: 0;
   padding: 6px 13px;
 }
+a.status-pill:hover {
+  border-color: var(--accent-edge);
+  color: var(--text-1);
+}
 .status-pill span {
   background: var(--accent);
   border-radius: 50%;

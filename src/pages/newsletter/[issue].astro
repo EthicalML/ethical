@@ -54,7 +54,9 @@ const frontmatter = {
 <BaseLayout frontmatter={frontmatter}>
   <article class="newsletter-issue">
     <Hero
-      status="THE ML ENGINEER — WEEKLY NEWSLETTER"
+      status="THE ML ENGINEER — SUBSCRIBE VIA RSS"
+      status_href="/newsletter/rss.xml"
+      status_reload
       title={['The Machine', 'Learning Engineer', `Issue #${issue}`]}
       subtitle_lines={['Join 70k+ AI professionals receiving weekly curated', 'articles, tutorials and blog posts on']}
       beneficiaries={['production machine learning.', 'MLOps at scale.', 'agentic systems.', 'ML security.', 'AI safety.']}
