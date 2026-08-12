@@ -60,12 +60,7 @@ const formatDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'nume
 
 <BaseLayout frontmatter={frontmatter}>
   <article class="blog-post">
-    <Hero
-      status="THE INSTITUTE — BLOG"
-      title={entry.data.title}
-      subtitle_lines={['Long-form writing from The Institute on production', 'machine learning, agentic systems and']}
-      beneficiaries={['responsible AI.']}
-    />
+    <Hero status="THE INSTITUTE — BLOG" title={entry.data.title} subtitle_lines={entry.data.summary ?? entry.data.title} />
     <div class="blog-meta" data-reveal>
       <p>
         <time datetime={publishedDate.toISOString().slice(0, 10)}>{formatDate(publishedDate)}</time>
@@ -74,13 +69,6 @@ const formatDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'nume
       {entry.data.originalDate && <p>Published here {formatDate(entry.data.date)}</p>}
       {entry.data.tags?.length ? <p class="blog-tags">{entry.data.tags.join(' · ')}</p> : null}
     </div>
-    {
-      entry.data.summary && (
-        <blockquote class="prose-quote blog-lede" data-reveal>
-          {entry.data.summary}
-        </blockquote>
-      )
-    }
     {
       seriesNavigation && seriesNavigation.total > 1 && (
         <nav class="blog-series-nav" aria-label={`${seriesNavigation.name} series`} data-reveal>
@@ -161,11 +149,6 @@ const formatDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'nume
   }
   .blog-meta span {
     margin-left: 14px;
-  }
-  .blog-lede {
-    border-bottom: 1px solid var(--hairline);
-    margin: 34px auto 0;
-    padding-bottom: 30px;
   }
   .blog-series-nav {
     align-items: stretch;

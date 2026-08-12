@@ -16,7 +16,11 @@ interface Props {
   // balanced across up to three lines at a wider measure, with the last line
   // in the accent ink and no glitch animation.
   title: string[] | string;
-  subtitle_lines: string[];
+  // Same convention as title: an array is the classic two fixed mission lines
+  // (with `beneficiaries` cycling the ending), while a plain string is
+  // balanced across three lines and its last segment becomes the single
+  // typed ending. `beneficiaries` is ignored in string form.
+  subtitle_lines: string[] | string;
   beneficiaries?: string[];
   typewriter_underline?: boolean;
   primary_button?: HeroButton;
@@ -35,9 +39,6 @@ const {
   secondary_button,
 }: Props = Astro.props;
 const hasActionsSlot = Astro.slots.has('actions');
-const initialBeneficiary = beneficiaries[0];
-const [missionLine1, missionLine2] = subtitle_lines;
-const ariaSentence = [...subtitle_lines, initialBeneficiary].filter(Boolean).join(' ');
 
 const balanceLines = (text: string, lines: number): string[] => {
   const words = text.split(' ');
@@ -66,6 +67,12 @@ const titleLines = longform ? balanceLines(title, 3) : title;
 // The floor is 40px; the 110-character warning above fires long before it.
 const longestLine = longform ? Math.max(...titleLines.map((line) => line.length)) : 0;
 const longformSize = longform ? Math.round(Math.min(72, Math.max(40, 980 / (0.52 * longestLine)))) : undefined;
+
+const subtitleParts = typeof subtitle_lines === 'string' ? balanceLines(subtitle_lines, 3) : null;
+const [missionLine1, missionLine2] = subtitleParts ? subtitleParts.slice(0, 2) : subtitle_lines;
+const effectiveBeneficiaries = subtitleParts ? [subtitleParts[2]] : beneficiaries;
+const initialBeneficiary = effectiveBeneficiaries[0];
+const ariaSentence = [missionLine1, missionLine2, initialBeneficiary].filter(Boolean).join(' ');
 ---
 
 <header
@@ -107,7 +114,7 @@ const longformSize = longform ? Math.round(Math.min(72, Math.max(40, 980 / (0.52
         )
       }
     </h1>
-    <type-writer data-beneficiaries={JSON.stringify(beneficiaries)}>
+    <type-writer data-beneficiaries={JSON.stringify(effectiveBeneficiaries)}>
       <p class="hero-subtitle" data-underline={typewriter_underline ? 'true' : 'false'} aria-label={ariaSentence}>
         <span class="hero-typewriter-line">
           <span class="hero-typewriter-text">{missionLine1}</span>
