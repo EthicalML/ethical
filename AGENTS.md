@@ -63,7 +63,7 @@ Node version is pinned in `.tool-versions`. `npm run dev` for the dev server, `n
 - No em dashes in site prose.
 - Organisation name: The Institute for Ethical AI Alignment & Safety. Network: Ethical AI Network. Principles: The 9 Responsible AI Principles.
 
-## SEO invariants
+## SEO Requirements with any new page
 
 - Every page has a topical `title` or `seoTitle` and `description` in frontmatter, using words people search for rather than internal labels; aim for about 65 characters.
 - Visible h1 text reads correctly as plain extracted text; never rely on CSS alone to separate words.

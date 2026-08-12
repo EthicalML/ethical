@@ -274,6 +274,8 @@ export const wordmark = {
   secondary: 'ALIGNMENT + SAFETY',
 };
 
+export const siteTitle = 'The Institute for Ethical AI Alignment & Safety';
+
 /* `short` is the same destination under a narrower label: the header swaps to it
    once the row runs out of room, rather than letting the pill push the page wide. */
 export const join = {
