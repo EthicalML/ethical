@@ -6,7 +6,7 @@ import KaosGraph from '../components/KaosGraph.astro';
 const { data, Content } = Astro.props;
 const frontmatter = {
   title: `${data.number}. ${data.title}`,
-  seoTitle: `${data.title} — Responsible AI Principle ${Number(data.number)}`,
+  seoTitle: `${data.title} — Alignment & Safety Principle ${Number(data.number)}`,
   description: data.description,
   eyebrow: `PRINCIPLE ${data.number} — COMMITMENT`,
   transitionName: `principle-title-${data.number}`,
