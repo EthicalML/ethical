@@ -11,15 +11,20 @@ const { frontmatter = {} } = Astro.props;
 const title = frontmatter.title ?? 'The Institute for Ethical AI Alignment & Safety';
 const seoTitle = frontmatter.seoTitle ?? title;
 const description = frontmatter.seoDescription ?? frontmatter.description ?? metaDescription;
-const canonical = new URL(Astro.url.pathname, Astro.site);
+const canonical = new URL(frontmatter.canonicalPath ?? Astro.url.pathname, Astro.site);
 const socialImage = new URL(frontmatter.image ?? ogImage, Astro.site);
 const organization = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'The Institute for Ethical AI Alignment & Safety',
+  alternateName: 'The Institute for Ethical AI & Machine Learning',
   url: 'https://ethical.institute/',
   logo: new URL('/favicon.png', Astro.site).href,
-  sameAs: ['https://github.com/EthicalML'],
+  sameAs: [
+    'https://github.com/EthicalML',
+    'https://machinelearning.substack.com',
+    'https://www.linkedin.com/newsletters/the-machine-learning-engineer-6882216044568571904/',
+  ],
 };
 const article = frontmatter.article
   ? {
@@ -152,7 +157,7 @@ const article = frontmatter.article
         }
       }
     </style>
-    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=UA-89407852-2"></script>
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-L2HXV1W6H6"></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
       function gtag() {
@@ -160,14 +165,14 @@ const article = frontmatter.article
         dataLayer.push(arguments);
       }
       gtag('js', new Date());
-      gtag('config', 'UA-89407852-2');
+      gtag('config', 'G-L2HXV1W6H6');
       let initialPageLoad = true;
       document.addEventListener('astro:page-load', () => {
         if (initialPageLoad) {
           initialPageLoad = false;
           return;
         }
-        gtag('config', 'UA-89407852-2', {
+        gtag('config', 'G-L2HXV1W6H6', {
           page_path: location.pathname + location.search,
           page_title: document.title,
         });
