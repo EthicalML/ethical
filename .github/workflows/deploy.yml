@@ -3,6 +3,9 @@ name: Deploy site
 on:
   push:
     branches: [master]
+  schedule:
+    # Daily rebuild so future-dated blog posts publish when due; off-peak minute.
+    - cron: '43 5 * * *'
   workflow_dispatch:
 
 permissions:

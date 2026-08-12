@@ -49,6 +49,14 @@ Owner has ideas for the newsletter beyond the carried-over archive (396 issues l
 Six homepage scroll-effect variants sit in the open PR #12, paused for owner decision: pick a variant to land or close the PR.
 
 
+## Blog follow-up: proactive weekly content proposals
+
+A recurring workflow (weekly cadence) that proposes blog content to publish: candidate topics or drafts sourced from the newsletter archive, the talk backlog, the backfill ledger, and current discussion threads, delivered as draft posts or a proposal list for owner triage. The scheduling substrate already exists (draft flag plus future-dated publishing with the daily deploy cron), so this is purely the generation/proposal side. Owner decision needed on delivery form (PR with draft posts vs a proposal doc) before building.
+
+## Blog follow-up: byte-sized opinions (Fowler-style bliki)
+
+Explore a Martin Fowler bliki-style stream of short opinion posts alongside full articles: byte-sized takes (a few paragraphs) with permalinks, published frequently. Open design questions: same collection with a `kind`/length distinction vs a separate collection, how they appear in the archive and RSS, and whether they feed the weekly-proposals workflow above as its lightest-weight output.
+
 ## Blog follow-up: RSS feeds and newsletter cross-publishing
 
 Once the blog ships, give it its own feed at `/blog/rss.xml`, fully separate from a newsletter feed at `/mle/rss.xml` (this absorbs the old deferred "RSS (later)" item): the audiences and cadences differ, both derive trivially from their content collections via `@astrojs/rss`, and nothing is gained by combining them. Separately decide whether new blog posts get surfaced in the weekly newsletter issues (a featured section or link block); that half is editorial, not build work, and needs an owner call on placement and cadence.
