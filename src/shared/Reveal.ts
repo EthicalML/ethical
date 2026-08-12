@@ -8,7 +8,7 @@
 // (dataset.revealed plus a `reveal:visible` event) without the fade styling;
 // components with bespoke entrances consume the signal via `onRevealed`.
 const REVEAL_PX = 100;
-const SHORT_REVEAL_RATIO = 0.6;
+const SHORT_REVEAL_RATIO = 0.3;
 
 export const onRevealed = (element: HTMLElement, callback: () => void, signal: AbortSignal) => {
   if (element.dataset.revealed === '1') {

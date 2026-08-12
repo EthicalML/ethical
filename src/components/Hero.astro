@@ -73,6 +73,11 @@ const [missionLine1, missionLine2] = subtitleParts ? subtitleParts.slice(0, 2) :
 const effectiveBeneficiaries = subtitleParts ? [subtitleParts[2]] : beneficiaries;
 const initialBeneficiary = effectiveBeneficiaries[0];
 const ariaSentence = [missionLine1, missionLine2, initialBeneficiary].filter(Boolean).join(' ');
+// Each line carries its final text in data-line for the CSS width spacer: the
+// hero grid's fr track takes its min-content from these nowrap lines, so
+// without a reserved width the copy column narrows while the typewriter is
+// mid-word and the title wraps onto an extra line until typing catches up.
+const longestBeneficiary = effectiveBeneficiaries.reduce((a, b) => (b.length > a.length ? b : a), '');
 ---
 
 <header
@@ -119,13 +124,13 @@ const ariaSentence = [missionLine1, missionLine2, initialBeneficiary].filter(Boo
     </h1>
     <type-writer data-beneficiaries={JSON.stringify(effectiveBeneficiaries)}>
       <p class="hero-subtitle" data-underline={typewriter_underline ? 'true' : 'false'} aria-label={ariaSentence}>
-        <span class="hero-typewriter-line">
+        <span class="hero-typewriter-line" data-line={missionLine1}>
           <span class="hero-typewriter-text">{missionLine1}</span>
         </span>
-        <span class="hero-typewriter-line">
+        <span class="hero-typewriter-line" data-line={missionLine2}>
           <span class="hero-typewriter-text">{missionLine2}</span>
         </span>
-        <span class="hero-typewriter-line hero-typewriter-dynamic">
+        <span class="hero-typewriter-line hero-typewriter-dynamic" data-line={longestBeneficiary}>
           <span class="hero-typewriter-glitch" data-text={initialBeneficiary}>
             <span class="hero-typewriter-text">{initialBeneficiary}</span><span class="hero-typewriter-cursor" aria-hidden="true"></span>
           </span>
