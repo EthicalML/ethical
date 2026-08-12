@@ -63,6 +63,18 @@ Node version is pinned in `.tool-versions`. `npm run dev` for the dev server, `n
 - No em dashes in site prose.
 - Organisation name: The Institute for Ethical AI Alignment & Safety. Network: Ethical AI Network. Principles: The 9 Responsible AI Principles.
 
+## SEO invariants
+
+- Every page has a topical `title` or `seoTitle` and `description` in frontmatter, using words people search for rather than internal labels; aim for about 65 characters.
+- Visible h1 text reads correctly as plain extracted text; never rely on CSS alone to separate words.
+- Article pages, including newsletters, blog posts and reports, emit Article JSON-LD with `datePublished`.
+- Article authors resolve through `src/data/authors.ts`; do not duplicate author records in page frontmatter.
+- Every new page is reachable through at least one internal link.
+- Assign every new indexable page to an llms.txt section; the build fails when an assignment is missing.
+- Add redirects in `astro.config.mjs` for moved or removed URLs.
+- Images below the fold are lazy-loaded.
+- Do not add eager third-party fetches.
+
 # Astro authoring conventions
 
 The ratified decisions in `~/Programming/agentic/kaos-ai-docs/ethical-institute-rebrand/` (moved out of the repo from `.github/memory/2026-07-rebrand/`) are authoritative. ADR-009 defines the client architecture and data-placement rules summarised here.
