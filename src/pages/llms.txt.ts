@@ -1,166 +1,56 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
+import { newsletterFrontmatter } from './newsletter/frontmatter';
 
 const SITE = 'https://ethical.institute';
 
-interface Surface {
+const sectionHeadings = [
+  'Principles and frameworks',
+  'Open source',
+  'Policy and research',
+  'Newsletter',
+  'About and network',
+] as const;
+type Section = (typeof sectionHeadings)[number];
+
+interface PageMetadata {
   title: string;
-  href: string;
-  note: string;
+  seoTitle?: string;
+  description: string;
 }
 
-// The curated index, in the order a reader unfamiliar with the Institute
-// should meet it: what it commits to, what it builds, what it has published,
-// then how to reach it. Kept here rather than derived from `src/data/navigation.ts`
-// because the header menus are shaped by what fits in a menu column, and this
-// file is shaped by what an assistant needs to answer a question.
-const sections: { heading: string; surfaces: Surface[] }[] = [
-  {
-    heading: 'Principles and frameworks',
-    surfaces: [
-      {
-        title: 'The 9 Responsible AI Principles',
-        href: '/principles/',
-        note: 'The Institute’s foundational commitments, each with its failure modes and the controls that implement it.',
-      },
-      {
-        title: 'Frameworks overview',
-        href: '/frameworks/',
-        note: 'Index of the applied frameworks: procurement, maturity assessment and security.',
-      },
-      {
-        title: 'AI-RFX Procurement Framework',
-        href: '/frameworks/ai-rfx/',
-        note: 'Open RFP and RFI templates for procuring machine learning systems.',
-      },
-      {
-        title: 'ML Maturity Model',
-        href: '/frameworks/maturity-model/',
-        note: 'Eight criteria for assessing a supplier’s production machine learning capability.',
-      },
-      {
-        title: 'MLSecOps and agentic security',
-        href: '/frameworks/security/',
-        note: 'Lifecycle security guidance and the agentic security taxonomy.',
-      },
-      {
-        title: 'Agentic RFX',
-        href: '/frameworks/agentic-rfx/',
-        note: 'Procurement criteria for agentic systems, in development.',
-      },
-      {
-        title: 'Agentic Maturity Model',
-        href: '/frameworks/agentic-maturity-model/',
-        note: 'Operating capability model for agentic systems, in development.',
-      },
-    ],
-  },
-  {
-    heading: 'Open source',
-    surfaces: [
-      {
-        title: 'Open-source projects',
-        href: '/open-source/',
-        note: 'Index of the Institute’s software and maintained reference lists.',
-      },
-      {
-        title: 'KAOS (Kubernetes Agent OS)',
-        href: '/open-source/kaos/',
-        note: 'Control plane for autonomous agents: scoped credentials, budgets, approval gates and an audit trail.',
-      },
-      {
-        title: 'Kompute',
-        href: '/open-source/kompute/',
-        note: 'Cross-vendor GPU compute framework, portable across hardware, hosted in Linux Foundation AI & Data.',
-      },
-      {
-        title: 'XAI Framework',
-        href: '/open-source/xai/',
-        note: 'Data analysis, model evaluation and production monitoring for bias and explainability.',
-      },
-      {
-        title: 'Awesome Production Machine Learning',
-        href: '/open-source/production-ml-list/',
-        note: 'Community catalogue of production ML and MLOps tooling, curated weekly.',
-      },
-      {
-        title: 'Awesome AI Guidelines',
-        href: '/open-source/ai-guidelines/',
-        note: 'Catalogue of AI principles, guidelines, frameworks and regulatory initiatives worldwide.',
-      },
-    ],
-  },
-  {
-    heading: 'Policy, standards and research',
-    surfaces: [
-      {
-        title: 'Policy and standards record',
-        href: '/policy/',
-        note: 'Published policy contributions and standards engagements, with the source documents.',
-      },
-      {
-        title: 'Reports and data',
-        href: '/reports/',
-        note: 'The annual practitioner survey, its methodology and citation guidance.',
-      },
-      {
-        title: 'State of Production Machine Learning 2025',
-        href: '/reports/state-of-ml-2025/',
-        note: 'Latest edition of the annual survey, compared against the previous year.',
-      },
-      {
-        title: 'State of Production Machine Learning 2024',
-        href: '/reports/state-of-ml-2024/',
-        note: 'Previous edition of the annual survey.',
-      },
-    ],
-  },
-  {
-    heading: 'Newsletter',
-    surfaces: [
-      {
-        title: 'The ML Engineer newsletter',
-        href: '/newsletter/',
-        note: 'Weekly curated machine learning writing for 70k+ practitioners, with the searchable archive of every issue.',
-      },
-    ],
-  },
-  {
-    heading: 'Talks, network and contact',
-    surfaces: [
-      {
-        title: 'Talks and events',
-        href: '/talks-and-events/',
-        note: 'Keynotes, conference talks and roundtables, with recordings where they exist.',
-      },
-      {
-        title: 'Ethical AI Network',
-        href: '/network/',
-        note: 'The practitioner network across engineering, research, policy and standards.',
-      },
-      {
-        title: 'Membership',
-        href: '/membership/',
-        note: 'What members contribute, what they get, and how to apply.',
-      },
-      {
-        title: 'Partners',
-        href: '/partners/',
-        note: 'Institutional relationships and the role each partner holds.',
-      },
-      {
-        title: 'About the Institute',
-        href: '/about/',
-        note: 'History since 2017, mission, methods and how the work is organised.',
-      },
-      {
-        title: 'Contact',
-        href: '/contact/',
-        note: 'Start an institutional collaboration, or reach the Institute directly.',
-      },
-    ],
-  },
-];
+interface Surface extends PageMetadata {
+  href: string;
+}
+
+// The order here is the reading order. Page titles and descriptions remain
+// owned by their page frontmatter and are never repeated in this index.
+const routeSections: Record<string, Section> = {
+  '/principles/': 'Principles and frameworks',
+  '/frameworks/': 'Principles and frameworks',
+  '/frameworks/ai-rfx/': 'Principles and frameworks',
+  '/frameworks/maturity-model/': 'Principles and frameworks',
+  '/frameworks/security/': 'Principles and frameworks',
+  '/frameworks/agentic-rfx/': 'Principles and frameworks',
+  '/frameworks/agentic-maturity-model/': 'Principles and frameworks',
+  '/open-source/': 'Open source',
+  '/open-source/kaos/': 'Open source',
+  '/open-source/kompute/': 'Open source',
+  '/open-source/xai/': 'Open source',
+  '/open-source/production-ml-list/': 'Open source',
+  '/open-source/ai-guidelines/': 'Open source',
+  '/policy/': 'Policy and research',
+  '/reports/': 'Policy and research',
+  '/reports/state-of-ml-2025/': 'Policy and research',
+  '/reports/state-of-ml-2024/': 'Policy and research',
+  '/newsletter/': 'Newsletter',
+  '/talks-and-events/': 'About and network',
+  '/network/': 'About and network',
+  '/membership/': 'About and network',
+  '/partners/': 'About and network',
+  '/about/': 'About and network',
+  '/contact/': 'About and network',
+};
 
 const preamble = `# The Institute for Ethical AI Alignment & Safety
 
@@ -170,11 +60,81 @@ The Institute develops methods for testing whether AI systems meet safety and al
 
 Every newsletter issue is also served as plain markdown at https://ethical.institute/newsletter/{issue}.md — for example https://ethical.institute/newsletter/396.md. The complete list is under Optional, at the end of this file.`;
 
+const pageModules = import.meta.glob<{ frontmatter: PageMetadata }>('./**/*.mdx', {
+  eager: true,
+});
+const astroPageModules = import.meta.glob('./**/*.astro');
+
+const routeFromFilename = (filename: string) => {
+  const route = filename
+    .replace(/^\.\//, '/')
+    .replace(/\.(astro|mdx)$/, '/')
+    .replace(/\/index\/$/, '/');
+  return route;
+};
+
+const pageMetadata = new Map(
+  Object.entries(pageModules).map(([filename, module]) => [
+    routeFromFilename(filename),
+    module.frontmatter,
+  ]),
+);
+pageMetadata.set('/newsletter/', newsletterFrontmatter);
+
+const excludedFromLlms = [
+  (route: string) => route === '/',
+  (route: string) => route === '/privacy/',
+  (route: string) => /^\/principles\/\d+\/$/.test(route),
+  (route: string) => /^\/newsletter\/\d+\/$/.test(route),
+];
+
 const list = (surfaces: Surface[]) =>
-  surfaces.map(({ title, href, note }) => `- [${title}](${SITE}${href}): ${note}`).join('\n');
+  surfaces
+    .map(
+      ({ seoTitle, title, href, description }) =>
+        `- [${seoTitle ?? title}](${SITE}${href}): ${description}`,
+    )
+    .join('\n');
 
 export const GET: APIRoute = async () => {
-  const issues = await getCollection('newsletter');
+  const [issues, principles] = await Promise.all([
+    getCollection('newsletter'),
+    getCollection('principles'),
+  ]);
+
+  const staticAstroRoutes = Object.keys(astroPageModules)
+    .filter(
+      (filename) =>
+        !filename.includes('/prototypes/') &&
+        !filename.includes('[') &&
+        !filename.endsWith('/404.astro'),
+    )
+    .map(routeFromFilename);
+  const sitemapRoutes = [
+    ...pageMetadata.keys(),
+    ...staticAstroRoutes,
+    ...principles.map(({ data }) => `/principles/${data.number}/`),
+    ...issues.map(({ data }) => `/newsletter/${data.issue}/`),
+  ];
+  const missingRoutes = [...new Set(sitemapRoutes)].filter(
+    (route) => !routeSections[route] && !excludedFromLlms.some((isExcluded) => isExcluded(route)),
+  );
+  if (missingRoutes.length) {
+    throw new Error(`llms.txt is missing a section assignment for: ${missingRoutes.join(', ')}`);
+  }
+
+  const staleRoutes = Object.keys(routeSections).filter((route) => !sitemapRoutes.includes(route));
+  if (staleRoutes.length) {
+    throw new Error(`llms.txt has unknown routes: ${staleRoutes.join(', ')}`);
+  }
+
+  const surfaces = Object.entries(routeSections).map(([href, section]) => {
+    const metadata = pageMetadata.get(href);
+    if (!metadata?.title || !metadata.description) {
+      throw new Error(`llms.txt cannot find title and description frontmatter for: ${href}`);
+    }
+    return { ...metadata, href, section };
+  });
 
   // Newest first: an assistant reading top-down should meet the current state
   // of the field before the 2018 archive.
@@ -190,7 +150,10 @@ export const GET: APIRoute = async () => {
 
   const body = [
     preamble,
-    ...sections.map(({ heading, surfaces }) => `## ${heading}\n\n${list(surfaces)}`),
+    ...sectionHeadings.map(
+      (heading) =>
+        `## ${heading}\n\n${list(surfaces.filter((surface) => surface.section === heading))}`,
+    ),
     // The spec reserves `## Optional` for what a consumer may skip when its
     // context budget is short. Nine years of weekly issues is exactly that: the
     // most valuable corpus on the site and the one nobody should be forced to
