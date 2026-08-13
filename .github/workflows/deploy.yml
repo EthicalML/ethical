@@ -20,21 +20,39 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      deploy: ${{ steps.decide.outputs.deploy }}
     steps:
       - uses: actions/checkout@v7
+      # Scheduled runs exist only to publish future-dated posts; when none came
+      # due in the script's lookback window the whole run is a no-op and every
+      # later step is skipped. Push and manual runs always deploy.
+      - id: decide
+        name: Check for newly due posts on scheduled runs
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "deploy=$(scripts/scheduled-deploy-due.sh)" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy=1" >> "$GITHUB_OUTPUT"
+          fi
       - uses: actions/setup-node@v7
+        if: steps.decide.outputs.deploy == '1'
         with:
           node-version-file: .tool-versions
           cache: npm
       - run: npm ci
+        if: steps.decide.outputs.deploy == '1'
       - run: npm run build
+        if: steps.decide.outputs.deploy == '1'
         env:
           FORM_ENDPOINT: ${{ secrets.FORM_ENDPOINT }}
       - uses: actions/upload-pages-artifact@v5
+        if: steps.decide.outputs.deploy == '1'
         with:
           path: dist
   deploy:
     needs: build
+    if: needs.build.outputs.deploy == '1'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
