@@ -1,6 +1,7 @@
 ---
 title: Production ML Across 2015-2035
 date: 2026-08-12
+image: './featured.jpg'
 summary: A twenty-year view of how production machine learning evolved, where engineering effort is moving and what the discipline needs next.
 tags: [mlops, production-ml]
 ---

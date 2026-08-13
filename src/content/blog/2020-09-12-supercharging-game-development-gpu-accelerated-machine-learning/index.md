@@ -1,6 +1,7 @@
 ---
 title: 'Supercharging Game Development with GPU Accelerated Machine Learning'
 date: 2020-09-12
+image: './image-02.png'
 summary: 'A hands on tutorial that teaches you how integrate GPU optimized ML code in your game development workflows using the Godot Game Engine and the Kompute framework.'
 tags: [gpu, kompute, machine-learning, game-development]
 source: external

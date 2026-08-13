@@ -1,6 +1,7 @@
 ---
 title: 'Supercharging your Mobile Apps: GPU Accelerated Machine Learning using Android NDK & Vulkan Kompute'
 date: 2020-10-05
+image: './featured.jpg'
 summary: 'A hands on tutorial that teaches you how to leverage your on-device phone GPU for accelerated data processing and machine learning using the Android NDK, Kompute and Vulkan.'
 tags: [gpu, kompute, machine-learning, android]
 source: external

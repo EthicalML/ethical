@@ -1,6 +1,7 @@
 ---
 title: "Claude Code: It's not replacing devs. It's moving them to a higher altitude."
 date: 2026-01-26
+image: './image-01.png'
 summary: 'An exploration of the paradigms introduced by agentic development tools, lessons from building with AI tooling, and what they could mean for software engineering.'
 tags: [agents, claude-code, software-engineering]
 source: external

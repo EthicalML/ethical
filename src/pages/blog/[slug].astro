@@ -47,7 +47,7 @@ const publishedDate = entry.data.originalDate ?? entry.data.date;
 const frontmatter = {
   title: entry.data.title,
   description: entry.data.summary,
-  image: entry.data.image,
+  image: entry.data.image.src,
   canonicalPath: entry.data.source !== 'original' ? entry.data.url : undefined,
   article: true,
   articleHeadline: entry.data.title,
@@ -63,7 +63,12 @@ const bylineAuthors = entry.data.authors.map((name) => ({ name, anchor: authors[
 
 <BaseLayout frontmatter={frontmatter}>
   <article class="blog-post">
-    <Hero status="THE INSTITUTE — BLOG" title={entry.data.title} subtitle_lines={entry.data.summary ?? entry.data.title} />
+    <Hero
+      status="THE INSTITUTE — BLOG"
+      title={entry.data.title}
+      subtitle_lines={entry.data.summary ?? entry.data.title}
+      title_transition={`blog-title-${blogSlug(entry)}`}
+    />
     <div class="blog-meta" data-reveal>
       {
         seriesNavigation?.previous ? (

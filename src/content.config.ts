@@ -156,25 +156,27 @@ const newsletter = defineCollection({
 
 const blog = defineCollection({
   loader: glob({ pattern: '*/index.md', base: './src/content/blog' }),
-  schema: z
-    .object({
-      title: z.string(),
-      date: z.date(),
-      summary: z.string().optional(),
-      tags: z.array(z.string()).max(5).optional(),
-      syndication: z.array(z.object({ name: z.string(), url: z.url() })).optional(),
-      series: z.string().optional(),
-      authors: z.array(z.string()).default(['Alejandro Saucedo']),
-      source: z.enum(['original', 'linkedin', 'hackernoon', 'external']).default('original'),
-      url: z.url().optional(),
-      originalDate: z.date().optional(),
-      image: z.string().optional(),
-      draft: z.boolean().default(false),
-    })
-    .refine(({ source, url }) => source === 'original' || url !== undefined, {
-      message: 'A non-original post requires its original URL.',
-      path: ['url'],
-    }),
+  schema: ({ image }) =>
+    z
+      .object({
+        title: z.string(),
+        date: z.date(),
+        summary: z.string().optional(),
+        tags: z.array(z.string()).max(5).optional(),
+        syndication: z.array(z.object({ name: z.string(), url: z.url() })).optional(),
+        series: z.string().optional(),
+        authors: z.array(z.string()).default(['Alejandro Saucedo']),
+        source: z.enum(['original', 'linkedin', 'hackernoon', 'external']).default('original'),
+        url: z.url().optional(),
+        originalDate: z.date().optional(),
+        // Every post carries a featured image: archive showcases and social cards depend on it.
+        image: image(),
+        draft: z.boolean().default(false),
+      })
+      .refine(({ source, url }) => source === 'original' || url !== undefined, {
+        message: 'A non-original post requires its original URL.',
+        path: ['url'],
+      }),
 });
 
 const policyProducts = defineCollection({

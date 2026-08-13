@@ -1,6 +1,7 @@
 ---
 title: 'Beyond CUDA: GPU Accelerated Python for Machine Learning on Cross-Vendor Graphics Cards Made Simple'
 date: 2020-11-13
+image: './image-01.png'
 summary: 'A practical deep dive into GPU Accelerated Python on cross-vendor graphics cards, building machine learning algorithms using the Kompute Python Framework and the Vulkan SDK.'
 tags: [gpu, kompute, machine-learning, python]
 source: external

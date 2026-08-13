@@ -1,6 +1,7 @@
 ---
 title: Whose Memory Is It? Building Multi-Tenant, Multi-Tier Memory for AI Agents (Part 2)
 date: 2026-08-10
+image: './featured.jpg'
 source: hackernoon
 url: https://hackernoon.com/whose-memory-is-it-building-multi-tenant-multi-tier-memory-for-ai-agents-part-2
 summary: 'This is a 4-part series on how agents remember: building short-, medium- and long-term memory that scales across users, agents, and kubernetes clusters.'

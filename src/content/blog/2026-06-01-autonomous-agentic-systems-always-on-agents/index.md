@@ -1,6 +1,7 @@
 ---
 title: 'Autonomous Agentic Systems: A Practical Guide to Always-On Agents'
 date: 2026-06-01
+image: './image-01.jpg'
 summary: 'A practical guide to designing, operating and scaling always-on agents, from basic agentic loops to scalable autonomous agentic systems.'
 tags: [agents, agentic-systems, kubernetes]
 source: hackernoon

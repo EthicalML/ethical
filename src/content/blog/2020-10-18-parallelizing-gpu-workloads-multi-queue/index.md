@@ -1,6 +1,7 @@
 ---
 title: 'Parallelizing GPU-intensive Workloads via Multi-Queue Operations'
 date: 2020-10-18
+image: './image-01.png'
 summary: 'Achieving 2x+ performance improvements on GPU-intensive workloads by leveraging multi-queue operation parallelism using Kompute and the Vulkan SDK.'
 tags: [gpu, kompute, parallel-computing]
 source: external

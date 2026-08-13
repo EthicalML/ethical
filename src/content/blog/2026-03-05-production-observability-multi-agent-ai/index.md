@@ -1,6 +1,7 @@
 ---
 title: 'Production Observability for Multi-Agent AI (with KAOS + OTel + SigNoz)'
 date: 2026-03-05
+image: './image-01.jpg'
 summary: 'A practical guide to adding production-grade observability to multi-agent AI systems with the K8s Agent Orchestration System using OpenTelemetry and SigNoz.'
 tags: [agents, observability, opentelemetry, kubernetes]
 source: hackernoon
