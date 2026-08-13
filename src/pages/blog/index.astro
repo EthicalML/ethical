@@ -82,9 +82,13 @@ const formatDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'nume
 </BaseLayout>
 
 <style>
-  .blog-featured,
-  .blog-showcase-section {
+  .blog-featured {
     margin: 0 auto;
+    max-width: 1180px;
+    padding: 0 48px;
+  }
+  .blog-showcase-section > .eyebrow {
+    margin: 0 auto 18px;
     max-width: 1180px;
     padding: 0 48px;
   }
@@ -109,7 +113,7 @@ const formatDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'nume
   .featured-media {
     align-self: stretch;
   }
-  .featured-media img {
+  .featured-media :global(img) {
     display: block;
     height: 100%;
     object-fit: cover;
@@ -126,29 +130,67 @@ const formatDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'nume
     padding-bottom: 96px;
     padding-top: 64px;
   }
-  .blog-showcase-section > .eyebrow {
-    margin-bottom: 18px;
+  .blog-showcase-section :global(.blog-showcase) {
+    display: block;
+    position: relative;
+  }
+  .blog-showcase-section :global(.stage-sticky) {
+    height: min(78vh, 640px);
+    position: sticky;
+    top: 76px;
+  }
+  .blog-showcase-section :global(.stage-steps) {
+    background: color-mix(in srgb, var(--bg-base) 70%, transparent);
+    margin-left: auto;
+    margin-right: 0;
+    margin-top: calc(-1 * min(78vh, 640px));
+    max-width: 450px;
+    padding-left: 26px;
+    /* The first card enters around the lower third; each card then gets a
+       long scroll runway, talks-reel style. */
+    padding-top: 52vh;
+    position: relative;
+    z-index: 2;
+  }
+  /* The fade between the full image and the translucent text column is a
+     fixed 80px strip hanging off the column's left edge. */
+  .blog-showcase-section :global(.stage-steps)::before {
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--bg-base) 70%, transparent));
+    bottom: 0;
+    content: '';
+    left: -80px;
+    position: absolute;
+    top: 0;
+    width: 80px;
   }
   .showcase-pane {
-    border: 1px solid var(--hairline-card);
-    border-radius: var(--radius-card);
     inset: 0;
     opacity: 0;
     overflow: hidden;
     position: absolute;
     transition: opacity 0.45s ease;
   }
+  /* Translucent dim only: the image stays visible edge to edge, darkened
+     toward the text side for contrast, never fading to the page background. */
+  /* A light uniform wash keeps the image cohesive with the dark page; the
+     text column carries its own opaque backdrop and fade strip. */
+  .showcase-pane::after {
+    background: color-mix(in srgb, var(--bg-base) 14%, transparent);
+    content: '';
+    inset: 0;
+    position: absolute;
+  }
   .showcase-pane[data-active='1'] {
     opacity: 1;
   }
-  .showcase-pane img {
+  .showcase-pane :global(img) {
     height: 100%;
     object-fit: cover;
     width: 100%;
   }
   .blog-card {
-    border-top: 1px solid var(--hairline);
-    padding: 32px 0;
+    margin-bottom: 46vh;
+    padding: 0;
   }
   .blog-card h2 {
     font: 300 var(--display-30) / 1.15 var(--font-display);
@@ -200,7 +242,7 @@ const formatDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'nume
   @media (max-width: 999px) {
     /* The stacked fallback would render every pane above the list; the cards
        carry the information, so the stage disappears on small screens. */
-    .blog-showcase :global(.stage-sticky) {
+    .blog-showcase-section :global(.stage-sticky) {
       display: none;
     }
   }
