@@ -54,9 +54,13 @@ Owner review 2026-08-12: most page heroes are boring, especially the ones with n
 - Structure: extract shared hero primitives (status pill, glitch title line, typewriter subtitle, canvas mount) as owned components composed by both `Hero` and `ArticleHero`, so fixes propagate without unifying the two species into one prop-matrix mega-component (rejected 2026-08-12: it couples 25 surfaces into one blast radius).
 - Interactive graph widgets (owner ask 2026-08-12): explore hero widgets, possibly 3D, that are interactive graphs in the spirit of the visualisations on https://www.theforecastingcompany.com/en, which the owner rates highly. The reference's graphs are client-rendered and not inspectable from fetched markup, so the exploration must start with the owner walking through the reference (screenshots or live) to pin down which behaviours appeal, per the no-unseen-design-references rule, before any prototyping.
 
+## Blog landing redesign
+
+The archive shipped with an interim showcase (2026-08-13): flagship hero, featured latest card, and a ScrollStage sweep where each post's featured image fills the container behind a right-aligned translucent card column (70% dim, 80px edge fade, talks-reel spacing). Owner verdict: acceptable to ship, not yet good. Revisit properly alongside the hero family programme: explored and rejected so far are a boxed split layout, a mid-screen gradient with backdrop blur, and per-card floating fade boxes; candidate directions include per-post canvas scenes, tag filter chips, and a series shelf. Design with owner in the loop from mockups, not iterations on the live page.
+
 ## Blog follow-up: proactive weekly content proposals
 
-A recurring workflow (weekly cadence) that proposes blog content to publish: candidate topics or drafts sourced from the newsletter archive, the talk backlog, the backfill ledger, and current discussion threads, delivered as draft posts or a proposal list for owner triage. The scheduling substrate already exists (draft flag plus future-dated publishing with the daily deploy cron), so this is purely the generation/proposal side. Owner decision needed on delivery form (PR with draft posts vs a proposal doc) before building.
+A recurring workflow (weekly cadence) that proposes blog content to publish: candidate topics or drafts sourced from the newsletter archive, the talk backlog, the backfill ledger, and current discussion threads, delivered as draft posts or a proposal list for owner triage. The scheduling substrate already exists (undated drafts plus future-dated publishing with the daily deploy cron), so this is purely the generation/proposal side. Owner decision needed on delivery form (PR with draft posts vs a proposal doc) before building.
 
 ## Blog follow-up: byte-sized opinions (Fowler-style bliki)
 
@@ -64,11 +68,13 @@ Explore a Martin Fowler bliki-style stream of short opinion posts alongside full
 
 ## Blog posts to write
 
-Queued posts for the new blog. Each lands as a draft or future-dated entry through the normal publish flow; the list will grow.
+Queued posts for the new blog. Each lands as an undated draft or future-dated entry through the normal publish flow; the list will grow.
 
+- Production ML Across 2015-2035, written properly (owner call 2026-08-14): the pilot post was a lightly adapted newsletter section and was removed rather than shipped. Write it as a full standalone piece from the PyCon DE & PyData 2026 talk (https://www.youtube.com/watch?v=I1GvlW1H4WI), with its own structure, stills or diagrams from the talk as images, and the recovered prose (git history of the removed post folder) as raw material. Coordinate with the Issue 400 entry below so the newsletter and post link rather than duplicate.
 - Announcement: the newsletter redesign and the new RSS feed (PR #69). Cover the rebuilt archive under the Astro site and the feed addition; publish once the blog itself is live and linked.
 - Production ML monitoring, conceptual rewrite (owner call 2026-08-12): not a 1-1 republication of the 2020 KDnuggets/TDS piece because its Seldon Core implementation is archive tech; write a version centred on the concepts (outliers, drift, explainers, statistical performance) that references the KDnuggets and Towards Data Science originals.
 - The top risks posed by AI and how to safeguard against them: the 2020 ITProPortal piece is dead on the live web (Wayback only); rather than recover it, treat the topic as a fresh post updated for the frontier-AI era.
+- AI policy engagement highlights (owner call 2026-08-12): the ACM US & Europe AI Principles and the UK AI policy adoption proposals were briefly imported as external-link cards and rejected; the blog carries no link-only entries. Write a post that discusses both engagements in more detail and links or features the LinkedIn announcements and the underlying documents.
 - Per-project posts for the open-source portfolio (owner call 2026-08-12): the GitHub repos do not enter the blog as feature-cards; instead each major project (Kompute, awesome-production-machine-learning, the regulation list, KAOS, fml/sml-security, the agentic lists) earns an authored post that tells its story and backlinks the repo and its existing /open-source/ page.
 
 ## Blog follow-up: RSS feeds and newsletter cross-publishing
@@ -102,7 +108,7 @@ Each issue carries an events block, but nothing in it points back to `/talks-and
 
 ## Issue 400: the Production ML Across 2015-2035 talk
 
-Written and cut from issue 399 at the last minute to make room for the HackerNoon series feature and the website relaunch. It is the PyCon DE & PyData 2026 talk, https://www.youtube.com/watch?v=I1GvlW1H4WI, covering production ML from 2015 to 2035: the 2015-2023 evolution and the shift of engineering effort from training to inference and the application layer, then monitoring, stack alignment, shorter production timelines, autonomous operational patterns, platform complexity and operational debt. The recovered full section now lives at `/blog/production-ml-across-2015-2035/`; lead issue 400 by linking to or lightly adapting that post rather than duplicating it.
+Written and cut from issue 399 at the last minute to make room for the HackerNoon series feature and the website relaunch. It is the PyCon DE & PyData 2026 talk, https://www.youtube.com/watch?v=I1GvlW1H4WI, covering production ML from 2015 to 2035: the 2015-2023 evolution and the shift of engineering effort from training to inference and the application layer, then monitoring, stack alignment, shorter production timelines, autonomous operational patterns, platform complexity and operational debt. The recovered full section was briefly a pilot blog post, removed 2026-08-14 pending a proper write-up (see the blog queue); the prose survives in the git history of `src/content/blog/2026-08-12-production-ml-across-2015-2035/index.md` on the feat/blog-imports branch and of `src/content/newsletter/399.md`. Coordinate issue 400 with the queued blog post so the two link rather than duplicate.
 
 ## Low priority — event banner artwork loads eagerly
 

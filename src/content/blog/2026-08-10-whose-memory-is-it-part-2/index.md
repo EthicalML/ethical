@@ -1,14 +1,13 @@
 ---
 title: Whose Memory Is It? Building Multi-Tenant, Multi-Tier Memory for AI Agents (Part 2)
 date: 2026-08-10
+image: './featured.jpg'
 source: hackernoon
 url: https://hackernoon.com/whose-memory-is-it-building-multi-tenant-multi-tier-memory-for-ai-agents-part-2
 summary: 'This is a 4-part series on how agents remember: building short-, medium- and long-term memory that scales across users, agents, and kubernetes clusters.'
 tags: [agents, memory, kubernetes]
 series: 'Whose Memory Is It?'
 ---
-
-_This is a 4-part series on how agents remember: building short-, medium- and long-term memory that scales across users, agents, and kubernetes clusters._
 
 Alice and bob are talking to the same agents. Alice interacts with various agents for infra management. Bob interacts with various agents for app development. Both are able to build on learnings from the last month. But how far should this go? Should Alice be able to recall memories from Bob's interactions? Should a user allow a single agent to recall memories from across their agents?
 

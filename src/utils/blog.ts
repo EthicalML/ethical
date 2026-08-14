@@ -5,11 +5,9 @@ export type BlogEntry = CollectionEntry<'blog'>;
 export const blogSlug = (entry: BlogEntry) =>
   entry.id.replace(/\/index(?:\.md)?$/, '').replace(/^\d{4}-\d{2}-\d{2}-/, '');
 
-export const hasBlogBody = (entry: BlogEntry) => Boolean(entry.body?.trim());
-
 export const assertUniqueBlogSlugs = (entries: BlogEntry[]) => {
   const foldersBySlug = new Map<string, string[]>();
-  for (const entry of entries.filter(hasBlogBody)) {
+  for (const entry of entries) {
     const slug = blogSlug(entry);
     const folder = entry.id.replace(/\/index(?:\.md)?$/, '');
     foldersBySlug.set(slug, [...(foldersBySlug.get(slug) ?? []), folder]);
@@ -21,15 +19,22 @@ export const assertUniqueBlogSlugs = (entries: BlogEntry[]) => {
   }
 };
 
-export const publishedBlogEntries = (entries: BlogEntry[], now = new Date()) => {
+// A post without a date is a draft and is not built anywhere. A dated post
+// always gets a page (future dates render as unlisted, noindexed previews);
+// only posts whose date has passed appear in listings, feeds and indexes.
+export const renderableBlogEntries = (entries: BlogEntry[]) => {
   assertUniqueBlogSlugs(entries);
-  return import.meta.env.PROD
-    ? entries.filter((entry) => !entry.data.draft && entry.data.date <= now)
-    : entries;
+  return import.meta.env.PROD ? entries.filter((entry) => entry.data.date) : entries;
 };
 
-export const blogHref = (entry: BlogEntry) =>
-  hasBlogBody(entry) ? `/blog/${blogSlug(entry)}/` : entry.data.url!;
+export const publishedBlogEntries = (entries: BlogEntry[], now = new Date()) => {
+  const renderable = renderableBlogEntries(entries);
+  return import.meta.env.PROD
+    ? renderable.filter((entry) => entry.data.date && entry.data.date <= now)
+    : renderable;
+};
+
+export const blogHref = (entry: BlogEntry) => `/blog/${blogSlug(entry)}/`;
 
 const sourceLabels: Partial<Record<BlogEntry['data']['source'], string>> = {
   linkedin: 'LinkedIn',

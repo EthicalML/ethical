@@ -1,55 +1,199 @@
 ---
 import { getCollection } from 'astro:content';
-import ProseLayout from '../../layouts/ProseLayout.astro';
-import { blogHref, blogSourceLabel, hasBlogBody, publishedBlogEntries } from '../../utils/blog';
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import ScrollStage from '../../components/ScrollStage.astro';
+import { blogHref, blogSlug, blogSourceLabel, publishedBlogEntries } from '../../utils/blog';
 
 const frontmatter = {
   title: 'Production ML, responsible AI and alignment blog',
   description: 'Writing from The Institute for Ethical AI Alignment & Safety on production machine learning, responsible AI and AI safety.',
 };
-const posts = publishedBlogEntries(await getCollection('blog')).sort((first, second) => second.data.date.getTime() - first.data.date.getTime());
-const formatDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+const posts = publishedBlogEntries(await getCollection('blog')).sort((first, second) => (second.data.date?.getTime() ?? 0) - (first.data.date?.getTime() ?? 0));
+const [featured, ...rest] = posts;
+const formatDate = (date?: Date) => (date ? date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Draft');
 ---
 
-<ProseLayout frontmatter={frontmatter}>
-  <div class="blog-list">
+<BaseLayout frontmatter={frontmatter}>
+  <article class="blog-archive">
+    <Hero
+      status="THE INSTITUTE — BLOG"
+      title={['Blogs, Tutorials', '& Thoughts', 'from The Institute']}
+      subtitle_lines={['Deep dives, tutorials and hard-won lessons', 'from a decade of building']}
+      beneficiaries={['production machine learning.', 'agentic systems.', 'GPU acceleration.', 'AI policy & safety.']}
+    />
     {
-      posts.map((post) => {
-        const external = !hasBlogBody(post);
-        const source = blogSourceLabel(post.data.source);
-        return (
-          <article class="blog-card" data-reveal>
-            <p class="blog-date">
-              {formatDate(post.data.originalDate ?? post.data.date)}
-              {post.data.originalDate && <span>Published here {formatDate(post.data.date)}</span>}
-            </p>
-            <h2>
-              <a href={blogHref(post)} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
-                {post.data.title}
-              </a>
-            </h2>
-            {post.data.summary && <p class="blog-summary">{post.data.summary}</p>}
-            {source && <p class="blog-source">Originally published on {source}</p>}
-            {post.data.tags?.length ? <p class="blog-tags">{post.data.tags.join(' · ')}</p> : null}
-          </article>
-        );
-      })
+      featured && (
+        <section class="blog-featured" data-reveal>
+          <p class="eyebrow">LATEST</p>
+          <a class="featured-card" href={blogHref(featured)}>
+            <div class="featured-media">
+              <Image src={featured.data.image} alt="" widths={[640, 1080]} sizes="(max-width: 950px) 100vw, 54vw" />
+            </div>
+            <div class="featured-copy">
+              <p class="blog-date">{formatDate(featured.data.originalDate ?? featured.data.date)}</p>
+              <h2 style={`view-transition-name: blog-title-${blogSlug(featured)}`}>{featured.data.title}</h2>
+              {featured.data.summary && <p class="blog-summary">{featured.data.summary}</p>}
+              {featured.data.tags?.length ? <p class="blog-tags">{featured.data.tags.join(' · ')}</p> : null}
+            </div>
+          </a>
+        </section>
+      )
     }
-  </div>
-</ProseLayout>
+    <section class="blog-showcase-section">
+      <p class="eyebrow" data-reveal>ARCHIVE</p>
+      <ScrollStage class="blog-showcase" line={0.5}>
+        <Fragment slot="stage">
+          {
+            rest.map((post) => (
+              <div class="showcase-pane" data-stage-item>
+                <Image src={post.data.image} alt="" widths={[640, 1080]} sizes="(max-width: 999px) 0px, 50vw" />
+              </div>
+            ))
+          }
+        </Fragment>
+        <Fragment slot="steps">
+          {
+            rest.map((post) => {
+              const source = blogSourceLabel(post.data.source);
+              return (
+                <article class="blog-card" data-stage-step>
+                  <p class="blog-date">
+                    {formatDate(post.data.originalDate ?? post.data.date)}
+                    {post.data.originalDate && <span>Published here {formatDate(post.data.date)}</span>}
+                  </p>
+                  <h2>
+                    <a href={blogHref(post)} style={`view-transition-name: blog-title-${blogSlug(post)}`}>
+                      {post.data.title}
+                    </a>
+                  </h2>
+                  {post.data.summary && <p class="blog-summary">{post.data.summary}</p>}
+                  {source && <p class="blog-source">Originally published on {source}</p>}
+                  {post.data.tags?.length ? <p class="blog-tags">{post.data.tags.join(' · ')}</p> : null}
+                </article>
+              );
+            })
+          }
+        </Fragment>
+      </ScrollStage>
+    </section>
+  </article>
+</BaseLayout>
 
 <style>
-  .blog-list {
+  .blog-featured {
     margin: 0 auto;
-    max-width: 840px;
-    padding: 0 48px 96px;
+    max-width: 1180px;
+    padding: 0 48px;
+  }
+  .blog-showcase-section > .eyebrow {
+    margin: 0 auto 18px;
+    max-width: 1180px;
+    padding: 0 48px;
+  }
+  .blog-featured {
+    padding-top: 54px;
+  }
+  .featured-card {
+    align-items: center;
+    border: 1px solid var(--hairline-card);
+    border-radius: var(--radius-card);
+    display: grid;
+    gap: 40px;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    margin-top: 14px;
+    overflow: hidden;
+    padding: 0;
+  }
+  .featured-card:hover {
+    border-color: var(--accent-edge);
+    opacity: 1;
+  }
+  .featured-media {
+    align-self: stretch;
+  }
+  .featured-media :global(img) {
+    display: block;
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+  }
+  .featured-copy {
+    padding: 34px 38px 34px 0;
+  }
+  .featured-copy h2 {
+    font: 300 var(--display-38) / 1.12 var(--font-display);
+    margin: 10px 0 14px;
+  }
+  .blog-showcase-section {
+    padding-bottom: 96px;
+    padding-top: 64px;
+  }
+  .blog-showcase-section :global(.blog-showcase) {
+    display: block;
+    position: relative;
+  }
+  .blog-showcase-section :global(.stage-sticky) {
+    height: min(78vh, 640px);
+    position: sticky;
+    top: 76px;
+  }
+  .blog-showcase-section :global(.stage-steps) {
+    background: color-mix(in srgb, var(--bg-base) 70%, transparent);
+    margin-left: auto;
+    margin-right: 0;
+    margin-top: calc(-1 * min(78vh, 640px));
+    max-width: 450px;
+    padding-left: 26px;
+    /* The first card enters around the lower third; each card then gets a
+       long scroll runway, talks-reel style. */
+    padding-top: 52vh;
+    position: relative;
+    z-index: 2;
+  }
+  /* The fade between the full image and the translucent text column is a
+     fixed 80px strip hanging off the column's left edge. */
+  .blog-showcase-section :global(.stage-steps)::before {
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--bg-base) 70%, transparent));
+    bottom: 0;
+    content: '';
+    left: -80px;
+    position: absolute;
+    top: 0;
+    width: 80px;
+  }
+  .showcase-pane {
+    inset: 0;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    transition: opacity 0.45s ease;
+  }
+  /* Translucent dim only: the image stays visible edge to edge, darkened
+     toward the text side for contrast, never fading to the page background. */
+  /* A light uniform wash keeps the image cohesive with the dark page; the
+     text column carries its own opaque backdrop and fade strip. */
+  .showcase-pane::after {
+    background: color-mix(in srgb, var(--bg-base) 14%, transparent);
+    content: '';
+    inset: 0;
+    position: absolute;
+  }
+  .showcase-pane[data-active='1'] {
+    opacity: 1;
+  }
+  .showcase-pane :global(img) {
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
   }
   .blog-card {
-    border-top: 1px solid var(--hairline);
-    padding: 32px 0;
+    margin-bottom: 46vh;
+    padding: 0;
   }
   .blog-card h2 {
-    font: 300 var(--display-38) / 1.12 var(--font-display);
+    font: 300 var(--display-30) / 1.15 var(--font-display);
     margin: 10px 0 14px;
   }
   .blog-card h2 a {
@@ -83,13 +227,32 @@ const formatDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'nume
     margin-bottom: 10px;
   }
   @media (max-width: 950px) {
-    .blog-list {
+    .blog-featured,
+    .blog-showcase-section {
       padding-inline: 24px;
+    }
+    .featured-card {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    .featured-copy {
+      padding: 24px;
+    }
+  }
+  @media (max-width: 999px) {
+    /* The stacked fallback would render every pane above the list; the cards
+       carry the information, so the stage disappears on small screens. */
+    .blog-showcase-section :global(.stage-sticky) {
+      display: none;
     }
   }
   @media (max-width: 600px) {
-    .blog-list {
-      padding: 0 18px 72px;
+    .blog-featured,
+    .blog-showcase-section {
+      padding-inline: 18px;
+    }
+    .blog-showcase-section {
+      padding-bottom: 72px;
     }
     .blog-date span {
       display: block;

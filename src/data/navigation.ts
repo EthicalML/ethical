@@ -248,9 +248,9 @@ export const menus: Record<string, Menu> = {
           },
           { title: 'Partners', description: 'Institutional collaboration', href: '/partners/' },
           {
-            title: 'Policy & standards',
-            description: 'Engagements and public records',
-            href: '/policy/',
+            title: 'Blog',
+            description: 'Long-form writing on production ML, agentic systems and AI safety',
+            href: '/blog/',
           },
         ],
       },

@@ -43,16 +43,29 @@ const newsletterRedirects = Object.fromEntries(
       [`/mle/${issue}`, `/newsletter/${issue}/`],
     ]),
 );
+const blogFrontmatter = (filename) =>
+  readFileSync(filename, 'utf8').match(/^---\n([\s\S]*?)\n---/)?.[1] ?? '';
+const blogPath = (filename) =>
+  `/blog/${basename(resolve(filename, '..')).replace(/^\d{4}-\d{2}-\d{2}-/, '')}/`;
+// Regex parses because collections are not loadable at config time; the venue
+// list must be kept in step with the `source` enum in src/content.config.ts by
+// hand. Republished posts point search engines at their off-site canonical,
+// and scheduled posts are unlisted previews until the daily deploy passes
+// their date; neither belongs in the sitemap.
 const republishedBlogPaths = new Set(
   globSync('src/content/blog/*/index.md')
+    .filter((filename) =>
+      /^source:\s*['"]?(?:linkedin|hackernoon|external)['"]?\s*$/m.test(blogFrontmatter(filename)),
+    )
+    .map(blogPath),
+);
+const scheduledBlogPaths = new Set(
+  globSync('src/content/blog/*/index.md')
     .filter((filename) => {
-      // Regex parse because collections are not loadable at config time; the venue list
-      // must be kept in step with the `source` enum in src/content.config.ts by hand.
-      const frontmatter = readFileSync(filename, 'utf8').match(/^---\n([\s\S]*?)\n---/)?.[1] ?? '';
-      return /^source:\s*['"]?(?:linkedin|hackernoon|external)['"]?\s*$/m.test(frontmatter);
+      const date = blogFrontmatter(filename).match(/^date:\s*['"]?(\d{4}-\d{2}-\d{2})/m)?.[1];
+      return !date || new Date(date) > new Date();
     })
-    .map((filename) => basename(resolve(filename, '..')).replace(/^\d{4}-\d{2}-\d{2}-/, ''))
-    .map((slug) => `/blog/${slug}/`),
+    .map(blogPath),
 );
 
 export default defineConfig({
@@ -104,7 +117,9 @@ export default defineConfig({
     // engines at their off-site canonical. Neither belongs in this sitemap.
     sitemap({
       filter: (page) =>
-        !page.includes('/prototypes/') && !republishedBlogPaths.has(new URL(page).pathname),
+        !page.includes('/prototypes/') &&
+        !republishedBlogPaths.has(new URL(page).pathname) &&
+        !scheduledBlogPaths.has(new URL(page).pathname),
       serialize(item) {
         const lastmod = newsletterLastmod.get(item.url);
         return lastmod ? { ...item, lastmod } : item;

@@ -22,6 +22,9 @@ interface Props {
   // typed ending. `beneficiaries` is ignored in string form.
   subtitle_lines: string[] | string;
   beneficiaries?: string[];
+  // View-transition name applied to the h1 so an archive card title can morph
+  // into the post title on navigation.
+  title_transition?: string;
   typewriter_underline?: boolean;
   primary_button?: HeroButton;
   secondary_button?: HeroButton;
@@ -34,6 +37,7 @@ const {
   title,
   subtitle_lines,
   beneficiaries = [],
+  title_transition,
   typewriter_underline = false,
   primary_button,
   secondary_button,
@@ -104,7 +108,7 @@ const longestBeneficiary = effectiveBeneficiaries.reduce((a, b) => (b.length > a
         </p>
       )
     }
-    <h1>
+    <h1 transition:name={title_transition}>
       {
         titleLines.map((line, index) => (
           <>

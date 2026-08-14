@@ -1,14 +1,13 @@
 ---
 title: Whose Memory Is It? Building Multi-Tenant, Multi-Tier Memory for AI Agents (Part 1)
 date: 2026-08-08
+image: './featured.jpg'
 source: hackernoon
 url: https://hackernoon.com/whose-memory-is-it-building-multi-tenant-multi-tier-memory-for-ai-agents-part-1
 summary: 'This is a 4-part series on how agents remember: building short-, medium- and long-term memory that scales across users, agents, and kubernetes clusters.'
 tags: [agents, memory, kubernetes]
 series: 'Whose Memory Is It?'
 ---
-
-_This is a 4-part series on how agents remember: building short-, medium- and long-term memory that scales across users, agents, and kubernetes clusters._
 
 LLMs are stateless by design, and without added memory logic every session starts from zero.
 
