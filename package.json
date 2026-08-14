@@ -43,12 +43,14 @@
     "@typescript-eslint/parser": "8.66.0",
     "eslint": "10.8.1",
     "eslint-plugin-astro": "3.1.0",
+    "fontkit": "^2.0.4",
     "globals": "17.9.0",
     "pagefind": "^1.5.2",
     "prettier": "3.9.6",
     "prettier-plugin-astro": "0.14.1",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.66.0"
+    "typescript-eslint": "8.66.0",
+    "wawoff2": "^2.0.1"
   },
   "overrides": {
     "nanoid": "^3.3.17"
