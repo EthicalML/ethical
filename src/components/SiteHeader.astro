@@ -7,6 +7,7 @@ import SiteLogo from './SiteLogo.astro';
 ---
 
 <site-header transition:persist="site-header">
+  <div class="header-glass" aria-hidden="true"></div>
   <header class="site-header" data-surface="dark">
     <div class="header-row">
       <SiteLogo />
@@ -245,11 +246,47 @@ import SiteLogo from './SiteLogo.astro';
     z-index: 60;
   }
 
-  .header-row {
-    align-items: center;
-    backdrop-filter: blur(14px);
+  /* The frosted pane, and the reason it is a separate element rather than the bar's own
+     background: `.site-header` carries `view-transition-name: site-header` so it survives
+     navigations, and a view-transition name makes an element its own backdrop root. Any
+     `backdrop-filter` inside it samples an empty backdrop and blurs nothing — which is why
+     the header's blur had been silently doing nothing at all. The pane lives outside that
+     named subtree, fixed to the viewport, tracking the bar's height. */
+  .header-glass {
+    backdrop-filter: blur(24px) saturate(175%);
     background: var(--bg-header);
     border-bottom: 1px solid var(--hairline);
+    /* The rim: one hairline of light along the top edge, nothing else. */
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 8%);
+    height: var(--header-bar-height, 69px);
+    inset: 0 0 auto;
+    pointer-events: none;
+    position: fixed;
+    /* Its own compositor layer: without this, Chrome re-rasterizes the backdrop-filter
+       whenever a canvas beneath promotes or demotes layers, which flickers. */
+    transform: translateZ(0);
+    will-change: backdrop-filter;
+    /* Under the header's own z-index 60, over the page. */
+    z-index: 59;
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    .header-glass {
+      background: var(--bg-header-dense);
+    }
+  }
+
+  /* A reader who has asked for less transparency gets the pigment back instead. */
+  @media (prefers-reduced-transparency: reduce) {
+    .header-glass {
+      backdrop-filter: none;
+      background: var(--bg-header-dense);
+      box-shadow: none;
+    }
+  }
+
+  .header-row {
+    align-items: center;
     display: flex;
     gap: var(--space-26);
     /* 15px keeps the row at the 70px it measured with the old mono wordmark, now that the
@@ -257,17 +294,17 @@ import SiteLogo from './SiteLogo.astro';
        and the bar compacts to 55px on the same eased value. */
     padding: calc(15px - 8px * var(--header-collapse, 0)) 40px;
     pointer-events: auto;
-    /* Pin the bar to its own compositor layer: without this, Chrome re-rasterizes the
-     backdrop-filter whenever a canvas beneath promotes/demotes layers, which flickers. */
-    transform: translateZ(0);
-    will-change: backdrop-filter;
   }
 
   /* Above the drawer breakpoint the shell holds the at-rest height and the bar shrinks inside
      it. The mega menu hangs off the bar, not the shell, or it would float in the gap. */
   @media (min-width: 1041px) {
+    site-header {
+      --header-bar-height: calc(71px - 16px * var(--header-collapse, 0));
+    }
+
     .site-header {
-      --header-bar-bottom: calc(71px - 16px * var(--header-collapse, 0));
+      --header-bar-bottom: var(--header-bar-height);
       --header-shell-height: 71px;
     }
   }

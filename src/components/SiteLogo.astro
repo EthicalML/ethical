@@ -174,7 +174,7 @@ const line2 = keyed(LINE2, ['A', 'S']);
         this.probes.set(key, this.querySelector<HTMLElement>(`.site-logo-char[data-key="${key}"]`)!);
       }
 
-      this.shell = this.closest<HTMLElement>('.site-header') ?? this;
+      this.shell = this.closest<HTMLElement>('site-header') ?? this;
 
       this.readTheme();
       this.themeWatch = new MutationObserver(() => this.readTheme());
@@ -372,8 +372,9 @@ const line2 = keyed(LINE2, ['A', 'S']);
 
       this.stage.style.width = `${lerp(m.width, collapsed).toFixed(2)}px`;
       this.stage.style.height = `${lerp(m.height, collapsed).toFixed(2)}px`;
-      /* The bar compacts on the same eased value: the logo owns the clock, the header reads
-         this one property. Nothing else is written outside this element. */
+      /* The bar and the frosted pane compact on the same eased value: the logo owns the
+         clock, the header reads this one property. Nothing else is written outside this
+         element. */
       this.shell.style.setProperty('--header-collapse', e.toFixed(4));
     }
   }
