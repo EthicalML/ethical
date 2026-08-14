@@ -147,6 +147,11 @@ const article = frontmatter.article
     </script>
     <ClientRouter />
     <style is:inline>
+      /* The pre-hide only ever covers what has not been marked revealed yet. Two things
+         clear it without waiting for the reveal bundle: the pre-paint script at the foot
+         of <body>, which marks every first-viewport target revealed so LCP text paints
+         with the document instead of on script execution, and the <noscript> override
+         below, which un-hides everything when there is no script to reveal it. */
       [data-reveal]:not([data-reveal='trigger']):not([data-revealed='1']) {
         opacity: 0;
         transform: translateY(26px);
@@ -184,6 +189,17 @@ const article = frontmatter.article
         }
       }
     </style>
+    <noscript>
+      <!-- Reveal is the only thing that clears the pre-hide, so without script the whole
+           page below the first viewport would stay at opacity 0 for ever. Same selector as
+           the rule above and later in the cascade, so it wins on source order. -->
+      <style>
+        [data-reveal]:not([data-reveal='trigger']):not([data-revealed='1']) {
+          opacity: 1;
+          transform: none;
+        }
+      </style>
+    </noscript>
     <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-L2HXV1W6H6"></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
@@ -231,6 +247,31 @@ const article = frontmatter.article
       <slot />
     </main>
     <FootnoteBand />
+    <script is:inline>
+      // Exempt the first viewport from the reveal pre-hide, before the first paint.
+      //
+      // The inline stylesheet in <head> holds every [data-reveal] element at opacity 0
+      // until Reveal marks it revealed, and Reveal ships in the deferred module bundle
+      // below. That made LCP wait on script execution on every route: the h1 itself
+      // started invisible, and measured on the built site over localhost LCP landed at
+      // 930-1000ms against a 40-70ms first contentful paint on every route sampled.
+      //
+      // Both `is:inline` and the position are load-bearing. The script must run in the
+      // parser, after the whole body exists (so rects are measurable) and before paint
+      // (so no frame is photographed hidden); the bundled module below cannot do either.
+      // It deliberately does not re-run on client-side navigation — inline scripts are
+      // marked executed across view transitions, and after a swap `new Reveal(true)`
+      // already settles what is on screen without an entrance.
+      //
+      // Anything starting inside the viewport is marked revealed, so it paints with the
+      // document and plays no entrance; Reveal's prime() and sweep() both skip it. Below
+      // the fold nothing changes: those targets stay primed and reveal on scroll.
+      // `trigger` roots are left alone — the pre-hide never applied to them, so there is
+      // nothing to exempt, and their timing signal stays Reveal's to send.
+      document.querySelectorAll('[data-reveal]:not([data-reveal="trigger"])').forEach((target) => {
+        if (target.getBoundingClientRect().top < innerHeight) target.setAttribute('data-revealed', '1');
+      });
+    </script>
     <script>
       import '../shared/MorphPairs';
       import '../shared/Motion';
