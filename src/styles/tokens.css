@@ -40,7 +40,7 @@
   --bg-base: #131414;
   --bg-panel: #171818;
   --bg-inset: #0f100f;
-  --bg-header: rgba(19, 20, 20, 0.9);
+  --bg-header: rgba(19, 20, 20, 0.82);
   --bg-header-solid: #131414;
   /* ---- theme tokens: ink (foreground on dark) ---- */
   --ink-1: #f4f2ee;
@@ -278,7 +278,7 @@
   --bg-panel: #ffffff;
   --bg-inset: #e7eae7;
   /* The header is one of the inverted blocks — it is dark in both themes. */
-  --bg-header: rgba(57, 67, 63, 0.95);
+  --bg-header: rgba(57, 67, 63, 0.86);
   --bg-header-solid: #39433f;
   /* ---- ink: the design's `panel 86%, #000`, a near-black in the panel's own
      slate-green hue family. The design carries body copy at `panel 66%, page`,
@@ -967,7 +967,7 @@ html[data-astro-transition="back"]::view-transition-new(principle-page) {
 ::view-transition-new(site-header):only-child,
 ::view-transition-new(newsletter-bar),
 ::view-transition-new(newsletter-bar):only-child { animation: none !important; }
-html.is-transitioning .site-header { backdrop-filter: none; background: var(--bg-header-solid); }
+html.is-transitioning .header-row { backdrop-filter: none; background: var(--bg-header-solid); }
 html[data-astro-transition="forward"]::view-transition-old(newsletter-page) {
   animation: principle-slide-out-left .22s ease both !important;
 }
