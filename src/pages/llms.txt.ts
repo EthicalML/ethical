@@ -50,6 +50,20 @@ for (const { heading, routes } of navigationSections) {
   for (const route of routes) if (!sectionByRoute.has(route)) sectionByRoute.set(route, heading);
 }
 
+/* Astro pages carry no MDX frontmatter for the glob above to read, so a navigation-linked
+   one supplies its catalogue entry here. Keep it in step with the page's own frontmatter. */
+const astroPageMetadata = new Map<string, PageMetadata>([
+  [
+    '/about/branding/',
+    {
+      title: 'Branding',
+      seoTitle: 'Branding: the Institute logo, mark, colour and type',
+      description:
+        'The identity of The Institute for Ethical AI Alignment & Safety: wordmark and mark lockups to download, the brand palette, and the typeface behind them.',
+    },
+  ],
+]);
+
 // This indexable catalogue is not linked in the site navigation.
 sectionByRoute.set('/open-source/ai-guidelines/', menus.oss.label);
 
@@ -106,7 +120,7 @@ export const GET: APIRoute = async () => {
 
   const surfaces: Surface[] = [...sectionByRoute].flatMap(([href, section]) => {
     if (isExcluded(href) || href === '/newsletter/' || href === '/blog/') return [];
-    const metadata = pageMetadata.get(href);
+    const metadata = pageMetadata.get(href) ?? astroPageMetadata.get(href);
     if (!metadata?.title || !metadata.description) {
       throw new Error(`llms.txt cannot find title and description frontmatter for: ${href}`);
     }
