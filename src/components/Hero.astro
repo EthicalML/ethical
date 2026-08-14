@@ -11,8 +11,16 @@ interface Props {
   // or any other non-HTML target cannot survive. Set this when status_href
   // points at one.
   status_reload?: boolean;
-  title: string[];
-  subtitle_lines: string[];
+  // An array renders the classic three-line display title with the glitch
+  // closing line. A plain string selects the longform mode: the full title is
+  // balanced across up to three lines at a wider measure, with the last line
+  // in the accent ink and no glitch animation.
+  title: string[] | string;
+  // Same convention as title: an array is the classic two fixed mission lines
+  // (with `beneficiaries` cycling the ending), while a plain string is
+  // balanced across three lines and its last segment becomes the single
+  // typed ending. `beneficiaries` is ignored in string form.
+  subtitle_lines: string[] | string;
   beneficiaries?: string[];
   typewriter_underline?: boolean;
   primary_button?: HeroButton;
@@ -31,12 +39,56 @@ const {
   secondary_button,
 }: Props = Astro.props;
 const hasActionsSlot = Astro.slots.has('actions');
-const initialBeneficiary = beneficiaries[0];
-const [missionLine1, missionLine2] = subtitle_lines;
-const ariaSentence = [...subtitle_lines, initialBeneficiary].filter(Boolean).join(' ');
+
+const balanceLines = (text: string, lines: number): string[] => {
+  const words = text.split(' ');
+  const target = Math.ceil(text.length / lines);
+  const out: string[] = [];
+  let current = '';
+  for (const word of words) {
+    if (current && current.length + word.length + 1 > target && out.length < lines - 1) {
+      out.push(current);
+      current = word;
+    } else {
+      current = current ? `${current} ${word}` : word;
+    }
+  }
+  out.push(current);
+  return out;
+};
+const longform = typeof title === 'string';
+if (longform && title.length > 110) {
+  console.warn(`[Hero] longform title exceeds the 110-character budget (${title.length}): ${title}`);
+}
+const titleLines = longform ? balanceLines(title, 3) : title;
+// Width first, size second: the longform column offers up to 980px, and the
+// title keeps the classic 72px display scale unless the longest balanced line
+// cannot fit at that measure (average display advance is close to 0.52em).
+// The floor is 40px; the 110-character warning above fires long before it.
+const longestLine = longform ? Math.max(...titleLines.map((line) => line.length)) : 0;
+const longformSize = longform ? Math.round(Math.min(72, Math.max(40, 980 / (0.52 * longestLine)))) : undefined;
+
+const subtitleParts = typeof subtitle_lines === 'string' ? balanceLines(subtitle_lines, 3) : null;
+const [missionLine1, missionLine2] = subtitleParts ? subtitleParts.slice(0, 2) : subtitle_lines;
+const effectiveBeneficiaries = subtitleParts ? [subtitleParts[2]] : beneficiaries;
+const initialBeneficiary = effectiveBeneficiaries[0];
+const ariaSentence = [missionLine1, missionLine2, initialBeneficiary].filter(Boolean).join(' ');
+// Each line carries its final text in data-line for the CSS width spacer: the
+// hero grid's fr track takes its min-content from these nowrap lines, so
+// without a reserved width the copy column narrows while the typewriter is
+// mid-word and the title wraps onto an extra line until typing catches up.
+const longestBeneficiary = effectiveBeneficiaries.reduce((a, b) => (b.length > a.length ? b : a), '');
 ---
 
-<header class="hero" data-surface="dark" data-surface-plate data-reveal data-pagefind-ignore>
+<header
+  class="hero"
+  data-surface="dark"
+  data-surface-plate
+  data-reveal
+  data-pagefind-ignore
+  data-title-mode={longform ? 'longform' : undefined}
+  style={longformSize && longformSize < 72 ? `--longform-title-size: ${longformSize}px` : undefined}
+>
   <hero-cycle><canvas class="hero-canvas" aria-hidden="true"></canvas></hero-cycle>
   <div class="hero-copy">
     {
@@ -54,29 +106,31 @@ const ariaSentence = [...subtitle_lines, initialBeneficiary].filter(Boolean).joi
     }
     <h1>
       {
-        title.map((line, index) => (
+        titleLines.map((line, index) => (
           <>
             {index > 0 && ' '}
-            {index === 2 ? (
+            {index !== titleLines.length - 1 ? (
+              <span>{line}</span>
+            ) : longform ? (
+              <em>{line}</em>
+            ) : (
               <em class="glitch" data-text={line}>
                 {line}
               </em>
-            ) : (
-              <span>{line}</span>
             )}
           </>
         ))
       }
     </h1>
-    <type-writer data-beneficiaries={JSON.stringify(beneficiaries)}>
+    <type-writer data-beneficiaries={JSON.stringify(effectiveBeneficiaries)}>
       <p class="hero-subtitle" data-underline={typewriter_underline ? 'true' : 'false'} aria-label={ariaSentence}>
-        <span class="hero-typewriter-line">
+        <span class="hero-typewriter-line" data-line={missionLine1}>
           <span class="hero-typewriter-text">{missionLine1}</span>
         </span>
-        <span class="hero-typewriter-line">
+        <span class="hero-typewriter-line" data-line={missionLine2}>
           <span class="hero-typewriter-text">{missionLine2}</span>
         </span>
-        <span class="hero-typewriter-line hero-typewriter-dynamic">
+        <span class="hero-typewriter-line hero-typewriter-dynamic" data-line={longestBeneficiary}>
           <span class="hero-typewriter-glitch" data-text={initialBeneficiary}>
             <span class="hero-typewriter-text">{initialBeneficiary}</span><span class="hero-typewriter-cursor" aria-hidden="true"></span>
           </span>
@@ -198,6 +252,11 @@ const ariaSentence = [...subtitle_lines, initialBeneficiary].filter(Boolean).joi
         outputs.forEach((output) => setText(output, ''));
         for (let index = 0; index < initialLines.length; index += 1) {
           await type(outputs[index], initialLines[index], 'initial');
+        }
+
+        if (beneficiaries.length <= 1) {
+          setPhase('dwell');
+          return;
         }
 
         let beneficiaryIndex = 0;

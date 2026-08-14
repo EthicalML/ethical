@@ -12,6 +12,8 @@ const { frontmatter = {} } = Astro.props;
 const title = frontmatter.title ?? siteTitle;
 const seoTitle = frontmatter.seoTitle ?? title;
 const description = frontmatter.seoDescription ?? frontmatter.description ?? metaDescription;
+// canonicalPath also accepts an absolute URL: republished blog posts point
+// their canonical at the original publication off-site.
 const canonical = new URL(frontmatter.canonicalPath ?? Astro.url.pathname, Astro.site);
 const socialImage = new URL(frontmatter.image ?? ogImage, Astro.site);
 const organization = {
@@ -34,11 +36,15 @@ const article = frontmatter.article
       headline: frontmatter.articleHeadline ?? title,
       ...(frontmatter.datePublished ? { datePublished: frontmatter.datePublished } : {}),
       ...(frontmatter.sameAs?.length ? { sameAs: frontmatter.sameAs } : {}),
-      author: {
-        '@type': 'Organization',
-        name: organization.name,
-        url: organization.url,
-      },
+      author: frontmatter.articleAuthors?.length
+        ? frontmatter.articleAuthors.length === 1
+          ? { '@type': 'Person', name: frontmatter.articleAuthors[0] }
+          : frontmatter.articleAuthors.map((name: string) => ({ '@type': 'Person', name }))
+        : {
+            '@type': 'Organization',
+            name: organization.name,
+            url: organization.url,
+          },
     }
   : undefined;
 ---

@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Hero from '../../components/Hero.astro';
 import NewsletterSubscribe from '../../components/NewsletterSubscribe.astro';
+import ArticleBody from '../../components/ArticleBody.astro';
 import { authors } from '../../data/authors';
 
 export async function getStaticPaths() {
@@ -120,9 +121,9 @@ const frontmatter = {
         <p class="issue-byline" data-reveal>
           Posted by <a href={author.aboutAnchor}>{author.name}</a>
         </p>
-        <div class="issue-body">
+        <ArticleBody class="issue-body">
           <Content />
-        </div>
+        </ArticleBody>
         <p class:list={['issue-subscribe', { 'has-syndication': entry.data.syndication?.length }]} data-reveal>
           Enjoy The ML Engineer? <a href="/newsletter/#subscribe">Subscribe to receive the next issue</a>.
         </p>
@@ -353,128 +354,6 @@ const frontmatter = {
     border-color: var(--accent-line);
     color: var(--accent-ink);
   }
-  .issue-body {
-    padding: 48px 24px 56px;
-  }
-  .issue-body :global(.issue-section) {
-    padding: 0;
-  }
-  .issue-body :global(.issue-section) > :global(*) {
-    margin-inline: auto;
-    max-width: 645px;
-  }
-  .issue-body :global(p) {
-    color: var(--text-2);
-    font-size: var(--body-16-5);
-    line-height: 1.75;
-    margin-block: 0 18px;
-  }
-  .issue-body :global(h2) {
-    border-top: 1px solid var(--hairline);
-    font: 300 var(--display-30) / 1.15 var(--font-display);
-    letter-spacing: -0.01em;
-    margin-block: 40px 18px;
-    padding-top: 36px;
-  }
-  .issue-body :global(h3) {
-    color: var(--text-1);
-    font-family: var(--font-mono);
-    font-size: var(--mono-11);
-    font-weight: 400;
-    letter-spacing: 0.14em;
-    margin-block: 30px 14px;
-    text-transform: uppercase;
-  }
-  .issue-body :global(ul) {
-    list-style: none;
-    margin-block: 0 20px;
-    padding: 0;
-  }
-  .issue-body :global(li) {
-    color: var(--text-2);
-    font-size: var(--body-16);
-    line-height: 1.65;
-    margin: 0 0 10px;
-    padding-left: 20px;
-    position: relative;
-  }
-  .issue-body :global(li)::before {
-    background: var(--accent);
-    content: '';
-    height: 1px;
-    left: 0;
-    position: absolute;
-    top: 0.75em;
-    width: 9px;
-  }
-  .issue-body :global(a) {
-    border-bottom: 1px solid var(--accent-line);
-    color: var(--accent-ink);
-    transition:
-      border-color 0.2s ease,
-      text-shadow 0.2s ease;
-  }
-  .issue-body :global(a:hover) {
-    border-bottom-color: var(--accent-ink);
-    opacity: 1;
-    text-shadow: 0 0 18px var(--accent-edge);
-  }
-  .issue-body :global(h2 a),
-  .issue-body :global(h3 a) {
-    border-bottom: 1px solid var(--accent-line);
-    color: var(--accent-ink);
-  }
-  .issue-body :global(h2 a:hover),
-  .issue-body :global(h3 a:hover) {
-    border-bottom-color: var(--accent-ink);
-    opacity: 1;
-    text-shadow: 0 0 22px var(--accent-edge);
-  }
-  .issue-body :global(img) {
-    border: 1px solid var(--hairline-card);
-    border-radius: var(--radius-card);
-    height: auto;
-    max-width: 100%;
-  }
-  .issue-body :global(img:not([width])) {
-    width: 100%;
-  }
-  /* Markdown code fences wear the AnimationWindow chrome: inset card, 30px
-     bar with traffic lights, the language as the centred window title. */
-  .issue-body :global(pre.astro-code) {
-    background: var(--bg-inset) !important;
-    border: 1px solid var(--hairline-card);
-    border-radius: 10px;
-    font-size: 13px;
-    line-height: 1.75;
-    margin-block: 0 20px;
-    overflow-x: auto;
-    padding: 46px 18px 18px;
-    position: relative;
-  }
-  .issue-body :global(pre.astro-code)::before {
-    background:
-      radial-gradient(circle at 16px 15px, var(--glitch-red) 3.5px, transparent 4.5px),
-      radial-gradient(circle at 29px 15px, var(--warn) 3.5px, transparent 4.5px), radial-gradient(circle at 42px 15px, var(--accent) 3.5px, transparent 4.5px),
-      var(--wash-2);
-    border-bottom: 1px solid var(--hairline-card);
-    content: '';
-    height: 30px;
-    inset: 0 0 auto;
-    position: absolute;
-  }
-  .issue-body :global(pre.astro-code)::after {
-    color: var(--text-3);
-    content: attr(data-language);
-    font: var(--mono-9) / 30px var(--font-mono);
-    inset: 0 0 auto;
-    letter-spacing: 0.08em;
-    position: absolute;
-    text-align: center;
-  }
-  .issue-body :global(pre.astro-code code) {
-    font-family: var(--font-mono);
-  }
   .issue-subscribe {
     border-top: 1px solid var(--hairline);
     color: var(--text-2);
@@ -520,11 +399,6 @@ const frontmatter = {
     letter-spacing: 0.12em;
     margin-right: 4px;
     text-transform: uppercase;
-  }
-  @media (max-width: 950px) {
-    .issue-body {
-      padding: 36px 24px 48px;
-    }
   }
   @media (max-width: 600px) {
     .issue-step span {

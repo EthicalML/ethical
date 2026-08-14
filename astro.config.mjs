@@ -43,6 +43,17 @@ const newsletterRedirects = Object.fromEntries(
       [`/mle/${issue}`, `/newsletter/${issue}/`],
     ]),
 );
+const republishedBlogPaths = new Set(
+  globSync('src/content/blog/*/index.md')
+    .filter((filename) => {
+      // Regex parse because collections are not loadable at config time; the venue list
+      // must be kept in step with the `source` enum in src/content.config.ts by hand.
+      const frontmatter = readFileSync(filename, 'utf8').match(/^---\n([\s\S]*?)\n---/)?.[1] ?? '';
+      return /^source:\s*['"]?(?:linkedin|hackernoon|external)['"]?\s*$/m.test(frontmatter);
+    })
+    .map((filename) => basename(resolve(filename, '..')).replace(/^\d{4}-\d{2}-\d{2}-/, ''))
+    .map((slug) => `/blog/${slug}/`),
+);
 
 export default defineConfig({
   site: 'https://ethical.institute',
@@ -89,9 +100,11 @@ export default defineConfig({
   integrations: [
     mdx(),
     preact(),
-    // Prototypes are working sketches, not pages anyone should find in search.
+    // Prototypes are working sketches, while republished blog pages point search
+    // engines at their off-site canonical. Neither belongs in this sitemap.
     sitemap({
-      filter: (page) => !page.includes('/prototypes/'),
+      filter: (page) =>
+        !page.includes('/prototypes/') && !republishedBlogPaths.has(new URL(page).pathname),
       serialize(item) {
         const lastmod = newsletterLastmod.get(item.url);
         return lastmod ? { ...item, lastmod } : item;

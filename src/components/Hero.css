@@ -90,6 +90,18 @@
   white-space: nowrap;
 }
 
+/* Invisible spacer holding each line's final text width. The hero grid's fr
+   track takes its min-content from these nowrap lines, so while the
+   typewriter is mid-word the copy column would otherwise narrow and wrap the
+   title onto an extra line until typing catches up. */
+.hero-typewriter-line::after {
+  content: attr(data-line);
+  display: block;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
 .hero-typewriter-dynamic {
   color: var(--accent-ink);
 }

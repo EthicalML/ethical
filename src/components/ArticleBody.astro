@@ -1,0 +1,7 @@
+---
+import './ArticleBody.css';
+
+const { class: className } = Astro.props;
+---
+
+<div class:list={['article-body', className]}><slot /></div>

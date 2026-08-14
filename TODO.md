@@ -36,10 +36,6 @@ The reading room renders each publication as page images with the canonical PDF 
 
 Every composed MDX page imports through the `src/components/prose/components.js` barrel, and Vite bundles all prose-component CSS into one 110,215-byte chunk, so importing one component ships everyone's CSS. `TalksGrid` proved it: zero consumers, markup never rendered, CSS still in the bundle. `/policy/` and `/open-source/` therefore download 188,709 bytes of CSS against 35,339 for `/privacy/`, roughly 150KB each of stylesheet they never use. Test whether direct component imports on one composed page split the chunk before doing the whole set. This is a serving optimisation with no maintenance benefit, so it only earns time if the fix is close to trivial.
 
-## Reveal thresholds: switch from % to fixed pixels
-
-The reveal system (src/shared/Reveal.ts) fires at a percentage of element height (REVEAL_RATIO 0.45, TALL_REVEAL_VH fallback). Owner call 2026-08-06: percentage is the wrong model for most elements — a tall section needs hundreds of scrolled pixels before it fires while a short one fires almost immediately. Switch to a fixed pixel threshold (element reveals once ~N px of it are visible) for most targets, keeping percentage/bespoke behaviour only for the few widgets that need it. Audit the Motion table entries when doing this.
-
 ## Newsletter pass (next up)
 
 Owner has ideas for the newsletter beyond the carried-over archive (396 issues live under /mle/, recent-issues rail derives from the filenames, /mle.html redirects to /network/). Scope to be defined by owner.
@@ -48,12 +44,32 @@ Owner has ideas for the newsletter beyond the carried-over archive (396 issues l
 
 Six homepage scroll-effect variants sit in the open PR #12, paused for owner decision: pick a variant to land or close the PR.
 
+## Hero family: coverage, variation and primitive extraction
+
+Owner review 2026-08-12: most page heroes are boring, especially the ones with no canvas animation behind them; even among the animated ones only a subset (the policy canvas notably) land well. This is a site-wide programme, deliberately decoupled from the blog build. Scope to design with owner:
+
+- Coverage: the `ArticleHero` pages without any canvas variant read as hero-less; decide which of the 21 utility pages earn a canvas (existing scenes: kaos, kompute, policy, open-source, generic) and whether new cheap scenes are worth building.
+- Quality: audit the existing canvas scenes against the policy one the owner rates; upgrade or retire the weak ones.
+- Variation: the flagship `Hero` cycles three scenes (planes, sphere, contour) but every surface gets the same default; consider per-surface defaults and deterministic per-post scene seeding (hash of slug picks scene and parameters) so repeated visits do not feel identical. Seeding must stay deterministic for the screenshot gates.
+- Structure: extract shared hero primitives (status pill, glitch title line, typewriter subtitle, canvas mount) as owned components composed by both `Hero` and `ArticleHero`, so fixes propagate without unifying the two species into one prop-matrix mega-component (rejected 2026-08-12: it couples 25 surfaces into one blast radius).
+- Interactive graph widgets (owner ask 2026-08-12): explore hero widgets, possibly 3D, that are interactive graphs in the spirit of the visualisations on https://www.theforecastingcompany.com/en, which the owner rates highly. The reference's graphs are client-rendered and not inspectable from fetched markup, so the exploration must start with the owner walking through the reference (screenshots or live) to pin down which behaviours appeal, per the no-unseen-design-references rule, before any prototyping.
+
+## Blog follow-up: proactive weekly content proposals
+
+A recurring workflow (weekly cadence) that proposes blog content to publish: candidate topics or drafts sourced from the newsletter archive, the talk backlog, the backfill ledger, and current discussion threads, delivered as draft posts or a proposal list for owner triage. The scheduling substrate already exists (draft flag plus future-dated publishing with the daily deploy cron), so this is purely the generation/proposal side. Owner decision needed on delivery form (PR with draft posts vs a proposal doc) before building.
+
+## Blog follow-up: byte-sized opinions (Fowler-style bliki)
+
+Explore a Martin Fowler bliki-style stream of short opinion posts alongside full articles: byte-sized takes (a few paragraphs) with permalinks, published frequently. Open design questions: same collection with a `kind`/length distinction vs a separate collection, how they appear in the archive and RSS, and whether they feed the weekly-proposals workflow above as its lightest-weight output.
 
 ## Blog posts to write
 
 Queued posts for the new blog. Each lands as a draft or future-dated entry through the normal publish flow; the list will grow.
 
 - Announcement: the newsletter redesign and the new RSS feed (PR #69). Cover the rebuilt archive under the Astro site and the feed addition; publish once the blog itself is live and linked.
+- Production ML monitoring, conceptual rewrite (owner call 2026-08-12): not a 1-1 republication of the 2020 KDnuggets/TDS piece because its Seldon Core implementation is archive tech; write a version centred on the concepts (outliers, drift, explainers, statistical performance) that references the KDnuggets and Towards Data Science originals.
+- The top risks posed by AI and how to safeguard against them: the 2020 ITProPortal piece is dead on the live web (Wayback only); rather than recover it, treat the topic as a fresh post updated for the frontier-AI era.
+- Per-project posts for the open-source portfolio (owner call 2026-08-12): the GitHub repos do not enter the blog as feature-cards; instead each major project (Kompute, awesome-production-machine-learning, the regulation list, KAOS, fml/sml-security, the agentic lists) earns an authored post that tells its story and backlinks the repo and its existing /open-source/ page.
 
 ## Blog follow-up: RSS feeds and newsletter cross-publishing
 
@@ -86,7 +102,7 @@ Each issue carries an events block, but nothing in it points back to `/talks-and
 
 ## Issue 400: the Production ML Across 2015-2035 talk
 
-Written and cut from issue 399 at the last minute to make room for the HackerNoon series feature and the website relaunch. It is the PyCon DE & PyData 2026 talk, https://www.youtube.com/watch?v=I1GvlW1H4WI, covering production ML from 2015 to 2035: the 2015-2023 evolution and the shift of engineering effort from training to inference and the application layer, then monitoring, stack alignment, shorter production timelines, autonomous operational patterns, platform complexity and operational debt. The full section prose is in the git history of `src/content/newsletter/399.md` — recover it from there rather than rewriting, and lead issue 400 with it.
+Written and cut from issue 399 at the last minute to make room for the HackerNoon series feature and the website relaunch. It is the PyCon DE & PyData 2026 talk, https://www.youtube.com/watch?v=I1GvlW1H4WI, covering production ML from 2015 to 2035: the 2015-2023 evolution and the shift of engineering effort from training to inference and the application layer, then monitoring, stack alignment, shorter production timelines, autonomous operational patterns, platform complexity and operational debt. The recovered full section now lives at `/blog/production-ml-across-2015-2035/`; lead issue 400 by linking to or lightly adapting that post rather than duplicating it.
 
 ## Low priority — event banner artwork loads eagerly
 

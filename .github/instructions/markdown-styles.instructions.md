@@ -6,14 +6,15 @@ applyTo: 'src/content/**/*.md,src/pages/**/*.mdx'
 
 Every markdown element the site styles, what it looks like, and the constraints on using it. Markdown is processed by the unified pipeline configured in `astro.config.mjs` (`rehype-external-links` then `rehype-sectionize`); presentation lives in `src/styles/tokens.css` (shared prose rules) and in the owning page for surface-specific overrides. Two rendering surfaces exist and differ where noted:
 
-| Surface | Where | Wrapper |
-| ------- | ----- | ------- |
-| Prose pages | `src/pages/**/*.mdx` through `ProseLayout.astro` | `.prose-section` per `##` heading |
-| Newsletter issues | `src/content/newsletter/*.md` through `src/pages/newsletter/[issue].astro` | `.issue-section` per `##` heading, inside `.issue-body` |
+| Surface           | Where                                                                      | Wrapper                                                                              |
+| ----------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Prose pages       | `src/pages/**/*.mdx` through `ProseLayout.astro`                           | `.prose-section` per `##` heading                                                    |
+| Newsletter issues | `src/content/newsletter/*.md` through `src/pages/newsletter/[issue].astro` | `.article-section.issue-section` per `##` heading, inside `.article-body.issue-body` |
+| Blog posts        | `src/content/blog/*/index.md` through `src/pages/blog/[slug].astro`        | `.article-section.blog-section` per `##` heading, inside `.article-body.blog-body`   |
 
 ## Headings
 
-`## Heading` is not a plain heading: `rehype-sectionize` turns each one into a section wrapper. On prose pages it produces a numbered `.prose-section` with a generated eyebrow; in newsletter issues it produces a bare `.issue-section` that carries the reveal trigger, and the heading itself renders as a large serif display line above a hairline rule. Use `##` only where that sectioning treatment is intended, and never hand-author the generated eyebrow or wrapper.
+`## Heading` is not a plain heading: `rehype-sectionize` turns each one into a section wrapper. On prose pages it produces a numbered `.prose-section` with a generated eyebrow; in newsletter issues and blog posts it produces a bare `.article-section` carrying the surface class, with the reveal trigger stamped on every block element inside it so long sections appear block by block, and the heading itself renders as a large serif display line above a hairline rule. Use `##` only where that sectioning treatment is intended, and never hand-author the generated eyebrow or wrapper.
 
 `### Subheading` renders as a small uppercase mono label with wide letter-spacing. It is the label-level heading, not a smaller title; do not use it for a paragraph that needs a sentence-case heading.
 
@@ -21,13 +22,13 @@ Every markdown element the site styles, what it looks like, and the constraints 
 
 ## Body copy
 
-Ordinary paragraphs render at `--body-16-5` with 1.75 line height in newsletter issues and `--body-16` at 1.7 on prose pages, capped to a readable measure and centred within the section. Markdown prose does not hard-wrap; let lines overflow (see AGENTS.md editorial rules). No em dashes in site prose.
+Ordinary paragraphs render at `--body-16-5` with 1.75 line height on the shared newsletter/blog article surface and `--body-16` at 1.7 on prose pages, capped to a readable measure and centred within the section. Markdown prose does not hard-wrap; let lines overflow (see AGENTS.md editorial rules). No em dashes in site prose.
 
 `**bold**` and `_italic_` render as expected inside paragraphs and list items. Do not use bold as a substitute for `###`.
 
 ## Blockquotes
 
-`> quoted text` renders as the site pull quote: serif italic at 21px, with an oversized accent quote mark hanging in the left margin and symmetric left/right padding so the measure stays optically centred. It drops to 18px with tighter padding below 600px. This is the same treatment as the newsletter deck (`.prose-quote` on `.issue-lede`), so a markdown quote and the issue summary read identically.
+`> quoted text` renders as the site pull quote: serif italic at 21px, with an oversized accent quote mark hanging in the left margin and symmetric left/right padding so the measure stays optically centred. It drops to 18px with tighter padding below 600px. This is the same treatment as the newsletter and blog decks (`.prose-quote` on `.issue-lede` or `.blog-lede`), so a markdown quote and the article summary read identically.
 
 Use it for a genuine quotation or a standout line. It is visually heavy: one per section at most, and never as a container for lists or code.
 
@@ -61,9 +62,11 @@ model.fit(x, y)
 
 `![alt](src)` renders full width inside its measure with a hairline card border and rounded corners. Height is automatic; an explicit `width` attribute is respected. Images that Astro should optimise belong under `src/assets/` and render through the image pipeline; only files that need exact public URLs belong in `public/`. Never duplicate an image between the two.
 
+Mermaid diagrams in blog source material are pre-rendered as committed SVG derivatives beside the post and referenced through ordinary image syntax. Render them with Mermaid's dark theme and a transparent background; the article surface supplies the stable dark inset plate that keeps them legible in both site themes. Do not add a browser-backed Mermaid build step or client-side Mermaid runtime for published posts.
+
 ## Tables
 
-Markdown tables are not styled by the site. Wide tabular data belongs in a designed component (see `REUSABLE.md`) or, for content collections, in a validated set with a schema. If a table is unavoidable in prose, it must sit inside a horizontally scrollable container so the page body never scrolls sideways.
+Markdown tables remain unsupported on prose pages and newsletter issues; wide tabular data there belongs in a designed component (see `REUSABLE.md`) or, for content collections, in a validated set with a schema. Blog posts are the exception: `rehype-sectionize` wraps each Markdown table in a keyboard-focusable `.article-table-scroll` region, and the blog article surface gives it hairline borders, compact body cells and mono header labels. The table keeps a useful minimum width and scrolls inside that wrapper, so the page body never scrolls sideways.
 
 ## MDX-only rules
 

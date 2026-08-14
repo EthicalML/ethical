@@ -1,0 +1,249 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleBody from '../../components/ArticleBody.astro';
+import Hero from '../../components/Hero.astro';
+import '../../components/HeroLongform.css';
+import { authors } from '../../data/authors';
+import { blogHref, blogSlug, hasBlogBody, publishedBlogEntries, type BlogEntry } from '../../utils/blog';
+
+export async function getStaticPaths() {
+  const entries = publishedBlogEntries(await getCollection('blog'));
+  const localEntries = entries.filter(hasBlogBody);
+  const linkedPost = (post: BlogEntry) => ({
+    external: !hasBlogBody(post),
+    href: blogHref(post),
+    title: post.data.title,
+  });
+  const related = (of: BlogEntry) =>
+    entries
+      .filter((other) => other.id !== of.id && other.data.tags?.some((tag) => of.data.tags?.includes(tag)))
+      .sort((first, second) => second.data.date.getTime() - first.data.date.getTime())
+      .slice(0, 3)
+      .map(linkedPost);
+  const seriesNavigation = (of: BlogEntry) => {
+    if (!of.data.series) return undefined;
+    const posts = entries
+      .filter((other) => other.data.series === of.data.series)
+      .sort((first, second) => first.data.date.getTime() - second.data.date.getTime());
+    const position = posts.findIndex((post) => post.id === of.id);
+    return {
+      name: of.data.series,
+      position: position + 1,
+      total: posts.length,
+      previous: position > 0 ? linkedPost(posts[position - 1]) : undefined,
+      next: position < posts.length - 1 ? linkedPost(posts[position + 1]) : undefined,
+    };
+  };
+  return localEntries.map((entry) => ({
+    params: { slug: blogSlug(entry) },
+    props: { entry, related: related(entry), seriesNavigation: seriesNavigation(entry) },
+  }));
+}
+
+const { entry, related, seriesNavigation } = Astro.props;
+const { Content } = await render(entry);
+const publishedDate = entry.data.originalDate ?? entry.data.date;
+// No `eyebrow`: the hero below is the page's only visible h1, so BaseLayout
+// must not render its own page header on top of it.
+const frontmatter = {
+  title: entry.data.title,
+  description: entry.data.summary,
+  image: entry.data.image,
+  canonicalPath: entry.data.source !== 'original' ? entry.data.url : undefined,
+  article: true,
+  articleHeadline: entry.data.title,
+  articleAuthors: entry.data.authors,
+  datePublished: publishedDate.toISOString().slice(0, 10),
+};
+// Same dd/mm/yy chip format as the newsletter issue meta bar.
+const barDate = [publishedDate.getDate(), publishedDate.getMonth() + 1, publishedDate.getFullYear() % 100]
+  .map((part) => String(part).padStart(2, '0'))
+  .join('/');
+const bylineAuthors = entry.data.authors.map((name) => ({ name, anchor: authors[name]?.aboutAnchor }));
+---
+
+<BaseLayout frontmatter={frontmatter}>
+  <article class="blog-post">
+    <Hero status="THE INSTITUTE — BLOG" title={entry.data.title} subtitle_lines={entry.data.summary ?? entry.data.title} />
+    <div class="blog-meta" data-reveal>
+      {
+        seriesNavigation?.previous && !seriesNavigation.previous.external ? (
+          <a class="blog-step" href={seriesNavigation.previous.href} aria-label={`Previous in series, part ${seriesNavigation.position - 1}`}>
+            <i aria-hidden="true">‹</i>
+            <span>Part {seriesNavigation.position - 1}</span>
+          </a>
+        ) : (
+          <span class="blog-step" aria-hidden="true" />
+        )
+      }
+      <div class="blog-chips">
+        {
+          seriesNavigation && (
+            <span class="blog-chip blog-series-chip">
+              Part {seriesNavigation.position} of {seriesNavigation.total}
+            </span>
+          )
+        }
+        <span class="blog-chip">{barDate}</span>
+        {entry.data.tags?.length ? <span class="chip-rule" aria-hidden="true" /> : null}
+        {entry.data.tags?.map((tag) => <span class="blog-tag">{tag}</span>)}
+      </div>
+      {
+        seriesNavigation?.next && !seriesNavigation.next.external ? (
+          <a class="blog-step" href={seriesNavigation.next.href} aria-label={`Next in series, part ${seriesNavigation.position + 1}`}>
+            <span>Part {seriesNavigation.position + 1}</span>
+            <i aria-hidden="true">›</i>
+          </a>
+        ) : (
+          <span class="blog-step" aria-hidden="true" />
+        )
+      }
+    </div>
+    <p class="blog-byline" data-reveal>
+      Posted by{' '}
+      {
+        bylineAuthors.map(({ name, anchor }, index) => (
+          <>
+            {index > 0 && ', '}
+            {anchor ? <a href={anchor}>{name}</a> : name}
+          </>
+        ))
+      }
+    </p>
+    <ArticleBody class="blog-body"><Content /></ArticleBody>
+    {
+      related.length > 0 && (
+        <aside class="blog-related" data-reveal>
+          <p class="eyebrow">RELATED</p>
+          <ul>
+            {related.map((post) => (
+              <li>
+                <a href={post.href} target={post.external ? '_blank' : undefined} rel={post.external ? 'noopener noreferrer' : undefined}>
+                  {post.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </aside>
+      )
+    }
+  </article>
+</BaseLayout>
+
+<style>
+  /* The meta bar, chips, steps and byline mirror the newsletter issue meta
+     treatment so the two article surfaces read identically; the shared
+     primitive extraction is recorded in TODO.md (hero family programme). */
+  .blog-related {
+    margin-inline: auto;
+    max-width: 645px;
+    padding-inline: 24px;
+  }
+  .blog-meta {
+    align-items: center;
+    background: var(--bg-inset);
+    border-block: 1px solid var(--hairline);
+    display: grid;
+    gap: 12px;
+    grid-template-columns: minmax(72px, 1fr) auto minmax(72px, 1fr);
+    margin-top: 34px;
+    padding: 16px 24px;
+  }
+  .blog-chips {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+  .blog-chip {
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-pill);
+    color: var(--text-2);
+    font-family: var(--font-mono);
+    font-size: var(--mono-10);
+    letter-spacing: 0.12em;
+    padding: 8px 14px;
+  }
+  .blog-chip.blog-series-chip {
+    border-color: var(--accent-edge);
+    color: var(--accent-ink);
+  }
+  .blog-tag {
+    border: 1px solid var(--hairline-card);
+    border-radius: var(--radius-pill);
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: var(--mono-9);
+    letter-spacing: 0.12em;
+    padding: 7px 11px;
+    text-transform: uppercase;
+  }
+  .chip-rule {
+    align-self: center;
+    background: rgba(var(--ink-wash-rgb), calc(0.22 * var(--ink-wash-lift)));
+    flex: none;
+    height: 22px;
+    margin: 0 3px;
+    width: 1px;
+  }
+  .blog-step {
+    align-items: center;
+    color: var(--text-2);
+    display: inline-flex;
+    font-family: var(--font-mono);
+    font-size: var(--mono-11);
+    gap: 7px;
+    justify-self: start;
+    letter-spacing: 0.08em;
+    padding: 6px 2px;
+    transition: color 0.2s ease;
+  }
+  .blog-step:last-child {
+    justify-self: end;
+  }
+  a.blog-step:hover {
+    color: var(--accent-ink);
+  }
+  .blog-byline {
+    color: var(--text-4);
+    font-family: var(--font-mono);
+    font-size: var(--mono-9);
+    letter-spacing: 0.12em;
+    margin: 20px auto 0;
+    max-width: 645px;
+    padding: 0 24px;
+    text-transform: uppercase;
+  }
+  .blog-byline a {
+    color: var(--accent-ink);
+  }
+  .blog-related a {
+    color: var(--accent-ink);
+  }
+  .blog-related {
+    border-top: 1px solid var(--hairline);
+    padding-bottom: 96px;
+    padding-top: 28px;
+  }
+  .blog-related ul {
+    list-style: none;
+    margin: 18px 0 0;
+    padding: 0;
+  }
+  .blog-related li {
+    margin-top: 10px;
+  }
+  @media (max-width: 600px) {
+    .blog-related {
+      padding-inline: 18px;
+    }
+    .blog-meta {
+      padding: 12px 16px;
+    }
+    .blog-step span {
+      display: none;
+    }
+  }
+</style>
