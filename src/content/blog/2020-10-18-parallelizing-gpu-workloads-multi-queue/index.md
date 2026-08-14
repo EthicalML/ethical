@@ -75,15 +75,54 @@ We will now take a look at the code that we will be using throughout this articl
 
 For measuring time we will be using `<chrono>` from the standard library. We will be mainly using it to calculate the difference across a start and end time retrieved with `std::chrono::high_resolution_clock::now()` as follows:
 
+```cpp
+int main() {
+    auto startSync = std::chrono::high_resolution_clock::now();
+
+    // ... code implementation
+
+    auto end = std::chrono::high_resolution_clock::now();
+    auto durationSync =
+      std::chrono::duration_cast<std::chrono::microseconds>(
+        end - start).count();
+}
+```
+
 You can find the [runnable code in this file](https://github.com/EthicalML/vulkan-kompute/blob/1053cde1f0d27799f0d7dbd8043919656498f8bf/test/TestAsyncOperations.cpp#L8), which is part of the Kompute test suite.
 
 ### 1. Creating a Kompute Manager to orchestrate all GPU work
 
 First we have to create the Kompute Manager, which performs all the required memory management and creates all required Vulkan resources. By default the Kompute Manager will pick GPU Device 0, but you are able to pass the specific device index you would prefer to initialise with, and if preferred you can pass your Vulkan resources if you already have a Vulkan application.
 
+```cpp
+
+int main()
+{
+    // ... previous code blocks
+
+    kp::Manager mgr; // Selects device 0 and first compute queue unless explicitly requested
+
+    // ... latter code blocks
+```
+
 ### 2. Create the Kompute Tensors in CPU host that will be used to process data
 
 We will now be able to create a set of Kompute Tensors. We first initialise the data in the CPU Host, consisting of an array of zeros with length of 10. We will be using two tensors as we’ll be running two algorithm executions. We will be able to check these Kompute Tensors at the end to confirm that the execution has been successful.
+
+```cpp
+
+int main()
+{
+    // ... previous code blocks
+
+    std::vector<float> zeros(10, 0);
+
+    // 1. Create a set of data tensors in host memory for processing
+    auto tensorA = std::make_shared<kp::Tensor>(kp::Tensor(zeros));
+    auto tensorB = std::make_shared<kp::Tensor>(kp::Tensor(zeros));
+
+    // ... latter code blocks
+```
 
 ### 3. Map the Kompute Tensors into GPU Device memory
 
@@ -93,6 +132,17 @@ We will now be able to create a set of Kompute Tensors. We first initialise the 
 
 We are now able to copy the host data of the Kompute Tensors into the GPU Device memory.
 
+```cpp
+
+int main()
+{
+   // ... previous code blocks
+
+    mgr.evalOpDefault<kp::OpTensorCreate>({ tensorA, tensorB });
+
+    // ... latter code blocks
+```
+
 This is an important step as by default the Kompute Tensors use device-only-visible memory which means that a GPU operation will need to copy it with a staging tensor.
 
 Kompute allows us to create the buffer and GPU memory block, as well as performing a copy with a staging buffer through the `kp::OpTensorCreate` operation.
@@ -101,21 +151,109 @@ Kompute allows us to create the buffer and GPU memory block, as well as performi
 
 The compute shader that we create has a relatively large loop to simulate an “expensive computation”. It basically performs a unit addition for `100000000` iterations and adds the result to the input Tensor.
 
+```cpp
+
+int main()
+{
+    // ... previous code blocks
+
+    std::string shader(R"(
+        #version 450
+        layout (local_size_x = 1) in;
+        layout(set = 0, binding = 0) buffer b { float pb[]; };
+
+        shared uint sharedTotal[1];
+
+        void main() {
+            uint index = gl_GlobalInvocationID.x;
+
+            sharedTotal[0] = 0;
+            for (int i = 0; i < 100000000; i++)
+            {
+                atomicAdd(sharedTotal[0], 1);
+            }
+
+            pb[index] = sharedTotal[0];
+        }
+    )");
+
+    // ... latter code blocks
+```
+
 ### 5. Run compute shader in the GPU using the Tensors for data processing
 
 Now we are able to submit the compute shader for execution through the `kp::OpAlgoBase` operation. This basically allows us to perform a submission of the shader with the respective tensor. This initial implementation runs the execution synchronously, so it will first run the execution of the shader with `tensorA`, and then the execution of the same shader with `tensorB`.
+
+```cpp
+
+int main()
+{
+    // ... previous code blocks
+
+    mgr.evalOpDefault<kp::OpAlgoBase<>>(
+        { tensorA },
+        std::vector<char>(shader.begin(), shader.end()));
+
+    mgr.evalOpDefault<kp::OpAlgoBase<>>(
+        { tensorB },
+        std::vector<char>(shader.begin(), shader.end()));
+
+    // ... latter code blocks
+```
 
 ### 6. Map results of the Kompute Tensors back into CPU Host memory
 
 Finally we want to retrieve the results from the GPU device memory into the CPU host memory so we can access it from C++. For this we can use the `kp::OpTensorSync` operation.
 
+```cpp
+
+int main()
+{
+  // ... previous code blocks
+
+    mgr.evalOpDefault<kp::OpTensorSyncLocal>({ tensorA, tensorB });
+
+    // ... latter code blocks
+```
+
 ### 7. Verify that the operation was successful
 
 Finally we can just check that both resulting `kp::Tensor` contain the expected value of `100000000`.
 
+```cpp
+
+int main()
+{
+    // ... previous code blocks
+
+    std::vector<float> expected(10, 100000000)
+    EXPECT_EQ(inputsSyncB[i]->data(), expected);
+
+}
+```
+
 ## Extending for Asynchronous Workload Submission
 
 The steps that we will need to extend for asynchronous submission in this case are quite minimal. The only thing we need to do is to substitute the `evalOpDefault` function for the `evalOpAsyncDefault` function, and then using the `evalOpAwaitDefault(<timeInNanoSecs>)` to wait until the job is finished. This basically would look as follows:
+
+```cpp
+
+int main()
+{
+    // ... previous code blocks
+
+    mgr.evalOpAsyncDefault<kp::OpAlgoBase<>>(
+      { tensorB },
+      std::vector<char>(shader.begin(), shader.end()));
+
+    mgr.evalOpAsyncDefault<kp::OpAlgoBase<>>(
+      { tensorA },
+      std::vector<char>(shader.begin(), shader.end()));
+
+    mgr.evalOpAwaitDefault();
+
+    // ... latter code blocks
+```
 
 As you can see we are able to submit two tasks for processing asynchronously, and then wait until they are finished with the Await function.
 
@@ -157,13 +295,62 @@ We will dive into each of these three points.
 
 When initialising a manager we are able to pass an array containing the queues that we would like to fetch. In this case, we only fetch one graphics queue and one compute queue, however, based on the hardware specs of the NVIDIA 1650, we would be able to request up to 16 graphics queues (familyIndex 0), 2 transfer queues (familyIndex 1), and 8 compute queues (familyIndex 2).
 
+```cpp
+
+int main()
+{
+    // ... previous code blocks
+
+    uint32_t deviceId(0);
+    std::vector<uint32_t> queues({ 0, 2 });
+
+    kp::Manager mgr(deviceId, queues);
+
+    // ... latter code blocks
+```
+
 ### 2. We create two Kompute Sequences with each respective queue allocated
 
 Now we are able to explicitly initialise two managed sequences, each allocated to a different queue, referencing the index of the array we passed in the previous step.
 
+```cpp
+
+int main()
+{
+    // ... previous code blocks
+
+    // The index is relative to the array we used to initialise
+    mgr.createManagedSequence("graphicsQueueSequence", 0);
+    mgr.createManagedSequence("computeQueueSequence", 1);
+
+    // ... latter code blocks
+```
+
 ### 3. We run the operations on each respective queue
 
 Now we are able to run operations submitting to each respective queue. In this case both of the GPU workloads are submitted in parallel.
+
+```cpp
+
+int main()
+{
+    // ... previous code blocks
+
+    mgrAsync.evalOpAsync<kp::OpAlgoBase<>>(
+      { tensorA },
+      "graphicsQueueSequence",
+      std::vector<char>(shader.begin(), shader.end()));
+
+    mgrAsync.evalOpAsync<kp::OpAlgoBase<>>(
+      { tensorB },
+      "computeQueueSequence",
+      std::vector<char>(shader.begin(), shader.end()));
+
+    mgrAsync.evalOpAwait("graphicsQueueSequence");
+    mgrAsync.evalOpAwait("computeQueueSequence");
+
+    // ... latter code blocks
+```
 
 ## Parallel Workload Execution Results
 

@@ -88,6 +88,33 @@ The core of our mobile app can be found in the `app/src/main/java/com/ethicalml/
 
 If we look at the shortened version of the class in the code block below we will notice the following key points:
 
+```kotlin
+// imports
+
+class KomputeJni : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        // ...
+    }
+
+    fun KomputeButtonOnClick(v: View) {
+        // ...
+    }
+
+    external fun initVulkan(): Boolean
+
+    external fun kompute(xi: FloatArray, xj: FloatArray, y: FloatArray): FloatArray
+
+    external fun komputeParams(xi: FloatArray, xj: FloatArray, y: FloatArray): FloatArray
+
+    companion object {
+        init {
+            System.loadLibrary("kompute-jni")
+        }
+    }
+}
+```
+
 - `fun onCreate(…)` — This function is called on initialisation of the Android Activity (when the app is loaded)
 - `fun KomputeButtonOnClick(…)`— This function is triggered when the main “KOMPUTE” button gets pressed, and triggers the C++ Jni binding functions using the data from the user interface text boxes.
 - `external fun initVulkan(): Boolean` — This function is one of the C++ JNI functions that will be bound to the Vulkan initialisation C++ function.
@@ -102,7 +129,78 @@ Now to cover each of the functions in more detail, we start with the `onCreate` 
 - `val binding` — This is the main object that will allow us to access all the text boxes and elements in the UI.
 - `val successVulkanInit = initVulkan()` — This is our first call to a C++ JNI function, which is primarily in charge of initialising Vulkan. If it’s successful it returns `true`, and we display the respective success message in a `android.widget.Toast` popup — an error is displayed otherwise.
 
+```kotlin
+
+// ... prior code blocks
+
+class KomputeJni : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val binding = ActivityKomputeJniBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.komputeGifView.loadUrl("file:///android_asset/komputer-2.gif")
+
+        binding.komputeGifView.getSettings().setUseWideViewPort(true)
+        binding.komputeGifView.getSettings().setLoadWithOverviewMode(true)
+
+        val successVulkanInit = initVulkan()
+        if (successVulkanInit) {
+            Toast.makeText(applicationContext, "Vulkan Loaded SUCCESS", Toast.LENGTH_SHORT).show()
+        } else {
+            binding.KomputeButton.isEnabled = false
+            Toast.makeText(applicationContext, "Vulkan Load FAILED", Toast.LENGTH_SHORT).show()
+        }
+        Log.i("KomputeJni", "Vulkan Result: " + successVulkanInit)
+
+        binding.predictionTextView.text = "N/A"
+    }
+
+// ... latter code blocks
+```
+
 Next up we have the `KomputeButtonOnClick(...)` function. This function gets triggered when the user presses the `“KOMPUTE”` button in the app. The main purpose of this function is to retrieve the inputs from the input text boxes in the UI, then use the input data to perform an ML train/inference step through the JNI C++ bindings, and finally display the resulting outputs back in the UI text labels. In further detail:
+
+```kotlin
+// ... prior code blocks
+
+    fun KomputeButtonOnClick(v: View) {
+
+        val xiEditText = findViewById<EditText>(R.id.XIEditText)
+        val xjEditText = findViewById<EditText>(R.id.XJEditText)
+        val yEditText = findViewById<EditText>(R.id.YEditText)
+
+        val wOneEditText = findViewById<TextView>(R.id.wOneTextView)
+        val wTwoEditText = findViewById<TextView>(R.id.wTwoTextView)
+        val biasEditText = findViewById<TextView>(R.id.biasTextView)
+
+        val komputeJniTextview = findViewById<TextView>(R.id.predictionTextView)
+
+        val xi = xiEditText.text.removeSurrounding("[", "]").split(",").map { it.toFloat() }.toFloatArray()
+        val xj = xjEditText.text.removeSurrounding("[", "]").split(",").map { it.toFloat() }.toFloatArray()
+        val y = yEditText.text.removeSurrounding("[", "]").split(",").map { it.toFloat() }.toFloatArray()
+
+        val out = kompute(xi, xj, y)
+
+        Log.i("KomputeJni", "RESULT:")
+        Log.i("KomputeJni", out.contentToString())
+
+        komputeJniTextview.text = out.contentToString()
+
+        val params = komputeParams(xi, xj, y)
+
+        Log.i("KomputeJni", "Params:")
+        Log.i("KomputeJni", params.contentToString())
+
+        wOneEditText.text = params[0].toString()
+        wTwoEditText.text = params[1].toString()
+        biasEditText.text = params[2].toString()
+    }
+
+// ... latter code blocks
+```
 
 - `val <elementname> = findViewById<EditText>(R.id.<elementname>)`— This is the format of the steps that create the variable that holds the respective text box with inputs. In this case `<elementname>` is the name of the element we are interacting with.
 - `xi, xj and y` — The `FloatArray` elements created from the text in the respective input boxes, which are then used for the ML model processing.
@@ -111,6 +209,23 @@ Next up we have the `KomputeButtonOnClick(...)` function. This function gets tri
 - `<elementname>.text = <value>` — The lines that follow this format basically override the text labels in the UI to display the outputs.
 
 The last few functions are only explicitly set as external functions to be bound to the C++ JNI bindings. Furthermore the `companion object` section provides the name of the shared library that will contain the respective bindings referenced in this activity.
+
+```kotlin
+// ... prior code blocks
+
+    external fun initVulkan(): Boolean
+
+    external fun kompute(xi: FloatArray, xj: FloatArray, y: FloatArray): FloatArray
+
+    external fun komputeParams(xi: FloatArray, xj: FloatArray, y: FloatArray): FloatArray
+
+    companion object {
+        init {
+            System.loadLibrary("kompute-jni")
+        }
+    }
+}
+```
 
 You can find the full file in the `KomputeJni.kt`[file](https://github.com/EthicalML/vulkan-kompute/blob/v0.3.2/examples/android/android-simple/app/src/main/java/com/ethicalml/kompute/KomputeJni.kt) in the repository.
 
@@ -132,6 +247,40 @@ The core components in the Android NDK bindings module consist of the following:
 
 The JNI bindings in this case are provided via the `KomputeJniNative.cpp`[file](https://github.com/EthicalML/vulkan-kompute/blob/v0.3.2/examples/android/android-simple/app/src/main/cpp/KomputeJniNative.cpp). The skeleton of the class is below — the function code logic has been redacted for simplicity, and will be explained in more detail below.
 
+```cpp
+// Imports & util functions
+
+extern "C" {
+
+JNIEXPORT jboolean JNICALL
+Java_com_ethicalml_kompute_KomputeJni_initVulkan(JNIEnv *env, jobject thiz) {
+    // ...
+}
+
+
+JNIEXPORT jfloatArray JNICALL
+Java_com_ethicalml_kompute_KomputeJni_kompute(
+        JNIEnv *env,
+        jobject thiz,
+        jfloatArray xiJFloatArr,
+        jfloatArray xjJFloatArr,
+        jfloatArray yJFloatArr) {
+    // ...
+}
+
+JNIEXPORT jfloatArray JNICALL
+Java_com_ethicalml_kompute_KomputeJni_komputeParams(
+        JNIEnv *env,
+        jobject thiz,
+        jfloatArray xiJFloatArr,
+        jfloatArray xjJFloatArr,
+        jfloatArray yJFloatArr) {
+    // ...
+}
+
+}
+```
+
 The JNI binding functions have to match the class functions defined in the Java/Kotlin code. The format for the function is:
 
 - `Java_<modulepath>_<class>_<functionname>(env, thiz, ...params)`
@@ -140,15 +289,111 @@ In our case the class is in the `com.ethicalml.kompute` module, in the class `Ko
 
 Diving one level deeper, we can now go through each section of the file. Starting with the imports, we can see below the imports together with comments outlining their core functionality.
 
+```cpp
+// Includes the Jni utilities for Android to be able to create the
+// relevant bindings for java, including JNIEXPORT, JNICALL , and
+// other "j-variables".
+#include <jni.h>
+
+// The ML class exposing the Kompute ML workflow for training and
+// prediction of inference data.
+#include "KomputeModelML.hpp"
+
+// Allows us to use the C++ sleep function to wait when loading the
+// Vulkan library in android
+#include <unistd.h>
+```
+
 In Android applications, we actually need to initialize the Vulkan dynamic library manually (which is something that you normally wouldn’t do outside of Android). The reason why this is required, is because the Vulkan library is not actually linked in Android phones. The reason why Android avoids doing any linking is for backwards compatibility, mainly to ensure the app doesn’t crash if the Vulkan library is not found in older phones.
 
 This means we need to manually find the library in the C++ code and if found, link each function to its respective memory address pointer so our C++ framework can use it. Fortunately, this is something that Kompute does automatically, and we won’t be covering the details in this article as it probably would require an article in itself, but if you’re interested you can read more about it in [**this post**](https://marcelbraghetto.github.io/a-simple-triangle/2019/06/16/part-17/), and you can see how Kompute imports Vulkan dynamically in the [Core.hpp header file](https://github.com/EthicalML/vulkan-kompute/blob/45ddfe524b9ed63c5fe1fc33773c8f93a18e2fac/src/include/kompute/Core.hpp#L5) using the `vk_ndk_wrapper_include`[files](https://github.com/EthicalML/vulkan-kompute/tree/45ddfe524b9ed63c5fe1fc33773c8f93a18e2fac/vk_ndk_wrapper_include).
 
 Below you can see the implementation of the function that exposes the `initVulkan` logic—`Java_com_ethicalml_kompute_KomputeJni_initVulkan(...)`. You can see inside this function we run `InitVulkan()`until the Vulkan library is successfully initialised, or alternatively fails if the maximum number of retries is reached.
 
+```cpp
+// ... previous code blocks
+
+JNIEXPORT jboolean JNICALL
+Java_com_ethicalml_kompute_KomputeJni_initVulkan(JNIEnv *env, jobject thiz) {
+
+    SPDLOG_INFO("Initialising vulkan");
+
+    uint32_t totalRetries = 0;
+
+    while (totalRetries < KOMPUTE_VK_INIT_RETRIES) {
+        SPDLOG_INFO("VULKAN LOAD TRY NUMBER: %u", totalRetries);
+        if(InitVulkan()) {
+            break;
+        }
+        sleep(1);
+        totalRetries++;
+    }
+
+    return totalRetries < KOMPUTE_VK_INIT_RETRIES;
+}
+
+// ... latter code blocks
+```
+
 Once Vulkan has been initialised, it is possible to call the remaining functions. The first one is the `kompute` function, which is in charge of training the model and running an inference request. The function receives the input Xi and Xj values, together with the expected predictions that the model will learn from. It will then return the prediction treating Xi and Xj as unseen data. The function will basically call the `KomputeModelML` class `train` function and `predict` function.
 
+```cpp
+// ... previous code blocks
+
+JNIEXPORT jfloatArray JNICALL
+Java_com_ethicalml_kompute_KomputeJni_kompute(
+        JNIEnv *env,
+        jobject thiz,
+        jfloatArray xiJFloatArr,
+        jfloatArray xjJFloatArr,
+        jfloatArray yJFloatArr) {
+
+    SPDLOG_INFO("Creating manager");
+
+    std::vector<float> xiVector = jfloatArrayToVector(env, xiJFloatArr);
+    std::vector<float> xjVector = jfloatArrayToVector(env, xjJFloatArr);
+    std::vector<float> yVector = jfloatArrayToVector(env, yJFloatArr);
+
+    KomputeModelML kml;
+    kml.train(yVector, xiVector, xjVector);
+
+    std::vector<float> pred = kml.predict(xiVector, xjVector);
+
+    return vectorToJFloatArray(env, pred);
+}
+
+// ... latter code blocks
+```
+
 The last remaining JNI function that will be exposed to the Java/Kotlin code is the `komputeParams` function, which is in charge of returning the parameters that the machine learning model learns, namely the `weight 1` , `weight 2` and the `bias` parameters.
+
+```cpp
+// ... previous code blocks
+
+JNIEXPORT jfloatArray JNICALL
+Java_com_ethicalml_kompute_KomputeJni_komputeParams(
+        JNIEnv *env,
+        jobject thiz,
+        jfloatArray xiJFloatArr,
+        jfloatArray xjJFloatArr,
+        jfloatArray yJFloatArr) {
+
+    SPDLOG_INFO("Creating manager");
+
+    std::vector<float> xiVector = jfloatArrayToVector(env, xiJFloatArr);
+    std::vector<float> xjVector = jfloatArrayToVector(env, xjJFloatArr);
+    std::vector<float> yVector = jfloatArrayToVector(env, yJFloatArr);
+
+    KomputeModelML kml;
+    kml.train(yVector, xiVector, xjVector);
+
+    std::vector<float> params = kml.get_params();
+
+    return vectorToJFloatArray(env, params);
+}
+
+// ... latter code blocks
+```
 
 The only remaining functions are the utility functions that we used in the JNI logic — namely `jfloatArrayToVector` and `vectorToJFloatArray` — these functions are self explanatory, so we’ll leave it to the reader to explore further in the source if interested.
 
@@ -157,6 +402,33 @@ The only remaining functions are the utility functions that we used in the JNI l
 Now that we’ve covered the key functions that are bound to the Kotlin / Java class, we can cover the `KomputeModelML` C++ class that contains the Kompute GPU Accelerated logic.
 
 The header file for the KomputeModelML class is outlined below, and contains the following key components:
+
+```cpp
+#pragma once
+
+#include "kompute/Kompute.hpp"
+
+class KomputeModelML {
+
+public:
+    KomputeModelML();
+    virtual ~KomputeModelML();
+
+    void train(std::vector<float> yData, std::vector<float> xIData, std::vector<float> xJData);
+
+    std::vector<float> predict(std::vector<float> xI, std::vector<float> xJ);
+
+    std::vector<float> get_params();
+
+private:
+    kp::Tensor mWeights;
+    kp::Tensor mBias;
+
+};
+
+static std::string LR_SHADER = R"(
+//... rest of header file
+```
 
 - `#include "kompute/Kompute.hpp”` — header containing all the Kompute dependencies that we’ll use in this project
 - `void train(...)` —Trains the machine learning model using the GPU native code for the logistic regression model. It takes the input array(s) `X`, and the array `y`containing the expected outputs.
@@ -172,15 +444,57 @@ The `CMakeLists.txt`[**build file**](https://github.com/EthicalML/vulkan-kompute
 
 First we need to make sure the Kompute library is available. Usually you would run the `INSTALL`target of the Kompute build to be able to use/import the respective library. However in this case we need to make sure Kompute is built for the right Android CPU architecture —our simplest option is adding the main repository as part of the build, which means that Kompute will also be built for the right mobile architectures. If you want to include this in your project, you just need to make sure the path is relative to the Kompute cloned folder.
 
+```cmake
+add_subdirectory(
+    ../../../../../../../
+    ${CMAKE_CURRENT_BINARY_DIR}/kompute_build)
+```
+
 We now set the variable VK_ANDROID_INCLUDE_DIR to the vulkan include directory. This contains all the include files we need for Vulkan — for completeness, Kompute uses the `vulkan.h` header as well as the `vulkan.hpp` C++ headers.
+
+```cmake
+set(
+  VK_ANDROID_INCLUDE_DIR
+  ${ANDROID_NDK}/sources/third_party/vulkan/src/include)
+```
 
 We are now able to add the library that will be used by the Java/Kotlin Android Studio project, which in this case is the shared library `kompute-jni`.
 
+```cmake
+add_library(kompute-jni SHARED
+        KomputeJniNative.cpp
+        KomputeModelML.cpp)
+```
+
 We now are able to add all relevant `include` directories. This includes the `VK_ANDROID_INCLUDE_DIR`which we defined above, as well as the `VK_ANDROID_COMMON_DIR` which contains Android `log.h` . The `single_include` is what contains the `kompute/Kompute.hpp` header from Kompute. Finally, we need to import the Kompute Dynamic library wrapper `vk_ndk_wrapper_include` which is necessary as the Vulkan library is imported dynamically. The logic behind this could become a series of articles in itself, so we won’t go down this rabbit-hole, but if you’re interested you can read more in [**this post**](https://marcelbraghetto.github.io/a-simple-triangle/2019/06/16/part-17/), and you can see how Kompute imports [**Vulkan dynamically**](https://github.com/EthicalML/vulkan-kompute/blob/45ddfe524b9ed63c5fe1fc33773c8f93a18e2fac/src/include/kompute/Core.hpp#L5).
+
+```cmake
+include_directories(
+        ${VK_ANDROID_COMMON_DIR}
+        ${VK_ANDROID_INCLUDE_DIR}
+        ../../../../../../../single_include/
+        ../../../../../../../vk_ndk_wrapper_include/)
+```
 
 To compile the project we’ll want to make sure the `VK_USE_PLATFORM_ANDROID_KHR` is set, as this is what enables the Android configuration. For this project we also disable the Vulkan debug layers with `KOMPUTE_DISABLE_VK_DEBUG_LAYERS.`
 
+```cmake
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 \
+                     -DVK_USE_PLATFORM_ANDROID_KHR=1 \
+                     -DKOMPUTE_DISABLE_VK_DEBUG_LAYERS=1")
+```
+
 Finally, we are able to link the relevant libraries to our `kompute-jni` shared library target. This includes:
+
+```cmake
+target_link_libraries(kompute-jni
+        # Libraries from kompute build
+        kompute
+        kompute_vk_ndk_wrapper
+        # Libraries from android build
+        log
+        android)
+```
 
 - `kompute`— This is the library created in the Kompute build.
 - `kompute_vk_ndk_wrapper` — This library also gets created by the Kompute build and contains the code to dynamically load and wrap the Vulkan library.

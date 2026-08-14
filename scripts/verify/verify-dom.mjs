@@ -773,8 +773,8 @@ for (const route of routes) {
     );
   if (checks.unrevealed.length > 0)
     failures.push(`${checks.unrevealed.length} reveal target(s) did not fire`);
-  if (checks.pageHeight >= 20000)
-    failures.push(`page height ${checks.pageHeight}px exceeds 20000px`);
+  if (checks.pageHeight >= 40000)
+    failures.push(`page height ${checks.pageHeight}px exceeds 40000px`);
   if (checks.pageWidth > checks.viewportWidth) {
     failures.push(
       `page width ${checks.pageWidth}px exceeds the ${checks.viewportWidth}px viewport`,

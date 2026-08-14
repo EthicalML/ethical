@@ -76,9 +76,53 @@ To build our first simple array-multiplication GPU computing application using K
 
 The full Python code required is quite minimal, so we are able to show the full script below. We’ll break down each of the sections in more detail.
 
+```python
+import kp
+import pyshader as ps
+
+# 1. Create Kompute Manager (selects device 0 by default)
+mgr = kp.Manager()
+
+# 2. Create Kompute Tensors to hold data
+tensor_in_a = kp.Tensor([2, 2, 2])
+tensor_in_b = kp.Tensor([1, 2, 3])
+tensor_out = kp.Tensor([0, 0, 0])
+
+# 3. Initialise the Kompute Tensors in the GPU
+mgr.eval_tensor_create_def([tensor_in_a, tensor_in_b, tensor_out])
+
+# 4. Define the multiplication shader code to run on the GPU
+@ps.python2shader
+def compute_shader_multiply(index=("input", "GlobalInvocationId", ps.ivec3),
+                            data1=("buffer", 0, ps.Array(ps.f32)),
+                            data2=("buffer", 1, ps.Array(ps.f32)),
+                            data3=("buffer", 2, ps.Array(ps.f32))):
+    i = index.x # Fetch the current run index being processed
+    data3[i] = data1[i] * data2[i] # Perform multiplication
+
+# 5. Dispatch algorithm execution against Kompute Tensors
+mgr.eval_algo_data_def(
+  [tensor_in_a, tensor_in_b, tensor_out],
+  compute_shader_multiply.to_spirv())
+
+# 6. Sync tensor data from GPU back to local
+mgr.eval_tensor_sync_local_def([tensor_out])
+
+# 7. Print results
+print(tensor_out.data()) # prints [2.0, 4.0, 6.0]
+```
+
 ### 1. Create a Kompute Manager (selects device 0 by default)
 
 First, we’ll create our Kompute Manager, which is in charge of creating and managing all the underlying Vulkan resources.
+
+```python
+# ...previous code blocks
+
+mgr = kp.Manager()
+
+# ...latter code blocks
+```
 
 As you can see, here we are initializing our Kompute Manager, which by default creates all the base Vulkan resources on Device 0 (in my case it’s an NVIDIA card, and Device 1 is my integrated graphics card). For more advanced use-cases it’s also possible to provide the underlying GPU queues that you’d like to load — in [this other tutorial](https://towardsdatascience.com/parallelizing-heavy-gpu-workloads-via-multi-queue-operations-50a38b15a1dc) we show how this can lead to significant speedups, but this is outside of scope of this article.
 
@@ -86,15 +130,47 @@ As you can see, here we are initializing our Kompute Manager, which by default c
 
 We will now create the Kompute Tensors that will be used for input and output. These will hold the data required which will be mapped into the GPU to perform this simple multiplication.
 
+```python
+# ...previous code blocks
+
+tensor_in_a = kp.Tensor([2, 2, 2])
+tensor_in_b = kp.Tensor([1, 2, 3])
+tensor_out = kp.Tensor([0, 0, 0])
+
+# ...latter code blocks
+```
+
 When the tensors are created, the data is only initialized in the local CPU memory (aka RAM), but in order to use it in the GPU we’ll have to map the data into the GPU memory.
 
 ### 3. Initialise the Kompute Tensors in the GPU
 
 Now that we have our Tensors created with local data, we will map the data into the GPU. For this we will use the `eval_tensor_create_def`, which will initialize the underlying Vulkan buffer and GPU memory, and perform the respective mapping into the GPU.
 
+```python
+# ...previous code blocks
+
+mgr.eval_tensor_create_def([tensor_in_a, tensor_in_b, tensor_out])
+
+# ...latter code blocks
+```
+
 ### 4. Define the code to run on the GPU
 
 Now that we’ve initialized the necessary Kompute Tensor components and they are mapped in GPU memory, we can add the Kompute Algorithm that will be executed in the GPU. This is referred to as the “shader” code, which we build using the `pyshader`library. You can see the full shader code below, and we’ll break down each of the section below.
+
+```python
+# ...previous code blocks
+
+@ps.python2shader
+def compute_shader_multiply(index=("input", "GlobalInvocationId", ps.ivec3),
+                            data1=("buffer", 0, ps.Array(ps.f32)),
+                            data2=("buffer", 1, ps.Array(ps.f32)),
+                            data3=("buffer", 2, ps.Array(ps.f32))):
+    i = index.x # Fetch the current run index being processed
+    data3[i] = data1[i] * data2[i]
+
+# ...latter code blocks
+```
 
 The GPU shader code can be defined as a Python function with the decorator `@ps.python2shader` , and the parameters in this case include the variables that we’ll be using. This includes the Tensor inputs and outputs that we’ll be processing — the parameter format is the following:
 
@@ -110,15 +186,41 @@ The final component is the actual equation used, which in this case is a simple 
 
 In order to run the shader above we will use the `eval_algo_data_def`function. The parameters required for this Kompute Operation includes the Tensors to bind into the GPU instructions, as well as the GPU shader code that we defined in the Python function above.
 
+```python
+# ...previous code blocks
+
+mgr.eval_algo_data_def(
+  [tensor_in_a, tensor_in_b, tensor_out],
+  compute_shader_multiply.to_spirv())
+
+# ...latter code blocks
+```
+
 It’s worth mentioning that Kompute allows the user to also pass the shader as a raw glsl string, or alternatively a file path to a SPIR-V binary or raw glsl/hlsl file. For context, [SPIR-V is the intermediate representation](https://www.khronos.org/opengl/wiki/SPIR-V) that GPUs can use to process relevant operations.
 
 ### 6. Use Kompute Operation to map GPU output data into local Tensors
 
 Once the algorithm runs successfully, the result data will now be we held in the GPU memory of our output tensor. We can now use the function `eval_tensor_sync_local_def` to sync the Tensor GPU memory into the local tensor.
 
+```python
+# ...previous code blocks
+
+mgr.eval_tensor_sync_local_def([tensor_out])
+
+# ...latter code blocks
+```
+
 ### 7. Print your results
 
 Finally, we can print the output data of our tensor.
+
+```python
+# ...previous code blocks
+
+print(tensor_out.data()) # prints [2.0, 4.0, 6.0]
+
+# ...latter code blocks
+```
 
 When you run this, you will see the values of your output tensor printed. That’s it, you’ve written your first Kompute!
 
@@ -231,9 +333,69 @@ Now that we have covered some of the core concepts, we will be able to learn abo
 
 First we will start with the GPU compute shader, which is the code that will be executed in the GPU. The full shader is outlined below, and we’ll be breaking down each section in detail to explain what each part is doing.
 
+```python
+
+@ps.python2shader
+def compute_shader(
+        index   = ("input", "GlobalInvocationId", ps.ivec3),
+        x_i     = ("buffer", 0, ps.Array(ps.f32)),
+        x_j     = ("buffer", 1, ps.Array(ps.f32)),
+        y       = ("buffer", 2, ps.Array(ps.f32)),
+        w_in    = ("buffer", 3, ps.Array(ps.f32)),
+        w_out_i = ("buffer", 4, ps.Array(ps.f32)),
+        w_out_j = ("buffer", 5, ps.Array(ps.f32)),
+        b_in    = ("buffer", 6, ps.Array(ps.f32)),
+        b_out   = ("buffer", 7, ps.Array(ps.f32)),
+        l_out   = ("buffer", 8, ps.Array(ps.f32)),
+        M       = ("buffer", 9, ps.Array(ps.f32))):
+
+    i = index.x # Fetch the current run index being processed
+
+    m = M[0]
+
+    w_curr = vec2(w_in[0], w_in[1])
+    b_curr = b_in[0]
+
+    x_curr = vec2(x_i[i], x_j[i])
+    y_curr = y[i]
+
+    z_dot = w_curr @ x_curr
+    z = z_dot + b_curr
+    y_hat = 1.0 / (1.0 + exp(-z))
+
+    d_z = y_hat - y_curr
+    d_w = (1.0 / m) * x_curr * d_z
+    d_b = (1.0 / m) * d_z
+
+    loss = -((y_curr * log(y_hat)) + ((1.0 + y_curr) * log(1.0 - y_hat)))
+
+    w_out_i[i] = d_w.x
+    w_out_j[i] = d_w.y
+    b_out[i] = d_b
+    l_out[i] = loss
+```
+
 ### 1. Define input and output parameters
 
 First we define all input parameters that are analogous to the input and output components we mentioned in the previous sections.
+
+```python
+@python2shader
+def compute_shader(
+        index   = ("input", "GlobalInvocationId", ivec3),
+        x_i     = ("buffer", 0, Array(f32)),
+        x_j     = ("buffer", 1, Array(f32)),
+        y       = ("buffer", 2, Array(f32)),
+        w_in    = ("buffer", 3, Array(f32)),
+        w_out_i = ("buffer", 4, Array(f32)),
+        w_out_j = ("buffer", 5, Array(f32)),
+        b_in    = ("buffer", 6, Array(f32)),
+        b_out   = ("buffer", 7, Array(f32)),
+        l_out   = ("buffer", 8, Array(f32)),
+        M       = ("buffer", 9, Array(f32))):
+
+    # ... latter code blocks
+```
 
 If you remember, at the end of the last section we mentioned how we will be leveraging the concept of micro-batches in order to use the parallel architecture of GPU processing. What this means in practice, is that we will be passing multiple instances of X to the GPU to process at a time, instead of expecting the GPU to process it one by one. This is why we see that above we have an array for `xi, xj, y, wOuti, wOutj,`and`bOut` respectively.
 
@@ -251,31 +413,98 @@ In more detail:
 
 We also receive the constant `M`, which will be the total number of elements — if you remember this parameter will be used for the calculation of the derivatives. We will also see how these parameters are actually passed into the shader from the Python Kompute side.
 
+```python
+        # ... previous code blocks
+        M       = ("buffer", 9, Array(f32))):
+
+    m = M[0]
+
+    # ... latter code blocks
+```
+
 Now that we have all the input and output parameters defined, we can start defining the core logic, which will contain the implementation of our machine learning training algorithm.
 
 ### 3. Keep track of the execution index
 
 We will need to keep track of the current index of the global invocation. Since the GPU executes in parallel, each of these runs will be running directly in parallel, so this allows the current execution to consistently keep track of what iteration index is currently being executed.
 
+```python
+    # ... previous code blocks
+
+    i = index.x
+
+    # ... latter code blocks
+```
+
 ### 4. Define the variables from the input parameters
 
 We now can start preparing all the variables that we’ll be using throughout the algorithms. All our inputs are buffer arrays, so we’ll want to store them in `vec2`and `float32` variables.
+
+```python
+    # ... previous code blocks
+
+    w_curr = vec2(w_in[0], w_in[1])
+    b_curr = b_in[0]
+
+    x_curr = vec2(x_i[i], x_j[i])
+    y_curr = y[i]
+
+    # ... latter code blocks
+```
 
 In this case we’re basically making explicit the variables that are being used for the current “thread run”. The GPU architecture consists of slightly more nuanced execution structures that involve thread blocks, memory access limitations, etc — however we won’t be covering these in this article.
 
 Now we get into the more fun part — implementing the inference / predict logic. Below we will implement the inference logic to calculate `ŷ`, which involves both the linear mapping function, as well as the sigmoid function which we defined above.
 
+```python
+    # ... previous code blocks
+
+    # Inference and sigmoid logic
+    z_dot = w_curr @ x_curr
+    z = z_dot + b_curr
+    y_hat = 1.0 / (1.0 + exp(-z))
+
+    # ... latter code blocks
+```
+
 ### 5. Calculate derivatives to “re-adjust” parameters
 
 Now that we have `y_hat`, we can now use it to calculate the derivatives (`∂z`, `∂w` and `∂b`), which in this case are the derivative of the currently-executed index input element.
+
+```python
+    # ... previous code blocks
+
+    d_z = y_hat - y_curr
+    d_w = (1.0 / m) * x_curr * d_z
+    d_b = (1.0 / m) * d_z
+
+    # ... latter code blocks
+```
 
 ### 6. Calculate the loss from the current iteration
 
 Using the expected prediction output and the calculated prediction output we are now able to compute the loss for the current iteration. As covered above, we are using the log loss (cross entropy) function to calculate the loss.
 
+```python
+    # ... previous code blocks
+
+    loss = -((y_curr * log(y_hat)) + ((1.0 + y_curr) * log(1.0 - y_hat)))
+
+    # ... latter code blocks
+```
+
 ### 7. Store the data on the output parameters
 
 Finally we are able to pass all respective calculated metrics to our output buffers. This will allow us to re-adjust for the next iteration.
+
+```python
+    # ... previous code blocks
+
+    w_out_i[i] = d_w.x
+    w_out_j[i] = d_w.y
+    b_out[i] = d_b
+    l_out[i] = loss
+```
 
 We’ve now finished the shader that will enable us to train a Logistic Regression algorithm in the GPU —we will now cover the rest of the logic that will call this shader and orchestrate the machine learning training and inference. The full script is outlined below, and you can also try it in the Google Colab notebook with a GPU.
 
@@ -304,21 +533,89 @@ As you can see this is more involved than the simpler example we used above. In 
 
 We will be creating the Kompute Manager with the device 0 explicitly defined — you can define another device as required.
 
+```python
+# ... previous code blocks
+
+mgr = kp.Manager(0)
+
+# ...latter code blocks
+```
+
 ### 2. Create all the Kompute Tensors required
 
 Now we’ll be creating all the tensors required. In this sub-section you will notice that we will be referencing all the buffers/arrays that are being used in the shader. We’ll also cover how the order in the parameters passed relates to the way data is bound into the shaders so it’s accessible.
 
+```python
+# ... previous code blocks
+
+tensor_x_i = kp.Tensor([0.0, 1.0, 1.0, 1.0, 1.0])
+tensor_x_j = kp.Tensor([0.0, 0.0, 0.0, 1.0, 1.0])
+
+tensor_y = kp.Tensor([0.0, 0.0, 0.0, 1.0, 1.0])
+
+tensor_w_in = kp.Tensor([0.001, 0.001])
+tensor_w_out_i = kp.Tensor([0.0, 0.0, 0.0, 0.0, 0.0])
+tensor_w_out_j = kp.Tensor([0.0, 0.0, 0.0, 0.0, 0.0])
+
+tensor_b_in = kp.Tensor([0.0])
+tensor_b_out = kp.Tensor([0.0, 0.0, 0.0, 0.0, 0.0])
+
+tensor_l_out = kp.Tensor([0.0, 0.0, 0.0, 0.0, 0.0])
+
+tensor_m = kp.Tensor([ tensor_y.size() ])
+
+# ...latter code blocks
+```
+
 We also store them in a list `params` for easier access:
+
+```python
+# ... previous code blocks
+
+params = [tensor_x_i, tensor_x_j, tensor_y, tensor_w_in, tensor_w_out_i,
+    tensor_w_out_j, tensor_b_in, tensor_b_out, tensor_l_out, tensor_m]
+
+# ...latter code blocks
+```
 
 ### 3. Execute the Kompute Tensor GPU initialization via Kompute Manager
 
 The Kompute Tensor initialisation is quite standard so we’ll be able to do this step directly through the manager as we did in the simple array multiplication example previously.
+
+```python
+# ... previous code blocks
+
+mgr.eval_tensor_create_def(params)
+
+# ...latter code blocks
+```
 
 ### 4. Create Kompute Sequence and record operations for execution
 
 In this section we will want to clear the previous recordings of the Kompute Sequence and begin recording a set of sequences. You will notice that unlike the previous section, in this case we won’t be running the `eval()` straight away as we’ll have to first record the operations.
 
 You will also notice that we will be recording three types of Kompute Operations through separate functions:
+
+```python
+# ... previous code blocks
+
+# Clear previous operations and begin recording for new operations
+sq.begin()
+
+# Record operation to sync memory from local to GPU memory
+sq.record_tensor_sync_device([tensor_w_in, tensor_b_in])
+
+# Record operation to execute GPU shader against all our parameters
+sq.record_algo_data(params, compute_shader.to_spirv())
+
+# Record operation to sync memory from GPU to local memory
+sq.record_tensor_sync_local([tensor_w_out_i, tensor_w_out_j, tensor_b_out, tensor_l_out])
+
+# Stop recording operations
+sq.end()
+
+# ... latter code blocks
+```
 
 - `record_tensor_sync_device(...)` — This operation ensures that the Tensors are synchronized with their GPU memory by mapping their local data into the GPU data. In this case, these Tensors use Device-only memory for processing efficiency, so the mapping is performed with a staging Tensor inside the operation (which is re-used throughout the operations for efficiency). Here we’re only wanting to sync the input weights, as these will be updated locally with the respective derivatives.
 - `record_algo_base_data(...)` — This is the Kompute Operation that binds the shader that we wrote above with all the local CPU/host resources. This includes making available the Tensors. It’s worth mentioning that the index of the tensors provided as parameters is the order in which they are mapped in the shaders via their respective bindings.
@@ -328,9 +625,36 @@ You will also notice that we will be recording three types of Kompute Operations
 
 Now that we have the command recorded, we can start running executions of these pre-loaded commands. In this case, we will be running the execution of a micro-batch iteration, followed by updating the parameters locally, so they are used in the following iteration.
 
+```python
+# ... previous code blocks
+
+# Perform machine learning training and inference across all input X and Y
+for i_iter in range(ITERATIONS):
+
+    # Execute an iteration of the algorithm
+    sq.eval()
+
+    # Calculate the parameters based on the respective derivatives calculated
+    for j_iter in range(tensor_b_out.size()):
+        tensor_w_in[0] -= learning_rate * tensor_w_out_i.data()[j_iter]
+        tensor_w_in[1] -= learning_rate * tensor_w_out_j.data()[j_iter]
+        tensor_b_in[0] -= learning_rate * tensor_b_out.data()[j_iter]
+
+# ... latter code blocks
+```
+
 ### 7. Print resulting parameters to use for future inference
 
 We now have a trained logistic regression model, or at least we’ve been able to optimize its respective function to identify suitable parameters. We are now able to print these parameters and use the parameters for inference in unseen datasets.
+
+```python
+# ... previous code blocks
+
+print(tensor_w_in.data()) # prints [0.00032, 1.58746]
+print(tensor_b_in.data()) # prints [-0.794009]
+
+# ... latter code blocks
+```
 
 And we’re done!
 

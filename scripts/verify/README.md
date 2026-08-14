@@ -100,7 +100,7 @@ Every entry is echoed with its reason into the JSON report and cropped into `<di
 - Page and console errors: catches runtime failures that static build success cannot expose.
 - Scripted reveal sweep: scrolls slowly through the full document and asserts every `[data-reveal]` reaches `data-revealed="1"` because observer-only reveal logic previously failed under fast scrolling.
 - Canvas pixel sampling: scales the full canvas into a small sample and asserts every visible canvas has at least one non-transparent pixel because blank widgets survived visual review during evaluation; the header's deliberately hidden preview mount is excluded until a menu opens it.
-- Page height ceiling: asserts the document remains below 20,000px to catch canvas ResizeObserver feedback loops.
+- Page height ceiling: asserts the document remains below 40,000px to catch canvas ResizeObserver feedback loops while accommodating long-form articles. Overflow, contrast and structural checks remain independent gates.
 - Page width ceiling: asserts pages do not exceed the selected viewport; wide tables must scroll inside their own container.
 - Mobile checks: asserts the drawer accordions, JOIN access, Escape/focus/scroll-lock handling, 44px touch targets including the drawer's theme toggle (measured with the drawer open, because below 950px the desktop pill is hidden and the drawer copy is not laid out until it opens), stacked form/footer, responsive evidence/phase grids, non-sticky principles detail, capped hero canvas, and contained survey tabs.
 - Homepage structure: asserts the three hero modes, principle layout, survey card/bars, and viewport-appropriate KAOS feature mount remain wired after refactors.
