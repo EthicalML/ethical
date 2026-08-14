@@ -1,17 +1,15 @@
 ---
-import { join, menus, wordmark } from '../data/navigation';
+import { join, menus } from '../data/navigation';
 import CommandPalette from './CommandPalette.astro';
 import MegaMenu from './MegaMenu.astro';
 import MobileDrawer from './MobileDrawer.astro';
+import SiteLogo from './SiteLogo.astro';
 ---
 
 <site-header transition:persist="site-header">
   <header class="site-header" data-surface="dark">
     <div class="header-row">
-      <a class="wordmark" href="/">
-        <span>{wordmark.primary}</span>
-        <span>{wordmark.secondary}</span>
-      </a>
+      <SiteLogo />
       <nav class="primary-nav" aria-label="Primary navigation">
         {
           Object.entries(menus)
@@ -251,22 +249,9 @@ import MobileDrawer from './MobileDrawer.astro';
     align-items: center;
     display: flex;
     gap: var(--space-26);
-    padding: 18px 40px;
-  }
-
-  .wordmark {
-    display: flex;
-    flex: none;
-    flex-direction: column;
-    font-family: var(--font-mono);
-    font-size: var(--mono-10);
-    letter-spacing: 0.15em;
-    line-height: 1.08;
-    white-space: nowrap;
-  }
-
-  .wordmark span:last-child {
-    color: var(--accent-ink);
+    /* 15px keeps the row at the 70px it measured with the old mono wordmark, now that the
+       logo's at-rest block is 40px tall. */
+    padding: 15px 40px;
   }
 
   .primary-nav {
@@ -431,7 +416,7 @@ import MobileDrawer from './MobileDrawer.astro';
   @media (max-width: 1180px) {
     .header-row {
       gap: 18px;
-      padding: 18px 28px;
+      padding: 15px 28px;
     }
 
     .search-keys {
@@ -469,10 +454,6 @@ import MobileDrawer from './MobileDrawer.astro';
       padding: 16px 24px;
     }
 
-    .wordmark {
-      width: 100%;
-    }
-
     .primary-nav {
       display: none;
       order: 3;
@@ -485,7 +466,7 @@ import MobileDrawer from './MobileDrawer.astro';
       top: 18px;
     }
 
-    /* The 420px header row has no room for a fourth control beside the wordmark,
+    /* The 420px header row has no room for a fourth control beside the logo,
        the join pill and the menu button, so below the drawer breakpoint the theme
        control lives in the drawer instead (see MobileDrawer.astro). */
     .nav-right .nav-trigger,
@@ -508,14 +489,6 @@ import MobileDrawer from './MobileDrawer.astro';
       gap: 10px;
       min-height: 68px;
       padding: 12px 20px;
-    }
-
-    .header-row > .wordmark {
-      font-size: 9px;
-      justify-content: center;
-      min-height: 44px;
-      min-width: 0;
-      width: auto;
     }
 
     .nav-right {

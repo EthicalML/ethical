@@ -269,11 +269,6 @@ export const menus: Record<string, Menu> = {
   },
 };
 
-export const wordmark = {
-  primary: 'THE INSTITUTE FOR ETHICAL AI',
-  secondary: 'ALIGNMENT + SAFETY',
-};
-
 export const siteTitle = 'The Institute for Ethical AI Alignment & Safety';
 
 /* `short` is the same destination under a narrower label: the header swaps to it
