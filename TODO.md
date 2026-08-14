@@ -70,6 +70,7 @@ Explore a Martin Fowler bliki-style stream of short opinion posts alongside full
 
 Queued posts for the new blog. Each lands as an undated draft or future-dated entry through the normal publish flow; the list will grow.
 
+- Production ML Across 2015-2035, written properly (owner call 2026-08-14): the pilot post was a lightly adapted newsletter section and was removed rather than shipped. Write it as a full standalone piece from the PyCon DE & PyData 2026 talk (https://www.youtube.com/watch?v=I1GvlW1H4WI), with its own structure, stills or diagrams from the talk as images, and the recovered prose (git history of the removed post folder) as raw material. Coordinate with the Issue 400 entry below so the newsletter and post link rather than duplicate.
 - Announcement: the newsletter redesign and the new RSS feed (PR #69). Cover the rebuilt archive under the Astro site and the feed addition; publish once the blog itself is live and linked.
 - Production ML monitoring, conceptual rewrite (owner call 2026-08-12): not a 1-1 republication of the 2020 KDnuggets/TDS piece because its Seldon Core implementation is archive tech; write a version centred on the concepts (outliers, drift, explainers, statistical performance) that references the KDnuggets and Towards Data Science originals.
 - The top risks posed by AI and how to safeguard against them: the 2020 ITProPortal piece is dead on the live web (Wayback only); rather than recover it, treat the topic as a fresh post updated for the frontier-AI era.
@@ -107,7 +108,7 @@ Each issue carries an events block, but nothing in it points back to `/talks-and
 
 ## Issue 400: the Production ML Across 2015-2035 talk
 
-Written and cut from issue 399 at the last minute to make room for the HackerNoon series feature and the website relaunch. It is the PyCon DE & PyData 2026 talk, https://www.youtube.com/watch?v=I1GvlW1H4WI, covering production ML from 2015 to 2035: the 2015-2023 evolution and the shift of engineering effort from training to inference and the application layer, then monitoring, stack alignment, shorter production timelines, autonomous operational patterns, platform complexity and operational debt. The recovered full section now lives at `/blog/production-ml-across-2015-2035/`; lead issue 400 by linking to or lightly adapting that post rather than duplicating it.
+Written and cut from issue 399 at the last minute to make room for the HackerNoon series feature and the website relaunch. It is the PyCon DE & PyData 2026 talk, https://www.youtube.com/watch?v=I1GvlW1H4WI, covering production ML from 2015 to 2035: the 2015-2023 evolution and the shift of engineering effort from training to inference and the application layer, then monitoring, stack alignment, shorter production timelines, autonomous operational patterns, platform complexity and operational debt. The recovered full section was briefly a pilot blog post, removed 2026-08-14 pending a proper write-up (see the blog queue); the prose survives in the git history of `src/content/blog/2026-08-12-production-ml-across-2015-2035/index.md` on the feat/blog-imports branch and of `src/content/newsletter/399.md`. Coordinate issue 400 with the queued blog post so the two link rather than duplicate.
 
 ## Low priority — event banner artwork loads eagerly
 
