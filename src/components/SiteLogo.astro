@@ -65,9 +65,10 @@ const line2 = keyed(LINE2, ['A', 'S']);
   type Key = 'I' | 'E' | 'A' | 'S';
 
   const KEYS: Key[] = ['I', 'E', 'A', 'S'];
+  /* One shot: hold the wordmark, collapse, then rest as the mark. It does not reverse and
+     it does not loop. */
   const HOLD = 1800;
   const RUN = 900;
-  const CYCLE = (HOLD + RUN) * 2;
 
   /* The handoff's scatter distances are quoted at its 26px demo size; they scale with ours. */
   const DEMO_FONT = 26;
@@ -77,7 +78,6 @@ const line2 = keyed(LINE2, ['A', 'S']);
   /* Brand colours are fixed identity values, not site accent tokens. The mark's cells are
      theme-invariant; only the page-side type colour and the travelling glyphs' start colour
      change, so the ramps are per theme. */
-  const CELL_RGBA = 'rgba(18,24,21,';
   const CELL_ACCENT_RGBA = 'rgba(87,227,155,';
   const RAMPS: Record<'dark' | 'light', Record<Key, [number[], number[]]>> = {
     dark: {
@@ -134,6 +134,10 @@ const line2 = keyed(LINE2, ['A', 'S']);
     private controller = new AbortController();
     private frame = 0;
     private started = false;
+    /* Survives disconnection on purpose: the header persists across view transitions, and the
+       collapse plays once per page load, not once per client-side navigation. */
+    private played = false;
+    private cellFill = '18,24,21';
     private origin = 0;
     private metrics: Metrics | null = null;
     private theme: 'dark' | 'light' = 'dark';
@@ -190,8 +194,12 @@ const line2 = keyed(LINE2, ['A', 'S']);
     }
 
     private readTheme() {
-      const ramp = getComputedStyle(this).getPropertyValue('--logo-ramp').trim();
-      this.theme = ramp === 'light' ? 'light' : 'dark';
+      const styles = getComputedStyle(this);
+      this.theme = styles.getPropertyValue('--logo-ramp').trim() === 'light' ? 'light' : 'dark';
+      /* The cell fill is an rgb triple rather than a colour so the late box-alpha fade can
+         compose it: on the dark bar the identity's #121815 is the bar's own value and the
+         mark disappears, so that tier lifts it. */
+      this.cellFill = styles.getPropertyValue('--logo-cell-fill').trim() || this.cellFill;
     }
 
     /** Picks the mode for the current viewport and preferences, then measures and starts. */
@@ -199,21 +207,24 @@ const line2 = keyed(LINE2, ['A', 'S']);
       if (this.frame) cancelAnimationFrame(this.frame);
       this.frame = 0;
 
-      if (this.markQuery.matches) {
+      /* The mark is the resting state now, so it is also what reduced motion and the narrow
+         tier render. Either counts as played: widening the window later should not spring an
+         animation on someone mid-session. */
+      if (this.markQuery.matches || this.motionQuery.matches) {
         this.dataset.mode = 'mark';
+        this.played = true;
         this.measure();
         this.applyStaticNudges();
-        return;
-      }
-      if (this.motionQuery.matches) {
-        this.dataset.mode = 'static';
-        this.clearFrameStyles();
         return;
       }
 
       this.dataset.mode = 'animate';
       this.measure();
       if (!this.metrics) return;
+      if (this.played) {
+        this.render(1);
+        return;
+      }
       this.origin = performance.now();
       this.frame = requestAnimationFrame(this.tick);
     }
@@ -249,10 +260,9 @@ const line2 = keyed(LINE2, ['A', 'S']);
         nudge[key] = solveNudge(key, glyph, key === 'A' || key === 'S');
       }
 
-      if (base.width > 0) {
-        this.style.setProperty('--logo-reserve-width', `${base.width}px`);
-        this.style.setProperty('--logo-reserve-height', `${base.height}px`);
-      }
+      /* Height only. The width is deliberately not reserved: the link tracks the stage's own
+         tween, so the nav row travels left with the collapse instead of leaving a hole. */
+      if (base.height > 0) this.style.setProperty('--logo-reserve-height', `${base.height}px`);
       this.metrics = { font, cell, gap, glyph, nudge, from, width: base.width, height: base.height };
     }
 
@@ -280,13 +290,14 @@ const line2 = keyed(LINE2, ['A', 'S']);
     }
 
     private tick = (now: number) => {
-      const t = (now - this.origin) % CYCLE;
-      let p: number;
-      if (t < HOLD) p = 0;
-      else if (t < HOLD + RUN) p = (t - HOLD) / RUN;
-      else if (t < HOLD * 2 + RUN) p = 1;
-      else p = 1 - (t - (HOLD * 2 + RUN)) / RUN;
+      const t = now - this.origin;
+      const p = t < HOLD ? 0 : Math.min(1, (t - HOLD) / RUN);
       this.render(p);
+      if (p >= 1) {
+        this.played = true;
+        this.frame = 0;
+        return;
+      }
       this.frame = requestAnimationFrame(this.tick);
     };
 
@@ -330,7 +341,7 @@ const line2 = keyed(LINE2, ['A', 'S']);
         cell.style.left = `${(lerp(from.x, to.x) - m.cell / 2).toFixed(2)}px`;
         cell.style.top = `${(lerp(from.y, to.y) - m.cell / 2).toFixed(2)}px`;
         cell.style.fontSize = `${lerp(m.font, m.glyph).toFixed(2)}px`;
-        cell.style.background = `${key === 'A' ? CELL_ACCENT_RGBA : CELL_RGBA}${boxAlpha.toFixed(3)})`;
+        cell.style.background = key === 'A' ? `${CELL_ACCENT_RGBA}${boxAlpha.toFixed(3)})` : `rgba(${this.cellFill},${boxAlpha.toFixed(3)})`;
         cell.style.color = mix(ramps[key][0], ramps[key][1], ramp);
         const nudge = m.nudge[key];
         this.glyphs.get(key)!.style.transform = `translate(${(nudge.x * e).toFixed(4)}em, ${(nudge.y * e).toFixed(4)}em)`;
@@ -379,6 +390,11 @@ const line2 = keyed(LINE2, ['A', 'S']);
      Cell tracks the line height (the demo's 30/30), the gap is 6% of the cell rounded to a
      whole pixel, and the in-cell glyph is the mark's 0.64 x cell. */
   site-logo {
+    /* An rgb triple, not a colour: the script composes it with the box-alpha fade. The
+       identity's cell is #121815, which is the dark header bar's own value, so three of the
+       four cells vanished into it; the bar therefore lifts the fill. The artwork, the favicon
+       and the branding page keep the identity value. */
+    --logo-cell-fill: 28, 36, 32;
     --logo-font: 17px;
     --logo-line: 20px;
     --logo-cell: 20px;
@@ -398,21 +414,32 @@ const line2 = keyed(LINE2, ['A', 'S']);
      the static type around it. */
   :root[data-theme='light'] site-logo {
     --logo-accent: #0f7a4c;
+    --logo-cell-fill: 18, 24, 21;
     --logo-ramp: light;
     --logo-type: #0b0e0c;
   }
 
   :root[data-theme='light'] :global([data-surface='dark']) site-logo {
     --logo-accent: #57e39b;
+    --logo-cell-fill: 18, 24, 21;
     --logo-ramp: dark;
     --logo-type: #f2f5f3;
   }
 
   .site-logo-link {
     display: block;
-    /* The reservation: the row is sized by the at-rest wordmark and never by the frame. */
+    /* Height is reserved so the row cannot change height; width is not, so the nav travels
+       left with the collapse. */
     height: var(--logo-reserve-height, auto);
-    width: var(--logo-reserve-width, auto);
+    position: relative;
+  }
+
+  /* Collapsed, the link is a ~41px mark. The pointer and touch target is grown past 44px
+     without giving the box a size the row would have to absorb. */
+  .site-logo-link::after {
+    content: '';
+    inset: -4px -3px;
+    position: absolute;
   }
 
   .site-logo-stage {
@@ -465,7 +492,7 @@ const line2 = keyed(LINE2, ['A', 'S']);
 
   .site-logo-cell {
     align-items: center;
-    background: #121815;
+    background: rgb(var(--logo-cell-fill));
     color: #f2f5f3;
     display: none;
     font-family: var(--font-display);
@@ -499,8 +526,32 @@ const line2 = keyed(LINE2, ['A', 'S']);
     position: absolute;
   }
 
-  /* Below the drawer breakpoint the row has no width for the wordmark beside the join pill
-     and the menu button, so the logo is the mark alone, on the row's 44px control height. */
+  /* The mark alone, laid out by CSS rather than by the frame loop: the resting state for
+     reduced motion, and for the narrow tier where the row has no width for the wordmark
+     beside the join pill and the menu button. */
+  site-logo[data-mode='mark'] .site-logo-text {
+    display: none;
+  }
+
+  /* With the wordmark hidden there is nothing to measure a reservation from, so the mark tier
+     states the row's height itself: without it the 41px mark makes the row a pixel taller. */
+  site-logo[data-mode='mark'] .site-logo-link {
+    align-items: center;
+    display: flex;
+    height: var(--logo-reserve-height, 40px);
+  }
+
+  site-logo[data-mode='mark'] .site-logo-mark {
+    display: grid;
+    gap: var(--logo-gap);
+    grid-template-columns: repeat(2, var(--logo-cell));
+  }
+
+  site-logo[data-mode='mark'] .site-logo-cell {
+    display: flex;
+    font-size: var(--logo-glyph);
+  }
+
   @media (max-width: 1040px) {
     site-logo {
       --logo-cell: 21px;
@@ -508,27 +559,11 @@ const line2 = keyed(LINE2, ['A', 'S']);
       --logo-glyph: 13.4px;
     }
 
-    .site-logo-link {
+    site-logo[data-mode='mark'] .site-logo-link {
       align-items: center;
       display: flex;
       height: 44px;
       min-height: 44px;
-      width: auto;
-    }
-
-    .site-logo-text {
-      display: none;
-    }
-
-    .site-logo-mark {
-      display: grid;
-      gap: var(--logo-gap);
-      grid-template-columns: repeat(2, var(--logo-cell));
-    }
-
-    .site-logo-cell {
-      display: flex;
-      font-size: var(--logo-glyph);
     }
   }
 </style>
