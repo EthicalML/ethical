@@ -5,6 +5,7 @@ import { ClientRouter } from 'astro:transitions';
 import SiteHeader from '../components/SiteHeader.astro';
 import FootnoteBand from '../components/FootnoteBand.astro';
 import { siteTitle } from '../data/navigation';
+import { authors } from '../data/authors';
 
 const metaDescription = 'An independent research institute working to ensure that frontier AI is safe, aligned and accountable to people and society.';
 const ogImage = '/images/banner.jpg';
@@ -29,22 +30,38 @@ const organization = {
     'https://www.linkedin.com/newsletters/the-machine-learning-engineer-6882216044568571904/',
   ],
 };
+// Named authors resolve through src/data/authors.ts so Person entities carry
+// url and sameAs (the E-E-A-T record); unknown names fall back to name-only.
+const person = (name: string) => {
+  const record = authors[name];
+  return record ? { '@type': 'Person', name, url: new URL(record.aboutAnchor, Astro.site).href, sameAs: record.sameAs } : { '@type': 'Person', name };
+};
 const article = frontmatter.article
   ? {
       '@context': 'https://schema.org',
       '@type': 'Article',
       headline: frontmatter.articleHeadline ?? title,
+      description,
+      url: canonical.href,
+      mainEntityOfPage: { '@type': 'WebPage', '@id': canonical.href },
+      image: socialImage.href,
       ...(frontmatter.datePublished ? { datePublished: frontmatter.datePublished } : {}),
       ...(frontmatter.sameAs?.length ? { sameAs: frontmatter.sameAs } : {}),
       author: frontmatter.articleAuthors?.length
         ? frontmatter.articleAuthors.length === 1
-          ? { '@type': 'Person', name: frontmatter.articleAuthors[0] }
-          : frontmatter.articleAuthors.map((name: string) => ({ '@type': 'Person', name }))
+          ? person(frontmatter.articleAuthors[0])
+          : frontmatter.articleAuthors.map(person)
         : {
             '@type': 'Organization',
             name: organization.name,
             url: organization.url,
           },
+      publisher: {
+        '@type': 'Organization',
+        name: organization.name,
+        url: organization.url,
+        logo: { '@type': 'ImageObject', url: organization.logo },
+      },
     }
   : undefined;
 ---
@@ -61,7 +78,9 @@ const article = frontmatter.article
     <link rel="alternate" type="application/rss+xml" title="The ML Engineer newsletter" href="/newsletter/rss.xml" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" href="/favicon.png" type="image/png" />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={frontmatter.article ? 'article' : 'website'} />
+    {frontmatter.article && frontmatter.datePublished && <meta property="article:published_time" content={frontmatter.datePublished} />}
+    {frontmatter.article && frontmatter.articleTags?.map((tag: string) => <meta property="article:tag" content={tag} />)}
     <meta property="og:site_name" content="The Institute for Ethical AI Alignment & Safety" />
     <meta property="og:title" content={seoTitle} />
     <meta property="og:description" content={description} />

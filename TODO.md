@@ -56,7 +56,7 @@ Owner review 2026-08-12: most page heroes are boring, especially the ones with n
 
 ## Blog landing redesign
 
-The archive shipped with an interim showcase (2026-08-13): flagship hero, featured latest card, and a ScrollStage sweep where each post's featured image fills the container behind a right-aligned translucent card column (70% dim, 80px edge fade, talks-reel spacing). Owner verdict: acceptable to ship, not yet good. Revisit properly alongside the hero family programme: explored and rejected so far are a boxed split layout, a mid-screen gradient with backdrop blur, and per-card floating fade boxes; candidate directions include per-post canvas scenes, tag filter chips, and a series shelf. Design with owner in the loop from mockups, not iterations on the live page.
+The archive shipped with an interim showcase (2026-08-13): flagship hero, featured latest card, and a ScrollStage sweep where each post's featured image fills the container behind a right-aligned translucent card column (70% dim, 80px edge fade, talks-reel spacing). Owner verdict: acceptable to ship, not yet good. Revisit properly alongside the hero family programme: explored and rejected so far are a boxed split layout, a mid-screen gradient with backdrop blur, and per-card floating fade boxes; candidate directions include per-post canvas scenes, tag filter chips, and a series shelf. Design with owner in the loop from mockups, not iterations on the live page. Batch into the next visual pass (SEO session finding 2026-08-14): the two mono-9 labels in `pages/blog/[slug].astro` (series-nav and related eyebrow) predate the owner's mono-10 ruling on the AI-RFX criteria table and should be bumped with owner review.
 
 ## Blog follow-up: proactive weekly content proposals
 

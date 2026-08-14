@@ -56,6 +56,8 @@ const frontmatter = {
   ),
   article: true,
   articleHeadline: `The Machine Learning Engineer Issue #${issue}`,
+  articleAuthors: [author.name],
+  articleTags: entry.data.tags,
   datePublished: entry.data.date?.toISOString().slice(0, 10),
   sameAs: entry.data.syndication?.map(({ url }) => url),
 };
