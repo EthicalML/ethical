@@ -160,7 +160,10 @@ const blog = defineCollection({
     z
       .object({
         title: z.string(),
-        date: z.date(),
+        // No date means draft: the post is not built anywhere. A future date
+        // builds an unlisted, noindexed preview page that the daily deploy
+        // flips into the listings once the date passes.
+        date: z.date().optional(),
         summary: z.string().optional(),
         tags: z.array(z.string()).max(5).optional(),
         syndication: z.array(z.object({ name: z.string(), url: z.url() })).optional(),
@@ -171,7 +174,6 @@ const blog = defineCollection({
         originalDate: z.date().optional(),
         // Every post carries a featured image: archive showcases and social cards depend on it.
         image: image(),
-        draft: z.boolean().default(false),
       })
       .refine(({ source, url }) => source === 'original' || url !== undefined, {
         message: 'A non-original post requires its original URL.',

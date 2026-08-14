@@ -60,7 +60,7 @@ The archive shipped with an interim showcase (2026-08-13): flagship hero, featur
 
 ## Blog follow-up: proactive weekly content proposals
 
-A recurring workflow (weekly cadence) that proposes blog content to publish: candidate topics or drafts sourced from the newsletter archive, the talk backlog, the backfill ledger, and current discussion threads, delivered as draft posts or a proposal list for owner triage. The scheduling substrate already exists (draft flag plus future-dated publishing with the daily deploy cron), so this is purely the generation/proposal side. Owner decision needed on delivery form (PR with draft posts vs a proposal doc) before building.
+A recurring workflow (weekly cadence) that proposes blog content to publish: candidate topics or drafts sourced from the newsletter archive, the talk backlog, the backfill ledger, and current discussion threads, delivered as draft posts or a proposal list for owner triage. The scheduling substrate already exists (undated drafts plus future-dated publishing with the daily deploy cron), so this is purely the generation/proposal side. Owner decision needed on delivery form (PR with draft posts vs a proposal doc) before building.
 
 ## Blog follow-up: byte-sized opinions (Fowler-style bliki)
 
@@ -68,7 +68,7 @@ Explore a Martin Fowler bliki-style stream of short opinion posts alongside full
 
 ## Blog posts to write
 
-Queued posts for the new blog. Each lands as a draft or future-dated entry through the normal publish flow; the list will grow.
+Queued posts for the new blog. Each lands as an undated draft or future-dated entry through the normal publish flow; the list will grow.
 
 - Announcement: the newsletter redesign and the new RSS feed (PR #69). Cover the rebuilt archive under the Astro site and the feed addition; publish once the blog itself is live and linked.
 - Production ML monitoring, conceptual rewrite (owner call 2026-08-12): not a 1-1 republication of the 2020 KDnuggets/TDS piece because its Seldon Core implementation is archive tech; write a version centred on the concepts (outliers, drift, explainers, statistical performance) that references the KDnuggets and Towards Data Science originals.

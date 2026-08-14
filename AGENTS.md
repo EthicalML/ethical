@@ -57,6 +57,16 @@ Path-scoped instruction files (`.github/instructions/`):
 
 Node version is pinned in `.tool-versions`. `npm run dev` for the dev server, `npm run build && npm run preview` for the production build. Use `npm run verify:parity -- <baseline-dir> <current-dir>` to mechanically prove screenshot parity; zero-visual-change work must pass with zero differing pixels unless a documented same-build recapture proves canvas instability. Temporary files go under `./tmp`, never `/tmp`.
 
+## Blog authoring and publishing
+
+Posts live as `src/content/blog/<YYYY-MM-DD->slug/index.md` with colocated assets. The publishing state machine is driven entirely by the optional `date` field; there is no draft flag:
+
+- **No `date`** — the post is a draft: never built in production, visible only in dev. The folder carries no date prefix yet.
+- **Future `date`** — the post page builds as an unlisted, `noindex`ed preview (reachable by URL, marked "Scheduled for" in its meta bar) but appears in no listing, sitemap, llms.txt entry or feed.
+- **Past `date`** — fully published everywhere. The flip happens at build time (`date <= now` is frozen into the static output), so the daily 05:43 UTC cron on `deploy.yml` exists solely to re-run the build as time passes; it deploys unconditionally and never modifies the repository.
+
+Every post requires a featured `image` (schema-enforced; drives archive showcases and social cards). Listing consumers must read the collection only through `publishedBlogEntries` in `src/utils/blog.ts`; only the post page's path generation uses `renderableBlogEntries`. Republished posts set `source` and `url` (rendered as the off-site canonical) and record other appearances in `syndication`.
+
 ## Editorial rules
 
 - Markdown prose does not hard-wrap; let lines overflow.

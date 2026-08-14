@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import { menus, siteTitle, type Menu, type MenuItem } from '../data/navigation';
+import { publishedBlogEntries } from '../utils/blog';
 
 const SITE = 'https://ethical.institute';
 
@@ -69,11 +70,12 @@ const list = (surfaces: Surface[]) =>
     .join('\n');
 
 export const GET: APIRoute = async () => {
-  const [issues, principles, blogPosts] = await Promise.all([
+  const [issues, principles, allBlogEntries] = await Promise.all([
     getCollection('newsletter'),
     getCollection('principles'),
     getCollection('blog'),
   ]);
+  const blogPosts = publishedBlogEntries(allBlogEntries);
   const staticAstroRoutes = Object.keys(astroPageModules)
     .filter(
       (filename) =>
@@ -129,7 +131,7 @@ export const GET: APIRoute = async () => {
   });
 
   const datedPosts = blogPosts.sort(
-    (first, second) => first.data.date.getTime() - second.data.date.getTime(),
+    (first, second) => (first.data.date?.getTime() ?? 0) - (second.data.date?.getTime() ?? 0),
   );
   const firstPost = datedPosts[0];
   const lastPost = datedPosts.at(-1);
@@ -140,7 +142,7 @@ export const GET: APIRoute = async () => {
   }
   surfaces.push({
     title: 'Production ML, responsible AI and alignment blog',
-    description: `${blogPosts.length} long-form articles, ${firstPost.data.date.toISOString().slice(0, 10)} to ${lastPost.data.date.toISOString().slice(0, 10)}.`,
+    description: `${blogPosts.length} long-form articles, ${firstPost.data.date?.toISOString().slice(0, 10)} to ${lastPost.data.date?.toISOString().slice(0, 10)}.`,
     href: '/blog/',
     section: blogSection,
   });

@@ -19,11 +19,19 @@ export const assertUniqueBlogSlugs = (entries: BlogEntry[]) => {
   }
 };
 
-export const publishedBlogEntries = (entries: BlogEntry[], now = new Date()) => {
+// A post without a date is a draft and is not built anywhere. A dated post
+// always gets a page (future dates render as unlisted, noindexed previews);
+// only posts whose date has passed appear in listings, feeds and indexes.
+export const renderableBlogEntries = (entries: BlogEntry[]) => {
   assertUniqueBlogSlugs(entries);
+  return import.meta.env.PROD ? entries.filter((entry) => entry.data.date) : entries;
+};
+
+export const publishedBlogEntries = (entries: BlogEntry[], now = new Date()) => {
+  const renderable = renderableBlogEntries(entries);
   return import.meta.env.PROD
-    ? entries.filter((entry) => !entry.data.draft && entry.data.date <= now)
-    : entries;
+    ? renderable.filter((entry) => entry.data.date && entry.data.date <= now)
+    : renderable;
 };
 
 export const blogHref = (entry: BlogEntry) => `/blog/${blogSlug(entry)}/`;

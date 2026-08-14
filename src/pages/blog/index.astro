@@ -10,9 +10,9 @@ const frontmatter = {
   title: 'Production ML, responsible AI and alignment blog',
   description: 'Writing from The Institute for Ethical AI Alignment & Safety on production machine learning, responsible AI and AI safety.',
 };
-const posts = publishedBlogEntries(await getCollection('blog')).sort((first, second) => second.data.date.getTime() - first.data.date.getTime());
+const posts = publishedBlogEntries(await getCollection('blog')).sort((first, second) => (second.data.date?.getTime() ?? 0) - (first.data.date?.getTime() ?? 0));
 const [featured, ...rest] = posts;
-const formatDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+const formatDate = (date?: Date) => (date ? date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Draft');
 ---
 
 <BaseLayout frontmatter={frontmatter}>

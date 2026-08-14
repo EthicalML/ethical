@@ -5,10 +5,12 @@ import ArticleBody from '../../components/ArticleBody.astro';
 import Hero from '../../components/Hero.astro';
 import '../../components/HeroLongform.css';
 import { authors } from '../../data/authors';
-import { blogHref, blogSlug, publishedBlogEntries, type BlogEntry } from '../../utils/blog';
+import { blogHref, blogSlug, publishedBlogEntries, renderableBlogEntries, type BlogEntry } from '../../utils/blog';
 
 export async function getStaticPaths() {
-  const entries = publishedBlogEntries(await getCollection('blog'));
+  const all = await getCollection('blog');
+  const pages = renderableBlogEntries(all);
+  const entries = publishedBlogEntries(all);
   const linkedPost = (post: BlogEntry) => ({
     href: blogHref(post),
     title: post.data.title,
@@ -16,14 +18,14 @@ export async function getStaticPaths() {
   const related = (of: BlogEntry) =>
     entries
       .filter((other) => other.id !== of.id && other.data.tags?.some((tag) => of.data.tags?.includes(tag)))
-      .sort((first, second) => second.data.date.getTime() - first.data.date.getTime())
+      .sort((first, second) => (second.data.date?.getTime() ?? 0) - (first.data.date?.getTime() ?? 0))
       .slice(0, 3)
       .map(linkedPost);
   const seriesNavigation = (of: BlogEntry) => {
     if (!of.data.series) return undefined;
     const posts = entries
       .filter((other) => other.data.series === of.data.series)
-      .sort((first, second) => first.data.date.getTime() - second.data.date.getTime());
+      .sort((first, second) => (first.data.date?.getTime() ?? 0) - (second.data.date?.getTime() ?? 0));
     const position = posts.findIndex((post) => post.id === of.id);
     return {
       name: of.data.series,
@@ -33,7 +35,7 @@ export async function getStaticPaths() {
       next: position < posts.length - 1 ? linkedPost(posts[position + 1]) : undefined,
     };
   };
-  return entries.map((entry) => ({
+  return pages.map((entry) => ({
     params: { slug: blogSlug(entry) },
     props: { entry, related: related(entry), seriesNavigation: seriesNavigation(entry) },
   }));
@@ -41,6 +43,11 @@ export async function getStaticPaths() {
 
 const { entry, related, seriesNavigation } = Astro.props;
 const { Content } = await render(entry);
+// Undated entries are drafts and only render in dev; scheduled posts render in
+// production as unlisted, noindexed previews until the daily deploy passes
+// their date.
+const scheduled = entry.data.date !== undefined && entry.data.date > new Date();
+const isDraft = entry.data.date === undefined;
 const publishedDate = entry.data.originalDate ?? entry.data.date;
 // No `eyebrow`: the hero below is the page's only visible h1, so BaseLayout
 // must not render its own page header on top of it.
@@ -48,16 +55,17 @@ const frontmatter = {
   title: entry.data.title,
   description: entry.data.summary,
   image: entry.data.image.src,
+  noindex: scheduled || isDraft || undefined,
   canonicalPath: entry.data.source !== 'original' ? entry.data.url : undefined,
   article: true,
   articleHeadline: entry.data.title,
   articleAuthors: entry.data.authors,
-  datePublished: publishedDate.toISOString().slice(0, 10),
+  datePublished: publishedDate?.toISOString().slice(0, 10),
 };
 // Same dd/mm/yy chip format as the newsletter issue meta bar.
-const barDate = [publishedDate.getDate(), publishedDate.getMonth() + 1, publishedDate.getFullYear() % 100]
-  .map((part) => String(part).padStart(2, '0'))
-  .join('/');
+const barDate = publishedDate
+  ? [publishedDate.getDate(), publishedDate.getMonth() + 1, publishedDate.getFullYear() % 100].map((part) => String(part).padStart(2, '0')).join('/')
+  : 'DRAFT';
 const bylineAuthors = entry.data.authors.map((name) => ({ name, anchor: authors[name]?.aboutAnchor }));
 ---
 
@@ -88,6 +96,7 @@ const bylineAuthors = entry.data.authors.map((name) => ({ name, anchor: authors[
             </span>
           )
         }
+        {scheduled && entry.data.date && <span class="blog-chip blog-series-chip">Scheduled for {entry.data.date.toISOString().slice(0, 10)}</span>}
         <span class="blog-chip">{barDate}</span>
         {entry.data.tags?.length ? <span class="chip-rule" aria-hidden="true" /> : null}
         {entry.data.tags?.map((tag) => <span class="blog-tag">{tag}</span>)}
