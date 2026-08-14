@@ -76,6 +76,7 @@ const article = frontmatter.article
     {frontmatter.noindex && <meta name="robots" content="noindex" />}
     {!frontmatter.noCanonical && <link rel="canonical" href={canonical} />}
     <link rel="alternate" type="application/rss+xml" title="The ML Engineer newsletter" href="/newsletter/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Production ML, responsible AI and alignment blog" href="/blog/rss.xml" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" href="/favicon.png" type="image/png" />
     <meta property="og:type" content={frontmatter.article ? 'article' : 'website'} />
