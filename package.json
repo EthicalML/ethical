@@ -33,7 +33,7 @@
     "@astrojs/preact": "^6.0.2",
     "@astrojs/rss": "4.0.19",
     "@astrojs/sitemap": "3.7.3",
-    "astro": "7.1.6",
+    "astro": "7.2.0",
     "preact": "^10.29.8"
   },
   "devDependencies": {
@@ -41,7 +41,7 @@
     "@eslint/js": "10.0.1",
     "@typescript-eslint/eslint-plugin": "8.66.0",
     "@typescript-eslint/parser": "8.66.0",
-    "eslint": "10.8.0",
+    "eslint": "10.8.1",
     "eslint-plugin-astro": "3.1.0",
     "globals": "17.9.0",
     "pagefind": "^1.5.2",
