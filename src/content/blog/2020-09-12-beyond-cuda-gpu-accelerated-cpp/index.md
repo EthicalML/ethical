@@ -93,11 +93,52 @@ Let’s jump into the code. Typically, in a Kompute application we’ll follow t
 
 First, we’ll create our Kompute Manager, which is in charge of creating and managing all the underlying Vulkan resources.
 
+```cpp
+// Single header include for Kompute
+#include "kompute/Kompute.hpp"
+
+int main() {
+
+    // Vulkan resources get created unless passed
+    kp::Manager mgr(0); // Selects GPU device at index 0
+
+    //... continued in next section
+}
+```
+
 As you can see, here we are initializing our Kompute Manager, expecting it to create all the base Vulkan resources on Device 0 (in my case Device 0 is my NVIDIA card, and Device 1 is my integrated graphics card). For more advanced use-cases it’s also possible to initialize the Kompute Manager with your own Vulkan resources (Device, Queue, etc) but this is out of scope of this article.
 
 ### 2. Create Kompute Tensors to hold data
 
 We will now create the Kompute Tensors that will be used for input and output. These will hold the data required which will be mapped into the GPU to perform this simple multiplication.
+
+```cpp
+int main()
+{
+    //... continued from previous section
+
+    std::shared_ptr<kp::Tensor> tensorInA{ new kp::Tensor({ 2.0, 4.0, 6.0 }) };
+    std::shared_ptr<kp::Tensor> tensorInB{ new kp::Tensor({ 0.0, 1.0, 2.0 }) };
+    std::shared_ptr<kp::Tensor> tensorOut{ new kp::Tensor({ 0.0, 0.0, 0.0 }) };
+
+    //... continued in next section
+}
+```
+
+```cpp
+int main()
+{
+    //... continued from previous section
+
+    std::vector<std::shared_ptr<kp::Tensor>> tensorParams({
+        std::shared_ptr<kp::Tensor>{&tensorInA},
+        std::shared_ptr<kp::Tensor>{&tensorInB},
+        std::shared_ptr<kp::Tensor>{&tensorOut}
+    });
+
+    //... continued in next section
+}
+```
 
 The reason why Kompute uses `std::shared_ptr` by design to avoid passing the objects by value, and instead passing them using [smart pointers](https://docs.microsoft.com/en-us/cpp/cpp/smart-pointers-modern-cpp?view=vs-2019).
 
@@ -105,11 +146,68 @@ The reason why Kompute uses `std::shared_ptr` by design to avoid passing the obj
 
 Now that we have our Tensors created with local data, we will map the data into the GPU. For this we will use the `kp::OpTensorCreate` Kompute Operation, which will initialize the underlying Vulkan buffer and GPU memory, and perform the respective mapping into the GPU.
 
+```cpp
+int main()
+{
+    //... continued from previous section
+
+    // Create the tensors by passing them as parameters
+    mgr.evalOpDefault<kp::OpTensorCreate>({ tensorInA, tensorInB, tensorOut });
+
+    //... continued in next section
+}
+```
+
 It’s also worth mentioning that it’s possible to shorten the tensor creation steps by leveraging the Kompute Manager `buildTensor` helper function. This would allow you to skip the need to create the `shared_ptr` explicitly as well as the `kp::OpTensorCreate` Operation as outlined below (you can also find the full code implementation of [this variation here](https://github.com/axsaucedo/vulkan-kompute/blob/2e8a5aa3a6d6172abb51ac038e1b75c5c2d58af9/test/TestMultipleAlgoExecutions.cpp#L274)).
+
+```cpp
+int main()
+{
+    //... continued from previous section
+
+    // Using this instead of Operations
+    auto tensorInA = mgr.buildTensor({ 2.0, 4.0, 6.0 });
+    auto tensorInB = mgr.buildTensor({ 0.0, 1.0, 2.0 });
+    auto tensorOut = mgr.buildTensor({ 0.0, 0.0, 0.0 });
+
+    //... continued in next section
+}
+```
 
 ### 4. Define the code to run on the GPU as a “compute shader”
 
 Now that we’ve initialized the necessary Kompute Tensor components and they are mapped in GPU memory, we can add the Kompute Algorithm that will be executed in the GPU. This is referred to as the “shader” code, which follows a C-like syntax. You can see the full shader code below, and we’ll break down each of the sections below.
+
+```cpp
+int main()
+{
+    //... continued from previous section
+
+    // Define your shader as a string (using string literals for simplicity)
+    // (You can also pass the raw compiled bytes, or even path to file)
+    std::string shader(R"(
+        // The version to use
+        #version 450
+
+        // The execution structure
+        layout (local_size_x = 1) in;
+
+        // The buffers are provided via the tensors
+        layout(binding = 0) buffer bufA { float a[]; };
+        layout(binding = 1) buffer bufB { float b[]; };
+        layout(binding = 2) buffer bufOut { float o[]; };
+
+        void main() {
+            uint index = gl_GlobalInvocationID.x;
+
+            o[index] = a[index] * b[index];
+        }
+    )");
+
+
+    //... continued in next section
+}
+```
 
 The `#version 450` and `layout(local_size_x = 1) in;` sections specify the version and parallel thread execution structure (which we’ll look at further down the article). We then can see the GPU data inputs and outputs defined in the format:
 
@@ -127,15 +225,55 @@ We then come into the core of this algorithm which is the multiplication `o[inde
 
 In order to run the shader above we will create the Kompute Operation `kp::OpAlgoBase`. The parameters required for this Kompute Operation includes the Tensors to bind into the GPU instructions, as well as the shader code itself.
 
+```cpp
+int main()
+{
+    //... continued from previous section
+
+    // Run Kompute operation on the Tensor parameters provided
+    mgr.evalOpDefault<kp::OpAlgoBase<>>(
+        tensorParams,
+        std::vector<char>(shader.begin(), shader.end()));
+
+    //... continued in next section
+}
+```
+
 It’s worth mentioning that Kompute allows the user to also pass the shader through a file path, or alternatively there are also Kompute tools that will allow you to convert the shader binaries into C++ header files.
 
 ### 6. Use Kompute Operation to map GPU output data into local Tensors
 
 Once the algorithm gets triggered, the result data will now be we held in the GPU memory of our output tensor. We can now use the `kp::OpTensorSyncLocal`Kompute Operation to sync the Tensor GPU memory as per the code block below.
 
+```cpp
+int main()
+{
+    //... continued from previous section
+
+    // Run Kompute operation on the parameters provided with dispatch layout
+    mgr.evalOpDefault<kp::OpTensorSyncLocal>({ tensorOut });
+
+    //... continued in next section
+}
+```
+
 ### 7. Print your results
 
 Finally, we can print the output data of our tensor.
+
+```cpp
+int main()
+{
+    //... continued from previous section
+
+    // prints "Output {  0  4  12  }"
+    std::cout<< "Output: {  ";
+    for (const float& elem : tensorOut->data()) {
+      std::cout << elem << "  ";
+    }
+    std::cout << "}" << std::endl;
+}
+```
 
 When you run this, you will see the values of your output tensor printed. That’s it, you’ve written your first Kompute!
 
@@ -250,6 +388,18 @@ Now that we have covered some of the core concepts, we will be able to learn abo
 
 First we need to define all the input and output buffers as follows:
 
+```glsl
+layout(set = 0, binding = 0) buffer bxi { float xi[]; };
+layout(set = 0, binding = 1) buffer bxj { float xj[]; };
+layout(set = 0, binding = 2) buffer by { float y[]; };
+layout(set = 0, binding = 3) buffer bwin { float win[]; };
+layout(set = 0, binding = 4) buffer bwouti { float wouti[]; };
+layout(set = 0, binding = 5) buffer bwoutj { float woutj[]; };
+layout(set = 0, binding = 6) buffer bbin { float bin[]; };
+layout(set = 0, binding = 7) buffer bbout { float bout[]; };
+layout(set = 0, binding = 8) buffer blout { float lout[]; };
+```
+
 If you remember, at the end of the last section we mentioned how we will be leveraging the concept of micro-batches in order to use the parallel architecture of GPU processing. What this means in practice, is that we will be passing multiple instances of X to the GPU to process at a time, instead of expecting the GPU to process it one by one. This is why we see that above we have an array for `xi, xj, y, wOuti, wOutj,`and`bOut` respectively.
 
 In more detail:
@@ -264,21 +414,127 @@ In more detail:
 
 We also receive the constant `M`, which will be the total number of elements — if you remember this parameter will be used for the calculation of the derivatives. We will also see how these parameters are actually passed into the shader from the C++ Kompute side.
 
+```glsl
+layout (constant_id = 0) const uint M = 0;
+
+float m = float(M);
+```
+
 Now that we have all the input and output parameters defined, we can start the `main` function, which will contain the implementation of our machine learning training algorithm.
 
 We will first start by keeping track of the current index of the global invocation. Since the GPU executes in parallel, each of these runs will be running directly in parallel, so this allows the current execution to consistently keep track of what iteration index is currently being executed.
 
+```cpp
+// ...code from previous blocks
+
+int main() {
+
+  uint idx = gl_GlobalInvocationID.x;
+
+  // ...code from latter blocks
+}
+```
+
 We now can start preparing all the variables that we’ll be using throughout the algorithms. All our inputs are buffer arrays, so we’ll want to store them in vec2 and float variables.
+
+```cpp
+// ...code from previous blocks
+
+int main() {
+
+  // ...code from previous blocks
+
+    vec2 wCurr = vec2(win[0], win[1]);
+    float bCurr = bin[0];
+
+    vec2 xCurr = vec2(xi[idx], xj[idx]);
+    float yCurr = y[idx];
+
+  // ...code from latter blocks
+}
+```
 
 In this case we’re basically making explicit the variables that are being used for the current “thread run”. The GPU architecture consists of slightly more nuanced execution structures that involve thread blocks, memory access limitations, etc — however we won’t be covering these in this example.
 
 Now we get into the more fun part —implementing the inference function. Below we will implement the inference function to calculate ŷ, which involves both the linear mapping function, as well as the sigmoid function.
 
+```cpp
+// ...code from previous blocks
+
+float sigmoid(float z) {
+    return 1.0 / (1.0 + exp(-z));
+}
+
+float inference(vec2 x, vec2 w, float b) {
+    // Compute the linear mapping function
+    float z = dot(w, x) + b;
+    // Calculate the y-hat with sigmoid
+    float yHat = sigmoid(z);
+    return yHat;
+}
+
+
+int main() {
+
+  // ...code from previous blocks
+
+    float yHat = inference(xCurr, wCurr, bCurr);
+
+  // ...code from latter blocks
+}
+```
+
 Now that we have `yHat`, we can now use it to calculate the derivatives (∂z, ∂w and ∂b), which in this case are the derivative of the currently-executed index input element.
+
+```cpp
+// ...code from previous blocks
+
+int main() {
+
+  // ...code from previous blocks
+
+    float dZ = yHat - yCurr;
+    vec2 dW = (1. / m) * xCurr * dZ;
+    float dB = (1. / m) * dZ;
+
+  // ...code from latter blocks
+}
+```
 
 We can now pass the derivatives as outputs, so the parameters can be re-adjusted for the next iteration.
 
+```cpp
+// ...code from previous blocks
+
+
+int main() {
+
+  // ...code from previous blocks
+
+    wouti[idx] = dW.x;
+    woutj[idx] = dW.y;
+    bout[idx] = dB;
+
+  // ...code from latter blocks
+}
+```
+
 Finally we’re able to calculate the loss and add it to the output `lout` array.
+
+```cpp
+// ...code from previous blocks
+
+float calculateLoss(float yHat, float y) {
+    return -(y * log(yHat)  +  (1.0 - y) * log(1.0 - yHat));
+}
+
+int main() {
+
+  // ...code from previous blocks
+
+    lout[idx] = calculateLoss(yHat, yCurr);
+}
+```
 
 That’s it, we’ve now finished the shader that will enable us to train a Logistic Regression algorithm in the GPU — you can find the [full code for the shader](https://github.com/axsaucedo/vulkan-kompute/blob/7906406dd1e8bbfb01c1c5d68be44f63587440aa/examples/logistic_regression/shaders/glsl/logistic_regression.comp#L7) in the GPU logistic regression [example repository](https://github.com/axsaucedo/vulkan-kompute/tree/7906406dd1e8bbfb01c1c5d68be44f63587440aa/examples/logistic_regression#kompute-logistic-regression-example).
 
@@ -302,15 +558,79 @@ As you can see this is more involved than the simpler example we used above. In 
 
 We will be importing the single header of Kompute — it’s also possible to use the more granular class-based headers if required. We will also create some of the base configuration variables; namely `ITERATIONS` and `learningRate` which will be used in latter code blocks.
 
+```cpp
+#include "kompute/Kompute.cpp"
+
+int main() {
+  uint32_t ITERATIONS = 100;
+  float learningRate = 0.1;
+
+    // code from latter blocks
+}
+```
+
 ### 2. Create all the Kompute Tensors required
 
 Now we’ll be creating all the tensors required. In this sub-section you will notice that we will be referencing all the buffers/arrays that are being used in the shader. We’ll also cover how the order in the parameters passed relates to the way data is bound into the shaders so it’s accessible.
 
+```cpp
+// ...code from previous blocks
+
+int main() {
+    // ...code from previous blocks
+
+    std::shared_ptr<kp::Tensor> xI{ new kp::Tensor({ 0, 1, 1, 1, 1 })};
+    std::shared_ptr<kp::Tensor> xJ{ new kp::Tensor({ 0, 0, 0, 1, 1 })};
+
+    std::shared_ptr<kp::Tensor> y{ new kp::Tensor({ 0, 0, 0, 1, 1 })};
+
+    std::shared_ptr<kp::Tensor> wIn{ new kp::Tensor({ 0.001, 0.001 })};
+    std::shared_ptr<kp::Tensor> wOutI{ new kp::Tensor({ 0, 0, 0, 0, 0 })};
+    std::shared_ptr<kp::Tensor> wOutJ{ new kp::Tensor({ 0, 0, 0, 0, 0 })};
+
+    std::shared_ptr<kp::Tensor> bIn{ new kp::Tensor({ 0 })};
+    std::shared_ptr<kp::Tensor> bOut{ new kp::Tensor({ 0, 0, 0, 0, 0 })};
+
+    std::shared_ptr<kp::Tensor> lOut{ new kp::Tensor({ 0, 0, 0, 0, 0 })};
+
+    // ...code from latter blocks
+}
+```
+
 We also store them in a parameter vector for easier access:
+
+```cpp
+// ...code from previous blocks
+
+int main() {
+    // ...code from previous blocks
+
+    std::vector<std::shared_ptr<kp::Tensor>> params =
+        {xI, xJ, y, wIn, wOutI, wOutJ, bIn, bOut, lOut};
+
+    // ...code from latter blocks
+}
+```
 
 ### 3. Create the Kompute Manager and initialize a Kompute Sequence
 
 If you remember from the previous example, we were able to execute commands directly using the Kompute Manager. However we are able to use the Kompute Sequence resource if we want further granularity to record command batches that can be submitted and loaded into the GPU before processing. For this, we will create a Kompute Manager, then create a Kompute Sequence through it.
+
+```cpp
+// ...code from previous blocks
+
+int main() {
+    // ...code from previous blocks
+
+    // We first create a manager selecting device 0
+    kp::Manager mgr;
+
+    // We then create a sequence and request the pointer (as it's provided as a weak_ptr)
+    std::shared_ptr<kp::Sequence> sq = mgr.getOrCreateManagedSequence("createTensors").lock()
+
+    // ...code from latter blocks
+}
+```
 
 ### 4. Execute the Kompute Tensor GPU initialization via Kompute Sequence
 
@@ -318,11 +638,60 @@ We can now start by running instructions on GPU resources — namely we will sta
 
 Let’s get started by recording commands, namely the OpTensorCreate command, and then evaluating the operation across all the tensors above. This operation will create the respective Vulkan memory/buffer resources.
 
+```cpp
+// ...code from previous blocks
+
+int main() {
+    // ...code from previous blocks
+
+    // Being listening for recording sequence
+    sq->begin();
+
+    // Register a recording command operation
+    sq->record<kp::OpTensorCreate>(params);
+
+    // Stop listening for recording sequence
+    sq->end();
+
+    // Evaluate the currently recorded sequence
+    sq->eval();
+
+    // ...code from latter blocks
+}
+```
+
 ### 5. Record batch algorithm execution in Kompute Sequence
 
 In this section we will want to clear the previous recordings of the Kompute Sequence and begin recording a set of sequences. You will notice that unlike the previous section, in this case we won’t be running the `eval()` straight away as we’ll have to run it multiple times, together with extra commands to re-adjust the parameters.
 
 You will also notice that we will be recording three types of Kompute Operations, namely:
+
+```cpp
+// ...code from previous blocks
+
+int main() {
+    // ...code from previous blocks
+
+    // Clear previous commands and begin listening for recording sequence
+    sq->begin();
+
+    // Ensure the input vectors are sync in GPU device memory
+    sq->record<kp::OpTensorSyncDevice>({wIn, bIn});
+
+    // Record the execution of the logistic regression shader
+    sq->record<kp::OpAlgoBase<>>(
+            params,
+            "test/shaders/glsl/test_logistic_regression.comp");
+
+    // Sync the output vectors to device so they can be used for processing
+    sq->record<kp::OpTensorSyncLocal>({wOutI, wOutJ, bOut, lOut});
+
+    // Stop listening for recording sequence
+    sq->end();
+
+    // ...code from latter blocks
+}
+```
 
 - `kp::OpTensorSyncDevice` — This operation ensures that the Tensors are synchronized with their GPU memory by mapping their local data into the GPU data. In this case, these Tensors use Device-only memory for processing efficiency, so the mapping is performed with a staging Tensor inside the operation (which is re-used throughout the operations for efficiency). Here we’re only wanting to sync the input weights, as these will be updated locally with the respective derivatives.
 - `kp::OpAlgoBase` — This is the Kompute Operation that binds the shader that we wrote above with all the local CPU/host resources. This includes making available the Tensors. It’s worth mentioning that the index of the tensors provided as parameters is the order in which they are mapped in the shaders via their respective bindings (as you can see in the shaders each vector has the format `layout(binding = NUMBER)`.
@@ -332,9 +701,45 @@ You will also notice that we will be recording three types of Kompute Operations
 
 Now that we have the command recorded, we can start running executions of these pre-loaded commands. In this case, we will be running the execution of a micro-batch iteration, followed by updating the parameters locally, so they are used in the following iteration.
 
+```cpp
+// ...code from previous blocks
+
+int main() {
+    // ...code from previous blocks
+
+    // Iterate across all expected iterations
+    for (size_t i = 0; i < ITERATIONS; i++) {
+
+        // Run evaluation of recorded commands
+        sq->eval();
+
+        // Update all model parameters
+        for(size_t j = 0; j < bOut->size(); j++) {
+            wIn->data()[0] -= learningRate * wOutI->data()[j];
+            wIn->data()[1] -= learningRate * wOutJ->data()[j];
+            bIn->data()[0] -= learningRate * bOut->data()[j];
+        }
+    }
+    // ...code from latter blocks
+}
+```
+
 ### 7. Print resulting parameters to use for further inference
 
 We now have a trained logistic regression model, or at least we’ve been able to optimize its respective function to identify suitable parameters. We are now able to print these parameters and use the parameters for inference in unseen datasets.
+
+```cpp
+// ...code from previous blocks
+
+int main() {
+    // ...code from previous blocks
+
+    std::cout << "RESULTS" << std::endl;
+    std::cout << "w1: " << wIn->data()[0] << std::endl;
+    std::cout << "w2: " << wIn->data()[1] << std::endl;
+    std::cout << "b: " << bIn->data()[0] << std::endl;
+}
+```
 
 And we’re done!
 

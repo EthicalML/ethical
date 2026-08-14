@@ -95,17 +95,128 @@ We will now be able to add the GdScript code in Godot which will allow us to rea
 
 Below is the full script that we are using to perform the processing, which is using the `KomputeModelML`custom Godot class we build in the next section. We’ll break down each of the different areas of the code below.
 
+```gdscript
+extends Node2D
+
+onready var xi_node = $UI/UIVBoxContainer/XIHBoxContainer/LineEdit
+onready var xj_node = $UI/UIVBoxContainer/XJHBoxContainer/LineEdit
+onready var y_node = $UI/UIVBoxContainer/XJHBoxContainer/LineEdit
+onready var preds_node = $UI/UIVBoxContainer/Panel/VBoxContainer/PredHBoxContainer2/PredictionsLabel
+onready var w1_node = $UI/UIVBoxContainer/Panel/VBoxContainer/PredHBoxContainer/Weight1Label
+onready var w2_node = $UI/UIVBoxContainer/Panel/VBoxContainer/PredHBoxContainer/Weight2Label
+onready var bias_node = $UI/UIVBoxContainer/Panel/VBoxContainer/PredHBoxContainer/BiasLabel
+
+func compute_ml():
+
+    var xi = str2var(xi_node.text)
+    var xj = str2var(xj_node.text)
+    var y = str2var(y_node.text)
+
+    var s = KomputeModelML.new()
+
+    s.train(y, xi, xj)
+
+    var preds = s.predict(xi, xj)
+
+    preds_node.text = str(preds)
+
+    var params = s.get_params()
+
+    w1_node.set_text(str(params[0]))
+    w2_node.set_text(str(params[1]))
+    bias_node.set_text(str(params[2]))
+```
+
 First we define variables to make the referencing of Godot Editor nodes simpler. This can be done with the dollar sign syntax `$NODE/PATH` as implemented in the snipped below.
+
+```gdscript
+extends Node2D
+
+onready var xi_node = $UI/UIVBoxContainer/XIHBoxContainer/LineEdit
+onready var xj_node = $UI/UIVBoxContainer/XJHBoxContainer/LineEdit
+onready var y_node = $UI/UIVBoxContainer/XJHBoxContainer/LineEdit
+onready var preds_node = $UI/UIVBoxContainer/Panel/VBoxContainer/PredHBoxContainer2/PredictionsLabel
+onready var w1_node = $UI/UIVBoxContainer/Panel/VBoxContainer/PredHBoxContainer/Weight1Label
+onready var w2_node = $UI/UIVBoxContainer/Panel/VBoxContainer/PredHBoxContainer/Weight2Label
+onready var bias_node = $UI/UIVBoxContainer/Panel/VBoxContainer/PredHBoxContainer/BiasLabel
+```
 
 The `compute_ml()` function below contains the logic for the machine learning training and predictions. We start by reading the inputs from the text boxes using the Godot editor node references.
 
+```gdscript
+# ... code from previous blocks
+
+func compute_ml():
+
+    var xi = str2var(xi_node.text)
+    var xj = str2var(xj_node.text)
+    var y = str2var(y_node.text)
+
+    # ... code from latter blocks
+```
+
 We now can create an instance from the C++ class bindings that we will be constructing in the next section. This is the class that exposes the training and prediction functions that we will be using for machine learning inference.
+
+```gdscript
+
+func compute_ml():
+
+    # ... code from previous code blocks
+
+    # We create an instance
+    var kml = KomputeModelML.new()
+
+    # ... code from latter code blocks
+```
 
 We now can train our model by passing the inputs and the expected predictions. The ML model underneath is [a logistic regression model](https://towardsdatascience.com/machine-learning-and-data-processing-in-the-gpu-with-vulkan-kompute-c9350e5e5d3a#6c88), which will adjust its internal parameters to fit the inputs and outputs best, resulting in a model that is then able to predict unseen datapoints.
 
+```gdscript
+
+func compute_ml():
+
+    # ... code from previous code blocks
+
+    # We create an instance
+    kml.train(y, xi, xj)
+
+    # ... code from latter code blocks
+```
+
 Now that we have trained our model, we can perform predictions on unseen data-points. For simplicity, we will pass in the same inputs we used for testing, however you could pass completely new arrays and see what predictions it produces. We can then display the results in the `preds_node` reference node variable that we defined, which will show in the display.
 
+```gdscript
+
+# ... code from previous code blocks
+
+func compute_ml():
+
+    # ... code from previous code blocks
+
+    var preds = kml.predict(xi, xj)
+
+    preds_node.text = str(preds)
+
+    # ... code from latter blocks
+```
+
 Finally we want to also display the learned parameters, which in this case it includes `w1` , `w2` and the `bias` . We are able to display the weights and bias in the respective labels.
+
+```gdscript
+# ... code from previous blocks
+
+func compute_ml():
+
+    # ... code from previous blocks
+
+    var params = s.get_params()
+
+    w1_node.set_text(str(params[0]))
+    w2_node.set_text(str(params[1]))
+    bias_node.set_text(str(params[2]))
+
+    # ... code from latter blocks
+```
 
 The final thing to set up is to connect the “Kompute Train & Predict” button into the `compute_ml` function, which can be done by setting up a signal that points to the function itself via the editor.
 
@@ -133,7 +244,64 @@ The header file for the Godot class binding implementation is outlined below, wh
 
 KomputeLogisticRegression.hpp Implementation
 
+```cpp
+#pragma once
+
+#include <Godot.hpp>
+#include <Node2D.hpp>
+#include <Array.hpp>
+
+#include "kompute/Kompute.hpp"
+
+namespace godot {
+class KomputeLogisticRegression : public Node2D {
+private:
+    GODOT_CLASS(KomputeLogisticRegression, Node2D);
+
+    // For custom module use gdclass
+    // GDCLASS(KomputeSummatorNode, Node);
+
+
+public:
+    KomputeLogisticRegression();
+
+    void train(Array y, Array xI, Array xJ);
+
+    Array predict(Array xI, Array xJ);
+
+    Array get_params();
+
+
+    static void _register_methods();
+
+    // For custom module use bind methods instead
+    //static void _bind_methods();
+
+
+private:
+    kp::Tensor mWeights;
+    kp::Tensor mBias;
+};
+
+static std::string LR_SHADER = R"(
+//... rest of header file
+```
+
 The initial section of the class header file includes:
+
+```cpp
+
+#include "kompute/Kompute.hpp"
+
+#include <Godot.hpp>
+#include <Node2D.hpp>
+#include <Array.hpp>
+
+namespace godot {
+class KomputeLogisticRegression : public Node2D {
+private:
+    GODOT_CLASS(KomputeLogisticRegression, Node2D);
+```
 
 - Import of the `Kompute.hpp`header containing all the Kompute dependencies that we’ll use in this project
 - The top-level `Godot.hpp` import is required to ensure all Godot components are available.
@@ -143,15 +311,64 @@ The initial section of the class header file includes:
 
 Following the base functionality, we have to define the core logic:
 
+```cpp
+
+// ... previous code blocks
+
+public:
+    KomputeLogisticRegression();
+
+    void train(Array y, Array xI, Array xJ);
+
+    Array predict(Array xI, Array xJ);
+
+    Array get_params();
+
+
+// ... latter code blocks
+```
+
 - `void train(Array y, Array xI, Array xJ)` —Trains the machine learning model using the GPU native code for the logistic regression model. It takes the input array(s) `X`, and the array `y`containing the expected outputs.
 - `Array predict(Array xI, Array xJ)` —Perform the inference request. In this implementation it is not using GPU code as generally there tends to be less performance gains through parallelization on the inference side. However there are still expected performance gains if multiple inputs are processed in parallel (which this function allows for).
 - `Array get_params()` —Returns an array containing the learned parameters in the format of `[ <weight_1>, <weight_2>, <bias> ]`.
 
 We then are able to declare the methods that will be bound between the C++ and the high level GdScript Godot Engine, and accessible to the editor and broader Game in general. We’ll look briefly below at the code required to register a function.
 
+```cpp
+
+// ... previous code blocks
+
+    static void _register_methods();
+
+// ... latter code blocks
+```
+
 For data management we will be using Kompute tensors as well as Arrays — in this case we will only need to “learn” and “persist” the weights and biases of our logistic regression model.
 
+```cpp
+// ... code from previous blocks
+
+private:
+    kp::Tensor mWeights;
+    kp::Tensor mBias;
+};
+
+// ... code from latter blocks
+```
+
 Finally, we also define the shader code, which is basically [the code that will be executed as machine code inside of the GPU](https://en.wikipedia.org/wiki/OpenGL_Shading_Language). Kompute allows us to pass a string containing the code, however for production deployments it is possible to convert the shaders to binary, and also use the utilities available to convert into header files.
+
+```cpp
+// ... code from previous blocks
+
+
+static std::string LR_SHADER = R"(
+    // ... shader code excluded for simplicity
+)";
+
+
+// ... code from latter blocks
+```
 
 If you are interested in the full implementation you can find all the files in the [gdnative implementation](https://github.com/EthicalML/vulkan-kompute/tree/godot_example/examples/godot_logistic_regression/gdnative_shared) and [custom module](https://github.com/EthicalML/vulkan-kompute/tree/godot_example/examples/godot_logistic_regression/custom_module) implementation folders. Furthermore if you are interested in the theoretical and underlying foundational concepts of these techniques, this is covered fully in [our previous post](https://towardsdatascience.com/machine-learning-and-data-processing-in-the-gpu-with-vulkan-kompute-c9350e5e5d3a#6c88).
 
