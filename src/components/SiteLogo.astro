@@ -148,7 +148,6 @@ const line2 = keyed(LINE2, ['A', 'S']);
     private theme: 'dark' | 'light' = 'dark';
     private themeWatch?: MutationObserver;
     private motionQuery = matchMedia('(prefers-reduced-motion: reduce)');
-    private markQuery = matchMedia('(max-width: 1040px)');
     private stage!: HTMLElement;
     private text!: HTMLElement;
     private chars: HTMLElement[] = [];
@@ -187,7 +186,6 @@ const line2 = keyed(LINE2, ['A', 'S']);
       window.addEventListener('scroll', this.onScroll, { passive: true, signal });
       window.addEventListener('resize', () => this.sync(), { signal });
       this.motionQuery.addEventListener('change', () => this.sync(), { signal });
-      this.markQuery.addEventListener('change', () => this.sync(), { signal });
       document.fonts?.ready.then(() => this.sync());
       window.setTimeout(() => this.sync(), 250);
       this.sync();
@@ -214,16 +212,6 @@ const line2 = keyed(LINE2, ['A', 'S']);
     private sync() {
       if (this.frame) cancelAnimationFrame(this.frame);
       this.frame = 0;
-
-      /* The narrow tier has no room for the wordmark at any scroll position, so it stays the
-         static mark and publishes no collapse. */
-      if (this.markQuery.matches) {
-        this.dataset.mode = 'mark';
-        this.shell.style.removeProperty('--header-collapse');
-        this.measure();
-        this.applyStaticNudges();
-        return;
-      }
 
       this.dataset.mode = 'animate';
       this.measure();
@@ -273,15 +261,6 @@ const line2 = keyed(LINE2, ['A', 'S']);
       this.metrics = { font, cell, gap, glyph, nudge, from, width: base.width, height: base.height };
     }
 
-    /** The static mark tier carries the full nudge, since it is permanently collapsed. */
-    private applyStaticNudges() {
-      if (!this.metrics) return;
-      for (const key of KEYS) {
-        const { x, y } = this.metrics.nudge[key];
-        this.glyphs.get(key)!.style.transform = `translate(${x.toFixed(4)}em, ${y.toFixed(4)}em)`;
-      }
-    }
-
     private clearFrameStyles() {
       for (const char of this.chars) {
         char.style.transform = '';
@@ -298,6 +277,10 @@ const line2 = keyed(LINE2, ['A', 'S']);
 
     private onScroll = () => {
       if (this.dataset.mode !== 'animate') return;
+      /* The drawer locks the body at a negative offset, so window.scrollY reads 0 while it is
+         open. Reacting to that would expand the logo under the open drawer and collapse it
+         again on close; the header holds whatever state it was opened in. */
+      if (document.body.classList.contains('mobile-nav-open')) return;
       const y = window.scrollY;
       const target = y > COLLAPSE_AT ? 1 : y < EXPAND_AT ? 0 : this.target;
       if (target === this.target) return;
@@ -552,44 +535,15 @@ const line2 = keyed(LINE2, ['A', 'S']);
     position: absolute;
   }
 
-  /* The mark alone, laid out by CSS rather than by the frame loop: the resting state for
-     reduced motion, and for the narrow tier where the row has no width for the wordmark
-     beside the join pill and the menu button. */
-  site-logo[data-mode='mark'] .site-logo-text {
-    display: none;
-  }
-
-  /* With the wordmark hidden there is nothing to measure a reservation from, so the mark tier
-     states the row's height itself: without it the 41px mark makes the row a pixel taller. */
-  site-logo[data-mode='mark'] .site-logo-link {
-    align-items: center;
-    display: flex;
-    height: var(--logo-reserve-height, 40px);
-  }
-
-  site-logo[data-mode='mark'] .site-logo-mark {
-    display: grid;
-    gap: var(--logo-gap);
-    grid-template-columns: repeat(2, var(--logo-cell));
-  }
-
-  site-logo[data-mode='mark'] .site-logo-cell {
-    display: flex;
-    font-size: var(--logo-glyph);
-  }
-
-  @media (max-width: 1040px) {
+  /* Narrow rows keep the wordmark and shrink it: the layout is measured, not declared, so
+     the collapse works at any size. Below 480px the row has to hold the wordmark, the join
+     pill and the 44px menu button at once. */
+  @media (max-width: 480px) {
     site-logo {
-      --logo-cell: 21px;
-      --logo-gap: 1px;
-      --logo-glyph: 13.4px;
-    }
-
-    site-logo[data-mode='mark'] .site-logo-link {
-      align-items: center;
-      display: flex;
-      height: 44px;
-      min-height: 44px;
+      --logo-cell: 17px;
+      --logo-font: 14.5px;
+      --logo-glyph: 10.9px;
+      --logo-line: 17px;
     }
   }
 </style>

@@ -239,7 +239,7 @@ import SiteLogo from './SiteLogo.astro';
      scroll-padding and `offsetHeight` reader keeps the number it already had. The shell is
      transparent below the compacted bar, so it must not eat clicks meant for the page. */
   .site-header {
-    height: var(--header-shell-height, auto);
+    height: var(--header-shell-height);
     pointer-events: none;
     position: sticky;
     top: 0;
@@ -298,15 +298,22 @@ import SiteLogo from './SiteLogo.astro';
 
   /* Above the drawer breakpoint the shell holds the at-rest height and the bar shrinks inside
      it. The mega menu hangs off the bar, not the shell, or it would float in the gap. */
+  /* Both tiers compact on the same eased value; they only differ in what they start from,
+     because the narrow row is sized by its 44px controls rather than by the logo. */
+  site-header {
+    --header-bar-height: calc(69px - 14px * var(--header-collapse, 0));
+    --header-shell-height: 69px;
+  }
+
   @media (min-width: 1041px) {
     site-header {
       --header-bar-height: calc(71px - 16px * var(--header-collapse, 0));
-    }
-
-    .site-header {
-      --header-bar-bottom: var(--header-bar-height);
       --header-shell-height: 71px;
     }
+  }
+
+  .site-header {
+    --header-bar-bottom: var(--header-bar-height);
   }
 
   .primary-nav {
@@ -542,8 +549,8 @@ import SiteLogo from './SiteLogo.astro';
       align-items: center;
       flex-wrap: nowrap;
       gap: 10px;
-      min-height: 68px;
-      padding: 12px 20px;
+      min-height: calc(68px - 14px * var(--header-collapse, 0));
+      padding: calc(12px - 7px * var(--header-collapse, 0)) 20px;
     }
 
     .nav-right {
