@@ -17,35 +17,159 @@ const next = number < 9 ? String(number + 1).padStart(2, '0') : undefined;
 ---
 
 <BaseLayout frontmatter={frontmatter}>
-  <article class="principle-prose" data-reveal transition:name="principle-page">
-    {data.failure_modes && <p class="commitment">{data.commitment}</p>}
-    <Content />
-  </article>
-  {
-    data.failure_modes && data.controls && (
-      <SplitList left={{ title: 'FAILURE MODES', items: data.failure_modes }} right={{ title: 'PRACTICAL CONTROLS', items: data.controls }} />
-    )
-  }
-  {data.number === '09' && <KaosGraph />}
-  <nav class="principle-pagination" aria-label="Adjacent principles">
-    {
-      previous && (
-        <a href={`/principles/${previous}/`} data-transition-direction="back">
-          ← Previous principle
-        </a>
-      )
-    }
-    {
-      next && (
-        <a href={`/principles/${next}/`} data-transition-direction="forward">
-          Next principle →
-        </a>
-      )
-    }
-  </nav>
+  <principle-meta-bar>
+    <div data-meta-sentinel aria-hidden="true"></div>
+    <nav class="principle-pagination" aria-label="Adjacent principles" data-reveal transition:name="principle-bar">
+      {
+        previous ? (
+          <a href={`/principles/${previous}/#principle`} data-transition-direction="back" aria-label={`Previous principle, ${previous}`}>
+            <i aria-hidden="true">‹</i>
+            <span class="principle-step-label">Previous</span>
+            <strong>{previous}</strong>
+          </a>
+        ) : (
+          <span class="principle-step" aria-hidden="true" />
+        )
+      }
+      <span class="principle-chip">Principle {data.number} / 09</span>
+      {
+        next ? (
+          <a href={`/principles/${next}/#principle`} data-transition-direction="forward" aria-label={`Next principle, ${next}`}>
+            <strong>{next}</strong>
+            <span class="principle-step-label">Next</span>
+            <i aria-hidden="true">›</i>
+          </a>
+        ) : (
+          <span class="principle-step" aria-hidden="true" />
+        )
+      }
+    </nav>
+    <div class="principle-anchor" id="principle" data-scroll-align="start" aria-hidden="true"></div>
+    <div class="principle-page" transition:name="principle-page">
+      <article class="principle-prose" data-reveal>
+        {data.failure_modes && <p class="commitment">{data.commitment}</p>}
+        <Content />
+      </article>
+      {
+        data.failure_modes && data.controls && (
+          <SplitList left={{ title: 'FAILURE MODES', items: data.failure_modes }} right={{ title: 'PRACTICAL CONTROLS', items: data.controls }} />
+        )
+      }
+      {data.number === '09' && <KaosGraph />}
+    </div>
+  </principle-meta-bar>
 </BaseLayout>
 
 <style is:global>
+  principle-meta-bar {
+    --principle-anchor-top: 54px;
+    --principle-bar-height: 65px;
+    --principle-stuck-top: 70px;
+    display: block;
+  }
+
+  .principle-anchor {
+    height: 0;
+    scroll-margin-top: calc(var(--principle-anchor-top) + var(--principle-bar-height));
+  }
+
+  .principle-pagination {
+    align-items: center;
+    background: var(--bg-inset);
+    border-block: 1px solid var(--hairline);
+    display: grid;
+    gap: 12px;
+    grid-template-columns: minmax(120px, 1fr) auto minmax(120px, 1fr);
+    margin-top: 34px;
+    padding: 16px 48px;
+    position: sticky;
+    top: var(--principle-stuck-top);
+    transition:
+      background 0.3s ease,
+      border-color 0.3s ease,
+      padding 0.3s ease;
+    z-index: 40;
+  }
+
+  principle-meta-bar.is-stuck .principle-pagination {
+    animation: principle-meta-lock 0.4s var(--ease-panel, cubic-bezier(0.16, 1, 0.3, 1));
+    background: var(--bg-panel);
+    border-top-color: transparent;
+    border-bottom-color: var(--accent-veil);
+    padding-block: 8px;
+  }
+
+  @keyframes principle-meta-lock {
+    from {
+      border-bottom-color: var(--accent-edge);
+      transform: translateY(-8px) scaleY(1.12);
+    }
+    60% {
+      transform: translateY(1px) scaleY(0.98);
+    }
+    to {
+      transform: none;
+    }
+  }
+
+  .principle-pagination a,
+  .principle-step {
+    align-items: center;
+    color: var(--text-2);
+    display: inline-flex;
+    font-family: var(--font-mono);
+    font-size: var(--mono-11);
+    gap: 7px;
+    justify-self: start;
+    letter-spacing: 0.08em;
+    min-height: 32px;
+    padding: 6px 2px;
+    transition: color 0.2s ease;
+  }
+
+  .principle-pagination > :last-child {
+    justify-self: end;
+  }
+
+  .principle-pagination a:hover {
+    color: var(--accent-ink);
+    opacity: 1;
+  }
+
+  .principle-pagination i {
+    font-family: var(--font-display);
+    font-size: 19px;
+    font-style: normal;
+    line-height: 1;
+  }
+
+  .principle-pagination strong {
+    color: var(--accent-ink);
+    font-weight: 500;
+  }
+
+  .principle-chip {
+    border: 1px solid var(--accent-edge);
+    border-radius: var(--radius-pill);
+    color: var(--accent-ink);
+    font-family: var(--font-mono);
+    font-size: var(--mono-10);
+    justify-self: center;
+    letter-spacing: 0.12em;
+    padding: 8px 14px;
+    text-transform: uppercase;
+    transition: padding 0.3s ease;
+    white-space: nowrap;
+  }
+
+  principle-meta-bar.is-stuck .principle-chip {
+    padding: 6px 11px;
+  }
+
+  .principle-page {
+    padding-bottom: 96px;
+  }
+
   .principle-prose {
     color: var(--text-2);
     font-size: var(--body-18);
@@ -55,43 +179,99 @@ const next = number < 9 ? String(number + 1).padStart(2, '0') : undefined;
   }
 
   @media (max-width: 950px) {
+    principle-meta-bar {
+      --principle-stuck-top: 68px;
+    }
+
+    .principle-pagination {
+      padding-inline: 24px;
+    }
+
+    .principle-pagination a {
+      min-height: 44px;
+      min-width: 44px;
+    }
+
     .principle-prose {
       padding: 0 24px;
     }
-  }
 
-  .principle-pagination {
-    display: flex;
-    justify-content: space-between;
-    padding: 28px 48px 96px;
-  }
-
-  .principle-pagination a {
-    border: 1px solid var(--hairline-card);
-    border-radius: var(--radius-pill);
-    padding: 10px 16px;
-  }
-
-  @media (max-width: 950px) {
-    .principle-pagination {
-      flex-wrap: wrap;
-      gap: 12px;
-      padding: 28px 24px 72px;
+    .principle-page {
+      padding-bottom: 72px;
     }
   }
 
   @media (max-width: 600px) {
+    .principle-pagination {
+      grid-template-columns: minmax(52px, 1fr) auto minmax(52px, 1fr);
+      padding-inline: 18px;
+    }
+
+    .principle-step-label {
+      display: none;
+    }
+
+    .principle-chip {
+      font-size: var(--mono-9);
+      letter-spacing: 0.08em;
+      padding-inline: 11px;
+    }
+
     .principle-prose {
       font-size: 16px;
       padding-inline: 18px;
     }
-  }
 
-  @media (max-width: 600px) {
-    .principle-pagination {
-      align-items: stretch;
-      flex-direction: column;
-      padding: 24px 18px 60px;
+    .principle-page {
+      padding-bottom: 60px;
     }
   }
 </style>
+
+<script>
+  class PrincipleMetaBar extends HTMLElement {
+    private controller = new AbortController();
+    private observer?: IntersectionObserver;
+    private glassObserver?: ResizeObserver;
+
+    connectedCallback() {
+      this.controller = new AbortController();
+      const sentinel = this.querySelector<HTMLElement>('[data-meta-sentinel]');
+      const pagination = this.querySelector<HTMLElement>('.principle-pagination');
+      if (!sentinel || !pagination) return;
+
+      const setOffset = () => {
+        const glass = document.querySelector<HTMLElement>('.header-glass');
+        const height = glass?.getBoundingClientRect().height;
+        if (height) this.style.setProperty('--principle-stuck-top', `${height - 1}px`);
+        this.style.setProperty('--principle-bar-height', `${pagination.getBoundingClientRect().height}px`);
+      };
+      const watchGlass = () => {
+        const glass = document.querySelector<HTMLElement>('.header-glass');
+        setOffset();
+        if (!glass) return;
+        this.glassObserver?.disconnect();
+        this.glassObserver = new ResizeObserver(setOffset);
+        this.glassObserver.observe(glass);
+      };
+      watchGlass();
+      addEventListener('resize', setOffset, { signal: this.controller.signal });
+      document.addEventListener('astro:page-load', watchGlass, { signal: this.controller.signal });
+
+      this.observer = new IntersectionObserver(([entry]) => this.classList.toggle('is-stuck', !entry.isIntersecting && entry.boundingClientRect.top < 0), {
+        rootMargin: '-80px 0px 0px 0px',
+      });
+      this.observer.observe(sentinel);
+    }
+
+    disconnectedCallback() {
+      this.controller.abort();
+      this.observer?.disconnect();
+      this.glassObserver?.disconnect();
+    }
+  }
+
+  if (!customElements.get('principle-meta-bar')) {
+    customElements.define('principle-meta-bar', PrincipleMetaBar);
+  }
+</script>

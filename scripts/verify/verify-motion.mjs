@@ -5,11 +5,13 @@
 //
 // Screenshots cannot see this class of bug. Navigating into a principle used to
 // play its view transition 26px too low and snap up on completion (fixed in
-// c38ef92): `.principle-prose` is both a `[data-reveal]` element and the named
+// c38ef92): `.principle-prose` was both a `[data-reveal]` element and the named
 // `principle-page` transition group, and the reveal settle was deferred by
 // `requestAnimationFrame` — one frame later than the browser photographs
-// `::view-transition-new`. The page was never in the wrong place; the snapshot
-// was, so every full-page capture of the landed page was correct.
+// `::view-transition-new`. The named group now wraps the complete principle body
+// and `.principle-prose` remains the reveal target tracked inside it. The page was
+// never in the wrong place; the snapshot was, so every full-page capture of the
+// landed page was correct.
 //
 // What is observable is the trajectory. This gate performs a REAL click-driven
 // navigation and samples, every animation frame for ~2s, the scroll offset and
