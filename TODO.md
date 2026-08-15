@@ -12,13 +12,9 @@ Moving the nameservers to Cloudflare would also allow **real 301 redirects** for
 
 `OpenSourceShowcase.css` carries two `.open-source-showcase` rules that match nothing: the component's root is the `open-source-showcase` custom element carrying `.open-source-prototype`. Deleting them is not purely mechanical, because the padding they were meant to apply may be intended and currently comes from elsewhere, so it needs a visually reviewed change rather than a blind removal. Found during the 2026-08-08 colocation pass.
 
-## Improve the search
+## Search: no entry point below 950px
 
-The search is still not immediate, takes a while to laod
-Can we make it such that it displays all and filters progressively?
-That way when you open it you could have some of the top recommended pages too
-Also i searched "mle 123", and "123" and the MLE newsletter 123 does not come up
-So it seems there are still inefficienes herel.
+The palette now opens instantly and answers issue numbers locally, but the `.search-trigger` button is `display: none` below 950px, so on a phone the only way in is a keyboard shortcut nobody has. The mobile drawer needs a search row that opens the same palette.
 
 ## Principles prev/next: sticky sub-navbar with directional slide
 
