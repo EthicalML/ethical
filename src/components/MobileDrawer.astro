@@ -206,31 +206,55 @@ import { menus } from '../data/navigation';
   /* Nav collapse; see the note in SiteHeader.astro. This block and the `matchMedia`
      above are the same boundary from two sides — the listener negates this query. */
   @media (max-width: 1040px) {
+    /* The panel is a plate, not a fade. It used to cross-fade its whole self in
+       over the live page, and because both layers are full-screen the page read
+       straight through the menu for the length of the transition: a 250ms double
+       exposure that looked like a rendering fault rather than a menu arriving.
+       The backdrop is therefore opaque from the first frame — `visibility` shows
+       instantly on open and holds until the end on close, which is how the
+       property interpolates — and the entrance moved inside, onto the content. */
     .mobile-drawer {
       background: var(--bg-panel);
       display: block;
       height: 100dvh;
       inset: 0;
       min-height: 100vh;
-      opacity: 0;
       overflow-y: auto;
       overscroll-behavior: contain;
       pointer-events: none;
       position: fixed;
-      transform: translateY(-12px);
-      transition:
-        opacity var(--duration-3) var(--ease-panel),
-        transform var(--duration-3) var(--ease-panel),
-        visibility var(--duration-3);
       visibility: hidden;
       z-index: 80;
     }
 
     .mobile-drawer[aria-hidden='false'] {
-      opacity: 1;
       pointer-events: auto;
-      transform: none;
       visibility: visible;
+    }
+
+    /* The group carries the 12px settle and the fade the panel used to carry, so the
+       menu still arrives as one movement and the rows keep their own stagger inside
+       it. Animating the content rather than the panel also means the plate never
+       leaves a strip of page uncovered along its bottom edge.
+
+       Both the transition and the row stagger are declared on the open state only,
+       so they run on the way in and not on the way out. Dismissal is deliberately a
+       cut: the header carries the control that closes the drawer and is only lifted
+       above it (z-index 90) while `body.mobile-nav-open` is set, so any held-open
+       plate after that class is removed would cover the header — and its resting
+       z-index of 60 sits under the panel's 80. Fading the content out over a held
+       plate hid the toggle the user had just pressed for the length of the fade. */
+    .mobile-nav {
+      opacity: 0;
+      transform: translateY(-12px);
+    }
+
+    .mobile-drawer[aria-hidden='false'] .mobile-nav {
+      opacity: 1;
+      transform: none;
+      transition:
+        opacity var(--duration-3) var(--ease-panel),
+        transform var(--duration-3) var(--ease-panel);
     }
 
     .mobile-nav {
@@ -360,9 +384,26 @@ import { menus } from '../data/navigation';
     color: var(--accent-ink);
   }
 
+  /* Under reduce the drawer arrives with no entrance at all: the plate was already
+     instant, and the content skips both the group settle and the row stagger rather
+     than playing them faster. */
   @media (prefers-reduced-motion: reduce) {
     .theme-toggle {
       transition: none;
+    }
+
+    .mobile-nav {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+
+    .mobile-drawer[aria-hidden='false'] .mobile-nav {
+      transition: none;
+    }
+
+    .mobile-drawer[aria-hidden='false'] .mobile-menu-section {
+      animation: none;
     }
   }
 
