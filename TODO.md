@@ -114,10 +114,6 @@ Fixable without changing anything anyone sees: render the photograph as an HTML 
 
 Explicitly NOT in scope: the reel mounts the active talk's player eagerly, which costs about 1 MB and sets two third-party cookies before any interaction. That is deliberate — it is what makes pressing play instant — and the owner has decided to keep it (2026-08-10). Do not "optimise" it away.
 
-## Reveal gate: exempt above-the-fold content from opacity-0
-
-Phase-3 CWV audit (2026-08-12, tmp/report-seo-phase3.md): the inline `[data-reveal]{opacity:0}` rule in BaseLayout.astro gates LCP on JS execution on every route — /privacy/ (ungated) renders content in ~106ms vs 1.4-1.9s elsewhere, and the h1 itself starts invisible. Fix by exempting the first viewport (or gating the rule behind a JS-added class so no-JS renders fully visible), keeping all below-fold reveal motion. Visible motion change: land alone, owner-validated with before/after per AGENTS.md. The prefers-reduced-motion branch already shows the opt-out pattern.
-
 ## About page: bespoke People treatment
 
 The People section shipped in PR #74 renders plain 120px portraits beside prose bios because the site has no prose-image vocabulary at all. Design a proper owner-validated treatment for the about-page bios (portrait framing, layout, possibly cards), and replace Lucy Yu's placeholder headshot with an owned image when supplied.
