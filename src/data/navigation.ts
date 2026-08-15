@@ -265,13 +265,9 @@ export const menus: Record<string, Menu> = {
       { number: '01', title: 'Our story', href: '/about/' },
       { number: '02', title: 'Partners', href: '/partners/' },
       { number: '03', title: 'Contact', href: '/contact/' },
+      { number: '04', title: 'Branding', href: '/about/branding/' },
     ],
   },
-};
-
-export const wordmark = {
-  primary: 'THE INSTITUTE FOR ETHICAL AI',
-  secondary: 'ALIGNMENT + SAFETY',
 };
 
 export const siteTitle = 'The Institute for Ethical AI Alignment & Safety';

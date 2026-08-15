@@ -7,7 +7,7 @@ import FootnoteBand from '../components/FootnoteBand.astro';
 import { siteTitle } from '../data/navigation';
 import { authors } from '../data/authors';
 
-const metaDescription = 'An independent research institute working to ensure that frontier AI is safe, aligned and accountable to people and society.';
+const metaDescription = 'An independent research institute working to ensure that frontier AI is safe, aligned and open for people and society.';
 const ogImage = '/images/banner.jpg';
 const { frontmatter = {} } = Astro.props;
 const title = frontmatter.title ?? siteTitle;
@@ -78,6 +78,7 @@ const article = frontmatter.article
     <link rel="alternate" type="application/rss+xml" title="The ML Engineer newsletter" href="/newsletter/rss.xml" />
     <link rel="alternate" type="application/rss+xml" title="Production ML, responsible AI and alignment blog" href="/blog/rss.xml" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.png" type="image/png" />
     <meta property="og:type" content={frontmatter.article ? 'article' : 'website'} />
     {frontmatter.article && frontmatter.datePublished && <meta property="article:published_time" content={frontmatter.datePublished} />}
