@@ -20,10 +20,6 @@ Presentation follow-up to the on-domain catalogue: clicking a category card shou
 
 The reading room renders each publication as page images with the canonical PDF hosted remotely, so the document bodies are the only genuinely uncrawlable content on the site. Add a second action next to the PDF link: a "preview text" control opening the full document text in a modal, converted from the PDF into readable markdown with tables and structure preserved. Extraction quality is the open question: `scripts/fetch-policy-previews.mjs` already downloads and extracts text, so first assess whether that structured output is good enough for tables and headings; if not, evaluate an OCR or document-understanding model, or a one-off subagent extraction pass committed as data. Confirm republication rights for the ACM-published documents before committing full text to the repo.
 
-## Newsletter pass (next up)
-
-Owner has ideas for the newsletter beyond the carried-over archive (396 issues live under /mle/, recent-issues rail derives from the filenames, /mle.html redirects to /network/). Scope to be defined by owner.
-
 ## PR #12 decision — hero-parallax exploration
 
 Six homepage scroll-effect variants sit in the open PR #12, paused for owner decision: pick a variant to land or close the PR.
@@ -87,10 +83,6 @@ The achievements card and StatBand print "30+" per owner instruction; the record
 ## LLM-based survey
 
 I want to follow on from the State of Production ML 2025, but now for 2026. Instead of asking respondents, I want to do a slight twist on this: collect, through research, the ML stack from various companies from their public blog posts, etc. We would be able to build a report based on all of that. Right now, this could be a more meaningful approach as opposed to what could be a biassed survey response.
-
-## Generate the newsletter events block from the events collection
-
-The talks-and-events backlink shipped in every issue (PR #83). The remaining half of that item: the events block itself is still hand-maintained copy in each issue; generating it from the events collection would keep the ~270 issues that carry one consistent without another archive-wide pass.
 
 ## Issue 400: the Production ML Across 2015-2035 talk
 
