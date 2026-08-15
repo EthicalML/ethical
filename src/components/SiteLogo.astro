@@ -360,9 +360,9 @@ const line2 = keyed(LINE2, ['A', 'S']);
 
     private onScroll = () => {
       if (this.dataset.mode !== 'animate') return;
-      /* The drawer locks the body at a negative offset, so window.scrollY reads 0 while it is
-         open. Reacting to that would expand the logo under the open drawer and collapse it
-         again on close; the header holds whatever state it was opened in. */
+      /* The drawer's overflow lock keeps the scroll position where it was, so no scroll
+         events fire while it is open; this guard stays as a belt-and-braces hold so the
+         header keeps whatever state it was opened in. */
       if (document.body.classList.contains('mobile-nav-open')) return;
       /* Activity model: ANY scroll collapses; IDLE_MS of stillness expands again. At the
          very top the wordmark always shows and no timer runs. Reduced motion keeps the

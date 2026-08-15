@@ -4,19 +4,19 @@ Derived from issues 340-398 (59 issues, 300 article sections). Host, tag, recenc
 
 ## Content types and the real per-issue mix
 
-| Type                                                                                          | Per issue |
-| --------------------------------------------------------------------------------------------- | --------- |
+| Type                                                                                                          | Per issue |
+| ------------------------------------------------------------------------------------------------------------- | --------- |
 | Opinion/essay from a named individual practitioner (Simon Willison, Ben Evans, Raschka, Karpathy, Eugene Yan) | 0.60      |
-| Named-company production-engineering blog (Netflix, Pinterest, Klaviyo, Bluesky, DuckDB, Modular) | 0.53      |
-| Research paper / arXiv-adjacent tech report                                                   | 0.53      |
-| Video or talk (YouTube)                                                                       | 0.47      |
-| Industry or state-of-X survey report (McKinsey, DX, CircleCI, OpenAI enterprise report)       | 0.47      |
-| Big-lab model or product release                                                              | 0.40      |
-| Educational course, curated list, tutorial                                                    | 0.40      |
-| Big-lab technical or best-practice blog (not a release: "Building Effective Agents", MCP)     | 0.33      |
-| Tooling or framework release                                                                  | 0.33      |
-| Architecture deep-dive (model internals explainer)                                            | 0.20      |
-| Safety or security incident/report                                                            | 0.20      |
+| Named-company production-engineering blog (Netflix, Pinterest, Klaviyo, Bluesky, DuckDB, Modular)             | 0.53      |
+| Research paper / arXiv-adjacent tech report                                                                   | 0.53      |
+| Video or talk (YouTube)                                                                                       | 0.47      |
+| Industry or state-of-X survey report (McKinsey, DX, CircleCI, OpenAI enterprise report)                       | 0.47      |
+| Big-lab model or product release                                                                              | 0.40      |
+| Educational course, curated list, tutorial                                                                    | 0.40      |
+| Big-lab technical or best-practice blog (not a release: "Building Effective Agents", MCP)                     | 0.33      |
+| Tooling or framework release                                                                                  | 0.33      |
+| Architecture deep-dive (model internals explainer)                                                            | 0.20      |
+| Safety or security incident/report                                                                            | 0.20      |
 
 There is no fixed slot template. What an issue near-always has is one named-individual opinion piece, plus one of {production-engineering blog, research paper}. Those two rotate almost interchangeably and rarely both appear in the same issue — that is a description of the corpus, not a cap: an issue carrying both is unusual, not wrong. The other two or three slots rotate freely across the rest. Architecture deep-dives and security incidents are 1-in-5 anchors, not staples: do not over-select them because they read well.
 

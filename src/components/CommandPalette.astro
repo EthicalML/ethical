@@ -185,6 +185,23 @@ const issueRanges = toIssueRanges(await getIssueNumbers());
     margin: 0;
     padding: 16px;
   }
+
+  /* Reachable from the header on a phone as of this change, so the panel is sized
+     for one: the 16vh drop wasted a third of a short screen, and the box is capped
+     in dvh because the on-screen keyboard shrinks the visual viewport while the
+     field is focused. The 16px field is the iOS rule, not a type choice — Safari
+     zooms the whole page in on any focused input below 16px. */
+  @media (max-width: 600px) {
+    .palette-overlay {
+      padding: 8vh 12px 12px;
+    }
+    .palette-panel {
+      max-height: 70dvh;
+    }
+    .palette-input-row input {
+      font-size: 16px;
+    }
+  }
 </style>
 
 <script>

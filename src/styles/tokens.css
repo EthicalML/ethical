@@ -1128,13 +1128,14 @@ main > .home-section:nth-last-child(1 of .home-section) { padding-bottom: var(--
   .project-grid, .report-pair { grid-template-columns:1fr; }
 }
 
-@media (max-width: 950px) {
-  body.mobile-nav-open {
-    left: 0;
+@media (max-width: 1040px) {
+  /* Overflow-only scroll lock: fixing the body clamps the scroll position, and
+     the compositor applies the clamp a frame late on real hardware, so the page
+     double-shifts before the drawer covers it. Hiding overflow keeps the scroll
+     position untouched in both directions, so open and close need no
+     compensation or restore. 1040px is the drawer breakpoint, not 950. */
+  html:has(body.mobile-nav-open) {
     overflow: hidden;
-    position: fixed;
-    right: 0;
-    width: 100%;
   }
 }
 
