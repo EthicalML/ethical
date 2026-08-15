@@ -571,6 +571,11 @@ const line2 = keyed(LINE2, ['A', 'S']);
     color: var(--logo-type);
     font-family: var(--font-display);
     font-weight: 300;
+    /* The sentence keeps its full laid-out width while collapsed (the scattered chars are
+       merely invisible), which put a hit-testable strip over the first nav triggers and ate
+       their hover. The anchor's own box tracks the stage tween, so it alone carries the
+       pointer surface. */
+    pointer-events: none;
     white-space: nowrap;
   }
 
