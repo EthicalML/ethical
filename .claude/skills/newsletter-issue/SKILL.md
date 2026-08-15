@@ -1,17 +1,19 @@
 ---
 name: newsletter-issue
-description: Draft the weekly ML Engineering newsletter issue under src/content/newsletter/. Use when asked to write, draft or prepare the next newsletter issue, or when given a set of article URLs to turn into an issue. Covers sourcing candidates from Hacker News and Reddit, grounding each article, drafting the five sections in the author's voice, and generating the summary and tags.
+description: Draft the weekly ML Engineering newsletter issue under src/content/newsletter/. Use when asked to write, draft or prepare the next newsletter issue, or when given a set of article URLs to turn into an issue. Covers sourcing candidates from Hacker News and Reddit, grounding each article, drafting the five sections in the author's voice, scouting new events and open CFPs for src/content/events.yaml, and generating the summary and tags.
 ---
 
 # Weekly newsletter issue
 
-Produce the next issue: five article sections plus frontmatter, boilerplate carried forward. Work through the steps in order. The owner publishes; never commit or open a PR unless asked.
+Produce the next issue: five article sections plus frontmatter, boilerplate carried forward, and an events scout alongside. You are the orchestrator: the context-heavy steps run as subagents that read a workflow file from `workflows/` and return a compact result — spawn them with the Agent tool, tell each which file to read, and keep the fetching out of your own context. The owner publishes; never commit or open a PR unless asked.
 
 ## 1. Establish the inputs
 
 Run `node scripts/newsletter/new-issue.mjs --dry-run` to get the issue number and date. State both to the owner before continuing.
 
-Determine which mode applies:
+Then kick off the events scout in the background so it runs while the issue is drafted: spawn a subagent with the prompt "Read .claude/skills/newsletter-issue/workflows/events-scout.md and execute it for issue <N>." Its report is picked up at step 8.
+
+Determine which mode applies for the articles:
 
 - The owner supplied the five URLs. Go to step 3.
 - No URLs supplied. Go to step 2.
@@ -27,65 +29,29 @@ The owner often supplies links collected during the week, in one of two modes. A
 
 A link to a LinkedIn or X post is a pointer, not a source: resolve it to the artifact it points at, and score that. Fall back to the post itself only when the commentary is the substance.
 
-Own content — the author's talks, projects and initiatives, and work they are connected to — is eligible and must be surfaced, flagged as own content, never silently dropped.
-
 ## 2. Source candidates
 
-Read `references/selection.md` in full. Then:
+Spawn a subagent with the prompt "Read .claude/skills/newsletter-issue/workflows/source-candidates.md and execute it", naming any owner-supplied URLs that joined the pool. It fetches, scores and skims the pool and returns a table of the 15 survivors.
 
-1. Fetch this week's candidates from all three sources:
+Present the 15 to the owner exactly as returned. The owner cuts the 15 down to five, and those five go to step 3. Never pick unilaterally.
 
-   ```
-   node --env-file=.env scripts/newsletter/candidates.mjs fetch --days 7 --source hn,reddit,feeds
-   ```
+After the cut, mark the clear rejects so they stop resurfacing:
 
-   This drops every URL the newsletter has already linked and merges the rest into the pool at `scripts/newsletter/data/candidates.json`. Entries stay `pool` until marked, so a thin week draws on earlier ones.
+```
+node scripts/newsletter/candidates.mjs mark rejected <url>...
+```
 
-   Reddit needs `REDDIT_CLIENT_ID` and `REDDIT_CLIENT_SECRET` in the repo `.env`; without them the command warns, skips Reddit and continues on the other sources. Drop `--source` to fetch Hacker News only.
-
-   `feeds` polls a hand-picked table of publisher blogs, so authoritative writing is picked up even when it never trends. Cap each publisher with `--per-feed N` (default 5).
-
-2. Review the ranked pool:
-
-   ```
-   node scripts/newsletter/candidates.mjs list --limit 40
-   ```
-
-   Add `--source hn`, `--source reddit` or `--source feeds` to list one source. Reddit scores and Hacker News points are not comparable, so read the `src` column before trusting the ranking. Feed entries are unscored and show `—` in `pts`: a publisher blog has no popularity signal at all, which is not the same as a low one, and those entries are ordered by recency instead. Judge them on the article, exactly as the rules require for every other entry.
-
-3. Score every entry against the rules in `references/selection.md`. The `kind`, `company`, `firstParty` and `ownProject` fields are heuristics from the title and host: use them to filter and sort, never to decide.
-
-4. Skim candidates from the top of the ranking until 15 survive the rules. Fetch each one and read enough to answer three questions: what does it actually claim or report, does it develop that idea or only enumerate observations, and who is the central actor. A title answers none of these. Metadata ranks a thin findings dump above a strong argument, and popularity is not a selection criterion at any point.
-
-5. Present the surviving 15 to the owner, each carrying: source, points (or `—`), age, host, kind, word count, the central actor and why they matter, and one line on what the piece argues. Mark anything thin. The owner cuts the 15 down to five, and those five go to step 3. Never pick unilaterally.
-
-6. Mark the clear rejects so they stop resurfacing:
-
-   ```
-   node scripts/newsletter/candidates.mjs mark rejected <url>...
-   ```
-
-   Everything else stays in the pool for later weeks.
+Everything else stays in the pool for later weeks.
 
 ## 3. Ground each article
 
-For each of the five URLs, write `tmp/issue-<N>/<slug>.md`, where `<slug>` is the last meaningful path segment of the URL. Start the file with a `Tier:` line naming which fetch tier below succeeded, then record what was released or found, the concrete numbers, the architecture or method, and the stated limitations. Notes, not prose.
+Spawn five subagents in parallel, one per URL, each with the prompt "Read .claude/skills/newsletter-issue/workflows/ground-article.md and execute it for issue <N> and <url>." Each writes its notes to `tmp/issue-<N>/<slug>.md` and returns the fetch tier reached plus a one-line gist.
 
-Fetch tiers, in order:
-
-1. `WebFetch` on the URL.
-2. arXiv: the `/abs/` page; read the PDF with `Read` only if the abstract is insufficient.
-3. PDFs: `Read` with a page range.
-4. Blocked or JS-only pages: the `claude-in-chrome` skill against the owner's logged-in browser. This tier requires the Chrome extension to be connected. When it is not, the tier does not exist.
-5. YouTube: the description and any transcript. Make no claims about unwatched video content.
-
-Ground only from the page being linked. Reporting _about_ a release is not grounding for a paragraph that links the release itself. A summary may be used to locate a first-party mirror worth fetching, never as the source of specifics.
-
-When a source survives every tier unread, stop on that article: leave its `TODO headline N` placeholder in the file, record the failure in the grounding notes, draft the other four, and ask the owner for a replacement URL or the pasted page. A four-article draft with an honest gap is the correct artifact.
+When a subagent returns `Tier: none`, stop on that article: leave its `TODO headline N` placeholder in the file, draft the other four, and ask the owner for a replacement URL or the pasted page. A four-article draft with an honest gap is the correct artifact.
 
 ## 4. Draft the five sections
 
-Read `references/style.md` in full. Then write one paragraph per article, ordered hook first, substance in slots 2 to 4, lighter closer last.
+Read `references/style.md` in full and every grounding file under `tmp/issue-<N>/`. Then write one paragraph per article, ordered hook first, substance in slots 2 to 4, lighter closer last. Draft only from the grounding notes — do not re-fetch the sources.
 
 Headings are short editorial rewrites of three to six words, not the source's own title, often `<Actor> on <Thing>` ("Netflix on the LLM-Native RecSys"). Each wraps its whole title in one link. Step 6 joins them into the summary, so write them to read well in a list.
 
@@ -130,9 +96,20 @@ Fix every lint error and justify any warning left standing. Prettier runs in `--
 
 ## 8. Hand over
 
-Show the owner the five drafted sections, flagging any article whose grounding notes recorded a weak or failed fetch tier. Stop. Publishing is the owner's call.
+Show the owner one review document: the five drafted sections, flagging any article whose grounding notes recorded a weak or failed fetch tier, followed by the events scout report from `tmp/issue-<N>/events-scout.md` — proposed additions, proposed updates, and the rejects it dropped. If the scout found nothing, say so; an empty week is normal. If the scout has not returned yet, hand over the sections and bring the events report as soon as it lands.
 
-## 9. After the owner publishes
+Stop. Publishing the issue and approving events are both the owner's call, and each event proposal needs its own explicit yes — a comment on one proposal is not approval of the rest.
+
+## 9. Apply approved events
+
+Only for proposals the owner approved:
+
+1. Edit `src/content/events.yaml`: insert approved additions keeping the sort by `start` newest first, and apply approved updates. Carry over any `# unverified` comments from the report.
+2. For each new slug: `node scripts/events/fetch-banners.mjs --only <slug>`.
+3. If a new event or newly opened CFP belongs in the issue's events block and the issue is not yet published, add it there too.
+4. `npm run check` must pass — the schema rejects an unknown topic.
+
+## 10. After the owner publishes
 
 ```
 node scripts/newsletter/candidates.mjs mark used <url>...
