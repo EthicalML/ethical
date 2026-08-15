@@ -173,6 +173,9 @@ const line2 = keyed(LINE2, ['A', 'S']);
         this.probes.set(key, this.querySelector<HTMLElement>(`.site-logo-char[data-key="${key}"]`)!);
       }
 
+      /* Published on the header, not on the root: a custom property written to the document
+         element invalidates style for the whole tree on every frame of the tween, which is
+         enough to make other observers on the page miss their timing. */
       this.shell = this.closest<HTMLElement>('site-header') ?? this;
 
       this.readTheme();
@@ -356,8 +359,7 @@ const line2 = keyed(LINE2, ['A', 'S']);
       this.stage.style.width = `${lerp(m.width, collapsed).toFixed(2)}px`;
       this.stage.style.height = `${lerp(m.height, collapsed).toFixed(2)}px`;
       /* The bar and the frosted pane compact on the same eased value: the logo owns the
-         clock, the header reads this one property. Nothing else is written outside this
-         element. */
+         clock, the header reads this one property. */
       this.shell.style.setProperty('--header-collapse', e.toFixed(4));
     }
   }
