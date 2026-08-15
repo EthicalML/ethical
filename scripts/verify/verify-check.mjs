@@ -141,8 +141,13 @@ const walkMarkup = (dir) => {
     }
     if (!/\.(astro|tsx|html)$/.test(entry.name)) continue;
     const text = readFileSync(full, 'utf8');
-    for (const [, value] of text.matchAll(/data-surface=(?:"([^"]*)"|'([^']*)')/g)) {
-      surfaceValues.add(value);
+    // Both quote styles: reading only the double-quoted group made every single-quoted
+    // occurrence (including one inside a component's own stylesheet) register as `undefined`
+    // and fail the check with a value nobody had written.
+    for (const [, doubleQuoted, singleQuoted] of text.matchAll(
+      /data-surface=(?:"([^"]*)"|'([^']*)')/g,
+    )) {
+      surfaceValues.add(doubleQuoted ?? singleQuoted);
     }
     for (const [, value] of text.matchAll(/data-surface=\{([^}]*)\}/g)) {
       for (const [, literal] of value.matchAll(/'([^']*)'/g)) surfaceValues.add(literal);

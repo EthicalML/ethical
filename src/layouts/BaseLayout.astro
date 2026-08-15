@@ -7,7 +7,7 @@ import FootnoteBand from '../components/FootnoteBand.astro';
 import { siteTitle } from '../data/navigation';
 import { authors } from '../data/authors';
 
-const metaDescription = 'An independent research institute working to ensure that frontier AI is safe, aligned and accountable to people and society.';
+const metaDescription = 'An independent research institute working to ensure that frontier AI is safe, aligned and open for people and society.';
 const ogImage = '/images/banner.jpg';
 const { frontmatter = {} } = Astro.props;
 const title = frontmatter.title ?? siteTitle;
@@ -78,6 +78,7 @@ const article = frontmatter.article
     <link rel="alternate" type="application/rss+xml" title="The ML Engineer newsletter" href="/newsletter/rss.xml" />
     <link rel="alternate" type="application/rss+xml" title="Production ML, responsible AI and alignment blog" href="/blog/rss.xml" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.png" type="image/png" />
     <meta property="og:type" content={frontmatter.article ? 'article' : 'website'} />
     {frontmatter.article && frontmatter.datePublished && <meta property="article:published_time" content={frontmatter.datePublished} />}
@@ -248,37 +249,19 @@ const article = frontmatter.article
     </main>
     <FootnoteBand />
     <script is:inline>
-      // Exempt the first viewport from the reveal pre-hide, before the first paint.
-      //
-      // The inline stylesheet in <head> holds every [data-reveal] element at opacity 0
-      // until Reveal marks it revealed, and Reveal ships in the deferred module bundle
-      // below. That made LCP wait on script execution on every route: the h1 itself
-      // started invisible, and measured on the built site over localhost LCP landed at
-      // 930-1000ms against a 40-70ms first contentful paint on every route sampled.
-      //
-      // Both `is:inline` and the position are load-bearing. The script must run in the
-      // parser, after the whole body exists (so rects are measurable) and before paint
-      // (so no frame is photographed hidden); the bundled module below cannot do either.
-      // It deliberately does not re-run on client-side navigation — inline scripts are
-      // marked executed across view transitions, and after a swap `new Reveal(true)`
-      // already settles what is on screen without an entrance.
-      //
-      // Anything starting inside the viewport is marked revealed, so it paints with the
-      // document and plays no entrance; Reveal's prime() and sweep() both skip it. Below
-      // the fold nothing changes: those targets stay primed and reveal on scroll.
-      // `trigger` roots are left alone — the pre-hide never applied to them, so there is
-      // nothing to exempt, and their timing signal stays Reveal's to send.
+      // Exempt the first viewport from the reveal pre-hide, before the first paint —
+      // otherwise LCP waits on the deferred reveal bundle (measured ~950ms vs a 40-70ms
+      // FCP). Both `is:inline` and the position are load-bearing: the script must run in
+      // the parser, after the body exists (rects measurable) and before paint. It does
+      // not re-run on client-side navigation; `new Reveal(true)` settles those. Below
+      // the fold and `trigger` roots are untouched.
       document.querySelectorAll('[data-reveal]:not([data-reveal="trigger"])').forEach((target) => {
         if (target.getBoundingClientRect().top < innerHeight) target.setAttribute('data-revealed', '1');
       });
-      // Painting the first viewport immediately exposes elements whose visible text
-      // their own script rewrites at mount: the server copy paints, the script wipes it
-      // and animates it back, and the wipe reads as a flash. `data-paint-hold` opts such
-      // an element out of that first paint, and its owner clears the hold once the text
-      // says what the script means it to say (Hero's typewriter is the one holder).
-      // `visibility` rather than `opacity` so the reserved layout does not move, and set
-      // from script rather than CSS so a scriptless client — which has no wipe to fear —
-      // is never held: no script, no hold, and the copy renders as authored.
+      // `data-paint-hold` opts out elements whose own script rewrites their text at
+      // mount (the hero typewriter): painting the server copy first would flash before
+      // the wipe. `visibility` keeps layout still; held from script so a scriptless
+      // client is never held. The owner clears the hold once its text is correct.
       document.querySelectorAll('[data-paint-hold]').forEach((held) => {
         held.style.visibility = 'hidden';
       });
