@@ -183,14 +183,14 @@ const frontmatter = {
      bar's own offset and the script narrows it as the header compacts; --meta-anchor-top is
      the landing reserve and stays put. */
   newsletter-meta-bar {
-    --meta-anchor-top: 70px;
+    --meta-anchor-top: 54px; /* collapsed bar height: every issue-to-issue landing arrives scrolled, so the header is (or instantly becomes) collapsed; if it is momentarily at rest, sticky clamps the bar flush and it glides down with the collapse */
     --meta-bar-height: 65px;
     --meta-stuck-top: 70px;
   }
 
   @media (max-width: 1040px) {
     newsletter-meta-bar {
-      --meta-anchor-top: 68px;
+      --meta-anchor-top: 54px;
       --meta-stuck-top: 68px;
     }
   }
