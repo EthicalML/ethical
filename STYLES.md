@@ -202,7 +202,7 @@ pair is now compared by `npm run check:ratchet` rather than by memory.
 
 ## Global stylesheet
 
-`src/styles/tokens.css` is 1,323 lines. The counts below are from the current parsed stylesheet: a rule is a CSS style rule or `@font-face` rule, keyframe step selectors are excluded, and declarations inside keyframes are included.
+`src/styles/tokens.css` is 1,324 lines. The counts below are from the current parsed stylesheet: a rule is a CSS style rule or `@font-face` rule, keyframe step selectors are excluded, and declarations inside keyframes are included.
 
 | Category                             | Rules | Declarations | Contents                                                                                                                              |
 | ------------------------------------ | ----: | -----------: | ------------------------------------------------------------------------------------------------------------------------------------- |
@@ -216,7 +216,7 @@ pair is now compared by `npm run check:ratchet` rather than by memory.
 | Responsive foundation                |     7 |            8 | Global section, typography, primitive and form adjustments at the named breakpoints.                                                  |
 | Cross-surface and canvas integration |    73 |          151 | Canvas mount contracts, homepage section composition, shared composed-page clusters and rules spanning a page plus a child component. |
 | Theme overrides                      |     1 |          104 | Every theme-dependent token's light value on `:root[data-theme='light']`.                                                             |
-| Total                                |   257 |          703 | Global CSS only.                                                                                                                      |
+| Total                                |   257 |          699 | Global CSS only.                                                                                                                      |
 
 ## Component and page owners
 
@@ -364,4 +364,4 @@ Use these widths for CSS media queries. A component that needs responsive client
 3. For a new token, add it to `:root` when at least two owners need the same semantic value, or when the value must change between themes. A theme-dependent value is always a token, however few owners it has: a literal has nowhere to flip to under `:root[data-theme='light']`. Otherwise keep the value local.
 4. If an override seems necessary, find the existing owner first and change the original rule or component API. Add a cross-owner rule to `tokens.css` only when the relationship itself is shared and document that reason here.
 
-<!-- styles-hash: 690c8094c6e50c8511850677d1b40494f6da9425b6498a481cf20b89eee228d6 -->
+<!-- styles-hash: 676ce8bfba6dca4e256f6c52f3cf2bc90d60e99eda7b486b9b6d2c238aef5069 -->
