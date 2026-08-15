@@ -129,11 +129,3 @@ The People section shipped in PR #74 renders plain 120px portraits beside prose 
 ## Network page: validate and refresh the member roster
 
 Owner call 2026-08-12: validate what the network page claims and actually update and add the members — the copy predates the relaunch, and the roster needs real entries plus a maintenance path for keeping them current.
-
-## Backdrop-filter audit: declared is not rendering
-
-The brand-logo work proved the header's `backdrop-filter` had never rendered — a `view-transition-name` on the element (or any ancestor) makes it its own backdrop root, so the filter samples nothing, silently. Four other declarations exist: `SurveyReportApp.module.css` (two), `EventCards.astro` and `CommandPalette.astro`. Their selectors suggest none sits inside a named subtree, but none has been screenshot-verified. Put each under a camera once; fix or delete any that turn out to be no-ops.
-
-## Mobile drawer: toggle state desyncs across a resize
-
-Pre-existing (reproduced on master, found during the brand-logo work): open the drawer at a narrow width, resize to desktop and back, and the next tap on the toggle closes rather than opens — the drawer's auto-close on the desktop resize leaves the toggle's `aria-expanded` out of step. This is also what makes `verify:dom` red at 420x900 (the gate's resize sequence hits exactly this), so fixing it un-reds the mobile DOM gate.
