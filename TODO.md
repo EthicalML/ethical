@@ -12,13 +12,9 @@ Moving the nameservers to Cloudflare would also allow **real 301 redirects** for
 
 `OpenSourceShowcase.css` carries two `.open-source-showcase` rules that match nothing: the component's root is the `open-source-showcase` custom element carrying `.open-source-prototype`. Deleting them is not purely mechanical, because the padding they were meant to apply may be intended and currently comes from elsewhere, so it needs a visually reviewed change rather than a blind removal. Found during the 2026-08-08 colocation pass.
 
-## Improve the search
+## Search: no entry point below 950px
 
-The search is still not immediate, takes a while to laod
-Can we make it such that it displays all and filters progressively?
-That way when you open it you could have some of the top recommended pages too
-Also i searched "mle 123", and "123" and the MLE newsletter 123 does not come up
-So it seems there are still inefficienes herel.
+The palette now opens instantly and answers issue numbers locally, but the `.search-trigger` button is `display: none` below 950px, so on a phone the only way in is a keyboard shortcut nobody has. The mobile drawer needs a search row that opens the same palette.
 
 ## Principles prev/next: sticky sub-navbar with directional slide
 
@@ -117,10 +113,6 @@ The talks page has only five `<img>` elements, all correctly lazy and none above
 Fixable without changing anything anyone sees: render the photograph as an HTML `<img>` layer behind the generated SVG rather than inside it, or gate the banner on an `IntersectionObserver`. The generated ground and motifs are cheap and can stay eager; it is only the remote photograph that is worth deferring.
 
 Explicitly NOT in scope: the reel mounts the active talk's player eagerly, which costs about 1 MB and sets two third-party cookies before any interaction. That is deliberate — it is what makes pressing play instant — and the owner has decided to keep it (2026-08-10). Do not "optimise" it away.
-
-## Reveal gate: exempt above-the-fold content from opacity-0
-
-Phase-3 CWV audit (2026-08-12, tmp/report-seo-phase3.md): the inline `[data-reveal]{opacity:0}` rule in BaseLayout.astro gates LCP on JS execution on every route — /privacy/ (ungated) renders content in ~106ms vs 1.4-1.9s elsewhere, and the h1 itself starts invisible. Fix by exempting the first viewport (or gating the rule behind a JS-added class so no-JS renders fully visible), keeping all below-fold reveal motion. Visible motion change: land alone, owner-validated with before/after per AGENTS.md. The prefers-reduced-motion branch already shows the opt-out pattern.
 
 ## About page: bespoke People treatment
 
