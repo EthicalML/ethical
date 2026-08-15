@@ -8,9 +8,10 @@
 #   cfp-track — worth speaking at, not showcase-worthy: the scout reports CFP
 #               windows and deadlines only; the event enters events.yaml only
 #               once a talk is confirmed or the owner partners with it.
-# `scouted` is the scout's own memory of one-off candidates, so the same
-# conference is not researched from scratch every week; the scout maintains
-# it freely. Seeded from the 2026-08-15 watchlist research
+# `scouted` is the scout's own memory — one-off candidates and the known state
+# of watchlist entries (`status: tracked`) — so nothing is researched from
+# scratch again until a deadline nears, an edition passes, or the record ages
+# out (~90 days); the scout maintains it freely. Seeded from the 2026-08-15 watchlist research
 # (tables posted on PR #100).
 
 watchlist:

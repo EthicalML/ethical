@@ -22,7 +22,7 @@ These govern every step below:
 
 ## 3. Check the watchlist
 
-For each watchlist entry, find the next edition beyond what the ledger last recorded: dates, location, and CFP status — including likely CFP windows when applications have not opened yet (organisers usually repeat their cycle). One search per entry is enough when nothing has changed; skip an entry whose state is already known with no deadline near.
+For each watchlist entry, find the next edition beyond what the ledger last recorded: dates, location, and CFP status — including likely CFP windows when applications have not opened yet (organisers usually repeat their cycle). The same carry-forward rule as step 4 applies: when the ledger already records the entry's next edition and CFP status, skip it entirely until a deadline is within 14 days, the edition passes, or the record is ~90 days old — most weeks this makes the watchlist sweep a handful of searches, not one per entry.
 
 The tiers behave differently (their meaning is documented in the ledger header):
 
@@ -33,7 +33,7 @@ The tiers behave differently (their meaning is documented in the ledger header):
 
 One sweep of `WebSearch` for new conferences in the next 12–18 months on the file's topics (AI platforms and infrastructure, AI agents, MLOps, LLM systems, cloud native, Kubernetes, Python, data/ML engineering, AI governance), applying the rules of step 2.
 
-Before researching any candidate, check it against `scouted`: if it was checked within the last 21 days and no CFP deadline is within 14 days, carry its ledger line forward and spend nothing more on it. Drop candidates whose `series` or `url` is already in `events.yaml` — those were handled in step 3.
+Before researching any candidate, check it against `scouted`. A known entry is carried forward at zero cost; re-research it only when something forces it: its recorded CFP deadline is within 14 days (flag the urgency), its recorded edition has passed (assess the next one, or prune), or the entry is over ~90 days old. `rejected` entries whose reason is structural (format, organiser shut down, scale cap) stay rejected without any recheck until a next edition suggests the structure changed. Drop candidates whose `series` or `url` is already in `events.yaml` — those were handled in step 3.
 
 ## 5. Select, then verify only the shortlist
 
@@ -43,7 +43,7 @@ Only for the shortlist and for watchlist findings being proposed: fetch the orga
 
 ## 6. Update the ledger
 
-Rewrite the `scouted` section of `scripts/events/data/scout-ledger.yaml`: one entry per candidate assessed this run or carried forward, with `checked` set to today for anything actually looked at. Prune entries whose event has passed. Leave `watchlist` untouched.
+Rewrite the `scouted` section of `scripts/events/data/scout-ledger.yaml`: one entry per candidate assessed this run or carried forward, with `checked` set to today for anything actually looked at. Watchlist entries record their known state here too (`status: tracked`, next edition dates, CFP status) — that record is what lets later runs skip them. Prune entries whose event has passed. Leave `watchlist` untouched.
 
 ## 7. Write the report
 
