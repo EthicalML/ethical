@@ -267,7 +267,10 @@ for (const route of routes) {
         scrollUnlocked: !document.body.classList.contains('mobile-nav-open'),
       }));
       await page.locator('[data-mobile-menu-open]').click();
-      await page.setViewportSize({ width: 1000, height: viewport.height });
+      // Must cross the 1040px nav-collapse breakpoint (see SiteHeader.astro) for the
+      // drawer's desktop auto-close to fire; 1000 stopped being "desktop" when the
+      // breakpoint moved and left this gate red with a phantom drawer bug.
+      await page.setViewportSize({ width: 1100, height: viewport.height });
       await page.waitForTimeout(100);
       homepageInteractions.mobileDrawerScrolled.desktopResize = await page.evaluate(() => ({
         ariaHidden: document.querySelector('[data-mobile-menu]').getAttribute('aria-hidden'),
@@ -294,7 +297,11 @@ for (const route of routes) {
           accordionCount: drawer.querySelectorAll('[data-mobile-accordion]').length,
           drawerOpen: drawer.getAttribute('aria-hidden') === 'false',
           firstPanelOpen: !drawer.querySelector('.mobile-submenu').hidden,
-          joinVisible: drawer.querySelector('.join-pill').getBoundingClientRect().height >= 44,
+          // The join CTA left the drawer for the header row when the toggle became the
+          // only drawer control; the 44px touch-target promise is asserted where the
+          // pill actually lives now.
+          joinVisible:
+            document.querySelector('.header-row .join-pill').getBoundingClientRect().height >= 44,
           /* The theme control is measured here, with the drawer open, rather than
              in the page-level touch-target sweep: below 950px the desktop pill is
              `display: none` and the drawer copy is inside a closed, hidden drawer,
