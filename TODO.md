@@ -8,14 +8,6 @@ Phase 6 — LLM-optimized serving (owner direction, proven pattern from industry
 
 Moving the nameservers to Cloudflare would also allow **real 301 redirects** for the legacy `/mle/N.html` URLs, configurable through the Cloudflare API once keys are available. GitHub Pages can only serve the current meta-refresh redirect pages, which Google documents as permanent redirects, so this would be an improvement rather than a repair.
 
-## OpenSourceShowcase: two dead selectors
-
-`OpenSourceShowcase.css` carries two `.open-source-showcase` rules that match nothing: the component's root is the `open-source-showcase` custom element carrying `.open-source-prototype`. Deleting them is not purely mechanical, because the padding they were meant to apply may be intended and currently comes from elsewhere, so it needs a visually reviewed change rather than a blind removal. Found during the 2026-08-08 colocation pass.
-
-## Search: no entry point below 950px
-
-The palette now opens instantly and answers issue numbers locally, but the `.search-trigger` button is `display: none` below 950px, so on a phone the only way in is a keyboard shortcut nobody has. The mobile drawer needs a search row that opens the same palette.
-
 ## Principles prev/next: sticky sub-navbar with directional slide
 
 The principle pages carry prev/next only at the bottom, and the transition does not read as progression. Move the controls into a sticky sub-navbar in the same spirit as the newsletter issue navigation, always reachable, and animate the change directionally: on next, the current principle text exits to the left while the next enters from the right; reversed on previous. Audit the Motion table entry for "Principle directional slide" when doing this. The current markup also uses ASCII-arrow link text, which the conventions forbid.
@@ -27,10 +19,6 @@ Presentation follow-up to the on-domain catalogue: clicking a category card shou
 ## Policy record: full text preview
 
 The reading room renders each publication as page images with the canonical PDF hosted remotely, so the document bodies are the only genuinely uncrawlable content on the site. Add a second action next to the PDF link: a "preview text" control opening the full document text in a modal, converted from the PDF into readable markdown with tables and structure preserved. Extraction quality is the open question: `scripts/fetch-policy-previews.mjs` already downloads and extracts text, so first assess whether that structured output is good enough for tables and headings; if not, evaluate an OCR or document-understanding model, or a one-off subagent extraction pass committed as data. Confirm republication rights for the ACM-published documents before committing full text to the repo.
-
-## Easy optimisation: composed pages ship the whole prose CSS bundle
-
-Every composed MDX page imports through the `src/components/prose/components.js` barrel, and Vite bundles all prose-component CSS into one 110,215-byte chunk, so importing one component ships everyone's CSS. `TalksGrid` proved it: zero consumers, markup never rendered, CSS still in the bundle. `/policy/` and `/open-source/` therefore download 188,709 bytes of CSS against 35,339 for `/privacy/`, roughly 150KB each of stylesheet they never use. Test whether direct component imports on one composed page split the chunk before doing the whole set. This is a serving optimisation with no maintenance benefit, so it only earns time if the fix is close to trivial.
 
 ## Newsletter pass (next up)
 
@@ -98,9 +86,9 @@ The achievements card and StatBand print "30+" per owner instruction; the record
 
 I want to follow on from the State of Production ML 2025, but now for 2026. Instead of asking respondents, I want to do a slight twist on this: collect, through research, the ML stack from various companies from their public blog posts, etc. We would be able to build a report based on all of that. Right now, this could be a more meaningful approach as opposed to what could be a biassed survey response.
 
-## Backlink every newsletter issue to the talks and events page
+## Generate the newsletter events block from the events collection
 
-Each issue carries an events block, but nothing in it points back to `/talks-and-events/`, so the archive of talks and the open calls for papers are reachable only from the site navigation. Add a backlink from the events block of every issue — new issues from the template, and the archive in a single pass — so a reader who finds an issue through search lands on the events page rather than a dead end. The events block itself is still hand-maintained copy; generating it from the events collection is the related open item, and doing both in one pass avoids editing 399 issues twice.
+The talks-and-events backlink shipped in every issue (PR #83). The remaining half of that item: the events block itself is still hand-maintained copy in each issue; generating it from the events collection would keep the ~270 issues that carry one consistent without another archive-wide pass.
 
 ## Issue 400: the Production ML Across 2015-2035 talk
 
