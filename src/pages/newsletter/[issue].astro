@@ -171,8 +171,30 @@ const frontmatter = {
      starts just under the chrome. */
   .issue-anchor {
     height: 0;
-    scroll-margin-top: calc(var(--meta-stuck-top, 62px) + var(--meta-bar-height, 58px));
+    /* Deliberately the at-rest chrome, not the live one: this is where a client-side
+       navigation lands, and the header collapses a moment after it arrives. Reading the
+       compacting height would move the landing point out from under the reader as the bar
+       shrinks — the scroll settles twice, which is exactly what the motion gate measures. */
+    scroll-margin-top: calc(var(--meta-anchor-top) + var(--meta-bar-height));
   }
+  /* Static, not fallbacks inside each var(): the anchor's scroll-margin is read on the
+     swapped-in document's first frame, before any script has measured anything. Both restate
+     the header's at-rest bar height less the 1px overlap. --meta-stuck-top is the docked
+     bar's own offset and the script narrows it as the header compacts; --meta-anchor-top is
+     the landing reserve and stays put. */
+  newsletter-meta-bar {
+    --meta-anchor-top: 70px;
+    --meta-bar-height: 65px;
+    --meta-stuck-top: 70px;
+  }
+
+  @media (max-width: 1040px) {
+    newsletter-meta-bar {
+      --meta-anchor-top: 68px;
+      --meta-stuck-top: 68px;
+    }
+  }
+
   .issue-meta {
     align-items: center;
     background: var(--bg-inset);
@@ -183,7 +205,7 @@ const frontmatter = {
     margin-top: 34px;
     padding: 16px 24px;
     position: sticky;
-    top: var(--meta-stuck-top, 62px);
+    top: var(--meta-stuck-top);
     transition:
       background 0.3s ease,
       border-color 0.3s ease,
@@ -437,20 +459,28 @@ const frontmatter = {
       if (!sentinel || !meta) return;
 
       // The header's height is not a constant: its bar compacts as the logo collapses, so the
-      // dock offset follows the bar's frosted pane instead of measuring the header once.
-      // Overlapped by 1px so no seam ever opens between the header and the docked bar.
-      const glass = document.querySelector<HTMLElement>('.header-glass');
+      // dock offset follows the bar's frosted pane. Overlapped by 1px so no seam ever opens
+      // between the header and the docked bar. The pane is re-queried on every measurement
+      // and re-observed after a navigation: the header is persisted across view transitions,
+      // so a captured node is the *outgoing* document's, detached and 0px tall, which drops
+      // the offset to -1px and moves this page's landing anchor by the header's whole height.
       const setOffset = () => {
-        const height = glass?.getBoundingClientRect().height ?? 62;
-        this.style.setProperty('--meta-stuck-top', `${height - 1}px`);
+        const glass = document.querySelector<HTMLElement>('.header-glass');
+        const height = glass?.getBoundingClientRect().height;
+        if (height) this.style.setProperty('--meta-stuck-top', `${height - 1}px`);
         this.style.setProperty('--meta-bar-height', `${meta.getBoundingClientRect().height}px`);
       };
-      setOffset();
-      addEventListener('resize', setOffset, { signal: this.controller.signal });
-      if (glass) {
+      const watchGlass = () => {
+        const glass = document.querySelector<HTMLElement>('.header-glass');
+        setOffset();
+        if (!glass) return;
+        this.glassObserver?.disconnect();
         this.glassObserver = new ResizeObserver(setOffset);
         this.glassObserver.observe(glass);
-      }
+      };
+      watchGlass();
+      addEventListener('resize', setOffset, { signal: this.controller.signal });
+      document.addEventListener('astro:page-load', watchGlass, { signal: this.controller.signal });
 
       this.observer = new IntersectionObserver(([entry]) => this.classList.toggle('is-stuck', !entry.isIntersecting && entry.boundingClientRect.top < 0), {
         rootMargin: '-80px 0px 0px 0px',
