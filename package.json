@@ -46,6 +46,7 @@
     "fontkit": "^2.0.4",
     "globals": "17.9.0",
     "pagefind": "^1.5.2",
+    "png-to-ico": "^3.0.2",
     "prettier": "3.9.6",
     "prettier-plugin-astro": "0.14.1",
     "typescript": "6.0.3",

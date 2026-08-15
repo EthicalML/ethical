@@ -14,6 +14,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as fontkit from 'fontkit';
+import pngToIco from 'png-to-ico';
 import sharp from 'sharp';
 import { decompress } from 'wawoff2';
 
@@ -61,12 +62,12 @@ for (const [style, file] of [
 }
 
 const variations = new Map();
-function instance(italic, size) {
+function instance(italic, size, wght = 300) {
   // The browser's default font-optical-sizing:auto sets opsz to the used font size in px.
   const opsz = Math.min(72, Math.max(6, size));
-  const key = `${italic ? 'i' : 'r'}:${opsz}`;
+  const key = `${italic ? 'i' : 'r'}:${opsz}:${wght}`;
   if (!variations.has(key)) {
-    variations.set(key, fonts[italic ? 'italic' : 'roman'].getVariation({ wght: 300, opsz }));
+    variations.set(key, fonts[italic ? 'italic' : 'roman'].getVariation({ wght, opsz }));
   }
   return variations.get(key);
 }
@@ -432,6 +433,44 @@ function faviconRasterSvg(size, padding) {
   ].join('\n');
 }
 
+/**
+ * Favicon cuts: weight-300 glyphs cannot survive tab sizes, so the small cuts trade weight
+ * for legibility — heavier instances at the smallest optical size, the glyph enlarged and
+ * ink-centred per cell. The dark cells lift to the header's value so the grid reads on
+ * dark tab strips. The letters lighten as the canvas grows, converging on the true mark.
+ */
+const FAVICON_CELL_BG = '#1c2420';
+const FAVICON_CUTS = [
+  { size: 16, cell: 7, gap: 2, frac: 0.95, wght: 800 },
+  { size: 32, cell: 15, gap: 2, frac: 0.85, wght: 700 },
+  { size: 48, cell: 23, gap: 2, frac: 0.78, wght: 600 },
+];
+
+function faviconTileSvg({ size, cell, gap, frac, wght }) {
+  const shapes = [];
+  MARK_CELLS.forEach((spec, i) => {
+    const x = (i % 2) * (cell + gap);
+    const y = Math.floor(i / 2) * (cell + gap);
+    // opsz pinned to the axis minimum (pass 6, not the glyph size): the chunkiest cut.
+    const font = instance(spec.italic, 6, wght);
+    const glyph = font.layout(spec.glyph).glyphs[0];
+    const scale = (cell * frac) / font.unitsPerEm;
+    const box = glyph.path.bbox;
+    const cx = ((box.minX + box.maxX) / 2) * scale;
+    const cy = ((box.minY + box.maxY) / 2) * scale;
+    shapes.push({
+      rect: { x, y, w: cell, h: cell },
+      fill: spec.bg === CELL_BG ? FAVICON_CELL_BG : spec.bg,
+    });
+    const d = glyph.path
+      .transform(scale, 0, 0, -scale, x + cell / 2 - cx, y + cell / 2 + cy)
+      .toSVG()
+      .replace(/-?\d+(\.\d+)?/g, (m) => num(Number(m)));
+    shapes.push({ fill: spec.fill, d });
+  });
+  return toSvg({ width: size, height: size }, null, shapes);
+}
+
 const verbose = process.argv.includes('--verify');
 fs.mkdirSync(outDir, { recursive: true });
 
@@ -462,7 +501,17 @@ for (const tile of TILES.filter((t) => t.fit)) {
   }
 }
 
-fs.writeFileSync(path.join(root, 'public', 'favicon.svg'), markSvg());
+// The scalable favicon carries the 32px lettered cut; the ico carries all three.
+fs.writeFileSync(path.join(root, 'public', 'favicon.svg'), faviconTileSvg(FAVICON_CUTS[1]));
+const faviconPngs = await Promise.all(
+  FAVICON_CUTS.map((cut) =>
+    sharp(Buffer.from(faviconTileSvg(cut)), { density: 288 })
+      .resize(cut.size, cut.size)
+      .png()
+      .toBuffer(),
+  ),
+);
+fs.writeFileSync(path.join(root, 'public', 'favicon.ico'), await pngToIco(faviconPngs));
 await sharp(Buffer.from(faviconRasterSvg(512, 40)))
   .png()
   .toFile(path.join(root, 'public', 'favicon.png'));
