@@ -210,12 +210,13 @@ const line2 = keyed(LINE2, ['A', 'S']);
       if (this.frame) cancelAnimationFrame(this.frame);
       this.frame = 0;
       this.target = y > COLLAPSE_AT ? 1 : 0;
-      /* Landing at the top of the destination from a settled collapsed header plays the
-         expansion instead of snapping: that is the one arrival where the reader is looking
-         at the header, and the instant jump to the full wordmark read as a glitch. Every
-         other arrival still adopts instantly — scrolled destinations, reduced motion, and
-         an expansion caught mid-flight simply continues from its pose (the tween reverses freely by design). */
-      if (this.target === 0 && this.progress > 0 && !this.motionQuery.matches) {
+      /* An arrival whose pose does not match plays the tween in whichever direction is
+         needed instead of snapping: the instant jump read as a glitch against the tweened
+         collapse everywhere else, and the tween reverses freely from any pose by design.
+         Two arrivals still adopt instantly: reduced motion, and hash arrivals — the
+         newsletter's prev/next lands on the docked issue bar, which reserves the header's
+         height and would ride a tweening bar a moment after the reader has arrived. */
+      if (this.progress !== this.target && !hashTarget && !this.motionQuery.matches) {
         this.last = performance.now();
         this.frame = requestAnimationFrame(this.tick);
         return;
