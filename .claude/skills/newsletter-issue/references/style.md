@@ -6,12 +6,12 @@ Keep the window at 40 issues. Over the full 398-issue archive the colon-lede rat
 
 ## Shape of one article section
 
-| Measure                | Median | p90 | Range |
-| ---------------------- | ------ | --- | ----- |
+| Measure                | Median | p90 | Range  |
+| ---------------------- | ------ | --- | ------ |
 | Words                  | 158    | 217 | 31-291 |
-| Sentences              | 6      | 8   | 1-17  |
-| Commas                 | 9      | 17  | 0-27  |
-| Links inside the prose | 0      | 1   | 0-3   |
+| Sentences              | 6      | 8   | 1-17   |
+| Commas                 | 9      | 17  | 0-27   |
+| Links inside the prose | 0      | 1   | 0-3    |
 
 One paragraph. No bullets, no sub-headings, no block quotes inside an article section. The link lives in the heading, so the prose usually carries none: name the source in words instead of linking it again.
 
