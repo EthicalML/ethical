@@ -342,7 +342,8 @@ const TILES = [
     handoff: 'C · #asset-mark',
     width: 640,
     height: 640,
-    build(theme, cells) {
+    // The mark is theme-invariant, so this is the one tile that ignores the theme.
+    build(_theme, cells) {
       const m = mark({ cell: 176, gap: 10, glyphSize: 112 });
       return m.draw((640 - m.size) / 2, (640 - m.size) / 2, { collectInto: cells });
     },
