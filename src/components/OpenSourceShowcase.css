@@ -139,10 +139,6 @@
   scroll-margin-top: 124px;
 }
 
-.open-source-showcase.compact {
-  padding-top: 48px;
-}
-
 @media (max-width: 950px) {
   .open-source-prototype {
     padding: 32px;
@@ -171,17 +167,6 @@
   .xai-stages b {
     animation: none;
     left: 33%;
-  }
-}
-
-.open-source-showcase h2 {
-  font: 300 44px/1.1 var(--font-display);
-  margin: 18px 0 38px;
-}
-
-@media (max-width: 950px) {
-  .open-source-showcase {
-    padding-inline: 24px;
   }
 }
 

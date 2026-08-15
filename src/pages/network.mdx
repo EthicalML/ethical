@@ -5,7 +5,11 @@ composed: true
 layout: ../layouts/ProseLayout.astro
 ---
 
-import { FormSection, Hero, NetworkDirectory, NewsletterLatestCard, RecentIssuesRail } from '../components/prose/components.js';
+import FormSection from '../components/FormSection.astro';
+import Hero from '../components/Hero.astro';
+import NetworkDirectory from '../components/NetworkDirectory.astro';
+import NewsletterLatestCard from '../components/NewsletterLatestCard.astro';
+import RecentIssuesRail from '../components/RecentIssuesRail.astro';
 import { contactFormCopy, networkSectors, networkStats } from '../data/contactForm';
 
 <Hero

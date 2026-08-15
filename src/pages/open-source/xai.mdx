@@ -7,7 +7,12 @@ layout: ../../layouts/ProseLayout.astro
 ---
 
 import { getEntry } from 'astro:content';
-import { ArticleHero, Metrics, ProjectLinks, StageExplorer, TalkCard, XaiProcess } from '../../components/prose/components.js';
+import ArticleHero from '../../components/ArticleHero.astro';
+import Metrics from '../../components/prose/Metrics.astro';
+import ProjectLinks from '../../components/ProjectLinks.astro';
+import StageExplorer from '../../components/StageExplorer.astro';
+import TalkCard from '../../components/TalkCard.astro';
+import XaiProcess from '../../components/XaiProcess.astro';
 
 export const stages = [
   {

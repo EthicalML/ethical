@@ -527,9 +527,12 @@
   }
 }
 
+/* `.prose-header h1` used to ride along here. The prose header is owned by
+  `src/styles/prose.css`, which sets its own two-step mobile ladder; this flat
+  52px sat later in the cascade and overrode the 600px step, but only on the
+  pages that happened to load this sheet. */
 @media (max-width: 950px) {
-  .hero h1,
-  .prose-header h1 {
+  .hero h1 {
     font-size: 52px;
   }
 }

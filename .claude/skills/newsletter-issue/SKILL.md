@@ -106,6 +106,12 @@ The weekly list mirrors the five headings and inverts their link convention: hea
 
 Check the events list against the new issue date and drop anything that has already happened. The scaffold copies it forward blind.
 
+Keep the `/talks-and-events/` backlink paragraph that sits under the events lede; every issue carries it so a reader who lands on an issue through search can reach the talks and events page. The scaffold carries it forward with the rest of the events block, so this is a check rather than an edit:
+
+```
+You can also find our upcoming events and past talk recordings on the [talks and events page](/talks-and-events/).
+```
+
 ## 6. Write the frontmatter
 
 `summary`: the five headings verbatim, comma-joined, plus ` + more 🚀`. Shorten a heading only if it is genuinely too long.

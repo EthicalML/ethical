@@ -6,7 +6,10 @@ composed: true
 layout: ../../layouts/ProseLayout.astro
 ---
 
-import { ArticleHero, CategoryAtlas, CTA, Metrics } from '../../components/prose/components.js';
+import ArticleHero from '../../components/ArticleHero.astro';
+import CategoryAtlas from '../../components/CategoryAtlas.astro';
+import CTA from '../../components/prose/CTA.astro';
+import Metrics from '../../components/prose/Metrics.astro';
 import catalogues from '../../content/oss-catalogues.json';
 import ProductionMlCatalogue from '../../components/ProductionMlCatalogue.astro';
 import productionMlLibraries from '../../data/production-ml-libraries.json';

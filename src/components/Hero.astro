@@ -126,7 +126,14 @@ const longestBeneficiary = effectiveBeneficiaries.reduce((a, b) => (b.length > a
         ))
       }
     </h1>
-    <type-writer data-beneficiaries={JSON.stringify(effectiveBeneficiaries)}>
+    {
+      /* data-paint-hold: the subtitle's final text is in the HTML for crawlers and for
+         scriptless clients, but this script blanks it and types it out, so painting the
+         server copy first would read as a flash and a wipe. The pre-paint script in
+         BaseLayout hides held elements before the first paint; run() clears the hold as
+         soon as the outputs say what it means them to say. */
+    }
+    <type-writer data-paint-hold data-beneficiaries={JSON.stringify(effectiveBeneficiaries)}>
       <p class="hero-subtitle" data-underline={typewriter_underline ? 'true' : 'false'} aria-label={ariaSentence}>
         <span class="hero-typewriter-line" data-line={missionLine1}>
           <span class="hero-typewriter-text">{missionLine1}</span>
@@ -180,6 +187,10 @@ const longestBeneficiary = effectiveBeneficiaries.reduce((a, b) => (b.length > a
 
     connectedCallback() {
       this.destroyed = false;
+      // Releases the pre-paint hold set by BaseLayout on `data-paint-hold`. Every exit
+      // from this method must reach it: a bail-out leaves the server-rendered subtitle
+      // in place, which is the correct text, and holding it back would lose the copy.
+      const paint = () => this.style.removeProperty('visibility');
       const subtitle = this.querySelector<HTMLElement>('.hero-subtitle');
       const outputs = Array.from(this.querySelectorAll<HTMLElement>('.hero-typewriter-text'));
       const glitch = this.querySelector<HTMLElement>('.hero-typewriter-glitch');
@@ -190,11 +201,15 @@ const longestBeneficiary = effectiveBeneficiaries.reduce((a, b) => (b.length > a
         const parsed = JSON.parse(this.dataset.beneficiaries ?? '[]');
         beneficiaries = Array.isArray(parsed) ? parsed : [];
       } catch {
+        paint();
         return;
       }
 
       const initialBeneficiary = beneficiaries[0];
-      if (!subtitle || outputs.length !== 3 || !glitch || !cursor || !initialBeneficiary) return;
+      if (!subtitle || outputs.length !== 3 || !glitch || !cursor || !initialBeneficiary) {
+        paint();
+        return;
+      }
 
       const initialLines = [outputs[0].textContent ?? '', outputs[1].textContent ?? '', initialBeneficiary];
       const styles = getComputedStyle(subtitle);
@@ -250,10 +265,12 @@ const longestBeneficiary = effectiveBeneficiaries.reduce((a, b) => (b.length > a
         if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
           initialLines.forEach((line, index) => setText(outputs[index], line));
           setPhase('static');
+          paint();
           return;
         }
 
         outputs.forEach((output) => setText(output, ''));
+        paint();
         for (let index = 0; index < initialLines.length; index += 1) {
           await type(outputs[index], initialLines[index], 'initial');
         }
