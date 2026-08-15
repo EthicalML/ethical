@@ -214,8 +214,8 @@ const line2 = keyed(LINE2, ['A', 'S']);
          expansion instead of snapping: that is the one arrival where the reader is looking
          at the header, and the instant jump to the full wordmark read as a glitch. Every
          other arrival still adopts instantly — scrolled destinations, reduced motion, and
-         a tween caught mid-flight, where matching the pose is not worth the complexity. */
-      if (this.target === 0 && this.progress === 1 && !this.motionQuery.matches) {
+         an expansion caught mid-flight simply continues from its pose (the tween reverses freely by design). */
+      if (this.target === 0 && this.progress > 0 && !this.motionQuery.matches) {
         this.last = performance.now();
         this.frame = requestAnimationFrame(this.tick);
         return;
