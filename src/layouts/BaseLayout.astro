@@ -7,7 +7,7 @@ import FootnoteBand from '../components/FootnoteBand.astro';
 import { siteTitle } from '../data/navigation';
 import { authors } from '../data/authors';
 
-const metaDescription = 'An independent research institute working to ensure that frontier AI is safe, aligned and accountable to people and society.';
+const metaDescription = 'An independent research institute working to ensure that frontier AI is safe, aligned and open for people and society.';
 const ogImage = '/images/banner.jpg';
 const { frontmatter = {} } = Astro.props;
 const title = frontmatter.title ?? siteTitle;
@@ -78,6 +78,7 @@ const article = frontmatter.article
     <link rel="alternate" type="application/rss+xml" title="The ML Engineer newsletter" href="/newsletter/rss.xml" />
     <link rel="alternate" type="application/rss+xml" title="Production ML, responsible AI and alignment blog" href="/blog/rss.xml" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.png" type="image/png" />
     <meta property="og:type" content={frontmatter.article ? 'article' : 'website'} />
     {frontmatter.article && frontmatter.datePublished && <meta property="article:published_time" content={frontmatter.datePublished} />}
@@ -147,6 +148,11 @@ const article = frontmatter.article
     </script>
     <ClientRouter />
     <style is:inline>
+      /* The pre-hide only ever covers what has not been marked revealed yet. Two things
+         clear it without waiting for the reveal bundle: the pre-paint script at the foot
+         of <body>, which marks every first-viewport target revealed so LCP text paints
+         with the document instead of on script execution, and the <noscript> override
+         below, which un-hides everything when there is no script to reveal it. */
       [data-reveal]:not([data-reveal='trigger']):not([data-revealed='1']) {
         opacity: 0;
         transform: translateY(26px);
@@ -184,6 +190,17 @@ const article = frontmatter.article
         }
       }
     </style>
+    <noscript>
+      <!-- Reveal is the only thing that clears the pre-hide, so without script the whole
+           page below the first viewport would stay at opacity 0 for ever. Same selector as
+           the rule above and later in the cascade, so it wins on source order. -->
+      <style>
+        [data-reveal]:not([data-reveal='trigger']):not([data-revealed='1']) {
+          opacity: 1;
+          transform: none;
+        }
+      </style>
+    </noscript>
     <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-L2HXV1W6H6"></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
@@ -231,6 +248,24 @@ const article = frontmatter.article
       <slot />
     </main>
     <FootnoteBand />
+    <script is:inline>
+      // Exempt the first viewport from the reveal pre-hide, before the first paint —
+      // otherwise LCP waits on the deferred reveal bundle (measured ~950ms vs a 40-70ms
+      // FCP). Both `is:inline` and the position are load-bearing: the script must run in
+      // the parser, after the body exists (rects measurable) and before paint. It does
+      // not re-run on client-side navigation; `new Reveal(true)` settles those. Below
+      // the fold and `trigger` roots are untouched.
+      document.querySelectorAll('[data-reveal]:not([data-reveal="trigger"])').forEach((target) => {
+        if (target.getBoundingClientRect().top < innerHeight) target.setAttribute('data-revealed', '1');
+      });
+      // `data-paint-hold` opts out elements whose own script rewrites their text at
+      // mount (the hero typewriter): painting the server copy first would flash before
+      // the wipe. `visibility` keeps layout still; held from script so a scriptless
+      // client is never held. The owner clears the hold once its text is correct.
+      document.querySelectorAll('[data-paint-hold]').forEach((held) => {
+        held.style.visibility = 'hidden';
+      });
+    </script>
     <script>
       import '../shared/MorphPairs';
       import '../shared/Motion';

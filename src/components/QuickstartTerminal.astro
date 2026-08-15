@@ -153,9 +153,14 @@ const { cli }: Props = Astro.props;
     overflow: auto;
     padding: 28px;
   }
+  /* The `code` here is the one the `Code` component renders inside
+    `.terminal-command`, so it is scoped to this terminal. Unscoped, the rule
+    left the component's stylesheet as a bare `code` selector and reset the
+    monospace font on every inline `code` span of every page that loaded the
+    chunk this component's CSS landed in. */
   .terminal-command,
   .terminal-output,
-  :global(code) {
+  .terminal-body :global(code) {
     font: inherit;
     white-space: pre-wrap;
   }

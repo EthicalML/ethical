@@ -5,7 +5,9 @@ composed: true
 layout: ../layouts/ProseLayout.astro
 ---
 
-import { ArticleHero, ChannelLinks, FormSection } from '../components/prose/components.js';
+import ArticleHero from '../components/ArticleHero.astro';
+import ChannelLinks from '../components/ChannelLinks.astro';
+import FormSection from '../components/FormSection.astro';
 import { contactFormCopy, contactFormTitle, networkSectors, networkStats } from '../data/contactForm';
 
 <ArticleHero eyebrow="CONTACT" title="Contact the Institute" intro="A single route into the network, frameworks, research and institutional partnerships." />

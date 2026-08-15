@@ -231,7 +231,9 @@ const initialProject = menus.oss.items![0]!;
     left: 0;
     position: absolute;
     right: 0;
-    top: 100%;
+    /* The header shell keeps its full height while the bar compacts inside it, so the panel
+       anchors to the bar's own bottom edge (published by SiteHeader) rather than the shell's. */
+    top: var(--header-bar-bottom, 100%);
   }
 
   .mega-panel {

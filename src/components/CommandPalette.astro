@@ -4,12 +4,34 @@
 // and Newsletter groups so the 400-issue archive never crowds out the site's
 // own pages. The index only exists on built output; in dev the palette opens
 // with a note instead of results.
+//
+// Nothing the palette shows first depends on that index. A curated set of
+// flagship destinations is server-rendered into the panel, so the palette opens
+// with content on the first frame and filters that set on every keystroke while
+// Pagefind is still loading its chunks. Issue numbers are answered locally from
+// the collection too: Pagefind ANDs query terms, so "mle 123" asked it for pages
+// containing both "mle" (a string that appears on no issue page, they read "The
+// ML Engineer") and "123", and returned everything except issue 123.
 import { NEWSLETTER_TAGS } from '../content.config';
+import { getIssueNumbers, toIssueRanges } from '../utils/RecentIssues';
 
 const NEWSLETTER_PREFIX = '/newsletter/';
+
+const SUGGESTIONS = [
+  { href: '/principles/', title: 'The 9 Responsible AI Principles', note: 'The principles for AI alignment and safety' },
+  { href: '/policy/', title: 'AI policy and standards', note: 'EU AI Act, ISO, UN and national engagement' },
+  { href: '/frameworks/', title: 'AI safety frameworks', note: 'Procurement, maturity and security frameworks' },
+  { href: '/open-source/', title: 'Open source projects', note: 'KAOS, Kompute, XAI and the production ML catalogue' },
+  { href: '/newsletter/', title: 'The ML Engineer newsletter', note: 'Weekly production ML and MLOps issues' },
+  { href: '/blog/', title: 'Blog', note: 'Engineering notes and write-ups' },
+  { href: '/reports/state-of-ml-2025/', title: 'State of Production ML 2025', note: 'Survey report, data and analysis' },
+  { href: '/about/', title: 'About the Institute', note: 'Mission, membership and the network' },
+];
+
+const issueRanges = toIssueRanges(await getIssueNumbers());
 ---
 
-<command-palette data-newsletter-prefix={NEWSLETTER_PREFIX} data-newsletter-tags={NEWSLETTER_TAGS.join(' ')}>
+<command-palette data-newsletter-prefix={NEWSLETTER_PREFIX} data-newsletter-tags={NEWSLETTER_TAGS.join(' ')} data-newsletter-issues={issueRanges}>
   <div class="palette-overlay" data-palette-overlay hidden>
     <div class="palette-panel" data-surface="dark" role="dialog" aria-modal="true" aria-label="Site search">
       <div class="palette-input-row">
@@ -17,9 +39,22 @@ const NEWSLETTER_PREFIX = '/newsletter/';
         <input data-palette-input type="search" placeholder="Search the Institute…" autocomplete="off" spellcheck="false" aria-label="Search query" />
         <span class="palette-hint" aria-hidden="true">ESC</span>
       </div>
-      <div class="palette-results" data-palette-results hidden>
+      <div class="palette-results" data-palette-results>
+        <div class="palette-group" data-palette-group="suggested">
+          <p class="palette-eyebrow" data-palette-suggested-eyebrow>START HERE</p>
+          <div data-palette-list="suggested">
+            {
+              SUGGESTIONS.map((suggestion) => (
+                <a class="palette-result" href={suggestion.href} data-palette-suggestion>
+                  <strong>{suggestion.title}</strong>
+                  <span>{suggestion.note}</span>
+                </a>
+              ))
+            }
+          </div>
+        </div>
         <div class="palette-group" data-palette-group="pages" hidden>
-          <p class="palette-eyebrow">PAGES</p>
+          <p class="palette-eyebrow">MORE PAGES</p>
           <div data-palette-list="pages"></div>
         </div>
         <div class="palette-group" data-palette-group="newsletter" hidden>
@@ -97,6 +132,10 @@ const NEWSLETTER_PREFIX = '/newsletter/';
   .palette-results {
     padding: 6px 0 10px;
   }
+  .palette-results[hidden],
+  .palette-group[hidden] {
+    display: none;
+  }
   .palette-eyebrow {
     color: var(--text-3);
     font-family: var(--font-mono);
@@ -108,6 +147,9 @@ const NEWSLETTER_PREFIX = '/newsletter/';
     border-left: 2px solid transparent;
     display: block;
     padding: 9px 16px 9px 14px;
+  }
+  .palette-results :global(a.palette-result[hidden]) {
+    display: none;
   }
   .palette-results :global(a.palette-result:hover),
   .palette-results :global(a.palette-result[data-active='1']) {
@@ -165,9 +207,12 @@ const NEWSLETTER_PREFIX = '/newsletter/';
 <script>
   type PagefindResult = { data: () => Promise<{ url: string; excerpt: string; meta?: { title?: string } }> };
   type Pagefind = { search: (query: string) => Promise<{ results: PagefindResult[] }>; preload?: (query: string) => Promise<void> };
+  type Entry = { url: string; title: string; excerpt: string };
 
   const PAGE_LIMIT = 6;
   const NEWSLETTER_LIMIT = 5;
+  // Fragments are fetched in one batch, so this bounds a round trip rather than a waterfall.
+  const FETCH_LIMIT = 16;
 
   class CommandPalette extends HTMLElement {
     private controller = new AbortController();
@@ -175,6 +220,7 @@ const NEWSLETTER_PREFIX = '/newsletter/';
     private pagefindFailed = false;
     private debounce?: number;
     private searchId = 0;
+    private issueRanges: [number, number][] = [];
 
     connectedCallback() {
       this.controller = new AbortController();
@@ -182,6 +228,14 @@ const NEWSLETTER_PREFIX = '/newsletter/';
       const overlay = this.querySelector<HTMLElement>('[data-palette-overlay]');
       const input = this.querySelector<HTMLInputElement>('[data-palette-input]');
       if (!overlay || !input) return;
+
+      this.issueRanges = (this.dataset.newsletterIssues ?? '')
+        .split(' ')
+        .filter(Boolean)
+        .map((part) => {
+          const [from, to] = part.split('-');
+          return [Number(from), Number(to ?? from)] as [number, number];
+        });
 
       document.addEventListener(
         'keydown',
@@ -196,7 +250,7 @@ const NEWSLETTER_PREFIX = '/newsletter/';
             event.preventDefault();
             this.move(event.key === 'ArrowDown' ? 1 : -1);
           } else if (!overlay.hidden && event.key === 'Enter') {
-            const active = this.querySelector<HTMLAnchorElement>('[data-active="1"]');
+            const active = this.rows().find((link) => link.dataset.active === '1');
             if (active) {
               event.preventDefault();
               this.close();
@@ -222,8 +276,13 @@ const NEWSLETTER_PREFIX = '/newsletter/';
       input.addEventListener(
         'input',
         () => {
+          // The local pass runs on the keystroke itself: filtering the curated set
+          // and resolving an issue number needs no index, so the panel always
+          // responds immediately and the Pagefind pass only adds to it.
+          const query = input.value.trim();
+          this.renderLocal(query);
           window.clearTimeout(this.debounce);
-          this.debounce = window.setTimeout(() => void this.search(input.value.trim()), 80);
+          this.debounce = window.setTimeout(() => void this.search(query), 80);
         },
         { signal },
       );
@@ -248,7 +307,7 @@ const NEWSLETTER_PREFIX = '/newsletter/';
       if (!overlay || !input) return;
       overlay.hidden = false;
       input.value = '';
-      this.render([], []);
+      this.renderLocal('');
       this.status('');
       input.focus();
       if (this.pagefindFailed) this.status('Search index unavailable — it is generated on the production build.');
@@ -283,9 +342,68 @@ const NEWSLETTER_PREFIX = '/newsletter/';
       status.hidden = !text;
     }
 
-    private async search(query: string) {
+    private suggestions() {
+      return Array.from(this.querySelectorAll<HTMLAnchorElement>('[data-palette-suggestion]'));
+    }
+
+    /** Filters the server-rendered destinations and resolves an issue number, with no index. */
+    private renderLocal(query: string) {
+      const group = this.querySelector<HTMLElement>('[data-palette-group="suggested"]');
+      const eyebrow = this.querySelector<HTMLElement>('[data-palette-suggested-eyebrow]');
+      const needle = query.toLowerCase();
+      let visible = 0;
+      for (const suggestion of this.suggestions()) {
+        const haystack = suggestion.textContent?.toLowerCase() ?? '';
+        const match = !needle || haystack.includes(needle);
+        suggestion.hidden = !match;
+        if (match) visible += 1;
+      }
+      if (group) group.hidden = visible === 0;
+      if (eyebrow) eyebrow.textContent = needle ? 'PAGES' : 'START HERE';
+      // An emptied box drops back to the opening state; otherwise the previous
+      // query's index matches stay put until the new ones replace them, so the
+      // list narrows rather than blanking between keystrokes.
+      if (!needle) {
+        this.fill('pages', []);
+        this.fill('newsletter', []);
+      }
+      this.pinIssue(this.issueFromQuery(query));
+      this.markFirstActive();
+    }
+
+    /** A number anywhere in the query that names a real issue: "123", "mle 123", "issue 123". */
+    private issueFromQuery(query: string) {
+      const digits = query.match(/\d{1,4}/);
+      if (!digits) return undefined;
+      const issue = Number(digits[0]);
+      return this.issueRanges.some(([from, to]) => issue >= from && issue <= to) ? issue : undefined;
+    }
+
+    private issueUrl(issue: number) {
+      return `${this.dataset.newsletterPrefix ?? '/newsletter/'}${issue}/`;
+    }
+
+    /** Keeps the number match as the first newsletter row without rebuilding the rest. */
+    private pinIssue(issue?: number) {
       const results = this.querySelector<HTMLElement>('[data-palette-results]');
-      if (!results) return;
+      const group = this.querySelector<HTMLElement>('[data-palette-group="newsletter"]');
+      const pages = this.querySelector<HTMLElement>('[data-palette-group="pages"]');
+      const list = this.querySelector<HTMLElement>('[data-palette-list="newsletter"]');
+      if (!results || !group || !pages || !list) return;
+      list.querySelector('[data-palette-pin]')?.remove();
+      if (issue !== undefined) {
+        const row = this.row({ url: this.issueUrl(issue), title: `The ML Engineer, issue #${issue}`, excerpt: `Open newsletter issue ${issue}` });
+        row.dataset.palettePin = '';
+        list.prepend(row);
+      }
+      group.hidden = list.children.length === 0;
+      // An asked-for issue number is the answer, so its group leads; without one
+      // the site's own pages come first and the archive stays below them.
+      if (issue === undefined) results.append(group);
+      else results.insertBefore(group, pages);
+    }
+
+    private async search(query: string) {
       if (!query) {
         this.render([], []);
         this.status('');
@@ -297,11 +415,11 @@ const NEWSLETTER_PREFIX = '/newsletter/';
       const response = await this.pagefind.search(query);
       if (id !== this.searchId) return;
       const prefix = this.dataset.newsletterPrefix ?? '/newsletter/';
-      const pages: { url: string; title: string; excerpt: string }[] = [];
+      const pages: Entry[] = [];
       // Tag names typed into the palette surface a browse row jumping to the
       // filtered archive, ahead of the full-text issue matches.
       const normalized = query.toLowerCase().replace(/\s+/g, '-');
-      const issues: { url: string; title: string; excerpt: string }[] = (this.dataset.newsletterTags ?? '')
+      const issues: Entry[] = (this.dataset.newsletterTags ?? '')
         .split(' ')
         .filter((tag) => tag && normalized.length >= 2 && tag.includes(normalized))
         .slice(0, 2)
@@ -310,55 +428,73 @@ const NEWSLETTER_PREFIX = '/newsletter/';
           title: `Browse tag: ${tag}`,
           excerpt: `All newsletter issues tagged <mark>${tag}</mark>`,
         }));
-      for (const result of response.results) {
+      // One batch instead of a fragment fetch per result: the awaits used to run in
+      // series, so every extra result cost another round trip before anything rendered.
+      const fragments = await Promise.all(response.results.slice(0, FETCH_LIMIT).map((result) => result.data()));
+      if (id !== this.searchId) return;
+      const suggested = new Set(this.suggestions().flatMap((link) => (link.hidden ? [] : [link.getAttribute('href')])));
+      for (const data of fragments) {
         if (pages.length >= PAGE_LIMIT && issues.length >= NEWSLETTER_LIMIT) break;
-        const data = await result.data();
         const url = data.url.replace(/index\.html$/, '');
         const entry = { url, title: data.meta?.title || url, excerpt: data.excerpt };
         if (url.startsWith(prefix)) {
           if (issues.length < NEWSLETTER_LIMIT) issues.push(entry);
-        } else if (pages.length < PAGE_LIMIT) {
+        } else if (pages.length < PAGE_LIMIT && !suggested.has(url)) {
           pages.push(entry);
         }
       }
       this.render(pages, issues);
-      this.status(pages.length || issues.length ? '' : `No results for “${query}”.`);
+      this.status(this.querySelector('a.palette-result:not([hidden])') ? '' : `No results for “${query}”.`);
     }
 
-    private render(pages: { url: string; title: string; excerpt: string }[], issues: { url: string; title: string; excerpt: string }[]) {
-      const results = this.querySelector<HTMLElement>('[data-palette-results]');
-      if (!results) return;
-      results.hidden = !pages.length && !issues.length;
-      for (const [key, entries] of [
-        ['pages', pages],
-        ['newsletter', issues],
-      ] as const) {
-        const group = this.querySelector<HTMLElement>(`[data-palette-group="${key}"]`);
-        const list = this.querySelector<HTMLElement>(`[data-palette-list="${key}"]`);
-        if (!group || !list) continue;
-        group.hidden = !entries.length;
-        list.textContent = '';
-        for (const entry of entries) {
-          const link = document.createElement('a');
-          link.className = 'palette-result';
-          link.href = entry.url;
-          const title = document.createElement('strong');
-          title.textContent = entry.title;
-          const excerpt = document.createElement('span');
-          // Pagefind excerpts carry only <mark> highlights; rendered as HTML so
-          // matches read highlighted rather than as literal tags.
-          excerpt.innerHTML = entry.excerpt;
-          link.append(title, excerpt);
-          link.addEventListener('click', () => this.close(), { signal: this.controller.signal });
-          list.append(link);
-        }
-      }
-      const first = this.querySelector<HTMLAnchorElement>('a.palette-result');
-      if (first) first.dataset.active = '1';
+    private render(pages: Entry[], issues: Entry[]) {
+      // The locally resolved issue stays pinned above the full-text matches.
+      const issue = this.issueFromQuery(this.querySelector<HTMLInputElement>('[data-palette-input]')?.value.trim() ?? '');
+      this.fill('pages', pages);
+      this.fill('newsletter', issue === undefined ? issues : issues.filter((entry) => entry.url !== this.issueUrl(issue)));
+      this.pinIssue(issue);
+      this.markFirstActive();
+    }
+
+    private row(entry: Entry) {
+      const link = document.createElement('a');
+      link.className = 'palette-result';
+      link.href = entry.url;
+      const title = document.createElement('strong');
+      title.textContent = entry.title;
+      const excerpt = document.createElement('span');
+      // Pagefind excerpts carry only <mark> highlights; rendered as HTML so
+      // matches read highlighted rather than as literal tags.
+      excerpt.innerHTML = entry.excerpt;
+      link.append(title, excerpt);
+      link.addEventListener('click', () => this.close(), { signal: this.controller.signal });
+      return link;
+    }
+
+    private fill(key: 'pages' | 'newsletter', entries: Entry[]) {
+      const group = this.querySelector<HTMLElement>(`[data-palette-group="${key}"]`);
+      const list = this.querySelector<HTMLElement>(`[data-palette-list="${key}"]`);
+      if (!group || !list) return;
+      group.hidden = !entries.length;
+      list.textContent = '';
+      for (const entry of entries) list.append(this.row(entry));
+    }
+
+    private rows() {
+      return Array.from(this.querySelectorAll<HTMLAnchorElement>('a.palette-result')).filter((link) => !link.hidden);
+    }
+
+    private markFirstActive() {
+      const rows = this.rows();
+      const keep = rows.find((link) => link.dataset.active === '1');
+      // Every row is cleared, not just the visible ones: a filtered-out row that
+      // kept the flag would still be the one Enter opened.
+      for (const link of this.querySelectorAll<HTMLAnchorElement>('a.palette-result')) if (link !== keep) delete link.dataset.active;
+      if (!keep && rows[0]) rows[0].dataset.active = '1';
     }
 
     private move(delta: number) {
-      const links = Array.from(this.querySelectorAll<HTMLAnchorElement>('a.palette-result'));
+      const links = this.rows();
       if (!links.length) return;
       const current = links.findIndex((link) => link.dataset.active === '1');
       if (current >= 0) delete links[current].dataset.active;

@@ -122,8 +122,14 @@ const { python, cpp } = Astro.props;
     padding: 24px;
     tab-size: 4;
   }
+  /* Soft-wrapped rather than scrolled: a long line is easier to read wrapped
+    than behind a horizontal scrollbar, which is invisible until it is used. The
+    panel keeps its own `overflow: auto` for the lines too wide to wrap. This
+    used to arrive from `QuickstartTerminal.astro`'s unscoped `code` rule, so the
+    wrapping is stated here, where the panel is owned. */
   [data-code-panel] :global(code) {
     font: inherit;
+    white-space: pre-wrap;
   }
   [hidden] {
     display: none;

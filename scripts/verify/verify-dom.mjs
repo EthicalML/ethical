@@ -241,8 +241,11 @@ for (const route of routes) {
       await page.waitForTimeout(400);
       homepageInteractions.mobileDrawerScrolled = await page.evaluate((expectedScroll) => {
         const drawer = document.querySelector('[data-mobile-menu]');
-        const header = document.querySelector('.site-header');
+        const shell = document.querySelector('.header-sticky');
+        const toggle = document.querySelector('[data-mobile-menu-open]');
         const siteHeader = drawer.closest('site-header');
+        const toggleBox = toggle.getBoundingClientRect();
+        const barBottom = shell.querySelector('.header-row').getBoundingClientRect().bottom;
         return {
           expectedScroll,
           ariaHidden: drawer.getAttribute('aria-hidden'),
@@ -250,12 +253,25 @@ for (const route of routes) {
           bodyTop: document.body.style.top,
           drawerTop: drawer.getBoundingClientRect().top,
           drawerZIndex: getComputedStyle(drawer).zIndex,
-          headerZIndex: getComputedStyle(header).zIndex,
+          // The pinned shell is lifted over the drawer on purpose: the toggle that closes the
+          // drawer lives in the header row, so the row has to stay hittable above it.
+          headerZIndex: getComputedStyle(shell).zIndex,
           parent: drawer.closest('mobile-drawer').parentElement.localName,
           persist: siteHeader?.getAttribute('data-astro-transition-persist'),
-          paintsOnTop: Boolean(
-            document.elementFromPoint(innerWidth / 2, 1)?.closest('[data-mobile-menu]'),
+          // Two halves of one promise: the drawer covers the viewport under the header bar,
+          // and the control that closes it is the thing you hit at the top of the screen.
+          drawerCoversBelowBar: Boolean(
+            document
+              .elementFromPoint(innerWidth / 2, barBottom + 20)
+              ?.closest('[data-mobile-menu]'),
           ),
+          toggleHittable:
+            document
+              .elementFromPoint(
+                toggleBox.left + toggleBox.width / 2,
+                toggleBox.top + toggleBox.height / 2,
+              )
+              ?.closest('[data-mobile-menu-open]') === toggle,
           scrollLocked: document.body.classList.contains('mobile-nav-open'),
         };
       }, lockedScroll);
@@ -267,7 +283,10 @@ for (const route of routes) {
         scrollUnlocked: !document.body.classList.contains('mobile-nav-open'),
       }));
       await page.locator('[data-mobile-menu-open]').click();
-      await page.setViewportSize({ width: 1000, height: viewport.height });
+      // Must cross the 1040px nav-collapse breakpoint (see SiteHeader.astro) for the
+      // drawer's desktop auto-close to fire; 1000 stopped being "desktop" when the
+      // breakpoint moved and left this gate red with a phantom drawer bug.
+      await page.setViewportSize({ width: 1100, height: viewport.height });
       await page.waitForTimeout(100);
       homepageInteractions.mobileDrawerScrolled.desktopResize = await page.evaluate(() => ({
         ariaHidden: document.querySelector('[data-mobile-menu]').getAttribute('aria-hidden'),
@@ -294,7 +313,11 @@ for (const route of routes) {
           accordionCount: drawer.querySelectorAll('[data-mobile-accordion]').length,
           drawerOpen: drawer.getAttribute('aria-hidden') === 'false',
           firstPanelOpen: !drawer.querySelector('.mobile-submenu').hidden,
-          joinVisible: drawer.querySelector('.join-pill').getBoundingClientRect().height >= 44,
+          // The join CTA left the drawer for the header row when the toggle became the
+          // only drawer control; the 44px touch-target promise is asserted where the
+          // pill actually lives now.
+          joinVisible:
+            document.querySelector('.header-row .join-pill').getBoundingClientRect().height >= 44,
           /* The theme control is measured here, with the drawer open, rather than
              in the page-level touch-target sweep: below 950px the desktop pill is
              `display: none` and the drawer copy is inside a closed, hidden drawer,
@@ -940,10 +963,11 @@ for (const route of routes) {
         scrolledDrawer.bodyTop !== `-${scrolledDrawer.expectedScroll}px` ||
         Math.abs(scrolledDrawer.drawerTop) > 0.5 ||
         scrolledDrawer.drawerZIndex !== '80' ||
-        scrolledDrawer.headerZIndex !== '60' ||
+        scrolledDrawer.headerZIndex !== '90' ||
         scrolledDrawer.parent !== 'site-header' ||
         scrolledDrawer.persist !== 'site-header' ||
-        !scrolledDrawer.paintsOnTop ||
+        !scrolledDrawer.drawerCoversBelowBar ||
+        !scrolledDrawer.toggleHittable ||
         !scrolledDrawer.scrollLocked ||
         Math.abs(scrolledDrawer.closed.scrollY - scrolledDrawer.expectedScroll) > 1 ||
         scrolledDrawer.closed.bodyTop !== '' ||

@@ -140,7 +140,9 @@ methodology:
 
 import survey2024Csv from '../../data/survey-2024.csv?raw';
 import survey2025Csv from '../../data/survey-2025.csv?raw';
-import { ArticleHero, SurveyEvidence, SurveyReport } from '../../components/prose/components.js';
+import ArticleHero from '../../components/ArticleHero.astro';
+import SurveyEvidence from '../../components/SurveyEvidence.astro';
+import SurveyReport from '../../components/SurveyReportIsland.astro';
 import { buildSurveyComparison } from '../../utils/SurveyReportData';
 
 export const report = buildSurveyComparison(survey2025Csv, survey2024Csv);
