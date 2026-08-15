@@ -56,6 +56,7 @@ const CASES = [
     click: 'a[href="/principles/01/"]:visible',
     to: '/principles/01/',
     targets: ['.principle-prose'],
+    expectedScrollY: 0,
   },
   {
     name: 'principle-next',
@@ -63,6 +64,7 @@ const CASES = [
     click: '.principle-pagination a[data-transition-direction="forward"]',
     to: '/principles/02/',
     targets: ['.principle-prose'],
+    expectedScrollY: 0,
   },
   {
     name: 'principle-prev',
@@ -70,6 +72,7 @@ const CASES = [
     click: '.principle-pagination a[data-transition-direction="back"]',
     to: '/principles/01/',
     targets: ['.principle-prose'],
+    expectedScrollY: 0,
   },
   {
     name: 'newsletter-index-to-issue',
@@ -264,6 +267,11 @@ for (const entry of cases) {
     problems.push(
       `scroll settled twice: ${scroll.maxCorrection}px correction at post-swap frame ${scroll.atFrame}`,
     );
+  if (
+    entry.expectedScrollY !== undefined &&
+    (scroll.final === null || Math.abs(scroll.final - entry.expectedScrollY) > TOLERANCE_PX)
+  )
+    problems.push(`scroll rested at ${scroll.final}px, expected ${entry.expectedScrollY}px`);
 
   if (errors.length) problems.push(...errors);
 

@@ -17,12 +17,12 @@ const next = number < 9 ? String(number + 1).padStart(2, '0') : undefined;
 ---
 
 <BaseLayout frontmatter={frontmatter}>
-  <principle-meta-bar>
+  <principle-meta-bar slot="before-hero">
     <div data-meta-sentinel aria-hidden="true"></div>
     <nav class="principle-pagination" aria-label="Adjacent principles" data-reveal transition:name="principle-bar">
       {
         previous ? (
-          <a href={`/principles/${previous}/#principle`} data-transition-direction="back" aria-label={`Previous principle, ${previous}`}>
+          <a href={`/principles/${previous}/`} data-transition-direction="back" aria-label={`Previous principle, ${previous}`}>
             <i aria-hidden="true">‹</i>
             <span class="principle-step-label">Previous</span>
             <strong>{previous}</strong>
@@ -34,7 +34,7 @@ const next = number < 9 ? String(number + 1).padStart(2, '0') : undefined;
       <span class="principle-chip">Principle {data.number} / 09</span>
       {
         next ? (
-          <a href={`/principles/${next}/#principle`} data-transition-direction="forward" aria-label={`Next principle, ${next}`}>
+          <a href={`/principles/${next}/`} data-transition-direction="forward" aria-label={`Next principle, ${next}`}>
             <strong>{next}</strong>
             <span class="principle-step-label">Next</span>
             <i aria-hidden="true">›</i>
@@ -44,33 +44,25 @@ const next = number < 9 ? String(number + 1).padStart(2, '0') : undefined;
         )
       }
     </nav>
-    <div class="principle-anchor" id="principle" data-scroll-align="start" aria-hidden="true"></div>
-    <div class="principle-page" transition:name="principle-page">
-      <article class="principle-prose" data-reveal>
-        {data.failure_modes && <p class="commitment">{data.commitment}</p>}
-        <Content />
-      </article>
-      {
-        data.failure_modes && data.controls && (
-          <SplitList left={{ title: 'FAILURE MODES', items: data.failure_modes }} right={{ title: 'PRACTICAL CONTROLS', items: data.controls }} />
-        )
-      }
-      {data.number === '09' && <KaosGraph />}
-    </div>
   </principle-meta-bar>
+  <div class="principle-page" transition:name="principle-page">
+    <article class="principle-prose" data-reveal>
+      {data.failure_modes && <p class="commitment">{data.commitment}</p>}
+      <Content />
+    </article>
+    {
+      data.failure_modes && data.controls && (
+        <SplitList left={{ title: 'FAILURE MODES', items: data.failure_modes }} right={{ title: 'PRACTICAL CONTROLS', items: data.controls }} />
+      )
+    }
+    {data.number === '09' && <KaosGraph />}
+  </div>
 </BaseLayout>
 
 <style is:global>
   principle-meta-bar {
-    --principle-anchor-top: 54px;
-    --principle-bar-height: 65px;
     --principle-stuck-top: 70px;
-    display: block;
-  }
-
-  .principle-anchor {
-    height: 0;
-    scroll-margin-top: calc(var(--principle-anchor-top) + var(--principle-bar-height));
+    display: contents;
   }
 
   .principle-pagination {
@@ -80,13 +72,14 @@ const next = number < 9 ? String(number + 1).padStart(2, '0') : undefined;
     display: grid;
     gap: 12px;
     grid-template-columns: minmax(120px, 1fr) auto minmax(120px, 1fr);
-    margin-top: 34px;
+    margin-bottom: 0;
     padding: 16px 48px;
     position: sticky;
     top: var(--principle-stuck-top);
     transition:
       background 0.3s ease,
       border-color 0.3s ease,
+      margin-bottom 0.3s ease,
       padding 0.3s ease;
     z-index: 40;
   }
@@ -96,6 +89,7 @@ const next = number < 9 ? String(number + 1).padStart(2, '0') : undefined;
     background: var(--bg-panel);
     border-top-color: transparent;
     border-bottom-color: var(--accent-veil);
+    margin-bottom: 16px;
     padding-block: 8px;
   }
 
@@ -244,7 +238,6 @@ const next = number < 9 ? String(number + 1).padStart(2, '0') : undefined;
         const glass = document.querySelector<HTMLElement>('.header-glass');
         const height = glass?.getBoundingClientRect().height;
         if (height) this.style.setProperty('--principle-stuck-top', `${height - 1}px`);
-        this.style.setProperty('--principle-bar-height', `${pagination.getBoundingClientRect().height}px`);
       };
       const watchGlass = () => {
         const glass = document.querySelector<HTMLElement>('.header-glass');

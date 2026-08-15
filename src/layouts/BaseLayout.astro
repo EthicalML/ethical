@@ -231,6 +231,7 @@ const article = frontmatter.article
         HTML without it (raw legacy /mle archive, redirect stubs) stays unindexed. */
     }
     <main data-pagefind-body data-pagefind-meta={`title:${title}`}>
+      <slot name="before-hero" />
       {
         frontmatter.eyebrow && (
           <header class="prose-header" data-reveal>
