@@ -428,6 +428,7 @@ const frontmatter = {
   class NewsletterMetaBar extends HTMLElement {
     private controller = new AbortController();
     private observer?: IntersectionObserver;
+    private glassObserver?: ResizeObserver;
 
     connectedCallback() {
       this.controller = new AbortController();
@@ -435,17 +436,21 @@ const frontmatter = {
       const meta = this.querySelector<HTMLElement>('.issue-meta');
       if (!sentinel || !meta) return;
 
+      // The header's height is not a constant: its bar compacts as the logo collapses, so the
+      // dock offset follows the bar's frosted pane instead of measuring the header once.
+      // Overlapped by 1px so no seam ever opens between the header and the docked bar.
+      const glass = document.querySelector<HTMLElement>('.header-glass');
       const setOffset = () => {
-        const header = document.querySelector<HTMLElement>('.site-header');
-        // Exact (fractional) header height, overlapped by 1px so no seam ever
-        // opens between the header and the docked bar. Set on the element so
-        // the sticky top, the anchor scroll-margin and the bar height all read it.
-        const height = header?.getBoundingClientRect().height ?? 62;
+        const height = glass?.getBoundingClientRect().height ?? 62;
         this.style.setProperty('--meta-stuck-top', `${height - 1}px`);
         this.style.setProperty('--meta-bar-height', `${meta.getBoundingClientRect().height}px`);
       };
       setOffset();
       addEventListener('resize', setOffset, { signal: this.controller.signal });
+      if (glass) {
+        this.glassObserver = new ResizeObserver(setOffset);
+        this.glassObserver.observe(glass);
+      }
 
       this.observer = new IntersectionObserver(([entry]) => this.classList.toggle('is-stuck', !entry.isIntersecting && entry.boundingClientRect.top < 0), {
         rootMargin: '-80px 0px 0px 0px',
@@ -456,6 +461,7 @@ const frontmatter = {
     disconnectedCallback() {
       this.controller.abort();
       this.observer?.disconnect();
+      this.glassObserver?.disconnect();
     }
   }
 
