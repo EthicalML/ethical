@@ -7,86 +7,88 @@ import SiteLogo from './SiteLogo.astro';
 ---
 
 <site-header transition:persist="site-header">
-  <div class="header-glass" aria-hidden="true"></div>
-  <header class="site-header" data-surface="dark">
-    <div class="header-row">
-      <SiteLogo />
-      <nav class="primary-nav" aria-label="Primary navigation">
-        {
-          Object.entries(menus)
-            .filter(([, menu]) => menu.primary)
-            .map(([id, menu]) => (
-              <button class="nav-trigger" type="button" aria-expanded="false" data-menu-trigger={id} data-menu-width={menu.width}>
-                {menu.label}
-                <span class="caret" aria-hidden="true">
-                  ▾
-                </span>
-              </button>
-            ))
-        }
-      </nav>
-      <div class="nav-right">
-        <button class="nav-trigger" type="button" aria-expanded="false" data-menu-trigger="about" data-menu-width={menus.about.width}>
-          {menus.about.label}<span class="caret" aria-hidden="true">▾</span>
-        </button>
-        <button class="search-trigger" type="button" data-command-palette-open aria-label="Search the site">
-          <svg
-            class="search-icon"
-            viewBox="0 0 24 24"
-            width="15"
-            height="15"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.4"
-            stroke-linecap="round"
-            aria-hidden="true"
-          >
-            <circle cx="10.75" cy="10.75" r="6"></circle>
-            <path d="M15.3 15.3 20 20"></path>
-          </svg>
-          <kbd class="search-keys" aria-hidden="true">⌘K</kbd>
-        </button>
-        <a class="join-pill" href={join.href}>
-          <span class="join-label-full">{join.label}</span>
-          <span class="join-label-short">{join.short}</span>
-        </a>
-        <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label="Light mode">
-          <svg
-            class="theme-icon theme-icon-sun"
-            viewBox="0 0 24 24"
-            width="16"
-            height="16"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.25"
-            stroke-linecap="round"
-            aria-hidden="true"
-          >
-            <circle cx="12" cy="12" r="4.25"></circle>
-            <path d="M12 2.75v2M12 19.25v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2.75 12h2M19.25 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
-          </svg>
-          <svg
-            class="theme-icon theme-icon-moon"
-            viewBox="0 0 24 24"
-            width="16"
-            height="16"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.25"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a6.75 6.75 0 0 0 10.7 10.7z"></path>
-          </svg>
-        </button>
-        <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Menu" data-mobile-menu-open>
-          <i aria-hidden="true"></i>
-        </button>
+  <div class="header-sticky">
+    <div class="header-glass" aria-hidden="true"></div>
+    <header class="site-header" data-surface="dark">
+      <div class="header-row">
+        <SiteLogo />
+        <nav class="primary-nav" aria-label="Primary navigation">
+          {
+            Object.entries(menus)
+              .filter(([, menu]) => menu.primary)
+              .map(([id, menu]) => (
+                <button class="nav-trigger" type="button" aria-expanded="false" data-menu-trigger={id} data-menu-width={menu.width}>
+                  {menu.label}
+                  <span class="caret" aria-hidden="true">
+                    ▾
+                  </span>
+                </button>
+              ))
+          }
+        </nav>
+        <div class="nav-right">
+          <button class="nav-trigger" type="button" aria-expanded="false" data-menu-trigger="about" data-menu-width={menus.about.width}>
+            {menus.about.label}<span class="caret" aria-hidden="true">▾</span>
+          </button>
+          <button class="search-trigger" type="button" data-command-palette-open aria-label="Search the site">
+            <svg
+              class="search-icon"
+              viewBox="0 0 24 24"
+              width="15"
+              height="15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <circle cx="10.75" cy="10.75" r="6"></circle>
+              <path d="M15.3 15.3 20 20"></path>
+            </svg>
+            <kbd class="search-keys" aria-hidden="true">⌘K</kbd>
+          </button>
+          <a class="join-pill" href={join.href}>
+            <span class="join-label-full">{join.label}</span>
+            <span class="join-label-short">{join.short}</span>
+          </a>
+          <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label="Light mode">
+            <svg
+              class="theme-icon theme-icon-sun"
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.25"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="4.25"></circle>
+              <path d="M12 2.75v2M12 19.25v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2.75 12h2M19.25 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+            </svg>
+            <svg
+              class="theme-icon theme-icon-moon"
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.25"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a6.75 6.75 0 0 0 10.7 10.7z"></path>
+            </svg>
+          </button>
+          <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Menu" data-mobile-menu-open>
+            <i aria-hidden="true"></i>
+          </button>
+        </div>
       </div>
-    </div>
-    <MegaMenu />
-  </header>
+      <MegaMenu />
+    </header>
+  </div>
   <MobileDrawer />
   <CommandPalette />
 </site-header>
@@ -237,13 +239,27 @@ import SiteLogo from './SiteLogo.astro';
      what sticks and what occupies flow, so the row can animate its height as the logo
      collapses without moving a single pixel of the page below it — and every anchor offset,
      scroll-padding and `offsetHeight` reader keeps the number it already had. The shell is
-     transparent below the compacted bar, so it must not eat clicks meant for the page. */
-  .site-header {
+     transparent below the compacted bar, so it must not eat clicks meant for the page.
+
+     The shell is a wrapper rather than the header element itself because the frosted pane has
+     to be a sibling of the named header (see .header-glass) and still travel with it: during
+     macOS elastic overscroll a sticky element rides the rubber band, and a pane positioned
+     against the viewport instead of against the shell tears away from the bar and lands on the
+     page text. Sharing one sticky ancestor means one paint offset for both, always. */
+  .header-sticky {
     height: var(--header-shell-height);
     pointer-events: none;
     position: sticky;
     top: 0;
     z-index: 60;
+  }
+
+  /* Positioned so the mega menu can anchor against it, and layered so the bar's contents sit
+     over the pane: both are children of one stacking context now, where the pane's old
+     z-index would have painted it over the nav. */
+  .site-header {
+    position: relative;
+    z-index: 1;
   }
 
   /* The frosted pane, and the reason it is a separate element rather than the bar's own
@@ -261,13 +277,14 @@ import SiteLogo from './SiteLogo.astro';
     height: var(--header-bar-height, 69px);
     inset: 0 0 auto;
     pointer-events: none;
-    position: fixed;
+    position: absolute;
     /* Its own compositor layer: without this, Chrome re-rasterizes the backdrop-filter
        whenever a canvas beneath promotes or demotes layers, which flickers. */
     transform: translateZ(0);
     will-change: backdrop-filter;
-    /* Under the header's own z-index 60, over the page. */
-    z-index: 59;
+    /* Under the bar's contents, over the page: the shell's own z-index 60 is what puts the
+       pair above the page. */
+    z-index: 0;
   }
 
   @supports not (backdrop-filter: blur(1px)) {
@@ -653,7 +670,7 @@ import SiteLogo from './SiteLogo.astro';
      open the header is pinned to the viewport and lifted over it. */
   /* Nav collapse; see the note on the first 1040px block above. */
   @media (max-width: 1040px) {
-    body.mobile-nav-open .site-header {
+    body.mobile-nav-open .header-sticky {
       inset-inline: 0;
       position: fixed;
       top: 0;
