@@ -375,7 +375,13 @@ import SiteLogo from './SiteLogo.astro';
     white-space: nowrap;
   }
 
+  /* One height for every framed control in this row. The search box and the join
+     pill are cut from the same number rather than each arriving at it through its
+     own padding, which is how the icon-only search box ended up 5px shorter than
+     the pill beside it at the first compression tier. */
   .nav-right {
+    --control-height: 34px;
+
     align-items: center;
     display: flex;
     gap: 8px;
@@ -383,7 +389,10 @@ import SiteLogo from './SiteLogo.astro';
   }
 
   .nav-right .join-pill {
+    align-items: center;
+    display: inline-flex;
     margin-left: 0;
+    min-height: var(--control-height);
   }
 
   .join-label-short {
@@ -391,18 +400,20 @@ import SiteLogo from './SiteLogo.astro';
   }
 
   /* Two glyphs, not one: the lens says "search" without being read, and the keycap
-     teaches the shortcut. Square corners and a 34px box put it on the join pill's
-     baseline grid, so the right-hand controls read as one row of same-cut buttons
-     rather than a pill floating beside a rectangle. */
+     teaches the shortcut. Square corners and the shared control height put it on the
+     join pill's baseline grid, so the right-hand controls read as one row of
+     same-cut buttons rather than a pill floating beside a rectangle. */
   .search-trigger {
     align-items: center;
     background: var(--wash-1);
     border: 1px solid var(--hairline-card);
     border-radius: 0;
+    box-sizing: border-box;
     color: var(--text-2);
     cursor: pointer;
     display: inline-flex;
     gap: 6px;
+    height: var(--control-height);
     padding: 6px 5px 6px 9px;
     transition:
       background-color 0.2s ease,
@@ -502,8 +513,13 @@ import SiteLogo from './SiteLogo.astro';
       display: none;
     }
 
+    /* With the keycap gone the lens is the whole control, so the box becomes a
+       square of the shared height instead of a short rectangle: padding cannot be
+       trusted to land on the pill's height once its content changes. */
     .search-trigger {
-      padding: 6px 8px;
+      justify-content: center;
+      padding: 0;
+      width: var(--control-height);
     }
 
     .join-pill {
@@ -545,13 +561,27 @@ import SiteLogo from './SiteLogo.astro';
       top: 18px;
     }
 
-    /* The 420px header row has no room for a fourth control beside the logo,
-       the join pill and the menu button, so below the drawer breakpoint the theme
-       control lives in the drawer instead (see MobileDrawer.astro). */
+    /* The theme control lives in the drawer below the drawer breakpoint (see
+       MobileDrawer.astro), where it reads as a setting rather than a fourth glyph
+       in the row. Search stays in the row: it is a destination, not a setting, and
+       hiding it left the palette with no entry point at all on a phone, since the
+       keyboard shortcut it advertised does not exist there. */
     .nav-right .nav-trigger,
-    .search-trigger,
     .theme-toggle {
       display: none;
+    }
+
+    /* Every framed control in the row grows to the 44px touch floor together, and
+       the search box keeps the square cut it has at every other width: three
+       same-height, same-cut boxes rather than circles bracketing a rectangle. The
+       keycap is already gone here, and it teaches a shortcut a phone cannot press. */
+    .nav-right {
+      --control-height: 44px;
+    }
+
+    .search-trigger {
+      background: transparent;
+      color: var(--text-1);
     }
 
     .nav-right {
@@ -575,9 +605,6 @@ import SiteLogo from './SiteLogo.astro';
     }
 
     .nav-right .join-pill {
-      align-items: center;
-      display: inline-flex;
-      min-height: 44px;
       padding: 9px 14px;
       position: static;
     }
@@ -589,13 +616,14 @@ import SiteLogo from './SiteLogo.astro';
       align-items: center;
       background: transparent;
       border: 1px solid var(--hairline-card);
-      border-radius: 50%;
+      border-radius: 0;
+      box-sizing: border-box;
       color: var(--text-1);
       cursor: pointer;
       display: inline-flex;
-      height: 44px;
+      height: var(--control-height);
       justify-content: center;
-      width: 44px;
+      width: var(--control-height);
     }
 
     .mobile-menu-toggle i,
@@ -647,13 +675,23 @@ import SiteLogo from './SiteLogo.astro';
     }
   }
 
+  /* Three 44px controls plus the 189px wordmark put the row's intrinsic minimum at
+     383px, so this tier spends the cheap gaps to bring it back to 375 — the narrowest
+     phone class in use. The 44px boxes are not a lever: the DOM gate holds every
+     mobile control at 44x44. Below 375 the wordmark is the only thing left to cut,
+     which is a brand decision rather than a spacing one. */
   @media (max-width: 420px) {
     .header-row {
+      gap: 8px;
       padding-inline: 14px;
     }
 
+    .nav-right {
+      gap: 6px;
+    }
+
     .nav-right .join-pill {
-      padding-inline: 11px;
+      padding-inline: 10px;
     }
   }
 </style>
