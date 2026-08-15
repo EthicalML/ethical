@@ -485,13 +485,28 @@ import MobileDrawer from './MobileDrawer.astro';
       top: 18px;
     }
 
-    /* The 420px header row has no room for a fourth control beside the wordmark,
-       the join pill and the menu button, so below the drawer breakpoint the theme
-       control lives in the drawer instead (see MobileDrawer.astro). */
+    /* The theme control lives in the drawer below the drawer breakpoint (see
+       MobileDrawer.astro), where it reads as a setting rather than a fourth glyph
+       in the row. Search stays in the row: it is a destination, not a setting, and
+       hiding it left the palette with no entry point at all on a phone, since the
+       keyboard shortcut it advertised does not exist there. */
     .nav-right .nav-trigger,
-    .search-trigger,
     .theme-toggle {
       display: none;
+    }
+
+    /* Icon only, cut to match the menu toggle it now sits in a row with: same 44px
+       circle, same hairline, so the two round controls bracket the join pill instead
+       of one square box floating beside a circle. The keycap is already gone at this
+       width, and it teaches a shortcut a touch device cannot press. */
+    .search-trigger {
+      background: transparent;
+      border-radius: 50%;
+      color: var(--text-1);
+      height: 44px;
+      justify-content: center;
+      padding: 0;
+      width: 44px;
     }
 
     .nav-right {
@@ -595,13 +610,23 @@ import MobileDrawer from './MobileDrawer.astro';
     }
   }
 
+  /* Three 44px controls plus the 189px wordmark put the row's intrinsic minimum at
+     383px, so this tier spends the cheap gaps to bring it back to 375 — the narrowest
+     phone class in use. The 44px boxes are not a lever: the DOM gate holds every
+     mobile control at 44x44. Below 375 the wordmark is the only thing left to cut,
+     which is a brand decision rather than a spacing one. */
   @media (max-width: 420px) {
     .header-row {
+      gap: 8px;
       padding-inline: 14px;
     }
 
+    .nav-right {
+      gap: 6px;
+    }
+
     .nav-right .join-pill {
-      padding-inline: 11px;
+      padding-inline: 10px;
     }
   }
 </style>
