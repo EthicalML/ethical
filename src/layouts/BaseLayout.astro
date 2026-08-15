@@ -271,6 +271,17 @@ const article = frontmatter.article
       document.querySelectorAll('[data-reveal]:not([data-reveal="trigger"])').forEach((target) => {
         if (target.getBoundingClientRect().top < innerHeight) target.setAttribute('data-revealed', '1');
       });
+      // Painting the first viewport immediately exposes elements whose visible text
+      // their own script rewrites at mount: the server copy paints, the script wipes it
+      // and animates it back, and the wipe reads as a flash. `data-paint-hold` opts such
+      // an element out of that first paint, and its owner clears the hold once the text
+      // says what the script means it to say (Hero's typewriter is the one holder).
+      // `visibility` rather than `opacity` so the reserved layout does not move, and set
+      // from script rather than CSS so a scriptless client — which has no wipe to fear —
+      // is never held: no script, no hold, and the copy renders as authored.
+      document.querySelectorAll('[data-paint-hold]').forEach((held) => {
+        held.style.visibility = 'hidden';
+      });
     </script>
     <script>
       import '../shared/MorphPairs';
