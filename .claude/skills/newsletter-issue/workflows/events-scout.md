@@ -16,13 +16,18 @@ Read `scripts/events/data/scout-ledger.yaml` in full (it is small): `watchlist` 
 
 These govern every step below:
 
-- Europe first, in priority order: Berlin and nearby; then Germany, Prague, Vienna, Amsterdam and nearby Central Europe; then Europe-wide. Virtual events strongly relevant to a European audience count.
+- Europe first, in priority order: Berlin and nearby; then the other key hubs — London, Amsterdam, and Germany/Central Europe (Munich, Hamburg, Prague, Vienna); then Europe-wide. Virtual events strongly relevant to a European audience count.
 - Non-European events qualify only as unique flagships of the AI Engineer / MLOps World tier — the watchlist marks the standing exceptions. Prestige alone does not qualify a US event.
 - The bar is flagship or large-mainstage: an event the network would plausibly speak at, of the tier already in `events.yaml`. Regional meetups, vendor user-conferences and paper-mill conferences do not qualify — with the KCD/ContainerDays-style entries on the watchlist as the deliberate exceptions.
 
 ## 3. Check the watchlist
 
-For each watchlist entry, find the next edition beyond what `events.yaml` already lists: dates, location, and CFP status — including likely CFP windows when applications have not opened yet (organisers usually repeat their cycle). One search per entry is enough when nothing has changed; skip an entry whose next edition is already in `events.yaml` with a CFP that is still months from its deadline.
+For each watchlist entry, find the next edition beyond what the ledger last recorded: dates, location, and CFP status — including likely CFP windows when applications have not opened yet (organisers usually repeat their cycle). One search per entry is enough when nothing has changed; skip an entry whose state is already known with no deadline near.
+
+The tiers behave differently (their meaning is documented in the ledger header):
+
+- `feature` entries: a confirmed next edition becomes a proposed `events.yaml` addition.
+- `cfp-track` entries: report CFP windows, deadlines and changes only. Never propose one into `events.yaml` — it enters the site list only once a talk is confirmed or the owner partners with it, which the owner does outside this workflow.
 
 ## 4. Scout for new events
 
@@ -32,7 +37,7 @@ Before researching any candidate, check it against `scouted`: if it was checked 
 
 ## 5. Select, then verify only the shortlist
 
-Keep at most 3 new events — the strongest only. Zero is the normal outcome most weeks; never pad. Rejects need no verification beyond the search results that surfaced them.
+Keep at most 3 new events — the strongest only. Zero is the normal outcome most weeks: the measured base rate (2026-08 research) is roughly one genuinely new flagship-tier conference in Europe every 5–6 months, so the cap binds only during announcement bursts; never pad. The cap applies to proposed `events.yaml` additions and new watchlist recommendations only — CFP status updates are not capped. Rejects need no verification beyond the search results that surfaced them.
 
 Only for the shortlist and for watchlist findings being proposed: fetch the organiser page (or its CFP platform, e.g. Sessionize) and confirm dates, location and CFP deadline, one source URL per claim. If the page will not load or sources disagree, keep the proposal but mark the field `# unverified`, the file's existing convention. Never guess a date. Distinguish confirmed facts from inferred timing (likely CFP windows are inferences and must say so).
 

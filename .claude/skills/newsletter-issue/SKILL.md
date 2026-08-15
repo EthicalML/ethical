@@ -31,9 +31,9 @@ A link to a LinkedIn or X post is a pointer, not a source: resolve it to the art
 
 ## 2. Source candidates
 
-Spawn a subagent with the prompt "Read .claude/skills/newsletter-issue/workflows/source-candidates.md and execute it", naming any owner-supplied URLs that joined the pool. It fetches, scores and skims the pool and returns a table of the 15 survivors.
+Spawn a subagent with the prompt "Read .claude/skills/newsletter-issue/workflows/source-candidates.md and execute it", naming any owner-supplied URLs that joined the pool. It fetches and skims the pool and returns a factual digest of ~25 candidates — facts only, no verdicts. The scoring judgement stays here with you.
 
-Present the 15 to the owner exactly as returned. The owner cuts the 15 down to five, and those five go to step 3. Never pick unilaterally.
+Read `references/selection.md` in full, score the digest against its rules, and cut to the 15 strongest. Present those 15 to the owner, each carrying the digest facts plus your one line on why they matter. The owner cuts the 15 down to five, and those five go to step 3. Never pick unilaterally.
 
 After the cut, mark the clear rejects so they stop resurfacing:
 

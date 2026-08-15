@@ -1,8 +1,6 @@
 # Source candidates
 
-Executed by a subagent. Input from the spawning prompt: any owner-supplied URLs already added to the pool. Output: a return message carrying the 15-survivor table described in step 4 — the orchestrator presents it to the owner; never present or decide yourself.
-
-Read `.claude/skills/newsletter-issue/references/selection.md` in full first. Then:
+Executed by a subagent. Input from the spawning prompt: any owner-supplied URLs already added to the pool. Output: a return message carrying the factual digest described in step 4. You gather and summarise; you do not score, rank editorially, or cut — the orchestrator applies the selection rules to what you return. Read `.claude/skills/newsletter-issue/references/selection.md` first, only to know which candidates are worth skimming at all (hard exclusions), not to score.
 
 1. Fetch this week's candidates from all three sources:
 
@@ -24,10 +22,10 @@ Read `.claude/skills/newsletter-issue/references/selection.md` in full first. Th
 
    Add `--source hn`, `--source reddit` or `--source feeds` to list one source. Reddit scores and Hacker News points are not comparable, so read the `src` column before trusting the ranking. Feed entries are unscored and show `—` in `pts`: a publisher blog has no popularity signal at all, which is not the same as a low one, and those entries are ordered by recency instead. Judge them on the article, exactly as the rules require for every other entry.
 
-3. Score every entry against the rules in `references/selection.md`. The `kind`, `company`, `firstParty` and `ownProject` fields are heuristics from the title and host: use them to filter and sort, never to decide.
+3. Drop only hard exclusions under `references/selection.md`; everything debatable stays in. The `kind`, `company`, `firstParty` and `ownProject` fields are heuristics from the title and host: use them to order the skim, never to drop.
 
-4. Skim candidates from the top of the ranking until 15 survive the rules. Fetch each one and read enough to answer three questions: what does it actually claim or report, does it develop that idea or only enumerate observations, and who is the central actor. A title answers none of these. Metadata ranks a thin findings dump above a strong argument, and popularity is not a selection criterion at any point.
+4. Skim the top ~25 remaining candidates. Fetch each one and read enough to answer three questions: what does it actually claim or report, does it develop that idea or only enumerate observations, and who is the central actor. A title answers none of these, and popularity is not a criterion.
 
    Own content — the author's talks, projects and initiatives, and work they are connected to — is eligible and must be surfaced, flagged as own content, never silently dropped.
 
-5. Return the surviving 15 as a table, each row carrying: URL, source, points (or `—`), age, host, kind, word count, the central actor and why they matter, and one line on what the piece argues. Mark anything thin and anything that is own content. Do not mark any entries rejected — the owner has not cut yet.
+5. Return all skimmed candidates as a factual digest table, each row carrying: URL, source, points (or `—`), age, host, kind, word count, the central actor, one line on what the piece claims, and one line on how far it develops the claim. Flag own content. Record facts, not verdicts — no scores, no ranking of your own, no rejections.

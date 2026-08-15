@@ -1,39 +1,127 @@
 # Events scout ledger. Read and updated by the newsletter-issue events scout
 # (.claude/skills/newsletter-issue/workflows/events-scout.md).
 #
-# `watchlist` is the owner-curated set of recurring conferences checked every
-# run — the scout proposes changes to it in its report but never edits it.
-# `scouted` is the scout's own memory of one-off candidates already assessed,
-# so the same conference is not researched from scratch every week; the scout
-# maintains it freely.
+# `watchlist` is owner-curated; the scout proposes changes in its report but
+# never edits it. Two tiers:
+#   feature   — flagship: the scout proposes confirmed next editions straight
+#               into src/content/events.yaml.
+#   cfp-track — worth speaking at, not showcase-worthy: the scout reports CFP
+#               windows and deadlines only; the event enters events.yaml only
+#               once a talk is confirmed or the owner partners with it.
+# `scouted` is the scout's own memory of one-off candidates, so the same
+# conference is not researched from scratch every week; the scout maintains
+# it freely. Seeded from the 2026-08-15 watchlist research
+# (tables posted on PR #100).
 
 watchlist:
-  - name: KubeCon + CloudNativeCon Europe
-    note: flagship CNCF; strategically relevant co-located events count too
-  - name: AGNTCon + MCPCon Europe
-    note: Linux Foundation agentic AI and MCP events, including separate European editions
-  - name: PyCon DE & PyData
-  - name: EuroPython
-  - name: Regional PyCons in Central and nearby Europe
-    note: Germany, Czechia, Austria, Poland, Netherlands, Belgium, France, Switzerland, Nordics
-  - name: World Summit AI Amsterdam
-  - name: Rise of AI Berlin
-  - name: AI Engineer Europe
-  - name: AI Engineer World's Fair
-    note: US, but unique flagship — the exception to the Europe rule
-  - name: MLOps World
-    note: US, but unique flagship — the exception to the Europe rule
-  - name: WeAreDevelopers World Congress Berlin
-  - name: Cloud Native AI Summit Europe
-  - name: AI Horizons Prague
-  - name: Kubernetes Community Days, Central and nearby Europe
-  - name: ContainerDays Hamburg
+  feature:
+    - name: KubeCon + CloudNativeCon Europe
+      note: 10k+ CNCF flagship; co-located Cloud Native AI + Kubeflow Day matters most
+    - name: AGNTCon + MCPCon Europe
+      note: Linux Foundation / Agentic AI Foundation canonical agents+MCP venue
+    - name: AI Engineer Europe
+      note: London; European edition of the flagship AI-engineering brand
+    - name: World Summit AI Amsterdam
+      note: 10k+; existing organiser relationship
+    - name: WeAreDevelopers World Congress Berlin
+      note: 15k+; keynoted 2024 and 2025
+    - name: QCon London
+      note: senior-practitioner flagship; curated programme, chair outreach over CFP
+    - name: The AI Summit London
+      note: 5k+, London Tech Week anchor; strong governance/exec fit
+    - name: GITEX AI Europe Berlin
+      note: 20k+, GITEX-backed; the Berlin mega-event
+    - name: WAICF Cannes
+      note: 10k+, strong governance/business mainstage
+    - name: HumanX EMEA Amsterdam
+      note: new 2026; US flagship's European edition, watch trajectory
+    - name: RAISE Summit Paris
+      note: new since 2024; Paris flagship, watch trajectory
+    - name: AI Engineer World's Fair
+      note: US, unique flagship — standing exception to the Europe rule
+    - name: MLOps World
+      note: US, unique flagship in the MLOps niche — standing exception; moved Austin to SF
+  cfp-track:
+    - name: Rise of AI Berlin
+      note: ~300 curated seats, German-ecosystem lineup; attend because Berlin
+    - name: Accelerate Tomorrow AI Summit Berlin
+      note: credible corporate speakers, one edition run; revisit tier after 2027
+    - name: AI Coding Summit Berlin
+      note: GitNation, mid-scale, right practitioner audience
+    - name: ContainerDays Hamburg
+      note: ~500-700, platform-engineering audience
+    - name: code.talks Hamburg
+      note: ~3,500 devs, regional flagship at best; already in events.yaml via CFP
+    - name: AI Horizons Prague
+      note: regional exec event
+    - name: PyCon DE & PyData
+      note: Europe's largest Python/AI community conf, community-scale
+    - name: EuroPython
+      note: Python community flagship, not an AI flagship
+    - name: Regional PyCons in Central and nearby Europe
+      note: Czechia, Austria, Poland, Netherlands, Belgium, France, Switzerland, Nordics
+    - name: Cloud Native AI Summit Europe
+      note: great topical fit, unproven first edition (Paris, Dec 2026)
+    - name: NDC London
+      note: solid stage, .NET-centric, thin AI coverage
+    - name: Devoxx Belgium
+      note: sell-out dev event; 2026 theme is agentic engineering
 
-scouted: []
-# Entry shape, one per candidate assessed:
-#   - name: Some Conf 2027
-#     url: https://someconf.example/
-#     checked: 2026-08-15
-#     status: proposed | rejected | watching
-#     reason: one line
-#     cfp: { url: ..., deadline: 2026-09-18 }   # when known
+scouted:
+  - name: CogX
+    url: https://cogx.co/
+    checked: 2026-08-15
+    status: rejected
+    reason: festival wound down in 2025; pivoted to advisory/venture studio
+  - name: The Next Web Conference
+    url: https://thenextweb.com/conference
+    checked: 2026-08-15
+    status: rejected
+    reason: FT shut TNW events down in 2025; no future editions
+  - name: Big Data & AI World Frankfurt
+    url: https://www.bigdataworldfrankfurt.de/
+    checked: 2026-08-15
+    status: rejected
+    reason: trade expo, not a speaking flagship
+  - name: Big Data LDN
+    url: https://www.bigdataldn.com/
+    checked: 2026-08-15
+    status: rejected
+    reason: ~8k reach but free expo-floor format, not a curated stage
+  - name: ODSC Europe
+    url: https://odsc.com/europe/
+    checked: 2026-08-15
+    status: rejected
+    reason: training-camp feel; headline attendance number is global, not per-event
+  - name: GOTO Amsterdam / Copenhagen
+    url: https://gotoams.nl/
+    checked: 2026-08-15
+    status: watching
+    reason: quality ~1,200 software stage, AI one track among many
+  - name: Machine Learning Prague
+    url: https://www.mlprague.com/
+    checked: 2026-08-15
+    status: watching
+    reason: strong regional cfp candidate; below watchlist bar for now
+  - name: MLcon Munich / Berlin
+    url: https://mlconference.ai/
+    checked: 2026-08-15
+    status: rejected
+    reason: training conference format
+  - name: data:unplugged Münster
+    url: https://www.data-unplugged.de/
+    checked: 2026-08-15
+    status: watching
+    reason: 10k+ but celebrity-skewed German headliners; tier unclear
+  - name: AI Summit Barcelona
+    checked: 2026-08-15
+    status: watching
+    reason: surfaced unverified; assess lineup before proposing
+  - name: NDC AI Oslo
+    checked: 2026-08-15
+    status: watching
+    reason: surfaced unverified; assess scale before proposing
+  - name: Kubernetes Community Days (Central Europe)
+    checked: 2026-08-15
+    status: rejected
+    reason: CNCF caps KCDs at 500 attendees — meetup-scale; dropped from watchlist 2026-08-15
