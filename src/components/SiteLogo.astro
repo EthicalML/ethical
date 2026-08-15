@@ -144,6 +144,8 @@ const line2 = keyed(LINE2, ['A', 'S']);
     private progress = 0;
     private target = 0;
     private last = 0;
+    private traversal = false;
+    private adopting = false;
     private cellFill = '18,24,21';
     private shell: HTMLElement = this;
     private metrics: Metrics | null = null;
@@ -199,17 +201,59 @@ const line2 = keyed(LINE2, ['A', 'S']);
          the docked issue bar with it a moment after the reader has arrived. The destination
          scroll must be derived from the target anchor: at swap time the router has not
          scrolled yet, so window.scrollY still reads the outgoing document's position. */
+      document.addEventListener(
+        'astro:before-preparation',
+        (event) => {
+          this.traversal = (event as Event & { navigationType?: string }).navigationType === 'traverse';
+        },
+        { signal },
+      );
       document.addEventListener('astro:after-swap', () => this.adoptDestination(), { signal });
       this.sync();
     }
 
     private adoptDestination() {
       if (this.dataset.mode !== 'animate' || !this.metrics) return;
+      /* A traversal restores the scroll position the reader left at, not the hash anchor,
+         so the anchor derivation below would adopt the pose for a place the page is not.
+         The router applies the restored scroll just after this event: wait a frame, read
+         the real position, and tween whichever direction the pose needs, as on any other
+         arrival. */
+      if (this.traversal) {
+        this.traversal = false;
+        this.adopting = true;
+        requestAnimationFrame(() => {
+          this.adopting = false;
+          if (this.frame) cancelAnimationFrame(this.frame);
+          this.frame = 0;
+          this.target = window.scrollY > COLLAPSE_AT ? 1 : 0;
+          if (this.progress !== this.target && !this.motionQuery.matches) {
+            this.last = performance.now();
+            this.frame = requestAnimationFrame(this.tick);
+            return;
+          }
+          this.progress = this.target;
+          if (this.target === 1 && !this.motionQuery.matches) this.armIdle();
+          this.render(this.progress);
+        });
+        return;
+      }
       const hashTarget = location.hash ? document.getElementById(location.hash.slice(1)) : null;
       const y = hashTarget ? hashTarget.getBoundingClientRect().top + window.scrollY : window.scrollY;
       if (this.frame) cancelAnimationFrame(this.frame);
       this.frame = 0;
       this.target = y > COLLAPSE_AT ? 1 : 0;
+      /* An arrival whose pose does not match plays the tween in whichever direction is
+         needed instead of snapping: the instant jump read as a glitch against the tweened
+         collapse everywhere else, and the tween reverses freely from any pose by design.
+         Two arrivals still adopt instantly: reduced motion, and hash arrivals — the
+         newsletter's prev/next lands on the docked issue bar, which reserves the header's
+         height and would ride a tweening bar a moment after the reader has arrived. */
+      if (this.progress !== this.target && !hashTarget && !this.motionQuery.matches) {
+        this.last = performance.now();
+        this.frame = requestAnimationFrame(this.tick);
+        return;
+      }
       this.progress = this.target;
       if (this.target === 1 && !this.motionQuery.matches) this.armIdle();
       this.render(this.progress);
@@ -235,6 +279,7 @@ const line2 = keyed(LINE2, ['A', 'S']);
 
     /** Picks the mode for the current viewport and preferences, then measures and starts. */
     private sync() {
+      const tweening = Boolean(this.frame);
       if (this.frame) cancelAnimationFrame(this.frame);
       this.frame = 0;
 
@@ -245,6 +290,16 @@ const line2 = keyed(LINE2, ['A', 'S']);
          client-side navigation land in the right state without replaying the gesture, and a
          reload halfway down a page open already compact. */
       this.target = window.scrollY > COLLAPSE_AT ? 1 : 0;
+      /* A resize mid-tween re-measures but must not snap the pose: the arrival expansion
+         above triggers resizes of its own (the swap changes the document height, so the
+         scrollbar appears or leaves), and snapping here undid it on the next frame. The
+         same applies while a traversal's deferred pose decision is pending. */
+      if (this.adopting) return;
+      if (tweening && this.progress !== this.target && !this.motionQuery.matches) {
+        this.last = performance.now();
+        this.frame = requestAnimationFrame(this.tick);
+        return;
+      }
       this.progress = this.target;
       if (this.target === 1 && !this.motionQuery.matches) this.armIdle();
       this.render(this.progress);
@@ -356,7 +411,12 @@ const line2 = keyed(LINE2, ['A', 'S']);
       const remaining = this.target - this.progress;
       this.progress = Math.abs(remaining) <= step ? this.target : this.progress + Math.sign(remaining) * step;
       this.render(this.progress);
-      this.frame = this.progress === this.target ? 0 : requestAnimationFrame(this.tick);
+      if (this.progress === this.target) {
+        this.frame = 0;
+        if (this.target === 1 && !this.motionQuery.matches) this.armIdle();
+      } else {
+        this.frame = requestAnimationFrame(this.tick);
+      }
     };
 
     private render(p: number) {
@@ -511,6 +571,11 @@ const line2 = keyed(LINE2, ['A', 'S']);
     color: var(--logo-type);
     font-family: var(--font-display);
     font-weight: 300;
+    /* The sentence keeps its full laid-out width while collapsed (the scattered chars are
+       merely invisible), which put a hit-testable strip over the first nav triggers and ate
+       their hover. The anchor's own box tracks the stage tween, so it alone carries the
+       pointer surface. */
+    pointer-events: none;
     white-space: nowrap;
   }
 
