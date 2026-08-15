@@ -210,6 +210,16 @@ const line2 = keyed(LINE2, ['A', 'S']);
       if (this.frame) cancelAnimationFrame(this.frame);
       this.frame = 0;
       this.target = y > COLLAPSE_AT ? 1 : 0;
+      /* Landing at the top of the destination from a settled collapsed header plays the
+         expansion instead of snapping: that is the one arrival where the reader is looking
+         at the header, and the instant jump to the full wordmark read as a glitch. Every
+         other arrival still adopts instantly — scrolled destinations, reduced motion, and
+         a tween caught mid-flight, where matching the pose is not worth the complexity. */
+      if (this.target === 0 && this.progress === 1 && !this.motionQuery.matches) {
+        this.last = performance.now();
+        this.frame = requestAnimationFrame(this.tick);
+        return;
+      }
       this.progress = this.target;
       if (this.target === 1 && !this.motionQuery.matches) this.armIdle();
       this.render(this.progress);
@@ -235,6 +245,7 @@ const line2 = keyed(LINE2, ['A', 'S']);
 
     /** Picks the mode for the current viewport and preferences, then measures and starts. */
     private sync() {
+      const tweening = Boolean(this.frame);
       if (this.frame) cancelAnimationFrame(this.frame);
       this.frame = 0;
 
@@ -245,6 +256,14 @@ const line2 = keyed(LINE2, ['A', 'S']);
          client-side navigation land in the right state without replaying the gesture, and a
          reload halfway down a page open already compact. */
       this.target = window.scrollY > COLLAPSE_AT ? 1 : 0;
+      /* A resize mid-tween re-measures but must not snap the pose: the arrival expansion
+         above triggers resizes of its own (the swap changes the document height, so the
+         scrollbar appears or leaves), and snapping here undid it on the next frame. */
+      if (tweening && this.progress !== this.target && !this.motionQuery.matches) {
+        this.last = performance.now();
+        this.frame = requestAnimationFrame(this.tick);
+        return;
+      }
       this.progress = this.target;
       if (this.target === 1 && !this.motionQuery.matches) this.armIdle();
       this.render(this.progress);
@@ -356,7 +375,12 @@ const line2 = keyed(LINE2, ['A', 'S']);
       const remaining = this.target - this.progress;
       this.progress = Math.abs(remaining) <= step ? this.target : this.progress + Math.sign(remaining) * step;
       this.render(this.progress);
-      this.frame = this.progress === this.target ? 0 : requestAnimationFrame(this.tick);
+      if (this.progress === this.target) {
+        this.frame = 0;
+        if (this.target === 1 && !this.motionQuery.matches) this.armIdle();
+      } else {
+        this.frame = requestAnimationFrame(this.tick);
+      }
     };
 
     private render(p: number) {
