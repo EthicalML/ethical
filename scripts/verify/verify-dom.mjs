@@ -959,8 +959,10 @@ for (const route of routes) {
         !scrolledDrawer ||
         scrolledDrawer.expectedScroll <= 0 ||
         scrolledDrawer.ariaHidden !== 'false' ||
-        scrolledDrawer.bodyPosition !== 'fixed' ||
-        scrolledDrawer.bodyTop !== `-${scrolledDrawer.expectedScroll}px` ||
+        /* The lock is overflow-only now: the body stays static and unoffset, and the
+           scroll position simply never moves in either direction. */
+        scrolledDrawer.bodyPosition !== 'static' ||
+        scrolledDrawer.bodyTop !== '' ||
         Math.abs(scrolledDrawer.drawerTop) > 0.5 ||
         scrolledDrawer.drawerZIndex !== '80' ||
         scrolledDrawer.headerZIndex !== '90' ||
