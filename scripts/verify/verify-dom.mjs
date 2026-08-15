@@ -241,8 +241,11 @@ for (const route of routes) {
       await page.waitForTimeout(400);
       homepageInteractions.mobileDrawerScrolled = await page.evaluate((expectedScroll) => {
         const drawer = document.querySelector('[data-mobile-menu]');
-        const header = document.querySelector('.site-header');
+        const shell = document.querySelector('.header-sticky');
+        const toggle = document.querySelector('[data-mobile-menu-open]');
         const siteHeader = drawer.closest('site-header');
+        const toggleBox = toggle.getBoundingClientRect();
+        const barBottom = shell.querySelector('.header-row').getBoundingClientRect().bottom;
         return {
           expectedScroll,
           ariaHidden: drawer.getAttribute('aria-hidden'),
@@ -250,12 +253,25 @@ for (const route of routes) {
           bodyTop: document.body.style.top,
           drawerTop: drawer.getBoundingClientRect().top,
           drawerZIndex: getComputedStyle(drawer).zIndex,
-          headerZIndex: getComputedStyle(header).zIndex,
+          // The pinned shell is lifted over the drawer on purpose: the toggle that closes the
+          // drawer lives in the header row, so the row has to stay hittable above it.
+          headerZIndex: getComputedStyle(shell).zIndex,
           parent: drawer.closest('mobile-drawer').parentElement.localName,
           persist: siteHeader?.getAttribute('data-astro-transition-persist'),
-          paintsOnTop: Boolean(
-            document.elementFromPoint(innerWidth / 2, 1)?.closest('[data-mobile-menu]'),
+          // Two halves of one promise: the drawer covers the viewport under the header bar,
+          // and the control that closes it is the thing you hit at the top of the screen.
+          drawerCoversBelowBar: Boolean(
+            document
+              .elementFromPoint(innerWidth / 2, barBottom + 20)
+              ?.closest('[data-mobile-menu]'),
           ),
+          toggleHittable:
+            document
+              .elementFromPoint(
+                toggleBox.left + toggleBox.width / 2,
+                toggleBox.top + toggleBox.height / 2,
+              )
+              ?.closest('[data-mobile-menu-open]') === toggle,
           scrollLocked: document.body.classList.contains('mobile-nav-open'),
         };
       }, lockedScroll);
@@ -947,10 +963,11 @@ for (const route of routes) {
         scrolledDrawer.bodyTop !== `-${scrolledDrawer.expectedScroll}px` ||
         Math.abs(scrolledDrawer.drawerTop) > 0.5 ||
         scrolledDrawer.drawerZIndex !== '80' ||
-        scrolledDrawer.headerZIndex !== '60' ||
+        scrolledDrawer.headerZIndex !== '90' ||
         scrolledDrawer.parent !== 'site-header' ||
         scrolledDrawer.persist !== 'site-header' ||
-        !scrolledDrawer.paintsOnTop ||
+        !scrolledDrawer.drawerCoversBelowBar ||
+        !scrolledDrawer.toggleHittable ||
         !scrolledDrawer.scrollLocked ||
         Math.abs(scrolledDrawer.closed.scrollY - scrolledDrawer.expectedScroll) > 1 ||
         scrolledDrawer.closed.bodyTop !== '' ||
