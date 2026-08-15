@@ -191,7 +191,25 @@ const line2 = keyed(LINE2, ['A', 'S']);
       this.motionQuery.addEventListener('change', () => this.sync(), { signal });
       document.fonts?.ready.then(() => this.sync());
       window.setTimeout(() => this.sync(), 250);
+      /* A navigation adopts the destination's state instantly — the collapse gesture belongs
+         to scrolling, never to arriving. The element persists across view transitions, so
+         without this a next/prev click from an at-rest header lands, then tweens, dragging
+         the docked issue bar with it a moment after the reader has arrived. The destination
+         scroll must be derived from the target anchor: at swap time the router has not
+         scrolled yet, so window.scrollY still reads the outgoing document's position. */
+      document.addEventListener('astro:after-swap', () => this.adoptDestination(), { signal });
       this.sync();
+    }
+
+    private adoptDestination() {
+      if (this.dataset.mode !== 'animate' || !this.metrics) return;
+      const hashTarget = location.hash ? document.getElementById(location.hash.slice(1)) : null;
+      const y = hashTarget ? hashTarget.getBoundingClientRect().top + window.scrollY : window.scrollY;
+      if (this.frame) cancelAnimationFrame(this.frame);
+      this.frame = 0;
+      this.target = y > COLLAPSE_AT ? 1 : 0;
+      this.progress = this.target;
+      this.render(this.progress);
     }
 
     disconnectedCallback() {
