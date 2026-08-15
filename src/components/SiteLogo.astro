@@ -65,11 +65,13 @@ const line2 = keyed(LINE2, ['A', 'S']);
   type Key = 'I' | 'E' | 'A' | 'S';
 
   const KEYS: Key[] = ['I', 'E', 'A', 'S'];
-  /* The collapse is the header's own condensing gesture: it runs when the reader scrolls
-     away from the top and reverses when they come back. Hysteresis keeps a scroll that hovers
-     on the threshold from flickering between the two states. */
+  /* The collapse is the header's own condensing gesture: any scroll activity condenses it,
+     and IDLE_MS of stillness lets the wordmark back out. At the top of the page the wordmark
+     always shows. COLLAPSE_AT/EXPAND_AT survive as the position thresholds used by loads,
+     navigations and the reduced-motion tier, which keeps the position model. */
   const RUN = 900;
   const COLLAPSE_AT = 80;
+  const IDLE_MS = 30_000;
   const EXPAND_AT = 24;
 
   /* The handoff's scatter distances are quoted at its 26px demo size; they scale with ours. */
@@ -209,11 +211,13 @@ const line2 = keyed(LINE2, ['A', 'S']);
       this.frame = 0;
       this.target = y > COLLAPSE_AT ? 1 : 0;
       this.progress = this.target;
+      if (this.target === 1 && !this.motionQuery.matches) this.armIdle();
       this.render(this.progress);
     }
 
     disconnectedCallback() {
       this.started = false;
+      window.clearTimeout(this.idleTimer);
       this.controller.abort();
       this.themeWatch?.disconnect();
       if (this.frame) cancelAnimationFrame(this.frame);
@@ -242,6 +246,7 @@ const line2 = keyed(LINE2, ['A', 'S']);
          reload halfway down a page open already compact. */
       this.target = window.scrollY > COLLAPSE_AT ? 1 : 0;
       this.progress = this.target;
+      if (this.target === 1 && !this.motionQuery.matches) this.armIdle();
       this.render(this.progress);
     }
 
@@ -296,14 +301,40 @@ const line2 = keyed(LINE2, ['A', 'S']);
       this.stage.style.height = '';
     }
 
+    private idleTimer = 0;
+
     private onScroll = () => {
       if (this.dataset.mode !== 'animate') return;
       /* The drawer locks the body at a negative offset, so window.scrollY reads 0 while it is
          open. Reacting to that would expand the logo under the open drawer and collapse it
          again on close; the header holds whatever state it was opened in. */
       if (document.body.classList.contains('mobile-nav-open')) return;
+      /* Activity model: ANY scroll collapses; IDLE_MS of stillness expands again. At the
+         very top the wordmark always shows and no timer runs. Reduced motion keeps the
+         position model instead — an idle-timed snap while the reader sits still is exactly
+         the uninvited motion that preference asks to avoid. */
       const y = window.scrollY;
-      const target = y > COLLAPSE_AT ? 1 : y < EXPAND_AT ? 0 : this.target;
+      if (this.motionQuery.matches) {
+        this.setTarget(y > COLLAPSE_AT ? 1 : y < EXPAND_AT ? 0 : this.target);
+        return;
+      }
+      if (y < EXPAND_AT) {
+        window.clearTimeout(this.idleTimer);
+        this.setTarget(0);
+      } else {
+        this.armIdle();
+        this.setTarget(1);
+      }
+    };
+
+    /* Re-armed on every scroll event, not in setTarget: continued scrolling must keep
+       pushing the expiry out even while the target is already collapsed. */
+    private armIdle() {
+      window.clearTimeout(this.idleTimer);
+      this.idleTimer = window.setTimeout(() => this.setTarget(0), IDLE_MS);
+    }
+
+    private setTarget(target: number) {
       if (target === this.target) return;
       this.target = target;
       /* Reduced motion gets the compact behaviour without the travel: the two states swap at
@@ -317,7 +348,7 @@ const line2 = keyed(LINE2, ['A', 'S']);
         this.last = performance.now();
         this.frame = requestAnimationFrame(this.tick);
       }
-    };
+    }
 
     private tick = (now: number) => {
       const step = (now - this.last) / RUN;
