@@ -7,7 +7,11 @@ layout: ../../layouts/ProseLayout.astro
 ---
 
 import { getEntry } from 'astro:content';
-import { ArticleHero, CodeTabs, Metrics, ProjectLinks, SequencePipeline } from '../../components/prose/components.js';
+import ArticleHero from '../../components/ArticleHero.astro';
+import CodeTabs from '../../components/CodeTabs.astro';
+import Metrics from '../../components/prose/Metrics.astro';
+import ProjectLinks from '../../components/ProjectLinks.astro';
+import SequencePipeline from '../../components/SequencePipeline.astro';
 
 export const pythonCode = `# 1. Create the manager (device 0, first queue, no extensions)
 mgr = kp.Manager()

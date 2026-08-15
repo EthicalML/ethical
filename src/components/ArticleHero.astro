@@ -101,11 +101,19 @@ const { eyebrow, title, intro, canvas = false, transitionName } = Astro.props;
     display: contents;
   }
 
+  /* The base absolute placement is owned here rather than inherited from
+    Hero.css: this hero has no other reason to load the flagship hero sheet, and
+    it did so only because every composed page pulled the whole prose barrel. */
   .article-hero.canvas-variant .hero-canvas {
+    bottom: 0;
+    height: 100%;
     left: 34%;
     mask-image: linear-gradient(90deg, transparent 0, #000 260px);
     -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 260px);
     opacity: 0.85;
+    position: absolute;
+    right: 0;
+    top: 0;
     width: 66%;
   }
 
