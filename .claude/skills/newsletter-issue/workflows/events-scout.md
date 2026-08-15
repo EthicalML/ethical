@@ -39,7 +39,7 @@ Before researching any candidate, check it against `scouted`. A known entry is c
 
 Keep at most 3 new events — the strongest only. Zero is the normal outcome most weeks: the measured base rate (2026-08 research) is roughly one genuinely new flagship-tier conference in Europe every 5–6 months, so the cap binds only during announcement bursts; never pad. The cap applies to proposed `events.yaml` additions and new watchlist recommendations only — CFP status updates are not capped. Rejects need no verification beyond the search results that surfaced them.
 
-Only for the shortlist and for watchlist findings being proposed: fetch the organiser page (or its CFP platform, e.g. Sessionize) and confirm dates, location and CFP deadline, one source URL per claim. If the page will not load or sources disagree, keep the proposal but mark the field `# unverified`, the file's existing convention. Never guess a date. Distinguish confirmed facts from inferred timing (likely CFP windows are inferences and must say so).
+Only for the shortlist and for watchlist findings being proposed: fetch the organiser page (or its CFP platform, e.g. Sessionize) and confirm dates, location and CFP deadline, one source URL per claim. If the page will not load or sources disagree, keep the proposal but mark the field `# unverified`, the file's existing convention. Never guess a date. Verify each claim once: a fact already confirmed earlier in this run is settled — no closing re-confirmation sweep. Distinguish confirmed facts from inferred timing (likely CFP windows are inferences and must say so).
 
 ## 6. Update the ledger
 
