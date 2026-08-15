@@ -6,6 +6,7 @@ export { default as PersonSchema } from './PersonSchema.astro';
 export { default as ComparisonTable } from '../ComparisonTable.astro';
 export { default as AffiliationMarquee } from '../AffiliationMarquee.astro';
 export { default as ArticleHero } from '../ArticleHero.astro';
+export { default as BrandingContent } from '../BrandingContent.astro';
 export { default as Hero } from '../Hero.astro';
 export { default as NewsletterLatestCard } from '../NewsletterLatestCard.astro';
 export { default as ChannelLinks } from '../ChannelLinks.astro';

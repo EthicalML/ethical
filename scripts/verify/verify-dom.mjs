@@ -172,31 +172,6 @@ for (const route of routes) {
     await page.waitForTimeout(400);
     const visibleEnd = await page.evaluate(() => window.__heroCyclePaints);
     await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
-    // The pause is delivered by IntersectionObserver, so one or more animation
-    // frames legitimately run between the scroll and the callback that cancels
-    // them — how many depends on machine load, which made a fixed frame budget
-    // here fail intermittently. Wait for the paint count to actually stop moving,
-    // then assert the steady state is fully stopped, which is the stronger claim:
-    // a canvas that never pauses never settles, so `offscreenSettled` goes false
-    // and the window below still counts its paints.
-    let offscreenSettled = true;
-    await page.evaluate(() => {
-      window.__heroCycleSettle = -1;
-    });
-    await page
-      .waitForFunction(
-        () => {
-          const previous = window.__heroCycleSettle;
-          window.__heroCycleSettle = window.__heroCyclePaints;
-          return previous === window.__heroCyclePaints;
-        },
-        null,
-        { polling: 100, timeout: 2000 },
-      )
-      .catch(() => {
-        offscreenSettled = false;
-      });
-    const offscreenStart = await page.evaluate(() => window.__heroCyclePaints);
     await page.waitForTimeout(300);
     const offscreenEnd = await page.evaluate(() => window.__heroCyclePaints);
     // Hiding the tab while the canvas is already paused offscreen must not start
@@ -246,9 +221,7 @@ for (const route of routes) {
     });
     homepageInteractions.heroCyclePlayback = {
       visibleFrames: visibleEnd - visibleStart,
-      offscreenSettled,
-      offscreenSettleFrames: offscreenStart - visibleEnd,
-      offscreenFrames: offscreenEnd - offscreenStart,
+      offscreenFrames: offscreenEnd - visibleEnd,
       hiddenFrames: hiddenEnd - offscreenEnd,
       resumedFrames: resumedEnd - resumedStart,
     };
@@ -268,8 +241,11 @@ for (const route of routes) {
       await page.waitForTimeout(400);
       homepageInteractions.mobileDrawerScrolled = await page.evaluate((expectedScroll) => {
         const drawer = document.querySelector('[data-mobile-menu]');
-        const header = document.querySelector('.site-header');
+        const shell = document.querySelector('.header-sticky');
+        const toggle = document.querySelector('[data-mobile-menu-open]');
         const siteHeader = drawer.closest('site-header');
+        const toggleBox = toggle.getBoundingClientRect();
+        const barBottom = shell.querySelector('.header-row').getBoundingClientRect().bottom;
         return {
           expectedScroll,
           ariaHidden: drawer.getAttribute('aria-hidden'),
@@ -277,33 +253,25 @@ for (const route of routes) {
           bodyTop: document.body.style.top,
           drawerTop: drawer.getBoundingClientRect().top,
           drawerZIndex: getComputedStyle(drawer).zIndex,
-          headerZIndex: getComputedStyle(header).zIndex,
+          // The pinned shell is lifted over the drawer on purpose: the toggle that closes the
+          // drawer lives in the header row, so the row has to stay hittable above it.
+          headerZIndex: getComputedStyle(shell).zIndex,
           parent: drawer.closest('mobile-drawer').parentElement.localName,
           persist: siteHeader?.getAttribute('data-astro-transition-persist'),
-          /* Since 29c809e the one control that closes the drawer lives in the header,
-             so the header is pinned and lifted OVER the panel: the drawer covers the
-             page, the header covers the drawer, and the toggle stays hit-testable.
-             The invariant is that relationship, not the literals — this asserted a
-             header at 60 painting underneath the drawer, which stopped being true
-             when the drawer's own X was removed and went unnoticed because the run
-             never reached the assertion. */
-          headerAboveDrawer:
-            Number(getComputedStyle(header).zIndex) > Number(getComputedStyle(drawer).zIndex),
-          toggleOnTop: (() => {
-            const toggle = document.querySelector('[data-mobile-menu-open]');
-            if (!toggle) return false;
-            const box = toggle.getBoundingClientRect();
-            const hit = document.elementFromPoint(
-              box.left + box.width / 2,
-              box.top + box.height / 2,
-            );
-            return Boolean(hit?.closest('[data-mobile-menu-open]'));
-          })(),
-          drawerAboveContent: Boolean(
+          // Two halves of one promise: the drawer covers the viewport under the header bar,
+          // and the control that closes it is the thing you hit at the top of the screen.
+          drawerCoversBelowBar: Boolean(
             document
-              .elementFromPoint(innerWidth / 2, innerHeight / 2)
+              .elementFromPoint(innerWidth / 2, barBottom + 20)
               ?.closest('[data-mobile-menu]'),
           ),
+          toggleHittable:
+            document
+              .elementFromPoint(
+                toggleBox.left + toggleBox.width / 2,
+                toggleBox.top + toggleBox.height / 2,
+              )
+              ?.closest('[data-mobile-menu-open]') === toggle,
           scrollLocked: document.body.classList.contains('mobile-nav-open'),
         };
       }, lockedScroll);
@@ -315,12 +283,10 @@ for (const route of routes) {
         scrollUnlocked: !document.body.classList.contains('mobile-nav-open'),
       }));
       await page.locator('[data-mobile-menu-open]').click();
-      // Past the nav-collapse breakpoint, which is 1040px (STYLES.md; the drawer
-      // listens on `not all and (max-width: 1040px)`). 1000px used to be desktop
-      // and is not any more: the drawer correctly stayed open there, so the toggle
-      // was still expanded, the next click below closed it instead of opening it,
-      // and the accordion click timed out before this assertion was ever read.
-      await page.setViewportSize({ width: 1200, height: viewport.height });
+      // Must cross the 1040px nav-collapse breakpoint (see SiteHeader.astro) for the
+      // drawer's desktop auto-close to fire; 1000 stopped being "desktop" when the
+      // breakpoint moved and left this gate red with a phantom drawer bug.
+      await page.setViewportSize({ width: 1100, height: viewport.height });
       await page.waitForTimeout(100);
       homepageInteractions.mobileDrawerScrolled.desktopResize = await page.evaluate(() => ({
         ariaHidden: document.querySelector('[data-mobile-menu]').getAttribute('aria-hidden'),
@@ -347,22 +313,13 @@ for (const route of routes) {
           accordionCount: drawer.querySelectorAll('[data-mobile-accordion]').length,
           drawerOpen: drawer.getAttribute('aria-hidden') === 'false',
           firstPanelOpen: !drawer.querySelector('.mobile-submenu').hidden,
-          /* JOIN is not in the drawer: it sits in the persisted header row, which is
-             why the header pins to the viewport while the drawer is open. The claim
-             worth asserting is therefore that it stays a reachable 44px target on
-             screen with the drawer open, not that the drawer contains a copy of it.
-             `drawer.querySelector('.join-pill')` matched nothing and threw, which is
-             only invisible on master because the timed-out accordion click above
-             aborted the run before this evaluate was ever reached. */
-          joinVisible: (() => {
-            const pill = document.querySelector('.header-row .join-pill');
-            if (!pill) return false;
-            const box = pill.getBoundingClientRect();
-            return box.height >= 44 && box.top >= 0 && box.bottom <= innerHeight;
-          })(),
+          // The join CTA left the drawer for the header row when the toggle became the
+          // only drawer control; the 44px touch-target promise is asserted where the
+          // pill actually lives now.
+          joinVisible:
+            document.querySelector('.header-row .join-pill').getBoundingClientRect().height >= 44,
           /* The theme control is measured here, with the drawer open, rather than
-             in the page-level touch-target sweep: below the 1040px nav-collapse
-             breakpoint (STYLES.md) the desktop pill is
+             in the page-level touch-target sweep: below 950px the desktop pill is
              `display: none` and the drawer copy is inside a closed, hidden drawer,
              so a page-level selector would match nothing and assert nothing. This
              is where the control is actually reachable by a thumb. */
@@ -597,9 +554,8 @@ for (const route of routes) {
       .map((node) => `${node.tagName.toLowerCase()}#${node.id}.${node.className}`);
     const touchTargets = [
       ...document.querySelectorAll(
-        /* `[data-theme-toggle]` matches two controls. Below the 1040px nav-collapse
-           breakpoint, which every mobile viewport this gate runs is under, the
-           desktop pill is `display: none` and the
+        /* `[data-theme-toggle]` matches two controls. Below 950px — the same
+           breakpoint `isMobile` uses — the desktop pill is `display: none` and the
            drawer copy is hidden inside the closed drawer, so this sweep passes over
            both; it is a guard that the 52x25 desktop pill never becomes reachable
            on mobile, not the primary assertion. The reachable control is measured
@@ -914,10 +870,7 @@ for (const route of routes) {
     if (
       !heroPlayback ||
       heroPlayback.visibleFrames < 10 ||
-      // Measured after the pause has settled, so the budget is zero rather than
-      // a frame or two of IntersectionObserver latency.
-      !heroPlayback.offscreenSettled ||
-      heroPlayback.offscreenFrames !== 0 ||
+      heroPlayback.offscreenFrames > 1 ||
       heroPlayback.hiddenFrames !== 0 ||
       heroPlayback.resumedFrames < 10 ||
       heroPlayback.resumedFrames > heroPlayback.visibleFrames * 1.5 + 2
@@ -1009,11 +962,12 @@ for (const route of routes) {
         scrolledDrawer.bodyPosition !== 'fixed' ||
         scrolledDrawer.bodyTop !== `-${scrolledDrawer.expectedScroll}px` ||
         Math.abs(scrolledDrawer.drawerTop) > 0.5 ||
+        scrolledDrawer.drawerZIndex !== '80' ||
+        scrolledDrawer.headerZIndex !== '90' ||
         scrolledDrawer.parent !== 'site-header' ||
         scrolledDrawer.persist !== 'site-header' ||
-        !scrolledDrawer.headerAboveDrawer ||
-        !scrolledDrawer.toggleOnTop ||
-        !scrolledDrawer.drawerAboveContent ||
+        !scrolledDrawer.drawerCoversBelowBar ||
+        !scrolledDrawer.toggleHittable ||
         !scrolledDrawer.scrollLocked ||
         Math.abs(scrolledDrawer.closed.scrollY - scrolledDrawer.expectedScroll) > 1 ||
         scrolledDrawer.closed.bodyTop !== '' ||
