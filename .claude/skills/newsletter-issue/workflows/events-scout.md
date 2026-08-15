@@ -1,38 +1,52 @@
 # Events scout
 
-Executed by a subagent. Input from the spawning prompt: the issue number `<N>`. Output: the report file `tmp/issue-<N>/events-scout.md` and a summary of at most one line per proposal. Never edit `src/content/events.yaml` yourself — the owner reviews the report first.
+Executed by a subagent. Input from the spawning prompt: the issue number `<N>`. Output: the report file `tmp/issue-<N>/events-scout.md`, an updated `scouted` section in the ledger, and a summary of at most one line per proposal. Never edit `src/content/events.yaml` or the ledger's `watchlist` yourself — the owner reviews the report first.
 
-## 1. Load the current list
+## 1. Load state, not files
 
-Read `src/content/events.yaml` in full. Collect every `slug`, `series` and `url`, and note which events are upcoming (start on or after today). Read the `EVENT_TOPICS` enum in `src/content.config.ts`; proposed `topics` values must come from it.
+Do not read `src/content/events.yaml` in full. Extract only the identity and date lines:
 
-## 2. Search for new events
+```
+grep -E '^\s*(- slug|series|url|start|end|cfps|- url|deadline)' src/content/events.yaml
+```
 
-Two sweeps, both via `WebSearch` and `WebFetch` on organiser pages:
+Read `scripts/events/data/scout-ledger.yaml` in full (it is small): `watchlist` is what to check every run, `scouted` is what has already been assessed. For allowed `topics` values, read the `EVENT_TOPICS` enum in `src/content.config.ts`.
 
-1. **Next editions of tracked series.** For each series in the file whose latest edition has passed or is within 3 months, check the organiser site for the next edition's dates.
-2. **New flagship events.** Search for major conferences in the next 12 months on the file's topics (MLOps, LLMs, AI agents, AI infrastructure, AI policy, ML security, Python/data engineering). The bar is flagship: an event the network would plausibly speak at or recommend, of the same tier as those already listed. Regional meetups, vendor user-conferences and paper-mill conferences do not qualify.
+## 2. Geographic and fit rules
 
-Drop any candidate whose `series` or `url` already appears in the file — those are updates (step 4), not additions.
+These govern every step below:
 
-## 3. Verify each candidate
+- Europe first, in priority order: Berlin and nearby; then Germany, Prague, Vienna, Amsterdam and nearby Central Europe; then Europe-wide. Virtual events strongly relevant to a European audience count.
+- Non-European events qualify only as unique flagships of the AI Engineer / MLOps World tier — the watchlist marks the standing exceptions. Prestige alone does not qualify a US event.
+- The bar is flagship or large-mainstage: an event the network would plausibly speak at, of the tier already in `events.yaml`. Regional meetups, vendor user-conferences and paper-mill conferences do not qualify — with the KCD/ContainerDays-style entries on the watchlist as the deliberate exceptions.
 
-For each surviving candidate, fetch the organiser page and record: name, start/end dates, location, CFP page URL and deadline if one is open or announced. Every date and deadline needs a source URL from the organiser (or the CFP platform it links, e.g. Sessionize). If sources disagree or the page will not load, keep the candidate but mark the field `# unverified` — the same convention the file already uses. Never guess a date to fill a field.
+## 3. Check the watchlist
 
-## 4. Check existing upcoming events for updates
+For each watchlist entry, find the next edition beyond what `events.yaml` already lists: dates, location, and CFP status — including likely CFP windows when applications have not opened yet (organisers usually repeat their cycle). One search per entry is enough when nothing has changed; skip an entry whose next edition is already in `events.yaml` with a CFP that is still months from its deadline.
 
-For each upcoming event already in the file, check the organiser page for: a CFP that has opened (or a deadline that changed) and is not yet in its `cfps` array, and date fields marked `# unverified` that can now be confirmed. Propose these as updates.
+## 4. Scout for new events
 
-## 5. Select
+One sweep of `WebSearch` for new conferences in the next 12–18 months on the file's topics (AI platforms and infrastructure, AI agents, MLOps, LLM systems, cloud native, Kubernetes, Python, data/ML engineering, AI governance), applying the rules of step 2.
 
-Keep at most 3 new events — the strongest only. Zero is the normal outcome most weeks: flagship events rarely appear, and the list must not be padded. Prefer a short report over a stretched one.
+Before researching any candidate, check it against `scouted`: if it was checked within the last 21 days and no CFP deadline is within 14 days, carry its ledger line forward and spend nothing more on it. Drop candidates whose `series` or `url` is already in `events.yaml` — those were handled in step 3.
 
-## 6. Write the report
+## 5. Select, then verify only the shortlist
 
-Write `tmp/issue-<N>/events-scout.md` with three sections:
+Keep at most 3 new events — the strongest only. Zero is the normal outcome most weeks; never pad. Rejects need no verification beyond the search results that surfaced them.
 
-- **Proposed additions** — for each, a ready-to-paste YAML entry matching the `events` schema in `src/content.config.ts` (omit `image`; `scripts/events/fetch-banners.mjs` fills it later), followed by one evidence line per date/deadline: the claim, the source URL, and whether it is verified or unverified.
-- **Proposed updates** — per existing slug, the exact field change and its evidence line.
-- **Rejected** — one line each for candidates found but dropped, with the reason, so the owner can overrule.
+Only for the shortlist and for watchlist findings being proposed: fetch the organiser page (or its CFP platform, e.g. Sessionize) and confirm dates, location and CFP deadline, one source URL per claim. If the page will not load or sources disagree, keep the proposal but mark the field `# unverified`, the file's existing convention. Never guess a date. Distinguish confirmed facts from inferred timing (likely CFP windows are inferences and must say so).
 
-Any section may be empty; say "none" rather than omitting it. Return the report path and the one-line summaries; do not paste the full report into the return message.
+## 6. Update the ledger
+
+Rewrite the `scouted` section of `scripts/events/data/scout-ledger.yaml`: one entry per candidate assessed this run or carried forward, with `checked` set to today for anything actually looked at. Prune entries whose event has passed. Leave `watchlist` untouched.
+
+## 7. Write the report
+
+Write `tmp/issue-<N>/events-scout.md` with four sections, any of which may say "none":
+
+- **Tracker update recommendations** — proposed `watchlist` additions or removals, each with a reason. Recommend only; the owner edits the watchlist.
+- **Proposed additions** — per event: a ready-to-paste YAML entry matching the `events` schema (omit `image`; `scripts/events/fetch-banners.mjs` fills it later), evidence lines per date/deadline (claim, source URL, verified or unverified), and a one-line recommendation. Flag any CFP deadline within 14 days.
+- **Proposed updates** — per existing `events.yaml` slug: the exact field change (newly opened CFP, changed deadline, confirmed dates) and its evidence line.
+- **Rejected** — one line each with the reason, so the owner can overrule.
+
+Return the report path and the one-line summaries; do not paste the full report into the return message.

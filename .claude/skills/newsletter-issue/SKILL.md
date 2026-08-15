@@ -45,13 +45,23 @@ Everything else stays in the pool for later weeks.
 
 ## 3. Ground each article
 
-Spawn five subagents in parallel, one per URL, each with the prompt "Read .claude/skills/newsletter-issue/workflows/ground-article.md and execute it for issue <N> and <url>." Each writes its notes to `tmp/issue-<N>/<slug>.md` and returns the fetch tier reached plus a one-line gist.
+For each of the five URLs, write `tmp/issue-<N>/<slug>.md`, where `<slug>` is the last meaningful path segment of the URL. Start the file with a `Tier:` line naming which fetch tier below succeeded, then record what was released or found, the concrete numbers, the architecture or method, and the stated limitations. Notes, not prose.
 
-When a subagent returns `Tier: none`, stop on that article: leave its `TODO headline N` placeholder in the file, draft the other four, and ask the owner for a replacement URL or the pasted page. A four-article draft with an honest gap is the correct artifact.
+Fetch tiers, in order:
+
+1. `WebFetch` on the URL.
+2. arXiv: the `/abs/` page; read the PDF with `Read` only if the abstract is insufficient.
+3. PDFs: `Read` with a page range.
+4. Blocked or JS-only pages: the `claude-in-chrome` skill against the owner's logged-in browser. This tier requires the Chrome extension to be connected. When it is not, the tier does not exist.
+5. YouTube: the description and any transcript. Make no claims about unwatched video content.
+
+Ground only from the page being linked. Reporting _about_ a release is not grounding for a paragraph that links the release itself. A summary may be used to locate a first-party mirror worth fetching, never as the source of specifics.
+
+When a source survives every tier unread, stop on that article: leave its `TODO headline N` placeholder in the file, record the failure in the grounding notes, draft the other four, and ask the owner for a replacement URL or the pasted page. A four-article draft with an honest gap is the correct artifact.
 
 ## 4. Draft the five sections
 
-Read `references/style.md` in full and every grounding file under `tmp/issue-<N>/`. Then write one paragraph per article, ordered hook first, substance in slots 2 to 4, lighter closer last. Draft only from the grounding notes — do not re-fetch the sources.
+Read `references/style.md` in full. Then write one paragraph per article, ordered hook first, substance in slots 2 to 4, lighter closer last.
 
 Headings are short editorial rewrites of three to six words, not the source's own title, often `<Actor> on <Thing>` ("Netflix on the LLM-Native RecSys"). Each wraps its whole title in one link. Step 6 joins them into the summary, so write them to read well in a list.
 
@@ -96,7 +106,7 @@ Fix every lint error and justify any warning left standing. Prettier runs in `--
 
 ## 8. Hand over
 
-Show the owner one review document: the five drafted sections, flagging any article whose grounding notes recorded a weak or failed fetch tier, followed by the events scout report from `tmp/issue-<N>/events-scout.md` — proposed additions, proposed updates, and the rejects it dropped. If the scout found nothing, say so; an empty week is normal. If the scout has not returned yet, hand over the sections and bring the events report as soon as it lands.
+Show the owner one review document: the five drafted sections, flagging any article whose grounding notes recorded a weak or failed fetch tier, followed by the events scout report from `tmp/issue-<N>/events-scout.md` — tracker update recommendations, proposed additions, proposed updates, and the rejects it dropped. If the scout found nothing, say so; an empty week is normal. If the scout has not returned yet, hand over the sections and bring the events report as soon as it lands.
 
 Stop. Publishing the issue and approving events are both the owner's call, and each event proposal needs its own explicit yes — a comment on one proposal is not approval of the rest.
 
@@ -105,9 +115,10 @@ Stop. Publishing the issue and approving events are both the owner's call, and e
 Only for proposals the owner approved:
 
 1. Edit `src/content/events.yaml`: insert approved additions keeping the sort by `start` newest first, and apply approved updates. Carry over any `# unverified` comments from the report.
-2. For each new slug: `node scripts/events/fetch-banners.mjs --only <slug>`.
-3. If a new event or newly opened CFP belongs in the issue's events block and the issue is not yet published, add it there too.
-4. `npm run check` must pass — the schema rejects an unknown topic.
+2. Apply approved tracker recommendations to the `watchlist` in `scripts/events/data/scout-ledger.yaml`.
+3. For each new slug: `node scripts/events/fetch-banners.mjs --only <slug>`.
+4. If a new event or newly opened CFP belongs in the issue's events block and the issue is not yet published, add it there too.
+5. `npm run check` must pass — the schema rejects an unknown topic.
 
 ## 10. After the owner publishes
 

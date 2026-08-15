@@ -1,0 +1,39 @@
+# Events scout ledger. Read and updated by the newsletter-issue events scout
+# (.claude/skills/newsletter-issue/workflows/events-scout.md).
+#
+# `watchlist` is the owner-curated set of recurring conferences checked every
+# run — the scout proposes changes to it in its report but never edits it.
+# `scouted` is the scout's own memory of one-off candidates already assessed,
+# so the same conference is not researched from scratch every week; the scout
+# maintains it freely.
+
+watchlist:
+  - name: KubeCon + CloudNativeCon Europe
+    note: flagship CNCF; strategically relevant co-located events count too
+  - name: AGNTCon + MCPCon Europe
+    note: Linux Foundation agentic AI and MCP events, including separate European editions
+  - name: PyCon DE & PyData
+  - name: EuroPython
+  - name: Regional PyCons in Central and nearby Europe
+    note: Germany, Czechia, Austria, Poland, Netherlands, Belgium, France, Switzerland, Nordics
+  - name: World Summit AI Amsterdam
+  - name: Rise of AI Berlin
+  - name: AI Engineer Europe
+  - name: AI Engineer World's Fair
+    note: US, but unique flagship — the exception to the Europe rule
+  - name: MLOps World
+    note: US, but unique flagship — the exception to the Europe rule
+  - name: WeAreDevelopers World Congress Berlin
+  - name: Cloud Native AI Summit Europe
+  - name: AI Horizons Prague
+  - name: Kubernetes Community Days, Central and nearby Europe
+  - name: ContainerDays Hamburg
+
+scouted: []
+# Entry shape, one per candidate assessed:
+#   - name: Some Conf 2027
+#     url: https://someconf.example/
+#     checked: 2026-08-15
+#     status: proposed | rejected | watching
+#     reason: one line
+#     cfp: { url: ..., deadline: 2026-09-18 }   # when known
