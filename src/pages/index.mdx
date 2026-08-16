@@ -29,7 +29,8 @@ hero:
 evidence:
   - value: '09'
     label: AI ALIGNMENT & SAFETY PRINCIPLES
-  - value: '393'
+  # Counted from the newsletter collection at build; see the StatBand call below.
+  - value: derived
     label: NEWSLETTER ISSUES PUBLISHED
   - value: 70k+
     label: ML PRACTITIONERS REACHED
@@ -240,6 +241,9 @@ import OpenSourceShowcase from '../components/OpenSourceShowcase.astro';
 import FormSection from '../components/FormSection.astro';
 import PolicySection from '../components/PolicySection.astro';
 import { contactFormCopy, contactFormTitle, networkSectors, networkStats } from '../data/contactForm';
+import { getIssueCount } from '../utils/RecentIssues';
+
+export const issueCount = await getIssueCount();
 
 <script
   type="application/ld+json"
@@ -253,7 +257,7 @@ import { contactFormCopy, contactFormTitle, networkSectors, networkStats } from 
 
 <Hero {...frontmatter.hero} />
 
-<StatBand stats={frontmatter.evidence} />
+<StatBand stats={frontmatter.evidence.map((stat) => (stat.value === 'derived' ? { ...stat, value: `${issueCount}` } : stat))} />
 
 <AffiliationMarquee />
 
