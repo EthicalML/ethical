@@ -105,8 +105,8 @@ tmp/
 # (eslint.config.mjs) and unaffected: worktrees are still never linted.
 .claude/*
 !.claude/skills/
+!.claude/rules/
 .claude/settings.local.json
-CLAUDE.md
 tmp2
 .obsidian/
 .github/.obsidian/
