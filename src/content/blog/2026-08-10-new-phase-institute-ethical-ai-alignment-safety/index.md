@@ -2,7 +2,7 @@
 title: A New Phase for The Institute for Ethical AI Alignment & Safety
 date: 2026-08-10
 image: './featured.jpg'
-summary: 'We are revealing the new phase of The Institute for Ethical AI Alignment & Safety, with a revamp across our principles, policy work, open source ecosystem and network, and a mission to ensure that frontier AI is safe, aligned and accountable to people and society.'
+summary: 'We are revealing the new phase of The Institute for Ethical AI Alignment & Safety, with a revamp across our principles, policy work, open source ecosystem and network, and a mission to ensure that frontier AI is safe, aligned and open for people and society.'
 tags: [announcement, ai-safety, ai-policy, open-source, institute]
 syndication:
   - name: 'LinkedIn (Institute)'
@@ -13,7 +13,7 @@ syndication:
 
 We are excited to reveal the new phase of The Institute for Ethical AI Alignment & Safety.
 
-> Join us in our mission to ensure that frontier AI is safe, aligned and accountable to people and society.
+> Join us in our mission to ensure that frontier AI is safe, aligned and open for people and society.
 
 Since our founding in 2017 we have built a reach of over 100,000 practitioners and a track record of contributions across public and private institutions. This new phase brings a revamp across all of our critical initiatives, and the mission that started it continues unchanged.
 
@@ -21,7 +21,7 @@ You can watch the announcement in [the reveal video](https://www.youtube.com/wat
 
 ## The mission
 
-The Institute is an independent research institute working to ensure that frontier AI is safe, aligned and accountable to people and society. That work has always sat at the intersection of three things that are usually kept apart: the regulation that sets the obligations, the infrastructure that makes those obligations implementable, and the practitioner network that has to live with both.
+The Institute is an independent research institute working to ensure that frontier AI is safe, aligned and open for people and society. That work has always sat at the intersection of three things that are usually kept apart: the regulation that sets the obligations, the infrastructure that makes those obligations implementable, and the practitioner network that has to live with both.
 
 The new phase is a consolidation of those three tracks rather than a change of direction.
 
