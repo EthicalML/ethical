@@ -1,6 +1,8 @@
 # TODO
 
-## SEO / GEO audit and LLM-optimized serving
+## Assess migration of this TODO.md to a task tracker (kata or beads)
+
+Exploration done 2026-08-16 in Claude session "explore beads and kata for task managers agentic" (resume: `claude --resume 539aec6c-6f29-470b-9105-cb15e8136ebe`). Both tools are installed and loaded with a snapshot of this file (36 issues, section bodies verbatim): beads at `~/.beads-planning` (`BEADS_DIR` in zprofile, `repo:ethical` labels) and kata at `~/.kata` (project `ethical`, `~/.kata.toml` home binding). Assessment so far: kata fits better (native central store, project-per-repo attribution, ~25x faster CLI, ~10x leaner `--agent` output, first-party TUI/web UI) while beads wins on maturity and git-native sync; full state in the `task-tracker-trial` auto-memory. Decision pending: adopt one (reload from this file first — the snapshots go stale), or drop both (`brew uninstall beads kata`, remove `~/.beads-planning`, `~/.kata`, `~/.kata.toml`, `BEADS_DIR` line). This file stays authoritative until decided.
 
 Six-phase programme, owner-approved direction (2026-08-07). Phases 1-5 are the audit: (1) technical SEO crawl including legacy-redirect integrity against the `legacy-jekyll` inventory, (2) content and keyword-intent analysis, (3) Core Web Vitals, (4) prioritized report, (5) GEO/AEO: AI crawler policy in robots.txt, llms.txt and markdown surfaces, answer-extraction readiness, and an AI answer audit baseline (query ChatGPT/Claude/Perplexity for the queries the site should own).
 
