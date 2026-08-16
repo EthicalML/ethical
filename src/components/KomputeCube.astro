@@ -10,24 +10,12 @@ interface Props {
    sit on different surfaces: `ArticleHero` inside a block that declares itself
    dark, so it says nothing, and `ProjectPortal` on paper inside no block at all,
    which is already `page`. Canvas never sniffs its own backdrop. */
-const { embedded = false, backdrop = false, surface } = Astro.props;
+const { backdrop = false, surface } = Astro.props;
 ---
 
-{
-  embedded ? (
-    <kompute-cube class:list={['kompute-canvas-mount', !backdrop && 'widget embedded-widget']} data-surface={surface}>
-      <canvas aria-label="Animated Kompute cube" />
-    </kompute-cube>
-  ) : (
-    <section aria-labelledby="kompute-cube-heading" data-reveal>
-      <p class="eyebrow">CUSTOM WIDGET</p>
-      <h2 id="kompute-cube-heading">Kompute cube</h2>
-      <kompute-cube class="widget kompute-canvas-mount" data-surface={surface}>
-        <canvas aria-label="Animated Kompute cube" />
-      </kompute-cube>
-    </section>
-  )
-}
+<kompute-cube class:list={['kompute-canvas-mount', !backdrop && 'widget embedded-widget']} data-surface={surface}>
+  <canvas aria-label="Animated Kompute cube" />
+</kompute-cube>
 
 <script>
   import '../shared/canvas/KomputeCube';
