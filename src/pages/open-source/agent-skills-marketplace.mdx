@@ -20,12 +20,12 @@ plugins:
 ---
 
 import { getEntry } from 'astro:content';
-import ArticleHero from '../../components/ArticleHero.astro';
 import CTA from '../../components/prose/CTA.astro';
 import FrameworkLinkCards from '../../components/FrameworkLinkCards.astro';
 import Metrics from '../../components/prose/Metrics.astro';
 import ProjectLinks from '../../components/ProjectLinks.astro';
 import QuickstartTerminal from '../../components/QuickstartTerminal.astro';
+import SkillsMarketplaceHero from '../../components/SkillsMarketplaceHero.astro';
 
 export const install = [
   { command: '/plugin marketplace add EthicalML/agent-skills-marketplace' },
@@ -41,7 +41,7 @@ export const links = [
 
 export const metricEntry = await getEntry('metrics', 'skills-marketplace');
 
-<ArticleHero
+<SkillsMarketplaceHero
   eyebrow="OPEN SOURCE · AGENT SKILLS · MIT"
   title={frontmatter.title}
   transitionName="skills-marketplace-title"

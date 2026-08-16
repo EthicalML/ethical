@@ -1,0 +1,26 @@
+---
+// The `/open-source/agent-skills-marketplace/` hero: `ArticleHero` with the loading bay dropped in
+// as its full-bleed backdrop.
+//
+// This exists because a page in MDX cannot do it directly. `@astrojs/mdx` passes named slots to an
+// Astro component as props (`{ ...props, ...slots }`), so a child carrying `slot="backdrop"`
+// overwrites the `backdrop` prop of the same name, and Astro's JSX renderer then deletes it as a
+// slot value: `ArticleHero` receives the backdrop content but never the flag that composes it. In
+// an `.astro` file props and slots are separate, so the pairing works here. Page copy still belongs
+// to the page and is forwarded through.
+import ArticleHero from './ArticleHero.astro';
+import SkillCrateDock from './SkillCrateDock.astro';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  intro?: string;
+  transitionName?: string;
+}
+
+const { eyebrow, title, intro, transitionName } = Astro.props;
+---
+
+<ArticleHero eyebrow={eyebrow} title={title} intro={intro} transitionName={transitionName} backdrop>
+  <SkillCrateDock slot="backdrop" embedded backdrop />
+</ArticleHero>
