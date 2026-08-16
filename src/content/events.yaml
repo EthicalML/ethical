@@ -25,6 +25,9 @@
   cfps:
     - url: https://codetalks.com/call-for-paper
       deadline: 2026-08-31
+  talks:
+    - title: To be announced
+      url: https://codetalks.com/
 
 - slug: world-summit-ai-europe-2026
   name: World Summit AI Europe 2026
@@ -37,6 +40,26 @@
   topics: [ai-agents, ai-policy, llms]
   talks:
     - title: To be announced
+
+- slug: humanx-emea-2026
+  name: HumanX Amsterdam 2026
+  series: humanx-emea
+  url: https://www.humanx.co/europe
+  image: https://www.humanx.co/europe/opengraph-image.png
+  start: 2026-09-22
+  end: 2026-09-24
+  location: Amsterdam, NL
+  topics: [ai-policy, llms, general-tech]
+
+- slug: agntcon-mcpcon-europe-2026
+  name: AGNTCon + MCPCon Europe 2026
+  series: agntcon-mcpcon-europe
+  url: https://events.linuxfoundation.org/agntcon-mcpcon-europe/
+  image: https://events.linuxfoundation.org/wp-content/uploads/2026/04/agntcon-mcpcon-europe-2026-snackable.jpg
+  start: 2026-09-17
+  end: 2026-09-18
+  location: Amsterdam, NL
+  topics: [ai-agents, llms, cloud-native]
 
 - slug: ai-infra-summit-2026
   name: AI Infra Summit 2026
