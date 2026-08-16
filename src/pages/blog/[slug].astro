@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ArticleBody from '../../components/ArticleBody.astro';
 import Hero from '../../components/Hero.astro';
@@ -124,6 +125,9 @@ const bylineAuthors = entry.data.authors.map((name) => ({ name, anchor: authors[
         ))
       }
     </p>
+    <figure class="blog-featured" data-reveal>
+      <Image src={entry.data.image} alt="" widths={[640, 1080, 1560]} sizes="(max-width: 828px) calc(100vw - 48px), 780px" loading="eager" />
+    </figure>
     <ArticleBody class="blog-body"><Content /></ArticleBody>
     {
       entry.data.syndication?.length ? (
@@ -158,6 +162,23 @@ const bylineAuthors = entry.data.authors.map((name) => ({ name, anchor: authors[
   /* The meta bar, chips, steps and byline mirror the newsletter issue meta
      treatment so the two article surfaces read identically; the shared
      primitive extraction is recorded in TODO.md (hero family programme). */
+  /* The featured image opens the article at the 780px media measure the body
+     gives diagrams and code, so it lines up with everything below it. */
+  .blog-featured {
+    margin: 40px auto 0;
+    max-width: 828px;
+    padding-inline: 24px;
+  }
+  .blog-featured :global(img) {
+    border: 1px solid var(--hairline-card);
+    border-radius: var(--radius-card);
+    display: block;
+    height: auto;
+    width: 100%;
+  }
+  .blog-featured + :global(.article-body) {
+    padding-top: 40px;
+  }
   .blog-related {
     margin-inline: auto;
     max-width: 645px;
