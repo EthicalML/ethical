@@ -1,0 +1,158 @@
+---
+// Side-by-side colour swatch columns for a theme variant pair: one row per
+// highlight group, carrying the chip, the group name, its hex value and what it
+// paints. The page owns the rows; this component only arranges them.
+interface Row {
+  name: string;
+  value: string;
+  use: string;
+}
+
+interface Group {
+  title: string;
+  note: string;
+  /** The variant's own `Normal` background and foreground, so each column of
+      swatches sits on the surface the theme actually paints them on. */
+  background: string;
+  ink: string;
+  rows: Row[];
+}
+
+interface Props {
+  groups: Group[];
+}
+
+const { groups } = Astro.props;
+---
+
+<div class="theme-palette prose-block" data-reveal>
+  {
+    groups.map(({ title, note, background, ink, rows }) => (
+      <section class="theme-palette-group" style={`--palette-plate: ${background}; --palette-ink: ${ink}`}>
+        <header>
+          <h3>{title}</h3>
+          <p>{note}</p>
+        </header>
+        <ul>
+          {rows.map(({ name, value, use }) => (
+            <li class="theme-swatch">
+              <span class="theme-swatch-chip" style={`background: ${value}`} />
+              <span class="theme-swatch-name">{name}</span>
+              <span class="theme-swatch-value">{value}</span>
+              <span class="theme-swatch-use">{use}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</div>
+
+<style is:global>
+  .theme-palette {
+    display: grid;
+    gap: 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 34px;
+    overflow: hidden;
+  }
+
+  .theme-palette-group {
+    border-right: 1px solid var(--hairline);
+    padding: 26px 24px;
+  }
+
+  .theme-palette-group:last-child {
+    border-right: 0;
+  }
+
+  .theme-palette-group h3 {
+    font-family: var(--font-mono);
+    font-size: var(--mono-10);
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  .theme-palette-group header p {
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: var(--mono-10);
+    margin: 8px 0 0;
+  }
+
+  .theme-palette-group ul {
+    background: var(--palette-plate);
+    border: 1px solid var(--hairline-card);
+    border-radius: var(--radius-control);
+    list-style: none;
+    margin: 18px 0 0;
+    padding: 6px 14px;
+  }
+
+  .theme-swatch {
+    align-items: center;
+    border-top: 1px solid rgba(128, 138, 132, 0.22);
+    display: grid;
+    font-family: var(--font-mono);
+    font-size: var(--mono-10-5);
+    gap: 12px;
+    grid-template-columns: 24px minmax(0, 1fr) 74px minmax(0, 1.1fr);
+    padding: 9px 0;
+  }
+
+  .theme-swatch:first-child {
+    border-top: 0;
+  }
+
+  .theme-swatch-chip {
+    border-radius: 2px;
+    display: block;
+    height: 18px;
+    width: 24px;
+  }
+
+  .theme-swatch-name,
+  .theme-swatch-value,
+  .theme-swatch-use {
+    color: var(--palette-ink, var(--text-2));
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .theme-swatch-value,
+  .theme-swatch-use {
+    opacity: 0.66;
+  }
+
+  @media (max-width: 950px) {
+    .theme-palette {
+      grid-template-columns: 1fr;
+    }
+
+    .theme-palette-group {
+      border-bottom: 1px solid var(--hairline);
+      border-right: 0;
+    }
+
+    .theme-palette-group:last-child {
+      border-bottom: 0;
+    }
+
+    .theme-swatch {
+      grid-template-columns: 24px minmax(0, 1fr) 74px;
+    }
+
+    .theme-swatch-use {
+      display: none;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .theme-palette {
+      margin-inline: 18px;
+    }
+  }
+</style>

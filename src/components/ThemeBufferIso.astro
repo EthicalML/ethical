@@ -1,0 +1,32 @@
+---
+// The monokai-institute.nvim buffer slab, as a standalone mount.
+interface Props {
+  embedded?: boolean;
+  backdrop?: boolean;
+  surface?: 'dark' | 'page';
+}
+
+/* Same contract as `KomputeCube`: `backdrop` drops the card framing so the slab
+   can sit full-bleed behind hero text, and `surface` overrides the surface the
+   mount would otherwise inherit from the nearest `data-surface` ancestor. Both
+   current callers sit inside a block that already declares itself dark, so
+   neither passes it; canvas never sniffs its own backdrop. */
+const { backdrop = false, surface } = Astro.props;
+---
+
+<theme-buffer-iso class:list={['theme-buffer-mount', !backdrop && 'widget embedded-widget']} data-surface={surface} aria-hidden="true">
+  <canvas></canvas>
+</theme-buffer-iso>
+
+<script>
+  import '../shared/canvas/ThemeBufferIso';
+</script>
+
+<style>
+  theme-buffer-iso,
+  canvas {
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+</style>

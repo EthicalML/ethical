@@ -5,6 +5,9 @@ import KomputeCube from './KomputeCube.astro';
 import OpenSourceHeroCanvas from './OpenSourceHeroCanvas.astro';
 import PolicyHeroCanvas from './PolicyHeroCanvas.astro';
 
+/* MDX passes a `slot="backdrop"` child as `props.backdrop` and then lifts it
+   into the slots map, which deletes the boolean the caller wrote alongside it.
+   Restoring it here keeps the flag meaningful from both `.astro` and `.mdx`. */
 if (Astro.slots.has('backdrop')) Astro.props.backdrop = true;
 
 const { eyebrow, title, intro, canvas = false, backdrop = false, transitionName } = Astro.props;
@@ -61,7 +64,7 @@ const { eyebrow, title, intro, canvas = false, backdrop = false, transitionName 
     z-index: 1;
   }
 
-  .article-hero.canvas-variant > :not(canvas, .kaos-architecture-mount, .kompute-canvas-mount, .policy-citadel-mount, .oss-lattice-mount) {
+  .article-hero.canvas-variant > :not(canvas, .kaos-architecture-mount, .kompute-canvas-mount, .theme-buffer-mount, .policy-citadel-mount, .oss-lattice-mount) {
     position: relative;
     z-index: 2;
   }
@@ -97,6 +100,22 @@ const { eyebrow, title, intro, canvas = false, backdrop = false, transitionName 
   .article-hero.canvas-variant > .kompute-canvas-mount canvas {
     height: 100%;
     width: 100%;
+  }
+
+  /* The buffer slab sits further right and dimmer than the cube: it cycles
+    through a light sage state whose plate is near white, and the hero title has
+    to stay readable across the whole cycle rather than only on the dark ones. */
+  .article-hero.canvas-variant > .theme-buffer-mount {
+    height: 100%;
+    left: 42%;
+    mask-image: linear-gradient(90deg, transparent 0, #000 300px);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 300px);
+    opacity: 0.4;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 58%;
+    z-index: 0;
   }
 
   .article-hero.canvas-variant > .policy-citadel-mount,
@@ -168,6 +187,7 @@ const { eyebrow, title, intro, canvas = false, backdrop = false, transitionName 
   @media (max-width: 950px) {
     .article-hero.canvas-variant > .kaos-architecture-mount,
     .article-hero.canvas-variant > .kompute-canvas-mount,
+    .article-hero.canvas-variant > .theme-buffer-mount,
     .article-hero.canvas-variant .hero-canvas {
       bottom: 0;
       height: 340px;
@@ -179,6 +199,13 @@ const { eyebrow, title, intro, canvas = false, backdrop = false, transitionName 
       top: auto;
       transform: none;
       width: 100%;
+    }
+
+    /* Narrow widths put the slab directly under the title rather than beside
+      it, so the sage state needs more headroom than the dark canvases do. */
+    .article-hero.canvas-variant > .theme-buffer-mount {
+      height: 300px;
+      opacity: 0.3;
     }
   }
 </style>

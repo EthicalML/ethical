@@ -55,6 +55,7 @@ for (const { heading, routes } of navigationSections) {
 sectionByRoute.set('/open-source/ai-guidelines/', menus.oss.label);
 sectionByRoute.set('/open-source/agent-skills-marketplace/', menus.oss.label);
 sectionByRoute.set('/open-source/production-agentic-list/', menus.oss.label);
+sectionByRoute.set('/open-source/monokai-institute/', menus.oss.label);
 
 const excludedFromLlms = [
   (route: string) => route === '/',
