@@ -47,7 +47,7 @@ Rewrite the `scouted` section of `scripts/events/data/scout-ledger.yaml`: one en
 
 ## 7. Write the report
 
-Write `tmp/issue-<N>/events-scout.md` with four sections, any of which may say "none":
+Write `tmp/issue-<N>/events-scout.md` with four sections, any of which may say "none". Every event named anywhere in the report carries a link on its title, rejects included — the owner clicks through to overrule, so an unlinked reject is the hardest row to check. Link the organiser page you verified against; when an event has no findable official page, say so in place rather than linking an aggregator.
 
 - **Tracker update recommendations** — proposed `watchlist` additions or removals, each with a reason. Recommend only; the owner edits the watchlist.
 - **Proposed additions** — per event: a ready-to-paste YAML entry matching the `events` schema (omit `image`; `scripts/events/fetch-banners.mjs` fills it later), evidence lines per date/deadline (claim, source URL, verified or unverified), and a one-line recommendation. Flag any CFP deadline within 14 days.

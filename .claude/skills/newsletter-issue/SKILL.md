@@ -33,7 +33,16 @@ A link to a LinkedIn or X post is a pointer, not a source: resolve it to the art
 
 Spawn a subagent with the prompt "Read .claude/skills/newsletter-issue/workflows/source-candidates.md and execute it", naming any owner-supplied URLs that joined the pool. It fetches and skims the pool and returns a factual digest of ~25 candidates — facts only, no verdicts. The scoring judgement stays here with you.
 
-Read `references/selection.md` in full, score the digest against its rules, and cut to the 15 strongest. Present those 15 to the owner, each carrying the digest facts plus your one line on why they matter. The owner cuts the 15 down to five, and those five go to step 3. Never pick unilaterally.
+Read `references/selection.md` in full, score the digest against its rules, and cut to the 15 strongest.
+
+Write the shortlist to `tmp/issue-<N>/shortlist.md` — the owner reviews it as a file, not as chat output. It carries four parts:
+
+1. A table of the 15, each row with the digest facts: source, points (or `—`), age, host, kind and word count.
+2. One paragraph per entry on what it argues and why the actor matters, flagging own content and anything thin. Every title is a link to its URL, in the table and in the paragraphs, with the description starting on its own line and a blank line between entries — the owner reviews by clicking through and annotating between them.
+3. A recommended five with a slot role each (hook, substance, substance, substance, closer), followed by a cap and mix check that names every rule the set touches: host clustering, the research-paper and model-release caps, the opinion and production-engineering slots, video count, adjacent-beat count, own-content cap, recency and repeat subjects. State any rule the recommendation deliberately breaks and why, and give the swap that would satisfy it.
+4. The cut list: everything skimmed but dropped, one line each with the reason, so the owner can pull one back.
+
+Then summarise in chat and link the file. The owner cuts to five, and those five go to step 3. Never pick unilaterally: the recommended five is a recommendation, and own content never enters the final five without an explicit yes.
 
 After the cut, mark the clear rejects so they stop resurfacing:
 
