@@ -1,0 +1,27 @@
+---
+// The agent-skills-marketplace loading bay, as a standalone mount. `surface` overrides the surface
+// this mount would otherwise inherit from the nearest `data-surface` ancestor; canvas never sniffs
+// its own backdrop.
+interface Props {
+  surface?: 'dark' | 'page';
+}
+
+const { surface } = Astro.props;
+---
+
+<skill-crate-dock data-surface={surface} aria-hidden="true">
+  <canvas></canvas>
+</skill-crate-dock>
+
+<script>
+  import '../shared/canvas/SkillCrateDock';
+</script>
+
+<style>
+  skill-crate-dock,
+  canvas {
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+</style>

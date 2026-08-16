@@ -65,6 +65,18 @@ projects:
       - label: View on GitHub
         href: https://github.com/EthicalML/awesome-artificial-intelligence-regulation
         kind: ''
+  skillsMarketplace:
+    figure: FIG 06 — SKILLS MARKETPLACE
+    title: Agent Skills Marketplace
+    text: An open marketplace of portable agent skills and plugins built on the SKILL.md convention, installing into both Claude Code and Copilot CLI from a single catalogue, with contributions accepted by pull request under automated validation.
+    tags: [COMMUNITY, SKILL.MD STANDARD, MIT]
+    actions:
+      - label: Open the marketplace
+        href: /open-source/agent-skills-marketplace/
+        kind: primary
+      - label: View on GitHub
+        href: https://github.com/EthicalML/agent-skills-marketplace
+        kind: ''
 ---
 
 import AnimationWindow from '../../components/AnimationWindow.astro';
@@ -74,6 +86,7 @@ import CategoryMosaic from '../../components/CategoryMosaic.astro';
 import KaosGraph from '../../components/KaosGraph.astro';
 import KomputeCube from '../../components/KomputeCube.astro';
 import ProjectFeature from '../../components/ProjectFeature.astro';
+import SkillCrateDock from '../../components/SkillCrateDock.astro';
 import XaiPipeline from '../../components/XaiPipeline.astro';
 
 <ArticleHero
@@ -152,19 +165,35 @@ import XaiPipeline from '../../components/XaiPipeline.astro';
   </div>
 </ProjectFeature>
 
+<ProjectFeature
+  figure={frontmatter.projects.aiGuidelines.figure}
+  title={frontmatter.projects.aiGuidelines.title}
+  text={frontmatter.projects.aiGuidelines.text}
+  morph="ai-guidelines-title"
+  morphHref="/open-source/ai-guidelines/"
+  metricId="ai-guidelines"
+  metricStyle="line"
+  tags={frontmatter.projects.aiGuidelines.tags}
+  actions={frontmatter.projects.aiGuidelines.actions}
+>
+  <div class="fixed-canvas">
+    <CategoryMosaic set="ai-guidelines" />
+  </div>
+</ProjectFeature>
+
   <ProjectFeature
-    figure={frontmatter.projects.aiGuidelines.figure}
-    title={frontmatter.projects.aiGuidelines.title}
-    text={frontmatter.projects.aiGuidelines.text}
-    morph="ai-guidelines-title"
-    morphHref="/open-source/ai-guidelines/"
-    metricId="ai-guidelines"
+    figure={frontmatter.projects.skillsMarketplace.figure}
+    title={frontmatter.projects.skillsMarketplace.title}
+    text={frontmatter.projects.skillsMarketplace.text}
+    morph="skills-marketplace-title"
+    morphHref="/open-source/agent-skills-marketplace/"
+    metricId="skills-marketplace"
     metricStyle="line"
-    tags={frontmatter.projects.aiGuidelines.tags}
-    actions={frontmatter.projects.aiGuidelines.actions}
+    tags={frontmatter.projects.skillsMarketplace.tags}
+    actions={frontmatter.projects.skillsMarketplace.actions}
   >
     <div class="fixed-canvas">
-      <CategoryMosaic set="ai-guidelines" />
+      <SkillCrateDock />
     </div>
   </ProjectFeature>
 </section>

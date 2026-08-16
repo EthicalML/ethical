@@ -9,14 +9,17 @@ interface TerminalLine {
 
 interface Props {
   cli: TerminalLine[];
+  /** Window title bar text. Defaults to the KAOS CLI, the terminal's first consumer. */
+  title?: string;
+  ariaLabel?: string;
 }
 
-const { cli }: Props = Astro.props;
+const { cli, title = 'kaos-cli', ariaLabel = 'KAOS CLI quickstart' }: Props = Astro.props;
 ---
 
-<AnimationWindow class="quickstart-window" title="kaos-cli" finite>
+<AnimationWindow class="quickstart-window" title={title} finite>
   <quickstart-terminal>
-    <div class="terminal-body" role="region" aria-label="KAOS CLI quickstart">
+    <div class="terminal-body" role="region" aria-label={ariaLabel}>
       {
         cli.map(({ command, output }) => (
           <div class="terminal-step" data-terminal-step>

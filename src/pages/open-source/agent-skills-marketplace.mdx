@@ -1,0 +1,77 @@
+---
+title: Agent Skills Marketplace
+seoTitle: Agent Skills Marketplace for Claude Code & Copilot CLI
+description: An open-source marketplace of portable agent skills and plugins built on the SKILL.md convention, installable in both Claude Code and Copilot CLI.
+composed: true
+layout: ../../layouts/ProseLayout.astro
+plugins:
+  - eyebrow: PLUGIN · 3 SKILLS
+    title: dev-utilities
+    description: 'Writing and explaining code: author reliable skills, walk through a commit or pull request, and align agent instruction files across tools.'
+    href: https://github.com/EthicalML/agent-skills-marketplace/tree/master/plugins/dev-utilities
+  - eyebrow: PLUGIN · 1 SKILL
+    title: site-capture
+    description: 'Recording website walkthroughs: a scripted screen capture of a site as video or GIF, with human-paced scrolling and a visible cursor.'
+    href: https://github.com/EthicalML/agent-skills-marketplace/tree/master/plugins/site-capture
+  - eyebrow: PLUGIN · 1 SKILL
+    title: agent-harness
+    description: 'Building Python agents: a skill-driven harness with deferred capability loading, custom tools and any OpenAI-compatible model endpoint.'
+    href: https://github.com/EthicalML/agent-skills-marketplace/tree/master/plugins/agent-harness
+---
+
+import { getEntry } from 'astro:content';
+import ArticleHero from '../../components/ArticleHero.astro';
+import CTA from '../../components/prose/CTA.astro';
+import FrameworkLinkCards from '../../components/FrameworkLinkCards.astro';
+import Metrics from '../../components/prose/Metrics.astro';
+import ProjectLinks from '../../components/ProjectLinks.astro';
+import QuickstartTerminal from '../../components/QuickstartTerminal.astro';
+
+export const install = [
+  { command: '/plugin marketplace add EthicalML/agent-skills-marketplace' },
+  { command: '/plugin install dev-utilities@agent-skills-marketplace' },
+  { command: 'copilot plugin marketplace add EthicalML/agent-skills-marketplace' },
+  { command: 'copilot plugin install dev-utilities@agent-skills-marketplace' },
+];
+
+export const links = [
+  { label: 'View on GitHub', href: 'https://github.com/EthicalML/agent-skills-marketplace' },
+  { label: 'Read the install guide', href: 'https://github.com/EthicalML/agent-skills-marketplace/blob/master/INSTALL.md' },
+];
+
+export const metricEntry = await getEntry('metrics', 'skills-marketplace');
+
+<ArticleHero
+  eyebrow="OPEN SOURCE · AGENT SKILLS · MIT"
+  title={frontmatter.title}
+  transitionName="skills-marketplace-title"
+  intro="An open-source marketplace of portable agent skills and plugins maintained by the Institute. Skills are written to the open SKILL.md convention, so the same plugin installs into Claude Code and Copilot CLI without being rewritten for either."
+/>
+
+## Skills as portable capability
+
+A skill is a folder with a `SKILL.md` at its root: a short description the agent matches against the task in front of it, and the procedure it should follow once it does. Because the format is a convention rather than a vendor feature, a skill written once is not tied to the assistant it was written in. The marketplace packages skills into plugins, and a plugin is the unit an assistant installs.
+
+The value is in what that portability protects. Capability captured as a skill outlives the tool it was captured in, stays reviewable as ordinary text in version control, and can be corrected in public when it turns out to be wrong. That is the same argument the Institute makes for the rest of its open-source work, applied to the instructions we hand to agents.
+
+## Installing from either client
+
+The marketplace is registered once, then plugins are installed from it by name. Claude Code takes the slash-command form and Copilot CLI the shell form; both read the same catalogue from the same repository. Replace `dev-utilities` with whichever plugin you want, or point your assistant at the repository's `INSTALL.md`, which checks prerequisites and does the registration and installation for you.
+
+<QuickstartTerminal cli={install} title="agent-skills-marketplace" ariaLabel="Marketplace install commands" />
+
+## Three plugins in the catalogue
+
+Five skills ship across three plugins today, each one a working tool rather than a demonstration. They cover the three jobs that came up often enough in the Institute's own work to be worth writing down properly.
+
+<FrameworkLinkCards cards={frontmatter.plugins} />
+
+## Contributing a skill
+
+Contributions arrive as pull requests. Every change runs through `scripts/validate.sh`, which checks plugin and skill structure before a reviewer sees it, so a submission either satisfies the format or says why it does not. `CONTRIBUTING.md` in the repository is the reference for what a good skill looks like and what the validator expects.
+
+<Metrics values={metricEntry.data.values} />
+
+<CTA href="https://github.com/EthicalML/agent-skills-marketplace/blob/master/CONTRIBUTING.md" label="Read the contribution guide" />
+
+<ProjectLinks links={links} />
