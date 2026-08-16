@@ -2,6 +2,8 @@
 
 Put a rule with the component or page that owns the rendered surface; `src/styles/tokens.css` is only for tokens, foundations, shared primitives, cross-surface integration and page-wide motion.
 
+**KEEP IT SIMPLE, KEEP IT CURRENT.** This file describes the present state only: the rule, its owner, and any constraint a reader must not break. No refactor narratives, no measurements from past decisions, no "used to be" — when the code changes, replace the prose rather than appending to it.
+
 ## Theme tokens
 
 Every colour that must differ between the dark and light themes is a token on `:root`. A literal
