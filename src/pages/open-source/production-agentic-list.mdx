@@ -7,6 +7,7 @@ layout: ../../layouts/ProseLayout.astro
 ---
 
 import ArticleHero from '../../components/ArticleHero.astro';
+import CatalogueLightGrid from '../../components/CatalogueLightGrid.astro';
 import CategoryAtlas from '../../components/CategoryAtlas.astro';
 import CTA from '../../components/prose/CTA.astro';
 import Metrics from '../../components/prose/Metrics.astro';
@@ -15,11 +16,14 @@ import ProductionMlCatalogue from '../../components/ProductionMlCatalogue.astro'
 import agenticLibraries from '../../data/production-agentic-libraries.json';
 
 <ArticleHero
+  backdrop
   eyebrow="OPEN SOURCE · COMMUNITY · AGENTS"
   title={frontmatter.title}
   intro={`"A curated list of awesome open source libraries to deploy, monitor, version, scale, and secure your production agentic systems and applications." ${agenticLibraries.libraryCount} libraries across ${agenticLibraries.categories.length} categories, with a summary of new additions released every month.`}
   transitionName="production-agentic-title"
-/>
+>
+  <CatalogueLightGrid backdrop slot="backdrop" />
+</ArticleHero>
 
 ## Explore the categories
 
