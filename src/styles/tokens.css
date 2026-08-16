@@ -947,9 +947,9 @@ html[data-astro-transition="back"]::view-transition-old(principle-page) {
 html[data-astro-transition="back"]::view-transition-new(principle-page) {
   animation: principle-slide-in-left .22s ease both !important;
 }
-/* The sliding article is lifted out of the root snapshot, so the sticky meta
-   bar needs its own group to stay above it; both endpoints have the bar docked
-   in the same place, so it holds still while the text travels under it. */
+/* Sliding article content is lifted out of the root snapshot, so each sticky
+   sub-navbar needs its own group above it. Both endpoints have the bar docked
+   in the same place, so the chrome holds still while the text travels under it. */
 /* The header is the one element that never refreshes: it is persisted across
    navigations and must not animate on either side of one. The name is declared
    here rather than with `transition:name` because Astro scopes that directive
@@ -959,6 +959,8 @@ html[data-astro-transition="back"]::view-transition-new(principle-page) {
    class selector matches in both documents and survives the swap. */
 ::view-transition-group(site-header) { animation: none !important; z-index: 60; }
 ::view-transition-group(newsletter-bar) { z-index: 50; }
+::view-transition-group(principle-bar) { z-index: 50; }
+::view-transition-group(principle-page) { z-index: 1; }
 ::view-transition-group(newsletter-page) { z-index: 1; }
 /* Chrome, not content: it holds still while the article travels under it. The
    outgoing snapshot is dropped rather than faded — stacking two opaque copies
@@ -966,11 +968,14 @@ html[data-astro-transition="back"]::view-transition-new(principle-page) {
    `:only-child` variant is spelled out because the generic settle rule carries
    that pseudo-class and would otherwise outrank a plain named selector. */
 ::view-transition-old(site-header),
-::view-transition-old(newsletter-bar) { display: none; }
+::view-transition-old(newsletter-bar),
+::view-transition-old(principle-bar) { display: none; }
 ::view-transition-new(site-header),
 ::view-transition-new(site-header):only-child,
 ::view-transition-new(newsletter-bar),
-::view-transition-new(newsletter-bar):only-child { animation: none !important; }
+::view-transition-new(newsletter-bar):only-child,
+::view-transition-new(principle-bar),
+::view-transition-new(principle-bar):only-child { animation: none !important; }
 html.is-transitioning .header-glass { backdrop-filter: none; background: var(--bg-header-solid); }
 html[data-astro-transition="forward"]::view-transition-old(newsletter-page) {
   animation: principle-slide-out-left .22s ease both !important;
