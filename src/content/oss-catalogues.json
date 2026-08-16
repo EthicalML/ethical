@@ -284,5 +284,54 @@
         "anchor": "#research-and-industry-newsletters"
       }
     ]
+  },
+  "productionAgentic": {
+    "repository": "https://github.com/EthicalML/awesome-production-agentic-systems",
+    "source": "https://raw.githubusercontent.com/EthicalML/awesome-production-agentic-systems/main/README.md",
+    "branch": "main",
+    "categories": [
+      {
+        "emoji": "🤖",
+        "name": "Agentic Frameworks",
+        "count": 36,
+        "anchor": "#agentic-frameworks"
+      },
+      {
+        "emoji": "🔭",
+        "name": "Agent Observability",
+        "count": 5,
+        "anchor": "#agent-observability"
+      },
+      {
+        "emoji": "📡",
+        "name": "Agent Protocols",
+        "count": 10,
+        "anchor": "#agent-protocols"
+      },
+      {
+        "emoji": "🎞️",
+        "name": "Memory Management",
+        "count": 7,
+        "anchor": "#memory-management"
+      },
+      {
+        "emoji": "🦺",
+        "name": "Agent Security",
+        "count": 10,
+        "anchor": "#agent-security"
+      },
+      {
+        "emoji": "🎮",
+        "name": "Prompt Engineering",
+        "count": 8,
+        "anchor": "#prompt-engineering"
+      },
+      {
+        "emoji": "🖥️",
+        "name": "Agent Interfaces",
+        "count": 3,
+        "anchor": "#agent-interfaces"
+      }
+    ]
   }
 }

@@ -9,14 +9,16 @@ interface Category {
 interface Props {
   categories: Category[];
   repository: string;
+  /** Names the catalogue in the field and table accessible labels. */
+  label?: string;
 }
 
-const { categories, repository } = Astro.props;
+const { categories, repository, label = 'Production machine learning' } = Astro.props;
 const maximum = Math.max(...categories.map(({ count }) => count));
 ---
 
 <category-atlas class="category-atlas" data-reveal>
-  <div class="atlas-field" aria-label="Production machine learning categories">
+  <div class="atlas-field" aria-label={`${label} categories`}>
     {
       categories.map(({ name, emoji, count, anchor }, index) => {
         const size = 104 + Math.round((count / maximum) * 94);
@@ -41,7 +43,7 @@ const maximum = Math.max(...categories.map(({ count }) => count));
     }
   </div>
 
-  <div class="atlas-table" aria-label="Production machine learning category counts">
+  <div class="atlas-table" aria-label={`${label} category counts`}>
     <div class="atlas-table-head"><strong>Category</strong><strong>Count</strong></div>
     {
       categories.map(({ name, count }) => (

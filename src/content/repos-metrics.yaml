@@ -58,3 +58,15 @@ kaos:
       label: CONTRIBUTORS
     - value: APACHE-2.0
       label: LICENSE
+agentic-systems:
+  values:
+    - value: '159'
+      label: STARS
+    - value: '25'
+      label: FORKS
+    - value: '7'
+      label: CONTRIBUTORS
+    - value: '79'
+      label: LIBRARIES
+    - value: '7'
+      label: CATEGORIES

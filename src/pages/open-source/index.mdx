@@ -77,6 +77,18 @@ projects:
       - label: View on GitHub
         href: https://github.com/EthicalML/awesome-artificial-intelligence-regulation
         kind: ''
+  agenticSystems:
+    figure: FIG 07 — AGENTIC SYSTEMS CATALOGUE
+    title: Awesome Production Agentic Systems
+    text: 'The community catalogue of open-source tooling for production agentic systems: seven categories covering agentic frameworks, observability, protocols, memory management, security, prompt engineering and interfaces, for teams deploying, monitoring, versioning and scaling agents.'
+    tags: [COMMUNITY, CURATED]
+    actions:
+      - label: Browse the catalogue
+        href: /open-source/production-agentic-list/
+        kind: primary
+      - label: View on GitHub
+        href: https://github.com/EthicalML/awesome-production-agentic-systems
+        kind: ''
 ---
 
 import AnimationWindow from '../../components/AnimationWindow.astro';
@@ -93,7 +105,7 @@ import XaiPipeline from '../../components/XaiPipeline.astro';
   canvas="open-source"
   eyebrow="OPEN SOURCE / BUILT IN PUBLIC"
   title="Open-source software and tools"
-  intro="Openly licensed software for agent orchestration, GPU compute, explainability and production ML, alongside the two community catalogues the Institute maintains. Built in public, governed in the open, used in production."
+  intro="Openly licensed software for agent orchestration, GPU compute, explainability and production ML, alongside the community catalogues the Institute maintains. Built in public, governed in the open, used in production."
 />
 
 <section className="oss-projects" aria-label="Open-source projects">
@@ -196,6 +208,22 @@ import XaiPipeline from '../../components/XaiPipeline.astro';
     <CategoryMosaic set="ai-guidelines" />
   </div>
 </ProjectFeature>
+
+  <ProjectFeature
+    figure={frontmatter.projects.agenticSystems.figure}
+    title={frontmatter.projects.agenticSystems.title}
+    text={frontmatter.projects.agenticSystems.text}
+    morph="production-agentic-title"
+    morphHref="/open-source/production-agentic-list/"
+    metricId="agentic-systems"
+    metricStyle="line"
+    tags={frontmatter.projects.agenticSystems.tags}
+    actions={frontmatter.projects.agenticSystems.actions}
+  >
+    <div class="fixed-canvas">
+      <CategoryMosaic set="agentic-systems" />
+    </div>
+  </ProjectFeature>
 </section>
 
 <CenteredCTA eyebrow="CONTRIBUTE" heading="Contribute to the open-source projects." href="/contact/" label="Start a conversation" />
