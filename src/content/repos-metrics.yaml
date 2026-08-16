@@ -38,6 +38,16 @@ ai-guidelines:
       label: CONTRIBUTORS
     - value: '15'
       label: ECONOMIC AREAS
+skills-marketplace:
+  values:
+    - value: '3'
+      label: PLUGINS
+    - value: '5'
+      label: SKILLS
+    - value: '2'
+      label: AGENT CLIENTS
+    - value: MIT
+      label: LICENSE
 kaos:
   values:
     - value: '268'

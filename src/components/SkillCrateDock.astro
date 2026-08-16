@@ -1,0 +1,68 @@
+---
+// The agent-skills-marketplace loading bay, as a standalone mount. `surface` overrides the surface
+// this mount would otherwise inherit from the nearest `data-surface` ancestor; canvas never sniffs
+// its own backdrop. `backdrop` drops the card framing so the bay can sit full-bleed behind hero
+// text, the same pair of props `KomputeCube` takes.
+interface Props {
+  embedded?: boolean;
+  backdrop?: boolean;
+  surface?: 'dark' | 'page';
+}
+
+const { backdrop = false, surface } = Astro.props;
+---
+
+<skill-crate-dock
+  class:list={['skill-dock-mount', !backdrop && 'widget embedded-widget']}
+  data-backdrop={backdrop ? '' : undefined}
+  data-surface={surface}
+  aria-hidden="true"
+>
+  <canvas></canvas>
+</skill-crate-dock>
+
+<script>
+  import '../shared/canvas/SkillCrateDock';
+</script>
+
+<style>
+  skill-crate-dock,
+  canvas {
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+</style>
+
+<style is:global>
+  /* Hero placement is owned here rather than in `ArticleHero`, because the hero only ever receives
+     this mount through its `backdrop` slot and has no knowledge of it. The attribute carries the
+     extra specificity needed to beat the hero's own `> :not(...)` lift of slotted content above the
+     legibility scrim: the bay belongs behind it. Geometry matches the Kompute hero backdrop. */
+  .article-hero.canvas-variant > .skill-dock-mount[data-backdrop] {
+    height: 100%;
+    left: 34%;
+    mask-image: linear-gradient(90deg, transparent 0, #000 260px);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 260px);
+    opacity: 0.58;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 66%;
+    z-index: 0;
+  }
+
+  @media (max-width: 950px) {
+    .article-hero.canvas-variant > .skill-dock-mount[data-backdrop] {
+      bottom: 0;
+      height: 340px;
+      left: 0;
+      mask-image: linear-gradient(180deg, transparent, #000 30%);
+      -webkit-mask-image: linear-gradient(180deg, transparent, #000 30%);
+      opacity: 0.5;
+      right: 0;
+      top: auto;
+      width: 100%;
+    }
+  }
+</style>

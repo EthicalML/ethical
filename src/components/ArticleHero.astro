@@ -5,19 +5,22 @@ import KomputeCube from './KomputeCube.astro';
 import OpenSourceHeroCanvas from './OpenSourceHeroCanvas.astro';
 import PolicyHeroCanvas from './PolicyHeroCanvas.astro';
 
-const { eyebrow, title, intro, canvas = false, transitionName } = Astro.props;
+if (Astro.slots.has('backdrop')) Astro.props.backdrop = true;
+
+const { eyebrow, title, intro, canvas = false, backdrop = false, transitionName } = Astro.props;
 ---
 
 <header
-  class:list={['article-hero', canvas && 'canvas-variant', canvas === 'kompute' && 'kompute-variant']}
-  data-surface={canvas ? 'dark' : undefined}
-  data-surface-plate={canvas ? '' : undefined}
+  class:list={['article-hero', (canvas || backdrop) && 'canvas-variant', canvas === 'kompute' && 'kompute-variant']}
+  data-surface={canvas || backdrop ? 'dark' : undefined}
+  data-surface-plate={canvas || backdrop ? '' : undefined}
   data-reveal
 >
   {canvas === 'kaos' ? <KaosArchitecture embedded backdrop /> : canvas === true && <ArticleHeroCanvas />}
   {canvas === 'kompute' && <KomputeCube embedded backdrop />}
   {canvas === 'policy' && <PolicyHeroCanvas />}
   {canvas === 'open-source' && <OpenSourceHeroCanvas />}
+  {backdrop && <slot name="backdrop" />}
   <p class="eyebrow">{eyebrow}</p>
   <h1 transition:name={transitionName} style={transitionName ? `view-transition-name: ${transitionName}` : undefined}>{title}</h1>
   {intro && <p>{intro}</p>}

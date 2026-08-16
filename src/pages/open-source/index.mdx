@@ -29,20 +29,8 @@ projects:
       - label: View on GitHub
         href: https://github.com/KomputeProject/kompute
         kind: ''
-  xai:
-    figure: FIG 03 — EXPLAINABILITY PIPELINE
-    title: XAI
-    text: An explainability toolbox for machine learning across data analysis, model evaluation and production monitoring, pairing the technical tools with the organisational process around them.
-    tags: [ALPHA, MIT]
-    actions:
-      - label: Open the framework
-        href: /open-source/xai/
-        kind: primary
-      - label: View on GitHub
-        href: https://github.com/EthicalML/xai
-        kind: ''
   productionMl:
-    figure: FIG 04 — ECOSYSTEM CATALOGUE
+    figure: FIG 03 — ECOSYSTEM CATALOGUE
     title: Awesome Production Machine Learning
     text: 'The community catalogue of production ML and MLOps tooling, curated weekly: 24 categories and more than 550 libraries, from serving and orchestration to explainability and ML security.'
     tags: [COMMUNITY, CURATED WEEKLY]
@@ -53,8 +41,32 @@ projects:
       - label: View on GitHub
         href: https://github.com/EthicalML/awesome-production-machine-learning
         kind: ''
+  skillsMarketplace:
+    figure: FIG 04 — SKILLS MARKETPLACE
+    title: Agent Skills Marketplace
+    text: An open marketplace of portable agent skills and plugins built on the SKILL.md convention, installing into both Claude Code and Copilot CLI from a single catalogue, with contributions accepted by pull request under automated validation.
+    tags: [COMMUNITY, SKILL.MD STANDARD, MIT]
+    actions:
+      - label: Open the marketplace
+        href: /open-source/agent-skills-marketplace/
+        kind: primary
+      - label: View on GitHub
+        href: https://github.com/EthicalML/agent-skills-marketplace
+        kind: ''
+  xai:
+    figure: FIG 05 — EXPLAINABILITY PIPELINE
+    title: XAI
+    text: An explainability toolbox for machine learning across data analysis, model evaluation and production monitoring, pairing the technical tools with the organisational process around them.
+    tags: [ALPHA, MIT]
+    actions:
+      - label: Open the framework
+        href: /open-source/xai/
+        kind: primary
+      - label: View on GitHub
+        href: https://github.com/EthicalML/xai
+        kind: ''
   aiGuidelines:
-    figure: FIG 05 — REGULATION CATALOGUE
+    figure: FIG 06 — REGULATION CATALOGUE
     title: Awesome AI Regulation, Principles & Guidelines
     text: An open catalogue mapping the ecosystem of guidelines, principles, codes of ethics, standards and regulation being put in place around artificial intelligence, from national law across fifteen economic areas to practical checklists.
     tags: [COMMUNITY, POLICY]
@@ -74,6 +86,7 @@ import CategoryMosaic from '../../components/CategoryMosaic.astro';
 import KaosGraph from '../../components/KaosGraph.astro';
 import KomputeCube from '../../components/KomputeCube.astro';
 import ProjectFeature from '../../components/ProjectFeature.astro';
+import SkillCrateDock from '../../components/SkillCrateDock.astro';
 import XaiPipeline from '../../components/XaiPipeline.astro';
 
 <ArticleHero
@@ -121,6 +134,38 @@ import XaiPipeline from '../../components/XaiPipeline.astro';
 </ProjectFeature>
 
 <ProjectFeature
+  figure={frontmatter.projects.productionMl.figure}
+  title={frontmatter.projects.productionMl.title}
+  text={frontmatter.projects.productionMl.text}
+  morph="production-ml-title"
+  morphHref="/open-source/production-ml-list/"
+  metricId="ecosystem"
+  metricStyle="line"
+  tags={frontmatter.projects.productionMl.tags}
+  actions={frontmatter.projects.productionMl.actions}
+>
+  <div class="fixed-canvas">
+    <CategoryMosaic set="production-ml" />
+  </div>
+</ProjectFeature>
+
+<ProjectFeature
+  figure={frontmatter.projects.skillsMarketplace.figure}
+  title={frontmatter.projects.skillsMarketplace.title}
+  text={frontmatter.projects.skillsMarketplace.text}
+  morph="skills-marketplace-title"
+  morphHref="/open-source/agent-skills-marketplace/"
+  metricId="skills-marketplace"
+  metricStyle="line"
+  tags={frontmatter.projects.skillsMarketplace.tags}
+  actions={frontmatter.projects.skillsMarketplace.actions}
+>
+  <div class="fixed-canvas">
+    <SkillCrateDock embedded backdrop />
+  </div>
+</ProjectFeature>
+
+<ProjectFeature
   figure={frontmatter.projects.xai.figure}
   title={frontmatter.projects.xai.title}
   text={frontmatter.projects.xai.text}
@@ -137,36 +182,20 @@ import XaiPipeline from '../../components/XaiPipeline.astro';
 </ProjectFeature>
 
 <ProjectFeature
-  figure={frontmatter.projects.productionMl.figure}
-  title={frontmatter.projects.productionMl.title}
-  text={frontmatter.projects.productionMl.text}
-  morph="production-ml-title"
-  morphHref="/open-source/production-ml-list/"
-  metricId="ecosystem"
+  figure={frontmatter.projects.aiGuidelines.figure}
+  title={frontmatter.projects.aiGuidelines.title}
+  text={frontmatter.projects.aiGuidelines.text}
+  morph="ai-guidelines-title"
+  morphHref="/open-source/ai-guidelines/"
+  metricId="ai-guidelines"
   metricStyle="line"
-  tags={frontmatter.projects.productionMl.tags}
-  actions={frontmatter.projects.productionMl.actions}
+  tags={frontmatter.projects.aiGuidelines.tags}
+  actions={frontmatter.projects.aiGuidelines.actions}
 >
   <div class="fixed-canvas">
-    <CategoryMosaic set="production-ml" />
+    <CategoryMosaic set="ai-guidelines" />
   </div>
 </ProjectFeature>
-
-  <ProjectFeature
-    figure={frontmatter.projects.aiGuidelines.figure}
-    title={frontmatter.projects.aiGuidelines.title}
-    text={frontmatter.projects.aiGuidelines.text}
-    morph="ai-guidelines-title"
-    morphHref="/open-source/ai-guidelines/"
-    metricId="ai-guidelines"
-    metricStyle="line"
-    tags={frontmatter.projects.aiGuidelines.tags}
-    actions={frontmatter.projects.aiGuidelines.actions}
-  >
-    <div class="fixed-canvas">
-      <CategoryMosaic set="ai-guidelines" />
-    </div>
-  </ProjectFeature>
 </section>
 
 <CenteredCTA eyebrow="CONTRIBUTE" heading="Contribute to the open-source projects." href="/contact/" label="Start a conversation" />
