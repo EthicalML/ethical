@@ -1,7 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import SplitList from '../components/SplitList.astro';
-import KaosGraph from '../components/KaosGraph.astro';
 
 const { data, Content } = Astro.props;
 const frontmatter = {
@@ -55,7 +54,6 @@ const next = number < 9 ? String(number + 1).padStart(2, '0') : undefined;
         <SplitList left={{ title: 'FAILURE MODES', items: data.failure_modes }} right={{ title: 'PRACTICAL CONTROLS', items: data.controls }} />
       )
     }
-    {data.number === '09' && <KaosGraph />}
   </div>
 </BaseLayout>
 

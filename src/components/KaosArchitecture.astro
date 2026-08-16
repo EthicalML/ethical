@@ -11,7 +11,7 @@ interface Props {
 
 /* `surface`: see KomputeCube.astro. Every mount either sits inside a block that
    declares the dark role or on the page ground, so no caller needs to override. */
-const { embedded = false, panel = false, backdrop = false, transitionName, morphSource, variant = 'ambient', surface } = Astro.props;
+const { panel = false, backdrop = false, transitionName, morphSource, variant = 'ambient', surface } = Astro.props;
 const transitionStyle = transitionName ? `view-transition-name: ${transitionName}` : undefined;
 ---
 
@@ -26,7 +26,7 @@ const transitionStyle = transitionName ? `view-transition-name: ${transitionName
       data-morph-source={morphSource}
       data-surface={surface}
     />
-  ) : embedded ? (
+  ) : (
     <kaos-architecture
       class:list={['kaos-architecture-mount', !backdrop && 'widget embedded-widget']}
       aria-label="KAOS control-plane architecture"
@@ -35,18 +35,6 @@ const transitionStyle = transitionName ? `view-transition-name: ${transitionName
       style={transitionStyle}
       data-surface={surface}
     />
-  ) : (
-    <section id="opensource" aria-labelledby="kaos-heading" data-reveal>
-      <p class="eyebrow">CUSTOM WIDGET</p>
-      <h2 id="kaos-heading">KAOS agent graph</h2>
-      <kaos-architecture
-        class="widget kaos-architecture-mount"
-        variant={variant}
-        transition:name={transitionName}
-        style={transitionStyle}
-        data-surface={surface}
-      />
-    </section>
   )
 }
 
