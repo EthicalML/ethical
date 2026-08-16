@@ -89,6 +89,18 @@ projects:
       - label: View on GitHub
         href: https://github.com/EthicalML/awesome-production-agentic-systems
         kind: ''
+  monokaiInstitute:
+    figure: FIG 08 — EDITOR THEME
+    title: Monokai Institute for Neovim
+    text: 'A Vim and Neovim colorscheme in the visual language of the Institute: the signature teal green on pitch black, and a warm sage paper companion. Full truecolor with a 256-colour fallback, optional transparency, and highlights tuned for Treesitter, LSP and completion popups.'
+    tags: [NEOVIM, THEME, APACHE-2.0]
+    actions:
+      - label: Open the theme
+        href: /open-source/monokai-institute/
+        kind: primary
+      - label: View on GitHub
+        href: https://github.com/EthicalML/monokai-institute.nvim
+        kind: ''
 ---
 
 import AnimationWindow from '../../components/AnimationWindow.astro';
@@ -100,6 +112,7 @@ import KaosGraph from '../../components/KaosGraph.astro';
 import KomputeCube from '../../components/KomputeCube.astro';
 import ProjectFeature from '../../components/ProjectFeature.astro';
 import SkillCrateDock from '../../components/SkillCrateDock.astro';
+import ThemeBufferIso from '../../components/ThemeBufferIso.astro';
 import XaiPipeline from '../../components/XaiPipeline.astro';
 
 <ArticleHero
@@ -210,6 +223,22 @@ import XaiPipeline from '../../components/XaiPipeline.astro';
   </div>
 </ProjectFeature>
 
+<ProjectFeature
+  figure={frontmatter.projects.aiGuidelines.figure}
+  title={frontmatter.projects.aiGuidelines.title}
+  text={frontmatter.projects.aiGuidelines.text}
+  morph="ai-guidelines-title"
+  morphHref="/open-source/ai-guidelines/"
+  metricId="ai-guidelines"
+  metricStyle="line"
+  tags={frontmatter.projects.aiGuidelines.tags}
+  actions={frontmatter.projects.aiGuidelines.actions}
+>
+  <div class="fixed-canvas">
+    <CategoryMosaic set="ai-guidelines" />
+  </div>
+</ProjectFeature>
+
   <ProjectFeature
     figure={frontmatter.projects.agenticSystems.figure}
     title={frontmatter.projects.agenticSystems.title}
@@ -223,6 +252,22 @@ import XaiPipeline from '../../components/XaiPipeline.astro';
   >
     <div class="fixed-canvas">
       <CatalogueLightGrid />
+    </div>
+  </ProjectFeature>
+
+  <ProjectFeature
+    figure={frontmatter.projects.monokaiInstitute.figure}
+    title={frontmatter.projects.monokaiInstitute.title}
+    text={frontmatter.projects.monokaiInstitute.text}
+    morph="monokai-institute-title"
+    morphHref="/open-source/monokai-institute/"
+    metricId="monokai-institute"
+    metricStyle="line"
+    tags={frontmatter.projects.monokaiInstitute.tags}
+    actions={frontmatter.projects.monokaiInstitute.actions}
+  >
+    <div class="fixed-canvas">
+      <ThemeBufferIso />
     </div>
   </ProjectFeature>
 </section>

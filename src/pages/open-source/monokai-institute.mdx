@@ -1,0 +1,120 @@
+---
+title: Monokai Institute for Neovim
+seoTitle: Monokai Institute — Neovim and Vim Colorscheme
+description: A truecolor Monokai colorscheme for Neovim and Vim, with a light sage variant, transparency support and highlights tuned for LSP and Treesitter.
+composed: true
+layout: ../../layouts/ProseLayout.astro
+---
+
+import { getEntry } from 'astro:content';
+import ArticleHero from '../../components/ArticleHero.astro';
+import Metrics from '../../components/prose/Metrics.astro';
+import ProjectLinks from '../../components/ProjectLinks.astro';
+import CapabilityTable from '../../components/prose/CapabilityTable.astro';
+import ThemePalette from '../../components/ThemePalette.astro';
+
+export const palette = [
+  {
+    title: 'Dark',
+    note: 'colorscheme monokai-institute',
+    background: '#000000',
+    ink: '#e0e2ea',
+    rows: [
+      { name: 'Normal', value: '#f8f8f2', use: 'Foreground on pitch black' },
+      { name: 'Constant', value: '#5ee6a0', use: 'Bold italic constants' },
+      { name: 'Keyword', value: '#f92672', use: 'Keywords and operators' },
+      { name: 'Function', value: '#a6e22e', use: 'Functions and directories' },
+      { name: 'Type', value: '#66d9ef', use: 'Types and definitions' },
+      { name: 'String', value: '#e6db74', use: 'Strings and characters' },
+      { name: 'Identifier', value: '#fd971f', use: 'Identifiers and matched parens' },
+      { name: 'Comment', value: '#7e8e91', use: 'Comments' },
+    ],
+  },
+  {
+    title: 'Light sage',
+    note: 'colorscheme monokai-institute-light',
+    background: '#f6f8f6',
+    ink: '#3a423e',
+    rows: [
+      { name: 'Normal', value: '#3a423e', use: 'Sage charcoal ink on warm paper' },
+      { name: 'Constant', value: '#0c7f5e', use: 'Bold italic constants' },
+      { name: 'Keyword', value: '#b04a63', use: 'Keywords and flow control' },
+      { name: 'Function', value: '#0083b0', use: 'Functions and specials' },
+      { name: 'Type', value: '#6a5a9e', use: 'Types and structures' },
+      { name: 'String', value: '#96692e', use: 'Strings and storage classes' },
+      { name: 'Accent', value: '#056259', use: 'Sign column and cursor line number' },
+      { name: 'Comment', value: '#9aa39d', use: 'Comments' },
+    ],
+  },
+];
+
+export const capabilities = [
+  {
+    capability: 'Truecolor',
+    detail:
+      'Set termguicolors for the full palette. Both variants also carry complete 256-colour cterm definitions, so they degrade gracefully on terminals without truecolor.',
+  },
+  {
+    capability: 'Transparency',
+    detail:
+      'Set g:monokai_institute_transparent = 1 before loading the dark variant to inherit the terminal background, and whatever transparency or blur it carries, instead of the default pitch black.',
+  },
+  {
+    capability: 'Modern plugins',
+    detail:
+      'Highlights are tuned for the LSP-era ecosystem: Treesitter capture groups, LSP semantic tokens, an always-on sign column and completion popup menus.',
+  },
+  {
+    capability: 'Two variants',
+    detail:
+      'The dark theme puts the signature teal on pitch black. The light sage companion keeps contrast deliberately gentle on warm paper, reserving the bright green for search highlights only.',
+  },
+];
+
+export const links = [{ label: 'View on GitHub', href: 'https://github.com/EthicalML/monokai-institute.nvim' }];
+
+export const metricEntry = await getEntry('metrics', 'monokai-institute');
+
+<ArticleHero
+  eyebrow="OPEN SOURCE · NEOVIM · APACHE-2.0"
+  title={frontmatter.title}
+  intro="A Vim and Neovim colorscheme in the visual language of the Institute: the signature teal green on pitch black for the dark theme, and a warm sage paper with muted accents for the light one. Full truecolor with a 256-colour fallback, an optional transparent background, and highlights tuned for the modern plugin ecosystem."
+  transitionName="monokai-institute-title"
+/>
+
+## The palette, by highlight group
+
+The theme stands on the shoulders of the Monokai family, taking molokai as the base of the dark variant's structure. The signature moves are its own: constants, which is to say `True`, `False`, `None` and every number, come out in bold italic green, echoing the italic serif accent this site uses, while search hits and matched parens flash the bright green. The light variant deepens that green for paper and holds the bright one back for search alone.
+
+<ThemePalette groups={palette} />
+
+## Install
+
+With [lazy.nvim](https://github.com/folke/lazy.nvim), load it eagerly and at high priority so it wins over any colorscheme a later plugin sets:
+
+```lua
+{
+  "EthicalML/monokai-institute.nvim",
+  lazy = false,
+  priority = 1000,
+  config = function()
+    vim.cmd.colorscheme("monokai-institute")  -- or "monokai-institute-light"
+  end,
+}
+```
+
+With [vim-plug](https://github.com/junegunn/vim-plug), the declaration and the colorscheme call sit in the same file:
+
+```vim
+Plug 'EthicalML/monokai-institute.nvim'
+colorscheme monokai-institute
+```
+
+## What it covers
+
+Both variants pin the highlight groups that Neovim otherwise fills in from the active background, which is the failure mode behind a theme that looks correct until you switch to it from a theme of the opposite polarity.
+
+<CapabilityTable items={capabilities} />
+
+<Metrics values={metricEntry.data.values} />
+<ProjectLinks links={links} />

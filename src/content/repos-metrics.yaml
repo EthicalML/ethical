@@ -48,6 +48,16 @@ skills-marketplace:
       label: AGENT CLIENTS
     - value: MIT
       label: LICENSE
+monokai-institute:
+  values:
+    - value: '1'
+      label: STARS
+    - value: '0'
+      label: FORKS
+    - value: '1'
+      label: CONTRIBUTORS
+    - value: APACHE-2.0
+      label: LICENSE
 kaos:
   values:
     - value: '268'
