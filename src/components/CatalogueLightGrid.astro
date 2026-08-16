@@ -1,0 +1,51 @@
+---
+// The agentic catalogue's light grid: a board of small cells over faint hairlines that idles,
+// runs snakes and tetromino lock-ins, and marks the cell under the pointer. Two mounts ship:
+// the FIG 07 panel's `.fixed-canvas`, and `backdrop`, the full-bleed layer behind a hero, which
+// carries no card framing and lets the hero's own scrim keep the copy legible.
+interface Props {
+  backdrop?: boolean;
+  surface?: 'dark' | 'page';
+}
+
+const { backdrop = false, surface } = Astro.props;
+---
+
+<catalogue-light-grid class:list={['catalogue-grid-mount', backdrop && 'backdrop']} data-surface={surface} aria-hidden="true">
+  <canvas></canvas>
+</catalogue-light-grid>
+
+<script>
+  import '../shared/canvas/CatalogueLightGrid';
+</script>
+
+<style>
+  catalogue-light-grid,
+  canvas {
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+
+  /* The backdrop mount generates no box of its own, so the canvas becomes a direct child of the
+     hero: it is then excluded from the hero's stacking rule for content children and sits under
+     the legibility scrim rather than over it. */
+  catalogue-light-grid.backdrop {
+    display: contents;
+  }
+
+  catalogue-light-grid.backdrop > canvas {
+    inset: 0;
+    opacity: 0.9;
+    position: absolute;
+    z-index: 0;
+  }
+
+  @media (max-width: 950px) {
+    catalogue-light-grid.backdrop > canvas {
+      mask-image: linear-gradient(180deg, transparent, #000 45%);
+      -webkit-mask-image: linear-gradient(180deg, transparent, #000 45%);
+      opacity: 0.62;
+    }
+  }
+</style>

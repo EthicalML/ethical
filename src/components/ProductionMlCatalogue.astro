@@ -13,9 +13,18 @@ interface Category {
 
 interface Props {
   categories: Category[];
+  /** Catalogue heading, its lede, and the noun the per-category entry count is measured in. */
+  heading?: string;
+  lede?: string;
+  unit?: string;
 }
 
-const { categories } = Astro.props;
+const {
+  categories,
+  heading = 'The production ML library list',
+  lede = 'Open a category to browse every library, its one-line description and its canonical project link.',
+  unit = 'libraries',
+} = Astro.props;
 const slug = (value: string) =>
   value
     .toLowerCase()
@@ -26,8 +35,8 @@ const slug = (value: string) =>
 <section class="production-catalogue" aria-labelledby="production-catalogue-heading" data-reveal>
   <header>
     <p class="eyebrow">ON-DOMAIN CATALOGUE</p>
-    <h2 id="production-catalogue-heading">The production ML library list</h2>
-    <p>Open a category to browse every library, its one-line description and its canonical project link.</p>
+    <h2 id="production-catalogue-heading">{heading}</h2>
+    <p>{lede}</p>
   </header>
   <div class="catalogue-categories">
     {
@@ -36,7 +45,7 @@ const slug = (value: string) =>
           <summary>
             <span aria-hidden="true">{category.emoji}</span>
             <strong>{category.name}</strong>
-            <small>{category.entries.length} libraries</small>
+            <small>{`${category.entries.length} ${unit}`}</small>
           </summary>
           <ul>
             {category.entries.map((entry) => (

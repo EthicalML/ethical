@@ -1,0 +1,64 @@
+---
+title: Awesome Production Agentic Systems
+seoTitle: 'Production Agentic Systems: Open-Source Agent Tools'
+description: A curated catalogue of 79 open-source libraries across 7 categories for deploying, monitoring, securing and scaling production agentic systems.
+composed: true
+layout: ../../layouts/ProseLayout.astro
+---
+
+import ArticleHero from '../../components/ArticleHero.astro';
+import CatalogueLightGrid from '../../components/CatalogueLightGrid.astro';
+import CategoryAtlas from '../../components/CategoryAtlas.astro';
+import CTA from '../../components/prose/CTA.astro';
+import Metrics from '../../components/prose/Metrics.astro';
+import catalogues from '../../content/oss-catalogues.json';
+import ProductionMlCatalogue from '../../components/ProductionMlCatalogue.astro';
+import agenticLibraries from '../../data/production-agentic-libraries.json';
+
+<ArticleHero
+  backdrop
+  eyebrow="OPEN SOURCE · COMMUNITY · AGENTS"
+  title={frontmatter.title}
+  intro={`"A curated list of awesome open source libraries to deploy, monitor, version, scale, and secure your production agentic systems and applications." ${agenticLibraries.libraryCount} libraries across ${agenticLibraries.categories.length} categories, with a summary of new additions released every month.`}
+  transitionName="production-agentic-title"
+>
+  <CatalogueLightGrid backdrop slot="backdrop" />
+</ArticleHero>
+
+## Explore the categories
+
+Seven sections cover the stack an agentic application needs in production: the frameworks that orchestrate agents, the observability that makes their behaviour legible, the protocols they speak to each other and to tools, the memory that carries context between runs, the security tooling that red teams them, the prompt engineering platforms behind their instructions, and the interfaces people meet them through.
+
+<div class="agentic-accent">
+  <CategoryAtlas categories={catalogues.productionAgentic.categories} repository={catalogues.productionAgentic.repository} label="Production agentic systems" />
+
+  <ProductionMlCatalogue
+    categories={agenticLibraries.categories}
+    heading="The production agentic systems list"
+    lede="Open a category to browse every library, its one-line description and its canonical project link."
+  />
+</div>
+
+## How it stays current
+
+New libraries are added continuously and summarised in monthly releases, so watching the repository doubles as a changelog for the agent tooling ecosystem. It is the agentic sibling of [Awesome Production Machine Learning](/open-source/production-ml-list/), and the weekly companion to both is the Machine Learning Engineer newsletter.
+
+The on-domain catalogue above is a committed rendition of the canonical GitHub README. The [GitHub repository](https://github.com/EthicalML/awesome-production-agentic-systems) remains the source of truth for updates and contributions.
+
+<div class="agentic-accent">
+  <Metrics metricId="agentic-systems" labels={['STARS', 'FORKS', 'CONTRIBUTORS', 'LIBRARIES', 'CATEGORIES']} />
+
+  <CTA href="https://github.com/EthicalML/awesome-production-agentic-systems" label="Browse the catalogue on GitHub" />
+</div>
+
+<style>{`
+.agentic-accent {
+  --accent: var(--violet-fill);
+  --accent-ink: var(--violet);
+  --accent-wash: var(--violet-a032);
+  --accent-wash-09: var(--violet-a080);
+  --accent-veil: var(--violet-a190);
+  --accent-line: var(--violet-a280);
+  --accent-edge: var(--violet-a550);
+}
+`}</style>

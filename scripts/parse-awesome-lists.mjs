@@ -6,15 +6,17 @@ import path from 'node:path';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const outputPath = path.join(root, 'src/content/oss-catalogues.json');
 const productionListPath = path.join(root, 'src/data/production-ml-libraries.json');
+const agenticListPath = path.join(root, 'src/data/production-agentic-libraries.json');
 
 const repositories = {
   productionMl: 'EthicalML/awesome-production-machine-learning',
   aiGuidelines: 'EthicalML/awesome-artificial-intelligence-regulation',
+  productionAgentic: 'EthicalML/awesome-production-agentic-systems',
 };
 
 // Refresh the committed offline snapshot with: node scripts/parse-awesome-lists.mjs
-function fetchReadme(repository) {
-  for (const branch of ['master', 'main']) {
+function fetchReadme(repository, branches = ['master', 'main']) {
+  for (const branch of branches) {
     const url = `https://raw.githubusercontent.com/${repository}/${branch}/README.md`;
     const result = spawnSync('curl', ['-fsSL', '--retry', '1', url], {
       encoding: 'utf8',
@@ -22,7 +24,7 @@ function fetchReadme(repository) {
     });
     if (result.status === 0 && result.stdout.trim()) return { branch, text: result.stdout, url };
   }
-  throw new Error(`Could not fetch README for ${repository} from master or main.`);
+  throw new Error(`Could not fetch README for ${repository} from ${branches.join(' or ')}.`);
 }
 
 function sliceBetween(text, start, end) {
@@ -71,8 +73,7 @@ function plainText(markdown) {
     .trim();
 }
 
-function productionLibraries(text, categoryDetails) {
-  const content = sliceBetween(text, '# Main Content', '# Other Awesome Lists');
+function listLibraries(content, categoryDetails) {
   const result = [];
   let current;
 
@@ -80,7 +81,7 @@ function productionLibraries(text, categoryDetails) {
     const heading = line.match(/^##\s+(.+?)\s*$/);
     if (heading) {
       const details = categoryDetails[result.length];
-      if (!details) throw new Error(`Could not match production ML category: ${heading[1]}`);
+      if (!details) throw new Error(`Could not match catalogue category: ${heading[1]}`);
       current = { name: details.name, emoji: details.emoji, entries: [] };
       result.push(current);
       continue;
@@ -150,7 +151,10 @@ const productionSections = sections(
   2,
 );
 const categories = zipLinksAndCounts(productionLinks, productionSections, splitLeadingEmoji);
-const libraryCategories = productionLibraries(production.text, categories);
+const libraryCategories = listLibraries(
+  sliceBetween(production.text, '# Main Content', '# Other Awesome Lists'),
+  categories,
+);
 
 const regulation = fetchReadme(repositories.aiGuidelines);
 const areaLinks = markdownLinks(
@@ -174,6 +178,34 @@ const themeSections = sections(
   1,
 );
 const themes = zipLinksAndCounts(themeLinks, themeSections, splitLeadingEmoji);
+
+const agentic = fetchReadme(repositories.productionAgentic, ['main', 'master']);
+const agenticContent = agentic.text.slice(agentic.text.indexOf('# Main Content'));
+const agenticCategories = zipLinksAndCounts(
+  markdownLinks(
+    sliceBetween(
+      agentic.text,
+      '## Quick links to sections on this page',
+      '## Contributing to the list',
+    ),
+  ),
+  sections(agenticContent, 2),
+  splitLeadingEmoji,
+);
+const agenticLibraryCategories = listLibraries(agenticContent, agenticCategories);
+const agenticLibraryCount = agenticLibraryCategories.reduce(
+  (total, category) => total + category.entries.length,
+  0,
+);
+const expectedAgenticCount = agenticCategories.reduce(
+  (total, category) => total + category.count,
+  0,
+);
+if (agenticCategories.length !== 7 || agenticLibraryCount !== expectedAgenticCount) {
+  throw new Error(
+    `Unexpected agentic systems list size: ${agenticCategories.length} categories, ${agenticLibraryCount} libraries.`,
+  );
+}
 
 if (categories.length !== 24 || areas.length !== 15 || themes.length !== 6) {
   throw new Error(
@@ -206,6 +238,12 @@ const snapshot = {
     areas,
     themes,
   },
+  productionAgentic: {
+    repository: `https://github.com/${repositories.productionAgentic}`,
+    source: agentic.url,
+    branch: agentic.branch,
+    categories: agenticCategories,
+  },
 };
 
 writeFileSync(outputPath, `${JSON.stringify(snapshot, null, 2)}\n`);
@@ -222,6 +260,19 @@ writeFileSync(
     2,
   )}\n`,
 );
+writeFileSync(
+  agenticListPath,
+  `${JSON.stringify(
+    {
+      repository: snapshot.productionAgentic.repository,
+      source: agentic.url,
+      libraryCount: agenticLibraryCount,
+      categories: agenticLibraryCategories,
+    },
+    null,
+    2,
+  )}\n`,
+);
 console.log(
-  `Wrote ${path.relative(root, outputPath)} and ${path.relative(root, productionListPath)} (${categories.length} production categories, ${libraryCount} libraries, ${areas.length} areas, ${themes.length} themes).`,
+  `Wrote ${path.relative(root, outputPath)}, ${path.relative(root, productionListPath)} and ${path.relative(root, agenticListPath)} (${categories.length} production categories, ${libraryCount} libraries, ${areas.length} areas, ${themes.length} themes, ${agenticCategories.length} agentic categories, ${agenticLibraryCount} agentic libraries).`,
 );

@@ -1,0 +1,444 @@
+{
+  "repository": "https://github.com/EthicalML/awesome-production-agentic-systems",
+  "source": "https://raw.githubusercontent.com/EthicalML/awesome-production-agentic-systems/main/README.md",
+  "libraryCount": 79,
+  "categories": [
+    {
+      "name": "Agentic Frameworks",
+      "emoji": "🤖",
+      "entries": [
+        {
+          "name": "ADK",
+          "href": "https://github.com/google/adk-python",
+          "description": "ADK is Google's Agent Development Kit for Python, a framework for building production-ready AI agents."
+        },
+        {
+          "name": "Agent Lightning",
+          "href": "https://github.com/microsoft/agent-lightning",
+          "description": "Agent Lightning is a framework for building production-ready AI agents with Lightning AI."
+        },
+        {
+          "name": "AgentKit",
+          "href": "https://github.com/inngest/agent-kit",
+          "description": "AgentKit help agent developers build multi-agent networks with deterministic routing and rich tooling via MCP."
+        },
+        {
+          "name": "Agents",
+          "href": "https://github.com/livekit/agents",
+          "description": "Agents allows users to build AI-driven server programs that can see, hear, and speak in realtime."
+        },
+        {
+          "name": "AgentScope",
+          "href": "https://github.com/modelscope/agentscope",
+          "description": "AgentScope is a multi-agent platform designed to empower developers to build multi-agent applications with large-scale models."
+        },
+        {
+          "name": "Agentset",
+          "href": "https://github.com/agentset-ai/agentset",
+          "description": "Agentset is an open-source production-ready RAG platform with built-in agentic reasoning, hybrid search, and multimodal support."
+        },
+        {
+          "name": "AgentStack",
+          "href": "https://github.com/AgentOps-AI/AgentStack",
+          "description": "AgentStack scaffolds your agent stack."
+        },
+        {
+          "name": "AgentTorch",
+          "href": "https://github.com/AgentTorch/AgentTorch",
+          "description": "AgentTorch is a framework for building and running Large Population Models (LPMs) that enables differentiable simulations over millions of autonomous agents."
+        },
+        {
+          "name": "Agno",
+          "href": "https://github.com/agno-agi/agno",
+          "description": "Agno is a full-stack framework for building multi-agent systems with memory, knowledge, and tools."
+        },
+        {
+          "name": "AIOpsLab",
+          "href": "https://github.com/microsoft/AIOpsLab",
+          "description": "AIOpsLab is a holistic framework to enable the design, development, and evaluation of autonomous AIOps agents."
+        },
+        {
+          "name": "any-agent",
+          "href": "https://github.com/mozilla-ai/any-agent",
+          "description": "any-agent is a Python library providing a single interface to different agent frameworks."
+        },
+        {
+          "name": "AutoGen",
+          "href": "https://github.com/microsoft/autogen",
+          "description": "AutoGen is an open-source framework for building AI agent systems."
+        },
+        {
+          "name": "Chidori",
+          "href": "https://github.com/ThousandBirdsInc/chidori",
+          "description": "Chidori is a reactive runtime that supports building robust AI agents using languages like Node.js, Python, and Rust, with a focus on reactivity and observability in agent workflows."
+        },
+        {
+          "name": "Composio",
+          "href": "https://github.com/ComposioHQ/composio",
+          "description": "Composio equip's your AI agents & LLMs with 100+ high-quality integrations via function calling."
+        },
+        {
+          "name": "Concordia",
+          "href": "https://github.com/google-deepmind/concordia",
+          "description": "Concordia is a library to facilitate construction and use of generative agent-based models to simulate interactions of agents in grounded physical, social, or digital space."
+        },
+        {
+          "name": "CrewAI",
+          "href": "https://github.com/crewAIInc/crewAI",
+          "description": "CrewAI is a cutting-edge framework for orchestrating role-playing, autonomous AI agents."
+        },
+        {
+          "name": "deepagents",
+          "href": "https://github.com/langchain-ai/deepagents",
+          "description": "deepagents is a Python package that implements these in a general purpose way so that you can easily create a Deep Agent for your application."
+        },
+        {
+          "name": "Eko",
+          "href": "https://github.com/FellouAI/eko",
+          "description": "Eko is a production-ready JavaScript framework that enables developers to create reliable agents, from simple commands to complex workflows."
+        },
+        {
+          "name": "EvoAgentX",
+          "href": "https://github.com/EvoAgentX/EvoAgentX",
+          "description": "EvoAgentX is an open-source framework for building, evaluating, and evolving LLM-based agents or agentic workflows in an automated, modular, and goal-driven manner."
+        },
+        {
+          "name": "GitHub Copilot SDK",
+          "href": "https://github.com/github/copilot-sdk",
+          "description": "The GitHub Copilot SDK exposes GitHub Copilot's agentic workflows through a programmable SDK for Python, TypeScript, Go, and .NET, providing production-tested agent runtime with planning, tool invocation, and file editing capabilities."
+        },
+        {
+          "name": "Hephaestus",
+          "href": "https://github.com/Ido-Levi/Hephaestus",
+          "description": "Hephaestus is an open-source, semi-structured agentic framework where AI agents dynamically build workflows and tasks as they discover needs, instead of adhering to predefined plans."
+        },
+        {
+          "name": "kagent",
+          "href": "https://github.com/kagent-dev/kagent",
+          "description": "kagent is a Kubernetes native framework for building AI agents."
+        },
+        {
+          "name": "KAOS",
+          "href": "https://github.com/axsaucedo/kaos",
+          "description": "KAOS is a Kubernetes-native framework for deploying and orchestrating AI agents with tool access, multi-agent coordination, and seamless LLM integration."
+        },
+        {
+          "name": "LangGraph",
+          "href": "https://github.com/langchain-ai/langgraph",
+          "description": "LangGraph is a library for building stateful, multi-actor applications with LLMs, used to create agent and multi-agent workflows."
+        },
+        {
+          "name": "Mastra",
+          "href": "https://github.com/mastra-ai/mastra",
+          "description": "Mastra is a TypeScript framework for building and shipping AI agents with workflows, memory, and observability."
+        },
+        {
+          "name": "Modelscope-Agent",
+          "href": "https://github.com/modelscope/modelscope-agent",
+          "description": "Modelscope-Agent is a customizable and scalable agent framework."
+        },
+        {
+          "name": "n8n",
+          "href": "https://github.com/n8n-io/n8n",
+          "description": "n8n is a workflow automation platform that gives technical teams the flexibility of code with the speed of no-code."
+        },
+        {
+          "name": "OpenAGI",
+          "href": "https://github.com/agiresearch/OpenAGI",
+          "description": "OpenAGI is used as the agent creation package to build agents for AIOS."
+        },
+        {
+          "name": "OpenAI Agents SDK",
+          "href": "https://github.com/openai/openai-agents-python",
+          "description": "The OpenAI Agents SDK is a lightweight yet powerful framework for building multi-agent workflows. It is provider-agnostic, supporting the OpenAI Responses and Chat Completions APIs, as well as 100+ other LLMs."
+        },
+        {
+          "name": "PocketFlow",
+          "href": "https://github.com/The-Pocket/PocketFlow",
+          "description": "PocketFlow is a lightweight framework for building and orchestrating AI agent workflows."
+        },
+        {
+          "name": "PydanticAI",
+          "href": "https://github.com/pydantic/pydantic-ai",
+          "description": "PydanticAI is a Python agent framework designed to make it less painful to build production grade applications with Generative AI."
+        },
+        {
+          "name": "RunAnywhere",
+          "href": "https://github.com/RunanywhereAI/runanywhere-sdks",
+          "description": "RunAnywhere provides on-device AI SDKs for mobile apps (iOS, Android, React Native, Flutter) to run LLMs, speech-to-text, and text-to-speech locally without cloud dependencies."
+        },
+        {
+          "name": "smolagents",
+          "href": "https://github.com/huggingface/smolagents",
+          "description": "smolagents is a library that enables you to run powerful agents in a few lines of code."
+        },
+        {
+          "name": "Swarm",
+          "href": "https://github.com/openai/swarm",
+          "description": "Swarm is an educational framework exploring ergonomic, lightweight multi-agent orchestration."
+        },
+        {
+          "name": "Swarms",
+          "href": "https://github.com/kyegomez/swarms",
+          "description": "Swarms is an enterprise grade and production ready multi-agent collaboration framework that enables you to orchestrate many agents to work collaboratively at scale to automate real-world activities."
+        },
+        {
+          "name": "TensorZero",
+          "href": "https://github.com/tensorzero/tensorzero",
+          "description": "TensorZero is an open-source framework for building production-grade LLM applications. It unifies an LLM gateway, observability, optimization, evaluations, and experimentation."
+        }
+      ]
+    },
+    {
+      "name": "Agent Observability",
+      "emoji": "🔭",
+      "entries": [
+        {
+          "name": "AgentLab",
+          "href": "https://github.com/ServiceNow/AgentLab",
+          "description": "AgentLab is an open-source framework for developing, testing, and benchmarking web agents on diverse tasks, designed for scalability and reproducibility."
+        },
+        {
+          "name": "AgentOps",
+          "href": "https://github.com/AgentOps-AI/agentops",
+          "description": "AgentOps helps developers build, evaluate, and monitor AI agents from prototype to production."
+        },
+        {
+          "name": "IntellAgent",
+          "href": "https://github.com/plurai-ai/intellagent",
+          "description": "IntellAgent is an advanced multi-agent framework that transforms the evaluation and optimization of conversational agents."
+        },
+        {
+          "name": "Judgeval",
+          "href": "https://github.com/JudgmentLabs/judgeval",
+          "description": "Judgeval is an open-source framework for agent behavior monitoring. Judgeval offers a toolkit to track and judge agent behavior in online and offline setups, enabling you to convert interaction data from production/test environments into improved agents."
+        },
+        {
+          "name": "Manifest",
+          "href": "https://github.com/mnfst/manifest",
+          "description": "Manifest is open-source observability for AI agents. Track costs, tokens, messages, and performance — entirely on your machine."
+        }
+      ]
+    },
+    {
+      "name": "Agent Protocols",
+      "emoji": "📡",
+      "entries": [
+        {
+          "name": "A2A",
+          "href": "https://github.com/a2aproject/A2A",
+          "description": "Agent2Agent (A2A) protocol addresses a critical challenge in the AI landscape: enabling gen AI agents, built on diverse frameworks by different companies running on separate servers, to communicate and collaborate effectively - as agents, not just as tools."
+        },
+        {
+          "name": "ACP",
+          "href": "https://github.com/agentclientprotocol/agent-client-protocol",
+          "description": "The Agent Client Protocol (ACP) standardizes communication between code editors (interactive programs for viewing and editing source code) and coding agents (programs that use generative AI to autonomously modify code)."
+        },
+        {
+          "name": "AgentAPI",
+          "href": "https://github.com/coder/agentapi",
+          "description": "Control Claude Code, AmazonQ, Opencode, Goose, Aider, Gemini, GitHub Copilot, Sourcegraph Amp, Codex, Auggie, and Cursor CLI with an HTTP API."
+        },
+        {
+          "name": "agents.json",
+          "href": "https://github.com/wild-card-ai/agents-json",
+          "description": "The agents.json Specification is an open specification that formally describes contracts for API and agent interactions, built on top of the OpenAPI standard."
+        },
+        {
+          "name": "ANP",
+          "href": "https://github.com/agent-network-protocol/AgentNetworkProtocol",
+          "description": "AgentNetworkProtocol (ANP) is an open-source communication standard designed to enable seamless connectivity and collaboration between intelligent agents, positioning itself as the foundational protocol for agent-to-agent interactions in the emerging AI ecosystem."
+        },
+        {
+          "name": "AP2",
+          "href": "https://github.com/google-agentic-commerce/AP2",
+          "description": "AP2 (Agent Payments Protocol) is a protocol for building secure and interoperable AI-driven payments in agentic commerce workflows."
+        },
+        {
+          "name": "arcade-mcp",
+          "href": "https://github.com/ArcadeAI/arcade-mcp",
+          "description": "arcade-mcp tool is a secure Python framework for building, authenticating, and deploying AI agent tools (MCP servers) at scale."
+        },
+        {
+          "name": "FastMCP",
+          "href": "https://github.com/jlowin/fastmcp",
+          "description": "FastMCP is an open-source Python framework designed to simplify the creation and management of servers and clients that adhere to the Model Context Protocol (MCP)."
+        },
+        {
+          "name": "MCP Inspector",
+          "href": "https://github.com/modelcontextprotocol/inspector",
+          "description": "MCP inspector is a developer tool for testing and debugging MCP servers."
+        },
+        {
+          "name": "UCP",
+          "href": "https://github.com/Universal-Commerce-Protocol/ucp",
+          "description": "UCP (Universal Commerce Protocol) is an open standard enabling interoperability between commerce entities and AI agents to facilitate seamless, agentic commerce integrations."
+        }
+      ]
+    },
+    {
+      "name": "Memory Management",
+      "emoji": "🎞️",
+      "entries": [
+        {
+          "name": "Graphiti",
+          "href": "https://github.com/getzep/graphiti",
+          "description": "Graphiti is a framework for building and querying temporally-aware knowledge graphs, specifically tailored for AI agents operating in dynamic environments."
+        },
+        {
+          "name": "LangMem",
+          "href": "https://github.com/langchain-ai/langmem",
+          "description": "LangMem provides ways to extract meaningful details from chats, store them, and use them to improve future interactions."
+        },
+        {
+          "name": "Mem0",
+          "href": "https://github.com/mem0ai/mem0",
+          "description": "Mem0 (\"mem-zero\") enhances AI assistants and agents with an intelligent memory layer, enabling personalized AI interactions. It remembers user preferences, adapts to individual needs, and continuously learns over time—ideal for customer support chatbots, AI assistants, and autonomous systems."
+        },
+        {
+          "name": "MemOS",
+          "href": "https://github.com/MemTensor/MemOS",
+          "description": "MemOS is an operating system for Large Language Models (LLMs) that enhances them with long-term memory capabilities. It allows LLMs to store, retrieve, and manage information, enabling more context-aware, consistent, and personalized interactions."
+        },
+        {
+          "name": "SimpleMem",
+          "href": "https://github.com/aiming-lab/SimpleMem",
+          "description": "SimpleMem is an efficient lifelong memory system for LLM agents that enables seamless memory retention and management across conversations."
+        },
+        {
+          "name": "supermemory",
+          "href": "https://github.com/supermemoryai/supermemory",
+          "description": "supermemory intelligently extracts information from your conversations and apps and pieces together connections between memories to deliver seamless user experience."
+        },
+        {
+          "name": "Zep",
+          "href": "https://github.com/getzep/zep",
+          "description": "Zep is a memory platform for AI agents that learns from user interactions and business data."
+        }
+      ]
+    },
+    {
+      "name": "Agent Security",
+      "emoji": "🦺",
+      "entries": [
+        {
+          "name": "Agentic Radar",
+          "href": "https://github.com/splx-ai/agentic-radar",
+          "description": "Agentic Radar is a security scanner for LLM agentic workflows for potential vulnerabilities."
+        },
+        {
+          "name": "Agentic Security",
+          "href": "https://github.com/msoedov/agentic_security",
+          "description": "Agentic Security is a vulnerability scanner for agentic workflows, protecting AI systems from jailbreaks, fuzzing, and multimodal attacks."
+        },
+        {
+          "name": "AI-Infra-Guard",
+          "href": "https://github.com/Tencent/AI-Infra-Guard",
+          "description": "AI-Infra-Guard is an infrastructure security tool for AI systems."
+        },
+        {
+          "name": "DeepTeam",
+          "href": "https://github.com/confident-ai/deepteam",
+          "description": "DeepTeam is a simple-to-use, open-source LLM red teaming framework, for penetration testing and safe guarding large-language model systems."
+        },
+        {
+          "name": "Inkog",
+          "href": "https://github.com/inkog-io/inkog",
+          "description": "Open-source AI agent security scanner. Detects prompt injection, infinite loops, token bombing, SQL injection via LLM, and missing human oversight across 20+ frameworks. CLI + MCP server with compliance mapping to EU AI Act, NIST AI RMF, and OWASP LLM Top 10."
+        },
+        {
+          "name": "mcp-scan",
+          "href": "https://github.com/invariantlabs-ai/mcp-scan",
+          "description": "mcp-scan is an MCP security scanning tool for local and remote MCP Servers."
+        },
+        {
+          "name": "promptfoo",
+          "href": "https://github.com/promptfoo/promptfoo",
+          "description": "promptfoo is an LLM red teaming and evaluation framework for testing jailbreaks, prompt injection, and vulnerabilities with adversarial attacks and CI/CD integration."
+        },
+        {
+          "name": "ps-fuzz",
+          "href": "https://github.com/prompt-security/ps-fuzz",
+          "description": "ps-fuzz is a tool to test and harden GenAI system prompts against security vulnerabilities and adversarial attacks."
+        },
+        {
+          "name": "Purple Llama",
+          "href": "https://github.com/meta-llama/PurpleLlama",
+          "description": "Purple Llama is a set of tools to assess and improve LLM security for building responsible GenAI models."
+        },
+        {
+          "name": "Rogue",
+          "href": "https://github.com/qualifire-dev/rogue",
+          "description": "Rogue is an AI agent evaluator and red team platform for testing agents against business policies and security vulnerabilities."
+        }
+      ]
+    },
+    {
+      "name": "Prompt Engineering",
+      "emoji": "🎮",
+      "entries": [
+        {
+          "name": "ChainForge",
+          "href": "https://github.com/ianarawjo/ChainForge",
+          "description": "ChainForge is an open-source visual programming environment for battle-testing prompts to LLMs. Compare across models, prompts, and prompt parameters using built-in visualizations."
+        },
+        {
+          "name": "DSPy",
+          "href": "https://github.com/stanfordnlp/dspy",
+          "description": "DSPy is the framework for programming—not prompting—language models. It allows you to iterate fast on building modular AI systems and offers algorithms for optimizing prompts and weights."
+        },
+        {
+          "name": "ell",
+          "href": "https://github.com/MadcowD/ell",
+          "description": "ell is a language model programming library that treats prompts as programs. Features automatic versioning, serialization, and rich tooling for prompt engineering with Ell Studio for visualization."
+        },
+        {
+          "name": "Latitude",
+          "href": "https://github.com/latitude-dev/latitude-llm",
+          "description": "Latitude is the open-source prompt engineering platform to build, evaluate, and refine prompts with AI. Features prompt management, playground testing, AI gateway, and evaluations."
+        },
+        {
+          "name": "PromptIDE",
+          "href": "https://x.ai/blog/prompt-ide",
+          "description": "PromptIDE by xAI is an integrated development environment for prompt engineering and interpretability research, providing transparent access to Grok-1 with rich analytics and Python SDK support."
+        },
+        {
+          "name": "PromptLayer",
+          "href": "https://github.com/MagnivOrg/prompt-layer-library",
+          "description": "PromptLayer is a platform that allows you to track, manage, and share your GPT prompt engineering by acting as middleware to log all OpenAI API requests."
+        },
+        {
+          "name": "PromptSource",
+          "href": "https://github.com/bigscience-workshop/promptsource",
+          "description": "PromptSource is a toolkit for creating, sharing and using natural language prompts. Contains a growing collection of prompts (P3: Public Pool of Prompts) written in Jinja templating language."
+        },
+        {
+          "name": "Prompty",
+          "href": "https://github.com/microsoft/prompty",
+          "description": "Prompty makes it easy to create, manage, debug, and evaluate LLM prompts for AI applications. An asset class and format for LLM prompts designed to enhance observability, understandability, and portability."
+        }
+      ]
+    },
+    {
+      "name": "Agent Interfaces",
+      "emoji": "🖥️",
+      "entries": [
+        {
+          "name": "A2UI",
+          "href": "https://github.com/google/A2UI",
+          "description": "A2UI is a framework for building agent-to-UI interactions."
+        },
+        {
+          "name": "Chat UI",
+          "href": "https://github.com/huggingface/chat-ui",
+          "description": "Chat UI is an open-source web application framework that provides the frontend interface and backend infrastructure for building conversational AI chatbots, serving as the codebase behind their HuggingChat platform."
+        },
+        {
+          "name": "ComfyUI",
+          "href": "https://github.com/comfyanonymous/ComfyUI",
+          "description": "ComfyUI is a node-based interface and inference engine for generative AI, specifically designed to work with Stable Diffusion and other AI models. It allows users to create complex workflows for image, video, and other content generation through a visual, graph-like interface."
+        }
+      ]
+    }
+  ]
+}

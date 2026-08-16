@@ -50,10 +50,11 @@ for (const { heading, routes } of navigationSections) {
   for (const route of routes) if (!sectionByRoute.has(route)) sectionByRoute.set(route, heading);
 }
 
-// These indexable projects are not linked in the site navigation; both are reachable from the
+// These indexable pages are not linked in the site navigation; all are reachable from the
 // /open-source/ portal.
 sectionByRoute.set('/open-source/ai-guidelines/', menus.oss.label);
 sectionByRoute.set('/open-source/agent-skills-marketplace/', menus.oss.label);
+sectionByRoute.set('/open-source/production-agentic-list/', menus.oss.label);
 
 const excludedFromLlms = [
   (route: string) => route === '/',
