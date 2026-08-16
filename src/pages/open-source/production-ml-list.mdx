@@ -8,6 +8,7 @@ layout: ../../layouts/ProseLayout.astro
 
 import ArticleHero from '../../components/ArticleHero.astro';
 import CategoryAtlas from '../../components/CategoryAtlas.astro';
+import CategoryMosaic from '../../components/CategoryMosaic.astro';
 import CTA from '../../components/prose/CTA.astro';
 import Metrics from '../../components/prose/Metrics.astro';
 import catalogues from '../../content/oss-catalogues.json';
@@ -19,7 +20,10 @@ import productionMlLibraries from '../../data/production-ml-libraries.json';
   title={frontmatter.title}
   intro={`"A curated list of awesome open source libraries to deploy, monitor, version and scale your machine learning." ${productionMlLibraries.libraryCount} libraries across ${productionMlLibraries.categories.length} categories, with a summary of new additions released every month.`}
   transitionName="production-ml-title"
-/>
+  backdrop
+>
+  <CategoryMosaic slot="backdrop" set="production-ml" backdrop />
+</ArticleHero>
 
 ## Explore the categories
 
