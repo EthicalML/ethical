@@ -69,6 +69,166 @@ watchlist:
       note: sell-out dev event; 2026 theme is agentic engineering
 
 scouted:
+  # Watchlist state (status: tracked) — what lets later runs skip the sweep.
+  - name: KubeCon + CloudNativeCon Europe
+    url: https://events.linuxfoundation.org/kubecon-cloudnativecon-europe-2027/
+    checked: 2026-08-16
+    status: tracked
+    next_edition: 2027-03-15 to 2027-03-18, Barcelona, ES
+    cfp: not open yet; LF opens ~6 months ahead (expect autumn 2026)
+    owner: keen to submit — flag the week the CFP opens (2026-08-16)
+  - name: AGNTCon + MCPCon Europe
+    url: https://events.linuxfoundation.org/agntcon-mcpcon-europe/
+    checked: 2026-08-16
+    status: tracked
+    next_edition: 2026-09-17 to 2026-09-18, RAI Amsterdam, NL
+    cfp: closed 2026-06-08
+    note: proposed into events.yaml on 2026-08-16
+  - name: AI Engineer Europe
+    url: https://www.ai.engineer/
+    checked: 2026-08-16
+    status: tracked
+    next_edition: February 2027, London — month announced, exact dates TBA
+    cfp: not open yet
+    owner: keen to submit — flag the week the CFP opens (2026-08-16)
+  - name: World Summit AI Amsterdam
+    checked: 2026-08-16
+    status: tracked
+    next_edition: 2026-10-07 to 2026-10-08, Amsterdam — already in events.yaml
+    cfp: n/a (curated)
+  - name: WeAreDevelopers World Congress Berlin
+    checked: 2026-08-16
+    status: tracked
+    next_edition: 2027 edition not announced; 2026 ran 8-10 July
+    cfp: not open yet; organiser usually opens in the autumn
+  - name: QCon London
+    checked: 2026-08-16
+    status: tracked
+    next_edition: 2027 edition not announced; 2026 ran in March
+    cfp: n/a — curated by track chairs, no open CFP
+  - name: The AI Summit London
+    checked: 2026-08-16
+    status: tracked
+    next_edition: 2027 edition not announced; 2026 ran 10-11 June
+    cfp: not open yet
+  - name: GITEX AI Europe Berlin
+    url: https://www.gitexeurope.com/
+    checked: 2026-08-16
+    status: tracked
+    next_edition: 2026 edition ran 2026-06-30 to 2026-07-01, Messe Berlin; 2027 not announced
+    cfp: n/a (expo speaking slots, sales-led)
+  - name: WAICF Cannes
+    checked: 2026-08-16
+    status: tracked
+    next_edition: 2027 edition not announced; 2026 ran 12-13 February
+    cfp: not open yet
+  - name: HumanX EMEA Amsterdam
+    url: https://www.humanx.co/europe
+    checked: 2026-08-16
+    status: tracked
+    next_edition: 2026-09-22 to 2026-09-24, RAI Amsterdam, NL
+    cfp: none published (curated programme)
+    note: proposed into events.yaml on 2026-08-16
+  - name: RAISE Summit Paris
+    checked: 2026-08-16
+    status: tracked
+    next_edition: 2027 edition not announced; 2026 ran 8-9 July
+    cfp: not open yet
+  - name: AI Engineer World's Fair
+    checked: 2026-08-16
+    status: tracked
+    next_edition: 2027 edition not announced; 2026 ran 29 June - 2 July, San Francisco
+    cfp: not open yet
+  - name: MLOps World
+    url: https://mlopsworld.com/
+    checked: 2026-08-16
+    status: tracked
+    next_edition: 2026-11-17 to 2026-11-18, Etter-Harbin Alumni Center, Austin, US — already in events.yaml
+    cfp: organiser has not published a 2026 speaker deadline
+  - name: Rise of AI Berlin
+    url: https://riseof.ai/conference-2027/
+    checked: 2026-08-16
+    status: tracked
+    tier: cfp-track
+    next_edition: 2027-05-12, Berlin, DE
+    cfp: not open yet
+    owner: notify when the 2027 CFP opens (2026-08-16)
+  - name: ContainerDays Hamburg
+    url: https://www.containerdays.io/containerdays-hamburg-2026/
+    checked: 2026-08-15
+    status: tracked
+    tier: cfp-track
+    next_edition: 2026-09-02 to 2026-09-04, Schuppen 52, Hamburg, DE
+    cfp: closed for the 2026 edition
+    owner: not interested (2026-08-16)
+  - name: code.talks Hamburg
+    url: https://codetalks.com/call-for-paper
+    checked: 2026-08-16
+    status: tracked
+    tier: cfp-track
+    next_edition: 2026-11-04 to 2026-11-05, Hamburg, DE — already in events.yaml
+    cfp: open, wave 3 closes 2026-08-31
+    owner: speaking at the 2026 edition — becomes a talks entry in events.yaml, title pending (2026-08-16)
+  - name: Cloud Native AI Summit Europe
+    url: https://sessionize.com/cloud-native-summit-europe-2026/
+    checked: 2026-08-16
+    status: tracked
+    tier: cfp-track
+    next_edition: 2026-12-02 to 2026-12-03, CNIT Forest, Paris, FR
+    cfp: open, closes 2026-09-18
+    owner: skipped 2026-08-16 — do not re-propose this edition
+  - name: Accelerate Tomorrow AI Summit Berlin
+    checked: 2026-08-15
+    status: tracked
+    tier: cfp-track
+    next_edition: 2027, Estrel Berlin — dates not published
+    cfp: not open yet
+  - name: AI Coding Summit Berlin
+    checked: 2026-08-15
+    status: tracked
+    tier: cfp-track
+    next_edition: 2027 not announced; 2026 edition ran online in February
+    cfp: not open yet
+  - name: AI Horizons Prague
+    checked: 2026-08-15
+    status: tracked
+    tier: cfp-track
+    next_edition: 2026-09-23 to 2026-09-24, Cubex Centrum, Prague, CZ
+    cfp: none published
+  - name: PyCon DE & PyData
+    checked: 2026-08-15
+    status: tracked
+    tier: cfp-track
+    next_edition: 2027 not announced; 2026 ran 14-17 April, Darmstadt
+    cfp: not open yet
+  - name: EuroPython
+    checked: 2026-08-15
+    status: tracked
+    tier: cfp-track
+    next_edition: 2027 not announced; 2026 ran 13-19 July, Kraków
+    cfp: not open yet
+  - name: NDC London
+    checked: 2026-08-15
+    status: tracked
+    tier: cfp-track
+    next_edition: January 2027 expected (annual cycle); dates not confirmed
+    cfp: not open yet
+  - name: Devoxx Belgium
+    url: https://devoxx.be/
+    checked: 2026-08-15
+    status: tracked
+    tier: cfp-track
+    next_edition: 2026-10-05 to 2026-10-09, Antwerp, BE
+    cfp: closed for the 2026 edition
+    owner: not interested (2026-08-16)
+
+  # One-off candidates.
+  - name: AI Infrastructure Summit Berlin
+    url: https://conferenceindex.org/event/ai-infrastructure-summit-2026-september-berlin-de
+    checked: 2026-08-16
+    status: rejected
+    reason: Polarise-run data-centre/compute-and-energy summit for DACH buyers, speakers TBA; wrong topic and wrong audience
+    owner: reviewed 2026-08-16 — reopened as cfp-track candidate; we.CONECT B2B summit, 500+, Berlin, agenda covers AgentOps and inference; confirm slot is editorial not sponsored before approaching
   - name: CogX
     url: https://cogx.co/
     checked: 2026-08-15
