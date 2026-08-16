@@ -5,6 +5,8 @@ import KomputeCube from './KomputeCube.astro';
 import OpenSourceHeroCanvas from './OpenSourceHeroCanvas.astro';
 import PolicyHeroCanvas from './PolicyHeroCanvas.astro';
 
+if (Astro.slots.has('backdrop')) Astro.props.backdrop = true;
+
 const { eyebrow, title, intro, canvas = false, backdrop = false, transitionName } = Astro.props;
 ---
 
