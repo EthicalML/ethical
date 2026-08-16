@@ -12,6 +12,7 @@ import Metrics from '../../components/prose/Metrics.astro';
 import ProjectLinks from '../../components/ProjectLinks.astro';
 import StageExplorer from '../../components/StageExplorer.astro';
 import TalkCard from '../../components/TalkCard.astro';
+import XaiPipeline from '../../components/XaiPipeline.astro';
 import XaiProcess from '../../components/XaiProcess.astro';
 
 export const stages = [
@@ -92,7 +93,10 @@ export const metricEntry = await getEntry('metrics', 'xai');
     '"XAI is a Machine Learning library that is designed with AI explainability in its core." It implements the three steps of explainable machine learning: data analysis, model evaluation and production monitoring, tools and process together.'
   }
   transitionName="xai-title"
-/>
+  backdrop
+>
+  <XaiPipeline slot="backdrop" backdrop />
+</ArticleHero>
 
 ## The process, by checkpoint
 

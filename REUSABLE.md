@@ -12,6 +12,25 @@ Documented reusable components for composed pages. An API change to a component 
 | ------- | --------- | ---------------------------------------------------------------------------------------- |
 | `class` | `string?` | Surface identity for page-specific integration; the wrapper always adds `.article-body`. |
 
+## ArticleHero
+
+`src/components/ArticleHero.astro`. The composed-page hero: eyebrow, h1 and optional intro, with an optional full-bleed canvas behind them under a legibility scrim. `canvas` selects one of the heroes the component wires itself; `backdrop` opens the same treatment to any canvas the page supplies through the `backdrop` slot, which is how the open-source project pages carry their own project animation.
+
+### Props
+
+| Prop             | Type                                                                   | Notes                                                                                                              |
+| ---------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `eyebrow`        | `string`                                                               | Small mono label above the title.                                                                                  |
+| `title`          | `string`                                                               | The h1.                                                                                                            |
+| `intro`          | `string?`                                                              | Optional lede paragraph.                                                                                           |
+| `canvas`         | `true \| 'kaos' \| 'kompute' \| 'policy' \| 'open-source' \| false` | Mounts a wired hero canvas and switches the hero to its dark canvas variant.                                       |
+| `backdrop`       | `boolean?`                                                             | Same dark canvas variant, with the canvas supplied by the page through the `backdrop` slot.                        |
+| `transitionName` | `string?`                                                              | View-transition group shared with the source that morphs into this title.                                          |
+
+A slotted backdrop mount must not carry card framing, and it renders its canvas with the `hero-canvas` class so the hero owns the placement (right two thirds at desktop, a masked band at the foot below 950px). `KomputeCube`, `CategoryMosaic` and `XaiPipeline` all take a `backdrop` prop that does exactly that.
+
+A named slot overwrites a same-named prop in MDX: the slotted child compiles to a `backdrop` prop and `astro/jsx-runtime` then promotes it to the slots map, deleting the boolean the page wrote. The component restores it from `Astro.slots.has('backdrop')` before reading its props, so a page can write both. Rename either the prop or the slot and that guard has to move with it.
+
 ## LinkCardGrid
 
 `src/components/LinkCardGrid.astro`. A responsive grid shell for collections of linked cards that carry a short label, title and trailing detail. It establishes the standard three-column layout, collapses to two columns at the wide breakpoint and one at the compact breakpoint, and leaves card content and card-specific presentation with the consumer. `FrameworkCards`, `FrameworkLinkCards` and `RegulationGrid` compose it; their local CSS records only meaningful differences such as gap size or an earlier single-column collapse.
@@ -380,8 +399,8 @@ The default slot is the widget column, and a `note` slot adds a second copy para
 
 ## Canvas widget mounts
 
-- `src/components/CategoryMosaic.astro` (`<category-mosaic>`, `src/shared/canvas/CategoryMosaic.ts`). The twinkling catalogue mosaic the header's nav preview draws, as a standalone mount. `set` chooses the tile set: `production-ml` (24 categories) or `ai-guidelines` (regulation themes and economic areas). Adding a set means adding a tile list and registering it in `TILE_SETS`.
+- `src/components/CategoryMosaic.astro` (`<category-mosaic>`, `src/shared/canvas/CategoryMosaic.ts`). The twinkling catalogue mosaic the header's nav preview draws, as a standalone mount. `set` chooses the tile set: `production-ml` (24 categories, square cells) or `ai-guidelines` (regulation themes and economic areas, hexagonal cells). Each set names its own cell shape in `TILE_SETS`, so two catalogues on the same grid never read as copies of each other; a shape is an entry in `CELL_SHAPES` giving the path over the cell box and the horizontal text inset its silhouette needs, and `triangle` is defined and reserved for a future set. Adding a set means adding a tile list and registering it with a shape. `backdrop` drops the mount out of flow for `ArticleHero`'s backdrop slot.
 - `src/components/CatalogueLightGrid.astro` (`<catalogue-light-grid>`, `src/shared/canvas/CatalogueLightGrid.ts`). The agentic catalogue's light grid: square cells over faint hairlines, idling on per-cell timers, crossed every few seconds by a snake run or a tetromino lock-in, and marking the cell under the pointer. `backdrop` swaps the mount for a full-bleed absolute canvas with no card framing, for use in an `ArticleHero` `backdrop` slot; without it the mount fills a `.fixed-canvas` panel. The seven category regions are density weights on the board, never labels.
-- `src/components/XaiPipeline.astro` (`<xai-pipeline>`, `src/shared/canvas/XaiPipeline.ts`). The three-checkpoint explainability pipeline with its travelling packet and feedback loop, likewise shared with the nav preview.
+- `src/components/XaiPipeline.astro` (`<xai-pipeline>`, `src/shared/canvas/XaiPipeline.ts`). The three-checkpoint explainability pipeline with its travelling packet and feedback loop, likewise shared with the nav preview. `backdrop` drops the mount out of flow for `ArticleHero`'s backdrop slot.
 - `src/components/OpenSourceHeroCanvas.astro` (`<open-source-hero-lattice>`, `src/shared/canvas/OpenSourceHeroLattice.ts`). The `/open-source/` hero: five project pads around a shared hub, ringed by an orbit of contributors that send a packet inward on each beat. Built on `src/shared/canvas/IsoKit.ts`, the isometric vocabulary it shares with the policy citadel; `data-scale`, `data-center-x` and `data-center-y` tune an embed.
 - `src/shared/canvas/CategoryConstellation.ts` (`<category-constellation>`) is currently unwired: its only consumer was `ProjectPortal`, retired when `/open-source/` moved to feature cards.

@@ -1,15 +1,17 @@
 ---
 // The three-checkpoint explainability pipeline the header's nav preview draws, as a standalone
-// mount.
+// mount. `backdrop` drops the mount out of flow so the hero that holds it places the canvas
+// full-bleed behind its copy, the same contract `KomputeCube` carries.
 interface Props {
+  backdrop?: boolean;
   surface?: 'dark' | 'page';
 }
 
-const { surface } = Astro.props;
+const { backdrop = false, surface } = Astro.props;
 ---
 
-<xai-pipeline data-surface={surface} aria-hidden="true">
-  <canvas></canvas>
+<xai-pipeline class:list={[backdrop && 'hero-backdrop-mount']} data-surface={surface} aria-hidden="true">
+  <canvas class:list={[backdrop && 'hero-canvas']}></canvas>
 </xai-pipeline>
 
 <script>
@@ -22,5 +24,11 @@ const { surface } = Astro.props;
     display: block;
     height: 100%;
     width: 100%;
+  }
+
+  /* The hero owns the placement of a `.hero-canvas`, so the mount itself must not generate a box
+    between the two. */
+  xai-pipeline.hero-backdrop-mount {
+    display: contents;
   }
 </style>

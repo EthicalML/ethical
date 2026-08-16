@@ -5,6 +5,60 @@ import { CanvasEngine, type CanvasPalette, rgba, surfaceOf } from './CanvasEngin
 // on their own offset cycles, so the board reads as a living index rather than a static table.
 // Shared by the header's nav preview and the open-source project cards.
 
+// Cell geometry is per set, so two catalogues on the same grammar never read as copies of each
+// other. A shape is a path over the cell box plus the horizontal text inset its silhouette needs;
+// adding one means adding an entry here and naming it on a tile set.
+export type MosaicShape = 'square' | 'hexagon' | 'triangle';
+
+interface MosaicCellShape {
+  inset: (width: number, height: number) => number;
+  path: (
+    context: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+  ) => void;
+}
+
+const CELL_SHAPES: Record<MosaicShape, MosaicCellShape> = {
+  square: {
+    inset: () => 0,
+    path: (context, x, y, width, height) => {
+      context.beginPath();
+      context.rect(x, y, width, height);
+    },
+  },
+  // Flat-topped hexagon: the cell box with both vertical edges pulled into a point, so the board
+  // reads as a honeycomb at any tile span.
+  hexagon: {
+    inset: (width) => Math.min(22, width * 0.11),
+    path: (context, x, y, width, height) => {
+      const cut = Math.min(22, width * 0.11);
+      const midY = y + height / 2;
+      context.beginPath();
+      context.moveTo(x + cut, y);
+      context.lineTo(x + width - cut, y);
+      context.lineTo(x + width, midY);
+      context.lineTo(x + width - cut, y + height);
+      context.lineTo(x + cut, y + height);
+      context.lineTo(x, midY);
+      context.closePath();
+    },
+  },
+  // Reserved for a future set: an upward triangle over the cell box.
+  triangle: {
+    inset: (width) => width * 0.2,
+    path: (context, x, y, width, height) => {
+      context.beginPath();
+      context.moveTo(x + width / 2, y);
+      context.lineTo(x + width, y + height);
+      context.lineTo(x, y + height);
+      context.closePath();
+    },
+  },
+};
+
 export interface MosaicTile {
   column: number;
   row: number;
@@ -91,7 +145,7 @@ export const PRODUCTION_ML_TILES: MosaicTile[] = [
 // A drawer bound to one tile set. Two sets ship: the production-ML catalogue and the AI
 // regulation catalogue, which share the layout grammar and differ only in their tiles.
 export const createMosaicDrawer =
-  (tiles: MosaicTile[]) =>
+  (tiles: MosaicTile[], shape: MosaicShape = 'square') =>
   (
     context: CanvasRenderingContext2D,
     width: number,
@@ -105,6 +159,7 @@ export const createMosaicDrawer =
     const rows = 4;
     const unitWidth = (width - pad * 2 - gap * (columns - 1)) / columns;
     const unitHeight = (height - pad * 2 - gap * (rows - 1)) / rows;
+    const cell = CELL_SHAPES[shape];
 
     tiles.forEach((tile, index) => {
       const x = pad + tile.column * (unitWidth + gap);
@@ -119,24 +174,29 @@ export const createMosaicDrawer =
       context.globalAlpha = entrance;
       context.save();
       context.translate(0, (1 - entrance) * 10);
+      cell.path(context, x, y, tileWidth, tileHeight);
       context.fillStyle = rgba(palette.accent, 0.015 + twinkle * 0.055);
-      context.fillRect(x, y, tileWidth, tileHeight);
+      context.fill();
       context.strokeStyle =
         twinkle > 0.08 ? rgba(palette.accentInk, 0.13 + twinkle * 0.6) : rgba(palette.ink, 0.13);
       context.lineWidth = 1 + twinkle * 0.4;
-      context.strokeRect(x, y, tileWidth, tileHeight);
+      context.stroke();
 
+      // Copy keeps clear of the silhouette: a pointed cell reclaims its inset from the measure.
+      const textInset = cell.inset(tileWidth, tileHeight);
+      const textLeft = x + 10 + textInset;
+      const textWidth = tileWidth - 20 - textInset * 2;
       context.textAlign = 'left';
       context.font = `${Math.min(17, tileHeight * 0.24)}px 'Geist',sans-serif`;
-      context.fillText(tile.emoji, x + 10, y + 24);
+      context.fillText(tile.emoji, textLeft, y + 24);
       context.font = "10px 'Geist Mono',monospace";
       context.fillStyle = rgba(palette.accentInk, 0.5 + twinkle * 0.5);
       context.textAlign = 'right';
-      context.fillText(String(tile.count), x + tileWidth - 10, y + 22);
+      context.fillText(String(tile.count), x + tileWidth - 10 - textInset, y + 22);
       context.textAlign = 'left';
       context.font = "9.5px 'Geist',sans-serif";
       context.fillStyle = rgba(palette.ink, 0.55 + twinkle * 0.4);
-      context.fillText(tile.name, x + 10, y + tileHeight - 12, tileWidth - 20);
+      context.fillText(tile.name, textLeft, y + tileHeight - 12, textWidth);
       context.restore();
       context.globalAlpha = 1;
     });
@@ -273,9 +333,10 @@ export const AI_GUIDELINES_TILES: MosaicTile[] = [
   },
 ];
 
-const TILE_SETS: Record<string, MosaicTile[]> = {
-  'production-ml': PRODUCTION_ML_TILES,
-  'ai-guidelines': AI_GUIDELINES_TILES,
+// Each set names its own cell shape, which is what keeps the two catalogues apart at a glance.
+const TILE_SETS: Record<string, { tiles: MosaicTile[]; shape: MosaicShape }> = {
+  'production-ml': { tiles: PRODUCTION_ML_TILES, shape: 'square' },
+  'ai-guidelines': { tiles: AI_GUIDELINES_TILES, shape: 'hexagon' },
 };
 
 // A standalone mount. `data-set` names the catalogue; the nav preview calls the drawer directly
@@ -286,9 +347,8 @@ export class CategoryMosaic extends HTMLElement {
   connectedCallback() {
     const canvas = this.querySelector('canvas');
     if (!canvas) return;
-    const draw = createMosaicDrawer(
-      TILE_SETS[this.dataset.set ?? 'production-ml'] ?? PRODUCTION_ML_TILES,
-    );
+    const set = TILE_SETS[this.dataset.set ?? 'production-ml'] ?? TILE_SETS['production-ml'];
+    const draw = createMosaicDrawer(set.tiles, set.shape);
     this.engine = new CanvasEngine(
       canvas,
       (context, width, height, elapsed, _pointer, palette) => {

@@ -1,16 +1,19 @@
 ---
 // The catalogue mosaic the header's nav preview draws, as a standalone mount. `set` names the
-// tile set: the production-ML ecosystem or the AI regulation catalogue.
+// tile set: the production-ML ecosystem or the AI regulation catalogue, each with its own cell
+// shape. `backdrop` drops the mount out of flow so the hero that holds it places the canvas
+// full-bleed behind its copy, the same contract `KomputeCube` carries.
 interface Props {
   set?: 'production-ml' | 'ai-guidelines';
+  backdrop?: boolean;
   surface?: 'dark' | 'page';
 }
 
-const { set = 'production-ml', surface } = Astro.props;
+const { set = 'production-ml', backdrop = false, surface } = Astro.props;
 ---
 
-<category-mosaic data-set={set} data-surface={surface} aria-hidden="true">
-  <canvas></canvas>
+<category-mosaic class:list={[backdrop && 'hero-backdrop-mount']} data-set={set} data-surface={surface} aria-hidden="true">
+  <canvas class:list={[backdrop && 'hero-canvas']}></canvas>
 </category-mosaic>
 
 <script>
@@ -23,5 +26,11 @@ const { set = 'production-ml', surface } = Astro.props;
     display: block;
     height: 100%;
     width: 100%;
+  }
+
+  /* The hero owns the placement of a `.hero-canvas`, so the mount itself must not generate a box
+    between the two. */
+  category-mosaic.hero-backdrop-mount {
+    display: contents;
   }
 </style>

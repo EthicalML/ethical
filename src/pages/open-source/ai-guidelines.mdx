@@ -7,6 +7,7 @@ layout: ../../layouts/ProseLayout.astro
 ---
 
 import ArticleHero from '../../components/ArticleHero.astro';
+import CategoryMosaic from '../../components/CategoryMosaic.astro';
 import CTA from '../../components/prose/CTA.astro';
 import Metrics from '../../components/prose/Metrics.astro';
 import RegulationGrid from '../../components/RegulationGrid.astro';
@@ -19,7 +20,10 @@ import catalogues from '../../content/oss-catalogues.json';
   intro={
     'A repository "mapping the ecosystem of guidelines, principles, codes of ethics, standards and regulation being put in place around artificial intelligence", from national law to practical checklists.'
   }
-/>
+  backdrop
+>
+  <CategoryMosaic slot="backdrop" set="ai-guidelines" backdrop />
+</ArticleHero>
 
 ## Two ways in
 
