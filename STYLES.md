@@ -51,36 +51,20 @@ has one warn line and dark has three strengths of one, and only dark has a basel
 
 Plus `--ink-a050`/`--ink-a030`, the ghost glyphs, excluded deliberately (see below).
 
-**What the last collapse did, and why those three families were different.** `--scrim-*` (12),
-`--ink-wash-*` (9) and `--shadow-*` (4) retired all 25 of their names. Not by merging colours — by
-noticing that their alphas were never jobs in the first place:
+**Scrims, ink washes and shadows carry no per-alpha names**, because their alphas are not jobs:
 
-- **Scrims.** Twelve tokens spelled four colours at nine alphas because a gradient's _stops_ had each
-  been given a name. A fade is one job; its stops are positions in it. The alpha went back to the
-  call site (`rgba(var(--scrim-page-rgb), 0.72)`) and what remains is the four surfaces a scrim can
-  fade toward — which is the only part that inverts under light, and therefore the only part that
-  had to be a token. Zero pixels, except the fourth depth, which was near enough the third to absorb
-  (measured 1.3/255 at its heaviest stop).
-- **Ink used as a mark.** Nine steps, no jobs: bar tracks, grid rules, indicator bars, carousel dots,
-  each composing whatever alpha its mark needed. Same move — `--ink-wash-rgb` plus the alpha at the
-  mark. The nine light values turned out to be nothing but their dark alpha times 1.32, so that
-  factor is now `--ink-wash-lift` rather than nine hand-tuned numbers. Zero pixels in dark; light
-  lands within 0.7/255 of the values it replaced.
-- **Shadows.** The three deep steps (.60/.55/.50) were one job at three hand-typed strengths and
-  became `--shadow-drop`; `--shadow-lift` is the tile shadow. Two rungs now.
+- **Scrims.** A fade is one job and its stops are positions in it, so the alpha lives at the call
+  site (`rgba(var(--scrim-page-rgb), 0.72)`); the tokens are only the four surfaces a scrim can
+  fade toward — the part that inverts under light.
+- **Ink used as a mark.** Bar tracks, grid rules, indicator bars and carousel dots compose
+  `--ink-wash-rgb` with whatever alpha the mark needs; light derives from dark through the single
+  `--ink-wash-lift` factor.
+- **Shadows.** Two rungs: `--shadow-drop` (deep) and `--shadow-lift` (tile).
 
-  **The budget argument for that merge was wrong, and the merge was kept anyway — knowingly.** It
-  read `Δα × 19`, black over `--bg-base`, giving 1.9/255 for .50 → .60. But these shadows fall
-  under dropdowns and modals, on a scrimmed overlay rather than the raw page, and measured on real
-  captures of the command palette the change is **45/255 across ~337k pixels**. Far outside the
-  3/255 budget. It survives because the owner compared the two side by side and could not see any
-  difference — 45/255 spread through a soft gradient reads as nothing — not because it was small.
-
-  **Nothing measured it at the time, and nothing would today.** No screenshot in `routes.json`
-  opens a menu or a modal, so the entire shadow family is unpainted in every capture. `verify:parity`
-  reported `0/255` for shadows throughout, which meant "no capture paints them", not "safe". If you
-  change a shadow, compare it by hand with the palette or a mega menu open; the sweep will agree
-  with you whatever you do.
+  **Shadows are unpainted in every capture.** No screenshot in `routes.json` opens a menu or a
+  modal, so `verify:parity` reports `0/255` for the whole shadow family whatever you change —
+  that means "no capture paints them", not "safe". If you change a shadow, compare it by hand
+  with the palette or a mega menu open.
 
 **Do not propose collapsing the rest invisibly.** Ink sits 244 channel levels above the darkest
 surface, so `Δα 0.01` is already `2.44/255` before rendering and ~`3/255` after glyph antialiasing,
@@ -150,10 +134,8 @@ surface rungs at their on-dark values for the subtree. A block whose own backgro
 adds `data-surface-plate` beside the role, which paints the panel plate under it; the plate is never
 valid without the role.
 
-This used to be a hand-maintained selector list in `tokens.css`, with a second hand-maintained
-`data-surface` label on every canvas mount inside those blocks. Two lists, in two files, nothing
-holding them together — and a block missing from either renders wrong **in light only**, invisible
-to anyone working in the default theme. `npm run check:ratchet` now fails if a light-theme rule
+A block missing the role renders wrong **in light only**, invisible to anyone working in the
+default theme. `npm run check:ratchet` fails if a light-theme rule
 selects blocks by class instead of by the role, if `data-surface-plate` appears without it, or if a
 `data-surface` value is anything but `dark` or `page`.
 
@@ -183,7 +165,7 @@ plate treatment with it.
 
 **One thing still has to stay in step.** The `--canvas-dark-*` values on `:root` restate the role
 rule's values, because a canvas cannot read the block it sits in — change one, change both. That
-pair is now compared by `npm run check:ratchet` rather than by memory.
+pair is compared by `npm run check:ratchet`.
 
 ### Never a token
 

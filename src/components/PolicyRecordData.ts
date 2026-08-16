@@ -7,7 +7,7 @@
 //
 // Regenerating previews: scripts/fetch-policy-previews.mjs downloads the PDFs and extracts
 // their text; scripts/render-policy-pages.mjs renders every page to webp. Cloudflare gates
-// automated retrieval of some documents; those PDFs are fetched manually (see AGENTS.md).
+// automated retrieval of some documents; those PDFs are fetched manually (see .github/copilot-instructions.md).
 
 export interface PolicyRecordProduct {
   title: string;

@@ -69,7 +69,7 @@ Spawn **two or three parallel `explore` subagents** scoped to what the PR touche
 
 ### Step 3 · Conventions subagent
 
-`AGENTS.md` is the single canonical agent entry point in this repo (there is no `CONVENTIONS.md` and no committed `CLAUDE.md`). Ask the subagent to read it and return: the change workflow, the definition of done, the commit/PR conventions, and any gotcha relevant to the touched paths. Point it at `STYLES.md` as well when the PR could touch styling or the token ratchet, and at `REUSABLE.md` when a component API is implicated.
+`.github/copilot-instructions.md` is the single canonical agent entry point in this repo (root `AGENTS.md` and `CLAUDE.md` are symlinks to it). Ask the subagent to read it and return: the change workflow, the definition of done, the commit/PR conventions, and any gotcha relevant to the touched paths. Point it at `STYLES.md` as well when the PR could touch styling or the token ratchet, and at `REUSABLE.md` when a component API is implicated.
 
 ### Step 4 · Harness subagent
 
@@ -263,7 +263,7 @@ git commit   # comprehensive message, see below
 git push
 ```
 
-Commit messages in this repo are **comprehensive prose**: a subject line that says what changed, then paragraphs explaining the root cause, the fix and how it was verified. **No trailers, no co-author lines, no session URLs** — that convention is explicit in `AGENTS.md` and applies to PR bodies too.
+Commit messages in this repo are **comprehensive prose**: a subject line that says what changed, then paragraphs explaining the root cause, the fix and how it was verified. **No trailers, no co-author lines, no session URLs** — that convention is explicit in `.github/copilot-instructions.md` and applies to PR bodies too.
 
 Monitor CI; rerun known flakes once before investigating:
 

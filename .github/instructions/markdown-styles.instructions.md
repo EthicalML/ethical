@@ -1,5 +1,8 @@
 ---
-applyTo: 'src/content/**/*.md,src/pages/**/*.mdx'
+applyTo: '{src/content/**/*.md,src/pages/**/*.mdx}'
+paths:
+  - 'src/content/**/*.md'
+  - 'src/pages/**/*.mdx'
 ---
 
 # Markdown elements and how they render
@@ -22,7 +25,7 @@ Every markdown element the site styles, what it looks like, and the constraints 
 
 ## Body copy
 
-Ordinary paragraphs render at `--body-16-5` with 1.75 line height on the shared newsletter/blog article surface and `--body-16` at 1.7 on prose pages, capped to a readable measure and centred within the section. Markdown prose does not hard-wrap; let lines overflow (see AGENTS.md editorial rules). No em dashes in site prose.
+Ordinary paragraphs render at `--body-16-5` with 1.75 line height on the shared newsletter/blog article surface and `--body-16` at 1.7 on prose pages, capped to a readable measure and centred within the section. Markdown prose does not hard-wrap; let lines overflow (see the editorial rules in `.github/copilot-instructions.md`). No em dashes in site prose.
 
 `**bold**` and `_italic_` render as expected inside paragraphs and list items. Do not use bold as a substitute for `###`.
 
