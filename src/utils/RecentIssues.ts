@@ -30,3 +30,9 @@ export function toIssueRanges(numbers: number[]) {
     .map(([from, to]) => (from === to ? `${from}` : `${from}-${to}`))
     .join(' ');
 }
+
+// The homepage's "issues published" stat. Counting entries rather than reading the
+// highest number keeps it honest if the archive ever has a gap.
+export async function getIssueCount() {
+  return (await getCollection('newsletter')).length;
+}
