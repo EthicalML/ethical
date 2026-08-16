@@ -11,6 +11,7 @@ import ArticleHero from '../../components/ArticleHero.astro';
 import Metrics from '../../components/prose/Metrics.astro';
 import ProjectLinks from '../../components/ProjectLinks.astro';
 import CapabilityTable from '../../components/prose/CapabilityTable.astro';
+import ThemeBufferIso from '../../components/ThemeBufferIso.astro';
 import ThemePalette from '../../components/ThemePalette.astro';
 
 export const palette = [
@@ -76,11 +77,14 @@ export const links = [{ label: 'View on GitHub', href: 'https://github.com/Ethic
 export const metricEntry = await getEntry('metrics', 'monokai-institute');
 
 <ArticleHero
+  backdrop
   eyebrow="OPEN SOURCE · NEOVIM · APACHE-2.0"
   title={frontmatter.title}
   intro="A Vim and Neovim colorscheme in the visual language of the Institute: the signature teal green on pitch black for the dark theme, and a warm sage paper with muted accents for the light one. Full truecolor with a 256-colour fallback, an optional transparent background, and highlights tuned for the modern plugin ecosystem."
   transitionName="monokai-institute-title"
-/>
+>
+  <ThemeBufferIso slot="backdrop" embedded backdrop />
+</ArticleHero>
 
 ## The palette, by highlight group
 
