@@ -16,10 +16,6 @@ The principle pages carry prev/next only at the bottom, and the transition does 
 
 Presentation follow-up to the on-domain catalogue: clicking a category card should open that category's libraries in a modal or in-place expanded panel rather than rendering as one long list below the fold. The full list must stay server-rendered in the DOM (hidden-until-click is fine and stays crawlable) since on-domain crawlability is the whole point of the catalogue. The monthly refresh half is done and shipped as `.github/workflows/catalogue-sync.yml`; it needs an `AUTOMATION_TOKEN` repository secret before its pull requests can auto-merge.
 
-## Policy record: full text preview
-
-The reading room renders each publication as page images with the canonical PDF hosted remotely, so the document bodies are the only genuinely uncrawlable content on the site. Add a second action next to the PDF link: a "preview text" control opening the full document text in a modal, converted from the PDF into readable markdown with tables and structure preserved. Extraction quality is the open question: `scripts/fetch-policy-previews.mjs` already downloads and extracts text, so first assess whether that structured output is good enough for tables and headings; if not, evaluate an OCR or document-understanding model, or a one-off subagent extraction pass committed as data. Confirm republication rights for the ACM-published documents before committing full text to the repo.
-
 ## PR #12 decision — hero-parallax exploration
 
 Six homepage scroll-effect variants sit in the open PR #12, paused for owner decision: pick a variant to land or close the PR.
