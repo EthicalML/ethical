@@ -113,6 +113,10 @@ npm run check
 
 Fix every lint error and justify any warning left standing. Prettier runs in `--write` mode because hand-edited YAML fails a `--check` round trip on an apostrophe alone. `npm run check` must pass; the schema rejects an unknown tag or more than three.
 
+A link that 404s against the issue worktree is not yet a broken link. The worktree is branched from a point in master's history, so a page added after that point is legitimately absent from it and from any dev server running out of it. Before treating a failure as real, re-check the URL against current master (`git ls-tree -r --name-only origin/master src/content/blog/` for a post, or a dev server on a worktree branched from a fresh `origin/master`). This cost issue 400 a follow-up PR: the owner's link to the new phase announcement was correct, the post had landed on master after the worktree was cut, and the 404 was taken as proof the link was wrong.
+
+The rule behind it generalises. When your own check contradicts what the owner wrote, the first hypothesis is that the check is wrong, not the copy. Rewriting an owner's line is a last resort that needs the failure reproduced against master and reported to them, not a silent correction folded into a commit.
+
 ## 8. Hand over
 
 Show the owner one review document: the five drafted sections, flagging any article whose grounding notes recorded a weak or failed fetch tier, followed by the events scout report from `tmp/issue-<N>/events-scout.md` — tracker update recommendations, proposed additions, proposed updates, and the rejects it dropped. If the scout found nothing, say so; an empty week is normal. If the scout has not returned yet, hand over the sections and bring the events report as soon as it lands.
