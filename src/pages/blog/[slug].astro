@@ -44,6 +44,12 @@ export async function getStaticPaths() {
 
 const { entry, related, seriesNavigation } = Astro.props;
 const { Content } = await render(entry);
+// Author-only publishing aid: generated and rendered in dev alone, so production ships
+// neither the buttons nor a second copy of every post. Diagrams are inlined as data URIs
+// from tmp/diagrams, written by scripts/blog/rasterise-diagrams.mjs.
+// Imported dynamically so the component and its scoped CSS are dead code in the
+// production bundle rather than shipped to every reader.
+const CopyIssue = import.meta.env.DEV ? (await import('../../components/CopyIssue.astro')).default : undefined;
 // Undated entries are drafts and only render in dev; scheduled posts render in
 // production as unlisted, noindexed previews until the daily deploy passes
 // their date.
@@ -128,7 +134,10 @@ const bylineAuthors = entry.data.authors.map((name) => ({ name, anchor: authors[
     <figure class="blog-featured" data-reveal>
       <Image src={entry.data.image} alt="" widths={[640, 1080, 1560]} sizes="(max-width: 828px) calc(100vw - 48px), 780px" loading="eager" />
     </figure>
-    <ArticleBody class="blog-body"><Content /></ArticleBody>
+    {CopyIssue && <CopyIssue body={entry.body ?? ''} summary={entry.data.summary} post={entry.id.replace(/\/index\.md$/, '')} />}
+    <ArticleBody class="blog-body">
+      <Content />
+    </ArticleBody>
     {
       entry.data.syndication?.length ? (
         <div class="blog-syndication" data-reveal>
