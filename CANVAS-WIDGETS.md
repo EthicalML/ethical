@@ -9,6 +9,7 @@ Named "canvas widgets" rather than 3D: the isometric pieces project 3D, the fiel
 - `CanvasEngine` - the shared loop: sizing, device pixel ratio, visibility gating, teardown.
 - `IsoKit` - isometric primitives (cubes, slabs, conduits, towers) shared by every iso widget.
 - `AnimationWindow` - the framed chrome around a demo that plays, with its title bar.
+- `PolicyHeroShared` - geometry shared by the policy citadel renditions.
 
 ## Widgets
 
