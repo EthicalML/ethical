@@ -69,7 +69,7 @@ Spawn **two or three parallel `explore` subagents** scoped to what the PR touche
 
 ### Step 3 · Conventions subagent
 
-`.github/copilot-instructions.md` is the single canonical agent entry point in this repo (root `AGENTS.md` and `CLAUDE.md` are symlinks to it). Ask the subagent to read it and return: the change workflow, the definition of done, the commit/PR conventions, and any gotcha relevant to the touched paths. Point it at `STYLES.md` as well when the PR could touch styling or the token ratchet, and at `REUSABLE.md` when a component API is implicated.
+`.github/copilot-instructions.md` is the single canonical agent entry point in this repo (root `AGENTS.md` and `CLAUDE.md` are symlinks to it). Ask the subagent to read it and return: the change workflow, its local checks, the commit/PR conventions, and any gotcha relevant to the touched paths. Point it at `STYLES.md` as well when the PR could touch styling or the token ratchet, and at `REUSABLE.md` when a component API is implicated.
 
 ### Step 4 · Harness subagent
 
@@ -154,7 +154,7 @@ Any npm **major** is at least medium by default. A major arrives alone precisely
 Tier the effort by Step 7's risk rating:
 
 - **Low (tooling only)** — apply fix, run the narrowest relevant gate (`npm run lint`, `npm run format:check`, or `npm run check:ratchet`). No reproduction step needed.
-- **Medium (build pipeline or `src/` edit)** — first **reproduce** the failure locally on the PR branch to prove the regression is real (not a CI artefact). Then apply the fix, re-run the full local definition of done: `npm run lint && npm run format:check && npm run check:ratchet && npm run build`. Then Phase E.
+- **Medium (build pipeline or `src/` edit)** — first **reproduce** the failure locally on the PR branch to prove the regression is real (not a CI artefact). Then apply the fix, re-run the full local checks: `npm run lint && npm run format:check && npm run check:ratchet && npm run build`. Then Phase E.
 - **High (majors, anything that can change rendered output, deploy changes)** — everything in medium, plus Phase E's parity sweep is **mandatory**, plus `npm run verify:dom:all` against the built PR head, plus `npm run verify:typewriter` if the hero or motion tokens are implicated.
 
 Keep all scratch output under `./tmp/` (gitignored). Use `./tmp/null` as the sink when suppressing output:
