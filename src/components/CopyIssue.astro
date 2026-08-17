@@ -1,0 +1,102 @@
+---
+// Author-only publishing aid, rendered in dev alone. Copies the issue as rich HTML so it
+// can be pasted straight into a LinkedIn article or the newsletter editor, both of which
+// reconstruct real bold, links and rules from a text/html clipboard flavour. The payloads
+// are generated at build from the issue markdown, so every URL is absolute.
+interface Props {
+  linkedin: string;
+  newsletter: string;
+}
+
+const { linkedin, newsletter } = Astro.props;
+// Serialised as JSON so a payload cannot terminate the script element, and read back with
+// JSON.parse rather than being reconstructed from the DOM.
+const payloads = JSON.stringify({ linkedin, newsletter }).replace(/</g, '\\u003c');
+---
+
+<copy-issue class="copy-issue">
+  <button type="button" data-copy="linkedin">Copy for LinkedIn</button>
+  <button type="button" data-copy="newsletter">Copy for newsletter</button>
+  <span data-copy-status role="status" aria-live="polite"></span>
+  <script is:inline type="application/json" data-payloads set:html={payloads} />
+</copy-issue>
+
+<style>
+  .copy-issue {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 24px auto 8px;
+  }
+
+  .copy-issue button {
+    font: inherit;
+    font-size: var(--body-14, 14px);
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .copy-issue button:hover {
+    border-color: currentColor;
+  }
+
+  .copy-issue [data-copy-status] {
+    font-size: var(--body-13, 13px);
+    opacity: 0.75;
+  }
+</style>
+
+<script>
+  type Payloads = { linkedin: string; newsletter: string };
+
+  class CopyIssue extends HTMLElement {
+    #controller?: AbortController;
+
+    connectedCallback() {
+      const status = this.querySelector<HTMLElement>('[data-copy-status]');
+      const source = this.querySelector<HTMLScriptElement>('[data-payloads]');
+      if (!status || !source) return;
+
+      this.#controller = new AbortController();
+      const payloads: Payloads = JSON.parse(source.textContent ?? '{}');
+
+      for (const button of this.querySelectorAll<HTMLButtonElement>('[data-copy]')) {
+        const mode = button.dataset.copy as keyof Payloads;
+        button.addEventListener(
+          'click',
+          async () => {
+            const html = payloads[mode];
+            try {
+              // Both flavours: the rich one for the target editor, the plain one so a
+              // paste into a plain text field still yields something readable.
+              const plain = new DOMParser().parseFromString(html, 'text/html').body.innerText;
+              await navigator.clipboard.write([
+                new ClipboardItem({
+                  'text/html': new Blob([html], { type: 'text/html' }),
+                  'text/plain': new Blob([plain], { type: 'text/plain' }),
+                }),
+              ]);
+              status.textContent = mode === 'linkedin' ? 'Copied, paste into a LinkedIn article' : 'Copied, paste into the newsletter editor';
+            } catch {
+              status.textContent = 'Copy failed, the clipboard needs a secure context';
+            }
+          },
+          { signal: this.#controller.signal },
+        );
+      }
+    }
+
+    disconnectedCallback() {
+      this.#controller?.abort();
+    }
+  }
+
+  if (!customElements.get('copy-issue')) customElements.define('copy-issue', CopyIssue);
+</script>

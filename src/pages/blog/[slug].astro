@@ -6,6 +6,7 @@ import ArticleBody from '../../components/ArticleBody.astro';
 import Hero from '../../components/Hero.astro';
 import '../../components/HeroLongform.css';
 import { authors } from '../../data/authors';
+import { toClipboardHtml, inlineDiagrams } from '../../utils/IssueClipboard';
 import { blogHref, blogSlug, publishedBlogEntries, renderableBlogEntries, type BlogEntry } from '../../utils/blog';
 
 export async function getStaticPaths() {
@@ -44,6 +45,41 @@ export async function getStaticPaths() {
 
 const { entry, related, seriesNavigation } = Astro.props;
 const { Content } = await render(entry);
+// Author-only publishing aid: generated and rendered in dev alone, so production ships
+// neither the buttons nor a second copy of every post. Diagrams are inlined as data URIs
+// from tmp/diagrams, written by scripts/blog/rasterise-diagrams.mjs.
+// Imported dynamically so the component and its scoped CSS are dead code in the
+// production bundle rather than shipped to every reader.
+const CopyIssue = import.meta.env.DEV ? (await import('../../components/CopyIssue.astro')).default : undefined;
+const clipboard = import.meta.env.DEV ? await buildClipboard() : undefined;
+
+async function buildClipboard() {
+  const { readFileSync } = await import('node:fs');
+  const { join } = await import('node:path');
+  const postDir = entry.id.replace(/\/index\.md$/, '');
+  const readPng = (name: string) => {
+    try {
+      return readFileSync(join('tmp/diagrams', postDir, name));
+    } catch {
+      return undefined;
+    }
+  };
+  const site = Astro.site?.href ?? 'https://ethical.institute/';
+  const body = inlineDiagrams(entry.body ?? '', readPng);
+  const shared = { title: entry.data.title, summary: entry.data.summary, site };
+  return {
+    linkedin: await toClipboardHtml({
+      ...shared,
+      body,
+      mode: 'linkedin' as const,
+    }),
+    newsletter: await toClipboardHtml({
+      ...shared,
+      body,
+      mode: 'newsletter' as const,
+    }),
+  };
+}
 // Undated entries are drafts and only render in dev; scheduled posts render in
 // production as unlisted, noindexed previews until the daily deploy passes
 // their date.
@@ -128,7 +164,10 @@ const bylineAuthors = entry.data.authors.map((name) => ({ name, anchor: authors[
     <figure class="blog-featured" data-reveal>
       <Image src={entry.data.image} alt="" widths={[640, 1080, 1560]} sizes="(max-width: 828px) calc(100vw - 48px), 780px" loading="eager" />
     </figure>
-    <ArticleBody class="blog-body"><Content /></ArticleBody>
+    {clipboard && CopyIssue && <CopyIssue linkedin={clipboard.linkedin} newsletter={clipboard.newsletter} />}
+    <ArticleBody class="blog-body">
+      <Content />
+    </ArticleBody>
     {
       entry.data.syndication?.length ? (
         <div class="blog-syndication" data-reveal>
