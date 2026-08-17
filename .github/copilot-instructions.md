@@ -9,10 +9,10 @@ The website for The Institute for Ethical AI Alignment & Safety (`ethical.instit
 
 ## Change workflow
 
-All changes land on `master` through a pull request; direct pushes are blocked by a branch ruleset. **Always** create changes in a separate worktree under `.worktrees/`. Use comprehensive commits with byte-sized content where possible. PR titles should also contain comprehensive commit-style titles. CI runs four required checks (lint, typecheck, build, motion); visual does pixel-perfect comparison and enforcement depends on PR label (dependencies=pixel-perfect, visual-change=skipped, otherwise measured and posted as PR).
-
-Before pushing:
-
+- All changes land on `master` through a pull request; direct pushes are blocked by a branch ruleset.
+- **Always** create changes in a separate worktree under `.worktrees/`.
+- Use comprehensive commits with byte-sized content where possible. PR titles should also contain comprehensive commit-style titles.
+- CI runs four required checks (lint, typecheck, build, motion); visual does pixel-perfect comparison and enforcement depends on PR label (dependencies=pixel-perfect, visual-change=skipped, otherwise measured and posted as PR).
 - Run the quick checks locally first: `npm run lint`, `npm run check:ratchet`, `npm run build`.
 - Be efficient with visual checks: one pass at the end, not one per small change. `npm run verify:dom -- <route>` at 1440 and 420 for affected routes; `npm run verify:parity` proves a refactor moved zero pixels.
 
