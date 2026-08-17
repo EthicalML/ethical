@@ -49,7 +49,7 @@ const WEB_APIS = new Set(['IntersectionObserver', 'MutationObserver', 'ResizeObs
 // without an extension, so they fall out on their own.
 const cited = (doc) =>
   new Set(
-    [...doc.matchAll(/`(\[?[A-Za-z][\w\-\]\/]*(?:\.astro|\.css|\.ts)?)`/g)]
+    [...doc.matchAll(/`(\[?[A-Za-z][\w\-\]/]*(?:\.astro|\.css|\.ts)?)`/g)]
       .map((match) => match[1])
       .filter((name) => /\.(astro|css|ts)$/.test(name) || /^[A-Z]/.test(name))
       .map(stem)
