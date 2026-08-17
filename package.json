@@ -8,7 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "check:ratchet": "node scripts/verify/verify-check.mjs && node scripts/verify/verify-styles-doc.mjs",
+    "check:ratchet": "node scripts/verify/verify-check.mjs && node scripts/verify/verify-styles-doc.mjs && node scripts/verify/verify-motion-docs.mjs",
     "lint": "eslint .",
     "format": "prettier --write src scripts astro.config.mjs eslint.config.mjs prettier.config.mjs package.json tsconfig.json .github/copilot-instructions.md README.md",
     "format:check": "prettier --check src scripts astro.config.mjs eslint.config.mjs prettier.config.mjs package.json tsconfig.json .github/copilot-instructions.md README.md",
@@ -25,6 +25,7 @@
     "postbuild": "pagefind --site dist",
     "styles:sync": "node scripts/verify/verify-styles-doc.mjs --sync",
     "check:styles-doc": "node scripts/verify/verify-styles-doc.mjs",
+    "check:motion-docs": "node scripts/verify/verify-motion-docs.mjs",
     "verify:canvas-surface": "node scripts/verify/verify-canvas-surface.mjs"
   },
   "dependencies": {

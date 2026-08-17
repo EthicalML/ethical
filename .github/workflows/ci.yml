@@ -40,7 +40,7 @@ jobs:
         shell: bash
         env:
           # What a build, the ratchet, the motion gate and the sweep read.
-          CODE_PATHS: src public scripts package.json package-lock.json astro.config.mjs tsconfig.json .tool-versions STYLES.md .github/workflows
+          CODE_PATHS: src public scripts package.json package-lock.json astro.config.mjs tsconfig.json .tool-versions STYLES.md TRANSITIONS.md CANVAS-WIDGETS.md .github/workflows
           # What `npm run lint` and `npm run format:check` actually cover.
           LINT_PATHS: src scripts astro.config.mjs eslint.config.mjs prettier.config.mjs package.json package-lock.json tsconfig.json .github/copilot-instructions.md README.md .github/workflows
         run: |

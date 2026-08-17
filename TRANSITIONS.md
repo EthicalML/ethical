@@ -14,11 +14,14 @@ A morph is a `view-transition-name` shared by a source and a destination. `Morph
 | homepage 03 policy heading             | `/policy/` hero h1               | `MorphPairs`, `PolicySection`, `ArticleHero`                   |
 | `/frameworks/` cards                   | the five framework heroes        | `MorphPairs`, `FrameworkCards`, `ArticleHero`                  |
 | homepage KAOS card title               | KAOS hero h1                     | `MorphPairs`, `OpenSourceShowcase`, `ArticleHero`              |
-| `/open-source/` panel titles           | project page heroes              | `MorphPairs`, `ProjectPortal`, `ArticleHero`                   |
+| `/open-source/` panel titles           | project page heroes              | `MorphPairs`, `ProjectFeature`, `ArticleHero`                  |
+| blog archive card title                | blog post hero h1                | `blog/index.astro`, `[slug].astro`, `Hero`                     |
 | affiliation marquee logo               | matching partner directory logo  | `MorphPairs`, `AffiliationMarquee`, `PartnerDirectory`         |
 | `/newsletter/N/` prev/next             | adjacent issue (body slides)     | `[issue].astro`, `Motion`, `ScrollRestoration`                 |
 | `/principles/NN/` sub-navbar prev/next | adjacent principle (body slides) | `PrincipleLayout`, `BaseLayout`, `Motion`, `ScrollRestoration` |
 | framework, network and newsletter CTAs | matching contact form row        | `FormSection`                                                  |
+
+`KaosGraph` and `KaosArchitecture` accept a `transitionName` for a canvas morph; no page passes one today.
 
 On both sibling navigations only the article body slides directionally; hero, header and meta bar stay put, and reduced motion replaces the slide with the standard fade.
 
@@ -45,6 +48,10 @@ Motion inside a route rather than between routes.
 | Mobile drawer entrance       | opaque panel, content settles down and fades with a per-row stagger                 | `MobileDrawer`, `SiteHeader`            |
 | Flagship initiative carousel | homepage 04 snap carousel with position bubbles and edge chevrons                   | `OpenSourceShowcase`                    |
 | Report scrollytelling        | `/reports/state-of-ml-*/` sticky bar-chart stage driven by the active question      | `SurveyReportApp`, `SurveyReportIsland` |
+| Mega menu panels             | panel swap and content fade as a nav section opens                                  | `MegaMenu`                              |
+| Control plane map            | KAOS control plane map: panel arrival on selecting a node                           | `ControlPlaneMap`                       |
+| Archive showcase             | blog archive scroll stage, the featured post riding the scroll                      | `ScrollStage`                           |
+| Talk reel                    | `/talks-and-events/` reel stepping through frames in the order given                | `TalkReel`, `ScrollStage`               |
 | Policy reading room          | `/policy/` record list, document viewer, mobile list/detail flip                    | `PolicyRecordPreview`                   |
 | Policy achievement set table | `/policy/` card grid: lego falls, ghost-rule wipes, neon reveals                    | `AchievementNeonRendition`              |
 

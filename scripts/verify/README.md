@@ -23,6 +23,12 @@ The flag seeds `localStorage.theme` before any script runs — the same signal t
 
 Dark output stays at `out/<viewport>/` so the committed dark baseline remains comparable; every other theme writes to `out/<theme>/<viewport>/` and can never overwrite it. Colour assertions resolve the custom property they mean (`--accent`, `--text-1`, `--bg-inset`, `--typewriter-cursor`, …) from the live page rather than baking one theme's literal, and the canvas screenshot mask uses the active theme's `--bg-base`.
 
+## Motion document gate
+
+`verify-motion-docs.mjs` (in `npm run check:ratchet`) derives from source what `TRANSITIONS.md` and `CANVAS-WIDGETS.md` claim. Every file that names a view transition, binds `MorphPairs`, defines `@keyframes` or drives a `requestAnimationFrame` loop is either named in a document or listed in `motion-doc-allowlist.json` with a reason; every file under `src/shared/canvas/` appears in the widget menu; and every component either document cites still exists. A stale allowlist entry fails too, so an excused file that stops animating does not stay excused.
+
+Transition pairs themselves are not derivable, since most names are computed (`blog-title-${slug}`), so what is checked is who participates rather than what maps to what. The runtime behaviour of a navigation is a different gate: `verify-motion.mjs` below.
+
 ## Contrast delta gate
 
 `verify-dom` samples every text-bearing element, composites its colour over the first opaque ancestor background, and records the WCAG ratio under a structural key. Absolute WCAG floors are unusable as a gate here: the correct dark site already produces ratios of 1.07 and 1.52 on decorative text. The gate is therefore a delta against dark.
