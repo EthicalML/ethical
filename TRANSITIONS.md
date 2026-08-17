@@ -14,11 +14,14 @@ A morph is a `view-transition-name` shared by a source and a destination. `Morph
 | homepage 03 policy heading             | `/policy/` hero h1               | `MorphPairs`, `PolicySection`, `ArticleHero`                   |
 | `/frameworks/` cards                   | the five framework heroes        | `MorphPairs`, `FrameworkCards`, `ArticleHero`                  |
 | homepage KAOS card title               | KAOS hero h1                     | `MorphPairs`, `OpenSourceShowcase`, `ArticleHero`              |
-| `/open-source/` panel titles           | project page heroes              | `MorphPairs`, `ProjectPortal`, `ArticleHero`                   |
+| `/open-source/` panel titles           | project page heroes              | `MorphPairs`, `ProjectFeature`, `ArticleHero`                  |
+| blog archive card title                | blog post hero h1                | `blog/index.astro`, `[slug].astro`, `Hero`                     |
 | affiliation marquee logo               | matching partner directory logo  | `MorphPairs`, `AffiliationMarquee`, `PartnerDirectory`         |
 | `/newsletter/N/` prev/next             | adjacent issue (body slides)     | `[issue].astro`, `Motion`, `ScrollRestoration`                 |
 | `/principles/NN/` sub-navbar prev/next | adjacent principle (body slides) | `PrincipleLayout`, `BaseLayout`, `Motion`, `ScrollRestoration` |
 | framework, network and newsletter CTAs | matching contact form row        | `FormSection`                                                  |
+
+`KaosGraph` and `KaosArchitecture` accept a `transitionName` for a canvas morph; no page passes one today.
 
 On both sibling navigations only the article body slides directionally; hero, header and meta bar stay put, and reduced motion replaces the slide with the standard fade.
 
