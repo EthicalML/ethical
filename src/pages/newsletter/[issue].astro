@@ -5,7 +5,6 @@ import Hero from '../../components/Hero.astro';
 import NewsletterSubscribe from '../../components/NewsletterSubscribe.astro';
 import ArticleBody from '../../components/ArticleBody.astro';
 import { authors } from '../../data/authors';
-import { toClipboardHtml } from '../../utils/IssueClipboard';
 
 export async function getStaticPaths() {
   const entries = await getCollection('newsletter');
@@ -34,24 +33,6 @@ const { Content } = await render(entry);
 // Imported dynamically so the component and its scoped CSS are dead code in the
 // production bundle rather than shipped to every reader.
 const CopyIssue = import.meta.env.DEV ? (await import('../../components/CopyIssue.astro')).default : undefined;
-const clipboard = import.meta.env.DEV
-  ? {
-      linkedin: await toClipboardHtml({
-        body: entry.body ?? '',
-        title: `The Machine Learning Engineer — Issue #${entry.data.issue}`,
-        summary: entry.data.summary,
-        site: Astro.site?.href ?? 'https://ethical.institute/',
-        mode: 'linkedin',
-      }),
-      newsletter: await toClipboardHtml({
-        body: entry.body ?? '',
-        title: `The Machine Learning Engineer — Issue #${entry.data.issue}`,
-        summary: entry.data.summary,
-        site: Astro.site?.href ?? 'https://ethical.institute/',
-        mode: 'newsletter',
-      }),
-    }
-  : undefined;
 const issue = entry.data.issue;
 const barDate = entry.data.date
   ? [entry.data.date.getDate(), entry.data.date.getMonth() + 1, entry.data.date.getFullYear() % 100].map((part) => String(part).padStart(2, '0')).join('/')
@@ -147,7 +128,7 @@ const frontmatter = {
         <p class="issue-byline" data-reveal>
           Posted by <a href={author.aboutAnchor}>{author.name}</a>
         </p>
-        {clipboard && CopyIssue && <CopyIssue linkedin={clipboard.linkedin} newsletter={clipboard.newsletter} />}
+        {CopyIssue && <CopyIssue body={entry.body ?? ''} summary={entry.data.summary} />}
         <ArticleBody class="issue-body">
           <Content />
         </ArticleBody>

@@ -20,12 +20,21 @@ const absolutise = (markdown: string, site: string) =>
     (_match, path: string) => `](${site.replace(/\/$/, '')}${path})`,
   );
 
-// The newsletter editor bolds nothing by default and the author wants every link to carry
-// weight, so links that are not already bold get wrapped.
+// Every link in the newsletter carries weight. The emphasis goes inside the anchor rather
+// than around it, because a sanitiser that rewrites anchors keeps nested emphasis but
+// commonly drops a <strong> wrapping one. Heading lines are skipped: they are already bold
+// and would nest emphasis pointlessly.
 const boldLinks = (markdown: string) =>
-  markdown.replace(MARKDOWN_LINK, (match, before, label, href) =>
-    before ? match : `**[${label}](${href})**`,
-  );
+  markdown
+    .split('\n')
+    .map((line) =>
+      line.startsWith('#')
+        ? line
+        : line.replace(MARKDOWN_LINK, (match, before, label, href) =>
+            before ? match : `[**${label}**](${href})`,
+          ),
+    )
+    .join('\n');
 
 // Paragraphs there have no bottom margin, so an empty paragraph after each block is the
 // only way to get separation that survives the paste.
@@ -51,7 +60,13 @@ export function toClipboardMarkdown(body: string, site: string, mode: ClipboardM
   for (const line of body.split('\n')) {
     const article = ARTICLE_HEADING.exec(line);
     if (article) {
-      out.push('', '---', '', `**[${article[1]}](${article[2]})**`);
+      // LinkedIn strips links out of headings and keeps them inside bold text; the
+      // newsletter editor keeps them either way, so there the title stays a heading.
+      const title =
+        mode === 'newsletter'
+          ? `# [${article[1]}](${article[2]})`
+          : `**[${article[1]}](${article[2]})**`;
+      out.push('', '---', '', title);
       continue;
     }
 
@@ -87,20 +102,21 @@ export function toClipboardMarkdown(body: string, site: string, mode: ClipboardM
  */
 export async function toClipboardHtml({
   body,
-  title,
   summary,
   site,
   mode,
 }: {
   body: string;
-  title: string;
   summary?: string;
   site: string;
   mode: ClipboardMode;
 }) {
   const processor = await createMarkdownProcessor({});
   const { code } = await processor.render(toClipboardMarkdown(body, site, mode));
-  const head = [`<h2>${title}</h2>`, summary ? `<p><em>${summary}</em></p>` : ''];
+  // No document title: both editors carry their own title field, so one here is a line to
+  // delete every time. The summary stays as a deck, in a dark grey that reads as secondary
+  // without disappearing against a light background.
+  const head = summary ? [`<p style="color: #4a4a4a"><em>${summary}</em></p>`] : [];
   const html = [...head.filter(Boolean), mode === 'newsletter' ? padBlocks(code) : code].join('\n');
   return alignLeft(html);
 }

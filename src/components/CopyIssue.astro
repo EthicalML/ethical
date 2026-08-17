@@ -1,17 +1,39 @@
 ---
-// Author-only publishing aid, rendered in dev alone. Copies the issue as rich HTML so it
+// Author-only publishing aid, rendered in dev alone. Copies the piece as rich HTML so it
 // can be pasted straight into a LinkedIn article or the newsletter editor, both of which
-// reconstruct real bold, links and rules from a text/html clipboard flavour. The payloads
-// are generated at build from the issue markdown, so every URL is absolute.
+// reconstruct real bold, links and rules from a text/html clipboard flavour. Payloads are
+// built here rather than by each page, so the two surfaces stay in step.
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { toClipboardHtml, inlineDiagrams } from '../utils/IssueClipboard';
+
 interface Props {
-  linkedin: string;
-  newsletter: string;
+  body: string;
+  summary?: string;
+  /** Blog posts only: the post directory whose rasterised diagrams get inlined. */
+  post?: string;
 }
 
-const { linkedin, newsletter } = Astro.props;
+const { body, summary, post } = Astro.props;
+const site = Astro.site?.href ?? 'https://ethical.institute/';
+
+const source = post ? inlineDiagrams(body, readDiagram) : body;
+const linkedin = await toClipboardHtml({ body: source, summary, site, mode: 'linkedin' });
+const newsletter = await toClipboardHtml({ body: source, summary, site, mode: 'newsletter' });
+
 // Serialised as JSON so a payload cannot terminate the script element, and read back with
 // JSON.parse rather than being reconstructed from the DOM.
 const payloads = JSON.stringify({ linkedin, newsletter }).replace(/</g, '\\u003c');
+
+// Rasterised by scripts/blog/rasterise-diagrams.mjs. A diagram not yet generated is left
+// as its original reference rather than dropped, so a gap is visible instead of silent.
+function readDiagram(name: string) {
+  try {
+    return readFileSync(join('tmp/diagrams', post ?? '', name));
+  } catch {
+    return undefined;
+  }
+}
 ---
 
 <copy-issue class="copy-issue">
