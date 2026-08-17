@@ -20,7 +20,8 @@ Before pushing:
 
 - `REUSABLE.md` - Before using or changing a documented reusable presentation component. Add an entry (what it does, props table) when a component is consumed by more than one page, and update it in the same change as an API change.
 - `STYLES.md` - Before adding or moving CSS.
-- `MOTION.md` - Before adding or changing motion, and when a transition misbehaves.
+- `TRANSITIONS.md` - Before adding or changing motion, and when a transition misbehaves.
+- `CANVAS-WIDGETS.md` - Before building a canvas object: hero backdrop, section figure or looping demo.
 - `scripts/verify/README.md` - When editing the verification harness (DOM gate, screenshots, ratchet).
 - `scripts/forms/apps-script.gs` - Before changing the contact form.
 
@@ -90,9 +91,9 @@ All first-party client behaviour is TypeScript.
 
 ## Motion
 
-Read `MOTION.md` before touching motion; it holds the transition pairs, the animation menu and the rules. The essentials:
+`TRANSITIONS.md` holds the route transition map and the page motion rules; `CANVAS-WIDGETS.md` is the menu of canvas objects. The essentials:
 
 - Route transitions are shared `view-transition-name` pairs set through `MorphPairs`; text morphs need identical strings at both endpoints.
 - Verify morphs against the production build, in-session and one change at a time; owner eyes are the acceptance gate, instrumentation is only for diagnosis.
 - Every animation has a reduced-motion rendition.
-- An added or changed motion updates `MOTION.md` in the same change.
+- An added or changed motion updates its document in the same change.
