@@ -99,6 +99,7 @@ _site/
 
 # Working / scratch files
 tmp/
+.worktrees/
 
 # Agent-local state stays out of the repo, but skills are project tooling and
 # belong to everyone working on it. The eslint ignore for .claude is separate
