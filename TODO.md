@@ -44,6 +44,10 @@ A recurring workflow (weekly cadence) that proposes blog content to publish: can
 
 Explore a Martin Fowler bliki-style stream of short opinion posts alongside full articles: byte-sized takes (a few paragraphs) with permalinks, published frequently. Open design questions: same collection with a `kind`/length distinction vs a separate collection, how they appear in the archive and RSS, and whether they feed the weekly-proposals workflow above as its lightest-weight output.
 
+## Blog drafts pending schedule and polish
+
+Two linked skills posts landed as undated drafts (PR #121): `announcing-the-agent-skills-marketplace` (the marketplace launch, structured as objective, mandate and capability, with the five shipping skills tabulated) and `how-to-write-an-agent-skill` (the opinionated companion drawn from the `writing-skills` skill). Both need an owner editorial pass and then dates. Direction so far is to stagger rather than co-release: the announcement first, the authoring post a few days later once people have installed the plugin and want the opinion behind it. Publishing each is adding a `date` and renaming the folder with the date prefix. Keep the reciprocal links intact when scheduling, since each post references the other.
+
 ## Blog posts to write
 
 Queued posts for the new blog. Each lands as an undated draft or future-dated entry through the normal publish flow; the list will grow.
