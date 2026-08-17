@@ -25,7 +25,9 @@ Dark output stays at `out/<viewport>/` so the committed dark baseline remains co
 
 ## Motion document gate
 
-`verify-motion-docs.mjs` (in `npm run check:ratchet`) derives from source what `TRANSITIONS.md` and `CANVAS-WIDGETS.md` claim: every file under `src/shared/canvas/` appears in the widget menu, every file that names a view transition or binds `MorphPairs` is named in the transition map, and every component either document cites still exists. Transition pairs themselves are not derivable, since most names are computed (`blog-title-${slug}`), so what is checked is who participates rather than what maps to what.
+`verify-motion-docs.mjs` (in `npm run check:ratchet`) derives from source what `TRANSITIONS.md` and `CANVAS-WIDGETS.md` claim. Every file that names a view transition, binds `MorphPairs`, defines `@keyframes` or drives a `requestAnimationFrame` loop is either named in a document or listed in `motion-doc-allowlist.json` with a reason; every file under `src/shared/canvas/` appears in the widget menu; and every component either document cites still exists. A stale allowlist entry fails too, so an excused file that stops animating does not stay excused.
+
+Transition pairs themselves are not derivable, since most names are computed (`blog-title-${slug}`), so what is checked is who participates rather than what maps to what. The runtime behaviour of a navigation is a different gate: `verify-motion.mjs` below.
 
 ## Contrast delta gate
 

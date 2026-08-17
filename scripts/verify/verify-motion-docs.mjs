@@ -7,8 +7,13 @@
 // Only derived checks live here. Transition names are mostly computed at runtime
 // (`blog-title-${slug}`, `partner-logo-${slug}`), so the pairs themselves cannot
 // be enumerated from source; what can be is WHO participates. A file that names
-// a view transition, drives one through MorphPairs, or draws on a canvas is a
-// file the documents have to account for, and every name they cite has to exist.
+// a view transition, drives one through MorphPairs, animates with keyframes or a
+// frame loop, or draws on a canvas is a file the documents have to account for,
+// and every name they cite has to exist.
+//
+// Coverage is the point: motion that no document mentions is either missing from
+// them or deliberately excluded, and `motion-doc-allowlist.json` is where the
+// second case is written down with its reason. There is no third state.
 
 import { readFileSync } from 'node:fs';
 import { readdir } from 'node:fs/promises';
@@ -18,6 +23,7 @@ const ROOT = new URL('../../', import.meta.url).pathname;
 const TRANSITIONS = join(ROOT, 'TRANSITIONS.md');
 const WIDGETS = join(ROOT, 'CANVAS-WIDGETS.md');
 const CANVAS_DIR = join(ROOT, 'src/shared/canvas');
+const ALLOWLIST = join(ROOT, 'scripts/verify/motion-doc-allowlist.json');
 
 const walk = async (dir, out = []) => {
   for (const entry of await readdir(dir, { withFileTypes: true })) {
@@ -50,17 +56,21 @@ const cited = (doc) =>
       .filter((name) => !WEB_APIS.has(name)),
   );
 
-// A file participates in transitions if it names a view transition, or reaches
-// for the shared pair machinery.
-const transitionParticipants = async () => {
-  const owners = new Set();
+// A file takes part in the site's motion if it names a view transition, reaches
+// for the shared pair machinery, defines keyframes, or drives a frame loop.
+const motionFiles = async () => {
+  const found = new Set();
   for (const path of await walk(join(ROOT, 'src'))) {
     if (!/\.(astro|css|ts|tsx|mdx)$/.test(path)) continue;
     const source = readFileSync(path, 'utf8');
-    if (/view-transition-name|transition:name=|MorphPairs/.test(source))
-      owners.add(relative(ROOT, path));
+    if (
+      /view-transition-name|transition:name=|MorphPairs|@keyframes|requestAnimationFrame/.test(
+        source,
+      )
+    )
+      found.add(relative(ROOT, path));
   }
-  return owners;
+  return found;
 };
 
 const run = async () => {
@@ -80,12 +90,19 @@ const run = async () => {
   for (const name of widgetNames)
     if (!onDisk.has(name)) problems.push(`CANVAS-WIDGETS.md names ${name}, which is not in src/`);
 
-  // 3. Everything that participates in a transition is accounted for by name.
-  const documented = cited(transitions);
-  for (const owner of await transitionParticipants())
-    if (!documented.has(stem(owner)))
-      problems.push(`${owner} takes part in a transition but is not named in TRANSITIONS.md`);
-  for (const name of documented)
+  // 3. Every file that animates is either documented or explicitly excused.
+  const allowlist = JSON.parse(readFileSync(ALLOWLIST, 'utf8')).allowed;
+  const documented = new Set([...cited(transitions), ...widgetNames]);
+  const animating = await motionFiles();
+  for (const path of animating)
+    if (!documented.has(stem(path)) && !(path in allowlist))
+      problems.push(`${path} animates but is in neither document nor motion-doc-allowlist.json`);
+  for (const path of Object.keys(allowlist))
+    if (!animating.has(path))
+      problems.push(`motion-doc-allowlist.json excuses ${path}, which no longer animates`);
+
+  // 4. Nothing the transition map names may have been deleted or renamed.
+  for (const name of cited(transitions))
     if (!onDisk.has(name)) problems.push(`TRANSITIONS.md names ${name}, which is not in src/`);
 
   if (problems.length) {
@@ -96,7 +113,8 @@ const run = async () => {
   }
 
   console.log(
-    `motion-docs: ok (${canvasFiles.length} canvas elements, ${documented.size} transition owners)`,
+    `motion-docs: ok (${animating.size} animating files, ${canvasFiles.length} canvas elements, ` +
+      `${Object.keys(allowlist).length} allowlisted)`,
   );
 };
 

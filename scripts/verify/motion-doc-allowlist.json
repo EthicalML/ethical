@@ -1,0 +1,9 @@
+{
+  "comment": "Files that animate but carry no entry in TRANSITIONS.md or CANVAS-WIDGETS.md. A motion is on this list because it is state feedback local to one control, not a designed piece of the site's motion language. Anything a reader could want to find, reuse or coordinate with belongs in a document instead.",
+  "allowed": {
+    "src/components/NewsletterSubscribe.astro": "submit-state feedback local to the form",
+    "src/components/SpeakingEnquiry.astro": "submit-state feedback local to the form",
+    "src/components/VideoLoader.astro": "loading shimmer while a poster resolves",
+    "src/shared/Theme.ts": "frame-timed class swap on the theme toggle, no designed motion"
+  }
+}

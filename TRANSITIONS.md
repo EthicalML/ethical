@@ -48,6 +48,10 @@ Motion inside a route rather than between routes.
 | Mobile drawer entrance       | opaque panel, content settles down and fades with a per-row stagger                 | `MobileDrawer`, `SiteHeader`            |
 | Flagship initiative carousel | homepage 04 snap carousel with position bubbles and edge chevrons                   | `OpenSourceShowcase`                    |
 | Report scrollytelling        | `/reports/state-of-ml-*/` sticky bar-chart stage driven by the active question      | `SurveyReportApp`, `SurveyReportIsland` |
+| Mega menu panels             | panel swap and content fade as a nav section opens                                  | `MegaMenu`                              |
+| Control plane map            | KAOS control plane map: panel arrival on selecting a node                           | `ControlPlaneMap`                       |
+| Archive showcase             | blog archive scroll stage, the featured post riding the scroll                      | `ScrollStage`                           |
+| Talk reel                    | `/talks-and-events/` reel stepping through frames in the order given                | `TalkReel`, `ScrollStage`               |
 | Policy reading room          | `/policy/` record list, document viewer, mobile list/detail flip                    | `PolicyRecordPreview`                   |
 | Policy achievement set table | `/policy/` card grid: lego falls, ghost-rule wipes, neon reveals                    | `AchievementNeonRendition`              |
 
