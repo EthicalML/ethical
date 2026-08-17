@@ -1,7 +1,7 @@
 ---
 title: How to Write an Agent Skill
 image: './featured.png'
-summary: 'An opinionated take on what belongs in a SKILL.md and what does not: the description as router, steps over prose, the line between a script and a judgement call, progressive disclosure, and how to verify a skill by making a blind agent run it.'
+summary: 'An opinionated take on what belongs in a SKILL.md and what to delete: the description as a router, steps over prose, and how to verify a skill.'
 tags: [agents, agent-skills, context-engineering, tooling]
 ---
 
