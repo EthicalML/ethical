@@ -16,7 +16,7 @@ export const authors: Record<string, Author> = {
     slug: 'alejandro-saucedo',
     name: 'Alejandro Saucedo',
     role: 'Co-founder & Scientific Advisor',
-    bio: 'Co-founder and Scientific Advisor at the Institute, Director of Markets AI, Data & Platform at Zalando SE, appointed AI Expert at the United Nations and Board Member at the ACM.',
+    bio: 'Co-founder and Scientific Advisor at the Institute, Director of AI, Data & Platform at Zalando SE, appointed AI Expert at the United Nations and Board Member at the ACM.',
     aboutAnchor: '/about/#alejandro-saucedo',
     portrait: '/images/people/alejandro-saucedo.jpg',
     affiliation: 'Zalando SE',
