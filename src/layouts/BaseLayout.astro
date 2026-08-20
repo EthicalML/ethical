@@ -73,6 +73,10 @@ const article = frontmatter.article
     <meta name="viewport" content="width=device-width" />
     <meta name="google-site-verification" content="9rfgBQEvfnZ7HS_kBzINrlrJ-_sJcyJxqEUltqvP9Og" />
     <meta name="description" content={description} />
+    {
+      /* LCP is display-face heading text on every route, so the roman Newsreader is fetched ahead of the stylesheet that asks for it. Only this face: the italic and the body faces are not on the critical paint path. */
+    }
+    <link rel="preload" href="/fonts/newsreader-latin-variable.woff2" as="font" type="font/woff2" crossorigin />
     {frontmatter.noindex && <meta name="robots" content="noindex" />}
     {!frontmatter.noCanonical && <link rel="canonical" href={canonical} />}
     <link rel="alternate" type="application/rss+xml" title="The ML Engineer newsletter" href="/newsletter/rss.xml" />

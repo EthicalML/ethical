@@ -21,7 +21,9 @@ const tagCounts = new Map<string, number>();
 for (const entry of issues) for (const tag of entry.data.tags ?? []) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
 const tags = [...tagCounts.entries()].sort((first, second) => second[1] - first[1] || first[0].localeCompare(second[0]));
 const shortDate = (date?: Date) => date?.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) ?? '';
-const issueLabel = (entry: (typeof issues)[number]) => [`Issue ${entry.data.issue}`, shortDate(entry.data.date), entry.data.summary].filter(Boolean).join(', ');
+// The summary is deliberately absent: it is already the cell's own text, and
+// repeating it in the label duplicated the archive's longest string 400 times.
+const issueLabel = (entry: (typeof issues)[number]) => [`Issue ${entry.data.issue}`, shortDate(entry.data.date)].filter(Boolean).join(', ');
 ---
 
 <BaseLayout frontmatter={frontmatter}>
