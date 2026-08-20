@@ -424,7 +424,7 @@ const issueRanges = toIssueRanges(await getIssueNumbers());
         .filter((tag) => tag && normalized.length >= 2 && tag.includes(normalized))
         .slice(0, 2)
         .map((tag) => ({
-          url: `${prefix}?tag=${tag}`,
+          url: `${prefix}topic/${tag}/`,
           title: `Browse tag: ${tag}`,
           excerpt: `All newsletter issues tagged <mark>${tag}</mark>`,
         }));

@@ -1,0 +1,38 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import IssueArchive from '../../../components/IssueArchive.astro';
+
+const descriptions: Record<number, string> = {
+  2018: 'Read the first year of The Machine Learning Engineer, covering practical ML foundations, tools and the emerging production engineering discipline.',
+  2019: 'Explore the 2019 newsletter archive, when production ML platforms, model operations and applied deep learning moved rapidly into practice.',
+  2020: 'Browse the 2020 issues of The Machine Learning Engineer, with engineering guidance for a year of accelerated automation and remote collaboration.',
+  2021: 'Revisit the 2021 newsletter archive for coverage of maturing MLOps stacks, responsible AI practice and production machine learning research.',
+  2022: 'Find The Machine Learning Engineer issues published in 2022, spanning modern data systems, ML security and the early generative AI shift.',
+  2023: 'Explore the 2023 archive as large language models, generative AI applications and their production challenges reshaped machine learning engineering.',
+  2024: 'Browse the 2024 newsletter issues on reliable AI systems, agentic workflows, governance and the infrastructure behind production models.',
+  2025: 'Read the 2025 archive of curated engineering, research and policy work across AI agents, LLM operations, safety and security.',
+  2026: 'Follow the 2026 edition of The Machine Learning Engineer for current work on agentic systems, frontier model oversight and production AI practice.',
+};
+
+export async function getStaticPaths() {
+  const allIssues = (await getCollection('newsletter')).sort(
+    (first, second) => (second.data.date?.getTime() ?? 0) - (first.data.date?.getTime() ?? 0) || second.data.issue - first.data.issue,
+  );
+  const years = [...new Set(allIssues.map((entry) => entry.data.date?.getFullYear()).filter((year): year is number => year !== undefined))];
+  return years.map((year) => ({ params: { year: String(year) }, props: { year, allIssues } }));
+}
+
+const { year, allIssues } = Astro.props;
+const issues = allIssues.filter((entry) => entry.data.date?.getFullYear() === year);
+const frontmatter = {
+  title: `Newsletter issues from ${year}`,
+  seoTitle: `Newsletter issues from ${year} | The ML Engineer`,
+  description: descriptions[year],
+  eyebrow: 'THE ML ENGINEER · YEAR ARCHIVE',
+};
+---
+
+<BaseLayout frontmatter={frontmatter}>
+  <IssueArchive issues={issues} allIssues={allIssues} activeYear={year} backlink />
+</BaseLayout>

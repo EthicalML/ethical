@@ -99,7 +99,7 @@ const frontmatter = {
           {entry.data.tags?.length ? <span class="chip-rule" aria-hidden="true" /> : null}
           {
             entry.data.tags?.map((tag) => (
-              <a class="issue-tag" href={`/newsletter/?tag=${tag}`}>
+              <a class="issue-tag" href={`/newsletter/topic/${tag}/`}>
                 {tag}
               </a>
             ))
