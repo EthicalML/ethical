@@ -24,7 +24,13 @@ const issueLabel = (entry: CollectionEntry<'newsletter'>) => [`Issue ${entry.dat
 ---
 
 <div class="issue-archive">
-  {backlink && <a class="archive-backlink" href="/newsletter/">Newsletter home</a>}
+  {
+    backlink && (
+      <a class="archive-backlink" href="/newsletter/">
+        Newsletter home
+      </a>
+    )
+  }
   <div class="finder-controls" data-reveal>
     <button type="button" class="finder-palette" data-command-palette-open>
       <span>Search all issues</span>
@@ -34,7 +40,9 @@ const issueLabel = (entry: CollectionEntry<'newsletter'>) => [`Issue ${entry.dat
       {
         years.map((year) =>
           activeYear === year ? (
-            <span class="active" aria-current="page">{year}</span>
+            <span class="active" aria-current="page">
+              {year}
+            </span>
           ) : (
             <a href={year === newestYear ? '/newsletter/' : `/newsletter/archive/${year}/`}>{year}</a>
           ),
