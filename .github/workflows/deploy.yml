@@ -42,3 +42,17 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v5
+  indexnow:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Submit sitemap URLs to IndexNow
+        run: |
+          key=1c243c5ba8b5dda1cf01e6c1730e4e63
+          curl -sf https://ethical.institute/sitemap-0.xml \
+            | grep -o '<loc>[^<]*' | sed 's/<loc>//' \
+            | jq -R . | jq -s --arg key "$key" \
+                '{host: "ethical.institute", key: $key, keyLocation: ("https://ethical.institute/" + $key + ".txt"), urlList: .}' \
+            | curl -sS -X POST https://api.indexnow.org/indexnow \
+                -H 'Content-Type: application/json; charset=utf-8' \
+                --data-binary @- -o /dev/null -w 'IndexNow HTTP %{http_code}\n'
