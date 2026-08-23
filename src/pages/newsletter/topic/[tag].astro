@@ -1,0 +1,103 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import IssueArchive from '../../../components/IssueArchive.astro';
+import { NEWSLETTER_TAGS } from '../../../content.config';
+
+const topics: Record<(typeof NEWSLETTER_TAGS)[number], { label: string; description: string }> = {
+  'ai-agents': {
+    label: 'AI agents',
+    description: 'Newsletter issues on autonomous and agentic AI systems, including orchestration, evaluation, memory, reliability and production deployment.',
+  },
+  'ai-ethics': {
+    label: 'AI ethics',
+    description: 'Curated writing on responsible AI practice, ethical design, accountability and the social impact of machine learning systems.',
+  },
+  'ai-policy': {
+    label: 'AI policy',
+    description: 'Newsletter coverage of AI regulation, governance frameworks, standards and the policy choices shaping real-world deployment.',
+  },
+  'computer-vision': {
+    label: 'computer vision',
+    description: 'Practical computer vision research and engineering, from image models and data pipelines to deployment and monitoring.',
+  },
+  'data-engineering': {
+    label: 'data engineering',
+    description: 'Issues about the data platforms, pipelines, quality controls and operational foundations that production machine learning depends on.',
+  },
+  explainability: {
+    label: 'explainable AI',
+    description: 'Research and tools for understanding model behaviour, communicating predictions and building explainability into AI systems.',
+  },
+  forecasting: {
+    label: 'forecasting',
+    description: 'Selected work on time-series modelling, probabilistic prediction, demand planning and dependable forecasting systems.',
+  },
+  'generative-ai': {
+    label: 'generative AI',
+    description: 'Engineering and research on generative models, application design, evaluation and the path from prototypes to reliable products.',
+  },
+  'gpu-compute': {
+    label: 'GPU computing',
+    description: 'Newsletter issues on GPU programming, accelerated machine learning, systems performance and efficient model workloads.',
+  },
+  llms: {
+    label: 'LLMs',
+    description: 'Curated large language model research, tooling and production lessons, including evaluation, serving, retrieval and safety.',
+  },
+  'ml-education': {
+    label: 'ML education',
+    description: 'Learning resources, practical curricula and clear explanations for developing machine learning engineering skills.',
+  },
+  'ml-research': {
+    label: 'ML research',
+    description: 'Noteworthy machine learning papers and research developments selected for engineers turning new ideas into working systems.',
+  },
+  'ml-security': {
+    label: 'ML security',
+    description: 'Threats, safeguards and engineering practices for securing models, data, pipelines and AI-enabled applications.',
+  },
+  mlops: {
+    label: 'MLOps',
+    description: 'Production MLOps guidance across deployment, testing, observability, feature systems and the machine learning lifecycle.',
+  },
+  nlp: {
+    label: 'natural language processing',
+    description: 'Newsletter issues on natural language processing research, language applications and the systems that bring them to production.',
+  },
+  privacy: {
+    label: 'privacy',
+    description: 'Privacy-preserving machine learning, data protection techniques and governance approaches for responsible AI development.',
+  },
+  'recommender-systems': {
+    label: 'recommender systems',
+    description: 'Engineering and research for ranking, personalisation and recommendation systems, from modelling through online evaluation.',
+  },
+  'reinforcement-learning': {
+    label: 'reinforcement learning',
+    description: 'Selected reinforcement learning research, applied methods and production considerations for sequential decision systems.',
+  },
+};
+
+export async function getStaticPaths() {
+  const allIssues = (await getCollection('newsletter')).sort(
+    (first, second) => (second.data.date?.getTime() ?? 0) - (first.data.date?.getTime() ?? 0) || second.data.issue - first.data.issue,
+  );
+  const tags = [...new Set(allIssues.flatMap((entry) => entry.data.tags ?? []))];
+  return tags.map((tag) => ({ params: { tag }, props: { tag, allIssues } }));
+}
+
+const { tag, allIssues } = Astro.props;
+const topic = topics[tag];
+const issues = allIssues.filter((entry) => entry.data.tags?.includes(tag));
+const frontmatter = {
+  title: `Newsletter issues on ${topic.label}`,
+  seoTitle: `Newsletter issues on ${topic.label} | The ML Engineer`,
+  description: topic.description,
+  eyebrow: 'THE ML ENGINEER · TOPIC ARCHIVE',
+};
+---
+
+<BaseLayout frontmatter={frontmatter}>
+  <IssueArchive issues={issues} allIssues={allIssues} activeTag={tag} backlink />
+</BaseLayout>

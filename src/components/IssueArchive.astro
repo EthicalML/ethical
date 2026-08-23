@@ -1,0 +1,272 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  issues: CollectionEntry<'newsletter'>[];
+  allIssues: CollectionEntry<'newsletter'>[];
+  activeYear?: number;
+  activeTag?: string;
+  backlink?: boolean;
+}
+
+const { issues, allIssues, activeYear, activeTag, backlink = false } = Astro.props;
+const years = [...new Set(allIssues.map((entry) => entry.data.date?.getFullYear()).filter((year): year is number => year !== undefined))].sort(
+  (first, second) => second - first,
+);
+const newestYear = years[0];
+const tagCounts = new Map<string, number>();
+for (const entry of allIssues) for (const tag of entry.data.tags ?? []) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+const tags = [...tagCounts.entries()].sort((first, second) => second[1] - first[1] || first[0].localeCompare(second[0]));
+const shortDate = (date?: Date) => date?.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) ?? '';
+// The summary is deliberately absent: it is already the cell's own text, and
+// repeating it in the label duplicates the archive's longest strings.
+const issueLabel = (entry: CollectionEntry<'newsletter'>) => [`Issue ${entry.data.issue}`, shortDate(entry.data.date)].filter(Boolean).join(', ');
+---
+
+<div class="issue-archive">
+  {
+    backlink && (
+      <a class="archive-backlink" href="/newsletter/">
+        Newsletter home
+      </a>
+    )
+  }
+  <div class="finder-controls" data-reveal>
+    <button type="button" class="finder-palette" data-command-palette-open>
+      <span>Search all issues</span>
+      <kbd>⌘K</kbd>
+    </button>
+    <nav class="year-rail" aria-label="Browse newsletter issues by year">
+      {
+        years.map((year) =>
+          activeYear === year ? (
+            <span class="active" aria-current="page">
+              {year}
+            </span>
+          ) : (
+            <a href={year === newestYear ? '/newsletter/' : `/newsletter/archive/${year}/`}>{year}</a>
+          ),
+        )
+      }
+    </nav>
+    <nav class="tag-rail" aria-label="Browse newsletter issues by topic">
+      {
+        tags.map(([tag, count]) =>
+          activeTag === tag ? (
+            <span class="active" aria-current="page" data-archive-tag={tag}>
+              {tag}
+              <small>{count}</small>
+            </span>
+          ) : (
+            <a href={`/newsletter/topic/${tag}/`} data-archive-tag={tag}>
+              {tag}
+              <small>{count}</small>
+            </a>
+          ),
+        )
+      }
+    </nav>
+  </div>
+  <div class="issue-list" data-reveal>
+    {
+      issues.map((entry) => (
+        <a class="issue-cell" href={`/newsletter/${entry.data.issue}/`} aria-label={issueLabel(entry)}>
+          <strong>#{entry.data.issue}</strong>
+          <span class="cell-date">{shortDate(entry.data.date)}</span>
+          <span class="cell-summary">{entry.data.summary ?? ''}</span>
+          <span class="cell-tags">{(entry.data.tags ?? []).join(' · ')}</span>
+        </a>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .issue-archive {
+    display: block;
+    margin: 0 auto;
+    max-width: 860px;
+    padding: 26px 24px 96px;
+  }
+  .archive-backlink {
+    color: var(--accent-ink);
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: var(--mono-11);
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+  .finder-controls {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 12px 0 22px;
+  }
+  .finder-palette {
+    align-items: center;
+    background: var(--wash-2);
+    border: 1px solid var(--hairline-strong);
+    border-radius: var(--radius-control);
+    color: var(--text-1);
+    cursor: pointer;
+    display: flex;
+    flex: 1;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    justify-content: space-between;
+    letter-spacing: 0.04em;
+    min-width: 220px;
+    padding: 10px 12px 10px 14px;
+  }
+  .finder-palette:hover {
+    border-color: var(--accent-edge);
+    color: var(--accent-ink);
+  }
+  .finder-palette kbd {
+    border: 1px solid var(--hairline);
+    border-radius: 4px;
+    color: var(--text-2);
+    font: inherit;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    padding: 3px 7px;
+  }
+  .year-rail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .year-rail a,
+  .year-rail span {
+    background: none;
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-pill);
+    color: var(--text-2);
+    font-family: var(--font-mono);
+    font-size: var(--mono-10);
+    letter-spacing: 0.1em;
+    padding: 7px 12px;
+  }
+  .year-rail a:hover {
+    color: var(--text-1);
+    opacity: 1;
+  }
+  .year-rail .active {
+    border-color: var(--accent-edge);
+    color: var(--accent-ink);
+  }
+  .tag-rail {
+    display: flex;
+    flex-basis: 100%;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .tag-rail a,
+  .tag-rail span {
+    align-items: baseline;
+    background: none;
+    border: 1px solid var(--hairline-card);
+    border-radius: var(--radius-pill);
+    color: var(--text-3);
+    display: inline-flex;
+    font-family: var(--font-mono);
+    font-size: var(--mono-9);
+    gap: 5px;
+    letter-spacing: 0.1em;
+    padding: 6px 10px;
+    text-transform: uppercase;
+  }
+  .tag-rail small {
+    color: var(--text-4);
+    font-size: 8.5px;
+  }
+  .tag-rail a:hover {
+    color: var(--text-1);
+    opacity: 1;
+  }
+  .tag-rail .active {
+    border-color: var(--accent-edge);
+    color: var(--accent-ink);
+  }
+  .tag-rail .active small {
+    color: var(--accent-ink);
+  }
+  .issue-list {
+    border-top: 1px solid var(--hairline);
+    display: block;
+  }
+  .issue-cell {
+    align-items: center;
+    border-bottom: 1px solid var(--hairline);
+    border-left: 2px solid transparent;
+    display: grid;
+    gap: 8px 14px;
+    grid-template-columns: 74px 92px 1fr auto;
+    padding: 13px 14px 13px 12px;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease;
+  }
+  .issue-cell:hover {
+    background: var(--accent-wash);
+    border-left-color: var(--accent-ink);
+    opacity: 1;
+  }
+  .issue-cell strong {
+    color: var(--text-1);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .cell-date {
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .cell-summary {
+    color: var(--text-2);
+    font-size: var(--body-14);
+    line-height: 1.5;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .cell-tags {
+    color: var(--text-4);
+    font-family: var(--font-mono);
+    font-size: 8.5px;
+    letter-spacing: 0.08em;
+    text-align: right;
+    text-transform: uppercase;
+  }
+  @media (max-width: 950px) {
+    .cell-tags {
+      display: none;
+    }
+    .issue-cell {
+      grid-template-columns: 64px 1fr;
+    }
+    .cell-summary {
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      display: -webkit-box;
+      grid-column: 1 / -1;
+      white-space: normal;
+    }
+  }
+  @media (max-width: 600px) {
+    .year-rail a,
+    .year-rail span,
+    .tag-rail a,
+    .tag-rail span,
+    .finder-palette {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+</style>

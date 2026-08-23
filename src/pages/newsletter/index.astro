@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Hero from '../../components/Hero.astro';
 import NewsletterSubscribe from '../../components/NewsletterSubscribe.astro';
+import IssueArchive from '../../components/IssueArchive.astro';
 
 const frontmatter = {
   title: 'The ML Engineer — Weekly Production ML & MLOps Newsletter',
@@ -17,13 +18,8 @@ const latestDate = latest?.data.date?.toLocaleDateString('en-GB', { day: 'numeri
 const years = [...new Set(issues.map((entry) => entry.data.date?.getFullYear()).filter((year): year is number => year !== undefined))].sort(
   (first, second) => second - first,
 );
-const tagCounts = new Map<string, number>();
-for (const entry of issues) for (const tag of entry.data.tags ?? []) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
-const tags = [...tagCounts.entries()].sort((first, second) => second[1] - first[1] || first[0].localeCompare(second[0]));
-const shortDate = (date?: Date) => date?.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) ?? '';
-// The summary is deliberately absent: it is already the cell's own text, and
-// repeating it in the label duplicated the archive's longest string 400 times.
-const issueLabel = (entry: (typeof issues)[number]) => [`Issue ${entry.data.issue}`, shortDate(entry.data.date)].filter(Boolean).join(', ');
+const newestYear = years[0];
+const currentIssues = issues.filter((entry) => entry.data.date?.getFullYear() === newestYear);
 ---
 
 <BaseLayout frontmatter={frontmatter}>
@@ -53,52 +49,7 @@ const issueLabel = (entry: (typeof issues)[number]) => [`Issue ${entry.data.issu
       )
     }
 
-    <issue-finder>
-      <div class="finder-controls" data-reveal>
-        <input data-finder-input type="search" inputmode="numeric" placeholder="Jump to issue — number or year" aria-label="Filter issues by number or year" />
-        <div class="year-rail" role="tablist" aria-label="Browse by year">
-          <button type="button" data-finder-year="all">ALL</button>
-          {
-            years.map((year, index) => (
-              <button type="button" data-finder-year={String(year)} class:list={[index === 0 && 'active']}>
-                {year}
-              </button>
-            ))
-          }
-        </div>
-        <div class="tag-rail" role="tablist" aria-label="Browse by topic">
-          {
-            tags.map(([tag, count]) => (
-              <button type="button" data-finder-tag={tag}>
-                {tag}
-                <small>{count}</small>
-              </button>
-            ))
-          }
-        </div>
-        <p class="finder-hint">Full-text search lives in <button type="button" class="finder-palette" data-command-palette-open>⌘K</button></p>
-      </div>
-      <div class="issue-list" data-reveal>
-        {
-          issues.map((entry) => (
-            <a
-              class="issue-cell"
-              href={`/newsletter/${entry.data.issue}/`}
-              aria-label={issueLabel(entry)}
-              data-issue={String(entry.data.issue)}
-              data-year={String(entry.data.date?.getFullYear() ?? '')}
-              data-tags={(entry.data.tags ?? []).join(' ')}
-            >
-              <strong>#{entry.data.issue}</strong>
-              <span class="cell-date">{shortDate(entry.data.date)}</span>
-              <span class="cell-summary">{entry.data.summary ?? ''}</span>
-              <span class="cell-tags">{(entry.data.tags ?? []).join(' · ')}</span>
-            </a>
-          ))
-        }
-      </div>
-      <p class="finder-empty" data-finder-empty hidden>No issues match.</p>
-    </issue-finder>
+    <IssueArchive issues={currentIssues} allIssues={issues} activeYear={newestYear} />
   </article>
 </BaseLayout>
 
@@ -147,299 +98,16 @@ const issueLabel = (entry: (typeof issues)[number]) => [`Issue ${entry.data.issu
     padding: 12px 20px;
     white-space: nowrap;
   }
-  issue-finder {
-    display: block;
-    margin: 0 auto;
-    max-width: 860px;
-    padding: 26px 24px 96px;
-  }
-  .finder-controls {
-    align-items: center;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 14px;
-    padding: 12px 0 22px;
-  }
-  .finder-controls input {
-    background: var(--wash-2);
-    border: 1px solid var(--hairline);
-    border-radius: 4px;
-    color: var(--text-1);
-    flex: 1;
-    font-family: var(--font-mono);
-    font-size: 13px;
-    letter-spacing: 0.04em;
-    min-width: 220px;
-    padding: 11px 14px;
-  }
-  .finder-controls input:focus {
-    border-color: var(--accent-ink);
-    outline: none;
-  }
-  .finder-controls input::placeholder {
-    color: var(--ink-5);
-  }
-  .year-rail {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-  .year-rail button {
-    background: none;
-    border: 1px solid var(--hairline);
-    border-radius: var(--radius-pill);
-    color: var(--text-2);
-    cursor: pointer;
-    font-family: var(--font-mono);
-    font-size: var(--mono-10);
-    letter-spacing: 0.1em;
-    padding: 7px 12px;
-    transition:
-      border-color 0.2s ease,
-      color 0.2s ease;
-  }
-  .year-rail button:hover {
-    color: var(--text-1);
-  }
-  .year-rail button.active {
-    border-color: var(--accent-edge);
-    color: var(--accent-ink);
-  }
-  .tag-rail {
-    display: flex;
-    flex-basis: 100%;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-  .tag-rail button {
-    align-items: baseline;
-    background: none;
-    border: 1px solid var(--hairline-card);
-    border-radius: var(--radius-pill);
-    color: var(--text-3);
-    cursor: pointer;
-    display: inline-flex;
-    font-family: var(--font-mono);
-    font-size: var(--mono-9);
-    gap: 5px;
-    letter-spacing: 0.1em;
-    padding: 6px 10px;
-    text-transform: uppercase;
-    transition:
-      border-color 0.2s ease,
-      color 0.2s ease;
-  }
-  .tag-rail button small {
-    color: var(--text-4);
-    font-size: 8.5px;
-  }
-  .tag-rail button:hover {
-    color: var(--text-1);
-  }
-  .tag-rail button.active {
-    border-color: var(--accent-edge);
-    color: var(--accent-ink);
-  }
-  .tag-rail button.active small {
-    color: var(--accent-ink);
-  }
-  .finder-hint {
-    color: var(--text-3);
-    flex-basis: 100%;
-    font-family: var(--font-mono);
-    font-size: var(--mono-10);
-    letter-spacing: 0.1em;
-    margin: 0;
-  }
-  .finder-palette {
-    background: none;
-    border: 1px solid var(--hairline);
-    border-radius: 4px;
-    color: var(--text-2);
-    cursor: pointer;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    padding: 3px 7px;
-  }
-  .finder-palette:hover {
-    border-color: var(--accent-edge);
-    color: var(--accent-ink);
-  }
-  .issue-list {
-    border-top: 1px solid var(--hairline);
-    display: block;
-  }
-  .issue-cell {
-    align-items: center;
-    border-bottom: 1px solid var(--hairline);
-    border-left: 2px solid transparent;
-    display: grid;
-    gap: 8px 14px;
-    grid-template-columns: 74px 92px 1fr auto;
-    padding: 13px 14px 13px 12px;
-    transition:
-      background 0.2s ease,
-      border-color 0.2s ease;
-  }
-  .issue-cell:hover {
-    background: var(--accent-wash);
-    border-left-color: var(--accent-ink);
-    opacity: 1;
-  }
-  .issue-cell[hidden] {
-    display: none;
-  }
-  .issue-cell strong {
-    color: var(--text-1);
-    font-family: var(--font-mono);
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-  }
-  .cell-date {
-    color: var(--text-3);
-    font-family: var(--font-mono);
-    font-size: 9.5px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .cell-summary {
-    color: var(--text-2);
-    font-size: var(--body-14);
-    line-height: 1.5;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .cell-tags {
-    color: var(--text-4);
-    font-family: var(--font-mono);
-    font-size: 8.5px;
-    letter-spacing: 0.08em;
-    text-align: right;
-    text-transform: uppercase;
-  }
-  @media (max-width: 950px) {
-    .cell-tags {
-      display: none;
-    }
-    .issue-cell {
-      grid-template-columns: 64px 1fr;
-    }
-    .cell-summary {
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-      display: -webkit-box;
-      grid-column: 1 / -1;
-      white-space: normal;
-    }
-  }
-  .finder-empty {
-    color: var(--text-2);
-    font-family: var(--font-mono);
-    font-size: var(--mono-11);
-    letter-spacing: 0.06em;
-    padding: 18px 0;
-  }
   @media (max-width: 600px) {
     .latest-card {
       align-items: flex-start;
       flex-direction: column;
       gap: 16px;
     }
-    .year-rail button,
-    .tag-rail button,
-    .finder-palette {
-      min-height: 44px;
-      min-width: 44px;
-    }
   }
 </style>
 
 <script>
-  class IssueFinder extends HTMLElement {
-    private controller = new AbortController();
-
-    connectedCallback() {
-      this.controller = new AbortController();
-      const { signal } = this.controller;
-      const input = this.querySelector<HTMLInputElement>('[data-finder-input]');
-      const yearButtons = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-finder-year]'));
-      const tagButtons = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-finder-tag]'));
-      const cells = Array.from(this.querySelectorAll<HTMLAnchorElement>('.issue-cell'));
-      const empty = this.querySelector<HTMLElement>('[data-finder-empty]');
-      if (!input || !cells.length) return;
-
-      // Default view: the newest year's issues, so the grid starts short.
-      let activeYear = yearButtons.find((button) => button.classList.contains('active'))?.dataset.finderYear ?? 'all';
-      let activeTag: string | null = null;
-
-      const apply = () => {
-        const query = input.value.trim();
-        let visible = 0;
-        for (const cell of cells) {
-          const issue = cell.dataset.issue ?? '';
-          const year = cell.dataset.year ?? '';
-          const cellTags = (cell.dataset.tags ?? '').split(' ');
-          const matchesQuery = !query || issue.startsWith(query.replace(/^#/, '')) || year === query;
-          const matchesYear = query ? true : activeYear === 'all' || year === activeYear;
-          const matchesTag = !activeTag || cellTags.includes(activeTag);
-          const show = matchesQuery && matchesYear && matchesTag;
-          cell.hidden = !show;
-          if (show) visible += 1;
-        }
-        if (empty) empty.hidden = visible > 0;
-      };
-      const setYear = (year: string) => {
-        activeYear = year;
-        yearButtons.forEach((button) => button.classList.toggle('active', button.dataset.finderYear === year));
-      };
-      const setTag = (tag: string | null) => {
-        activeTag = tag;
-        tagButtons.forEach((button) => button.classList.toggle('active', button.dataset.finderTag === tag));
-        // A topic spans years, so a tag selection widens the year scope.
-        if (tag) setYear('all');
-      };
-
-      input.addEventListener('input', apply, { signal });
-      yearButtons.forEach((button) =>
-        button.addEventListener(
-          'click',
-          () => {
-            setYear(button.dataset.finderYear ?? 'all');
-            input.value = '';
-            apply();
-          },
-          { signal },
-        ),
-      );
-      tagButtons.forEach((button) =>
-        button.addEventListener(
-          'click',
-          () => {
-            setTag(activeTag === button.dataset.finderTag ? null : (button.dataset.finderTag ?? null));
-            apply();
-          },
-          { signal },
-        ),
-      );
-      // Deep link: /newsletter/?tag=llms preselects a topic (issue tag chips
-      // and the palette's browse-tag row land here).
-      const requested = new URLSearchParams(location.search).get('tag');
-      if (requested && tagButtons.some((button) => button.dataset.finderTag === requested)) {
-        setTag(requested);
-        this.querySelector('.tag-rail')?.scrollIntoView({ block: 'center' });
-      }
-      apply();
-    }
-
-    disconnectedCallback() {
-      this.controller.abort();
-    }
-  }
-
-  if (!customElements.get('issue-finder')) {
-    customElements.define('issue-finder', IssueFinder);
-  }
+  const tag = new URLSearchParams(location.search).get('tag');
+  if (tag && document.querySelector(`[data-archive-tag="${CSS.escape(tag)}"]`)) location.replace(`/newsletter/topic/${encodeURIComponent(tag)}/`);
 </script>

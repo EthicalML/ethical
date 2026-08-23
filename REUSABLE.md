@@ -2,6 +2,20 @@
 
 Documented reusable components for composed pages. An API change to a component documented here updates this file in the same change. Pages own their content; these components arrange supplied data and never hide owner-editable copy.
 
+## IssueArchive
+
+`src/components/IssueArchive.astro`. The shared newsletter archive navigation and issue list used by the newsletter landing page, year archives and topic archives. It renders complete year and topic rails as static links, marks the current selection as non-link text, opens the command palette for full-archive search and preserves the compact issue-cell presentation. The newest year always points to `/newsletter/`; older years and topics point to their archive routes.
+
+### Props
+
+| Prop         | Type                              | Notes                                                                                                  |
+| ------------ | --------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `issues`     | `CollectionEntry<'newsletter'>[]` | Issues rendered on the current page.                                                                  |
+| `allIssues`  | `CollectionEntry<'newsletter'>[]` | Complete collection used to derive every year, occurring topic and per-topic count for the rails.     |
+| `activeYear` | `number?`                         | Current year, rendered as the non-link active entry.                                                   |
+| `activeTag`  | `string?`                         | Current topic slug, rendered as the non-link active entry.                                             |
+| `backlink`   | `boolean?`                        | Adds the newsletter-home backlink on year and topic archive pages; defaults to `false` on the landing. |
+
 ## ArticleBody
 
 `src/components/ArticleBody.astro` with `ArticleBody.css`. The shared long-form Markdown body wrapper for newsletter issues and blog posts. It owns the 645px reading measure, issue-style headings, body copy, lists, links, images and code-window chrome. Blog tables additionally arrive wrapped by `rehype-sectionize` in `.article-table-scroll`, which supplies contained horizontal scrolling and the compact table treatment. Pass the surface identity through the optional `class` prop (`issue-body` or `blog-body`) and render the collection's `<Content />` in the default slot. Summary decks, metadata, navigation and related links remain with the consuming page.
