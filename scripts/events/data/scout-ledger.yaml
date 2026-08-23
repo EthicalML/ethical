@@ -72,11 +72,12 @@ scouted:
   # Watchlist state (status: tracked) — what lets later runs skip the sweep.
   - name: KubeCon + CloudNativeCon Europe
     url: https://events.linuxfoundation.org/kubecon-cloudnativecon-europe-2027/
-    checked: 2026-08-16
+    checked: 2026-08-23
     status: tracked
     next_edition: 2027-03-15 to 2027-03-18, Barcelona, ES
-    cfp: not open yet; LF opens ~6 months ahead (expect autumn 2026)
-    owner: keen to submit — flag the week the CFP opens (2026-08-16)
+    cfp: OPEN — opened 2026-08-10, closes 2026-10-11 23:59 CEST (https://sessionize.com/kubecon-cloudnativecon-europe-2027/)
+    owner: keen to submit — CFP now open, flagged in issue-401 scout report
+    note: proposed into events.yaml on 2026-08-23
   - name: AGNTCon + MCPCon Europe
     url: https://events.linuxfoundation.org/agntcon-mcpcon-europe/
     checked: 2026-08-16
@@ -86,10 +87,10 @@ scouted:
     note: proposed into events.yaml on 2026-08-16
   - name: AI Engineer Europe
     url: https://www.ai.engineer/
-    checked: 2026-08-16
+    checked: 2026-08-23
     status: tracked
     next_edition: February 2027, London — month announced, exact dates TBA
-    cfp: not open yet
+    cfp: not open yet (rechecked 2026-08-23; organiser site still "dates TBA")
     owner: keen to submit — flag the week the CFP opens (2026-08-16)
   - name: World Summit AI Amsterdam
     checked: 2026-08-16
@@ -135,10 +136,12 @@ scouted:
     next_edition: 2027 edition not announced; 2026 ran 8-9 July
     cfp: not open yet
   - name: AI Engineer World's Fair
-    checked: 2026-08-16
+    url: https://ai.engineer/
+    checked: 2026-08-23
     status: tracked
-    next_edition: 2027 edition not announced; 2026 ran 29 June - 2 July, San Francisco
-    cfp: not open yet
+    next_edition: 2027-06-29 to 2027-07-02, Moscone West, San Francisco, US — confirmed on organiser site
+    cfp: not open yet (no speaker call visible 2026-08-23)
+    note: proposed into events.yaml on 2026-08-23
   - name: MLOps World
     url: https://mlopsworld.com/
     checked: 2026-08-16

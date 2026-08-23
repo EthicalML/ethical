@@ -109,6 +109,8 @@ export default defineConfig({
   },
   markdown: {
     processor: unified({ rehypePlugins: [rehypeExternalLinks, rehypeSectionize] }),
+    // Never typographic quotes: authored straight quotes must render as authored.
+    smartypants: false,
   },
   integrations: [
     mdx(),
