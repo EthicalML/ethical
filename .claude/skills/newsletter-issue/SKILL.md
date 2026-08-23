@@ -11,7 +11,7 @@ Produce the next issue: five article sections plus frontmatter, boilerplate carr
 
 Run `node scripts/newsletter/new-issue.mjs --dry-run` to get the issue number and date. State both to the owner before continuing.
 
-Then kick off the events scout in the background so it runs while the issue is drafted: spawn a subagent with the prompt "Read .claude/skills/newsletter-issue/workflows/events-scout.md and execute it for issue <N>." Its report is picked up at step 8.
+Then kick off the events scout in the background so it runs while the issue is drafted: spawn a subagent with the prompt "Read .claude/skills/newsletter-issue/workflows/events-scout.md and execute it for issue <N>." Its report is picked up at step 9.
 
 Determine which mode applies for the articles:
 
@@ -117,13 +117,35 @@ A link that 404s against the issue worktree is not yet a broken link. The worktr
 
 The rule behind it generalises. When your own check contradicts what the owner wrote, the first hypothesis is that the check is wrong, not the copy. Rewriting an owner's line is a last resort that needs the failure reproduced against master and reported to them, not a silent correction folded into a commit.
 
-## 8. Hand over
+## 8. Collect the post images
 
-Show the owner one review document: the five drafted sections, flagging any article whose grounding notes recorded a weak or failed fetch tier, followed by the events scout report from `tmp/issue-<N>/events-scout.md` — tracker update recommendations, proposed additions, proposed updates, and the rejects it dropped. If the scout found nothing, say so; an empty week is normal. If the scout has not returned yet, hand over the sections and bring the events report as soon as it lands.
+Each article is posted to social separately, as an image post: the section prose exactly as published, the source link on the last line, and a picture that is the post rather than a preview attached to it. This step gathers the picture candidates.
+
+```
+node scripts/newsletter/fetch-images.mjs --issue <N>
+```
+
+It reads the five article headings out of the assembled issue, so it runs after step 5 and not before. For each one it collects the site's og and twitter images, a page-1 render where the link is a paper or a PDF, the largest images on the rendered page, and a 1200x630 screenshot as the guaranteed floor. Logos and funder strips sort last rather than out. Everything lands in `tmp/issue-<N>/images/` and is listed in `tmp/issue-<N>/images.md`.
+
+Choose nothing. The document exists to be annotated by the owner, one `Choice:` line per article: a candidate number, `gif` for a site-capture walk, a path or URL of his own, or `skip`. Hand it over at step 9 alongside the sections.
+
+Once it comes back annotated:
+
+```
+node scripts/newsletter/fetch-images.mjs --apply --issue <N>
+```
+
+That writes `tmp/issue-<N>/posts/<n>-<slug>/` holding `post.txt` and the chosen image, ready to drag into Buffer's composer. Anything marked `gif` is reported as still open rather than produced: record it with the `site-capture` skill against that article's URL and drop the result into its post folder. Buffer's API is not involved and nothing is hosted, because its assets attach by public URL and must stay reachable until the post publishes, which a local file cannot do.
+
+Nothing from this step is ever committed. `tmp/` is gitignored, and these images are somebody else's artwork borrowed for the length of one post.
+
+## 9. Hand over
+
+Show the owner one review document: the five drafted sections, flagging any article whose grounding notes recorded a weak or failed fetch tier, followed by the events scout report from `tmp/issue-<N>/events-scout.md` — tracker update recommendations, proposed additions, proposed updates, and the rejects it dropped. If the scout found nothing, say so; an empty week is normal. If the scout has not returned yet, hand over the sections and bring the events report as soon as it lands. Link `tmp/issue-<N>/images.md` in the same handover so the pictures are chosen in one pass with everything else.
 
 Stop. Publishing the issue and approving events are both the owner's call, and each event proposal needs its own explicit yes — a comment on one proposal is not approval of the rest.
 
-## 9. Apply approved events
+## 10. Apply approved events
 
 Only for proposals the owner approved:
 
@@ -133,7 +155,7 @@ Only for proposals the owner approved:
 4. If a new event or newly opened CFP belongs in the issue's events block and the issue is not yet published, add it there too.
 5. `npm run check` must pass — the schema rejects an unknown topic.
 
-## 10. After the owner publishes
+## 11. After the owner publishes
 
 ```
 node scripts/newsletter/candidates.mjs mark used <url>...
