@@ -16,7 +16,7 @@ import { fileURLToPath } from 'node:url';
 
 const repoRoot = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const issueDir = join(repoRoot, 'src/content/newsletter');
-const eventsHeading = '## Upcoming MLOps Events';
+const eventsHeadingPattern = /^## Upcoming (?:MLOps Events|\[MLOps Events\]\([^)]*\))/m;
 const articleCount = 5;
 
 function parseArguments(argv) {
@@ -62,7 +62,7 @@ function frontmatterValue(source, key) {
 function splitIssue(source) {
   const body = source.replace(/^---\n[\s\S]*?\n---\n/, '');
   const weekHeadingIndex = body.indexOf('## This week in');
-  const eventsIndex = body.indexOf(eventsHeading);
+  const eventsIndex = body.search(eventsHeadingPattern);
   if (weekHeadingIndex === -1 || eventsIndex === -1) {
     throw new Error('previous issue does not have the expected "This week in" / events headings');
   }
