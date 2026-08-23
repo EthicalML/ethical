@@ -29,7 +29,7 @@ The website for The Institute for Ethical AI Alignment & Safety (`ethical.instit
 
 - Markdown prose does not hard-wrap; let lines overflow.
 - No em dashes in site prose.
-- Straight quotes only, ever: `'` and `"` in source AND in rendered output. Never typographic/curly quotes (`’` `‘` `“` `”`), whether authored or introduced by tooling; `smartypants: false` in `astro.config.mjs` enforces the render side and must stay.
+- ASCII punctuation only, ever, in source AND in rendered output: straight quotes `'` and `"`, never curly (`’` `‘` `“` `”`); `-` and `--`, never en or em dashes (`–` `—`); `...`, never an ellipsis character (`…`). This holds whether the character is authored or introduced by tooling, and `smartypants: false` in `astro.config.mjs` enforces the render side and must stay: SmartyPants otherwise curls quotes and converts `--`/`---`/`...` behind your back.
 - Organisation name: The Institute for Ethical AI Alignment & Safety. Network: Ethical AI Network. Principles: The 9 Responsible AI Principles.
 - No bare paragraph after a widget: the note belongs in the section lede above it.
 
