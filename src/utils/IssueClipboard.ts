@@ -111,7 +111,8 @@ export async function toClipboardHtml({
   site: string;
   mode: ClipboardMode;
 }) {
-  const processor = await createMarkdownProcessor({});
+  // smartypants off, as in astro.config.mjs: authored straight quotes stay straight.
+  const processor = await createMarkdownProcessor({ smartypants: false });
   const { code } = await processor.render(toClipboardMarkdown(body, site, mode));
   // No document title: both editors carry their own title field, so one here is a line to
   // delete every time. The summary stays as a deck, in a dark grey that reads as secondary

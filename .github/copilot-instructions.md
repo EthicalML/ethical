@@ -29,6 +29,7 @@ The website for The Institute for Ethical AI Alignment & Safety (`ethical.instit
 
 - Markdown prose does not hard-wrap; let lines overflow.
 - No em dashes in site prose.
+- Straight quotes only, ever: `'` and `"` in source AND in rendered output. Never typographic/curly quotes (`’` `‘` `“` `”`), whether authored or introduced by tooling; `smartypants: false` in `astro.config.mjs` enforces the render side and must stay.
 - Organisation name: The Institute for Ethical AI Alignment & Safety. Network: Ethical AI Network. Principles: The 9 Responsible AI Principles.
 - No bare paragraph after a widget: the note belongs in the section lede above it.
 
