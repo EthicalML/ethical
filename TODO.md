@@ -65,6 +65,32 @@ Queued posts for the new blog. Each lands as an undated draft or future-dated en
 
 Once the blog ships, give it its own feed at `/blog/rss.xml`, fully separate from a newsletter feed at `/mle/rss.xml` (this absorbs the old deferred "RSS (later)" item): the audiences and cadences differ, both derive trivially from their content collections via `@astrojs/rss`, and nothing is gained by combining them. Separately decide whether new blog posts get surfaced in the weekly newsletter issues (a featured section or link block); that half is editorial, not build work, and needs an owner call on placement and cadence.
 
+## Copy-for-LinkedIn: code blocks as images
+
+The dev-only copy buttons (`src/components/CopyIssue.astro`, payloads built in `src/utils/IssueClipboard.ts`) hand LinkedIn every fenced block as Shiki-highlighted `<pre>` markup. LinkedIn's article editor has no code block construct, so it flattens those to paragraphs and the leading indentation goes with them, which is what makes a multi-line CLI invocation readable. Owner ask (2026-08-24): rasterise code blocks to PNG the way `inlineDiagrams()` already rasterises the SVG diagrams, so code survives the paste as an image.
+
+Measured on the memory series part 4, which carries 48 fenced blocks totalling 18 KB of code, rendered at LinkedIn's ~744px column width:
+
+| Block                         | Lines | Rendered height | base64 @2x |
+| ----------------------------- | ----- | --------------- | ---------- |
+| `kaos system install`         | 5     | 144px           | 32 KB      |
+| `kaos agent deploy`, 3 agents | 19    | 435px           | 159 KB     |
+| terminal output               | 11    | 269px           | 128 KB     |
+| the recall JSON               | 37    | 1184px          | 561 KB     |
+| pydantic-ai wiring            | 22    | 498px           | 227 KB     |
+
+That extrapolates to roughly 10.4 MB of base64 at 2x and 4.4 MB at 1x, against a current LinkedIn payload of 101 KB. A 40-100x payload increase has to survive a clipboard write and a paste into a web editor, and it fails at paste time, which is the worst moment to find out. So rasterising all 48 blocks is not the answer.
+
+Three findings that shape whatever the solution turns out to be:
+
+- Four blocks have max column widths of 786, 222, 208 and 145 characters, all single-line JSON payloads. At a fixed column width they soft-wrap with continuation lines starting at column 0, so the indentation structure is destroyed anyway and the result is a tall wall of text that is legible but not readable. Hard-wrapping those in the post source is worth doing on its own merits, since they read poorly on our own pages too, and it removes the worst rasterisation candidates.
+- A code image cannot be copied by the reader. For posts whose value is commands the reader is meant to run, that is a real cost to weigh, not a nitpick. Alt text keeps screen readers whole but not copyability.
+- Whether LinkedIn accepts a data-URI `<img>` on paste at all is unverified. The existing diagram inlining assumes it, and the code comments record a probe for the heading and bold behaviour but not for images. A 20-minute manual paste probe decides whether any of this is worth building, and it should come first.
+
+Direction to explore rather than a decided plan: hard-wrap the oversized blocks in source, then gate rasterisation on the blocks where indentation actually carries meaning (roughly 12-15 of the 48 here) and leave one-liners as text, which would put the payload near 1-1.5 MB at 1x. The measurement script used for the numbers above is throwaway and was not kept.
+
+Related and separately actionable: `inlineDiagrams()` resolves rasterised PNGs from `tmp/diagrams/<post-dir>/`, keyed on the post directory name. Renaming a post folder when publishing it, which the date-prefix convention requires, silently orphans its diagrams; part 4's payload carries zero inlined images for exactly this reason until `scripts/blog/rasterise-diagrams.mjs` is re-run. Either key the cache on the slug instead of the directory, or have the copy buttons warn when a referenced diagram has no PNG.
+
 ## Deferred
 
 - Anti-LLM style pass — needs owner to supply the style guidance it was waiting on, or downgrade to a plain owner-led copy review
