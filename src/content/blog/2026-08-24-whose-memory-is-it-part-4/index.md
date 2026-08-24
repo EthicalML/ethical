@@ -1,14 +1,24 @@
 ---
 title: Whose Memory Is It? Building Multi-Tenant, Multi-Tier Memory for AI Agents (Part 4)
+date: 2026-08-24
 image: './featured.jpg'
 summary: 'This is a 4-part series on how agents remember: building short-, medium- and long-term memory that scales across users, agents, and kubernetes clusters.'
 tags: [agents, memory, kubernetes]
 series: 'Whose Memory Is It?'
 ---
 
-Alice and Bob both use our agent platform. On Monday, Alice worked on a support incident, and the agent remembers what she told it. On Thursday, Bob asks a similar question, and the agent, being helpful, answers with what it learned from Alice. Nothing was hacked, Bob doesn't know about prompt injection, and nothing about that request was malformed. An agent answered a question how it was designed, and it was still a data leak.
+Alice and Bob both use our agent platform. On Monday, Alice worked on a support incident, and the agent remembers what she told it. On Thursday, Bob asks a similar question, and the agent, being helpful, answers with what it learned from Alice.
 
-The first three parts of our 4-part series on agent memory were spent designing a system that ensures such incidents are avoided. In this final part, we actually deploy the components that we've designed so far, and show how it survives in the real world. Do the memory tiers actually work together inside one conversation? Does a single write end up visible to the right agents and invisible to everyone else? Does the boundary hold when the model is told to cross it? And what does it take to get the same behaviour in an agent of your own? Let's find out!
+Nothing was hacked, Bob doesn't know about prompt injection, and nothing about that request was malformed. An agent answered a question how it was designed, and it was still a data leak.
+
+The first three parts of our 4-part series on agent memory were spent designing a system that ensures such incidents are avoided.
+
+In this final part in the series, we actually deploy the components that we've designed so far, and show how it survives in the real world:
+
+- Do the memory tiers actually work together inside one conversation?
+- Does a single write end up visible to the right agents and invisible to everyone else?
+- Does the boundary hold when the model is told to cross it?
+- And what does it take to get the same behaviour in an agent of your own? Let's find out!
 
 > A design is only the blueprint; the only way to find out if it survives is to run it and see what blows up under pressure.
 
@@ -49,18 +59,27 @@ As a refresher, here is the taxonomy that we adopted for our memory:
 | Medium-term | Rolling summary per session, versioned so past summaries stay accessible          | On compaction, when the window hits its token budget | Relational rows, append-only |
 | Long-term   | Atomic facts extracted from context window, keyed by scope, recalled semantically | In the background, after compaction                  | Mem0 into the vector store   |
 
-Then in Part 2 we designed the scope model and answered "whose memory is it?". Every write attaches all the identities the request was verified with (the agent, the user, and the session), and every read picks one level from a nested set. Each of these levels is bound to the identity verified at the gateway rather than to anything the caller claims.
+Then in Part 2 we designed the scope model and answered "whose memory is it?".
+
+Every write attaches all the identities the request was verified with (the agent, the user, and the session), and every read picks one level from a nested set. Each of these levels is bound to the identity verified at the gateway rather than to anything the caller claims.
+
 The outermost level, `store` sees everything and belongs to the admin plane alone:
 
 ![Nested memory scopes from session through agent, user, and store](./scope-hierarchy.svg)
 
-In Part 3 we worked on converting the design into infrastructure. We codified the memory layer as a `MemoryStore` Kubernetes resource that agents share as a service backed by Postgres with pgvector, with summarization and fact extraction kept off the message the user is waiting on. We then set up the cluster it runs on, and this control plane is what makes the scope model enforceable. That is, a request enters through the gateway mesh, the user token is verified against the identity service, and the agent runtime derives the read scope and the write attribution from that verified identity before it ever calls the store.
+In Part 3 we worked on converting the design into infrastructure.
+
+We codified the memory layer as a `MemoryStore` Kubernetes resource that agents share as a service backed by Postgres with pgvector, with summarization and fact extraction kept off the message the user is waiting on. We then set up the cluster it runs on, and this control plane is what makes the scope model enforceable.
+
+That is, a request enters through the gateway mesh, the user token is verified against the identity service, and the agent runtime derives the read scope and the write attribution from that verified identity before it ever calls the store.
 
 ![Request path from users through the gateway mesh to agents, identity and the MemoryStore](./cluster-request-path.svg)
 
-Part 3 closed by walking that setup through an example outage of five incidents in increasing impact, from a single evicted replica to the store fully unreachable, and basically seeing how the design worked against it. Fortunately agents keep answering with an empty memory block and a `degraded` flag on the response, so an outage of memory doesn't mean the whole cluster also crashes.
+Part 3 closed by walking that setup through an example outage of five incidents in increasing impact, from a single evicted replica to the store fully unreachable, and basically seeing how the design worked against it.
 
-Finally, in this part 4, we run it. Everything in this post assumes that the cluster exists, and if you are following along, you can run the same one command from Part 3 to set it up:
+Fortunately agents keep answering with an empty memory block and a `degraded` flag on the response, so an outage of memory doesn't mean the whole cluster also crashes.
+
+Finally, in this **part 4**, we run it. Everything in this post assumes that the cluster exists, and if you are following along, you can run the same one command from Part 3 to set it up:
 
 ```bash
 $ kaos system install \
@@ -80,28 +99,30 @@ We will deploy three agents to test different properties of memory:
 
 ![Three agents with different maximum read scopes bound to one MemoryStore](./example-agents-store.svg)
 
-- **`session-assistant`** is a conversation-only assistant with `maxReadScope: session`; the ceiling limits automatic recall and the `search_memory` tool to the current session.
-- **`user-assistant`** is a personalised assistant with `maxReadScope: user`, which automatically recalls the user's memory on every message and gives `search_memory` the `session`, `agent`, and `user` levels.
+- **`session-assistant`** is a conversation-only agent with `maxReadScope: session`; this max ceiling limits automatic memory recall, as well as the `search_memory` tool (more on this later).
+- **`user-assistant`** is a personalised agent with `maxReadScope: user`, which automatically recalls the user's memory on every message and gives `search_memory` the `session`, `agent`, and `user` levels.
 - **`agent-bot`** is an agent from a separate domain on the same store with `maxReadScope: agent`, which automatically recalls the agent's own memory across sessions; in Step 2 it acts as the isolation control.
 
 > The key question we'll be answering is, "whose memory is it?".
 
 For this we will test the following rules, each of which is exercised by a command later in this post:
 
-| What we ask for                                      | What should happen                                              | Where  |
-| ---------------------------------------------------- | --------------------------------------------------------------- | ------ |
-| Alice reads her own `user` scope                     | Her facts come back from every agent she has used               | Step 2 |
-| Bob reads his own `user` scope                       | Only his own facts, never Alice's                               | Step 2 |
-| Bob asks the question Alice asked, on the same agent | Answered from his partition alone                               | Step 2 |
-| `agent-bot` reads its own `agent` scope              | Empty; unrelated agents share the store, not the data           | Step 2 |
-| Alice erases her `user` scope                        | Her facts go across all agents and sessions, and Bob's remain   | Step 2 |
-| An admin reads the `store` level                     | Every owner's facts, with no agent actor context on the request | Step 2 |
-| An agent reads the `store` level                     | Refused with `403`, since the level is admin plane only         | Step 2 |
-| `session-assistant` searches at the `agent` level    | Not expressible, the level is absent from its tool schema       | Step 3 |
-
 ![Which recalls are allowed and which are refused across Alice, Bob and the store level](./scope-access-outcomes.svg)
 
-### Setting up the Example: One Command
+More specifically, the rules that we are enforcing are the following:
+
+| What we ask for                                      | What should happen                                              |
+| ---------------------------------------------------- | --------------------------------------------------------------- |
+| Alice reads her own `user` scope                     | Her long-term facts come back from every agent                  |
+| Bob reads his own `user` scope                       | Only his own long-term facts, never Alice's                     |
+| Bob asks the question Alice asked, on the same agent | Answered from his partition alone                               |
+| `agent-bot` reads its own `agent` scope              | Empty; unrelated agents share the store, not the data           |
+| Alice erases her `user` scope                        | Her facts go across all agents and sessions, and Bob's remain   |
+| An admin reads the `store` level                     | Every owner's facts, with no agent actor context on the request |
+| An agent reads the `store` level                     | Refused with `403`, since the level is admin plane only         |
+| `session-assistant` searches at the `agent` level    | Not expressible, the level is absent from its tool schema       |
+
+### Setting up the Agentic System in the Cluster: One Command
 
 The identity-enabled cluster from the recap above is all this needs, since the example partitions memory by verified user identity, and Part 3 covers how that auth wiring reaches the memory path. Everything else the example needs is bundled as a single sample, so one command deploys the whole cast:
 
@@ -109,9 +130,11 @@ The identity-enabled cluster from the recap above is all this needs, since the e
 $ kaos samples deploy 7-memory-agent -n support-demo
 ```
 
-### Setting up the Example: Breaking it Up
+### The Components in the Cluster
 
-To see the shape of each object, the same setup can be built component by component. The model endpoint and the store first:
+To see the shape of each component that we deployed, we can actually go through each one by one.
+
+The model endpoint and the store first:
 
 ```bash
 $ kaos modelapi create support-modelapi \
@@ -126,7 +149,9 @@ $ kaos memorystore create support-memory -n support-demo \
   --max-read-scope user
 ```
 
-The store carries a deliberately small conversational budget so compaction is easy to trigger, set where the fold actually happens, which is the store's own write path. The command renders the tier knobs onto the `MemoryStore` object:
+For this example we have configured the store with a deliberately small **conversational budget** so compaction is easy to trigger. This will allow us to see quickly when the compaction triggers, as well as long-term memory extraction.
+
+This is the `MemoryStore` object that is created with that command:
 
 ```yaml
 # excerpt: the MemoryStore conversational-tier knobs
@@ -142,7 +167,7 @@ spec:
     enabled: true # fold overflow into a medium-term summary
 ```
 
-Then the agents, each differing only in its read configuration:
+Then we create each of the agents we defined above:
 
 ```bash
 $ kaos agent deploy user-assistant -n support-demo \
@@ -166,9 +191,9 @@ $ kaos agent deploy agent-bot -n support-demo \
   --memory-max-read-scope agent
 ```
 
-The store-wide `maxReadScope: user` is the ceiling for every bound agent. An agent that omits its own ceiling inherits that store value, whose CRD default is `agent`, so the session-only agent is explicit here. Every agent write carries the verified user, agent, and session attribution. The configured store remains the tenant boundary.
+The last thing that we need to configure is the access controls for the users. That is a separate `AccessGrant`, and with two tenants in the example both groups need one.
 
-One thing the memory configuration deliberately does not decide is who may talk to the agent in the first place. That is a separate `AccessGrant`, and with two tenants in the example both groups need one. Alice's group already reaches all three agents; Bob's group needs its own grant, without which the gateway refuses him before any memory code runs:
+Alice's group already reaches all three agents; Bob's group needs its own grant, without which the gateway refuses him before any memory code runs:
 
 ```yaml
 apiVersion: kaos.tools/v1alpha1
@@ -185,7 +210,7 @@ spec:
       name: support
 ```
 
-Reaching an agent and reading a memory partition are two different permissions, and this is the first of them.
+Now that we have everything configured we can kick off the examples.
 
 **Let's Fetch the Users' Identities**
 
@@ -205,9 +230,9 @@ The verified subject travels inside the cached token rather than the login outpu
 
 ### Step 1: The Three Tiers in One Conversation
 
-We will follow one incident flow, where we expect to run three requests, and we should see a compaction triggered, which will capture the medium- and long-term memory that we can use for the queries.
+We will simulate a conversation where we are triaging a "fictitious issue" - this will allow us to see how memory is stored at the different levels. It's worth stating that the issue is made up, but the prompt and response are all real, and can be simulated as well by you.
 
-First we send an initial request to the `session-assistant` on a `ticket-42` which we assume contains descriptions related to an issue:
+First we send an initial request to the `session-assistant` on a made up `ticket-42` which we tell the agent it contains descriptions related to an issue:
 
 ```bash
 $ kaos agent invoke session-assistant -n support-demo \
@@ -289,7 +314,7 @@ well.
 ✓ allowed — request permitted
 ```
 
-Each conversation message is persisted to the central store after the run, and the conversation should have carried out multiple medium-term compaction actions, as well as long-term extraction actions in the memory.
+Each conversation message is persisted to the central store after the run, and as we mentioned earlier, we made the compaction window shorter, so we now have a few medium- and long-term memory entries.
 
 Now inspect what the store holds for that session:
 
@@ -343,11 +368,11 @@ The JSON responses below are the real outputs with record metadata (ids, hashes,
 }
 ```
 
-We can see that the three memory tiers are present in one response.
+We can see that the three memory tiers are present in one response:
 
-- The short-term window **is the working memory**, holding only the last conversation message.
-- The medium-term summary **contains the previous context**. Summarisation triggers when the window reached the token limit.
-- The long-term facts capture the learnings from the conversation. Extraction runs also when the window reaches token limit.
+- The short-term window **is the working memory window**, holding only the last conversation message.
+- The medium-term summary **contains the previous context**. Summarisation triggers when the window reached the token compaction limit.
+- The long-term facts capture the **learnings** from the conversation. Extraction runs also when the window reaches token limit.
 
 We can query these long-term facts semantically, we can query it for `--user alice` at the scope of the user:
 
@@ -407,7 +432,7 @@ on the payments call for EUR currency.
 
 Two caveats are worth stating plainly here, because both are consequences of choices made earlier in the series.
 
-- Long-term memory extraction runs in the background after compaction, so a question asked seconds after a conversation can arrive before the facts that answer it exist; that latency is the price of keeping extraction off the message the user waits on.
+- Long-term memory extraction runs in the background after compaction, so if a question is asked immediately after a conversation arrives, the facts may not yet be loaded - we have taken this consistency tradeoff for performance.
 - Automatic recall is best effort: the store returns the facts and the runtime injects them as leading context, but whether the model uses that context is the model's business.
 
 Every message and memory records are written to the database with metadata about their respective agent, user, and session. The agent-plane read however is restricted in a hierarchical scope of `session < agent < user`, and each level is bound to an identity verified at the gateway.
@@ -420,7 +445,9 @@ Alice's tickets remain available through her `user` level across agents, while B
 
 ![Alice and Bob writing through the same agents into separate user partitions](./user-partitions.svg)
 
-**Per user, across agents.** Alice raises a second ticket with the `user-assistant`, then reads her `user` scope:
+**Per user, across agents.**
+
+Alice raises a second ticket with the `user-assistant`, then reads her `user` scope:
 
 ```bash
 $ kaos agent invoke user-assistant -n support-demo \
@@ -482,7 +509,11 @@ Resolved user 'alice' to principal '286eec2a-2854-4999-be83-0e1658c31a4c' from t
 
 One `user` scope contains the context from both agents, because every record carries the same verified `user_id` regardless of which agent wrote it.
 
-**Isolation between tenants** is what the scope model exists for, so let's give Bob a memory of his own rather than an empty partition to compare against. He raises his own ticket through the same assistant Alice just used:
+**Isolation between tenants**
+
+The scope model exists to ensure isolation between agents.
+
+This means that Bob's agents has a memory of his own rather than an empty partition to compare against. He raises his own ticket through the same assistant Alice just used:
 
 ```bash
 $ kaos agent invoke user-assistant -n support-demo \
@@ -537,7 +568,7 @@ please share them, and I can help further.
 ✓ allowed — request permitted
 ```
 
-That same question returned Alice's full incident history. Bob gets his own ticket and none of hers. Nobody wrote a filter for this and no rule names Alice or Bob anywhere: automatic recall runs at the `user` level against whichever principal the gateway verified, so the partition follows the user for free.
+That same question returned Alice's full incident history. Bob gets his own ticket and none of hers. Nobody wrote a filter for this and no rule names Alice or Bob anywhere. This is because automatic recall runs at the `user` level against whichever principal the gateway verified.
 
 As part of this, the unrelated agent stays isolated on the other axis, and it means its own `agent` scope is currently holding nothing on the memory front:
 
@@ -550,7 +581,9 @@ $ kaos memory recall -n support-demo \
 # {"long_term": {"facts": [], "block": ""}, "degraded": false}
 ```
 
-**Erasure is designed to be one operation**, which means that because every record carries Alice's principal, one `forget` reaches her contributions across both assistants and all her sessions:
+**Erasure is designed to be one operation**
+
+This means that because every record carries Alice's principal, one `forget` reaches her contributions across both assistants and all her sessions:
 
 ```bash
 $ kaos memory forget -n support-demo \
@@ -620,11 +653,9 @@ Without that header the same request returns 200 and Bob's record. And `search_m
 
 ### Step 3: The Model's Permission Boundary
 
-We can now dive into the last part, exploring what an agent can recall on its own by using internal tools, as opposed to the RAG approach that we've seen before.
+We can now dive into the last section, exploring what an agent can recall on its own. Namely we show the configuration that can enable each agent to recall using the `search_memory` tool.
 
-As part of this implementation we also provide configuration that can enable each agent to recall using the `search_memory` tool.
-
-However the access is still restricted to the memory scopes that agent is entitled to, so an unentitled search cannot even be expressed:
+However the access is still restricted to the memory scopes that agent is entitled to.
 
 ![The search_memory level enum each agent receives from its maximum read scope](./search-tool-levels.svg)
 
@@ -646,9 +677,9 @@ $ kaos agent tools session-assistant -n support-demo
 
 `session-assistant` carries only the `session` value, so the model literally cannot express an agent- or user-level search there. Neither agent schema contains the admin-only `store` level. The tool's schema defines the entitlement.
 
-**The model is only allowed to recall within its boundary.**
+**The model is only allowed to recall within its limits.**
 
-Here `user-assistant` searches `user` for Alice's past tickets and answers from facts attributed to her user scope and nothing more, by using the memory tool it was given:
+Here we are prompting `user-assistant` to search at scope `user` for Alice's past tickets and answers from facts attributed to her user scope and nothing more, by using the memory tool it was given:
 
 ```bash
 $ kaos agent invoke user-assistant -n support-demo \
@@ -670,7 +701,7 @@ payments service on the same day.
 
 The CLI prints the grounded reply and the authorization decision; the tool call itself is visible in the telemetry spans from the observability post, not in the chat output, so the selected level is legible from the entitlement and the grounded answer.
 
-**The boundary holds under steering.**
+**The boundary holds under prompt injection.**
 
 Attackers may try to do prompt injection to force `session-assistant` at the `agent` level - however this is blocked:
 
@@ -692,7 +723,7 @@ Validation result: The call is invalid because the level "agent" is not permitte
 ✓ allowed — request permitted
 ```
 
-The `agent` level is not in this agent's schema, so the model has no way to express the call the prompt demanded.
+The `agent` level is not in this agent's schema, so the model has no way to express the call demanded with the prompt.
 
 It stayed inside its limits and reported that the requested level is unsupported.
 
@@ -700,7 +731,9 @@ That should give us a good idea on the end to end flows. Now we can look at the 
 
 ## Integrate It in Your Own Agent
 
-Let's take a look at the framework-agnostic skeleton for memory that we introduced back in Part 1 - this is the 101 of memory implemented:
+Let's take a look at the framework-agnostic skeleton for memory that we introduced back in Part 1.
+
+This is the 101 of memory implemented back there:
 
 ```python
 async def run_with_memory(session_id, user_message, memory, agent):
@@ -727,13 +760,15 @@ async def run_with_memory(session_id, user_message, memory, agent):
     return response
 ```
 
-What we didn't cover here is what you must add before this becomes a production dependency, which includes server-side scope enforcement, the erasure fan-out across tiers, the soft/strict write contract, OpenTelemetry on every operation, and a service boundary so a fleet shares one memory instead of one process hoarding it.
+Now we can extend this to support all the limitations that we have mitigated. Namely including server-side scope enforcement, the erasure fan-out across tiers, the soft/strict write contract, OpenTelemetry on every operation, and a service wrapper.
 
 This is what we ended up enabling with the `kaos-memory` package from Part 3's design section.
 
 It is a pip install library that you can use in your agent projects as well.
 
-The core is the `MemoryServiceClient`, the client an agent calls for recall, write and forget; the retrieval and consolidation happen behind it in the service. The `[service]` extra is the deployed side, adding Mem0, the vector store, and the FastAPI service.
+The core is the `MemoryServiceClient`. This client can be used to hit the server for recall, write and forget.
+
+The `[service]` extra install is the deployed side, adding Mem0, the vector store, and the FastAPI service.
 
 There is also a `[pydantic-ai]` extra that adds the runtime adapters, server-side scope derivation, and the memory toolset for pydantic AI:
 
@@ -806,17 +841,16 @@ On KAOS the operator wires all of this automatically, with the effective `maxRea
 
 ## When NOT to Add Long-Term Memory
 
-Throughout these 4 posts we talked about memory designs, implementations and examples - however equally important is to know when NOT to use advanced long-term memory.
+Throughout these 4 posts we talked about memory designs, implementations and examples - however equally important is to know when NOT to use some of these capabilities, especially concepts like long-term memory.
 
 Long term memory especially has a measurable break-even point as [a 2026 cost-performance analysis](https://arxiv.org/abs/2603.04814) finds long-context actually wins on raw recall for short interactions (obviously), and although long-term memory becomes favorable across longer term contexts, this tradeoff is important to understand the cost.
 
 Long-term memory is a poor fit when:
 
 - Interactions are genuinely single-shot, where session history already covers it.
-- You cannot yet answer the erasure question, since memory without deletion is a liability.
+- You cannot yet find a sound deletion approach for memory, as this can be a liability.
 - Tenancy boundaries are unclear, where every memory becomes a potential leak vector.
 - You cannot afford the extraction cost of additional LLM calls for every remembered conversation.
-- An outage of the memory path would be treated as an outage of the agent, in which case memory has become a hard dependency and the design should be revisited before scaling.
 
 One caution applies even when memory _is_ the right call, which is that remembering and staying current are different problems.
 
@@ -832,7 +866,7 @@ Back to the incident that we opened with. Bob asking a reasonable question and g
 
 **The tool-level boundary enforced restrictions.** Agents can be enabled with ability to search_memory at different scopes. However the access was restricted by design, guarding from prompt injections by limiting the inputs in the tool code itself, as well as at the service level.
 
-If your memory system is boring - it just works, and when it doesn't you don't end up with data leaks or system-wide outages - then your agents get to be the interesting part.
+If your memory system is boring, it just works. When it doesn't you don't end up with data leaks or system-wide outages. So let's make it boring, so your agents get to be the interesting part.
 
 **The series:**
 
