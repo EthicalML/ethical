@@ -34,7 +34,7 @@ Here's a refresher on this 4-part series on Multi-Tiered / Multi-Tenant Agent Me
 
 - **[Part 1: What agent memory is and what to build on.](https://www.linkedin.com/pulse/whose-memory-building-multi-tenant-multi-tier-ai-agents-saucedo-kvcsf/)** The taxonomy, the baseline implementations everyone starts with, and the engine landscape from surveying ~30 tools.
 - **Part 2 (this post): Tiers and scopes for multi-tenant agents.** The three-tier design and the answer to whose memory it is.
-- **Part 3: Memory as infrastructure.** The Kubernetes `MemoryStore` resource, its deployment topology, and how to integrate it in your own agent (coming soon...).
+- **[Part 3: Memory as infrastructure.](/blog/whose-memory-is-it-part-3)** The Kubernetes `MemoryStore` resource, its deployment topology, and the failure contract probed scenario by scenario.
 - **Part 4: Agent memory in action.** A worked example that runs end to end on a secured cluster, with real outputs (coming soon...).
 
 Let's get started.
@@ -186,5 +186,5 @@ Stay tuned for next week!
 
 - **[Part 1: What agent memory is and what to build on.](https://www.linkedin.com/pulse/whose-memory-building-multi-tenant-multi-tier-ai-agents-saucedo-kvcsf/)** The taxonomy, the baseline implementations everyone starts with, and the engine landscape from surveying ~30 tools.
 - **Part 2 (this post): Tiers and scopes for multi-tenant agents.** The three-tier design and the answer to whose memory it is.
-- **Part 3: Memory as infrastructure.** The Kubernetes `MemoryStore` resource, its deployment topology, and how to integrate it in your own agent (coming soon...).
+- **[Part 3: Memory as infrastructure.](/blog/whose-memory-is-it-part-3)** The Kubernetes `MemoryStore` resource, its deployment topology, and the failure contract probed scenario by scenario.
 - **Part 4: Agent memory in action.** A worked example that runs end to end on a secured cluster, with real outputs (coming soon...).

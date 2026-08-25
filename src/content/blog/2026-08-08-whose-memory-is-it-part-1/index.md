@@ -29,7 +29,7 @@ This post is the first of a 4-part series, which we plan to release weekly over 
 
 - **Part 1 (this post): What agent memory is and what to build on.** The taxonomy, the baseline implementations everyone starts with, and the engine landscape from surveying ~30 tools.
 - **Part 2: Tiers and scopes for multi-tenant agents.** The three-tier design and the answer to whose memory it is (coming soon...).
-- **Part 3: Memory as infrastructure.** The Kubernetes `MemoryStore` resource, its deployment topology, and how to integrate it in your own agent (coming soon...).
+- **[Part 3: Memory as infrastructure.](/blog/whose-memory-is-it-part-3)** The Kubernetes `MemoryStore` resource, its deployment topology, and the failure contract probed scenario by scenario.
 - **Part 4: Agent memory in action.** A worked example that runs end to end on a secured cluster, with real outputs (coming soon...).
 
 ## A Working Taxonomy of Agent Memory
@@ -214,5 +214,5 @@ In part 2 we take that position and design the memory system itself. This includ
 
 - Part 1 (this post): What agent memory is and what to build on.
 - Part 2: Tiers and scopes for multi-tenant agents (coming soon...).
-- Part 3: Memory as infrastructure (coming soon...).
+- [Part 3: Memory as infrastructure](/blog/whose-memory-is-it-part-3).
 - Part 4: Agent memory in action (coming soon...).
