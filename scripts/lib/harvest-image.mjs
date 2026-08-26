@@ -147,6 +147,11 @@ function compareVersions(left, right) {
   return 0;
 }
 
+/** The best specifier available, for handing to a child process that resolves its own. */
+export function playwrightModulePath() {
+  return resolvePlaywright().find((specifier) => specifier !== 'playwright') ?? 'playwright';
+}
+
 function resolvePlaywright() {
   if (process.env.NEWSLETTER_PLAYWRIGHT) return [process.env.NEWSLETTER_PLAYWRIGHT];
   const npxCache = path.join(process.env.HOME ?? '', '.npm/_npx');

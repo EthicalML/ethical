@@ -96,7 +96,10 @@ function readArticles(source) {
       if (lines[cursor].startsWith('## ')) break;
       if (lines[cursor].trim()) prose.push(lines[cursor].trim());
     }
-    articles.push({ title: heading[1], url: heading[2], prose: prose.join('\n\n') });
+    // Neither LinkedIn nor X renders markdown, so an inline link would post as its own
+    // source. Issue prose rarely carries one, since the heading already holds the link.
+    const plain = prose.join('\n\n').replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1');
+    articles.push({ title: heading[1], url: heading[2], prose: plain });
   });
   return articles;
 }
@@ -267,14 +270,54 @@ async function collect(article, { dir }) {
     }
   }
 
-  // 3. The images actually on the rendered page, and a screenshot off the same load. The
-  //    screenshot is the floor: every article gets at least one usable picture from it.
-  let shot = null;
+  // 3. The images actually on the rendered page, and three screenshots off the same load.
+  //    The screenshots are the floor: every article ends with a usable picture even when the
+  //    source blocks every fetch, and the figure shot is the only thing here that can capture
+  //    a diagram drawn as inline SVG or canvas, which nothing downloadable would find.
+  const shots = [];
   const dom = await domImageCandidates(article.url, {
     onPage: async (page) => {
       await page.setViewportSize({ width: shotWidth, height: shotHeight });
       await page.waitForTimeout(600);
-      shot = await page.screenshot({ type: 'png' });
+      shots.push({ kind: 'screenshot hero', buffer: await page.screenshot({ type: 'png' }) });
+
+      // The biggest thing on the page that is a picture of something: a diagram, a chart, a
+      // table of results. Cropped to the element, because the interesting part of a technical
+      // post is usually one figure rather than the column it sits in.
+      await page.setViewportSize({ width: 1400, height: 1000 });
+      const figure = await page.evaluate(() => {
+        const boxes = [...document.querySelectorAll('img, svg, canvas, figure, table, pre')]
+          .map((node, index) => {
+            const box = node.getBoundingClientRect();
+            return { index, area: box.width * box.height, width: box.width, height: box.height };
+          })
+          // Wider than a sidebar, shorter than a whole page, and not a hairline rule.
+          .filter((item) => item.width >= 320 && item.height >= 180 && item.height <= 1600)
+          .sort((left, right) => right.area - left.area);
+        if (!boxes.length) return -1;
+        return boxes[0].index;
+      });
+      if (figure >= 0) {
+        const handle = (await page.$$('img, svg, canvas, figure, table, pre'))[figure];
+        if (handle) {
+          shots.push({
+            kind: 'screenshot figure',
+            buffer: await handle.screenshot({ type: 'png' }),
+          });
+        }
+      }
+
+      // Something from the middle of the article, which tends to be prose plus a code block.
+      await page.setViewportSize({ width: shotWidth, height: shotHeight });
+      const middle = await page.evaluate(() => {
+        const depth = Math.max(0, document.body.scrollHeight - window.innerHeight);
+        window.scrollTo(0, Math.round(depth * 0.45));
+        return Math.round(depth * 0.45);
+      });
+      if (middle > 200) {
+        await page.waitForTimeout(500);
+        shots.push({ kind: 'screenshot middle', buffer: await page.screenshot({ type: 'png' }) });
+      }
     },
   });
   if (dom.reason) rejected.push(dom.reason);
@@ -290,12 +333,9 @@ async function collect(article, { dir }) {
       rejected.push(`page image: ${error.message} (${candidate.url})`);
     }
   }
-  if (shot)
-    await take({
-      buffer: shot,
-      kind: 'screenshot',
-      source: `${article.url} at ${shotWidth}x${shotHeight}`,
-    });
+  for (const shot of shots) {
+    await take({ buffer: shot.buffer, kind: shot.kind, source: `${article.url} (${shot.kind})` });
+  }
 
   // Logos, favicons and funder strips sort last rather than out. On a paper's page they are
   // most of what there is to find, and a menu that quietly dropped them would look like the
@@ -323,16 +363,20 @@ function kilobytes(bytes) {
  */
 function reviewDocument(issue, results) {
   const out = [
-    `# Issue ${issue} images`,
+    `# Issue ${issue} posts`,
     '',
-    'One image per article, which is the post rather than an attachment to it. Nothing is chosen for you.',
+    'One post per article: the text, and an image that is the post rather than an attachment to it. Nothing is chosen for you.',
     '',
-    'Edit the `Choice:` line under each heading and leave everything else alone:',
+    'Edit two things per article and leave the rest alone.',
+    '',
+    '`Choice:` picks the picture:',
     '',
     '- a candidate number, to use that image;',
-    '- `gif`, to have a site-capture walk of the page recorded instead;',
+    '- `gif`, to have a scroll-through of the page recorded instead;',
     '- a path or URL of your own;',
     '- `skip`, to post that one without an image.',
+    '',
+    '`Text:` is the post itself, pre-filled with the section as published and the link on the last line. Edit inside the fence; what is there at apply time is what gets posted.',
     '',
     'Then run `node scripts/newsletter/fetch-images.mjs --apply` to lay out the posts.',
     '',
@@ -341,6 +385,9 @@ function reviewDocument(issue, results) {
     out.push(`## ${position + 1}. ${result.title}`, '');
     out.push(`Source: <${result.url}>`, '');
     out.push('Choice: ', '');
+    // Fenced rather than quoted: it round-trips whitespace exactly and nothing inside it is
+    // read as markdown, so an edit means what it says.
+    out.push('Text:', '', '```', `${result.prose}`, '', result.url, '```', '');
     if (!result.candidates.length) {
       out.push('No candidate survived. Paste a path on the choice line, or write `gif`.', '');
     }
@@ -385,7 +432,8 @@ function readChoices(document) {
       .trim();
     const choice = block.match(/^Choice:[ \t]*(.*)$/m)?.[1]?.trim() ?? '';
     const files = [...block.matchAll(/<img src="images\/([^"]+)"/g)].map((match) => match[1]);
-    return { title, choice, files };
+    const text = block.match(/^Text:\s*\n```\n([\s\S]*?)\n```/m)?.[1] ?? '';
+    return { title, choice, files, text };
   });
 }
 
@@ -395,7 +443,7 @@ function readChoices(document) {
  * owner asked for and paraphrasing it here would mean editing the issue twice.
  */
 async function applyChoices(issue, articles, { imagesDir, postsDir }) {
-  const document = readFileSync(path.join(path.dirname(imagesDir), 'images.md'), 'utf8');
+  const document = readFileSync(path.join(path.dirname(imagesDir), 'posts.md'), 'utf8');
   const choices = readChoices(document);
   const pending = [];
   mkdirSync(postsDir, { recursive: true });
@@ -406,7 +454,10 @@ async function applyChoices(issue, articles, { imagesDir, postsDir }) {
     const choice = entry?.choice ?? '';
     const dir = path.join(postsDir, `${position + 1}-${slug}`);
     mkdirSync(dir, { recursive: true });
-    writeFileSync(path.join(dir, 'post.txt'), `${article.prose}\n\n${article.url}\n`);
+    // The document wins over the issue. It was pre-filled from the issue and may since have
+    // been edited, and re-deriving here would throw those edits away on every re-run.
+    const text = entry?.text?.trim() || `${article.prose}\n\n${article.url}`;
+    writeFileSync(path.join(dir, 'post.txt'), `${text}\n`);
 
     if (!choice || choice.toLowerCase() === 'skip') {
       pending.push(`${slug}: no image (choice "${choice || 'blank'}")`);
@@ -484,20 +535,30 @@ async function main() {
   }
 
   const only = typeof options.only === 'string' ? options.only : null;
-  const results = [];
-  for (const article of articles) {
-    if (only && slugFor(article.url) !== only) continue;
-    process.stdout.write(`${slugFor(article.url)}: `);
-    const result = await collect(article, { dir: imagesDir });
-    results.push(result);
-    console.log(
-      `${result.candidates.length} candidate(s)` +
-        (result.rejected.length ? `, ${result.rejected.length} not shown` : ''),
-    );
-  }
+  const wanted = articles.filter((article) => !only || slugFor(article.url) === only);
 
-  writeFileSync(path.join(workDir, 'images.md'), reviewDocument(issue, results));
-  console.log(`\nreview: tmp/issue-${issue}/images.md`);
+  // Concurrent, because almost all of the time here is a browser waiting on somebody else's
+  // network. Capped rather than unbounded: each article launches its own Chromium, and five
+  // at once on a laptop already competing with a dev server is where it stops being free.
+  const results = new Array(wanted.length);
+  let next = 0;
+  const worker = async () => {
+    while (next < wanted.length) {
+      const index = next;
+      next += 1;
+      const article = wanted[index];
+      const result = await collect(article, { dir: imagesDir });
+      results[index] = result;
+      console.log(
+        `${result.slug}: ${result.candidates.length} candidate(s)` +
+          (result.rejected.length ? `, ${result.rejected.length} not shown` : ''),
+      );
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(3, wanted.length) }, worker));
+
+  writeFileSync(path.join(workDir, 'posts.md'), reviewDocument(issue, results));
+  console.log(`\nreview: tmp/issue-${issue}/posts.md`);
 }
 
 main().catch((error) => {

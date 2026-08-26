@@ -125,23 +125,28 @@ Each article is posted to social separately, as an image post: the section prose
 node scripts/newsletter/fetch-images.mjs --issue <N>
 ```
 
-It reads the five article headings out of the assembled issue, so it runs after step 5 and not before. For each one it collects the site's og and twitter images, a page-1 render where the link is a paper or a PDF, the largest images on the rendered page, and a 1200x630 screenshot as the guaranteed floor. Logos and funder strips sort last rather than out. Everything lands in `tmp/issue-<N>/images/` and is listed in `tmp/issue-<N>/images.md`.
+It reads the five article headings out of the assembled issue, so it runs after step 5 and not before, and it takes the post text from the same place. For each article it collects the site's og and twitter images, a page-1 render where the link is a paper or a PDF, the largest images on the rendered page, and three screenshots off one page load: the hero, the biggest figure cropped to itself, and a mid-article frame. The screenshots are the floor, and the figure shot is the only thing here that catches a diagram drawn as inline SVG or canvas. Logos and funder strips sort last rather than out. Articles run concurrently. Everything lands in `tmp/issue-<N>/images/` and is listed in `tmp/issue-<N>/posts.md`.
 
-Choose nothing. The document exists to be annotated by the owner, one `Choice:` line per article: a candidate number, `gif` for a site-capture walk, a path or URL of his own, or `skip`. Hand it over at step 9 alongside the sections.
+Choose nothing, and write nothing. The document exists to be annotated by the owner, two fields per article: `Choice:` for the picture (a candidate number, `gif`, a path or URL of his own, or `skip`) and a `Text:` fence pre-filled with the section as published plus the link on the last line. Hand it over at step 9 alongside the sections.
 
 Once it comes back annotated:
 
 ```
 node scripts/newsletter/fetch-images.mjs --apply --issue <N>
+node scripts/newsletter/capture-gifs.mjs --issue <N>
 ```
 
-That writes `tmp/issue-<N>/posts/<n>-<slug>/` holding `post.txt` and the chosen image, ready to drag into Buffer's composer. Anything marked `gif` is reported as still open rather than produced: record it with the `site-capture` skill against that article's URL and drop the result into its post folder. Buffer's API is not involved and nothing is hosted, because its assets attach by public URL and must stay reachable until the post publishes, which a local file cannot do.
+`--apply` writes `tmp/issue-<N>/posts/<n>-<slug>/` holding `post.txt` and the chosen image, ready to drag into Buffer's composer. The text comes from the document rather than from the issue, so an owner edit survives a re-run; the issue only supplies the pre-fill.
+
+`capture-gifs` records a scroll-through for every article marked `gif`, in parallel, and encodes each to a GIF under 5 MB. It drives the `site-capture` skill's engine, found through `--engine`, then `SITE_CAPTURE_ENGINE`, then the installed skill, so no path into a personal install is ever committed. That engine always loads the site root before handing over to a flow, so `scripts/newsletter/capture-flow.mjs` navigates to the article first and marks the moment it lands; the runner trims everything before that mark. A walk that opens on somebody's homepage means the mark was lost, not that the URL was wrong.
+
+Buffer's API is not involved and nothing is hosted, because its assets attach by public URL and must stay reachable until the post publishes, which a local file cannot do.
 
 Nothing from this step is ever committed. `tmp/` is gitignored, and these images are somebody else's artwork borrowed for the length of one post.
 
 ## 9. Hand over
 
-Show the owner one review document: the five drafted sections, flagging any article whose grounding notes recorded a weak or failed fetch tier, followed by the events scout report from `tmp/issue-<N>/events-scout.md` — tracker update recommendations, proposed additions, proposed updates, and the rejects it dropped. If the scout found nothing, say so; an empty week is normal. If the scout has not returned yet, hand over the sections and bring the events report as soon as it lands. Link `tmp/issue-<N>/images.md` in the same handover so the pictures are chosen in one pass with everything else.
+Show the owner one review document: the five drafted sections, flagging any article whose grounding notes recorded a weak or failed fetch tier, followed by the events scout report from `tmp/issue-<N>/events-scout.md` — tracker update recommendations, proposed additions, proposed updates, and the rejects it dropped. If the scout found nothing, say so; an empty week is normal. If the scout has not returned yet, hand over the sections and bring the events report as soon as it lands. Link `tmp/issue-<N>/posts.md` in the same handover so the pictures are chosen in one pass with everything else.
 
 Stop. Publishing the issue and approving events are both the owner's call, and each event proposal needs its own explicit yes — a comment on one proposal is not approval of the rest.
 
