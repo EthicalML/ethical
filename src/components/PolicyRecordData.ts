@@ -1,4 +1,4 @@
-// The policy record: the 28 delivered policy products shown in the /policy/ reading room
+// The policy record: the 30 delivered policy products shown in the /policy/ reading room
 // (PolicyRecordPreview). Each entry carries the canonical publication link (href, usually
 // acm.org) plus curated fields: slug (matches the committed page renders under
 // public/images/policy-record/pages/<slug>/), and a neutral "what it argued" summary grounded
@@ -139,6 +139,18 @@ export const products: PolicyRecordProduct[] = [
     role: 'AUTHOR',
     summary:
       'Argues that regulatory simplification for agentic frontier models must be paired with robust technical oversight, drawing on recent frontier-model disclosures and public evaluations by the UK AI Security Institute.',
+  },
+  {
+    title: 'Frontier AI and European values',
+    instrument: 'EU AI OFFICE',
+    date: 'AUG 2026',
+    track: 'eu-ai-act',
+    href: 'https://www.acm.org/binaries/content/assets/public-policy/europe-tpc/frontier-ai-and-european-values_eurtpc_826.docx.pdf',
+    slug: '29-frontier-ai-and-european-values',
+    role: 'AUTHOR',
+    pages: 6,
+    summary:
+      'Policy brief following the first European Expert Forum on Frontier AI, arguing Europe should compete through trustworthy governance rather than computational scale alone: purpose-first lifecycle assessment, sovereignty as a layered capability beyond compute, a case-by-case rather than uniform approach to open-weight release, and cognitive sovereignty as the condition for meaningful human oversight.',
   },
   {
     title: 'Reflections on draft prEN 18282',
