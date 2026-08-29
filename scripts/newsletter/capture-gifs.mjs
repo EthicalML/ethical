@@ -31,8 +31,17 @@ const flowPath = path.join(root, 'scripts/newsletter/capture-flow.mjs');
 
 // A walk, not a tour. Long enough to read the title and see the article has a body, short
 // enough to loop on a feed without becoming wallpaper.
-const captureWidth = 1280;
-const captureHeight = 800;
+//
+// Chrome's screencast records at 25fps and Playwright cannot raise it, so smoothness has to
+// be bought on the other side of the equation: at the engine's default 460 px/s the page
+// travels ~18px between frames and reads as stutter, while 240 px/s puts it under 10px and
+// the same 25fps looks fine. The viewport is larger than the frame we actually want, with
+// zoom compensating, because the recording is made at the CSS viewport size and there is no
+// other way to get more pixels; zoom 1.25 at 1600x1000 frames exactly what 1280x800 did.
+const captureWidth = 1600;
+const captureHeight = 1000;
+const captureZoom = 1.25;
+const captureSpeed = 240;
 const maxGifBytes = 5 * 1024 * 1024;
 
 // Encoding ladder, tried in order until one lands under the cap. Frame rate goes first
@@ -205,6 +214,10 @@ async function capture(target, { engine, postsDir, workDir }) {
       String(captureWidth),
       '--height',
       String(captureHeight),
+      '--zoom',
+      String(captureZoom),
+      '--speed',
+      String(captureSpeed),
     ],
     {
       // The engine resolves Playwright from PLAYWRIGHT_MODULE when it is not a dependency of

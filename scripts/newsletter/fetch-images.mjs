@@ -99,9 +99,29 @@ function readArticles(source) {
     // Neither LinkedIn nor X renders markdown, so an inline link would post as its own
     // source. Issue prose rarely carries one, since the heading already holds the link.
     const plain = prose.join('\n\n').replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1');
-    articles.push({ title: heading[1], url: heading[2], prose: plain });
+    articles.push({
+      title: heading[1],
+      url: heading[2],
+      prose: plain,
+      short: firstSentence(plain),
+    });
   });
   return articles;
+}
+
+// X allows 280 characters and Bluesky 300, so the whole section never fits either. The
+// opening sentence is what the author shortens to by hand, and it is written as a hook
+// anyway, so it is the right pre-fill. X bills any link at 23 characters whatever its length
+// while Bluesky counts the real thing, so the budget below leaves room for the longer of the
+// two rather than the average.
+const shortProseBudget = 250;
+
+function firstSentence(prose) {
+  const match = prose.match(/^[\s\S]*?[.!?](?=\s|$)/);
+  const sentence = (match ? match[0] : prose).trim();
+  return sentence.length <= shortProseBudget
+    ? sentence
+    : `${sentence.slice(0, shortProseBudget - 1).trimEnd()}...`;
 }
 
 // The last segment that names anything. A trailing locale ("/harness/en") or an index file
@@ -382,12 +402,19 @@ function reviewDocument(issue, results) {
     '',
   ];
   results.forEach((result, position) => {
+    if (result.reuse) {
+      out.push(result.reuse, '');
+      return;
+    }
     out.push(`## ${position + 1}. ${result.title}`, '');
     out.push(`Source: <${result.url}>`, '');
-    out.push('Choice: ', '');
+    out.push(`Choice: ${result.keptChoice ?? ''}`, '');
     // Fenced rather than quoted: it round-trips whitespace exactly and nothing inside it is
     // read as markdown, so an edit means what it says.
-    out.push('Text:', '', '```', `${result.prose}`, '', result.url, '```', '');
+    const text = result.keptText || `${result.prose}\n\n${result.url}`;
+    out.push('Text:', '', '```', text, '```', '');
+    const short = result.keptShort || `${result.short}\n\n${result.url}`;
+    out.push(`Short: (X and Bluesky, ${short.length} chars)`, '', '```', short, '```', '');
     if (!result.candidates.length) {
       out.push('No candidate survived. Paste a path on the choice line, or write `gif`.', '');
     }
@@ -433,7 +460,10 @@ function readChoices(document) {
     const choice = block.match(/^Choice:[ \t]*(.*)$/m)?.[1]?.trim() ?? '';
     const files = [...block.matchAll(/<img src="images\/([^"]+)"/g)].map((match) => match[1]);
     const text = block.match(/^Text:\s*\n```\n([\s\S]*?)\n```/m)?.[1] ?? '';
-    return { title, choice, files, text };
+    const short = block.match(/^Short:[^\n]*\n\s*\n```\n([\s\S]*?)\n```/m)?.[1] ?? '';
+    // The block exactly as it stands, so an article that was not re-collected this run can be
+    // put back untouched rather than rebuilt from data the document no longer carries.
+    return { title, choice, files, text, short, raw: `## ${block.trimEnd()}` };
   });
 }
 
@@ -458,6 +488,13 @@ async function applyChoices(issue, articles, { imagesDir, postsDir }) {
     // been edited, and re-deriving here would throw those edits away on every re-run.
     const text = entry?.text?.trim() || `${article.prose}\n\n${article.url}`;
     writeFileSync(path.join(dir, 'post.txt'), `${text}\n`);
+    // The short cut is a separate file rather than a section of the same one, because the
+    // two go to different channels and each is uploaded whole.
+    const short = entry?.short?.trim() || `${article.short}\n\n${article.url}`;
+    writeFileSync(path.join(dir, 'post-short.txt'), `${short}\n`);
+    if (short.length > 280) {
+      pending.push(`${slug}: short text is ${short.length} chars, over X's 280`);
+    }
 
     if (!choice || choice.toLowerCase() === 'skip') {
       pending.push(`${slug}: no image (choice "${choice || 'blank'}")`);
@@ -557,8 +594,35 @@ async function main() {
   };
   await Promise.all(Array.from({ length: Math.min(3, wanted.length) }, worker));
 
-  writeFileSync(path.join(workDir, 'posts.md'), reviewDocument(issue, results));
-  console.log(`\nreview: tmp/issue-${issue}/posts.md`);
+  // Re-running the collection must not cost the owner his annotations. Anything already
+  // written against an article that is still in the issue is carried into the new document;
+  // only the candidate menu is rebuilt.
+  const documentPath = path.join(workDir, 'posts.md');
+  const previous = existsSync(documentPath) ? readChoices(readFileSync(documentPath, 'utf8')) : [];
+  // Every article in the issue appears in the document, whether or not it was re-collected:
+  // --only narrows the fetching, never the document, or a targeted re-run would silently
+  // delete four articles' worth of annotations.
+  const carried = articles.map((article) => {
+    const before = previous.find((entry) => entry.title === article.title);
+    const fresh = results.find((result) => result && result.title === article.title);
+    if (!fresh) {
+      return before?.raw
+        ? { reuse: before.raw }
+        : { ...article, slug: slugFor(article.url), candidates: [], rejected: ['not collected'] };
+    }
+    if (!before) return fresh;
+    return {
+      ...fresh,
+      keptChoice: before.choice,
+      keptText: before.text?.trim(),
+      keptShort: before.short?.trim(),
+    };
+  });
+  const kept = carried.filter((result) => result.keptChoice).length;
+  writeFileSync(documentPath, reviewDocument(issue, carried));
+  console.log(
+    `\nreview: tmp/issue-${issue}/posts.md` + (kept ? ` (${kept} choice(s) carried over)` : ''),
+  );
 }
 
 main().catch((error) => {
