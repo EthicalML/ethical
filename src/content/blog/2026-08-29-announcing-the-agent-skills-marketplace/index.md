@@ -1,5 +1,6 @@
 ---
 title: Announcing the Agent Skills Marketplace
+date: 2026-08-29
 image: './featured.png'
 summary: 'The Institute is releasing an open-source marketplace of portable agent skills: five skills across three plugins, written to the SKILL.md convention so the same plugin installs into both Claude Code and Copilot CLI.'
 tags: [agents, agent-skills, open-source, tooling]
@@ -77,7 +78,7 @@ Five skills across three plugins. Each one is a tool we use, not a demonstration
 
 The first of those is worth calling out, because it is the skill that governs the rest. `writing-skills` is our opinionated view of what a skill should look like, and we have written it up in full in [How to write an agent skill](/blog/how-to-write-an-agent-skill/).
 
-`standardize-agent-instructions` is the one that tends to surprise people. Most repositories that have been touched by more than one agent tool now carry three or four instruction files that have quietly diverged. The skill collapses them into a single source of truth with symlinks, which removes an entire category of "the agent ignored the rules" bug.
+[`standardize-agent-instructions`](/blog/one-source-of-truth-for-agent-instructions/) is the one that tends to surprise people. Most repositories that have been touched by more than one agent tool now carry three or four instruction files that have quietly diverged. The skill collapses them into a single source of truth with symlinks, which removes an entire category of "the agent ignored the rules" bug.
 
 ## Contributing
 

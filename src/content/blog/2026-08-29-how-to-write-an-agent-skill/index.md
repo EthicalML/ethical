@@ -1,5 +1,6 @@
 ---
 title: How to Write an Agent Skill
+date: 2026-08-29
 image: './featured.png'
 summary: 'An opinionated take on what belongs in a SKILL.md and what to delete: the description as a router, steps over prose, and how to verify a skill.'
 tags: [agents, agent-skills, context-engineering, tooling]
