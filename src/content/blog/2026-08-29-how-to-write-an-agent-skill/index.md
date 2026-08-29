@@ -6,7 +6,11 @@ summary: 'An opinionated take on what belongs in a SKILL.md and what to delete: 
 tags: [agents, agent-skills, context-engineering, tooling]
 ---
 
-Ask an agent to write you a skill and it will hand back something impressive and wrong. Six hundred lines, a Prerequisites section, an Architecture Overview, a Troubleshooting appendix, and somewhere in the middle, buried, the four commands that actually do the work.
+At some point in the last year I noticed I had stopped writing bash scripts. Not as a decision; it just happened. The small automations I used to script I now write as skills. The deterministic parts still end up as commands, but they sit inside a procedure an agent executes, and the parts that used to be a flag nobody remembers or a comment saying "use judgement here" are now actual judgement.
+
+That is the trade a skill makes, and getting it right is the whole craft: deterministic utilities where the answer is fixed, non-deterministic intelligence where it is not, each doing the job the other is bad at. Done correctly, something else falls out of it. A script is a dead end: it does one thing, and extending it means reopening it. A skill written at the right grain is a lego block, small enough to compose and stackable, so one skill becomes a step inside another and a procedure written for one job turns into a piece of a much bigger one. The set of things you can hand to an agent stops growing linearly and starts compounding.
+
+Which makes it worth being precise about how to write one, because the default is bad. Ask an agent to write you a skill and it will hand back something impressive and wrong. Six hundred lines, a Prerequisites section, an Architecture Overview, a Troubleshooting appendix, and somewhere in the middle, buried, the four commands that actually do the work.
 
 > A skill is a procedure an agent follows. Write it as if you were writing code, but in English.
 
