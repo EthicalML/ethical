@@ -108,9 +108,14 @@ export default defineConfig({
     '/_includes/subscribe-form.html': '/',
   },
   markdown: {
-    processor: unified({ rehypePlugins: [rehypeExternalLinks, rehypeSectionize] }),
-    // Never typographic quotes: authored straight quotes must render as authored.
-    smartypants: false,
+    // Never typographic punctuation: authored ASCII must render as authored. smartypants
+    // belongs on the processor rather than beside it, because a custom `processor` owns the
+    // whole markdown pipeline; setting it on `markdown` is deprecated and slated for removal,
+    // which would silently bring curly quotes and em dashes back.
+    processor: unified({
+      smartypants: false,
+      rehypePlugins: [rehypeExternalLinks, rehypeSectionize],
+    }),
   },
   integrations: [
     mdx(),
