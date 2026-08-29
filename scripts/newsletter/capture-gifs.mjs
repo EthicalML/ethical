@@ -12,9 +12,10 @@
  * will be, so its path is resolved at run time and never committed: --engine, then
  * SITE_CAPTURE_ENGINE, then the installed skill.
  *
- * Output is a GIF per article, written into that article's post folder, under the size cap.
- * GIF only: the destinations that need a picture rather than a video are the reason this
- * exists, and one artifact per post is one less thing to choose at upload time.
+ * Output is two files per article, written into that article's post folder: an mp4 carrying
+ * the walk at full quality, and a GIF of the same walk squeezed under a 5 MB cap. Upload the
+ * mp4 wherever video is accepted, which is most places and always looks better; the GIF is
+ * for wherever it is not.
  */
 
 import { execFile, execFileSync } from 'node:child_process';
@@ -145,6 +146,43 @@ async function encodeGif(webm, target, workDir, trimSeconds) {
   return { bytes: statSync(target).size, ...ladder.at(-1), overCap: true };
 }
 
+/**
+ * The same walk as video, at the recorded resolution and untouched frame rate.
+ *
+ * A GIF is a 256-colour format with no interframe compression, so holding one under a size
+ * cap means throwing away frame rate, pixels and palette until it fits, and eased scrolling
+ * over a dark page is exactly where that shows. H.264 carries the full recording at a
+ * fraction of the weight, so the mp4 is the one to upload wherever video is accepted and the
+ * GIF is the fallback for wherever it is not.
+ */
+async function encodeMp4(webm, target, trimSeconds) {
+  await run('ffmpeg', [
+    '-v',
+    'error',
+    '-y',
+    '-ss',
+    String(trimSeconds),
+    '-i',
+    webm,
+    '-c:v',
+    'libx264',
+    '-preset',
+    'slow',
+    '-crf',
+    '20',
+    // Chrome records at even dimensions already, but a scaler that lands on an odd number
+    // makes yuv420p fail outright rather than degrade.
+    '-vf',
+    'scale=trunc(iw/2)*2:trunc(ih/2)*2',
+    '-pix_fmt',
+    'yuv420p',
+    '-movflags',
+    '+faststart',
+    target,
+  ]);
+  return { bytes: statSync(target).size };
+}
+
 async function capture(target, { engine, postsDir, workDir }) {
   const slugDir = readdirSync(postsDir).find((name) => name.startsWith(`${target.position}-`));
   if (!slugDir) throw new Error(`no post folder for ${target.position}; run --apply first`);
@@ -188,8 +226,10 @@ async function capture(target, { engine, postsDir, workDir }) {
   const trim = Number(stdout.match(/^\s*([\d.]+)s\s+article\s*$/m)?.[1] ?? 0);
   const gif = path.join(postsDir, slugDir, 'image.gif');
   const encoded = await encodeGif(webm, gif, outDir, trim);
+  const mp4 = path.join(postsDir, slugDir, 'image.mp4');
+  const video = await encodeMp4(webm, mp4, trim);
   rmSync(outDir, { recursive: true, force: true });
-  return { slugDir, gif, trim, ...encoded };
+  return { slugDir, gif, mp4, trim, video, ...encoded };
 }
 
 async function main() {
@@ -248,10 +288,12 @@ async function main() {
       console.log(`${target.title}: FAILED - ${result.reason.message}`);
       return;
     }
-    const { bytes, fps, width, overCap } = result.value;
+    const { bytes, fps, width, overCap, video } = result.value;
+    const mb = (value) => `${(value / 1024 / 1024).toFixed(1)} MB`;
     console.log(
-      `${target.title}: ${(bytes / 1024 / 1024).toFixed(1)} MB at ${fps}fps ${width}px -> ` +
-        `${path.relative(root, result.value.gif)}` +
+      `${target.title}\n` +
+        `  mp4 ${mb(video.bytes)} at ${captureWidth}x${captureHeight} -> ${path.relative(root, result.value.mp4)}\n` +
+        `  gif ${mb(bytes)} at ${fps}fps ${width}px -> ${path.relative(root, result.value.gif)}` +
         (overCap ? ' (OVER the 5 MB cap even at the lowest rung)' : ''),
     );
   });
