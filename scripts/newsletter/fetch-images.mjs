@@ -472,7 +472,7 @@ function readChoices(document) {
  * as it was published, with the link on its own last line, because that is the shape the
  * owner asked for and paraphrasing it here would mean editing the issue twice.
  */
-async function applyChoices(issue, articles, { imagesDir, postsDir }) {
+async function applyChoices(articles, { imagesDir, postsDir }) {
   const document = readFileSync(path.join(path.dirname(imagesDir), 'posts.md'), 'utf8');
   const choices = readChoices(document);
   const pending = [];
@@ -561,7 +561,7 @@ async function main() {
   mkdirSync(imagesDir, { recursive: true });
 
   if (options.apply) {
-    const pending = await applyChoices(issue, articles, {
+    const pending = await applyChoices(articles, {
       imagesDir,
       postsDir: path.join(workDir, 'posts'),
     });
