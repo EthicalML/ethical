@@ -1,5 +1,9 @@
 # Newsletter voice
 
+Read `.github/instructions/voice.instructions.md` first. It is the shared core for both blog and newsletter prose: personification, sentence shape, no superfluous text, banned constructions and banned words. It applies to every issue from 402 on, and nothing below relaxes it.
+
+This file is the newsletter's own structure and register, which the shared core does not cover and does not override.
+
 Mined from issues 359-398 (198 article sections) by `scripts/newsletter/style-corpus.mjs`. Regenerate with `node scripts/newsletter/style-corpus.mjs --issues 40` and re-curate this file when the voice drifts.
 
 Keep the window at 40 issues. Over the full 398-issue archive the colon-lede rate falls from 58% to 27% and the median section halves from 158 to 70 words: the current voice is recent, and mining the whole archive teaches the wrong one.
@@ -20,6 +24,8 @@ Per issue: 5 sections, 789 words and 29 sentences of article prose in total.
 ## The lede
 
 58% of sections open with a scene-setting first sentence that ends in a colon, then the detail follows. This is the single strongest structural tell of the voice.
+
+The blog bans mid-prose apposition after a colon ("The rule is simple: ..."), where the second half restates the first. This is not that: the lede names the actor and the release, and the colon introduces the detail that follows, which is the use every guide permits. Do not "fix" a lede into a single sentence.
 
 > Netflix has developed an LLM-native Recommender System, and they share some of the learnings they gathered along the journey:
 
@@ -83,7 +89,11 @@ Hedges are load-bearing, not filler. Use them: `it seems that` 13/10 · `seems t
 
 ## Never
 
-These appear zero times in 198 sections. Writing any of them breaks the voice instantly: `delve`, `game-changing`, `revolutionary`, `pivotal`, `testament`, `crucial`, `moreover`, `furthermore`. Near-zero and only in technical senses: `seamless` 2, `landscape` 2, `leverage` 4, `unlock` 7, `harness` 9 (always "agent harness"), `robust` 11.
+The shared core's banned word list holds, and every word on it is already absent or near-absent from the corpus. Three of them need a newsletter reading:
+
+- `harness` is allowed as a noun, because the newsletter reports on agent harnesses by name ("DeepSeek's Agent Harness"). The verb is not.
+- `journey` and `showcase` are banned in the prose. Their handful of corpus uses are a talk title and a product's own page name, which the "unless quoting a source, a title or a product name" exception already covers.
+- `leverage` (4 uses) and the near-zero `seamless`, `landscape` and `robust` stay banned or near-banned. `unlock` (7) is not banned anywhere and stays available.
 
 Also never: bullets inside an article section; a second link to the source already linked in the heading; a summary sentence that restates the heading; "In this article the authors".
 

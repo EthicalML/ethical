@@ -72,7 +72,7 @@ When a source survives every tier unread, stop on that article: leave its `TODO 
 
 ## 4. Draft the five sections
 
-Read `references/style.md` in full. Then write one paragraph per article, ordered hook first, substance in slots 2 to 4, lighter closer last.
+Read `.github/instructions/voice.instructions.md` and `references/style.md`, both in full. The first is the shared core the blog and the newsletter both obey; the second is the newsletter's own shape and register, and it never relaxes the first. Then write one paragraph per article, ordered hook first, substance in slots 2 to 4, lighter closer last.
 
 Headings are short editorial rewrites of three to six words, not the source's own title, often `<Actor> on <Thing>` ("Netflix on the LLM-Native RecSys"). Each wraps its whole title in one link. Step 6 joins them into the summary, so write them to read well in a list.
 
@@ -81,7 +81,7 @@ Constraints, all from `references/style.md`:
 - About 789 words of article prose across the issue, with real variance between sections. The median section is 158 words and the corpus runs 31 to 291; five sections near 160 is more uniform than anything published.
 - Roughly three of five sections open on a colon-lede, the rest on a short exclamation or question.
 - Exclamation marks and semicolons belong mid-paragraph, not only in the opener: about four or five of each per issue.
-- No bullets, no sub-headings, no second link to a source already in its heading, none of the banned words.
+- No bullets, no sub-headings, no second link to a source already in its heading, none of the banned words or constructions.
 - Close every section on an editorial beat.
 - Attribute claims to the source ("they claim", "OpenAI estimates") rather than asserting vendor numbers as fact.
 
@@ -110,6 +110,7 @@ You can also find our upcoming events and past talk recordings on the [talks and
 ```
 node scripts/newsletter/style-corpus.mjs --lint src/content/newsletter/<N>.md
 npx prettier --write src/content/newsletter/<N>.md
+npm run check:voice
 npm run check
 ```
 
