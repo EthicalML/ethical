@@ -16,16 +16,16 @@ This post covers what good skills look like: the 5 principles I follow, an optio
 
 ## The 5 Principles, Plus an Optional One
 
-- The description is a router, so it says when to use the skill in the words a user would type.
-- The body is steps, and anything that isn't a step gets deleted.
-- Scripts carry the fixed sequences, and the agent carries the judgement calls.
-- `SKILL.md` holds only what every run needs.
-- Verification is a step of the procedure, for the output and for the skill itself.
-- Optionally, a human feedback loop, where the skill ends by reporting its own friction upstream.
+1. The description is a router, so it says when to use the skill in the words a user would type.
+2. The body is steps, and anything that isn't a step gets deleted.
+3. Scripts carry the fixed sequences, and the agent carries the judgement calls.
+4. `SKILL.md` holds only what every run needs.
+5. Verification is a step of the procedure, for the output and for the skill itself.
+6. Optionally, a human feedback loop, where the skill ends by reporting its own friction upstream.
 
 The rest of the post goes through each one with a bad and a good example.
 
-## The Description Is a Router
+## Principle 1: The Description Is a Router
 
 A skill is a folder with a `SKILL.md` at its root. The frontmatter carries the `name` and the `description`, and the body carries the procedure. The description is the only part the agent sees before deciding whether to load the skill, so it works as a matching rule against the task in front of it.
 
@@ -45,7 +45,7 @@ description: Succinct walkthrough of a code change. Use when the user asks to ex
 
 The second one names the trigger phrases and the accepted inputs. I write the description last, once I know what the skill actually does, and I write it for the router rather than for the reader.
 
-## The Body Is Steps and Nothing Else
+## Principle 2: The Body Is Steps and Nothing Else
 
 The body of the skill is the procedure, written as steps that the agent executes in order.
 
@@ -89,7 +89,7 @@ Error handling stays though, and it goes inside the step that fails. A line like
 
 Getting to the simple solution is often harder than accepting the complicated default, and that extra work is pretty much the point of the exercise. I add complexity when it's required, not before, and not after.
 
-## Scripts and Judgement Are Different Tools
+## Principle 3: Scripts and Judgement Are Different Tools
 
 After many iterations building and using skills, I found the sweet spot by using deterministic scripts where the actions are clear (carrying out auth, executing against an API, etc), and leaning on non-deterministic intelligence where the task benefits from logic (something not working, building a creative structure like a document or deck, etc).
 
@@ -112,7 +112,7 @@ This can fail in both directions, and I've hit both:
 - Put too much in the script and the skill becomes a thin wrapper around a program, at which point you didn't need a skill and could just use the program directly.
 - Put too much on the agent and the skill burns minutes and thousands of tokens re-deriving something that we could easily do with a five-line shell script.
 
-## SKILL.md Only Holds What Every Run Needs
+## Principle 4: SKILL.md Only Holds What Every Run Needs
 
 `SKILL.md` loads on every invocation, and it consumes context before the agent has looked at a single file of the actual task. So my rule is that `SKILL.md` holds the steps, their conditions, and their commands, and nothing else.
 
@@ -133,7 +133,7 @@ An example of progressive disclosure is our `release-repo` skill, which keeps ea
 
 One more thing I avoid is restating what a schema or a type already says. If the source of truth is unclear, the fix belongs in the source of truth. A skill that duplicates a schema will disagree with it within a month.
 
-## Verify the Output, Then Verify the Skill
+## Principle 5: Verify the Output, Then Verify the Skill
 
 When nobody checks the output of a skill, it will eventually produce wrong output and nothing in the run will flag it. So I put verification in the procedure as its own step, and I size it to what's at stake:
 
@@ -157,7 +157,7 @@ Every one of those is a defect in the skill and not in the model, as a step that
 
 I run this a handful of times, and I run it on a cheaper model than the one I'm targeting. A cheap model is a more honest test, as it will fall into every hole that a strong model steps over.
 
-## The Optional Principle: A Human Feedback Loop
+## Principle 6 (Optional): A Human Feedback Loop
 
 There's a sixth principle that I've been introducing gradually, and this is the one that has genuinely blown my mind. The skill ends with a step where it reports its own friction back to a human. After the last step, the agent looks back at the run and identifies anything that took more than a couple of attempts, any workaround it had to invent, and any knowledge it picked up that the skill doesn't capture.
 
