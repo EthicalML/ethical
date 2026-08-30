@@ -91,7 +91,7 @@ Run `node scripts/newsletter/new-issue.mjs` to write `src/content/newsletter/<N>
 
 The weekly list mirrors the five headings and inverts their link convention: headings link the whole title, bullets link only part of the phrase. Keep the three fixed trailing bullets; the backslash in `\+ more 🚀` is required Markdown escaping.
 
-Check the events list against the new issue date and drop anything that has already happened. The scaffold copies it forward blind.
+Reconcile the events list against the future events in `src/content/events.yaml`, in both directions: drop anything that has already happened by the issue date, and add any tracked future event the block is missing (the scaffold copies the block forward blind, so an event added to the yaml after the block was last edited stays silently absent forever - issues up to 402 ran with two tracked Amsterdam events missing this way). Events the owner is speaking at go under the speaking heading; everything else under other relevant events, sorted by date.
 
 Keep the `/talks-and-events/` backlink paragraph that sits under the events lede; every issue carries it so a reader who lands on an issue through search can reach the talks and events page. The scaffold carries it forward with the rest of the events block, so this is a check rather than an edit:
 
