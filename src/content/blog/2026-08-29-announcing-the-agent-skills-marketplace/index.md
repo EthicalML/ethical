@@ -10,7 +10,7 @@ tags: [agents, agent-skills, open-source, tooling]
 
 Today we are releasing the [Agent Skills Marketplace](/open-source/agent-skills-marketplace/), an open-source catalogue of portable agent skills that we maintain at the Institute.
 
-We are releasing nine skills across three plugins (under Apache License), and all of them install into both Claude Code and Copilot CLI.
+We are releasing 11 skills across three plugins (under Apache License), and all of them install into both Claude Code and Copilot CLI.
 
 ## Why Agent Skills Are Gaining Popularity
 
@@ -62,7 +62,7 @@ We make sure that every change runs `scripts/validate.sh` in CI. The script chec
 
 ## What We Are Releasing Today
 
-Each of the nine skills is a tool we use in our own day-to-day work, across this site's repository, the [KAOS](https://github.com/axsaucedo/kaos) project and the marketplace itself.
+Each of the 11 skills is a tool we use in our own day-to-day work, across this site's repository, the [KAOS](https://github.com/axsaucedo/kaos) project and the marketplace itself.
 
 | Plugin                 | Skill                            | What it does                                                                                                                |
 | ---------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
@@ -75,6 +75,8 @@ Each of the nine skills is a tool we use in our own day-to-day work, across this
 | `codebase-automations` | `release-repo`                   | Scores a repository's release readiness and executes a semantic version release end to end.                                 |
 | `workflow-automations` | `site-capture`                   | Records a scripted screen capture of a site as video or GIF, with human-paced scrolling, clicks and a visible cursor.       |
 | `workflow-automations` | `create-agent-harness`           | Builds a skill-driven Python agent harness with deferred capability loading against any OpenAI-compatible endpoint.         |
+| `workflow-automations` | `create-streamlit-app`           | Scaffolds a local Streamlit and Polars data app with pluggable file, SQL, HTTP or snapshot datasources.                     |
+| `workflow-automations` | `verify-streamlit-app`           | Drives a headless browser against a running Streamlit app to confirm it genuinely renders, from a manual loop to a pytest suite. |
 
 The first of those is worth calling out because it's the skill that governs the rest. `writing-skills` encodes our opinionated view of what a skill should look like, and we have written it up in full in [How to write an agent skill](/blog/how-to-write-an-agent-skill/).
 
