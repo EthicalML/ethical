@@ -8,15 +8,15 @@ tags: [agents, agent-skills, context-engineering, tooling]
 
 > ["The hottest new programming language is English."](https://x.com/karpathy/status/1617979122625712128) - Andrej Karpathy, 2023
 
-At some point in the last year I noticed I had stopped writing bash scripts. It wasn't an explicit decision I made, it just happened organically as the small automations I used to script became skills instead. The deterministic parts still end up as commands, but now they sit inside a procedure that an agent executes. The judgement calls used to be a flag nobody remembers or a comment saying "use judgement here", and now they are actual judgement.
+At some point in the last year I noticed I had stopped writing bash scripts. It wasn't an explicit decision I made, it just happened organically as the small automations I used to script became skills instead. The deterministic parts still end up as commands, but now they sit inside a procedure that an agent executes.
 
-I believe this balance is what a skill gets you, and finding it is a craft in itself. You want deterministic utilities where the answer is fixed, and you want non-deterministic intelligence where it's not, so each side does the job the other is bad at.
+After many iterations building and using skills, I found the sweet spot by using deterministic scripts where the actions are clear (carrying out auth, executing against an API, etc), and leaning on non-deterministic intelligence where the task benefits from logic (something not working, building a creative structure like a document or deck, etc).
 
-A script does one thing, and extending it means reopening it. A skill written at the right grain works more like a lego block, so you can compose them and stack them, and one skill becomes a step inside another. Each new skill can build on the ones already written, which means the collection compounds instead of growing one automation at a time.
+A skill written at the right grain works more like a lego block, so you can compose them and stack them, and one skill becomes a step inside another. Each new skill can build on the ones already written, and the collection compounds instead of growing one automation at a time.
 
-Being precise about how to write one is important nowadays because the default is just not great. Whenever I blindly delegate the skill writing to an agent, I end up getting a bunch of AI slop; it ends up being more of a menu of suggestions than an actual recipe. I get six hundred lines, a Prerequisites section, an Architecture Overview, a Troubleshooting appendix, and somewhere in the middle, buried, the four commands that actually do the work.
+Whenever I blindly delegate the skill writing to an agent, I end up getting a bunch of AI slop; it ends up being more of a menu of suggestions than an actual recipe. I get 600 lines, a Prerequisites section, an Architecture Overview, a Troubleshooting appendix, the entire history of the program's changes (context you don't need when executing it), and somewhere in the middle, buried, the four commands that actually do the work.
 
-A skill is a procedure an agent follows, so I write it as if I were writing code, but in English. I try to be exact and deterministic where the answer is fixed, and I leave room for judgement where it's not. This is the view I encoded in the [`writing-skills`](https://github.com/EthicalML/agent-skills-marketplace/tree/master/plugins/dev-utilities/skills/writing-skills) skill that we published in the [Agent Skills Marketplace](/blog/announcing-the-agent-skills-marketplace/).
+A skill is a procedure an agent follows, so I write it as if I were writing code, but in English. I encoded this view in the [`writing-skills`](https://github.com/EthicalML/agent-skills-marketplace/tree/master/plugins/dev-utilities/skills/writing-skills) skill that we published in the [Agent Skills Marketplace](/blog/announcing-the-agent-skills-marketplace/).
 
 ## The Two Halves of a SKILL.md
 
@@ -53,7 +53,7 @@ The second one names the trigger phrases and the accepted inputs. I write the de
 
 If something isn't a step and it isn't the outline, it probably doesn't belong. Prose in a skill is dead weight, and the agent pays for it on every single run.
 
-This is where I see most skills go wrong, so it's worth being blunt about what to delete:
+Most skills I review need the same deletions:
 
 - The introduction explaining what the tool is.
 - The architecture section.
@@ -79,9 +79,9 @@ I put that inline in the step that does the upload, and not in a Troubleshooting
 
 ## Scripts and Judgement Are Different Tools
 
-A sequence of steps that never varies is a script. When I see authenticate, call the API, validate the response, build the output, I write that as a script and have the skill invoke it. The agent shouldn't be re-deriving a fixed sequence token by token on every run.
+When a sequence of steps never varies, I write it as a script and have the skill invoke it, as the agent shouldn't be re-deriving fixed commands token by token on every run.
 
-A judgement call is a step that requires reading a source, choosing between valid options, writing content, or judging whether the output is good enough. I leave those to the agent, and I give it the rule it must follow rather than the answer.
+I leave the judgement calls to the agent, like reading a source, choosing between valid options, or judging whether the output is good enough, and I give it the rule it must follow rather than the answer.
 
 This can fail in both directions, and I've hit both:
 
@@ -108,7 +108,7 @@ When nobody checks the output of a skill, it will eventually produce wrong outpu
 - A gate that confirms the prerequisites exist.
 - A single command whose exit code decides whether the skill continues.
 
-The temptation is to overbuild here because verification feels virtuous. It's not free though, as every check adds context and wall-clock time on every run, so I verify proportionately and push the heavier checks behind a condition.
+I try not to overbuild the checks though, as every check adds context and wall-clock time on every run, so I verify proportionately and push the heavier checks behind a condition.
 
 ## Verify the Skill by Making a Blind Agent Run It
 

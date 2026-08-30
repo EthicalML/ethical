@@ -42,6 +42,8 @@ Other register rules:
 
 - Conversational questions and interjections are fine ("Well, which one is it?"); declarative punch fragments that close or restate a point are not.
 - Prefer common words. Do not reach for a vivid uncommon verb ("evaporates") when a plain phrase does the job ("is ephemeral", "disappears").
+- Write numbers as digits (600), not spelled out (six hundred).
+- Ground claims in experience with inline parenthetical examples, "etc" welcome: "After many iterations building and using skills, I found the sweet spot by using deterministic scripts where the actions are clear (carrying out auth, executing against an API, etc), and leaning on non-deterministic intelligence where the task benefits from logic (something not working, building a creative structure like a document or deck, etc)." That sentence replaced "I believe this balance is what a skill gets you, and finding it is a craft in itself. You want deterministic utilities where the answer is fixed..." - the difference is the pattern.
 - Use contractions naturally ("wasn't", "it's", "I've").
 - Casual hedges and colloquial fillers are part of the register ("just", "a bunch of", "pretty much", "nowadays", "organically").
 - Colons only introduce lists, enumerations or code blocks; mid-prose apposition ("The rule is simple: ...") gets merged into one sentence instead.
@@ -76,6 +78,9 @@ Banned constructions (LLM tells):
 - Copula avoidance ("serves as", "stands as", "functions as", "marks"): write "is".
 - Metaphor equations ("Context is the budget, and the skill spends it..."). Say the plain fact instead.
 - A follow-up sentence that labels the previous one ("This is progressive disclosure."). Fold the term in ("An example of progressive disclosure is when...").
+- Gerund equations of the form "X is Y, and doing-Z means W" ("A script does one thing, and extending it means reopening it."). Cryptic and hard to parse; say it plainly or delete it.
+- Abstract throat-clearing paragraph openers that frame the point before making it ("Being precise about how to write one is important nowadays because..."). Open the paragraph with the point itself.
+- Symmetric wrap-up clauses tacked onto a finished sentence ("...so each side does the job the other is bad at."). The sentence was done; end it.
 - The rule of three as a reflex; vague attribution ("experts argue") without a named source.
 
 Banned words unless quoting a source: testament, underscore, propel, unwavering, heartfelt, embrace, foster, ignite, empower, amplify, catalyst, leverage, epitome, cornerstone, harness, noteworthy, unprecedented, profound, pivotal, journey, delve, crucial, tapestry, showcase, vibrant, groundbreaking, "diverse array", "failure modes" (write "common failures"), ship/shipping (write release, publish, or land). Use plain alternatives: shows, indicates, supports, argues.
