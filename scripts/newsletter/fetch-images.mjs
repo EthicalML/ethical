@@ -101,7 +101,8 @@ function readArticles(source) {
     const plain = prose.join('\n\n').replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1');
     articles.push({
       title: heading[1],
-      url: heading[2],
+      // Own posts link site-relative in the issue; the social post needs the full URL.
+      url: new URL(heading[2], 'https://ethical.institute').href,
       prose: plain,
       short: firstSentence(plain),
     });

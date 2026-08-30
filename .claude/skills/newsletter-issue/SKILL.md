@@ -35,6 +35,8 @@ Spawn a subagent with the prompt "Read .claude/skills/newsletter-issue/workflows
 
 Read `references/selection.md` in full, score the digest against its rules, and cut to the 15 strongest.
 
+Before writing the shortlist, resolve every link against the pool: each URL comes from the matching entry in `scripts/newsletter/data/candidates.json`, copied verbatim. Never link a bare host and never complete a truncated URL from memory, a digest row missing its full URL is recovered from the pool, and if it is not in the pool either, that is a digest defect to send back to the subagent, not a gap to paper over. The owner reviews the shortlist by clicking through; one guessed slug poisons the whole list's credibility.
+
 Write the shortlist to `tmp/issue-<N>/shortlist.md` — the owner reviews it as a file, not as chat output. It carries four parts:
 
 1. A table of the 15, each row with the digest facts: source, points (or `—`), age, host, kind and word count.
