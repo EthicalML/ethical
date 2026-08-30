@@ -28,6 +28,7 @@ jobs:
     outputs:
       code: ${{ steps.filter.outputs.code }}
       lint: ${{ steps.filter.outputs.lint }}
+      content: ${{ steps.filter.outputs.content }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -43,6 +44,8 @@ jobs:
           CODE_PATHS: src public scripts package.json package-lock.json astro.config.mjs tsconfig.json .tool-versions STYLES.md TRANSITIONS.md CANVAS-WIDGETS.md .github/workflows
           # What `npm run lint` and `npm run format:check` actually cover.
           LINT_PATHS: src scripts astro.config.mjs eslint.config.mjs prettier.config.mjs package.json package-lock.json tsconfig.json .github/copilot-instructions.md README.md .github/workflows
+          # What `npm run check:voice` reads: authored blog and newsletter prose.
+          CONTENT_PATHS: src/content/blog src/content/newsletter
         run: |
           # Anything that is not a pull request has no merge base to diff, so it
           # runs everything rather than guessing.
@@ -50,16 +53,18 @@ jobs:
             echo 'Not a pull request; running every job.'
             echo 'code=true' >> "$GITHUB_OUTPUT"
             echo 'lint=true' >> "$GITHUB_OUTPUT"
+            echo 'content=true' >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git fetch --no-tags --prune origin "$GITHUB_BASE_REF"
           base=$(git merge-base "origin/$GITHUB_BASE_REF" HEAD)
           echo "Merge base: $base"
           git diff --name-only "$base" HEAD | sed 's/^/  /'
-          for group in code lint; do
+          for group in code lint content; do
             case "$group" in
               code) paths="$CODE_PATHS" ;;
               lint) paths="$LINT_PATHS" ;;
+              content) paths="$CONTENT_PATHS" ;;
             esac
             # shellcheck disable=SC2086
             if [ -n "$(git diff --name-only "$base" HEAD -- $paths)" ]; then
@@ -83,6 +88,8 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run format:check
+      - run: npm run check:voice
+        if: needs.changes.outputs.content == 'true'
   typecheck:
     needs: changes
     if: needs.changes.outputs.code == 'true'
