@@ -64,18 +64,18 @@ We make sure that every change runs `scripts/validate.sh` in CI. The script chec
 
 Each of the 11 skills is a tool we use in our own day-to-day work, across this site's repository, the [KAOS](https://github.com/axsaucedo/kaos) project and the marketplace itself.
 
-| Plugin                 | Skill                            | What it does                                                                                                                |
-| ---------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `dev-utilities`        | `writing-skills`                 | Writes or revises a `SKILL.md` so it reads as executable instructions rather than prose.                                    |
-| `dev-utilities`        | `writing-agents-md`              | Cuts a repository's agent instruction files down to what every session actually needs.                                      |
-| `dev-utilities`        | `explain-code-walkthrough`       | Turns a commit, pull request, diff or git range into a succinct walkthrough of what changed and why.                        |
-| `dev-utilities`        | `standardize-agent-instructions` | Consolidates a repository's agent instruction files so one set works across Copilot, Claude Code, Codex, Cursor and Gemini. |
-| `codebase-automations` | `dependabot-fix`                 | Diagnoses and fixes one failing Dependabot pull request end to end, and merges it only when the checks prove it safe.       |
-| `codebase-automations` | `dependabot-fix-all`             | Processes every open Dependabot pull request on autopilot, one isolated fix at a time.                                      |
-| `codebase-automations` | `release-repo`                   | Scores a repository's release readiness and executes a semantic version release end to end.                                 |
-| `workflow-automations` | `site-capture`                   | Records a scripted screen capture of a site as video or GIF, with human-paced scrolling, clicks and a visible cursor.       |
-| `workflow-automations` | `create-agent-harness`           | Builds a skill-driven Python agent harness with deferred capability loading against any OpenAI-compatible endpoint.         |
-| `workflow-automations` | `create-streamlit-app`           | Scaffolds a local Streamlit and Polars data app with pluggable file, SQL, HTTP or snapshot datasources.                     |
+| Plugin                 | Skill                            | What it does                                                                                                                     |
+| ---------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `dev-utilities`        | `writing-skills`                 | Writes or revises a `SKILL.md` so it reads as executable instructions rather than prose.                                         |
+| `dev-utilities`        | `writing-agents-md`              | Cuts a repository's agent instruction files down to what every session actually needs.                                           |
+| `dev-utilities`        | `explain-code-walkthrough`       | Turns a commit, pull request, diff or git range into a succinct walkthrough of what changed and why.                             |
+| `dev-utilities`        | `standardize-agent-instructions` | Consolidates a repository's agent instruction files so one set works across Copilot, Claude Code, Codex, Cursor and Gemini.      |
+| `codebase-automations` | `dependabot-fix`                 | Diagnoses and fixes one failing Dependabot pull request end to end, and merges it only when the checks prove it safe.            |
+| `codebase-automations` | `dependabot-fix-all`             | Processes every open Dependabot pull request on autopilot, one isolated fix at a time.                                           |
+| `codebase-automations` | `release-repo`                   | Scores a repository's release readiness and executes a semantic version release end to end.                                      |
+| `workflow-automations` | `site-capture`                   | Records a scripted screen capture of a site as video or GIF, with human-paced scrolling, clicks and a visible cursor.            |
+| `workflow-automations` | `create-agent-harness`           | Builds a skill-driven Python agent harness with deferred capability loading against any OpenAI-compatible endpoint.              |
+| `workflow-automations` | `create-streamlit-app`           | Scaffolds a local Streamlit and Polars data app with pluggable file, SQL, HTTP or snapshot datasources.                          |
 | `workflow-automations` | `verify-streamlit-app`           | Drives a headless browser against a running Streamlit app to confirm it genuinely renders, from a manual loop to a pytest suite. |
 
 The first of those is worth calling out because it's the skill that governs the rest. `writing-skills` encodes our opinionated view of what a skill should look like, and we have written it up in full in [How to write an agent skill](/blog/how-to-write-an-agent-skill/).

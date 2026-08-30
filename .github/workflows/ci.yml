@@ -83,6 +83,7 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run format:check
+      - run: npm run check:voice
   typecheck:
     needs: changes
     if: needs.changes.outputs.code == 'true'

@@ -26,6 +26,7 @@
     "styles:sync": "node scripts/verify/verify-styles-doc.mjs --sync",
     "check:styles-doc": "node scripts/verify/verify-styles-doc.mjs",
     "check:motion-docs": "node scripts/verify/verify-motion-docs.mjs",
+    "check:voice": "bash scripts/verify/check-voice.sh",
     "verify:canvas-surface": "node scripts/verify/verify-canvas-surface.mjs"
   },
   "dependencies": {

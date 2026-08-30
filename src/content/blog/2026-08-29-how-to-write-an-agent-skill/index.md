@@ -53,15 +53,19 @@ Side note rant: agents are just too verbose by default, and the default iteratio
 
 ```markdown
 ## Overview
+
 This skill provides a comprehensive framework for managing releases...
 
 ## Architecture
+
 The release pipeline consists of three layers...
 
 ## Prerequisites
+
 ...
 
 ## Troubleshooting
+
 ...
 ```
 
