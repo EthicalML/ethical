@@ -101,7 +101,8 @@ function readArticles(source) {
     const plain = prose.join('\n\n').replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1');
     articles.push({
       title: heading[1],
-      url: heading[2],
+      // Own posts link site-relative in the issue; the social post needs the full URL.
+      url: new URL(heading[2], 'https://ethical.institute').href,
       prose: plain,
       short: firstSentence(plain),
     });
@@ -111,17 +112,23 @@ function readArticles(source) {
 
 // X allows 280 characters and Bluesky 300, so the whole section never fits either. The
 // opening sentence is what the author shortens to by hand, and it is written as a hook
-// anyway, so it is the right pre-fill. X bills any link at 23 characters whatever its length
-// while Bluesky counts the real thing, so the budget below leaves room for the longer of the
-// two rather than the average.
-const shortProseBudget = 250;
-
+// anyway, so it is the right pre-fill. No programmatic cropping: a short over the cap is
+// reported as an open item for the reviewing agent to crop with judgement, never cut
+// mid-thought by code.
 function firstSentence(prose) {
   const match = prose.match(/^[\s\S]*?[.!?](?=\s|$)/);
-  const sentence = (match ? match[0] : prose).trim();
-  return sentence.length <= shortProseBudget
-    ? sentence
-    : `${sentence.slice(0, shortProseBudget - 1).trimEnd()}...`;
+  return (match ? match[0] : prose).trim();
+}
+
+// The owner splits the reviewed post into short line-shaped paragraphs, so the first line
+// of the edited text is the hook and the natural short post. Falls back to the first
+// sentence when the first line runs on.
+function firstLine(text) {
+  const line = text
+    .split('\n')
+    .map((part) => part.trim())
+    .find((part) => part && !/^https?:\/\//.test(part));
+  return line ?? firstSentence(text);
 }
 
 // The last segment that names anything. A trailing locale ("/harness/en") or an index file
@@ -489,8 +496,11 @@ async function applyChoices(articles, { imagesDir, postsDir }) {
     const text = entry?.text?.trim() || `${article.prose}\n\n${article.url}`;
     writeFileSync(path.join(dir, 'post.txt'), `${text}\n`);
     // The short cut is a separate file rather than a section of the same one, because the
-    // two go to different channels and each is uploaded whole.
-    const short = entry?.short?.trim() || `${article.short}\n\n${article.url}`;
+    // two go to different channels and each is uploaded whole. An empty Short fence is not
+    // an error: it means "derive from the post", taking the first line of the EDITED text
+    // (the owner splits posts by lines, so the first line is the hook) rather than the
+    // issue prose an owner edit has since replaced.
+    const short = entry?.short?.trim() || `${firstLine(text)}\n\n${article.url}`;
     writeFileSync(path.join(dir, 'post-short.txt'), `${short}\n`);
     if (short.length > 280) {
       pending.push(`${slug}: short text is ${short.length} chars, over X's 280`);

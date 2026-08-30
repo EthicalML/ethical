@@ -14,6 +14,8 @@ Executed by a subagent. Input from the spawning prompt: any owner-supplied URLs 
 
    `feeds` polls a hand-picked table of publisher blogs, so authoritative writing is picked up even when it never trends. Cap each publisher with `--per-feed N` (default 5).
 
+   A skipped feed is a blocking defect: fix it and re-run before continuing (usually `npx playwright install chromium`). A feed that cannot be fixed from this machine goes in the digest's first line.
+
 2. Review the ranked pool:
 
    ```
@@ -29,3 +31,5 @@ Executed by a subagent. Input from the spawning prompt: any owner-supplied URLs 
    Own content — the author's talks, projects and initiatives, and work they are connected to — is eligible and must be surfaced, flagged as own content, never silently dropped.
 
 5. Return all skimmed candidates as a factual digest table, each row carrying: URL, source, points (or `—`), age, host, kind, word count, the central actor, one line on what the piece claims, and one line on how far it develops the claim. Flag own content. Record facts, not verdicts — no scores, no ranking of your own, no rejections.
+
+   Every URL is the pool entry's, copied verbatim and complete: never a bare host, never truncated to fit the table. A shortened URL reaches the owner as a broken link.

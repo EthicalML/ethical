@@ -3,13 +3,13 @@
 #
 # `watchlist` is owner-curated; the scout proposes changes in its report but
 # never edits it. Two tiers:
-#   feature   — flagship: the scout proposes confirmed next editions straight
+#   feature   - flagship: the scout proposes confirmed next editions straight
 #               into src/content/events.yaml.
-#   cfp-track — worth speaking at, not showcase-worthy: the scout reports CFP
+#   cfp-track - worth speaking at, not showcase-worthy: the scout reports CFP
 #               windows and deadlines only; the event enters events.yaml only
 #               once a talk is confirmed or the owner partners with it.
-# `scouted` is the scout's own memory — one-off candidates and the known state
-# of watchlist entries (`status: tracked`) — so nothing is researched from
+# `scouted` is the scout's own memory - one-off candidates and the known state
+# of watchlist entries (`status: tracked`) - so nothing is researched from
 # scratch again until a deadline nears, an edition passes, or the record ages
 # out (~90 days); the scout maintains it freely. Seeded from the 2026-08-15 watchlist research
 # (tables posted on PR #100).
@@ -39,9 +39,9 @@ watchlist:
     - name: RAISE Summit Paris
       note: new since 2024; Paris flagship, watch trajectory
     - name: AI Engineer World's Fair
-      note: US, unique flagship — standing exception to the Europe rule
+      note: US, unique flagship - standing exception to the Europe rule
     - name: MLOps World
-      note: US, unique flagship in the MLOps niche — standing exception; moved Austin to SF
+      note: US, unique flagship in the MLOps niche - standing exception; moved Austin to SF
   cfp-track:
     - name: Rise of AI Berlin
       note: ~300 curated seats, German-ecosystem lineup; attend because Berlin
@@ -69,14 +69,14 @@ watchlist:
       note: sell-out dev event; 2026 theme is agentic engineering
 
 scouted:
-  # Watchlist state (status: tracked) — what lets later runs skip the sweep.
+  # Watchlist state (status: tracked) - what lets later runs skip the sweep.
   - name: KubeCon + CloudNativeCon Europe
     url: https://events.linuxfoundation.org/kubecon-cloudnativecon-europe-2027/
     checked: 2026-08-23
     status: tracked
     next_edition: 2027-03-15 to 2027-03-18, Barcelona, ES
-    cfp: OPEN — opened 2026-08-10, closes 2026-10-11 23:59 CEST (https://sessionize.com/kubecon-cloudnativecon-europe-2027/)
-    owner: keen to submit — CFP now open, flagged in issue-401 scout report
+    cfp: OPEN - opened 2026-08-10, closes 2026-10-11 23:59 CEST (https://sessionize.com/kubecon-cloudnativecon-europe-2027/)
+    owner: keen to submit - CFP now open, flagged in issue-401 scout report
     note: proposed into events.yaml on 2026-08-23
   - name: AGNTCon + MCPCon Europe
     url: https://events.linuxfoundation.org/agntcon-mcpcon-europe/
@@ -87,15 +87,15 @@ scouted:
     note: proposed into events.yaml on 2026-08-16
   - name: AI Engineer Europe
     url: https://www.ai.engineer/
-    checked: 2026-08-23
+    checked: 2026-08-30
     status: tracked
-    next_edition: February 2027, London — month announced, exact dates TBA
-    cfp: not open yet (rechecked 2026-08-23; organiser site still "dates TBA")
-    owner: keen to submit — flag the week the CFP opens (2026-08-16)
+    next_edition: February 2027, London - month announced, exact dates TBA
+    cfp: not open yet (rechecked 2026-08-30; no speaker call surfaced)
+    owner: keen to submit - flag the week the CFP opens (2026-08-16)
   - name: World Summit AI Amsterdam
     checked: 2026-08-16
     status: tracked
-    next_edition: 2026-10-07 to 2026-10-08, Amsterdam — already in events.yaml
+    next_edition: 2026-10-07 to 2026-10-08, Amsterdam - already in events.yaml
     cfp: n/a (curated)
   - name: WeAreDevelopers World Congress Berlin
     checked: 2026-08-16
@@ -106,7 +106,7 @@ scouted:
     checked: 2026-08-16
     status: tracked
     next_edition: 2027 edition not announced; 2026 ran in March
-    cfp: n/a — curated by track chairs, no open CFP
+    cfp: n/a - curated by track chairs, no open CFP
   - name: The AI Summit London
     checked: 2026-08-16
     status: tracked
@@ -139,14 +139,14 @@ scouted:
     url: https://ai.engineer/
     checked: 2026-08-23
     status: tracked
-    next_edition: 2027-06-29 to 2027-07-02, Moscone West, San Francisco, US — confirmed on organiser site
+    next_edition: 2027-06-29 to 2027-07-02, Moscone West, San Francisco, US - confirmed on organiser site
     cfp: not open yet (no speaker call visible 2026-08-23)
     note: proposed into events.yaml on 2026-08-23
   - name: MLOps World
     url: https://mlopsworld.com/
     checked: 2026-08-16
     status: tracked
-    next_edition: 2026-11-17 to 2026-11-18, Etter-Harbin Alumni Center, Austin, US — already in events.yaml
+    next_edition: 2026-11-17 to 2026-11-18, Etter-Harbin Alumni Center, Austin, US - already in events.yaml
     cfp: organiser has not published a 2026 speaker deadline
   - name: Rise of AI Berlin
     url: https://riseof.ai/conference-2027/
@@ -166,12 +166,12 @@ scouted:
     owner: not interested (2026-08-16)
   - name: code.talks Hamburg
     url: https://codetalks.com/call-for-paper
-    checked: 2026-08-16
+    checked: 2026-08-30
     status: tracked
     tier: cfp-track
-    next_edition: 2026-11-04 to 2026-11-05, Hamburg, DE — already in events.yaml
-    cfp: open, wave 3 closes 2026-08-31
-    owner: speaking at the 2026 edition — becomes a talks entry in events.yaml, title pending (2026-08-16)
+    next_edition: 2026-11-04 to 2026-11-05, Hamburg, DE - already in events.yaml
+    cfp: open, wave 3 closes 2026-08-31 - TOMORROW (verified 2026-08-30 on the CFP page)
+    owner: speaking at the 2026 edition - becomes a talks entry in events.yaml, title pending (2026-08-16)
   - name: Cloud Native AI Summit Europe
     url: https://sessionize.com/cloud-native-summit-europe-2026/
     checked: 2026-08-16
@@ -179,12 +179,12 @@ scouted:
     tier: cfp-track
     next_edition: 2026-12-02 to 2026-12-03, CNIT Forest, Paris, FR
     cfp: open, closes 2026-09-18
-    owner: skipped 2026-08-16 — do not re-propose this edition
+    owner: skipped 2026-08-16 - do not re-propose this edition
   - name: Accelerate Tomorrow AI Summit Berlin
     checked: 2026-08-15
     status: tracked
     tier: cfp-track
-    next_edition: 2027, Estrel Berlin — dates not published
+    next_edition: 2027, Estrel Berlin - dates not published
     cfp: not open yet
   - name: AI Coding Summit Berlin
     checked: 2026-08-15
@@ -227,11 +227,11 @@ scouted:
 
   # One-off candidates.
   - name: AI Infrastructure Summit Berlin
-    url: https://conferenceindex.org/event/ai-infrastructure-summit-2026-september-berlin-de
-    checked: 2026-08-16
-    status: rejected
-    reason: Polarise-run data-centre/compute-and-energy summit for DACH buyers, speakers TBA; wrong topic and wrong audience
-    owner: reviewed 2026-08-16 — reopened as cfp-track candidate; we.CONECT B2B summit, 500+, Berlin, agenda covers AgentOps and inference; confirm slot is editorial not sponsored before approaching
+    url: https://www.we-conect.com/events/ai-infrastructure-summit-2026/
+    checked: 2026-08-30
+    status: watching
+    reason: we.CONECT B2B summit; search results give 2026-09-28 to 2026-09-29, Maritim proArte Hotel, Berlin, 500+ attendees, agenda covers AgentOps/inference/observability - organiser site is JS-rendered and would not fetch, so dates unverified and editorial-vs-sponsored speaking still unconfirmed
+    owner: reviewed 2026-08-16 - reopened as cfp-track candidate; confirm slot is editorial not sponsored before approaching
   - name: CogX
     url: https://cogx.co/
     checked: 2026-08-15
@@ -278,9 +278,10 @@ scouted:
     status: watching
     reason: 10k+ but celebrity-skewed German headliners; tier unclear
   - name: AI Summit Barcelona
-    checked: 2026-08-15
+    url: https://aisummitbarcelona.com/
+    checked: 2026-08-30
     status: watching
-    reason: surfaced unverified; assess lineup before proposing
+    reason: 2026 edition surfaced as 2026-09-22 to 2026-09-23, WTC Barcelona, self-claimed ~10k target (own marketing, unverified); early edition, clashes with HumanX EMEA dates; keep watching until scale/lineup is proven
   - name: NDC AI Oslo
     checked: 2026-08-15
     status: watching
@@ -288,4 +289,4 @@ scouted:
   - name: Kubernetes Community Days (Central Europe)
     checked: 2026-08-15
     status: rejected
-    reason: CNCF caps KCDs at 500 attendees — meetup-scale; dropped from watchlist 2026-08-15
+    reason: CNCF caps KCDs at 500 attendees - meetup-scale; dropped from watchlist 2026-08-15

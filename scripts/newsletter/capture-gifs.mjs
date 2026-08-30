@@ -4,6 +4,7 @@
  * Records a scroll-through of every article marked `gif` in the issue's review document.
  *
  *   node scripts/newsletter/capture-gifs.mjs [--issue N] [--engine <path>] [--only <slug>]
+ *                                            [--theme light|dark]
  *
  * The recording engine is the `site-capture` skill's `capture.mjs`, which is a standalone
  * script with a documented CLI. It is used rather than reimplemented: it already handles the
@@ -19,7 +20,15 @@
  */
 
 import { execFile, execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
@@ -32,16 +41,21 @@ const flowPath = path.join(root, 'scripts/newsletter/capture-flow.mjs');
 // A walk, not a tour. Long enough to read the title and see the article has a body, short
 // enough to loop on a feed without becoming wallpaper.
 //
-// Chrome's screencast records at 25fps and Playwright cannot raise it, so smoothness has to
-// be bought on the other side of the equation: at the engine's default 460 px/s the page
-// travels ~18px between frames and reads as stutter, while 240 px/s puts it under 10px and
-// the same 25fps looks fine. The viewport is larger than the frame we actually want, with
-// zoom compensating, because the recording is made at the CSS viewport size and there is no
-// other way to get more pixels; zoom 1.25 at 1600x1000 frames exactly what 1280x800 did.
-const captureWidth = 1600;
-const captureHeight = 1000;
-const captureZoom = 1.25;
+// The engine encodes straight from Chrome's screencast frames and their real timestamps, at
+// 50fps by default, so scrolling is smooth at any sane speed; 240 px/s stays because a calm
+// walk reads better on a feed than a sprint. Resolution comes from a device scale factor on
+// a plain 1280x800 viewport, never from CSS zoom: fractional zoom scales layout coordinates
+// and split the seams of the header logo's outlined SVG paths, while a scale factor renders
+// the same integer CSS layout at double density and records 2560x1600.
+const captureWidth = 1280;
+const captureHeight = 800;
+const captureScale = 2;
 const captureSpeed = 240;
+// Walks record dark: that is the site's default look and the owner's choice. --theme light
+// exists as an override; the engine's flag both emulates the matching prefers-color-scheme
+// and seeds `localStorage.theme` before first paint, which is the key ethical.institute
+// reads for its explicit data-theme choice (it ignores the media query).
+const captureTheme = 'dark';
 const maxGifBytes = 5 * 1024 * 1024;
 
 // Encoding ladder, tried in order until one lands under the cap. Frame rate goes first
@@ -51,6 +65,7 @@ const ladder = [
   { fps: 12, width: 900, quality: 80 },
   { fps: 10, width: 900, quality: 80 },
   { fps: 10, width: 760, quality: 75 },
+  { fps: 8, width: 760, quality: 72 },
   { fps: 8, width: 640, quality: 70 },
 ];
 
@@ -114,6 +129,27 @@ function gifTargets(document) {
           .toLowerCase() ?? '',
     }))
     .filter((entry) => entry.choice === 'gif' && entry.url);
+}
+
+/**
+ * The walk previewed in the review document, under the article it belongs to: a gif block
+ * appended after the candidate list, and the mp4 as a plain link since markdown cannot
+ * embed video. Refreshed in place on a re-run rather than appended again.
+ */
+function withWalkBlocks(document, position, slugDir) {
+  const note =
+    `**walk gif**\n\n<img src="posts/${slugDir}/image.gif" width="420">\n\n` +
+    `**walk mp4**\n\nposts/${slugDir}/image.mp4`;
+  const start = document.search(new RegExp(`^## ${position}\\. `, 'm'));
+  if (start === -1) return document;
+  const nextHeading = document.indexOf('\n## ', start);
+  const end = nextHeading === -1 ? document.length : nextHeading;
+  const block = document.slice(start, end);
+  const existing = /\*\*walk gif\*\*\n\n<img [^\n]*\n\n\*\*walk mp4\*\*\n\n[^\n]*/;
+  const updated = existing.test(block)
+    ? block.replace(existing, note)
+    : `${block.replace(/\s+$/, '')}\n\n${note}\n`;
+  return document.slice(0, start) + updated + document.slice(end);
 }
 
 async function encodeGif(webm, target, workDir, trimSeconds) {
@@ -192,7 +228,7 @@ async function encodeMp4(webm, target, trimSeconds) {
   return { bytes: statSync(target).size };
 }
 
-async function capture(target, { engine, postsDir, workDir }) {
+async function capture(target, { engine, postsDir, theme, workDir }) {
   const slugDir = readdirSync(postsDir).find((name) => name.startsWith(`${target.position}-`));
   if (!slugDir) throw new Error(`no post folder for ${target.position}; run --apply first`);
   const outDir = path.join(workDir, `capture-${target.position}`);
@@ -214,8 +250,10 @@ async function capture(target, { engine, postsDir, workDir }) {
       String(captureWidth),
       '--height',
       String(captureHeight),
-      '--zoom',
-      String(captureZoom),
+      '--dsf',
+      String(captureScale),
+      '--theme',
+      theme,
       '--speed',
       String(captureSpeed),
     ],
@@ -292,24 +330,29 @@ async function main() {
 
   // In parallel, because each is a browser recording in real time: five sequential walks is
   // five times the wall clock for work that does not compete for anything but CPU.
+  const theme = typeof options.theme === 'string' ? options.theme : captureTheme;
   const settled = await Promise.allSettled(
-    targets.map((target) => capture(target, { engine, postsDir, workDir })),
+    targets.map((target) => capture(target, { engine, postsDir, theme, workDir })),
   );
+  // One read-modify-write after all the captures, not one per capture racing the others.
+  let document = readFileSync(documentPath, 'utf8');
   settled.forEach((result, index) => {
     const target = targets[index];
     if (result.status === 'rejected') {
       console.log(`${target.title}: FAILED - ${result.reason.message}`);
       return;
     }
+    document = withWalkBlocks(document, target.position, result.value.slugDir);
     const { bytes, fps, width, overCap, video } = result.value;
     const mb = (value) => `${(value / 1024 / 1024).toFixed(1)} MB`;
     console.log(
       `${target.title}\n` +
-        `  mp4 ${mb(video.bytes)} at ${captureWidth}x${captureHeight} -> ${path.relative(root, result.value.mp4)}\n` +
+        `  mp4 ${mb(video.bytes)} at ${captureWidth * captureScale}x${captureHeight * captureScale} -> ${path.relative(root, result.value.mp4)}\n` +
         `  gif ${mb(bytes)} at ${fps}fps ${width}px -> ${path.relative(root, result.value.gif)}` +
         (overCap ? ' (OVER the 5 MB cap even at the lowest rung)' : ''),
     );
   });
+  writeFileSync(documentPath, document);
 }
 
 main().catch((error) => {

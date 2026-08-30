@@ -35,6 +35,8 @@ Spawn a subagent with the prompt "Read .claude/skills/newsletter-issue/workflows
 
 Read `references/selection.md` in full, score the digest against its rules, and cut to the 15 strongest.
 
+Resolve every link against `scripts/newsletter/data/candidates.json`, copied verbatim. Never complete a URL from memory; a row the pool cannot resolve goes back to the subagent as a digest defect.
+
 Write the shortlist to `tmp/issue-<N>/shortlist.md` — the owner reviews it as a file, not as chat output. It carries four parts:
 
 1. A table of the 15, each row with the digest facts: source, points (or `—`), age, host, kind and word count.
@@ -89,7 +91,7 @@ Run `node scripts/newsletter/new-issue.mjs` to write `src/content/newsletter/<N>
 
 The weekly list mirrors the five headings and inverts their link convention: headings link the whole title, bullets link only part of the phrase. Keep the three fixed trailing bullets; the backslash in `\+ more 🚀` is required Markdown escaping.
 
-Check the events list against the new issue date and drop anything that has already happened. The scaffold copies it forward blind.
+Reconcile the events list against `src/content/events.yaml` in both directions: drop what has already happened, and add any tracked future event the block is missing. The scaffold copies the block forward blind, so an event added to the yaml later never arrives on its own. Speaking slots go under the speaking heading, the rest under other relevant events, sorted by date.
 
 Keep the `/talks-and-events/` backlink paragraph that sits under the events lede; every issue carries it so a reader who lands on an issue through search can reach the talks and events page. The scaffold carries it forward with the rest of the events block, so this is a check rather than an edit:
 
@@ -136,7 +138,7 @@ node scripts/newsletter/fetch-images.mjs --apply --issue <N>
 node scripts/newsletter/capture-gifs.mjs --issue <N>
 ```
 
-`--apply` writes `tmp/issue-<N>/posts/<n>-<slug>/` holding `post.txt` and the chosen image, ready to drag into Buffer's composer. The text comes from the document rather than from the issue, so an owner edit survives a re-run; the issue only supplies the pre-fill.
+`--apply` writes `tmp/issue-<N>/posts/<n>-<slug>/` holding `post.txt` and the chosen image, ready to drag into Buffer's composer. The text comes from the document rather than from the issue, so an owner edit survives a re-run; the issue only supplies the pre-fill. An empty `Short:` fence (X and Bluesky) means derive: the first line of the edited text plus the link. Nothing is cropped programmatically, so a short over X's 280 comes back as an open item for you to crop with judgement.
 
 `capture-gifs` records a scroll-through for every article marked `gif`, in parallel, and writes two files per article: an `image.mp4` carrying the walk at the full 1280x800 and full frame rate, and an `image.gif` of the same walk squeezed under a 5 MB cap. Upload the mp4 wherever video is accepted, which is most places; a GIF has no interframe compression and a 256-colour palette, so holding one under a cap costs frame rate, pixels and gradients, and it shows on an eased scroll over a dark page. It drives the `site-capture` skill's engine, found through `--engine`, then `SITE_CAPTURE_ENGINE`, then the installed skill, so no path into a personal install is ever committed. That engine always loads the site root before handing over to a flow, so `scripts/newsletter/capture-flow.mjs` navigates to the article first and marks the moment it lands; the runner trims everything before that mark. A walk that opens on somebody's homepage means the mark was lost, not that the URL was wrong.
 

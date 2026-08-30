@@ -123,6 +123,8 @@ function resolvePlaywright() {
 // makes an entry relevant wherever it was published.
 const strongKeywords = [
   'agentic',
+  'agentic engineering',
+  'ai engineering',
   'alignment',
   'anthropic',
   'arxiv.org',
@@ -186,6 +188,13 @@ const strongKeywords = [
   'reinforcement learning',
   'rlhf',
   'serving',
+  // Agentic-engineering vocabulary: the practice of building software with
+  // agents. "software factory" is the emerging term of art (the Uber post
+  // issue 402 missed); these admit to the pool only; the selection rules
+  // still cap how much of the beat an issue carries.
+  'software factory',
+  'coding agent',
+  'coding agents',
   'spark',
   'tensor',
   'tensorflow',
@@ -1052,9 +1061,20 @@ async function fetchBrowserFeed(feed, timestamp) {
   for (const specifier of specifiers) {
     try {
       const playwright = await import(specifier);
-      ({ chromium } = playwright.default ?? playwright);
-      if (chromium) break;
-      lastError = new Error('no chromium export');
+      const candidate = (playwright.default ?? playwright).chromium;
+      if (!candidate) {
+        lastError = new Error('no chromium export');
+        continue;
+      }
+      // A cached playwright whose browser download never completed imports
+      // fine but cannot launch; skip it so a working copy further down the
+      // list is used instead of failing the feed.
+      if (!existsSync(candidate.executablePath())) {
+        lastError = new Error(`browser not installed for ${specifier}`);
+        continue;
+      }
+      chromium = candidate;
+      break;
     } catch (error) {
       lastError = error;
     }
@@ -1384,7 +1404,11 @@ async function commandFetch(options) {
     if (!hit.title || seen.has(hit.id)) continue;
     seen.add(hit.id);
     const candidate = toCandidate(hit, source, corpus, timestamp);
-    if (!isRelevant(candidate.title, candidate.host)) continue;
+    // Feed items bypass the keyword gate for the same reason hand-added URLs
+    // do: the feed table is hand-picked, and a curated publisher's post is
+    // relevant by construction even when its title carries no keyword
+    // ("Running a Software Factory Efficiently at Uber Scale").
+    if (source !== 'feeds' && !isRelevant(candidate.title, candidate.host)) continue;
     relevant += 1;
     if (corpus.used.has(candidate.normalisedUrl)) {
       alreadyUsed += 1;
