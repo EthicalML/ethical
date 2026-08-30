@@ -31,7 +31,7 @@ description: <when to use it, in the words a user would type>
 <the procedure the agent follows, written as steps>
 ```
 
-I find the simplicity of the format to be the point, as there's nothing between what a reviewer reads and what the agent runs. The two halves do have genuinely different jobs though, and conflating them is the most common structural mistake I see.
+There's nothing between what a reviewer reads and what the agent runs. The two halves do have genuinely different jobs though, and conflating them is the most common structural mistake I see.
 
 ### The Description Is a Router
 
@@ -55,11 +55,11 @@ If something isn't a step and it isn't the outline, it probably doesn't belong. 
 
 This is where I see most skills go wrong, so it's worth being blunt about what to delete:
 
-- the introduction explaining what the tool is,
-- the architecture section,
-- the rationale paragraphs,
-- the glossary,
-- and the "further reading" list.
+- The introduction explaining what the tool is.
+- The architecture section.
+- The rationale paragraphs.
+- The glossary.
+- The "further reading" list.
 
 ## Keep It Simple
 
@@ -75,7 +75,7 @@ I put the error handling next to the thing that fails.
 
 > If the error says an asset cannot be cropped, pick a different asset. Do not widen the crop.
 
-That belongs inline in the step that does the cropping, and not in a Troubleshooting section at the end. Nobody reads a troubleshooting section until they're already lost, and by then the agent has usually chosen the wrong recovery and is three steps down a bad path. The same applies to constraints. A rule that governs step four should be written in step four, and not in a Rules section at the top that the agent will have half-forgotten by the time it matters.
+I put that inline in the step that does the cropping, and not in a Troubleshooting section at the end, as by the time the agent reaches a troubleshooting section it has usually already chosen the wrong recovery. I do the same with constraints, so a rule that governs step four is written in step four.
 
 ## Scripts and Judgement Are Different Tools
 
@@ -102,7 +102,11 @@ One more thing I avoid is restating what a schema or a type already says. If the
 
 ## Make Verification a Step of the Procedure
 
-When nobody checks the output of a skill, it will eventually produce wrong output and nothing in the run will flag it. So I put verification in the procedure as its own step, and I size it to what's at stake. Sometimes that's a script that validates the input before the expensive work starts, sometimes it's a gate that confirms the prerequisites exist, and sometimes it's a single command whose exit code decides whether the skill continues.
+When nobody checks the output of a skill, it will eventually produce wrong output and nothing in the run will flag it. So I put verification in the procedure as its own step, and I size it to what's at stake:
+
+- A script that validates the input before the expensive work starts.
+- A gate that confirms the prerequisites exist.
+- A single command whose exit code decides whether the skill continues.
 
 The temptation is to overbuild here because verification feels virtuous. It's not free though, as every check adds context and wall-clock time on every run, so I verify proportionately and push the heavier checks behind a condition.
 
@@ -112,7 +116,13 @@ This is the step almost nobody does, and in my experience it's worth more than e
 
 ![A blind subagent run with the transcript defects annotated: a file read three times and an invented step](./verify-run.png)
 
-Then I read the evidence rather than the opinion. I look at where the tokens were spent, at which step took far longer than it should have, and at where the transcript shows the agent getting stuck, re-reading the same file, or inventing a step I never wrote. Every one of those is a defect in the skill and not in the model, as a step that gets misread is a step that's ambiguous.
+Then I read the evidence rather than the opinion:
+
+- I look at where the tokens were spent.
+- I check which step took far longer than it should have.
+- I read the transcript for the agent getting stuck, re-reading the same file, or inventing a step I never wrote.
+
+Every one of those is a defect in the skill and not in the model, as a step that gets misread is a step that's ambiguous.
 
 I run this a handful of times, and I run it on a cheaper model than the one I'm targeting. A cheap model is a more honest test, as it will fall into every hole that a strong model steps over.
 

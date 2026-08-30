@@ -45,6 +45,7 @@ Other register rules:
 - Use contractions naturally ("wasn't", "it's", "I've").
 - Casual hedges and colloquial fillers are part of the register ("just", "a bunch of", "pretty much", "nowadays", "organically").
 - Colons only introduce lists, enumerations or code blocks; mid-prose apposition ("The rule is simple: ...") gets merged into one sentence instead.
+- Bullet points are normal sentences that start with a capital and end with a full stop. Never comma-separated fragments continuing the lead-in sentence ("- the architecture section,").
 - Avoid definitional framings without an actor ("X is the unit that...", "X serves as..."); say what someone does with the thing.
 
 Calibration pairs from the author (left is the tell, right is the voice):
