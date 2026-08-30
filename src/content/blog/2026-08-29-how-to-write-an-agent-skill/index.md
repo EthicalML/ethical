@@ -2,7 +2,7 @@
 title: How to Write an Agent Skill
 date: 2026-08-29
 image: './featured.png'
-summary: 'My opinionated take on what good agent skills look like, with 5 principles, good and bad examples for each, and the real skills we open sourced.'
+summary: 'My opinionated take on what good agent skills look like, with the principles I follow, good and bad examples for each, and the real skills we open sourced.'
 tags: [agents, agent-skills, context-engineering, tooling]
 ---
 
@@ -12,15 +12,16 @@ At some point in the last year I noticed I had stopped writing bash scripts. It 
 
 A skill is a procedure an agent follows, so I write it as if I were writing code, but in English. The file a reviewer reads is exactly what the agent executes, with nothing compiled in between. I encoded this approach in the [`writing-skills`](https://github.com/EthicalML/agent-skills-marketplace/tree/master/plugins/dev-utilities/skills/writing-skills) skill that we published in the [Agent Skills Marketplace](/blog/announcing-the-agent-skills-marketplace/).
 
-This post covers what good skills look like: the 5 principles I follow, good and bad examples for each, and the real skills we open sourced along the way.
+This post covers what good skills look like: the 5 principles I follow, an optional one that has felt magical, good and bad examples for each, and the real skills we open sourced along the way.
 
-## The 5 Principles
+## The 5 Principles, Plus an Optional One
 
 - The description is a router, so it says when to use the skill in the words a user would type.
 - The body is steps, and anything that isn't a step gets deleted.
 - Scripts carry the fixed sequences, and the agent carries the judgement calls.
 - `SKILL.md` holds only what every run needs.
 - Verification is a step of the procedure, for the output and for the skill itself.
+- Optionally, a human feedback loop, where the skill ends by reporting its own friction upstream.
 
 The rest of the post goes through each one with a bad and a good example.
 
@@ -67,10 +68,12 @@ The release pipeline consists of three layers...
 The good version:
 
 ```markdown
-1. Run scripts/preflight.sh and stop if it fails.
+1. Run scripts/preflight.sh, and if it fails, read troubleshooting.md.
 2. Bump the version, tag the commit, and push the tag.
 3. Watch the release CI, and if a check goes red, decide whether it blocks the release.
 ```
+
+Note how the Troubleshooting appendix from the bad version became a conditional read in step 1, so only the runs that actually fail pay for it.
 
 Most skills I review need the same deletions:
 
@@ -153,6 +156,15 @@ Then I read the evidence rather than the opinion:
 Every one of those is a defect in the skill and not in the model, as a step that gets misread is a step that's ambiguous.
 
 I run this a handful of times, and I run it on a cheaper model than the one I'm targeting. A cheap model is a more honest test, as it will fall into every hole that a strong model steps over.
+
+## The Optional Principle: A Human Feedback Loop
+
+There's a sixth principle that I've been introducing gradually, and in some places it has felt magical. The skill ends with a step where it reports its own friction back to a human. After the last step, the agent looks back at the run and identifies anything that took more than a couple of attempts, any workaround it had to invent, and any knowledge it picked up that the skill doesn't capture.
+
+- If the fix is small enough (a couple of lines, a docs correction), the agent contributes a PR upstream to the skill's repository.
+- For anything bigger, it opens an issue with the context, the files and the steps to reproduce.
+
+The skill then improves from every run rather than only when I sit down to edit it, and the people running it don't need to be able to judge the defect themselves. I keep it optional, as the extra step costs a little on every run, and not every skill is worth the loop.
 
 ## The Skills We Open Sourced
 
