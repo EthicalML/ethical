@@ -16,12 +16,12 @@ This post covers what good skills look like: the 5 principles I follow, an optio
 
 ## The 5 Principles, Plus an Optional One
 
-1. The description is a router, so it says when to use the skill in the words a user would type.
-2. The body is steps, and anything that isn't a step gets deleted.
-3. Scripts carry the fixed sequences, and the agent carries the judgement calls.
-4. `SKILL.md` holds only what every run needs.
-5. Verification is a step of the procedure, for the output and for the skill itself.
-6. Optionally, a human feedback loop, where the skill ends by reporting its own friction upstream.
+- Principle 1: The description is a router, so it says when to use the skill in the words a user would type.
+- Principle 2: The body is steps, and anything that isn't a step gets deleted.
+- Principle 3: Scripts carry the fixed sequences, and the agent carries the judgement calls.
+- Principle 4: `SKILL.md` holds only what every run needs.
+- Principle 5: Verification is a step of the procedure, for the output and for the skill itself.
+- Principle 6 (optional): A human feedback loop, where the skill ends by reporting its own friction upstream.
 
 The rest of the post goes through each one with a bad and a good example.
 
