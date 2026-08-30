@@ -187,3 +187,5 @@ The same approach runs across our [open-source projects](/open-source/), where [
 /plugin marketplace add EthicalML/agent-skills-marketplace
 /plugin install dev-utilities@agent-skills-marketplace
 ```
+
+If you write one of your own, the bar we set for the marketplace applies, as it should be a procedure you actually run and short enough that someone can read it and disagree with it. And if you disagree with any of the principles above, principle 6 works on me too, so open an issue or send a PR to the [marketplace repository](https://github.com/EthicalML/agent-skills-marketplace) and become part of the flywheel.

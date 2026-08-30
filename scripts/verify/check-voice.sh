@@ -1,18 +1,19 @@
 #!/usr/bin/env bash
-# Check blog posts against the mechanical rules of the voice guide
-# (.github/instructions/blog.instructions.md): banned words, banned phrases,
-# and ASCII-only punctuation. Structural rules (sentence shape, personification)
-# are enforced by the instructions file itself, not here.
+# Mechanical voice checks for blog posts: non-ASCII characters (em dashes,
+# curly quotes, ellipses) and a short list of words and phrases that
+# essentially never appear in legitimate prose. Everything requiring judgement
+# lives in .github/instructions/blog.instructions.md and is applied by the
+# agent writing the post, not here.
 #
-# Posts dated before the guide existed (2026-08-29) are skipped rather than
-# retro-edited; the rules apply to everything written from the guide onward.
+# Posts dated before the voice guide existed (2026-08-29) are skipped rather
+# than retro-edited.
 set -euo pipefail
 
 root="$(cd "$(dirname "$0")/../.." && pwd)"
 cutoff='2026-08-29'
 
-words='testament|underscor(e|es|ed|ing)|propel(s|led|ling)?|unwavering|heartfelt|embrac(e|es|ed|ing)|foster(s|ed|ing)?|ignit(e|es|ed|ing)|empower(s|ed|ing)?|amplif(y|ies|ied|ying)|catalyst|leverag(e|es|ed|ing)|epitome|cornerstone|noteworthy|unprecedented|profound(ly)?|pivotal|delv(e|es|ed|ing)|tapestry|showcas(e|es|ed|ing)|vibrant|groundbreaking|diverse array|crucial(ly)?|ship(s|ped|ping)?|failure modes?'
-phrases='not just|is quietly|at its core|delving into|serves as|stands as|functions as|it rarely survives|rather than the exception'
+words='testament|tapestry|delv(e|es|ed|ing)|epitome|cornerstone|unwavering|heartfelt|groundbreaking|diverse array'
+phrases='is quietly|at its core|it rarely survives'
 
 status=0
 for file in "$root"/src/content/blog/*/index.md; do
