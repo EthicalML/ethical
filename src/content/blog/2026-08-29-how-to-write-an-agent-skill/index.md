@@ -63,19 +63,19 @@ This is where I see most skills go wrong, so it's worth being blunt about what t
 
 ## Keep It Simple
 
-Here I allow myself a short rant, as agents are just too verbose by default, and the default iteration you get back is AI slop. I sometimes catch myself writing exactly that as a comment back to the agent (not often, but sometimes). The default skill an agent generates is overengineered, as it abstracts the procedure into phases, invents configuration that nobody asked for, and adds a fallback path for a failure that has never happened.
+Side note rant: agents are just too verbose by default, and the default iteration you get back is AI slop. I sometimes catch myself writing exactly that as a comment back to the agent (too often). The default skill an agent generates reads more like a menu of the things that "could be done", and it often ends up with the worst of both worlds, deterministic and non-deterministic.
 
-> Finding the simple version of a procedure takes more work than writing the complicated one.
+> Simple doesn't mean simplistic, as a simple solution can still solve complexity, just not in a complicated manner.
 
-Simple doesn't mean incomplete, and that extra work is pretty much the point of the exercise. I add complexity when it's required, not before, and not after.
+Getting to the simple solution is often harder than accepting the complicated default, and that extra work is pretty much the point of the exercise. I add complexity when it's required, not before, and not after.
 
 ## Handle Errors Where They Happen
 
 I put the error handling next to the thing that fails.
 
-> If the error says an asset cannot be cropped, pick a different asset. Do not widen the crop.
+> If the upload fails with a 413, split the file and retry. Do not raise the size limit.
 
-I put that inline in the step that does the cropping, and not in a Troubleshooting section at the end, as by the time the agent reaches a troubleshooting section it has usually already chosen the wrong recovery. I do the same with constraints, so a rule that governs step four is written in step four.
+I put that inline in the step that does the upload, and not in a Troubleshooting section at the end, as by the time the agent reaches a troubleshooting section it has usually already chosen the wrong recovery. I do the same with constraints, so a rule that governs step four is written in step four.
 
 ## Scripts and Judgement Are Different Tools
 
@@ -83,16 +83,16 @@ A sequence of steps that never varies is a script. When I see authenticate, call
 
 A judgement call is a step that requires reading a source, choosing between valid options, writing content, or judging whether the output is good enough. I leave those to the agent, and I give it the rule it must follow rather than the answer.
 
-The failure modes run in both directions, and I've hit both:
+This can fail in both directions, and I've hit both:
 
-- Put too much in the script and the skill becomes a thin wrapper around a program, at which point you didn't need a skill and should just ship the program.
-- Put too much on the agent and the skill burns minutes and thousands of tokens re-deriving something a five-line shell command settles exactly.
+- Put too much in the script and the skill becomes a thin wrapper around a program, at which point you didn't need a skill and could just use the program directly.
+- Put too much on the agent and the skill burns minutes and thousands of tokens re-deriving something that we could easily do with a five-line shell script.
 
 ## SKILL.md Only Holds What Every Run Needs
 
-`SKILL.md` loads on every invocation. Context is the budget, and the skill spends it before the agent has looked at a single file of the actual task. So my rule is that `SKILL.md` holds the steps, their conditions, and their commands, and nothing else.
+`SKILL.md` loads on every invocation, and it consumes context before the agent has looked at a single file of the actual task. So my rule is that `SKILL.md` holds the steps, their conditions, and their commands, and nothing else.
 
-I move something into a separate file when some runs need it and others don't, and then I read it from the step that needs it. This is progressive disclosure.
+An example of progressive disclosure is when I move something into a separate file because only some runs need it, and then I read it from the step that needs it.
 
 - A substantial and self-contained branch of the workflow becomes `workflow-<name>.md`, and it gets read from the step that takes that branch. If the branch is three lines I leave it inline, as a file per branch is its own kind of overengineering.
 - Reference material becomes `docs.md` or similar, read at the point it's needed rather than at the top.
@@ -137,7 +137,7 @@ If you take one thing from this, take the shape:
 - Error handling sits next to the step that fails, never in an appendix.
 - Verify the output as a step, and verify the skill by giving a blind subagent a real task.
 
-The [`writing-skills`](https://github.com/EthicalML/agent-skills-marketplace/tree/master/plugins/dev-utilities/skills/writing-skills) skill applies all of this to itself, which felt like the only honest test of a position like this one. It ships in the `dev-utilities` plugin:
+The [`writing-skills`](https://github.com/EthicalML/agent-skills-marketplace/tree/master/plugins/dev-utilities/skills/writing-skills) skill applies all of this to itself, which felt like the only honest test of a position like this one. It's part of the `dev-utilities` plugin:
 
 ```text
 /plugin marketplace add EthicalML/agent-skills-marketplace

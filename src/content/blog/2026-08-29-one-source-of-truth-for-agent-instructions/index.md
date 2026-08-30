@@ -55,7 +55,7 @@ The layout takes a paragraph to describe and an afternoon to apply by hand, whic
 
 Most of the skill's length covers traps rather than the main path, and every trap is in there because I hit it:
 
-- Repositories often gitignore `CLAUDE.md` or `.claude/`, so `git add -A` skips the new symlinks without any error and the migration ships half-done. This is why the skill runs `git check-ignore` explicitly and confirms the symlinks are staged with git's symlink mode.
+- Repositories often gitignore `CLAUDE.md` or `.claude/`, so `git add -A` skips the new symlinks without any error and the migration lands half-done. This is why the skill runs `git check-ignore` explicitly and confirms the symlinks are staged with git's symlink mode.
 - The same file gets read at the repo root through the symlinks and at `.github/` directly, so no relative Markdown link inside it resolves correctly from both depths. The skill writes references as root-anchored paths instead.
 - Native Windows checkouts (outside WSL2) need Developer Mode for symlinks, so for repos with those contributors the skill swaps the root files to Claude's `@`-import syntax.
 

@@ -74,8 +74,10 @@ Banned constructions (LLM tells):
 - Runs of symmetric bolded-lead bullets ("**Portable, not captive.** ... **Reviewable as text.** ...").
 - Sentences ending in a trailing "-ing" commentary clause ("...highlighting the importance of X").
 - Copula avoidance ("serves as", "stands as", "functions as", "marks"): write "is".
+- Metaphor equations ("Context is the budget, and the skill spends it..."). Say the plain fact instead.
+- A follow-up sentence that labels the previous one ("This is progressive disclosure."). Fold the term in ("An example of progressive disclosure is when...").
 - The rule of three as a reflex; vague attribution ("experts argue") without a named source.
 
-Banned words unless quoting a source: testament, underscore, propel, unwavering, heartfelt, embrace, foster, ignite, empower, amplify, catalyst, leverage, epitome, cornerstone, harness, noteworthy, unprecedented, profound, pivotal, journey, delve, crucial, tapestry, showcase, vibrant, groundbreaking, "diverse array". Use plain alternatives: shows, indicates, supports, argues.
+Banned words unless quoting a source: testament, underscore, propel, unwavering, heartfelt, embrace, foster, ignite, empower, amplify, catalyst, leverage, epitome, cornerstone, harness, noteworthy, unprecedented, profound, pivotal, journey, delve, crucial, tapestry, showcase, vibrant, groundbreaking, "diverse array", "failure modes" (write "common failures"), ship/shipping (write release, publish, or land). Use plain alternatives: shows, indicates, supports, argues.
 
 Punctuation: the site-wide ASCII rules already ban em dashes and curly quotes; additionally, do not overuse `-` dashes or boldface. Bold is for coined terms and genuinely load-bearing phrases.
