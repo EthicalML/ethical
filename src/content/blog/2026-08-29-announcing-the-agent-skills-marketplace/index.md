@@ -8,7 +8,7 @@ tags: [agents, agent-skills, open-source, tooling]
 
 Today we are releasing the [Agent Skills Marketplace](/open-source/agent-skills-marketplace/), an open-source catalogue of portable agent skills maintained by the Institute.
 
-> A skill is capability written down as text a human can read, review and correct.
+> A skill is the careful balance of deterministic utilities with non-deterministic intelligence.
 
 Five skills ship across three plugins, all under MIT, all installable into both Claude Code and Copilot CLI without being rewritten for either.
 
