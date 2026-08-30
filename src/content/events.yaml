@@ -83,6 +83,15 @@
   talks:
     - title: To be announced
 
+- slug: economic-forum-2026
+  name: Economic Forum 2026
+  series: economic-forum
+  url: https://www.forum-ekonomiczne.pl/en
+  start: 2026-09-08
+  end: 2026-09-10
+  location: Karpacz, PL
+  topics: [ai-policy, general-tech, llms]
+
 - slug: euroscipy-2026
   name: EuroSciPy 2026
   series: euroscipy
