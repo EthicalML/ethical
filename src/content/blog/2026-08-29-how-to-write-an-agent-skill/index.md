@@ -159,12 +159,14 @@ I run this a handful of times, and I run it on a cheaper model than the one I'm 
 
 ## The Optional Principle: A Human Feedback Loop
 
-There's a sixth principle that I've been introducing gradually, and in some places it has felt magical. The skill ends with a step where it reports its own friction back to a human. After the last step, the agent looks back at the run and identifies anything that took more than a couple of attempts, any workaround it had to invent, and any knowledge it picked up that the skill doesn't capture.
+There's a sixth principle that I've been introducing gradually, and this is the one that has genuinely blown my mind. The skill ends with a step where it reports its own friction back to a human. After the last step, the agent looks back at the run and identifies anything that took more than a couple of attempts, any workaround it had to invent, and any knowledge it picked up that the skill doesn't capture.
 
 - If the fix is small enough (a couple of lines, a docs correction), the agent contributes a PR upstream to the skill's repository.
 - For anything bigger, it opens an issue with the context, the files and the steps to reproduce.
 
-The skill then improves from every run rather than only when I sit down to edit it, and the people running it don't need to be able to judge the defect themselves. I keep it optional, as the extra step costs a little on every run, and not every skill is worth the loop.
+When it works, the skill goes from a loop to a **flywheel**, as every run generates feedback, the feedback lands as PRs and issues, and the skill improves before I ever sit down to edit it. The people running it don't need to be able to judge the defect themselves, which matters because many of them can't. In my opinion this iterative, self-improving feedback loop is one of the key insights we will be seeing as an emerging pattern in enterprise and beyond.
+
+I keep it optional, as the extra step costs a little on every run, and not every skill is worth the loop.
 
 ## The Skills We Open Sourced
 
