@@ -6,19 +6,32 @@ summary: 'My opinionated take on what belongs in a SKILL.md and what to delete, 
 tags: [agents, agent-skills, context-engineering, tooling]
 ---
 
+> ["The hottest new programming language is English."](https://x.com/karpathy/status/1617979122625712128) - Andrej Karpathy, 2023
+
 At some point in the last year I noticed I had stopped writing bash scripts. It wasn't an explicit decision I made, it just happened organically as the small automations I used to script became skills instead. The deterministic parts still end up as commands, but now they sit inside a procedure that an agent executes. The judgement calls used to be a flag nobody remembers or a comment saying "use judgement here", and now they are actual judgement.
 
-I believe this balance is what a skill gets you, and finding it is a craft in itself. You want deterministic utilities where the answer is fixed, and you want non-deterministic intelligence where it's not, so each side does the job the other is bad at. When you get this right, something else falls out of it too. A script does one thing, and extending it means reopening it. A skill written at the right grain works more like a lego block, so you can compose them and stack them, and one skill becomes a step inside another. Each new skill can build on the ones already written, which means the collection compounds instead of growing one automation at a time.
+I believe this balance is what a skill gets you, and finding it is a craft in itself. You want deterministic utilities where the answer is fixed, and you want non-deterministic intelligence where it's not, so each side does the job the other is bad at.
+
+A script does one thing, and extending it means reopening it. A skill written at the right grain works more like a lego block, so you can compose them and stack them, and one skill becomes a step inside another. Each new skill can build on the ones already written, which means the collection compounds instead of growing one automation at a time.
 
 Being precise about how to write one is important nowadays because the default is just not great. Whenever I blindly delegate the skill writing to an agent, I end up getting a bunch of AI slop; it ends up being more of a menu of suggestions than an actual recipe. I get six hundred lines, a Prerequisites section, an Architecture Overview, a Troubleshooting appendix, and somewhere in the middle, buried, the four commands that actually do the work.
 
-> A skill is a procedure an agent follows, so write it as if you were writing code, but in English.
-
-That framing carries everything below. I try to be exact and deterministic where the answer is fixed, and I leave room for judgement where it's not. This is also the view I encoded in the [`writing-skills`](https://github.com/EthicalML/agent-skills-marketplace/tree/master/plugins/dev-utilities/skills/writing-skills) skill that we published in the [Agent Skills Marketplace](/blog/announcing-the-agent-skills-marketplace/).
+A skill is a procedure an agent follows, so I write it as if I were writing code, but in English. I try to be exact and deterministic where the answer is fixed, and I leave room for judgement where it's not. This is the view I encoded in the [`writing-skills`](https://github.com/EthicalML/agent-skills-marketplace/tree/master/plugins/dev-utilities/skills/writing-skills) skill that we published in the [Agent Skills Marketplace](/blog/announcing-the-agent-skills-marketplace/).
 
 ## The Two Halves of a SKILL.md
 
-A skill is a folder with a `SKILL.md` at its root. The frontmatter carries a `name` and a `description`, and the body carries the procedure. I find the simplicity of the format to be the point, as there's nothing between what a reviewer reads and what the agent runs. The two halves do have genuinely different jobs though, and conflating them is the most common structural mistake I see.
+A skill is a folder with a `SKILL.md` at its root. The frontmatter carries a `name` and a `description`, and the body carries the procedure.
+
+```text
+---
+name: explain-code-walkthrough
+description: <when to use it, in the words a user would type>
+---
+
+<the procedure the agent follows, written as steps>
+```
+
+I find the simplicity of the format to be the point, as there's nothing between what a reviewer reads and what the agent runs. The two halves do have genuinely different jobs though, and conflating them is the most common structural mistake I see.
 
 ### The Description Is a Router
 
@@ -38,13 +51,23 @@ The second one names the trigger phrases and the accepted inputs. I write the de
 
 ### The Body Is Steps and Nothing Else
 
-If something isn't a step and it isn't the outline, it probably doesn't belong. Prose in a skill is dead weight, and the agent pays for it on every single run. This is where I see most skills go wrong, so it's worth being blunt about what to delete: the introduction explaining what the tool is, the architecture section, the rationale paragraphs, the glossary, the "further reading" list.
+If something isn't a step and it isn't the outline, it probably doesn't belong. Prose in a skill is dead weight, and the agent pays for it on every single run.
+
+This is where I see most skills go wrong, so it's worth being blunt about what to delete:
+
+- the introduction explaining what the tool is,
+- the architecture section,
+- the rationale paragraphs,
+- the glossary,
+- and the "further reading" list.
 
 ## Keep It Simple
 
-This is the first principle and the one that matters most, so I'm giving it its own section. Simple doesn't mean incomplete. In my experience, finding the simple version of a procedure takes more work than writing the complicated one, and that work is pretty much the point of the exercise.
+Here I allow myself a short rant, as agents are just too verbose by default, and the default iteration you get back is AI slop. I sometimes catch myself writing exactly that as a comment back to the agent (not often, but sometimes). The default skill an agent generates is overengineered, as it abstracts the procedure into phases, invents configuration that nobody asked for, and adds a fallback path for a failure that has never happened.
 
-The default skill an agent generates is overengineered. It abstracts the procedure into phases, invents configuration that nobody asked for, and adds a fallback path for a failure that has never happened. I add complexity when it's required, not before, and not after.
+> Finding the simple version of a procedure takes more work than writing the complicated one.
+
+Simple doesn't mean incomplete, and that extra work is pretty much the point of the exercise. I add complexity when it's required, not before, and not after.
 
 ## Handle Errors Where They Happen
 
@@ -86,6 +109,8 @@ The temptation is to overbuild here because verification feels virtuous. It's no
 ## Verify the Skill by Making a Blind Agent Run It
 
 This is the step almost nobody does, and in my experience it's worth more than every review pass combined. I don't ask a model to judge my skill, because asking "is this SKILL.md any good?" produces agreeable, useless feedback. Instead I give a blind subagent a real task that should trigger the skill, and I watch what happens.
+
+![A blind subagent run with the transcript defects annotated: a file read three times and an invented step](./verify-run.png)
 
 Then I read the evidence rather than the opinion. I look at where the tokens were spent, at which step took far longer than it should have, and at where the transcript shows the agent getting stuck, re-reading the same file, or inventing a step I never wrote. Every one of those is a defect in the skill and not in the model, as a step that gets misread is a step that's ambiguous.
 
