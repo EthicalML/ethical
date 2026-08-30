@@ -16,11 +16,11 @@ Being precise about how to write one is important nowadays because the default i
 
 That framing carries everything below. I try to be exact and deterministic where the answer is fixed, and I leave room for judgement where it's not. This is also the view I encoded in the [`writing-skills`](https://github.com/EthicalML/agent-skills-marketplace/tree/master/plugins/dev-utilities/skills/writing-skills) skill that we published in the [Agent Skills Marketplace](/blog/announcing-the-agent-skills-marketplace/).
 
-## The shape of a skill
+## The Two Halves of a SKILL.md
 
 A skill is a folder with a `SKILL.md` at its root. The frontmatter carries a `name` and a `description`, and the body carries the procedure. I find the simplicity of the format to be the point, as there's nothing between what a reviewer reads and what the agent runs. The two halves do have genuinely different jobs though, and conflating them is the most common structural mistake I see.
 
-### The description is a router
+### The Description Is a Router
 
 The description is the only part of the skill that the agent sees before deciding whether to load it. It works as a matching rule, and the agent compares it against the task in front of it. In practice I've found that a description tends not to fire when it only says what the skill is, because nothing in it matches the words a user actually types. Compare:
 
@@ -34,19 +34,19 @@ description: Succinct walkthrough of a code change. Use when the user asks to ex
   a PR number or URL, a git range, or a pasted diff.
 ```
 
-The second one names the trigger phrases and the accepted inputs, which means it fires when it should and stays quiet when it shouldn't. I write the description last, once I know what the skill actually does, and I write it for the router rather than for the reader.
+The second one names the trigger phrases and the accepted inputs. I write the description last, once I know what the skill actually does, and I write it for the router rather than for the reader.
 
-### The body is steps
+### The Body Is Steps and Nothing Else
 
-If something isn't a step and it isn't the outline, it probably doesn't belong. Prose in a skill is dead weight, and the agent pays for it on every single run. This is where I see most skills go wrong, so it's worth being blunt about what to delete: the introduction explaining what the tool is, the architecture section, the rationale paragraphs, the glossary, the "further reading" list. None of it changes what the agent does, and all of it costs context.
+If something isn't a step and it isn't the outline, it probably doesn't belong. Prose in a skill is dead weight, and the agent pays for it on every single run. This is where I see most skills go wrong, so it's worth being blunt about what to delete: the introduction explaining what the tool is, the architecture section, the rationale paragraphs, the glossary, the "further reading" list.
 
-## Keep it simple
+## Keep It Simple
 
 This is the first principle and the one that matters most, so I'm giving it its own section. Simple doesn't mean incomplete. In my experience, finding the simple version of a procedure takes more work than writing the complicated one, and that work is pretty much the point of the exercise.
 
 The default skill an agent generates is overengineered. It abstracts the procedure into phases, invents configuration that nobody asked for, and adds a fallback path for a failure that has never happened. I add complexity when it's required, not before, and not after.
 
-## Handle errors where they happen
+## Handle Errors Where They Happen
 
 I put the error handling next to the thing that fails.
 
@@ -54,7 +54,7 @@ I put the error handling next to the thing that fails.
 
 That belongs inline in the step that does the cropping, and not in a Troubleshooting section at the end. Nobody reads a troubleshooting section until they're already lost, and by then the agent has usually chosen the wrong recovery and is three steps down a bad path. The same applies to constraints. A rule that governs step four should be written in step four, and not in a Rules section at the top that the agent will have half-forgotten by the time it matters.
 
-## Scripts and judgement are different tools
+## Scripts and Judgement Are Different Tools
 
 A sequence of steps that never varies is a script. When I see authenticate, call the API, validate the response, build the output, I write that as a script and have the skill invoke it. The agent shouldn't be re-deriving a fixed sequence token by token on every run.
 
@@ -65,13 +65,11 @@ The failure modes run in both directions, and I've hit both:
 - Put too much in the script and the skill becomes a thin wrapper around a program, at which point you didn't need a skill and should just ship the program.
 - Put too much on the agent and the skill burns minutes and thousands of tokens re-deriving something a five-line shell command settles exactly.
 
-Finding the line between them is most of the craft of writing a good skill.
-
-## Only what every run needs
+## SKILL.md Only Holds What Every Run Needs
 
 `SKILL.md` loads on every invocation. Context is the budget, and the skill spends it before the agent has looked at a single file of the actual task. So my rule is that `SKILL.md` holds the steps, their conditions, and their commands, and nothing else.
 
-I move something into a separate file when some runs need it and others don't, and then I read it from the step that needs it. This is progressive disclosure, and it's the difference between a skill that costs a little and one that costs a lot before it has done anything.
+I move something into a separate file when some runs need it and others don't, and then I read it from the step that needs it. This is progressive disclosure.
 
 - A substantial and self-contained branch of the workflow becomes `workflow-<name>.md`, and it gets read from the step that takes that branch. If the branch is three lines I leave it inline, as a file per branch is its own kind of overengineering.
 - Reference material becomes `docs.md` or similar, read at the point it's needed rather than at the top.
@@ -79,21 +77,21 @@ I move something into a separate file when some runs need it and others don't, a
 
 One more thing I avoid is restating what a schema or a type already says. If the source of truth is unclear, the fix belongs in the source of truth. A skill that duplicates a schema will disagree with it within a month.
 
-## Make verification a step
+## Make Verification a Step of the Procedure
 
 When nobody checks the output of a skill, it will eventually produce wrong output and nothing in the run will flag it. So I put verification in the procedure as its own step, and I size it to what's at stake. Sometimes that's a script that validates the input before the expensive work starts, sometimes it's a gate that confirms the prerequisites exist, and sometimes it's a single command whose exit code decides whether the skill continues.
 
 The temptation is to overbuild here because verification feels virtuous. It's not free though, as every check adds context and wall-clock time on every run, so I verify proportionately and push the heavier checks behind a condition.
 
-## Verify the skill itself by making something run it
+## Verify the Skill by Making a Blind Agent Run It
 
 This is the step almost nobody does, and in my experience it's worth more than every review pass combined. I don't ask a model to judge my skill, because asking "is this SKILL.md any good?" produces agreeable, useless feedback. Instead I give a blind subagent a real task that should trigger the skill, and I watch what happens.
 
-Then I read the evidence rather than the opinion. I look at where the tokens were spent, at which step took far longer than it should have, and at where the transcript shows the agent getting stuck, re-reading the same file, or inventing a step I never wrote. Every one of those is a defect in the skill and not in the model. A step that gets misread is ambiguous, a file that gets read four times should have been summarised in the step, and a wrong turn at step three means step three doesn't say what I thought it said.
+Then I read the evidence rather than the opinion. I look at where the tokens were spent, at which step took far longer than it should have, and at where the transcript shows the agent getting stuck, re-reading the same file, or inventing a step I never wrote. Every one of those is a defect in the skill and not in the model, as a step that gets misread is a step that's ambiguous.
 
-I run this a handful of times, and I run it on a cheaper model than the one I'm targeting. A cheap model is a more honest test, as it will fall into every hole that a strong model steps over. When a small model executes a skill cleanly, the skill is genuinely unambiguous.
+I run this a handful of times, and I run it on a cheaper model than the one I'm targeting. A cheap model is a more honest test, as it will fall into every hole that a strong model steps over.
 
-## The short version
+## The Short Version
 
 If you take one thing from this, take the shape:
 

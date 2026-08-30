@@ -21,6 +21,16 @@ Posts live as `src/content/blog/<YYYY-MM-DD->slug/index.md` with colocated asset
 
 Blog prose is written in the author's voice, extracted from the published archive (the higher-altitude post, the memory series). Every sentence must add knowledge; a sentence that only emphasises or restates the previous point is deleted.
 
+No superfluous text. Make each point once, in the sentence where it lives, and move on:
+
+- No bullet list that elaborates the benefits of a point already made in prose; the author deletes these wholesale.
+- No justification sentence appended after a stated practice ("We put the machine on format checking because it does that job better..."). State the practice; the reader can infer why.
+- One example or consequence where the draft piles up three ("how software gets built, how research gets summarised and how decisions get drafted" became "how software gets built").
+- No trailing amplifier clause ("...without being rewritten for either", "...and the risk goes away") and no closing sentence that repeats the section's point.
+- Added words must carry new facts, motive or a concrete example ("as we don't aim for this to be a complete list of skills, but a curated list").
+
+Section titles are in Title Case and carry the section's claim, question or finding, never an abstract category label. From the archive: "Task State Is Not Memory", "What Changes When the Loop Keeps Running?", "When NOT to Add Long-Term Memory", "Memory 101: The Version Everyone Starts With", "Kubernetes Enters the Picture: Memory as Infrastructure", "Access Scopes: Whose Memory Is It Anyway?". Numbered patterns carry series ("Decision 1:", "Failure 1:", "Step 1:", "Surprise #1:"), colon constructions and playful titles are welcome, and "Closing Thoughts" ends a post. A title like "The objective" or "Overview" says nothing and gets replaced.
+
 The single strongest driver is **personification**. The author is present in the text as "I" (personal posts) or "we" (Institute posts), and actions have actors: "we make sure every change runs the validator", never "every change runs the validator". This applies to headings too ("What we are shipping today", not "What ships today"). A paragraph with no person in it is almost always the detached LLM register.
 
 Sentence shape is the second driver, and it has two failure modes that both read as LLM:

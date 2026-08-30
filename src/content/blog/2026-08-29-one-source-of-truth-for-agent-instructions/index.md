@@ -12,13 +12,13 @@ What sent me counting was a debugging session. An agent kept breaking a conventi
 
 So, how many of these files does a repository actually need? The answer I landed on is one, plus symlinks. The procedure for getting a repo there is now the [`standardize-agent-instructions`](https://github.com/EthicalML/agent-skills-marketplace/tree/master/plugins/dev-utilities/skills/standardize-agent-instructions) skill in the `dev-utilities` plugin of the [Agent Skills Marketplace](/blog/announcing-the-agent-skills-marketplace/).
 
-## How a repo ends up with four rulebooks
+## How a Repo Ends Up with Four Rulebooks
 
 Nobody plans to maintain four copies of the same document; the copies arrive one tool at a time. Someone adopts Claude Code and writes a `CLAUDE.md`. Then Copilot code review wants `.github/copilot-instructions.md`, so the content gets pasted there. Eventually a third copy appears in `AGENTS.md` for Codex and the growing list of tools that read it. From then on, whenever a convention changes, whoever changes it updates the file their own tool reads, and the other copies keep the old version.
 
-The result is the situation from my debugging session, where the rules an agent follows depend on which assistant happens to be running. Every agent follows its own file faithfully, so nothing surfaces the divergence until a convention gets broken visibly enough for a human to go looking.
+The result is the situation from my debugging session, where the rules an agent follows depend on which assistant happens to be running.
 
-## One real file behind many names
+## The Layout: One Real File Behind Many Names
 
 The skill converges a repository onto a single rule. The `.github` files are real, and everything else is a symlink to them.
 
@@ -32,7 +32,7 @@ AGENTS.md  -> .github/copilot-instructions.md
 
 Each harness finds the file it expects at the path it expects, and every path resolves to the same bytes, so editing the `.github` file updates every assistant at once.
 
-Why is the Copilot path the real one and not, say, `AGENTS.md`? Copilot's instruction discovery runs server-side during code review, and it's undocumented whether it follows a symlinked `.github/copilot-instructions.md`. Every other consumer reads from a local checkout, where symlinks behave normally. So I point the symlinks at the one consumer I can't inspect, and the risk goes away.
+Why is the Copilot path the real one and not, say, `AGENTS.md`? Copilot's instruction discovery runs server-side during code review, and it's undocumented whether it follows a symlinked `.github/copilot-instructions.md`. Every other consumer reads from a local checkout, where symlinks behave normally. So I point the symlinks at the one consumer I can't inspect.
 
 Path-scoped rules need one extra move. Copilot reads the scope from an `applyTo:` frontmatter key with a single glob string, whilst Claude Code reads a `paths:` key with a list. So the skill gives each `.github/instructions/<name>.instructions.md` both keys with the same globs:
 
@@ -44,7 +44,7 @@ paths:
 ---
 ```
 
-## What the skill automates
+## What the Skill Automates
 
 The layout takes a paragraph to describe and an afternoon to apply by hand, which is exactly the kind of work a skill is for. Given a repo, the skill does the following:
 
@@ -61,7 +61,7 @@ Most of the skill's length covers traps rather than the main path, and every tra
 
 The last step is verification. You `head` each symlink and confirm it prints instruction content and not a path string, and then you grep that every path-scoped file carries both frontmatter keys.
 
-## Try it on your own repo
+## Try It on Your Own Repo
 
 The skill installs from the marketplace into Claude Code:
 
@@ -77,6 +77,6 @@ copilot plugin marketplace add EthicalML/agent-skills-marketplace
 copilot plugin install dev-utilities@agent-skills-marketplace
 ```
 
-Then ask your assistant to standardise the agent instruction files in the repository, and read the pull request it opens. The repository behind this site runs the resulting layout. This is the test we apply to everything in the catalogue, as a skill should be a procedure we actually run, published so people can read it and correct it.
+Then ask your assistant to standardise the agent instruction files in the repository, and read the pull request it opens. The repository behind this site runs the resulting layout.
 
 The rest of the catalogue is covered in [Announcing the Agent Skills Marketplace](/blog/announcing-the-agent-skills-marketplace/), and my opinions on how a skill like this one should be written are in [How to write an agent skill](/blog/how-to-write-an-agent-skill/).

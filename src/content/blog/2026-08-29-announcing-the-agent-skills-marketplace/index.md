@@ -2,7 +2,7 @@
 title: Announcing the Agent Skills Marketplace
 date: 2026-08-29
 image: './featured.png'
-summary: 'We are releasing an open-source marketplace of portable agent skills, with five skills across three plugins written to the SKILL.md convention so the same plugin installs into both Claude Code and Copilot CLI.'
+summary: 'We are releasing an open-source marketplace of portable agent skills, written to the SKILL.md convention so the same plugin installs into both Claude Code and Copilot CLI.'
 tags: [agents, agent-skills, open-source, tooling]
 ---
 
@@ -12,7 +12,7 @@ Today we are releasing the [Agent Skills Marketplace](/open-source/agent-skills-
 
 We are shipping a few skills across three plugins (under Apache License), and all of them install into both Claude Code and Copilot CLI.
 
-## The objective
+## Why Agent Skills Are Gaining Popularity
 
 The reason why agent skills are gaining popularity is because most of the capability that people are building with coding agents today is ephemeral. It lives in a prompt someone pasted into a chat window, in a paragraph buried in a project instruction file, or in the head of the one engineer who worked out how to make the agent do the thing reliably. It can't be reviewed, it can't be copied to another team, and it usually disappears with the next tool change.
 
@@ -20,25 +20,25 @@ A skill writes that same capability down as a folder with a `SKILL.md` file at i
 
 Our objective with the marketplace is to make that the normal way capability gets shared, for some utilities that we have found helpful ourselves.
 
-## The mandate
+## The Same Argument, One Level Higher
 
 Since 2017 we have argued that systems making consequential decisions should be inspectable by the people affected by them. That argument has produced the [Nine Principles for AI Alignment & Safety](/principles/), over 30 [policy contributions](/policy/), and a set of [open-source projects](/open-source/) that give the principles something to run on.
 
 Agent skills are the same argument applied, but one level higher in abstraction. The instructions we hand to agents are now a real part of how software gets built. We believe those instructions deserve the same treatment we ask for everywhere else: written down, versioned, reviewed, and open to correction.
 
-That's the mandate we operate the marketplace under. It's a place where a working procedure can be published, validated and improved by anyone who uses it, and it doesn't compete with the assistants it installs into. 
+That's the mandate we operate the marketplace under. It's a place where a working procedure can be published, validated and improved by anyone who uses it, and it doesn't compete with the assistants it installs into.
 
-## The capability
+## The Mechanics: Skills, Plugins and Validation
 
 We kept the mechanics deliberately small, as we don't aim for this to be a complete list of skills, but a curated list.
 
-### Skills and plugins
+### Skills and Plugins
 
 A skill is a directory containing a `SKILL.md`. The frontmatter carries a `name` and a `description`, and the body carries the procedure. The description is doing real work here, as the agent matches it against the task. A vague description means the skill never fires, and an overreaching one means it fires when it shouldn't.
 
 A plugin bundles one or more related skills, and it's the thing an assistant actually installs. We didn't add any packaging layers beyond that.
 
-### Installing from either client
+### Installing from Either Client
 
 You register the marketplace once and then install plugins from it by name. Claude Code takes the slash-command form:
 
@@ -56,13 +56,13 @@ copilot plugin install dev-utilities@agent-skills-marketplace
 
 We also wrote `INSTALL.md` in the repository to do the prerequisite check, the registration and the installation for you, in case you'd rather hand the whole thing to your assistant.
 
-### Validation before review
+### Validation Before Review
 
 We make sure that every change runs `scripts/validate.sh` in CI. The script checks manifest structure, skill frontmatter, skill references, naming and plugin freshness. A submission either satisfies the format or gets told exactly why it doesn't, before a human reviewer spends time on it.
 
-## What we are shipping today
+## What We Are Shipping Today
 
-Each of the five skills we are shipping is a tool we use in our own day-to-day work.
+Each of the skills we are shipping is a tool we use in our own day-to-day work.
 
 | Plugin          | Skill                            | What it does                                                                                                                |
 | --------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
@@ -76,7 +76,7 @@ The first of those is worth calling out because it's the skill that governs the 
 
 [`standardize-agent-instructions`](/blog/one-source-of-truth-for-agent-instructions/) is the one that tends to surprise people. Most repositories that have seen more than one agent tool now carry three or four instruction files, and those files have diverged from each other. The skill collapses them into a single source of truth with symlinks, and that removes an entire category of "the agent ignored the rules" bug.
 
-## Contributing
+## Contributing Your Own Skills
 
 Contributions arrive as pull requests against [the repository](https://github.com/EthicalML/agent-skills-marketplace). Please run `scripts/validate.sh` before you open one, and read [`CONTRIBUTING.md`](https://github.com/EthicalML/agent-skills-marketplace/blob/master/CONTRIBUTING.md) for what the validator expects and what a good skill looks like.
 
