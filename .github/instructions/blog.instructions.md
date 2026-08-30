@@ -23,10 +23,15 @@ Blog prose is written in the author's voice, extracted from the published archiv
 
 The single strongest driver is **personification**. The author is present in the text as "I" (personal posts) or "we" (Institute posts), and actions have actors: "we make sure every change runs the validator", never "every change runs the validator". This applies to headings too ("What we are shipping today", not "What ships today"). A paragraph with no person in it is almost always the detached LLM register.
 
-Sentence shape is the second driver:
+Sentence shape is the second driver, and it has two failure modes that both read as LLM:
 
-- Long, flowing, connected sentences are the default. Join related thoughts with "as", "because", "which", "so", "whilst", "since" or a semicolon instead of chopping them into consecutive short sentences. Splitting one thought across two or three short declarative sentences is the loudest tell of all ("A plugin is the unit an assistant installs. That is the only packaging layer."), so fold the fragment into the sentence it belongs to or delete it.
+- Chopping one thought into consecutive short declarative fragments ("A plugin is the unit an assistant installs. That is the only packaging layer."). Fold the fragment into the sentence it belongs to or delete it. A short sentence is fine when it carries a complete plain thought; a fragment that restates or punctuates the previous sentence is not.
+- Fusing several thoughts into one nested sentence ("A skill writes that same capability down as a folder with a SKILL.md at its root, which holds a short description the agent matches against the task in front of it and the procedure it should follow once it matches."). Sentences read in normal order (subject, verb, object), one thought per clause. Length comes from chaining plain clauses with "and", "so", "but", "as" or "because", never from stacking relative clauses or piling modifiers. At most one subordinate clause per sentence; if the reader has to re-read to find who does what, split it.
+
+Other register rules:
+
 - Conversational questions and interjections are fine ("Well, which one is it?"); declarative punch fragments that close or restate a point are not.
+- Prefer common words. Do not reach for a vivid uncommon verb ("evaporates") when a plain phrase does the job ("is ephemeral", "disappears").
 - Use contractions naturally ("wasn't", "it's", "I've").
 - Casual hedges and colloquial fillers are part of the register ("just", "a bunch of", "pretty much", "nowadays", "organically").
 - Colons only introduce lists, enumerations or code blocks; mid-prose apposition ("The rule is simple: ...") gets merged into one sentence instead.
@@ -39,6 +44,7 @@ Calibration pairs from the author (left is the tell, right is the voice):
 - "Which makes it worth being precise about how to write one, because the default is bad." -> "Being precise about how to write one is important nowadays because the default is just not great."
 - "Every change runs scripts/validate.sh in CI." -> "We make sure that every change runs scripts/validate.sh in CI."
 - "Five skills across three plugins. Each of them is a tool we use." -> "Each of the five skills we are shipping is a tool we use in our own day-to-day work."
+- "A skill writes that same capability down as a folder with a SKILL.md at its root, which holds a short description the agent matches against the task in front of it and the procedure it should follow once it matches." -> "A skill writes that same capability down as a folder with a SKILL.md file at its root. The file holds a short description and a procedure. The agent matches the description against the task in front of it, and once it matches, it follows the procedure."
 
 What the posts do:
 
@@ -52,7 +58,7 @@ What the posts do:
 Banned constructions (LLM tells):
 
 - "It's not X. It's Y." / "Not just X, but Y" / negative parallelisms; "the real X is"; "is less X, and more Y"; "X rather than Y" framed as misconception-correction.
-- "is quietly ...", "Delving into", "At its core", "this is another strong signal that ... moving from ... into ...".
+- "is quietly ...", "Delving into", "At its core", "it rarely survives", "this is another strong signal that ... moving from ... into ...".
 - Aphorism pull quotes; mic-drop one-line paragraph closers; chiasmus and inversion snaps.
 - Runs of symmetric bolded-lead bullets ("**Portable, not captive.** ... **Reviewable as text.** ...").
 - Sentences ending in a trailing "-ing" commentary clause ("...highlighting the importance of X").
