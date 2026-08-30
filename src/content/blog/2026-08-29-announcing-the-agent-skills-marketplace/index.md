@@ -6,35 +6,31 @@ summary: 'We are releasing an open-source marketplace of portable agent skills, 
 tags: [agents, agent-skills, open-source, tooling]
 ---
 
-Today we are releasing the [Agent Skills Marketplace](/open-source/agent-skills-marketplace/), an open-source catalogue of portable agent skills that we maintain at the Institute.
-
 > A skill is the careful balance of deterministic utilities with non-deterministic intelligence.
 
-We are shipping five skills across three plugins, all under MIT, and all of them install into both Claude Code and Copilot CLI without being rewritten for either.
+Today we are releasing the [Agent Skills Marketplace](/open-source/agent-skills-marketplace/), an open-source catalogue of portable agent skills that we maintain at the Institute.
+
+We are shipping a few skills across three plugins (under Apache License), and all of them install into both Claude Code and Copilot CLI.
 
 ## The objective
 
-Most of the capability that people are building with coding agents today is ephemeral. It lives in a prompt someone pasted into a chat window, in a paragraph buried in a project instruction file, or in the head of the one engineer who worked out how to make the agent do the thing reliably. It can't be reviewed, it can't be copied to another team, and it usually disappears with the next tool change.
+The reason why agent skills are gaining popularity is because most of the capability that people are building with coding agents today is ephemeral. It lives in a prompt someone pasted into a chat window, in a paragraph buried in a project instruction file, or in the head of the one engineer who worked out how to make the agent do the thing reliably. It can't be reviewed, it can't be copied to another team, and it usually disappears with the next tool change.
 
 A skill writes that same capability down as a folder with a `SKILL.md` file at its root. The file holds a short description and a procedure. The agent matches the description against the task in front of it, and once it matches, it follows the procedure. Because the skill is a file in version control, it can be read in a pull request, corrected in public, and copied to another team.
 
-Our objective with the marketplace is to make that the normal way capability gets shared. Concretely:
-
-- The `SKILL.md` layout is a convention and not a vendor feature, so a skill written once installs into more than one assistant, and changing tools doesn't mean rewriting everything the team has worked out.
-- A skill is prose and commands, with no build artefact between what a reviewer reads and what the agent runs.
-- When a skill turns out to encode a bad practice, the fix is a pull request instead of a support ticket to a vendor.
+Our objective with the marketplace is to make that the normal way capability gets shared, for some utilities that we have found helpful ourselves.
 
 ## The mandate
 
 Since 2017 we have argued that systems making consequential decisions should be inspectable by the people affected by them. That argument has produced the [Nine Principles for AI Alignment & Safety](/principles/), over 30 [policy contributions](/policy/), and a set of [open-source projects](/open-source/) that give the principles something to run on.
 
-Agent skills are the same argument applied one level up. The instructions we hand to agents are now a real part of how software gets built, how research gets summarised and how decisions get drafted. We believe those instructions deserve the same treatment we ask for everywhere else: written down, versioned, reviewed, and open to correction by people who didn't write them.
+Agent skills are the same argument applied, but one level higher in abstraction. The instructions we hand to agents are now a real part of how software gets built. We believe those instructions deserve the same treatment we ask for everywhere else: written down, versioned, reviewed, and open to correction.
 
-That's the mandate we operate the marketplace under. It's a place where a working procedure can be published, validated and improved by anyone who uses it, and it doesn't compete with the assistants it installs into.
+That's the mandate we operate the marketplace under. It's a place where a working procedure can be published, validated and improved by anyone who uses it, and it doesn't compete with the assistants it installs into. 
 
 ## The capability
 
-We kept the mechanics deliberately small.
+We kept the mechanics deliberately small, as we don't aim for this to be a complete list of skills, but a curated list.
 
 ### Skills and plugins
 
@@ -62,7 +58,7 @@ We also wrote `INSTALL.md` in the repository to do the prerequisite check, the r
 
 ### Validation before review
 
-We make sure that every change runs `scripts/validate.sh` in CI. The script checks manifest structure, skill frontmatter, skill references, naming and plugin freshness. A submission either satisfies the format or gets told exactly why it doesn't, before a human reviewer spends time on it. We put the machine on format checking because it does that job better than a reviewer, and a catalogue that drifts out of spec stops being useful fast.
+We make sure that every change runs `scripts/validate.sh` in CI. The script checks manifest structure, skill frontmatter, skill references, naming and plugin freshness. A submission either satisfies the format or gets told exactly why it doesn't, before a human reviewer spends time on it.
 
 ## What we are shipping today
 
