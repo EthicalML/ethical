@@ -1,6 +1,6 @@
 ---
 import EventBanner from './EventBanner.astro';
-import { loadEvents, eventDate, recordings, openCfps, type Event } from '../utils/Events';
+import { loadEvents, eventDate, recordings, openCfps, hasSpoken, namedTalks, type Event } from '../utils/Events';
 
 const today = new Date();
 const { all, upcoming, past } = await loadEvents(today);
@@ -63,7 +63,7 @@ const leadImage = (event: Event) => (event.talks ?? []).find((talk) => talk.imag
         >
           <span class="card-art">
             <EventBanner slug={event.slug} series={event.series} label={event.series.toUpperCase()} topic={event.topics?.[0]} image={leadImage(event)} />
-            {(event.talks ?? []).length > 0 && <span class="card-flag speaking">{ahead.has(event.slug) ? 'SPEAKING' : 'WE SPOKE'}</span>}
+            {hasSpoken(event) && <span class="card-flag speaking">{ahead.has(event.slug) ? 'SPEAKING' : 'WE SPOKE'}</span>}
             {recordings(event).length > 0 && <span class="card-flag">WATCH</span>}
             {openCfps(event, today).length > 0 && <span class="card-flag cfp">CFP OPEN</span>}
           </span>
@@ -71,7 +71,8 @@ const leadImage = (event: Event) => (event.talks ?? []).find((talk) => talk.imag
             <span class="card-date">{eventDate(event)}</span>
             <span class="card-title">{event.name}</span>
             {event.location && <span class="card-sub">{event.location}</span>}
-            {(event.talks ?? []).map((talk) => (
+            {hasSpoken(event) && <span class="card-rule" />}
+            {namedTalks(event).map((talk) => (
               <span class="card-talk">{talk.title}</span>
             ))}
           </span>
@@ -264,34 +265,26 @@ const leadImage = (event: Event) => (event.talks ?? []).find((talk) => talk.imag
     color: var(--text-3);
     font-size: 0.75rem;
   }
-  /* Matches the upcoming cards: the separator only exists where we are on the
-     programme, so it carries the accent and lights on hover. */
-  .card-talk {
-    border-top: 1px solid transparent;
-    color: var(--text-2);
-    font-size: 0.76rem;
-    line-height: 1.35;
-    margin-top: var(--space-6);
-    padding-top: var(--space-6);
-    position: relative;
-  }
-  .card-talk::before {
+  /* Matches the upcoming cards: the rule renders wherever we are on the
+     programme, with or without an announced title under it. */
+  .card-rule {
     background: rgba(var(--accent-ink-rgb), 0.55);
-    content: '';
     height: 2px;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: -1px;
+    margin-top: var(--space-6);
     transition:
       background var(--duration-3),
       box-shadow var(--duration-3),
       height var(--duration-3);
   }
-  .archive-card:hover .card-talk::before {
+  .archive-card:hover .card-rule {
     background: var(--accent);
     box-shadow: 0 0 14px var(--accent-edge);
     height: 3px;
+  }
+  .card-talk {
+    color: var(--text-2);
+    font-size: 0.76rem;
+    line-height: 1.35;
   }
   .finder-empty {
     color: var(--text-2);
@@ -321,7 +314,7 @@ const leadImage = (event: Event) => (event.talks ?? []).find((talk) => talk.imag
     .archive-card {
       transition: none;
     }
-    .card-talk::before {
+    .card-rule {
       transition: none;
     }
     .archive-card:hover {

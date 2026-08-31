@@ -1,6 +1,6 @@
 ---
 import EventBanner from './EventBanner.astro';
-import { loadEvents, openCfps, eventDate, daysUntil, type Event } from '../utils/Events';
+import { loadEvents, openCfps, eventDate, daysUntil, hasSpoken, namedTalks, type Event } from '../utils/Events';
 
 interface Props {
   /** Event names in the order they should lead; anything else follows by date. */
@@ -32,14 +32,15 @@ const events: Event[] = [...upcoming].sort(
             {openCfps(event, today).map((cfp) => (
               <span class="banner-pill">CFP · {daysUntil(cfp.deadline!, today)} DAYS</span>
             ))}
-            {(event.talks ?? []).length > 0 && <span class="banner-pill speaking">SPEAKING</span>}
+            {hasSpoken(event) && <span class="banner-pill speaking">SPEAKING</span>}
             <EventBanner slug={event.slug} series={event.series} label={event.series.toUpperCase()} topic={event.topics?.[0]} image={event.image} />
           </span>
           <span class="card-body">
             <span class="card-date">{eventDate(event)}</span>
             <span class="card-name">{event.name}</span>
             {event.location && <span class="card-where">{event.location}</span>}
-            {(event.talks ?? []).map((talk) => (
+            {hasSpoken(event) && <span class="card-rule" />}
+            {namedTalks(event).map((talk) => (
               <span class="card-talk">{talk.title}</span>
             ))}
           </span>
@@ -122,35 +123,29 @@ const events: Event[] = [...upcoming].sort(
     color: var(--text-2);
     font-size: 0.8rem;
   }
-  /* The separator only exists on a card we are on the programme for, so it is
-     the second marker rather than a divider: the strategy grid's phase rule,
-     accent at rest and lit on hover. The line is a pseudo-element because the
-     glow has to belong to the rule, not to the block of text under it. */
-  .card-talk {
-    border-top: 1px solid transparent;
-    color: var(--text-3);
-    font-size: 0.78rem;
-    margin-top: var(--space-8);
-    padding-top: var(--space-8);
-    position: relative;
-  }
-  .card-talk::before {
+  /* The rule renders for a card we are on the programme for and nothing else,
+     so it is the second speaking marker rather than a divider: the strategy
+     grid's phase rule, accent at rest and lit on hover. It is its own element
+     rather than the talk line's border because a confirmed slot often has no
+     announced title yet, and the marker must not depend on there being text
+     under it. */
+  .card-rule {
     background: rgba(var(--accent-ink-rgb), 0.55);
-    content: '';
     height: 2px;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: -1px;
+    margin-top: var(--space-6);
     transition:
       background var(--duration-3),
       box-shadow var(--duration-3),
       height var(--duration-3);
   }
-  .event-card:hover .card-talk::before {
+  .event-card:hover .card-rule {
     background: var(--accent);
     box-shadow: 0 0 14px var(--accent-edge);
     height: 3px;
+  }
+  .card-talk {
+    color: var(--text-3);
+    font-size: 0.78rem;
   }
   .cards-empty {
     color: var(--text-2);
@@ -161,7 +156,7 @@ const events: Event[] = [...upcoming].sort(
       transform: none;
       transition: none;
     }
-    .card-talk::before {
+    .card-rule {
       transition: none;
     }
   }
