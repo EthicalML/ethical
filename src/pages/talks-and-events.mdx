@@ -4,6 +4,7 @@ description: Keynotes, conference talks and roundtables on production ML, securi
 composed: true
 layout: ../layouts/ProseLayout.astro
 featured:
+  - Economic Forum 2026
   - Signals Conference 2026
   - World Summit AI Europe 2026
   - AI Infra Summit 2026
@@ -27,9 +28,14 @@ import TalkReel from '../components/TalkReel.astro';
   <h2>Where to be this year</h2>
   <p>A personal selection of the events worth the trip, marked where we are on the programme or a call for papers is still open.</p>
   <EventCards names={frontmatter.featured} empty="No public dates right now — announcements go out first through the ML Engineer newsletter." />
-  <a className="button primary" href="/newsletter/">
-    {'Subscribe to newsletter'}
-  </a>
+  <div className="actions">
+    <a className="button primary" href="#every-talk-and-event">
+      {'All future and past events'}
+    </a>
+    <a className="button" href="/newsletter/">
+      {'Weekly events via Newsletter'}
+    </a>
+  </div>
 </section>
 
 <section className="cluster-section reel-section" data-reveal>
@@ -41,7 +47,7 @@ import TalkReel from '../components/TalkReel.astro';
 
 <section className="cluster-section archive-section" data-reveal>
   <p className="eyebrow">ARCHIVE</p>
-  <h2>Every talk and event</h2>
+  <h2 id="every-talk-and-event">Every talk and event</h2>
   <p>What is ahead, then everything behind. Search by name, city or year, or filter by topic, and every talk we have a recording of is linked.</p>
   <EventArchive />
 </section>

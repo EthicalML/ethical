@@ -9,6 +9,7 @@ const { all, upcoming, past } = await loadEvents(today);
 // favourites to the top made the sort unreadable — the reader cannot tell why
 // 2019 sits above 2026.
 const events: Event[] = [...upcoming, ...past];
+const ahead = new Set(upcoming.map((event) => event.slug));
 
 const topicCounts = new Map<string, number>();
 for (const event of all) for (const topic of event.topics ?? []) topicCounts.set(topic, (topicCounts.get(topic) ?? 0) + 1);
@@ -19,6 +20,12 @@ const leadImage = (event: Event) => (event.talks ?? []).find((talk) => talk.imag
 ---
 
 <event-finder class="event-archive">
+  <nav class="when-toggle" role="group" aria-label="Filter by date">
+    <button type="button" data-finder-when="all" aria-pressed="true">All</button>
+    <button type="button" data-finder-when="upcoming" aria-pressed="false">Upcoming</button>
+    <button type="button" data-finder-when="past" aria-pressed="false">Past</button>
+  </nav>
+
   <div class="finder-bar">
     <input data-finder-input type="search" placeholder="Search by name, city or year" aria-label="Search events by name, city or year" />
     <div class="finder-modes" role="group" aria-label="Filter events">
@@ -51,6 +58,7 @@ const leadImage = (event: Event) => (event.talks ?? []).find((talk) => talk.imag
           data-ours={(event.talks ?? []).length > 0 ? 'yes' : 'no'}
           data-video={recordings(event).length > 0 ? 'yes' : 'no'}
           data-cfp={openCfps(event, today).length > 0 ? 'yes' : 'no'}
+          data-when={ahead.has(event.slug) ? 'upcoming' : 'past'}
           data-text={`${event.name} ${event.location ?? ''} ${event.start.getFullYear()} ${(event.talks ?? []).map((talk) => talk.title).join(' ')}`.toLowerCase()}
         >
           <span class="card-art">
@@ -74,6 +82,45 @@ const leadImage = (event: Event) => (event.talks ?? []).find((talk) => talk.imag
 </event-finder>
 
 <style>
+  /* Sits at the section heading's right edge on desktop, the same placement as
+     the policy record toggle, so the reader meets the upcoming/past split
+     before the search box rather than after it. Below the heading's own
+     wrapping point it drops back into flow above the bar. */
+  .when-toggle {
+    display: flex;
+    inset: -118px 0 auto auto;
+    position: absolute;
+  }
+  .when-toggle button {
+    background: transparent;
+    border: 1px solid var(--hairline-card);
+    color: var(--text-3);
+    cursor: pointer;
+    font: var(--mono-9) / 1 var(--font-mono);
+    letter-spacing: 0.1em;
+    min-height: 36px;
+    padding: 0 18px;
+    text-transform: uppercase;
+    transition:
+      border-color 0.3s ease,
+      color 0.3s ease;
+  }
+  .when-toggle button + button {
+    border-left: 0;
+  }
+  .when-toggle button:hover {
+    color: var(--text-1);
+  }
+  .when-toggle button[aria-pressed='true'] {
+    background: var(--accent);
+    border-color: var(--accent-ink);
+    color: var(--accent-on);
+  }
+
+  .event-archive {
+    display: block;
+    position: relative;
+  }
   .finder-bar {
     align-items: center;
     display: flex;
@@ -222,6 +269,16 @@ const leadImage = (event: Event) => (event.talks ?? []).find((talk) => talk.imag
   /* Below the gate's mobile breakpoint every control has to clear 44x44. The
      compact chip sizing is a desktop affordance, not a universal one. */
   @media (max-width: 950px) {
+    .when-toggle {
+      inset: auto;
+      margin-bottom: var(--space-14);
+      position: static;
+    }
+    .when-toggle button {
+      flex: 1 1 0;
+      min-height: 44px;
+      padding: 0 var(--space-12);
+    }
     .finder-modes button,
     .topic-rail button {
       min-height: 44px;
@@ -248,13 +305,20 @@ const leadImage = (event: Event) => (event.talks ?? []).find((talk) => talk.imag
       const { signal } = this.controller;
       const input = this.querySelector<HTMLInputElement>('[data-finder-input]');
       const modeButtons = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-finder-mode]'));
+      const whenButtons = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-finder-when]'));
       const topicButtons = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-finder-topic]'));
       const cards = Array.from(this.querySelectorAll<HTMLAnchorElement>('.archive-card'));
       const empty = this.querySelector<HTMLElement>('[data-finder-empty]');
       if (!input || !cards.length) return;
 
       let mode = 'all';
+      let when = 'all';
       let activeTopic: string | null = null;
+
+      // An orthogonal axis to the mode buttons: an event can be both upcoming
+      // and one we speak at, so the two controls intersect rather than replace
+      // one another.
+      const matchesWhen = (card: HTMLElement) => when === 'all' || card.dataset.when === when;
 
       const matchesMode = (card: HTMLElement) =>
         mode === 'all' ||
@@ -271,7 +335,7 @@ const leadImage = (event: Event) => (event.talks ?? []).find((talk) => talk.imag
         for (const card of cards) {
           const topics = (card.dataset.topics ?? '').split(' ').filter(Boolean);
           const matchesQuery = !query || (card.dataset.text ?? '').includes(query);
-          const eligible = matchesQuery && matchesMode(card);
+          const eligible = matchesQuery && matchesMode(card) && matchesWhen(card);
           if (eligible) for (const topic of topics) counts.set(topic, (counts.get(topic) ?? 0) + 1);
           const show = eligible && (!activeTopic || topics.includes(activeTopic));
           card.hidden = !show;
@@ -294,6 +358,17 @@ const leadImage = (event: Event) => (event.talks ?? []).find((talk) => talk.imag
           () => {
             mode = button.dataset.finderMode ?? 'all';
             modeButtons.forEach((other) => other.classList.toggle('active', other === button));
+            apply();
+          },
+          { signal },
+        ),
+      );
+      whenButtons.forEach((button) =>
+        button.addEventListener(
+          'click',
+          () => {
+            when = button.dataset.finderWhen ?? 'all';
+            whenButtons.forEach((other) => other.setAttribute('aria-pressed', String(other === button)));
             apply();
           },
           { signal },

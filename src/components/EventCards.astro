@@ -90,9 +90,13 @@ const events: Event[] = [...upcoming].sort(
     right: var(--space-12);
     z-index: 2;
   }
+  /* The one marker that says we are on the programme, so it is the filled form
+     of the accent rather than the CFP pill's outline: a neutral outline on a
+     photographic banner read as chrome and disappeared. */
   .banner-pill.speaking {
-    border-color: var(--hairline-strong);
-    color: var(--text-1);
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-on);
     left: var(--space-12);
     right: auto;
   }
