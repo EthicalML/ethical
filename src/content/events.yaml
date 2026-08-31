@@ -91,6 +91,8 @@
   end: 2026-09-10
   location: Karpacz, PL
   topics: [ai-policy, general-tech, llms]
+  talks:
+    - title: To be announced
 
 - slug: euroscipy-2026
   name: EuroSciPy 2026

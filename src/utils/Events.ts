@@ -20,6 +20,17 @@ export function hasSpoken(event: Event): boolean {
   return (event.talks ?? []).length > 0;
 }
 
+/**
+ * The title a confirmed slot carries until the programme names it. It is what
+ * marks the event as ours, so it stays in the data, but it says nothing a
+ * reader does not already get from the speaking marker and never renders.
+ */
+export const UNANNOUNCED = 'To be announced';
+
+export function namedTalks(event: Event) {
+  return (event.talks ?? []).filter((talk) => talk.title !== UNANNOUNCED);
+}
+
 export function recordings(event: Event) {
   return (event.talks ?? []).filter((talk) => talk.video);
 }
