@@ -21,8 +21,8 @@ const leadImage = (event: Event) => (event.talks ?? []).find((talk) => talk.imag
 
 <event-finder class="event-archive">
   <nav class="when-toggle" role="group" aria-label="Filter by date">
-    <button type="button" data-finder-when="all" aria-pressed="true">All</button>
-    <button type="button" data-finder-when="upcoming" aria-pressed="false">Upcoming</button>
+    <button type="button" data-finder-when="all" aria-pressed="false">All</button>
+    <button type="button" data-finder-when="upcoming" aria-pressed="true">Upcoming</button>
     <button type="button" data-finder-when="past" aria-pressed="false">Past</button>
   </nav>
 
@@ -63,6 +63,7 @@ const leadImage = (event: Event) => (event.talks ?? []).find((talk) => talk.imag
         >
           <span class="card-art">
             <EventBanner slug={event.slug} series={event.series} label={event.series.toUpperCase()} topic={event.topics?.[0]} image={leadImage(event)} />
+            {(event.talks ?? []).length > 0 && <span class="card-flag speaking">{ahead.has(event.slug) ? 'SPEAKING' : 'WE SPOKE'}</span>}
             {recordings(event).length > 0 && <span class="card-flag">WATCH</span>}
             {openCfps(event, today).length > 0 && <span class="card-flag cfp">CFP OPEN</span>}
           </span>
@@ -226,6 +227,15 @@ const leadImage = (event: Event) => (event.talks ?? []).find((talk) => talk.imag
     position: absolute;
     z-index: 2;
   }
+  /* Top left, clear of WATCH at the foot: the two co-occur on most of the
+     archive. Filled accent, the same weight the upcoming cards give it. */
+  .card-flag.speaking {
+    background: var(--accent);
+    border-color: var(--accent);
+    bottom: auto;
+    color: var(--accent-on);
+    top: var(--space-8);
+  }
   .card-flag.cfp {
     border-color: var(--accent-edge, var(--hairline-strong));
     color: var(--accent, var(--text-1));
@@ -254,13 +264,34 @@ const leadImage = (event: Event) => (event.talks ?? []).find((talk) => talk.imag
     color: var(--text-3);
     font-size: 0.75rem;
   }
+  /* Matches the upcoming cards: the separator only exists where we are on the
+     programme, so it carries the accent and lights on hover. */
   .card-talk {
-    border-top: 1px solid var(--hairline);
+    border-top: 1px solid transparent;
     color: var(--text-2);
     font-size: 0.76rem;
     line-height: 1.35;
     margin-top: var(--space-6);
     padding-top: var(--space-6);
+    position: relative;
+  }
+  .card-talk::before {
+    background: rgba(var(--accent-ink-rgb), 0.55);
+    content: '';
+    height: 2px;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: -1px;
+    transition:
+      background var(--duration-3),
+      box-shadow var(--duration-3),
+      height var(--duration-3);
+  }
+  .archive-card:hover .card-talk::before {
+    background: var(--accent);
+    box-shadow: 0 0 14px var(--accent-edge);
+    height: 3px;
   }
   .finder-empty {
     color: var(--text-2);
@@ -290,6 +321,9 @@ const leadImage = (event: Event) => (event.talks ?? []).find((talk) => talk.imag
     .archive-card {
       transition: none;
     }
+    .card-talk::before {
+      transition: none;
+    }
     .archive-card:hover {
       transform: none;
     }
@@ -312,7 +346,9 @@ const leadImage = (event: Event) => (event.talks ?? []).find((talk) => talk.imag
       if (!input || !cards.length) return;
 
       let mode = 'all';
-      let when = 'all';
+      // Opens on what is ahead: the archive runs to 2019, and the reader who
+      // lands here is deciding where to go, not browsing history.
+      let when = 'upcoming';
       let activeTopic: string | null = null;
 
       // An orthogonal axis to the mode buttons: an event can be both upcoming

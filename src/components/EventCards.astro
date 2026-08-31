@@ -122,12 +122,35 @@ const events: Event[] = [...upcoming].sort(
     color: var(--text-2);
     font-size: 0.8rem;
   }
+  /* The separator only exists on a card we are on the programme for, so it is
+     the second marker rather than a divider: the strategy grid's phase rule,
+     accent at rest and lit on hover. The line is a pseudo-element because the
+     glow has to belong to the rule, not to the block of text under it. */
   .card-talk {
-    border-top: 1px solid var(--hairline);
+    border-top: 1px solid transparent;
     color: var(--text-3);
     font-size: 0.78rem;
     margin-top: var(--space-8);
     padding-top: var(--space-8);
+    position: relative;
+  }
+  .card-talk::before {
+    background: rgba(var(--accent-ink-rgb), 0.55);
+    content: '';
+    height: 2px;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: -1px;
+    transition:
+      background var(--duration-3),
+      box-shadow var(--duration-3),
+      height var(--duration-3);
+  }
+  .event-card:hover .card-talk::before {
+    background: var(--accent);
+    box-shadow: 0 0 14px var(--accent-edge);
+    height: 3px;
   }
   .cards-empty {
     color: var(--text-2);
@@ -136,6 +159,9 @@ const events: Event[] = [...upcoming].sort(
     .event-card,
     .event-card:hover {
       transform: none;
+      transition: none;
+    }
+    .card-talk::before {
       transition: none;
     }
   }
