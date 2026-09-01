@@ -116,3 +116,4 @@ tmp2
 .env
 .env.*
 !.env.example
+.vscode/
