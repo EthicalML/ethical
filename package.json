@@ -30,29 +30,29 @@
     "verify:canvas-surface": "node scripts/verify/verify-canvas-surface.mjs"
   },
   "dependencies": {
-    "@astrojs/markdown-remark": "7.2.2",
-    "@astrojs/mdx": "7.0.5",
-    "@astrojs/preact": "^6.0.2",
+    "@astrojs/markdown-remark": "7.2.4",
+    "@astrojs/mdx": "7.0.8",
+    "@astrojs/preact": "^6.0.4",
     "@astrojs/rss": "4.0.19",
     "@astrojs/sitemap": "3.7.3",
-    "astro": "7.2.0",
+    "astro": "7.2.9",
     "preact": "^10.29.8"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
     "@eslint/js": "10.0.1",
-    "@typescript-eslint/eslint-plugin": "8.66.0",
-    "@typescript-eslint/parser": "8.66.0",
-    "eslint": "10.8.1",
+    "@typescript-eslint/eslint-plugin": "8.68.0",
+    "@typescript-eslint/parser": "8.68.0",
+    "eslint": "10.9.1",
     "eslint-plugin-astro": "3.1.0",
     "fontkit": "^2.0.4",
-    "globals": "17.9.0",
+    "globals": "17.11.0",
     "pagefind": "^1.5.2",
     "png-to-ico": "^3.0.2",
     "prettier": "3.9.6",
     "prettier-plugin-astro": "0.14.1",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.66.0",
+    "typescript-eslint": "8.68.0",
     "wawoff2": "^2.0.1"
   },
   "overrides": {
