@@ -1,7 +1,7 @@
 {
   "repository": "https://github.com/EthicalML/awesome-production-machine-learning",
   "source": "https://raw.githubusercontent.com/EthicalML/awesome-production-machine-learning/master/README.md",
-  "libraryCount": 545,
+  "libraryCount": 547,
   "categories": [
     {
       "name": "AutoML",
@@ -885,9 +885,19 @@
           "description": "BentoML is an open source framework for high performance ML model serving."
         },
         {
+          "name": "Bifrost",
+          "href": "https://github.com/maximhq/bifrost",
+          "description": "AI gateway providing a single OpenAI-compatible API across 23+ LLM providers, with automatic fallbacks, load balancing, semantic caching, budget governance and Prometheus metrics."
+        },
+        {
           "name": "BISHENG",
           "href": "https://github.com/dataelement/bisheng",
           "description": "BISHENG is an open LLM application devops platform, focusing on enterprise scenarios."
+        },
+        {
+          "name": "CosmoEdge",
+          "href": "https://github.com/cosmo-wander-ai/cosmo-edge",
+          "description": "A C++ edge video AI engine for production deployments, combining RTSP ingestion, CV/VLM inference, visual orchestration, alarms, and event delivery across Sophon and Rockchip NPUs."
         },
         {
           "name": "DeepDetect",
