@@ -43,6 +43,8 @@ watchlist:
     - name: MLOps World
       note: US, unique flagship in the MLOps niche - standing exception; moved Austin to SF
   cfp-track:
+    - name: FastAPI Conf
+      note: official FastAPI-team event, Amsterdam; first edition invited-speakers only, watch for a real CFP
     - name: Rise of AI Berlin
       note: ~300 curated seats, German-ecosystem lineup; attend because Berlin
     - name: Accelerate Tomorrow AI Summit Berlin
@@ -77,7 +79,7 @@ scouted:
     next_edition: 2027-03-15 to 2027-03-18, Barcelona, ES
     cfp: OPEN - opened 2026-08-10, closes 2026-10-11 23:59 CEST (https://sessionize.com/kubecon-cloudnativecon-europe-2027/)
     owner: keen to submit - CFP now open, flagged in issue-401 scout report
-    note: proposed into events.yaml on 2026-08-23; proposal still not merged as of 2026-09-06
+    note: added to events.yaml on 2026-09-06
   - name: AGNTCon + MCPCon Europe
     url: https://events.linuxfoundation.org/agntcon-mcpcon-europe/
     checked: 2026-08-16
@@ -143,7 +145,7 @@ scouted:
     status: tracked
     next_edition: 2027-06-29 to 2027-07-02, Moscone West, San Francisco, US - confirmed on organiser site
     cfp: not open yet (no speaker call visible 2026-08-23)
-    note: proposed into events.yaml on 2026-08-23; proposal still not merged as of 2026-09-06
+    note: added to events.yaml on 2026-09-06
   - name: MLOps World
     url: https://mlopsworld.com/call-for-speakers/
     checked: 2026-09-06
