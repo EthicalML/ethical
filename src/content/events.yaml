@@ -3,6 +3,17 @@
 # One event is one conference: several talks or several per-track CFPs live in the arrays.
 # Sorted by `start`, newest first.
 
+- slug: mlsys-2027
+  name: MLSys 2027
+  series: mlsys
+  url: https://mlsys.org/
+  start: 2027-05-01 # unverified - organiser confirms May 2027 but has not announced program dates
+  location: Santa Clara, US
+  topics: [mlops, ai-infrastructure, research]
+  cfps:
+    - url: https://openreview.net/group?id=MLSys.org/2027/Conference
+      # no deadline announced yet
+
 - slug: mlops-world-2026
   name: MLOps World 2026
   series: mlops-world
