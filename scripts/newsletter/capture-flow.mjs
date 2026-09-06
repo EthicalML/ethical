@@ -22,7 +22,21 @@ export default async function flow({ goto, mark, page, pause, scrollTo }) {
   await goto(process.env.CAPTURE_TARGET_URL);
   mark('article');
 
+  // Third-party articles interrupt a scroll with a newsletter or signup modal
+  // (Medium does it partway down), which then sits over the body for the rest of
+  // the walk. Escape closes every one seen so far, and costs nothing on a page
+  // that has none, so it is pressed at each beat rather than only on arrival.
+  const dismiss = async () => {
+    await page.keyboard.press('Escape').catch(() => {});
+    await page
+      .locator('[aria-label="close" i], button[data-testid="close-button"]')
+      .first()
+      .click({ timeout: 700 })
+      .catch(() => {});
+  };
+
   await pause(1600);
+  await dismiss();
   mark('top');
 
   const depth = await page.evaluate(() => {
@@ -36,6 +50,7 @@ export default async function flow({ goto, mark, page, pause, scrollTo }) {
 
   if (depth > 200) {
     await scrollTo(depth);
+    await dismiss();
     await pause(1500);
     mark('body');
     await scrollTo(0);
