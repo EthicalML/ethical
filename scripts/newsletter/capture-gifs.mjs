@@ -238,6 +238,13 @@ async function capture(target, { engine, postsDir, theme, workDir }) {
     'node',
     [
       engine,
+      // Headed because headless Chromium is fingerprinted and blocked outright by
+      // some of the sites the newsletter links, and --no-root because the engine
+      // otherwise loads the site root first: wasted footage the runner trims, and
+      // on a Cloudflare-fronted site the root-then-deep-link hop is itself what
+      // trips the bot check.
+      '--headed',
+      '--no-root',
       '--url',
       target.url,
       '--flow',
