@@ -3,6 +3,29 @@
 # One event is one conference: several talks or several per-track CFPs live in the arrays.
 # Sorted by `start`, newest first.
 
+- slug: wearedevelopers-world-congress-2027
+  name: WeAreDevelopers World Congress 2027
+  series: wearedevelopers-world-congress
+  url: https://www.wearedevelopers.com/world-congress
+  image: https://imagedelivery.net/p2Gwf4g3bNtyXUmnEu9Kdw/main-stage/main-stage-panorama/og?format=auto
+  start: 2027-07-14
+  end: 2027-07-16
+  location: Berlin, DE
+  topics: [general-tech, llms]
+  cfps:
+    - url: https://sessionize.com/wearedevelopers-world-congress-2026-europe/
+      # no deadline: the official call has closed, late submissions are rolling
+
+- slug: ai-engineer-worlds-fair-2027
+  name: AI Engineer World's Fair 2027
+  series: ai-engineer-worlds-fair
+  url: https://ai.engineer/
+  image: https://ai.engineer/og-image-ai-engineer.png
+  start: 2027-06-29
+  end: 2027-07-02
+  location: San Francisco, US
+  topics: [ai-agents, llms]
+
 - slug: mlsys-2027
   name: MLSys 2027
   series: mlsys
@@ -13,6 +36,19 @@
   cfps:
     - url: https://openreview.net/group?id=MLSys.org/2027/Conference
       # no deadline announced yet
+
+- slug: kubecon-cloudnativecon-europe-2027
+  name: KubeCon + CloudNativeCon Europe 2027
+  series: kubecon-cloudnativecon-europe
+  url: https://events.linuxfoundation.org/kubecon-cloudnativecon-europe-2027/
+  image: https://events.linuxfoundation.org/wp-content/uploads/2024/11/KubeCon-EU27_Snackable.jpg
+  start: 2027-03-15
+  end: 2027-03-18
+  location: Barcelona, ES
+  topics: [cloud-native, mlops, ai-infrastructure]
+  cfps:
+    - url: https://sessionize.com/kubecon-cloudnativecon-europe-2027/
+      deadline: 2026-10-11
 
 - slug: mlops-world-2026
   name: MLOps World 2026
