@@ -2,7 +2,7 @@
 
 `public/keynote/` is the compiled, standalone Signals Berlin presentation, served at https://ethical.institute/keynote/. Astro copies this directory unchanged into `dist/keynote/`; the existing Pages workflow publishes it when this PR is merged to `master`. It has its own full-screen layout and does not use the Astro navigation or route transitions.
 
-The package contains 38 speaking stops, animated Three.js objects, local fonts, a portrait, the closing QR code. No slide screenshots are shipped; a PDF can be exported separately if needed. Click, Space, Enter, Page Down, or Right advances; P opens the presenter window. Hash links such as `/keynote/#4.7` open a specific stop. Reduced-motion support remains built into the presentation.
+The package contains 38 speaking stops, six preloaded Three.js hardware models, local fonts, a portrait, and the closing QR code. Daytime and storm scenes use coordinated light/dark palettes. The repaired enclosure becomes a memory-rack drawer; nested mechanical sleeves open into a funnel, and a 6,800-star field gathers into a rotating galaxy at the close. No slide screenshots are shipped; a PDF can be exported separately if needed. Click, Space, Enter, Page Down, or Right advances; P opens the presenter window. Hash links such as `/keynote/#4.7` open a specific stop. Reduced-motion support remains built into the presentation.
 
 ## Updating the package
 
