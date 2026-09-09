@@ -19,7 +19,7 @@
 
 ## Automated checks
 
-`npm run verify` builds, starts a separate production server, and launches Playwright Chromium with `--use-angle=metal`. It records the actual renderer and rejects software rendering. It checks all 38 views, offline requests, navigation, spring settling, presenter sync, reduced motion, 4K rendering, context restoration and environment recovery. Reports and screenshots go under `tmp/`.
+`npm run verify` builds, starts a separate production server, and launches Playwright Chromium with `--use-angle=metal`. It records the actual renderer and rejects software rendering. It checks all 40 views, offline requests, navigation, spring settling, presenter sync, reduced motion, 4K rendering, context restoration and environment recovery. Reports and screenshots go under `tmp/`.
 
 
 ## Editorial checks
