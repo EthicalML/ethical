@@ -56,6 +56,8 @@ Every sentence must add knowledge; a sentence that only emphasises or restates t
 - Abstract throat-clearing paragraph openers that frame the point before making it ("Being precise about how to write one is important nowadays because..."). Open with the point itself.
 - Symmetric wrap-up clauses tacked onto a finished sentence ("...so each side does the job the other is bad at."). The sentence was done; end it.
 - The rule of three as a reflex; vague attribution ("experts argue") without a named source.
+- Fronted-clause comma pivots as topic sentences ("Where X wins, it wins on...", "When Y fails, it fails because..."). State the finding as a plain declarative instead.
+- Any rhetorical shape repeated as the opener of consecutive paragraphs. A single fronted clause or bolded lead can pass; the same shape opening every paragraph in a section is the tell, so vary paragraph openers or open on the plain fact. (Caught 2026-09-06 in a results report whose every paragraph under a table opened "Where X, it Y" - flagged by the owner as unmistakably LLM.)
 - A summary sentence that restates the heading; "In this article the authors".
 
 ## Banned words
