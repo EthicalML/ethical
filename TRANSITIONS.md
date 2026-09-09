@@ -62,3 +62,7 @@ Motion inside a route rather than between routes.
 - An element whose script rewrites its own visible text at mount carries `data-paint-hold`, cleared by that script on every exit path. The hero typewriter subtitle is the only holder.
 - Cards a user drives never rotate on their own (principles, phases).
 - Every motion has a reduced-motion rendition.
+
+## Standalone keynote
+
+`/keynote/` is a compiled presentation with its own scroll/clicker motion, separate from Astro route transitions. Its 40 stops use continuous hardware assembly and chapter weather. The engine service row retains four complete assemblies, including the housing and covers, and reverses smoothly into the assembled engine. The closing starfield stays scattered until Thank You. Reduced motion holds deterministic scene states. See `KEYNOTE.md` for source and release verification.
