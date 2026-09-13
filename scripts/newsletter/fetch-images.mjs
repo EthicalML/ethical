@@ -303,15 +303,19 @@ async function collect(article, { dir }) {
   //    a diagram drawn as inline SVG or canvas, which nothing downloadable would find.
   const shots = [];
   const dom = await domImageCandidates(article.url, {
-    onPage: async (page) => {
+    onPage: async (page, { stripConsent }) => {
       await page.setViewportSize({ width: shotWidth, height: shotHeight });
       await page.waitForTimeout(600);
+      // Re-run per shot: a resize or a scroll re-reveals a sticky banner that was already
+      // removed once, and the banner is pinned over exactly the part worth photographing.
+      await stripConsent();
       shots.push({ kind: 'screenshot hero', buffer: await page.screenshot({ type: 'png' }) });
 
       // The biggest thing on the page that is a picture of something: a diagram, a chart, a
       // table of results. Cropped to the element, because the interesting part of a technical
       // post is usually one figure rather than the column it sits in.
       await page.setViewportSize({ width: 1400, height: 1000 });
+      await stripConsent();
       const figure = await page.evaluate(() => {
         const boxes = [...document.querySelectorAll('img, svg, canvas, figure, table, pre')]
           .map((node, index) => {
@@ -343,6 +347,7 @@ async function collect(article, { dir }) {
       });
       if (middle > 200) {
         await page.waitForTimeout(500);
+        await stripConsent();
         shots.push({ kind: 'screenshot middle', buffer: await page.screenshot({ type: 'png' }) });
       }
     },

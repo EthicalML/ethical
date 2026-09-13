@@ -25,6 +25,8 @@ Per issue: 5 sections, 789 words and 29 sentences of article prose in total.
 
 58% of sections open with a scene-setting first sentence that ends in a colon, then the detail follows. This is the single strongest structural tell of the voice.
 
+What that sentence names is the actor and what they put out: "Netflix has developed...", "OpenAI published...", "Pinterest shared how they are evolving...". The colon then hands over to the argument. It does not open on the argument itself. "Google Research argue we have been building tool-use datasets backwards" is a thesis wearing a colon-lede's clothes, and the owner rewrote exactly that opener in issue 404 back to "Google Research published ToolGrad, a new way to build the datasets...". Report what was published, and let the claim arrive in the sentence after.
+
 The blog bans mid-prose apposition after a colon ("The rule is simple: ..."), where the second half restates the first. This is not that: the lede names the actor and the release, and the colon introduces the detail that follows, which is the use every guide permits. Do not "fix" a lede into a single sentence.
 
 > Netflix has developed an LLM-native Recommender System, and they share some of the learnings they gathered along the journey:

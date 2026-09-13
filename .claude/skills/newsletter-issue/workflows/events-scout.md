@@ -45,6 +45,8 @@ Only for the shortlist and for watchlist findings being proposed: fetch the orga
 
 Rewrite the `scouted` section of `scripts/events/data/scout-ledger.yaml`: one entry per candidate assessed this run or carried forward, with `checked` set to today for anything actually looked at. Watchlist entries record their known state here too (`status: tracked`, next edition dates, CFP status) — that record is what lets later runs skip them. Prune entries whose event has passed. Leave `watchlist` untouched.
 
+These edits land in whatever checkout this run happens to sit in, which is not the worktree the issue is being drafted in and is frequently behind `origin/master`. Two things follow. Check any claim that an earlier proposal is "still unmerged" against `origin/master` rather than against the working tree, because an absent entry usually means this checkout is stale rather than that the owner never merged it — issue 404's run reported three 2027 events as unmerged when all three were already on master. And say in the return message which file you changed, so the orchestrator carries the edit into the issue branch instead of leaving it stranded.
+
 ## 7. Write the report
 
 Write `tmp/issue-<N>/events-scout.md` with four sections, any of which may say "none". Every event named anywhere in the report carries a link on its title, rejects included — the owner clicks through to overrule, so an unlinked reject is the hardest row to check. Link the organiser page you verified against; when an event has no findable official page, say so in place rather than linking an aggregator.
