@@ -230,6 +230,47 @@ export function rankDomCandidates(candidates) {
   ];
 }
 
+// A consent banner is pinned over the top of every screenshot taken from a page that has one,
+// and it is the first thing the owner asks to be removed. Removing the node beats clicking the
+// button: a click is a consent decision made on somebody's behalf, and this only needs the
+// pixels gone. Bounded to small fixed or sticky boxes so an article that merely discusses
+// cookies keeps its body text.
+export async function stripConsent(page) {
+  try {
+    await page.evaluate(() => {
+      const wording = /cookie|consent|gdpr|privacy preference|uses cookies/i;
+      const naming = /cookie|consent|gdpr/i;
+      for (const node of document.querySelectorAll('div,section,aside,dialog,footer,form')) {
+        const style = getComputedStyle(node);
+        if (!/fixed|sticky/.test(style.position)) continue;
+        const box = node.getBoundingClientRect();
+        if (box.height > 420 || box.height < 20) continue;
+        const naming_hint = `${node.id ?? ''} ${String(node.className ?? '')}`;
+        const text = (node.innerText ?? '').slice(0, 400);
+        if (wording.test(text) || naming.test(naming_hint)) node.remove();
+      }
+    });
+  } catch {
+    // A banner we cannot reach is a cosmetic problem, not a failed harvest.
+  }
+}
+
+// Cloudflare and friends serve an interstitial to the bundled Chromium build while letting a
+// real Chrome through. The page "renders", so nothing throws: we get a screenshot of the block
+// notice instead of the article, which is worse than an error because it looks like a result.
+const blockedPage =
+  /you have been blocked|attention required|just a moment|access denied|enable javascript and cookies|unable to access/i;
+
+async function looksBlocked(page) {
+  try {
+    const title = await page.title();
+    const text = await page.evaluate(() => (document.body?.innerText ?? '').slice(0, 400));
+    return blockedPage.test(title) || blockedPage.test(text);
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Never throws: a page that will not render is one page with no DOM candidates, not a dead
  * run. Resolves to { candidates, reason }, where `reason` explains an empty list.
@@ -250,10 +291,40 @@ export async function domImageCandidates(
 ) {
   const chromium = await loadChromium();
   if (!chromium) return { candidates: [], reason: 'Playwright unavailable, DOM pass skipped' };
+
+  // Bundled Chromium first, then the installed Chrome. The second pass only runs when the
+  // first one came back with an interstitial, so the common case still costs one launch.
+  const launches = [{}, { channel: 'chrome' }];
+  let last = { candidates: [], reason: 'page render failed' };
+  for (const launchOptions of launches) {
+    const result = await harvestOnce(pageUrl, launchOptions, {
+      minBackgroundWidth,
+      minBackgroundHeight,
+      timeoutMs,
+      retrySettleMs,
+      onPage,
+    });
+    if (!result.blocked) return { candidates: result.candidates, reason: result.reason };
+    last = { candidates: result.candidates, reason: result.reason };
+  }
+  return last;
+}
+
+async function harvestOnce(
+  pageUrl,
+  launchOptions,
+  { minBackgroundWidth, minBackgroundHeight, timeoutMs, retrySettleMs, onPage },
+) {
+  const chromium = await loadChromium();
   let browser;
   try {
-    browser = await chromium.launch();
-    const page = await browser.newPage({ userAgent: browserUserAgent });
+    browser = await chromium.launch(launchOptions);
+    // The pinned UA keeps the bundled build consistent with the plain-fetch pass. A real
+    // Chrome announcing a version it is not is a mismatch some bot checks read on its own,
+    // so the channel retry sends whatever that install actually is.
+    const page = await browser.newPage(
+      launchOptions.channel ? {} : { userAgent: browserUserAgent },
+    );
     try {
       await page.goto(pageUrl, { waitUntil: 'networkidle', timeout: timeoutMs });
     } catch {
@@ -262,6 +333,14 @@ export async function domImageCandidates(
       await page.goto(pageUrl, { waitUntil: 'domcontentloaded', timeout: timeoutMs });
       await page.waitForTimeout(retrySettleMs);
     }
+    if (await looksBlocked(page)) {
+      return {
+        candidates: [],
+        reason: `page render blocked by ${new URL(pageUrl).host}`,
+        blocked: true,
+      };
+    }
+    await stripConsent(page);
     const raw = await page.evaluate(collectDomImages, {
       minWidth: minBackgroundWidth,
       minHeight: minBackgroundHeight,
@@ -281,14 +360,14 @@ export async function domImageCandidates(
     }
     if (onPage) {
       try {
-        await onPage(page);
+        await onPage(page, { stripConsent: () => stripConsent(page) });
       } catch {
         // A screenshot that will not take is one missing candidate, not a failed harvest.
       }
     }
-    return { candidates: rankDomCandidates(candidates), reason: '' };
+    return { candidates: rankDomCandidates(candidates), reason: '', blocked: false };
   } catch (error) {
-    return { candidates: [], reason: `page render failed (${error.message})` };
+    return { candidates: [], reason: `page render failed (${error.message})`, blocked: false };
   } finally {
     await browser?.close();
   }
