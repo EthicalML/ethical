@@ -69,6 +69,8 @@ watchlist:
       note: solid stage, .NET-centric, thin AI coverage
     - name: Devoxx Belgium
       note: sell-out dev event; 2026 theme is agentic engineering
+    - name: Data Innovation Summit
+      note: Stockholm; Nordic applied data/analytics/AI flagship, 12th edition, organiser-reported 3,500+ delegates across 15 stages; speaking runs through rolling nominations rather than a dated CFP
 
 scouted:
   # Watchlist state (status: tracked) - what lets later runs skip the sweep.
@@ -89,10 +91,10 @@ scouted:
     note: proposed into events.yaml on 2026-08-16
   - name: AI Engineer Europe
     url: https://www.ai.engineer/europe
-    checked: 2026-09-06
+    checked: 2026-09-13
     status: tracked
     next_edition: February 2027, London - month announced, exact dates TBA
-    cfp: not open yet (rechecked 2026-09-06; the /europe page still shows the passed April 2026 edition, so no 2027 speaker call is published)
+    cfp: not open yet (rechecked 2026-09-13; the /europe page still fronts the passed April 2026 edition and carries only a "Europe 2027" header, no speaker call)
     owner: keen to submit - flag the week the CFP opens (2026-08-16)
   - name: World Summit AI Amsterdam
     checked: 2026-08-16
@@ -182,7 +184,7 @@ scouted:
     status: tracked
     tier: cfp-track
     next_edition: 2026-12-02 to 2026-12-03, CNIT Forest, Paris, FR
-    cfp: open, closes 2026-09-18 - inside the 14-day window as of 2026-09-06
+    cfp: open, closes 2026-09-18 - five days out as of 2026-09-13, lapses next run
     owner: skipped 2026-08-16 - do not re-propose this edition
   - name: Accelerate Tomorrow AI Summit Berlin
     checked: 2026-08-15
@@ -238,6 +240,17 @@ scouted:
     status: watching
     reason: owner-supplied lead (2026-09-06). First edition 2026-10-28, Transformatorhuis Amsterdam, single day, single track, official FastAPI-team event with Samuel Colvin among the speakers. No CFP - the 2026 line-up is invited speakers only - and seats are capped, so it sits at community-conference tier rather than the events.yaml flagship bar
     note: recommended as a cfp-track watchlist addition in the issue-403 report; not proposed into events.yaml
+  - name: Data Innovation Summit
+    url: https://datainnovationsummit.com/region/nordics/
+    checked: 2026-09-13
+    status: watching
+    reason: Nordic applied data/analytics/AI flagship, 12th edition 2027-05-18 to 2027-05-20 at Kistamassan, Stockholm; organiser reports 3,500+ delegates, 300+ speakers, 15 stages for the 2026 edition. Speaker nominations run rolling via hyperight.com/nominate with no published deadline. Scale sits at the code.talks tier, so cfp-track rather than an events.yaml addition
+    note: recommended as a cfp-track watchlist addition in the issue-404 report
+  - name: AI & Big Data Expo Europe (TechEx)
+    url: https://www.ai-expo.net/europe/
+    checked: 2026-09-13
+    status: rejected
+    reason: trade expo, not a curated speaking flagship - the 8,000 visitor figure spans eight co-located events and the stages are sponsor-led; same class as the already-rejected Big Data LDN and Big Data & AI World Frankfurt
   - name: AI Infrastructure Summit Berlin
     url: https://www.we-conect.com/events/ai-infrastructure-summit-2026/
     checked: 2026-09-06
