@@ -1,24 +1,46 @@
 ---
-title: "Agentic Security & Identity: Who Are You, Who's Your Agent, And What Should They Be Allowed To Do?"
+title: "Agentic Security & Identity: Who Are You, Who's Your Agent, And What Should They Be Allowed To Do? (Part 2)"
 date: 2026-09-19
 image: './featured.png'
-summary: 'A practical walkthrough of agent identity and authorization on Kubernetes: who the user is, who the agent is, and what each of them should be allowed to reach, worked end to end on a real cluster with KAOS, Keycloak and the Agentic Identity Broker.'
-tags: [agents, identity, security, kubernetes, kaos]
+summary: 'This is a 2-part series on agent identity and security: who the user is, who the agent is, and what each of them should be allowed to reach. Part 2 runs the design end to end on a cluster, with two users, two agents, a tool, a model and a third-party service.'
+tags: [agents, identity, security, oauth, kubernetes]
+series: 'Agentic Security & Identity'
 ---
 
-What is Agentic Security & Identity? In this practical walkthrough we cover this topic by diving into 3 key questions:
+Alice and Bob both work at the same company and both have access to the same agent platform. Alice is in the `researchers` group and Bob is in `support`. They send the same request to the same agent, and one of them should get an answer and the other should be refused.
 
-1. **Who are you? [User Identity]** - What user called the agent? What if it's an autonomous agent?
-2. **Who's your agent? [Agent Identity]** - What is the identity of the agent? Is the Agent able to act on the user's behalf? Or on its own behalf?
-3. **What can you & your agent do? [Access Control]** Can *this* user use *this* agent, and can *this* agent reach *that* tool or model?
+Then Alice asks that agent to touch GitHub on her behalf. The request should go out carrying Alice's own credential, with Alice's permissions, landing in Alice's audit log, and she should be able to withdraw it without affecting Bob.
 
-We had to figure out how these questions had to be answered when introducing identity and authorization to the Kubernetes Agent Orchestration System (KAOS). 
+[Part 1](/blog/agentic-security-and-identity-part-1/) was spent designing a system where all of that holds. In this second and final part we actually deploy it and find out whether it survives contact with a real cluster:
 
-Here we walk through some of the architectural decisions, learnings and examples of agentic identity and authorization in KAOS. 
+- Does a user in the wrong group actually get refused at the door?
+- When an agent reaches its own tool and model, what authorizes that hop, and did anyone have to write it down?
+- What happens to an autonomous agent that has no user behind it at all?
+- And when Alice asks for GitHub, does the request really go out as Alice? Let's find out!
 
-We configure a cluster with KAOS for the agent orchestration integrated with Keycloak for identity & authentication, as well as an agent impersonation service for identity exchange.
+> A design is only a blueprint. The only way to find out whether it holds is to run it and watch what gets denied.
 
-We will walk through a concrete example where we will deploy a multi-component agentic system and show how calls from different users (or autonomous agents) succeed or fail.
+Recently I spent some time extending the [Kubernetes Agent Orchestration System (KAOS)](https://github.com/axsaucedo/kaos) to support agent identity and authorization, so I thought it would be useful to compile the research, the architecture decisions and the worked example into this series. Everything below runs against the public [Agentic Identity Broker](https://github.com/zalando-incubator/agentic-identity-broker) release, pinned at `v0.1.8`, on a local KIND cluster. One honest caveat up front: on a local cluster the GitHub side is a mock, so the consent screen is completed automatically rather than in a browser. Every identity and access-control decision in the walkthrough is real, and the third-party endpoint receiving the result is not.
+
+## The Series So Far
+
+Part 1 covered the ground you need before writing any of this, so here is a brief refresher before we run it.
+
+We started from the shared bot token, the credential every platform reaches for first and the one that fails on attribution, then on least privilege, then on revocation. Closing that gap needs a component holding each user's real third-party credential, obtained with their consent, which is what the Agentic Identity Broker does and why we adopted it rather than writing our own.
+
+Then we separated the two identities that every protected call carries. The **subject** is the human the work is being done for, and the **actor** is the agent doing the work. We decide resource access on the actor and use the subject for what the user personally delegated, which is the distinction that keeps multi-agent chains honest.
+
+Finally we made six architecture decisions, of which three matter most for what follows:
+
+| Decision | What we chose | What we turned down |
+| --- | --- | --- |
+| Where enforcement lives | One gateway on every hop, plus a NetworkPolicy so nothing can go around it | Checks in the agent runtime, a sidecar per workload, a service mesh |
+| How authorization is modelled | One explicit `AccessGrant` for who may enter an agent, with the agent's own dependencies derived from its spec, all evaluated by our own Open Policy Agent decision point | A policy language as the authoring surface, or the broker answering the decision |
+| Who owns what | We own the integration; the broker and the identity provider run as their own releases | The platform installing and lifecycle-managing its own broker |
+
+That third row is why this walkthrough has both a broker and Keycloak in it. The broker holds the delegated third-party credentials and performs the exchange, and the gateway is what attaches the returned credential to the outbound request. Keycloak proves who the human is, carries the group membership our rules match on, and registers each agent as its own client so the broker can tell which agent is asking. Neither replaces the other.
+
+Now let's build the cluster and see it work.
 
 ---
 
@@ -633,7 +655,7 @@ This is also why the install needed `--agent-auth keycloak`: the AIB must be abl
 
 Here the graded introduction of GitHub ends and the contrast matters, so let's state it plainly. `echo-mcp` is a tool **inside** the cluster - a KAOS resource, gated by AccessGrants. GitHub is a service **outside** it. You could wrap GitHub in an internal MCP server with a shared bot token - that is exactly the anti-pattern the intuition section described. Instead, GitHub is declared **in the AIB**, and each call goes out as the real user.
 
-Outside services are administered in the AIB itself, not as cluster objects, because the AIB is what actually holds the user's third-party tokens. The declaration has three parts: the **service** (GitHub - its API hostname and OAuth endpoints), a **permission set** (the scopes an agent may request on it), and the **agent link** (which agent may use that permission set, keyed by the agent's stable logical name). The operator keeps that logical name and the agent's login-service client current, and *reflects* the declaration into the cluster plumbing it implies. The safety property that makes this trustworthy: the token swap exists only on the GitHub route; internal traffic never touches the AIB. This is the same boundary the [MCP authorization spec](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization) draws when it forbids *token passthrough* and requires audience validation - a token minted for one hop must never be silently reused on another, which is the classic *confused-deputy* trap.
+Outside services are administered in the AIB itself, not as cluster objects, because the AIB is what actually holds the user's third-party tokens. The declaration has three parts: the **service** (GitHub - its API hostname and OAuth endpoints), a **permission set** (the scopes an agent may request on it), and the **agent link** (which agent may use that permission set, keyed by the agent's stable logical name). The operator keeps that logical name and the agent's login-service client current, and *reflects* the declaration into the cluster plumbing it implies. The safety property that makes this trustworthy: the token swap exists only on the GitHub route; internal traffic never touches the AIB. This is the same boundary the [MCP security best practices](https://modelcontextprotocol.io/specification/2026-07-28/basic/security_best_practices) draws when it forbids *token passthrough* and requires audience validation - a token minted for one hop must never be silently reused on another, which is the classic *confused-deputy* trap.
 
 <details>
 <summary>[Collapsed section] Expand to see the outside-service declaration in the AIB</summary>
@@ -732,28 +754,23 @@ The token swap can never leak onto internal paths, because the swap filter is at
 
 ---
 
-## 6. Wrapping up: what we built, and what we chose
+## Closing Thoughts: Making Agent Identity Boring
 
-Three questions - who's the user, who's the agent, what may each reach - answered on every hop by one gateway that fails closed. That's the whole system in a sentence. Pulling back, here's what it adds up to.
+Back to where we opened. Alice and Bob sending the same request and deserving different answers, and Alice asking for GitHub and deserving to be the one GitHub sees. We asked four questions at the top, and we can answer all of them now.
 
-### The high-level picture
+**A user in the wrong group is refused at the door.** Same agent, same message, and the only difference is who is behind it. alice's token carries `researchers`, which the one grant we wrote allows, and bob's carries `support`, which nothing grants, so he never reaches the agent at all.
 
-- **Identity is two halves.** A user-facing agent carries the *user's* identity downstream (the user is the *subject*); an autonomous agent acts as *itself* (the agent is the *actor*). The gateway validates both - the user token from the login provider, the agent token from the AIB - on every request.
-- **Access is one question, keyed on the actor.** "Can *this* calling agent reach *that* resource?" is decided at the gateway from grant data. The user identity rides along for third-party delegation, but resource access is attributed to the *agent* - which is what keeps multi-agent chains correct.
-- **On-behalf-of is a per-user token swap.** When an agent touches GitHub it goes out as the *real user*, confined to the egress route - never a shared bot token.
+**The agent's own hops were authorized by its declaration.** We wrote exactly one AccessGrant in the entire walkthrough. The researcher reaching `echo-mcp` and `model-api` was authorized by the fact that we declared those dependencies on the agent, which the operator projected straight into the enforcement data. The declaration is the authorization, and it is one less thing to keep in sync.
 
-### If you're building agent identity yourself
+**The autonomous agent acted as itself and was still checked.** `autobot` has no user behind it and is allowed anyway, which is not a hole in fail-closed but fail-closed working correctly. It presents its own identity, which is valid, and it can reach only what that identity was granted. The user-facing agent invoked with no user is refused, because that one has no identity behind it at all.
 
-- **Put enforcement at the gateway, not in agent code.** The moment authorization lives in the runtime, every language and every custom server becomes a boundary you have to trust. One choke point enforces uniformly across SDK and non-SDK workloads.
-- **Two identities, not one.** "The agent" and "the user behind the agent" are different principals. Decide resource access on the *agent*; use the *user* for what the user personally delegated. Collapsing them breaks the instant one agent calls another.
-- **Fail-closed needs a second lock.** A deny-by-default gateway can still be walked around via direct cluster networking - so it's only as strong as the NetworkPolicy that forces traffic through it. The safe default is binary and costs availability; plan for HA.
-- **Model authorization as data first.** Explicit grant rows - requested, approved, delegated - go a long way before you need a policy language. Keep the decision behind a neutral contract so you can swap engines later.
-- **Identity is not safety.** Authorization decides whether an agent *may* call a tool; it says nothing about whether that tool's output is trustworthy. Prompt injection and tool poisoning are a separate surface - out of scope here, but not out of mind.
+**And the GitHub endpoint received alice.** She consented once, the broker stored her token, and every call after that went out carrying her delegated identity rather than a shared one. When she disconnected, the very next request was refused again. The agent never held her credential at any point in that sequence, because the exchange happens at the gateway on one specific egress route and nowhere else. On this cluster the endpoint on the far end is a mock, so what we proved is the delegation path rather than GitHub's own behaviour.
 
-### The architectural tradeoffs we chose
+The thing I would take away from building this is that almost none of it is exotic. It is OAuth token exchange, an OIDC provider, a gateway doing external authorization, a NetworkPolicy, and one component holding consented credentials that we can now install instead of writing. The primitives were never the hard part. What made this expensive was that the credential vault and the consent surface were everybody's homework, and that piece has just been [open sourced](https://github.com/zalando-incubator/agentic-identity-broker).
 
-- **Gateway enforcement over SDK enforcement.** We rejected in-code checks - they'd duplicate the decision per runtime and make security depend on application correctness. The cost: everything sits behind the gateway (plus NetworkPolicy), and off-gateway custom servers opt into their own checks.
-- **Data-first grants over a policy engine.** Simple grant tables, not a general policy/Rego layer by default - but behind the standard Envoy `ext_authz` contract, so OPA is a drop-in when real policy complexity arrives.
-- **Declared dependency = grant, for now.** Today an agent's declared `mcpServers`/`modelAPI` project straight into enforcement (fast, DRY). The target model adds an approval lifecycle on those requested edges; we took the bootstrap path deliberately and kept the distinction explicit.
-- **Coarse resource-boundary, not tool-granular.** The gateway decides "can this agent reach this resource," not "which tool, which arguments." Finer control stays a runtime concern.
-- **Workload identity stays Kubernetes-native.** mTLS / SPIFFE / service-mesh binding is out of scope, not deferred - the trust model is the AIB credential under Secret isolation plus NetworkPolicy. SPIFFE and WIMSE (further reading above) are where this generalises if a concrete cross-cluster need appears.
+So let's make agent identity boring. Then the agents get to be the interesting part.
+
+**The series:**
+
+- **[Part 1: the problem, what to build on, and the broker.](/blog/agentic-security-and-identity-part-1/)** The three questions every agent request has to answer, the standards and tools that already exist, what the Agentic Identity Broker does, and the architecture decisions we made on top of it.
+- **Part 2 (this post): agent identity in action.** A worked example that runs end to end on a cluster, with two users, two agents, a tool, a model and a third-party service, and real allow and deny outputs.
