@@ -61,6 +61,14 @@ Then it doesn't. That token is a shared credential, and a shared credential has 
 
 ![A shared bot token makes GitHub see one identity for everyone, while per-user delegation makes it see the real person](./bot-vs-delegated.svg)
 
+The obvious repairs do not work either, and the broker's own documentation has [the clearest table I have seen](https://agenticidentitybroker.dev/docs/introduction/) on why. There are three things teams reach for, and each one drops at least one of the four properties you actually need, which are least privilege, user consent, revocability and auditability.
+
+| What you reach for | What it costs you |
+| --- | --- |
+| Hand the agent the user's own OAuth token | The token is far too broad, you cannot revoke it for one agent, and there is no record of what the agent did with it. It then spreads to every agent the user touches. |
+| Give each agent its own third-party client | It does not scale past a handful, there is no shared place for a user to see what they have consented to, and provider secrets end up copied into every agent. |
+| Static API keys or a shared service account | No per-user delegation and no expiry, with consent and audit weakest of all. This is the bot token we started with. |
+
 Underneath all three is the same missing piece. The cluster can decide *whether* a request leaves, but it has no authority over GitHub's tokens, so it cannot make GitHub see Alice rather than the bot. Nothing you write in a Kubernetes policy object closes that gap. Bridging it needs a component that holds each user's *real* third-party credential, obtained with that user's consent, and puts the right one on each outbound call.
 
 We did not want to write that component, and we no longer have to.
@@ -99,17 +107,30 @@ One draft worth singling out because it shows up in practice is [Client ID Metad
 
 The commercial space is crowded and the marketing blurs the categories, so I found it easier to sort the products by the job we actually needed doing. Establishing and trading identities is where Keycloak, Auth0's work for generative AI, Okta, WorkOS, Descope and the broker in this post sit. Arcade and Composio solve a narrower problem, bundling third-party OAuth per tool and handing your agent a working connector. SPIFFE and the cloud agent identities cover workload identity. A gateway does the enforcing, whether that is Envoy, agentgateway or a mesh, and an engine like Open Policy Agent evaluates the rules.
 
+![The layers of the agent identity stack, from workload identity at the bottom through brokering and enforcement to policy at the top](./layer-map.svg)
+
 The useful thing to notice is that no gateway and no policy engine creates trustworthy delegation context on its own. They enforce a decision about identities that something else has to have established. That is why the broker layer is the one we could not skip, and until recently we had not found one we could adopt rather than build.
 
 ## Zalando Open Sourced the Agentic Identity Broker
 
-The [Agentic Identity Broker](https://github.com/zalando-incubator/agentic-identity-broker) (AIB) is the component we had been waiting on, and it went public in the `zalando-incubator` organisation under an MIT licence. Its own one-line description is that it captures delegation chains for on-behalf-of flows in agentic AI, brokers between OAuth2 infrastructures, and implements a token vault. That sentence is doing a lot of work, so let's unpack it.
+The [Agentic Identity Broker](https://agenticidentitybroker.dev/) (AIB) is the component we had been waiting on, and it went public in the `zalando-incubator` organisation under an MIT licence. Its [documentation site](https://agenticidentitybroker.dev/) calls it an OAuth2 broker for delegation and consent, and states the goal in one line that is worth keeping in mind for the rest of this post: users delegate scoped, revocable access to agents without handing those agents their credentials.
+
+Its own concepts page reduces the whole thing to [four facts](https://agenticidentitybroker.dev/docs/concepts/), and they are a better summary than I would have written:
+
+1. **Delegation is per user, per agent, per service, and scoped.** A person creates a grant that lets one agent use specific permission sets with specific services. It can expire, and it can be revoked.
+2. **The broker owns the third-party tokens.** Authorising a service creates a session holding encrypted access and refresh tokens, and the agent never receives them.
+3. **Access is exchanged, not shared.** At request time a gateway presents the agent token and the target resource, and the broker returns the right provider token.
+4. **Authentication is somebody else's job.** The broker does not log users in. A trusted proxy authenticates the person and passes them in a header.
+
+That fourth one is the load-bearing design decision, and it is why the broker is adoptable rather than a migration.
 
 The vault is the part that no amount of cluster-side policy can substitute for. When Alice consents to her agent touching GitHub, GitHub issues a token for Alice and the broker stores it, encrypted. The agent never sees it. That credential has to be issued by GitHub *to Alice*, and nothing you write in a Kubernetes object can conjure it.
 
 Consent is where the user gets a say and gets it back. The project includes a React frontend where a person can see which agents they have delegated what to, across services like Google, GitHub, Databricks and Linear, and withdraw it. Revocation stops being a credential rotation that breaks everyone and becomes one person clicking one thing.
 
 The delegation chain is what makes the exchange safe. Present the broker with proof of who the user is and which agent is acting, and it returns that user's stored third-party token. That trade is the only thing it does with identity, because agents get their identity from an agent identity service and users get theirs from the login provider you already run.
+
+The [exchange itself](https://agenticidentitybroker.dev/docs/concepts/token-exchange) is worth looking at closely, because the party list tells you where the trust sits. The gateway authenticates to the broker with a signed client assertion validated against the upstream JWKS, so only a gateway you trust can ask for stored credentials at all, and the assertion subject lands in the audit record. The subject token is the agent's token, and the broker pulls the user and the agent out of it with configurable expressions over the claims. The resource names the target, which the broker normalises and matches against the services it knows. Only after all of that does it check that the user actually has a live grant, decrypt or refresh the stored token, and hand it back.
 
 ### Where It Sits: the Gateway, Never the Agent
 
@@ -123,7 +144,7 @@ The README makes the case for this concretely on the MCP side. Frameworks like F
 
 ### What It Deliberately Does Not Do
 
-The project is unusually clear about its own boundaries, which I appreciate more than I expected to. It states plainly that it is [not an identity provider](https://github.com/zalando-incubator/agentic-identity-broker/blob/main/docs/introduction/why-not-idp.md), with no human login or user directory in it at all. Something upstream has to authenticate the human and hand it a pre-authenticated request. It is not the MCP server, the agent runtime or the gateway either.
+The project is unusually clear about its own boundaries, which I appreciate more than I expected to. It states plainly that it is [not an identity provider](https://agenticidentitybroker.dev/docs/introduction/why-not-idp), with no human login or user directory in it at all. Something upstream has to authenticate the human and hand it a pre-authenticated request. It is also not a general secrets manager: it holds OAuth2 delegations and the third-party tokens behind them, and nothing else. It is not the MCP server, the agent runtime or the gateway either.
 
 That is a short list of non-goals for a product in this space, and it is the reason the thing is adoptable. A broker that also wanted to be your identity provider would be asking you to migrate your users, and nobody is doing that to add agent support.
 
@@ -135,9 +156,27 @@ A few details decided it for us.
 
 **The vault takes encryption seriously.** Provider access tokens, refresh tokens and service client secrets are all encrypted, with no plaintext fallback available. The documented production path uses per-value AES-GCM-SIV data keys under a hierarchical KMS keyring. Each ciphertext is bound to its own service, so a stored token cannot be replayed against a different one. The in-process key backend exists for development and says so.
 
+**Two policy gates guard an exchange, and both have to say yes.** The broker evaluates its own expression over the request, and the optional external processor in front of it runs Open Policy Agent over the proxied call. They are composed as a fail-closed AND, so the OPA layer does not replace the broker's own grant check and neither one can wave a request through on its own.
+
 **The grant model is in business language, not scope strings.** The domain objects are a principal, a registered agent, a third-party service, a permission set and a grant with an optional expiry. The permission set is the interesting one, because it maps a choice a human can actually understand onto the provider scope strings underneath. Revoking a grant removes that one agent's authority; terminating a provider session deletes the stored tokens and affects every agent that depended on them. Those are two different operations with two different blast radii, and having both is right.
 
 **There are two doors, on purpose.** The end-user API and the admin API are separate ports with separate contracts, and the admin port is expected to stay internal behind stronger policy. We run it that way.
+
+![Inside the broker: an end-user API for consent and OAuth, an internal admin API, the grant model, and the encrypted vault behind both](./broker-internals.svg)
+
+### Proxy, Local or Hybrid: the Choice That Decides Whether Keycloak Stays
+
+The detail I wish I had understood sooner is that the broker has [three OAuth2 server modes](https://agenticidentitybroker.dev/docs/concepts/oauth2-server-modes), and picking one is really a decision about how much of your existing identity estate you keep.
+
+| Mode | Who issues agent tokens | When you want it |
+| --- | --- | --- |
+| `proxy` (the default) | Your existing authorization server does. The broker forwards the OAuth endpoints to it, republishes its keys, and adds the grant system on top. | You already run something for agent tokens and want consent and delegation added to it. This is what KAOS does, with Keycloak upstream. |
+| `local` | The broker does, signing its own ES256 tokens with keys it manages and rotates. | You have no authorization server for agents and would rather not stand one up. |
+| `hybrid` | Both, chosen per registered agent. | You are migrating, or you have a mixed fleet you do not intend to unify. |
+
+We run proxy mode, which is the concrete answer to "does this replace Keycloak". It does not, because in this mode Keycloak is still the thing issuing the tokens and the broker is adding a consent and delegation layer in front. Choosing `local` would change that answer for agent tokens, and it would still leave human login with Keycloak, because the broker does not do human login in any mode.
+
+One operational note worth knowing before you pick proxy. The broker fetches upstream metadata at startup and refuses to start if that fails, and if the upstream keys later go away its JWKS endpoint returns a 503 and key-dependent flows reject requests. It fails closed on its upstream, which is the behaviour you want and also a dependency you should plan for.
 
 ### Zalando Has Been Talking About This Publicly
 
@@ -146,6 +185,8 @@ The day before I wrote this, Magnus Jungsbluth and Jan Brennenstuhl presented [E
 They say the broker is built and used in the Zalando Agent Platform, which the deck draws as a combination of the kagent runtime, agentgateway, application registration, a user interface and the identity and consent delegation layer. Their engineering blog [describes the same platform](https://engineering.zalando.com/posts/2026/08/agentic-engineering-at-zalando-a-snapshot.html) from the other end, where team-hosted internal MCP servers are automatically protected by a default ingress OAuth filter and the broker sits in that call path.
 
 I keep coming back to how they define effective access on one of those slides. For a user-delegated call it is the user's permission intersected with the agent's permission, plus a live delegation, and all of those have to hold at the moment of the call rather than at the moment somebody set it up. An autonomous call has no user and no delegation in it, so it reduces to the agent's own permission, which is a different question that deserves its own answer rather than a weaker version of this one.
+
+![Effective access is what the user may do intersected with what the agent may do, and only while a live delegation exists](./effective-access.svg)
 
 Their maturity labels are unusually specific for a conference deck. Centralised tool authorization is marked available, tool approvals in progress, strong affirmation through CIBA on the roadmap, and intent-based access as outlook. The README adds sessionless on-behalf-of for semi-autonomous agents and formalised agent-to-agent token exchange. It also notes that agent registration now uses client ID metadata documents, and labels the older dynamic client registration flow as historical.
 
@@ -159,6 +200,8 @@ Having surveyed all of that, the question we actually had to answer was which pa
 
 **We kept Keycloak for user identity, and for agent OIDC clients.** This is the part worth being explicit about, because AIB does not fill this slot and is not trying to. Its end-user API takes a pre-authenticated header, which means something upstream has to have already established who the human is. In our setup that something is Keycloak, providing the login flow, the group membership that our access rules match on, and the audience mapper that makes a user's token acceptable as an exchange subject. Keycloak also does double duty on the agent side, where the operator registers each agent as its own client through dynamic client registration, because the broker needs to tie an exchange request to a specific agent. If your deployment has no human users at all you can run agents on Kubernetes ServiceAccounts and drop Keycloak entirely, but the moment a person logs in you need a user identity provider and it will not be the broker.
 
+![What we adopted, what we kept, and what we built ourselves](./adopt-keep-build.svg)
+
 **We wrote the enforcement ourselves.** Deciding whether *this* agent may reach *that* resource inside our own cluster is a question about our own objects, and the answer has to be available on every hop of every request. We run it as our own policy decision point, and part 2 walks through exactly how.
 
 ## The Architecture Decisions
@@ -170,6 +213,8 @@ Most of the interesting work was not code, it was choosing between options that 
 Every call, whether a user reaching an agent or an agent reaching a tool, a model or another agent, travels through one gateway that checks it before letting it through. The gateway validates the identities and asks a policy decision point for an allow or deny. On the specific egress routes we generate for a declared third-party service, and only on those, it additionally fetches the user's provider credential from the broker and attaches it to the outbound request.
 
 We rejected putting the checks in the agent runtime. It reads as the simpler option, and it duplicates the decision into every language and framework you support, which makes your security posture a function of application correctness. It also leaves you with no answer for the custom MCP server somebody wrote in an afternoon. We also rejected a sidecar per workload, which enforces uniformly but multiplies the things that have to be upgraded in lockstep, and a service mesh, which solves a larger problem than we had at a cost we did not want to impose on every KAOS user.
+
+![The three enforcement topologies we compared: checks in the agent runtime, a sidecar per workload, and one gateway with a NetworkPolicy behind it](./enforcement-options.svg)
 
 The catch is that a gateway only enforces what actually goes through it, which is why the gateway decision is really two decisions. The second one is a NetworkPolicy that stops workloads talking to each other directly over ClusterIP. Without it, a deny-by-default gateway is a suggestion.
 
@@ -190,6 +235,8 @@ This is a deliberate demotion. It is tempting to let the SDK do a quick local ch
 We wanted explicit grant rows rather than a policy language: this group may use that agent, this agent may reach that tool, this user delegated that scope. Grant tables are easy to diff and easy to explain to somebody who does not write Rego, and most platforms never need more than that.
 
 We originally decided to keep that data in the broker and have it answer the runtime decision, and we reversed that. What we run now is our own policy decision point, stock Open Policy Agent behind the gateway's standard authorization contract, with our operator projecting grant data into it from the Kubernetes objects. Nobody hand-writes policy, so the data-first model survived intact; what changed is who evaluates it and where.
+
+![The filter order at the gateway, with our own decision point running before the token exchange](./decision-point-order.svg)
 
 Two things pushed the reversal. The decision point has to answer on every hop of every request and fail closed when it cannot, so we wanted it running as our own highly available service rather than as a dependency on a component with a broader job. The order matters too, because our decision point runs *before* the token swap, which is what makes "allow this request but do not exchange a token for it" expressible at all. Coupling the two had been the single biggest reason we had not adopted a broker earlier.
 

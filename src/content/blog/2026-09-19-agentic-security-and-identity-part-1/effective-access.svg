@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 480" width="100%" style="max-width:760px;background-color:transparent" role="img" aria-label="Effective access is what the user may do intersected with what the agent may do, and only while a live delegation exists">
+  <defs>
+    <style>
+      .lbl{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:15px;fill:#ccc}
+      .sub{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:13px;fill:#8d8d8d;font-style:italic}
+      .mid{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:15px;fill:#e8e8e8;font-weight:bold}
+      .gate{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;fill:#55d68a;letter-spacing:.08em}
+      .note{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:13px;fill:#8d8d8d}
+    </style>
+  </defs>
+
+  <circle cx="290" cy="225" r="140" fill="#2a3550" fill-opacity="0.55" stroke="#6f8fc4" stroke-width="1.5"/>
+  <circle cx="470" cy="225" r="140" fill="#33301f" fill-opacity="0.55" stroke="#bda45f" stroke-width="1.5"/>
+  <path d="M380 105 A140 140 0 0 1 380 345 A140 140 0 0 1 380 105 Z" fill="#1f3a2a" fill-opacity="0.9" stroke="#50a078" stroke-width="2"/>
+
+  <text class="lbl" x="196" y="190" text-anchor="middle">What the user</text>
+  <text class="lbl" x="196" y="210" text-anchor="middle">may do</text>
+  <text class="sub" x="196" y="232" text-anchor="middle">their own permissions</text>
+
+  <text class="lbl" x="566" y="190" text-anchor="middle">What the agent</text>
+  <text class="lbl" x="566" y="210" text-anchor="middle">may do</text>
+  <text class="sub" x="566" y="232" text-anchor="middle">its ceiling, not theirs</text>
+
+  <text class="mid" x="380" y="212" text-anchor="middle">Effective</text>
+  <text class="mid" x="380" y="232" text-anchor="middle">access</text>
+
+  <line x1="380" y1="358" x2="380" y2="396" stroke="#50a078" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <rect x="236" y="396" width="288" height="40" rx="6" fill="none" stroke="#50a078" stroke-width="1.5"/>
+  <text class="gate" x="380" y="421" text-anchor="middle">AND A LIVE DELEGATION</text>
+
+  <text class="note" x="380" y="30" text-anchor="middle">All of it has to hold at the moment of the call,</text>
+  <text class="note" x="380" y="49" text-anchor="middle">not at the moment somebody set it up.</text>
+</svg>
