@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 400" width="100%" style="max-width:860px;background-color:transparent" role="img" aria-label="Three separate releases: the operator configures Keycloak and the broker and registers agents, and installs neither">
+  <defs><style>
+      .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;fill:#55d68a;letter-spacing:.2em}
+      .head{font-family:Georgia,"Times New Roman",serif;font-size:30px;fill:#f2f2f0}
+      .headi{font-family:Georgia,"Times New Roman",serif;font-size:30px;fill:#55d68a;font-style:italic}
+      .node{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;fill:#c9c9c6;letter-spacing:.06em}
+      .cap{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;fill:#8a8a86;letter-spacing:.04em}
+      .good{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;fill:#55d68a;letter-spacing:.05em}
+      .bad{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;fill:#c46a6a;letter-spacing:.05em}
+      .ln{stroke:#4a4e4a;stroke-width:1.4;fill:none}
+      .lng{stroke:#55d68a;stroke-width:1.6;fill:none}
+      .lnb{stroke:#c46a6a;stroke-width:1.4;fill:none}
+      .lnd{stroke:#4a4e4a;stroke-width:1.4;fill:none;stroke-dasharray:5 4}
+      .shape{fill:none;stroke:#5a5e5a;stroke-width:1.5}
+      .shapeg{fill:none;stroke:#55d68a;stroke-width:1.8}
+      .shapeb{fill:none;stroke:#c46a6a;stroke-width:1.5}
+    </style>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#4a4e4a"/></marker>
+    <marker id="arg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#55d68a"/></marker>
+    <marker id="arb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#c46a6a"/></marker>
+  </defs>
+  <text class="eyebrow" x="40" y="44">DECISION 6 &#183; OWN THE INTEGRATION</text>
+  <text class="head" x="40" y="86">Three releases, <tspan class="headi">one integration</tspan></text>
+
+  <g transform="translate(40,120)">
+    <!-- keycloak -->
+    <rect class="shape" x="0" y="40" width="210" height="120" rx="4"/>
+    <text class="node" x="105" y="70" text-anchor="middle">KEYCLOAK</text>
+    <text class="cap" x="105" y="96" text-anchor="middle">own Helm release</text>
+    <text class="cap" x="105" y="114" text-anchor="middle">own storage, upgrades</text>
+    <text class="cap" x="105" y="132" text-anchor="middle">already in production</text>
+
+    <!-- broker -->
+    <rect class="shape" x="590" y="40" width="210" height="120" rx="4"/>
+    <text class="node" x="695" y="70" text-anchor="middle">BROKER (AIB)</text>
+    <text class="cap" x="695" y="96" text-anchor="middle">own Helm release</text>
+    <text class="cap" x="695" y="114" text-anchor="middle">own keys, migrations</text>
+    <text class="cap" x="695" y="132" text-anchor="middle">pinned v0.1.8</text>
+
+    <!-- operator -->
+    <rect class="shapeg" x="290" y="40" width="220" height="120" rx="4"/>
+    <text class="good" x="400" y="70" text-anchor="middle">KAOS OPERATOR</text>
+    <text class="cap" x="400" y="96" text-anchor="middle">configures the platform</text>
+    <text class="cap" x="400" y="114" text-anchor="middle">keeps registrations fresh</text>
+    <text class="bad" x="400" y="132" text-anchor="middle">installs neither</text>
+
+    <!-- arrows -->
+    <line class="lnd" x1="288" y1="100" x2="214" y2="100" marker-end="url(#ar)"/>
+    <text class="cap" x="250" y="88" text-anchor="middle">points at,</text>
+    <text class="cap" x="250" y="122" text-anchor="middle">registers</text>
+    <text class="cap" x="250" y="138" text-anchor="middle">agents in</text>
+
+    <line class="lnd" x1="512" y1="100" x2="586" y2="100" marker-end="url(#ar)"/>
+    <text class="cap" x="549" y="88" text-anchor="middle">points at,</text>
+    <text class="cap" x="549" y="122" text-anchor="middle">registers</text>
+    <text class="cap" x="549" y="138" text-anchor="middle">agents in</text>
+
+    <!-- rejected -->
+    <line class="lnd" x1="0" y1="200" x2="780" y2="200"/>
+    <text class="bad" x="0" y="228">REJECTED:</text>
+    <text class="cap" x="96" y="228">the operator installing and upgrading its own broker and identity provider.</text>
+    <text class="cap" x="96" y="246">It demos beautifully, and nobody running this seriously accepts a second</text>
+    <text class="cap" x="96" y="264">identity provider on someone else's upgrade schedule.</text>
+  </g>
+</svg>

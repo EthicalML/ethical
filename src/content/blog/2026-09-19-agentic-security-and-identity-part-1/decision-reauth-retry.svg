@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 420" width="100%" style="max-width:860px;background-color:transparent" role="img" aria-label="The consent loop: a first call is refused with a re-auth instruction, the user approves once, and the retry goes out as them">
+  <defs><style>
+      .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;fill:#55d68a;letter-spacing:.2em}
+      .head{font-family:Georgia,"Times New Roman",serif;font-size:30px;fill:#f2f2f0}
+      .headi{font-family:Georgia,"Times New Roman",serif;font-size:30px;fill:#55d68a;font-style:italic}
+      .node{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;fill:#c9c9c6;letter-spacing:.06em}
+      .cap{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;fill:#8a8a86;letter-spacing:.04em}
+      .good{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;fill:#55d68a;letter-spacing:.05em}
+      .bad{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;fill:#c46a6a;letter-spacing:.05em}
+      .ln{stroke:#4a4e4a;stroke-width:1.4;fill:none}
+      .lng{stroke:#55d68a;stroke-width:1.6;fill:none}
+      .lnb{stroke:#c46a6a;stroke-width:1.4;fill:none}
+      .lnd{stroke:#4a4e4a;stroke-width:1.4;fill:none;stroke-dasharray:5 4}
+      .shape{fill:none;stroke:#5a5e5a;stroke-width:1.5}
+      .shapeg{fill:none;stroke:#55d68a;stroke-width:1.8}
+      .shapeb{fill:none;stroke:#c46a6a;stroke-width:1.5}
+    </style>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#4a4e4a"/></marker>
+    <marker id="arg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#55d68a"/></marker>
+    <marker id="arb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#c46a6a"/></marker>
+  </defs>
+  <text class="eyebrow" x="40" y="44">DECISION 5 &#183; FAIL WITH A RE-AUTH URL</text>
+  <text class="head" x="40" y="86">Refuse, <tspan class="headi">approve once</tspan>, retry</text>
+
+  <g transform="translate(40,120)">
+    <!-- step 1 -->
+    <text class="cap" x="0" y="20">1. FIRST CALL</text>
+    <circle class="shape" cx="30" cy="70" r="12"/><path class="shape" d="M12 100 a18 20 0 0 1 36 0"/>
+    <line class="ln" x1="60" y1="70" x2="130" y2="70" marker-end="url(#ar)"/>
+    <path class="shape" d="M170 36 l32 18 v36 l-32 18 -32-18 V54 z"/>
+    <line class="lnb" x1="204" y1="70" x2="244" y2="70"/>
+    <line class="lnb" x1="234" y1="58" x2="254" y2="82"/><line class="lnb" x1="254" y1="58" x2="234" y2="82"/>
+    <text class="bad" x="130" y="146">needs approval - run:</text>
+    <text class="bad" x="130" y="164">kaos auth connect github</text>
+
+    <!-- step 2 -->
+    <text class="cap" x="330" y="20">2. APPROVE ONCE</text>
+    <circle class="shape" cx="360" cy="70" r="12"/><path class="shape" d="M342 100 a18 20 0 0 1 36 0"/>
+    <line class="lng" x1="390" y1="70" x2="450" y2="70" marker-end="url(#arg)"/>
+    <rect class="shape" x="452" y="42" width="100" height="56" rx="4"/>
+    <text class="node" x="502" y="75" text-anchor="middle">GITHUB</text>
+    <text class="cap" x="502" y="118" text-anchor="middle">"allow"</text>
+    <line class="lng" x1="502" y1="130" x2="502" y2="176" marker-end="url(#arg)"/>
+    <ellipse class="shapeg" cx="502" cy="196" rx="46" ry="11"/>
+    <path class="shapeg" d="M456 196 v28 a46 11 0 0 0 92 0 v-28"/>
+    <text class="good" x="560" y="200">BROKER</text>
+    <text class="cap" x="560" y="218">stores alice's token</text>
+
+    <!-- step 3 -->
+    <text class="cap" x="640" y="20">3. RETRY</text>
+    <circle class="shape" cx="670" cy="70" r="12"/><path class="shape" d="M652 100 a18 20 0 0 1 36 0"/>
+    <line class="ln" x1="700" y1="70" x2="740" y2="70" marker-end="url(#ar)"/>
+    <path class="shape" d="M772 44 l24 14 v28 l-24 14 -24-14 V58 z"/>
+    <line class="lng" x1="772" y1="102" x2="772" y2="150" marker-end="url(#arg)"/>
+    <text class="good" x="772" y="172" text-anchor="middle">as alice</text>
+
+    <!-- footer note -->
+    <line class="lnd" x1="0" y1="256" x2="780" y2="256"/>
+    <text class="cap" x="0" y="282">A missing platform grant fails closed with no instruction offered,</text>
+    <text class="cap" x="0" y="300">because there is nothing the user could do about it themselves.</text>
+  </g>
+</svg>
