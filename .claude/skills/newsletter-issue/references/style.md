@@ -6,6 +6,8 @@ This file is the newsletter's own structure and register, which the shared core 
 
 Mined from issues 359-398 (198 article sections) by `scripts/newsletter/style-corpus.mjs`. Regenerate with `node scripts/newsletter/style-corpus.mjs --issues 40` and re-curate this file when the voice drifts.
 
+The paragraphing guidance below is the exception: it is mined from 399-404, because the section shape changed after the window the rest of this file covers. A regeneration that widens the window will dilute it, so re-check it against the newest three issues rather than letting the mined numbers overwrite it.
+
 Keep the window at 40 issues. Over the full 398-issue archive the colon-lede rate falls from 58% to 27% and the median section halves from 158 to 70 words: the current voice is recent, and mining the whole archive teaches the wrong one.
 
 ## Shape of one article section
@@ -17,9 +19,24 @@ Keep the window at 40 issues. Over the full 398-issue archive the colon-lede rat
 | Commas                 | 9      | 17  | 0-27   |
 | Links inside the prose | 0      | 1   | 0-3    |
 
-One paragraph. No bullets, no sub-headings, no block quotes inside an article section. The link lives in the heading, so the prose usually carries none: name the source in words instead of linking it again.
-
 Per issue: 5 sections, 789 words and 29 sentences of article prose in total.
+
+### Paragraphing: short paragraphs, not one block
+
+**A section is several short paragraphs separated by blank lines, not a single block of prose.** The word and sentence counts above are for the whole section and are unaffected by how it is broken up.
+
+| Measure                 | Median | Range |
+| ----------------------- | ------ | ----- |
+| Paragraphs per section  | 5      | 4-7   |
+| Sentences per paragraph | 1      | 1-4   |
+
+This is a recent change and the table above is mined from a window that predates it, so do not trust the older sections for this one thing. Issues up to 399 are almost all single-block: 9 of the 30 sections across 399-404 are one paragraph, and every one of those sits in 399 and 401. From 402 on it is consistent, and 400 had already done it once.
+
+The rhythm is one thought per paragraph. The lede takes its own paragraph and the colon hands over to the paragraph beneath it, each supporting point gets its own line, and the editorial beat closes on its own. A paragraph carrying two sentences is normal, three is the upper end, and four is the most in the corpus.
+
+A numbered or bulleted list inside a section is rare but allowed: 1 section in 30, the 6 principles in issue 402. Use one only where the source really is a list. No sub-headings and no block quotes inside an article section.
+
+The link lives in the heading, so the prose usually carries none: name the source in words instead of linking it again.
 
 ## The lede
 
