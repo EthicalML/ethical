@@ -77,7 +77,7 @@ Before writing anything I went looking for what I could stand on. The short answ
 
 ### The Stable Base
 
-None of these were written for agents, and all of them do most of the work anyway.
+None of these were written with agents in mind, and they still do most of the work.
 
 | Specification | What it gives you |
 | --- | --- |
@@ -264,13 +264,13 @@ Four things I'd tell anyone starting this, which aren't obvious from the decisio
 
 The gateway has to deny when the policy decision point says no *and* when it can't reach it at all, because "no answer" and "no" have to be the same outcome. Treating an unavailable authorization backend as a deny is what fail-closed means in practice, and it shouldn't be relaxable into allow-on-error.
 
-That safe default is also a bill, because it makes the decision point a hard dependency of every request in the cluster, so it has to run highly available with multiple replicas from day one. I consider this the right trade, but it's a trade, and it's easy to underestimate until you've had the decision point restart under load.
+That safe default has a cost, because it makes the decision point a hard dependency of every request in the cluster, so it has to run highly available with multiple replicas from day one. I consider this the right trade, but it's a trade, and it's easy to underestimate until you've had the decision point restart under load.
 
 ### 2. Start coarse, because fine-grained authorization is a different problem
 
 The KAOS gateway decides whether an agent may reach a resource. It doesn't decide which tool on that resource, or with which arguments. That finer question needs to understand the payload, which means understanding MCP, which means the gateway grows a protocol parser and your security model grows a dependency on a spec that's still moving.
 
-Resource-boundary decisions get you most of the value for a fraction of the surface. Keep the finer control in the runtime until you have a concrete case that needs it.
+In my experience resource-boundary decisions get you most of the value for a fraction of the surface, so I'd keep the finer control in the runtime until you have a concrete case that needs it.
 
 ### 3. An authorized call can still be poisoned
 

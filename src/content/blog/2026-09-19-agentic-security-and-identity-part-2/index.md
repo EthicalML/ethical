@@ -46,7 +46,7 @@ Now let's build the cluster and see it work.
 
 ## 1. The control plane
 
-The **control plane** is the set of components that establish identity and decide the rules. None of them carry your agents' actual traffic; they answer the 3 questions from part 1 about it. Here they are on one map. The greyed pieces belong to [section 5](#5-agents-acting-on-behalf-of-users---on-outside-services) and can be ignored for now.
+The **control plane** is the set of components that establish identity and decide the rules. Apart from the gateway, none of them carry your agents' actual traffic; they answer the 3 questions from part 1 about it. Here they are on one map. The greyed pieces belong to [section 5](#5-agents-acting-on-behalf-of-users---on-outside-services) and can be ignored for now.
 
 
 ![The control plane components: gateway mesh, user and agent identity services, the KAOS authz service, the agent impersonation service and the KAOS operator](./control-plane.svg)
@@ -118,7 +118,7 @@ sessions: {}
 
 ## 2. The data plane
 
-The **data plane** is the actual agent traffic: users invoking agents, agents calling tools and models. Every one of those calls travels through the Gateway Mesh and is checked before it is let through. 
+The **data plane** is the actual agent traffic, meaning users invoking agents and agents calling tools and models. Every one of those calls travels through the Gateway Mesh and is checked before it is let through. 
 
 The hands-on example uses the following resources:
 
@@ -145,11 +145,11 @@ A *signed token* is like an ID card issued by the identity provider, and both th
 
 User Auth issues signed tokens for human users and it carries their groups (`groups` isn't a core OIDC claim, so the identity provider maps it in; with Keycloak that's a group-membership protocol mapper).
 
-Agent Auth also issues signed tokens, but these are provided as secrets for agents, which then are exchanged for signed tokens.
+Agent Auth also issues signed tokens, but an agent starts from a credential it was given (a mounted ServiceAccount token, or a client secret) and exchanges that for one.
 
 The gateway does the two checks in order; first it confirms the token is genuine and unexpired (identity), then it asks the KAOS Authz Service whether that identity is allowed to do this (permission), and only if both pass does the request reach its destination.
 
-If the authz service *can't be reached at all* the request is denied. You can loosen this through config params (I don't recommend it), and it's the reason the authz service runs highly available.
+If the authz service *can't be reached at all* the request is denied. There's no config knob to loosen this, since the operator sets `failOpen: false` on every policy it generates, and it's the reason the authz service runs highly available.
 
 ### 2.2 Deploy the agents and tools
 
@@ -182,7 +182,7 @@ The tool's single function is an echo, and the model's responses are mocked, so 
 
 #### Reproduce it yourself
 
-Each resource has its own `kaos ... create` command, so you can build an equivalent setup by hand and see the shape of each object. The model and tool first:
+Each resource has its own `kaos ... create` command, so you can build a similar setup by hand and see the shape of each object. The model and tool first:
 
 ```bash
 # a small in-cluster model endpoint
@@ -328,9 +328,9 @@ NAME                        SUBJECTS      RESOURCES     ENFORCED
 researchers-to-researcher   researchers   researcher    True
 ```
 
-The `ENFORCED` column is the KAOS Operator reporting back: `True` means it has projected the rule into the Authz Service and the gateway is enforcing it. `False` would name the reason, for example that access control is not enabled or that no user login provider is configured.
+The `ENFORCED` column is the KAOS Operator reporting back, and `True` means it has projected the rule into the Authz Service and the gateway is enforcing it. `False` would name the reason, for example that access control is not enabled or that no user login provider is configured.
 
-If you ever need an agent to reach something it did *not* declare, you can add an `--agent` grant (`kaos auth grant create --agent <agent> --resource ...`). That AccessGrant is merged *on top of* the derived access, it never replaces it. For the common case, declaring the dependency is all you need.
+If you ever need an agent to reach something it did *not* declare, you can add an `--agent` grant (`kaos auth grant create --agent <agent> --resource ...`). That AccessGrant is merged *on top of* the derived access. For the common case, declaring the dependency is all you need.
 
 Those permissions (the one grant you wrote plus the ones derived from the agent specs) are the *only* access that exists. Here's the same map, each green edge labelled with where its permission comes from, and everything not green is denied:
 
@@ -400,7 +400,7 @@ Autobot echo response
 
 ![the autonomous autobot agent presenting its own identity and reaching only the model endpoint it was granted](./autobot-allowed.svg)
 
-There's no `--user` here, yet the call is allowed, while the very next example (a user-facing agent with no `--user`) is denied. Both are fail-closed working as intended. The autonomous agent presents its *own* identity, which is valid, and the third rule lets that identity reach `model-api`. A user-facing agent invoked with no `--user` has *no* identity behind it at all:
+There's no `--user` here, yet the call is allowed, while the very next example (a user-facing agent with no `--user`) is denied. Both are fail-closed working as intended. The autonomous agent presents its *own* identity, which is valid, and the third rule lets that identity reach `model-api`. A user-facing agent invoked with no `--user` has no *user* identity behind it, and it needs one:
 
 ```bash
 kaos agent invoke researcher -m "summarise repo X"      # no --user
@@ -459,7 +459,7 @@ security:
         tokenPath: /var/run/secrets/kaos-agent/token
 ```
 
-`gatewayJwtOptional: true` means that for agent tokens, the Authz Service performs the full identity check; the gateway's own user-token check does not block agent calls. This is required for autonomous agents: their Kubernetes-issued ServiceAccount token is not a user login token, and the user login provider would otherwise reject it before the access check ever runs. The `serviceAccount` block is the short-lived mounted token described above: valid only for the gateway (`audience`), auto-refreshed (`expirationSeconds`), read from `tokenPath`.
+`gatewayJwtOptional: true` means that for agent tokens, the Authz Service performs the full identity check; the gateway's own user-token check does not block agent calls. Autonomous agents need this, because their Kubernetes-issued ServiceAccount token isn't a user login token, and the user login provider would otherwise reject it before the access check ever runs. The `serviceAccount` block is the short-lived mounted token described above, valid only for the gateway (`audience`), auto-refreshed (`expirationSeconds`) and read from `tokenPath`.
 
 Switching the provider is the whole difference between the two modes, and this is what `--agent-auth keycloak` sets:
 
@@ -569,13 +569,9 @@ This is where "is it allowed?" gets answered, and there are two kinds of rule:
 - **Who may use a resource.** An `AccessGrant` binds a **group** (or user) to a resource: *"`researchers` may use `researcher`."* This gates a person reaching an agent.
 - **What an agent may reach.** An `AccessGrant` binds an **agent** to tools/models: *"`researcher` may reach `echo-mcp` and `model-api`."* This gates movement between components.
 
-Both are the same object type, and only the subject differs (a group/user vs. an agent). I kept it uniform so there's one rule format to learn, one place to look, and one `kaos auth grant list` that shows every permission in the cluster.
+Both are the same object type, and only the subject differs (a group/user vs. an agent). I kept it uniform so there's one rule format to learn, one place to look, and one `kaos auth grant list` that shows every explicit grant in the cluster.
 
-Enforcement lives at the gateway, which asks the **KAOS Authz Service** on every request. That service:
-
-- runs **in-cluster as its own always-on service** (multiple replicas, so it's highly available),
-- **fails closed**: if it says no, or can't be reached, the request is denied (you saw this with `--off`), and
-- is only reachable *through the gateway* when `--gateway-strict` is set, so a workload can't sidestep it by calling a resource directly.
+Enforcement lives at the gateway, which asks the **KAOS Authz Service** on every request. That service runs **in-cluster as its own always-on service** with multiple replicas, so it's highly available. It **fails closed**, so if it says no or can't be reached the request is denied (you saw this with `--off`). And resources are only reachable *through the gateway* when `--gateway-strict` is set, so a workload can't sidestep it by calling a resource directly.
 
 ![The enforcement path: the gateway asking the KAOS authz service who is calling and what they want, and denying when it cannot answer](./enforcement-path.svg)
 
@@ -633,11 +629,7 @@ The naive way to let an agent use GitHub is to give it a single bot account's to
 
 Nothing from sections 1-4 can fix it, because an in-cluster `AccessGrant` can't express "GitHub as alice". The cluster has no authority over GitHub's tokens, so it can decide *whether* a request leaves, but it can't make GitHub see alice instead of the bot. Bridging that gap needs a component that holds each user's *real* GitHub credential (issued by GitHub, consented to by the user) and puts the right one on each outbound call.
 
-KAOS does the opposite of the shared bot on all three counts:
-
-- **Acting as the user, never a shared bot.** When alice asks the researcher to touch GitHub, GitHub receives *alice's own* token and sees alice. bob's requests go out as bob. Permissions and audit on the GitHub side are per-person, exactly as if each user called GitHub directly.
-- **The agent never sees a durable credential.** The agent only ever holds its own short-lived in-cluster identity. The real GitHub token is swapped onto the outbound request at the gateway; the agent code never touches it.
-- **Revocation is per user.** alice can withdraw her approval at any time without affecting anyone else.
+KAOS does the opposite of the shared bot on all 3 counts. When alice asks the researcher to touch GitHub, GitHub receives *alice's own* token and sees alice, and bob's requests go out as bob, so permissions and audit on the GitHub side are per-person, exactly as if each user called GitHub directly. The agent only ever holds its own short-lived in-cluster identity, because the real GitHub token is swapped onto the outbound request at the gateway and the agent code never touches it. And alice can withdraw her approval at any time without affecting anyone else.
 
 ### 5.2 Enter the Agent Identity Broker (AIB)
 
@@ -740,7 +732,7 @@ kaos agent invoke researcher --user alice -m "list my GitHub repos"
 2. On the outbound GitHub route, and **only** on that route, the gateway presents the re-minted token, together with the agent's own credential, to the AIB. The AIB validates both, checks that alice consented, and returns alice's real GitHub token from its vault.
 3. The gateway swaps alice's GitHub token onto the outbound request. GitHub receives it and sees alice (steps 7-10 on the 5.2 map).
 
-The token swap can never leak onto internal paths, because the swap filter is attached only to the egress route the operator generated for the declared service. Only alice's own token ever reaches GitHub, and the agent never sees a long-lived credential. But you don't have to think about any of that: `connect` once, then `invoke --user` as normal.
+The token swap can never leak onto internal paths, because the swap filter is attached only to the egress route the operator generated for the declared service. Only alice's own token ever reaches GitHub, and the agent never sees a long-lived credential. But you don't have to think about any of that, since you `connect` once and then `invoke --user` as normal.
 
 ---
 
