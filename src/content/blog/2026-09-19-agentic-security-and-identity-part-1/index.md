@@ -1,6 +1,6 @@
 ---
 title: "Agentic Security & Identity: Who Are You, Who's Your Agent, And What Should They Be Allowed To Do? (Part 1)"
-date: 2026-09-19
+date: 2026-12-31
 image: './featured.png'
 summary: 'This is a 2-part series on agent identity and security: who the user is, who the agent is, and what each of them should be allowed to reach. Part 1 covers the delegation problem, the standards to build on, and the Agentic Identity Broker that Zalando has just open sourced.'
 tags: [agents, identity, security, oauth, kubernetes]
@@ -34,7 +34,7 @@ Before any of the machinery makes sense I found it helped to be precise about wh
 
 1. **Who are you?** Which human called the agent, and which groups are they in? Sometimes the honest answer is "nobody", because an autonomous agent woke up on a schedule and decided it had work to do.
 2. **Who's your agent?** Which agent is making this call, and can it prove that identity without a human present?
-3. **What can you and your agent do?** Can *this* user use *this* agent, and can *this* agent reach *that* tool, model or external service?
+3. **What can you and your agent do?** Can _this_ user use _this_ agent, and can _this_ agent reach _that_ tool, model or external service?
 
 The second question is the one most platforms answer badly, because an agent is a workload and a workload doesn't log in. It has no browser, no password and nobody at the keyboard, so every mechanism designed around a human consenting in a redirect doesn't apply to it directly.
 
@@ -47,7 +47,7 @@ The first and second questions together produce a distinction I lean on for the 
 
 I decide resource access on the **actor**, and I use the **subject** for what the user personally delegated. An autonomous agent that nobody started carries only the actor, which is exactly why the two have to be separable. Collapsing them is tempting because in the simple case there's one user and one agent, and it breaks the instant one agent calls another and you can no longer tell whether "the caller" means the person who started it or the agent 3 hops down.
 
-One warning on the word *subject*, because it's overloaded and I hit the collision myself. When I say subject here I mean the delegating human in an on-behalf-of flow. In part 2 you'll meet an `AccessGrant` whose `subject` field can name a user, a group or an agent, which is a different and more general use of the same word. I've kept the two apart by always saying *AccessGrant subject* for the second one.
+One warning on the word _subject_, because it's overloaded and I hit the collision myself. When I say subject here I mean the delegating human in an on-behalf-of flow. In part 2 you'll meet an `AccessGrant` whose `subject` field can name a user, a group or an agent, which is a different and more general use of the same word. I've kept the two apart by always saying _AccessGrant subject_ for the second one.
 
 ## The Shared Bot Token, and Why Everyone Builds It First
 
@@ -63,13 +63,13 @@ The problems show up in a fairly predictable order once real people use it:
 
 The obvious repairs don't work either, and the broker's own documentation has [the clearest table I've seen](https://agenticidentitybroker.dev/docs/introduction/) on why. There are 3 things teams reach for, and each one drops at least one of the 4 properties you actually need, which are least privilege, user consent, revocability and auditability.
 
-| What you reach for | What it costs you |
-| --- | --- |
-| Hand the agent the user's own OAuth token | The token is far too broad, you can't revoke it for one agent, and there's no record of what the agent did with it. It then spreads to every agent the user touches. |
-| Give each agent its own third-party client | It doesn't scale past a handful, there's no shared place for a user to see what they've consented to, and provider secrets end up copied into every agent. |
-| Static API keys or a shared service account | No per-user delegation and no expiry, with consent and audit weakest of all. This is the bot token I started with. |
+| What you reach for                          | What it costs you                                                                                                                                                    |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Hand the agent the user's own OAuth token   | The token is far too broad, you can't revoke it for one agent, and there's no record of what the agent did with it. It then spreads to every agent the user touches. |
+| Give each agent its own third-party client  | It doesn't scale past a handful, there's no shared place for a user to see what they've consented to, and provider secrets end up copied into every agent.           |
+| Static API keys or a shared service account | No per-user delegation and no expiry, with consent and audit weakest of all. This is the bot token I started with.                                                   |
 
-Underneath all 3 is the same missing piece. The cluster can decide *whether* a request leaves, but it has no authority over GitHub's tokens, so it can't make GitHub see Alice instead of the bot. Nothing you write in a Kubernetes policy object closes that gap. Bridging it needs a component that holds each user's *real* third-party credential, obtained with that user's consent, and puts the right one on each outbound call. I didn't want to write that component, and as it turns out I no longer have to.
+Underneath all 3 is the same missing piece. The cluster can decide _whether_ a request leaves, but it has no authority over GitHub's tokens, so it can't make GitHub see Alice instead of the bot. Nothing you write in a Kubernetes policy object closes that gap. Bridging it needs a component that holds each user's _real_ third-party credential, obtained with that user's consent, and puts the right one on each outbound call. I didn't want to write that component, and as it turns out I no longer have to.
 
 ## Standing on the Shoulders of RFCs
 
@@ -79,17 +79,17 @@ Before writing anything I went looking for what I could stand on. The short answ
 
 None of these were written with agents in mind, and they still do most of the work.
 
-| Specification | What it gives you |
-| --- | --- |
-| [RFC 8693, OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html) | The one primitive that matters most here. A client presents a `subject_token`, optionally an `actor_token`, and asks for a token aimed at a specific target, and the `act` claim can carry the delegation. It deliberately leaves the trust and policy decisions to you. |
-| [RFC 9068, JWT profile for access tokens](https://www.rfc-editor.org/rfc/rfc9068.html) | Makes the user and agent context locally verifiable, so the gateway doesn't need a round trip to check it. |
-| [RFC 8414, authorization server metadata](https://www.rfc-editor.org/rfc/rfc8414.html) and [RFC 9728, protected resource metadata](https://www.rfc-editor.org/rfc/rfc9728.html) | Discovery, so an agent finds the right issuer and asks for a token with the right audience instead of hardcoding either. |
-| [RFC 8707, resource indicators](https://www.rfc-editor.org/rfc/rfc8707.html) and [RFC 9449, DPoP](https://www.rfc-editor.org/rfc/rfc9449.html) | Bind a token to a target and to a sender, which is how you stop a token minted for one hop being replayed on another. |
-| [Kubernetes bound, audience-scoped ServiceAccount tokens](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/) ([KEP-1205](https://github.com/kubernetes/enhancements/blob/master/keps/sig-auth/1205-bound-service-account-tokens/README.md)) | A workload identity that expires and rotates itself, already present in every cluster. This is the default agent identity in KAOS. |
-| [SPIFFE and SPIRE](https://spiffe.io/docs/latest/spiffe-about/spiffe-concepts/) | The same idea generalised past the cluster boundary, for when one cluster stops being the edge of your world. |
-| [NIST SP 800-207](https://csrc.nist.gov/pubs/sp/800/207/final) | The vocabulary for what I'm building, a policy enforcement point in the path consulting a policy decision point. |
+| Specification                                                                                                                                                                                                                                                                 | What it gives you                                                                                                                                                                                                                                                        |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [RFC 8693, OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html)                                                                                                                                                                                             | The one primitive that matters most here. A client presents a `subject_token`, optionally an `actor_token`, and asks for a token aimed at a specific target, and the `act` claim can carry the delegation. It deliberately leaves the trust and policy decisions to you. |
+| [RFC 9068, JWT profile for access tokens](https://www.rfc-editor.org/rfc/rfc9068.html)                                                                                                                                                                                        | Makes the user and agent context locally verifiable, so the gateway doesn't need a round trip to check it.                                                                                                                                                               |
+| [RFC 8414, authorization server metadata](https://www.rfc-editor.org/rfc/rfc8414.html) and [RFC 9728, protected resource metadata](https://www.rfc-editor.org/rfc/rfc9728.html)                                                                                               | Discovery, so an agent finds the right issuer and asks for a token with the right audience instead of hardcoding either.                                                                                                                                                 |
+| [RFC 8707, resource indicators](https://www.rfc-editor.org/rfc/rfc8707.html) and [RFC 9449, DPoP](https://www.rfc-editor.org/rfc/rfc9449.html)                                                                                                                                | Bind a token to a target and to a sender, which is how you stop a token minted for one hop being replayed on another.                                                                                                                                                    |
+| [Kubernetes bound, audience-scoped ServiceAccount tokens](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/) ([KEP-1205](https://github.com/kubernetes/enhancements/blob/master/keps/sig-auth/1205-bound-service-account-tokens/README.md)) | A workload identity that expires and rotates itself, already present in every cluster. This is the default agent identity in KAOS.                                                                                                                                       |
+| [SPIFFE and SPIRE](https://spiffe.io/docs/latest/spiffe-about/spiffe-concepts/)                                                                                                                                                                                               | The same idea generalised past the cluster boundary, for when one cluster stops being the edge of your world.                                                                                                                                                            |
+| [NIST SP 800-207](https://csrc.nist.gov/pubs/sp/800/207/final)                                                                                                                                                                                                                | The vocabulary for what I'm building, a policy enforcement point in the path consulting a policy decision point.                                                                                                                                                         |
 
-The other thing to read is the [MCP authorization specification](https://modelcontextprotocol.io/specification/2026-07-28/basic/security_best_practices), which has moved several times, so read it at its current revision and not the one you bookmarked. It's where the prohibition on *token passthrough* lives, which is the rule that a token minted for one hop must never be silently reused on the next. In my experience that rule is the single most common way these systems go wrong, because reusing the token is always the path of least resistance and it turns your agent into a confused deputy.
+The other thing to read is the [MCP authorization specification](https://modelcontextprotocol.io/specification/2026-07-28/basic/security_best_practices), which has moved several times, so read it at its current revision and not the one you bookmarked. It's where the prohibition on _token passthrough_ lives, which is the rule that a token minted for one hop must never be silently reused on the next. In my experience that rule is the single most common way these systems go wrong, because reusing the token is always the path of least resistance and it turns your agent into a confused deputy.
 
 ### The Agent-Specific Work Is Still Moving
 
@@ -122,7 +122,7 @@ Their concepts page boils it down to [4 facts](https://agenticidentitybroker.dev
 
 The fourth one is the design decision that let me adopt it without migrating anything, and I come back to it below.
 
-The vault is the part that no cluster-side policy can substitute for. When Alice consents to her agent touching GitHub, GitHub issues a token for Alice and the broker stores it, encrypted. The agent never sees it. That credential has to be issued by GitHub *to Alice*, and nothing you write in a Kubernetes object can conjure it.
+The vault is the part that no cluster-side policy can substitute for. When Alice consents to her agent touching GitHub, GitHub issues a token for Alice and the broker stores it, encrypted. The agent never sees it. That credential has to be issued by GitHub _to Alice_, and nothing you write in a Kubernetes object can conjure it.
 
 The user gives consent in the broker's own UI and can withdraw it there too. The project includes a React frontend where a person can see which agents they've delegated what to, across services like Google, GitHub, Databricks and Linear, and withdraw it. Revoking one agent's access becomes one person clicking one thing, and nobody else's credential rotates.
 
@@ -164,11 +164,11 @@ The end-user API and the admin API are separate ports with separate contracts, a
 
 The detail I wish I'd understood sooner is that the broker has [3 OAuth2 server modes](https://agenticidentitybroker.dev/docs/concepts/oauth2-server-modes), and the one you pick decides how much of your existing identity setup you keep.
 
-| Mode | Who issues agent tokens | When you want it |
-| --- | --- | --- |
+| Mode                  | Who issues agent tokens                                                                                                                         | When you want it                                                                                                                        |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `proxy` (the default) | Your existing authorization server does. The broker forwards the OAuth endpoints to it, republishes its keys, and adds the grant system on top. | You already run something for agent tokens and want consent and delegation added to it. This is what KAOS does, with Keycloak upstream. |
-| `local` | The broker does, signing its own ES256 tokens with keys it manages and rotates. | You have no authorization server for agents and would rather not stand one up. |
-| `hybrid` | Both, chosen per registered agent. | You are migrating, or you have a mixed fleet you do not intend to unify. |
+| `local`               | The broker does, signing its own ES256 tokens with keys it manages and rotates.                                                                 | You have no authorization server for agents and would rather not stand one up.                                                          |
+| `hybrid`              | Both, chosen per registered agent.                                                                                                              | You are migrating, or you have a mixed fleet you do not intend to unify.                                                                |
 
 I run proxy mode, which is the concrete answer to "does this replace Keycloak". It doesn't, because in this mode Keycloak is still the thing issuing the tokens and the broker adds a consent and delegation layer in front. Choosing `local` would change that answer for agent tokens, and it would still leave human login with Keycloak, because the broker doesn't do human login in any mode.
 
@@ -198,7 +198,7 @@ Keycloak stayed for user identity, and for agent OIDC clients. This is the part 
 
 ![What was adopted, what was kept, and what was built](./adopt-keep-build.svg)
 
-The enforcement I wrote myself. Deciding whether *this* agent may reach *that* resource inside the cluster is a question about KAOS's own objects, and the answer has to be available on every hop of every request. It runs as KAOS's own policy decision point, and part 2 walks through exactly how.
+The enforcement I wrote myself. Deciding whether _this_ agent may reach _that_ resource inside the cluster is a question about KAOS's own objects, and the answer has to be available on every hop of every request. It runs as KAOS's own policy decision point, and part 2 walks through exactly how.
 
 ## The Architecture Decisions
 
@@ -238,7 +238,7 @@ I originally decided to keep that data in the broker and have it answer the runt
 
 ![The filter order at the gateway, with KAOS's own decision point running before the token exchange](./decision-point-order.svg)
 
-Two things pushed the reversal. The decision point has to answer on every hop of every request and fail closed when it can't, so I wanted it running as its own highly available service and not as a dependency on a component with a broader job. The order matters too, because the decision point runs *before* the token swap, which is what makes "allow this request but do not exchange a token for it" expressible at all. Coupling the two had been the single biggest reason I hadn't adopted a broker earlier.
+Two things pushed the reversal. The decision point has to answer on every hop of every request and fail closed when it can't, so I wanted it running as its own highly available service and not as a dependency on a component with a broader job. The order matters too, because the decision point runs _before_ the token swap, which is what makes "allow this request but do not exchange a token for it" expressible at all. Coupling the two had been the single biggest reason I hadn't adopted a broker earlier.
 
 ### Decision 5: Fail With a Re-Auth URL, Then Retry
 
@@ -262,7 +262,7 @@ Four things I'd tell anyone starting this, which aren't obvious from the decisio
 
 ### 1. Fail closed, then pay for it
 
-The gateway has to deny when the policy decision point says no *and* when it can't reach it at all, because "no answer" and "no" have to be the same outcome. Treating an unavailable authorization backend as a deny is what fail-closed means in practice, and it shouldn't be relaxable into allow-on-error.
+The gateway has to deny when the policy decision point says no _and_ when it can't reach it at all, because "no answer" and "no" have to be the same outcome. Treating an unavailable authorization backend as a deny is what fail-closed means in practice, and it shouldn't be relaxable into allow-on-error.
 
 That safe default has a cost, because it makes the decision point a hard dependency of every request in the cluster, so it has to run highly available with multiple replicas from day one. I consider this the right trade, but it's a trade, and it's easy to underestimate until the decision point restarts under load and every request in the cluster politely returns 403.
 
@@ -274,7 +274,7 @@ In my experience resource-boundary decisions get you most of the value for a fra
 
 ### 3. An authorized call can still be poisoned
 
-This is the one I'd put on a poster. Authorization decides whether an agent *may* call a tool. It says nothing whatsoever about whether that tool's output is trustworthy, and a perfectly authorized call can return poisoned content that talks the agent into its next action.
+This is the one I'd put on a poster. Authorization decides whether an agent _may_ call a tool. It says nothing whatsoever about whether that tool's output is trustworthy, and a perfectly authorized call can return poisoned content that talks the agent into its next action.
 
 Prompt injection and tool poisoning live on a different axis to everything in this post, and a team that has just finished an identity programme is exactly the team most likely to think it's covered.
 
