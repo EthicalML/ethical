@@ -3,6 +3,16 @@
 # One event is one conference: several talks or several per-track CFPs live in the arrays.
 # Sorted by `start`, newest first.
 
+- slug: agntcon-mcpcon-europe-2027
+  name: AGNTCon + MCPCon Europe 2027
+  series: agntcon-mcpcon-europe
+  url: https://events.linuxfoundation.org/agntcon-mcpcon-europe-2027/
+  image: https://events.linuxfoundation.org/wp-content/uploads/2026/08/agntcon-mcpcon-eu-27-social-snackable-2.jpg
+  start: 2027-09-15
+  end: 2027-09-16
+  location: London, UK
+  topics: [ai-agents, llms, cloud-native]
+
 - slug: wearedevelopers-world-congress-2027
   name: WeAreDevelopers World Congress 2027
   series: wearedevelopers-world-congress
