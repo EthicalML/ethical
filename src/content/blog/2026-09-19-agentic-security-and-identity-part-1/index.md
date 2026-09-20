@@ -9,7 +9,7 @@ series: 'Agentic Security & Identity'
 
 The first time I wired one of my agents up to GitHub I did the thing everyone does. I created a bot account, put its token in a Kubernetes Secret, and let every user's request ride on it.
 
-That was fine for the demo, and it stopped being fine pretty much the moment a second person used it. GitHub saw one identity for all of us, so I couldn't tell whose request was whose. If I'd wanted to cut one person off, the only lever I had was rotating a credential that everybody else depended on. And that long-lived token now lived somewhere the agent could read, so anything that could talk the agent into it (a prompt injection, a poisoned tool result, etc) could reach for it too.
+It wasn't a deliberate design decision, it was just the quickest way to get the demo working, and it held up right until a second person tried to use the agent. GitHub saw one identity for all of us, so I couldn't tell whose request was whose. If I'd wanted to cut one person off, the only lever I had was rotating a credential that everybody else depended on. And that long-lived token now lived somewhere the agent could read, so anything that could talk the agent into it (a prompt injection, a poisoned tool result, etc) could reach for it too.
 
 So how do I let an agent act on one person's behalf without handing it a credential that belongs to everyone else?
 
@@ -32,7 +32,7 @@ This post is the first of a 2-part series:
 
 Before any of the machinery makes sense I found it helped to be precise about what I'm actually asking on each request. There are 3 questions, and a lot of the confusion in this space comes from collapsing them into one:
 
-1. **Who are you?** Which human called the agent, and which groups are they in? Sometimes the honest answer is "nobody", because an autonomous agent woke up on a schedule.
+1. **Who are you?** Which human called the agent, and which groups are they in? Sometimes the honest answer is "nobody", because an autonomous agent woke up on a schedule and decided it had work to do.
 2. **Who's your agent?** Which agent is making this call, and can it prove that identity without a human present?
 3. **What can you and your agent do?** Can *this* user use *this* agent, and can *this* agent reach *that* tool, model or external service?
 
@@ -71,7 +71,7 @@ The obvious repairs don't work either, and the broker's own documentation has [t
 
 Underneath all 3 is the same missing piece. The cluster can decide *whether* a request leaves, but it has no authority over GitHub's tokens, so it can't make GitHub see Alice instead of the bot. Nothing you write in a Kubernetes policy object closes that gap. Bridging it needs a component that holds each user's *real* third-party credential, obtained with that user's consent, and puts the right one on each outbound call. I didn't want to write that component, and as it turns out I no longer have to.
 
-## What Already Exists to Build On
+## Standing on the Shoulders of RFCs
 
 Before writing anything I went looking for what I could stand on. The short answer is that the base is solid and the agent-specific layer on top of it is very much still moving, and it's worth being clear about which half you're relying on, because one of them is a decade of deployed practice and the other is a set of drafts that may not survive.
 
@@ -113,7 +113,7 @@ The thing I noticed drawing this out is that no gateway and no policy engine cre
 
 The [Agentic Identity Broker](https://agenticidentitybroker.dev/) (AIB) is the component I'd been waiting on, and it went public in the `zalando-incubator` organisation under an MIT licence. Its [documentation site](https://agenticidentitybroker.dev/) calls it an OAuth2 broker for delegation and consent, and states the goal in one line that's worth keeping in mind for the rest of this post: users delegate scoped, revocable access to agents without handing those agents their credentials.
 
-Its own concepts page reduces the whole thing to [4 facts](https://agenticidentitybroker.dev/docs/concepts/), and they're a better summary than I would've written:
+Their concepts page boils it down to [4 facts](https://agenticidentitybroker.dev/docs/concepts/), which saved me writing my own version:
 
 1. **Delegation is per user, per agent, per service, and scoped.** A person creates a grant that lets one agent use specific permission sets with specific services. It can expire, and it can be revoked.
 2. **The broker owns the third-party tokens.** Authorising a service creates a session holding encrypted access and refresh tokens, and the agent never receives them.
@@ -264,7 +264,7 @@ Four things I'd tell anyone starting this, which aren't obvious from the decisio
 
 The gateway has to deny when the policy decision point says no *and* when it can't reach it at all, because "no answer" and "no" have to be the same outcome. Treating an unavailable authorization backend as a deny is what fail-closed means in practice, and it shouldn't be relaxable into allow-on-error.
 
-That safe default has a cost, because it makes the decision point a hard dependency of every request in the cluster, so it has to run highly available with multiple replicas from day one. I consider this the right trade, but it's a trade, and it's easy to underestimate until you've had the decision point restart under load.
+That safe default has a cost, because it makes the decision point a hard dependency of every request in the cluster, so it has to run highly available with multiple replicas from day one. I consider this the right trade, but it's a trade, and it's easy to underestimate until the decision point restarts under load and every request in the cluster politely returns 403.
 
 ### 2. Start coarse, because fine-grained authorization is a different problem
 
