@@ -50,6 +50,28 @@ The blog bans mid-prose apposition after a colon ("The rule is simple: ..."), wh
 
 > Last week OpenAI published about their rouge hacking HuggingFace, this week HF published a super detailed forensic reconstruction and it's insane:
 
+### The lede is never a stranded one-liner
+
+**"then continue normally" means in the same paragraph.** Now that sections are broken into short paragraphs, an exclamation or question lede left alone on its own line becomes a paragraph that carries no information, and the owner rewrites those on sight.
+
+```
+This one is a genuinely new kind of model!
+
+Diogo Almeida, who was at OpenAI and is one of the co-inventors of RLHF, launched Jev, ...
+```
+
+The first line says nothing a reader could not have guessed from the heading. Fold the reaction into the news, or drop it and open on the news:
+
+```
+Structured outputs are what everyone wires around when putting an LLM inside software, and this week someone shipped a model that does nothing else. Diogo Almeida, who was at OpenAI and is one of the co-inventors of RLHF, launched Jev, ...
+```
+
+The owner's own rewrite in issue 405 shows the shape: a claim about where the field is, then the actor and the release, in one paragraph.
+
+> Forecasting foundation models are taking over, with a new top model from Europe this week 🇪🇺🚀🇫🇷 The Forecasting Company released an Open 256 million parameter time series foundation model and it's going for the top 3 best in performance.
+
+A colon lede is the exception and is meant to sit alone, because its colon hands over to the paragraph beneath it. An exclamation or question lede has nothing to hand over with, so it carries its own news or it is not a lede.
+
 The other 42% open on a short exclamation or a question, then continue normally:
 
 > Europe is on Fire with another Foundation Model!

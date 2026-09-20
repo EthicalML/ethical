@@ -31,6 +31,7 @@ Every sentence must add knowledge; a sentence that only emphasises or restates t
 - No bullet list that elaborates the benefits of a point already made in prose.
 - No justification sentence appended after a stated practice ("We put the machine on format checking because it does that job better..."). State the practice; the reader can infer why.
 - One example or consequence where the draft piles up three ("how software gets built, how research gets summarised and how decisions get drafted" became "how software gets built").
+- No paragraph whose whole job is a reaction. A standalone line like "This one is a genuinely new kind of model!" or "Huge if true!" states an opinion the reader cannot check and adds no fact, and it reads as filler wherever it sits. Fold the reaction into the sentence carrying the news, or cut it. This bites hardest at the start of a section, where an opener is meant to tell the reader what happened.
 - No trailing amplifier clause ("...without being rewritten for either", "...and the risk goes away") and no closing sentence that repeats the section's point.
 - Added words must carry new facts, motive or a concrete example ("as we don't aim for this to be a complete list of skills, but a curated list").
 
