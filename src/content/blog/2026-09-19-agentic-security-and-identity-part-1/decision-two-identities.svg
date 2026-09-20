@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 420" width="100%" style="max-width:860px;background-color:transparent" role="img" aria-label="Two tokens travel together on every hop: the user's stays the same, the agent's changes at each agent">
+  <defs><style>
+      .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;fill:#55d68a;letter-spacing:.2em}
+      .head{font-family:Georgia,"Times New Roman",serif;font-size:30px;fill:#f2f2f0}
+      .headi{font-family:Georgia,"Times New Roman",serif;font-size:30px;fill:#55d68a;font-style:italic}
+      .node{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;fill:#c9c9c6;letter-spacing:.06em}
+      .cap{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;fill:#8a8a86;letter-spacing:.04em}
+      .good{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;fill:#55d68a;letter-spacing:.05em}
+      .bad{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;fill:#c46a6a;letter-spacing:.05em}
+      .ln{stroke:#4a4e4a;stroke-width:1.4;fill:none}
+      .lng{stroke:#55d68a;stroke-width:1.6;fill:none}
+      .lnb{stroke:#c46a6a;stroke-width:1.4;fill:none}
+      .lnd{stroke:#4a4e4a;stroke-width:1.4;fill:none;stroke-dasharray:5 4}
+      .shape{fill:none;stroke:#5a5e5a;stroke-width:1.5}
+      .shapeg{fill:none;stroke:#55d68a;stroke-width:1.8}
+      .shapeb{fill:none;stroke:#c46a6a;stroke-width:1.5}
+    </style>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#4a4e4a"/></marker>
+    <marker id="arg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#55d68a"/></marker>
+    <marker id="arb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#c46a6a"/></marker>
+  </defs>
+  <text class="eyebrow" x="40" y="44">DECISION 2 &#183; TWO IDENTITIES, KEPT SEPARATE</text>
+  <text class="head" x="40" y="86">Two tokens on every hop, <tspan class="headi">never merged</tspan></text>
+
+  <g transform="translate(40,130)">
+    <!-- hops -->
+    <circle class="shape" cx="40" cy="120" r="14"/><path class="shape" d="M18 154 a22 24 0 0 1 44 0"/>
+    <text class="node" x="40" y="190" text-anchor="middle">ALICE</text>
+
+    <line class="ln" x1="80" y1="120" x2="160" y2="120" marker-end="url(#ar)"/>
+    <path class="shape" d="M220 74 l40 23 v46 l-40 23 -40-23 V97 z"/><circle class="shape" cx="220" cy="120" r="9"/>
+    <text class="node" x="220" y="190" text-anchor="middle">AGENT A</text>
+
+    <line class="ln" x1="262" y1="120" x2="342" y2="120" marker-end="url(#ar)"/>
+    <path class="shape" d="M402 74 l40 23 v46 l-40 23 -40-23 V97 z"/><circle class="shape" cx="402" cy="120" r="9"/>
+    <text class="node" x="402" y="190" text-anchor="middle">AGENT B</text>
+
+    <line class="ln" x1="444" y1="120" x2="524" y2="120" marker-end="url(#ar)"/>
+    <rect class="shapeg" x="526" y="90" width="120" height="60" rx="4"/>
+    <text class="good" x="586" y="125" text-anchor="middle">TOOL</text>
+    <text class="node" x="586" y="190" text-anchor="middle">DECIDED ON: AGENT B</text>
+    <text class="cap" x="586" y="208" text-anchor="middle">delegated for: alice</text>
+
+    <!-- token tracks -->
+    <text class="cap" x="660" y="52" text-anchor="end">SUBJECT (user token): the same human all the way</text>
+    <line class="lng" x1="120" y1="30" x2="660" y2="30"/>
+    <text class="good" x="150" y="22">alice</text>
+    <text class="good" x="332" y="22">alice</text>
+    <text class="good" x="514" y="22">alice</text>
+
+    <text class="cap" x="660" y="236" text-anchor="end">ACTOR (agent token): changes at every agent</text>
+    <line class="ln" x1="120" y1="248" x2="300" y2="248"/>
+    <line class="ln" x1="304" y1="248" x2="480" y2="248"/>
+    <line class="ln" x1="484" y1="248" x2="660" y2="248"/>
+    <text class="node" x="140" y="268">(none yet)</text>
+    <text class="node" x="316" y="268">agent-a</text>
+    <text class="node" x="498" y="268">agent-b</text>
+  </g>
+</svg>
