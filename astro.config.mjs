@@ -77,6 +77,8 @@ export default defineConfig({
     preview: { allowedHosts: ['ethical.institute', 'localhost', '127.0.0.1'] },
   },
   redirects: {
+    // /keynote/ uses a page redirect to preserve slide hashes and presenter queries.
+    '/keynote.html': '/keynotes/signals-2026/',
     '/talks/': '/talks-and-events/',
     '/talks.html': '/talks-and-events/',
     '/principles.html': '/principles/',
@@ -125,6 +127,7 @@ export default defineConfig({
     sitemap({
       filter: (page) =>
         !page.includes('/prototypes/') &&
+        new URL(page).pathname !== '/keynote/' &&
         !republishedBlogPaths.has(new URL(page).pathname) &&
         !scheduledBlogPaths.has(new URL(page).pathname),
       serialize(item) {

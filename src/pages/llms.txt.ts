@@ -60,6 +60,7 @@ sectionByRoute.set('/open-source/monokai-institute/', menus.oss.label);
 const excludedFromLlms = [
   (route: string) => route === '/',
   (route: string) => route === '/privacy/',
+  (route: string) => route === '/keynote/', // Legacy redirect, not an indexable page.
   (route: string) => /^\/principles\/\d+\/$/.test(route),
   (route: string) => /^\/newsletter\/\d+\/$/.test(route),
 ];
