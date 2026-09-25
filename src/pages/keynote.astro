@@ -1,0 +1,25 @@
+---
+// This page takes precedence over the config redirect so shared slide fragments
+// and presenter query parameters survive the move. The meta refresh is a fallback.
+const destination = '/keynotes/signals-2026/';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Signals 2026 keynote has moved</title>
+    <meta name="description" content="The Signals 2026 keynote by Alejandro Saucedo has a new address." />
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={`https://ethical.institute${destination}`} />
+    <meta http-equiv="refresh" content={`2;url=${destination}`} />
+    <script>
+      location.replace('/keynotes/signals-2026/' + location.search + location.hash);
+    </script>
+  </head>
+  <body>
+    <h1>The Signals 2026 keynote has moved</h1>
+    <p><a href={destination}>Open the presentation</a></p>
+  </body>
+</html>

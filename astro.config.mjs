@@ -77,6 +77,7 @@ export default defineConfig({
     preview: { allowedHosts: ['ethical.institute', 'localhost', '127.0.0.1'] },
   },
   redirects: {
+    '/keynote/': '/keynotes/signals-2026/',
     '/talks/': '/talks-and-events/',
     '/talks.html': '/talks-and-events/',
     '/principles.html': '/principles/',
