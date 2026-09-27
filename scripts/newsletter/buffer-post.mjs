@@ -21,6 +21,11 @@
  * `application/octet-stream` with `nosniff`, which is not a video as far as a consumer is
  * concerned, while jsDelivr serves the same bytes as `video/mp4`. Nothing goes on master and
  * nothing is deployed to the site.
+ *
+ * A folder may also hold `document.pdf`, for an article that is itself a paper or a report.
+ * LinkedIn then gets it as a document post, which it shows as a swipeable carousel, with the
+ * folder's image as the cover and `document-title.txt` as its title. The other channels
+ * cannot take a document, so they still get the image.
  */
 
 import { execFileSync } from 'node:child_process';
@@ -197,6 +202,17 @@ async function main() {
     console.log(`asset: ${assetUrl}`);
   }
 
+  const document = present.has('document.pdf');
+  if (document && !media) throw new Error(`${slugDir}: document.pdf needs an image for its cover`);
+  const documentTitle = present.has('document-title.txt')
+    ? readFileSync(path.join(dir, 'document-title.txt'), 'utf8').trim()
+    : slugDir;
+  let documentUrl = '';
+  if (document && wanted.includes('linkedin') && !options['dry-run']) {
+    documentUrl = publishAsset(path.join(dir, 'document.pdf'), `issue-${issue}/${slugDir}.pdf`);
+    console.log(`document: ${documentUrl}`);
+  }
+
   for (const service of wanted) {
     const channel = available.find((one) => one.service === service);
     if (!channel) {
@@ -216,18 +232,22 @@ async function main() {
       continue;
     }
 
-    const assets =
-      media && assetUrl
-        ? [
-            videoExtensions.has(path.extname(media))
-              ? { video: { url: assetUrl } }
-              : { image: { url: assetUrl } },
-          ]
-        : [];
+    const asDocument = document && service === 'linkedin';
+    let assets = [];
+    if (asDocument && documentUrl) {
+      assets = [{ document: { url: documentUrl, title: documentTitle, thumbnailUrl: assetUrl } }];
+    } else if (media && assetUrl) {
+      assets = [
+        videoExtensions.has(path.extname(media))
+          ? { video: { url: assetUrl } }
+          : { image: { url: assetUrl } },
+      ];
+    }
 
     if (options['dry-run']) {
+      const attached = asDocument ? 'document.pdf' : media;
       console.log(
-        `${service}: would post ${text.length} chars from ${file}${media ? ` with ${media}` : ''}`,
+        `${service}: would post ${text.length} chars from ${file}${attached ? ` with ${attached}` : ''}`,
       );
       continue;
     }
