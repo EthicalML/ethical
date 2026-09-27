@@ -42,6 +42,8 @@ watchlist:
       note: US, unique flagship - standing exception to the Europe rule
     - name: MLOps World
       note: US, unique flagship in the MLOps niche - standing exception; moved Austin to SF
+    - name: PyTorch Conference Europe
+      note: Linux Foundation / PyTorch Foundation; first edition Paris Apr 2026, full AI-infra stack; watch for 2027
   cfp-track:
     - name: FastAPI Conf
       note: official FastAPI-team event, Amsterdam; first edition invited-speakers only, watch for a real CFP
@@ -76,10 +78,10 @@ scouted:
   # Watchlist state (status: tracked) - what lets later runs skip the sweep.
   - name: KubeCon + CloudNativeCon Europe
     url: https://events.linuxfoundation.org/kubecon-cloudnativecon-europe-2027/
-    checked: 2026-08-23
+    checked: 2026-09-27
     status: tracked
     next_edition: 2027-03-15 to 2027-03-18, Barcelona, ES
-    cfp: OPEN - opened 2026-08-10, closes 2026-10-11 23:59 CEST (https://sessionize.com/kubecon-cloudnativecon-europe-2027/); 22 days out as of 2026-09-19, inside the 14-day flag window next run
+    cfp: OPEN - opened 2026-08-10, closes 2026-10-11 23:59 CEST (https://sessionize.com/kubecon-cloudnativecon-europe-2027/); reconfirmed 2026-09-27, 14 days out - FLAGGED urgent in the issue-406 report
     owner: keen to submit - CFP now open, flagged in issue-401 scout report
     note: added to events.yaml on 2026-09-06
   - name: AGNTCon + MCPCon Europe
@@ -91,10 +93,10 @@ scouted:
     note: proposed into events.yaml on 2026-09-19 (issue-405 report)
   - name: AI Engineer Europe
     url: https://www.ai.engineer/europe
-    checked: 2026-09-19
+    checked: 2026-09-27
     status: tracked
     next_edition: February 2027, London - month announced, exact dates TBA
-    cfp: not open yet (rechecked 2026-09-19; the /europe page still fronts the passed April 2026 edition and carries only a "Europe 2027" header in the nav, no dates and no speaker call)
+    cfp: not open yet (rechecked 2026-09-27; the /europe page still carries only a "Europe 2027" header in the nav, no dates and no speaker call)
     owner: keen to submit - flag the week the CFP opens (2026-08-16)
   - name: World Summit AI Amsterdam
     checked: 2026-08-16
@@ -109,38 +111,46 @@ scouted:
     cfp: official call closed; late submissions reviewed on a rolling basis until slots fill (https://www.wearedevelopers.com/world-congress/call-for-speakers)
     note: proposed into events.yaml on 2026-09-06
   - name: QCon London
-    checked: 2026-08-16
+    url: https://qconlondon.com/
+    checked: 2026-09-27
     status: tracked
-    next_edition: 2027 edition not announced; 2026 ran in March
-    cfp: n/a - curated by track chairs, no open CFP
+    next_edition: 2027-04-13 to 2027-04-15 (certification 2027-04-16), QEII Centre, London, UK - confirmed on the organiser site
+    cfp: n/a - programme committee selects sessions; a speaker-inquiries form is linked from the homepage, no dated CFP
+    note: proposed into events.yaml on 2026-09-27 (issue-406 report)
   - name: The AI Summit London
-    checked: 2026-08-16
+    url: https://london.theaisummit.com/
+    checked: 2026-09-27
     status: tracked
-    next_edition: 2027 edition not announced; 2026 ran 10-11 June
-    cfp: not open yet
+    next_edition: 2027-06-09 to 2027-06-10, Tobacco Dock, London, UK - confirmed on the organiser site
+    cfp: no dated CFP - "Submit a Speaker" form only
+    note: proposed into events.yaml on 2026-09-27 (issue-406 report)
   - name: GITEX AI Europe Berlin
     url: https://www.gitexeurope.com/
-    checked: 2026-08-16
+    checked: 2026-09-27
     status: tracked
-    next_edition: 2026 edition ran 2026-06-30 to 2026-07-01, Messe Berlin; 2027 not announced
+    next_edition: 2027 not announced on the organiser site (2026-09-27); third-party listings claim 2027-06-02 to 2027-06-04, Messe Berlin, but the organiser site assigns 2-4 June 2027 to GITEX India, so treat as unverified
     cfp: n/a (expo speaking slots, sales-led)
   - name: WAICF Cannes
-    checked: 2026-08-16
+    url: https://waicf.com/
+    checked: 2026-09-27
     status: tracked
-    next_edition: 2027 edition not announced; 2026 ran 12-13 February
-    cfp: not open yet
+    next_edition: 2027-02-10 to 2027-02-11, Palais des Festivals, Cannes, FR - confirmed on the organiser site
+    cfp: no dated CFP - "Submit a Speaker" portal only
+    note: proposed into events.yaml on 2026-09-27 (issue-406 report)
   - name: HumanX EMEA Amsterdam
     url: https://www.humanx.co/europe
-    checked: 2026-08-16
+    checked: 2026-09-27
     status: tracked
-    next_edition: 2026-09-22 to 2026-09-24, RAI Amsterdam, NL
+    next_edition: 2027-09-20 to 2027-09-22, RAI Amsterdam, NL - confirmed on the organiser site; the 2026 edition (22-24 Sept) has passed
     cfp: none published (curated programme)
-    note: proposed into events.yaml on 2026-08-16
+    note: 2027 edition proposed into events.yaml on 2026-09-27 (issue-406 report)
   - name: RAISE Summit Paris
-    checked: 2026-08-16
+    url: https://www.raisesummit.com/
+    checked: 2026-09-27
     status: tracked
-    next_edition: 2027 edition not announced; 2026 ran 8-9 July
-    cfp: not open yet
+    next_edition: 2027-07-06 to 2027-07-08, Palais des Congres, Paris, FR - confirmed on the organiser site (moves from the Carrousel du Louvre to a three-day format)
+    cfp: not open yet - no 2027 speaker call on the page
+    note: proposed into events.yaml on 2026-09-27 (issue-406 report)
   - name: AI Engineer World's Fair
     url: https://ai.engineer/
     checked: 2026-08-23
@@ -164,10 +174,10 @@ scouted:
     owner: notify when the 2027 CFP opens (2026-08-16) - NOTIFIED in the issue-403 scout report
   - name: ContainerDays Hamburg
     url: https://www.containerdays.io/
-    checked: 2026-09-06
+    checked: 2026-09-27
     status: tracked
     tier: cfp-track
-    next_edition: 2027 not announced; 2026 ran 2026-09-02 to 2026-09-04, Hamburg
+    next_edition: Hamburg 2027 not announced (a ContainerDays Warsaw 2027 is mentioned); 2026 ran 2026-09-02 to 2026-09-04, Hamburg
     cfp: not open yet
     owner: not interested (2026-08-16)
   - name: code.talks Hamburg
@@ -187,35 +197,38 @@ scouted:
     cfp: closed - the 2026-09-18 deadline has now passed (2026-09-19); next window is the 2027 edition
     owner: skipped 2026-08-16 - do not re-propose this edition
   - name: Accelerate Tomorrow AI Summit Berlin
-    checked: 2026-08-15
+    url: https://www.acceleratetomorrow.com/
+    checked: 2026-09-27
     status: tracked
     tier: cfp-track
-    next_edition: 2027, Estrel Berlin - dates not published
-    cfp: not open yet
+    next_edition: 2027-06-15 to 2027-06-16, Estrel Berlin, DE - confirmed on the organiser site
+    cfp: rolling - a "Become a Speaker" form is live, no published deadline
   - name: AI Coding Summit Berlin
-    checked: 2026-08-15
+    url: https://gitnation.com/events/ai-developer-conferences
+    checked: 2026-09-27
     status: tracked
     tier: cfp-track
-    next_edition: 2027 not announced; 2026 edition ran online in February
+    next_edition: no 2027 European edition announced; GitNation lists only AI Coding Summit Asia (Singapore, April 2027)
     cfp: not open yet
   - name: AI Horizons Prague
-    checked: 2026-08-15
+    url: https://aihorizonsprague.cz/en
+    checked: 2026-09-27
     status: tracked
     tier: cfp-track
-    next_edition: 2026-09-23 to 2026-09-24, Cubex Centrum, Prague, CZ
-    cfp: none published
+    next_edition: 2026 edition (23-24 Sept) has passed; 2027 not announced
+    cfp: none published - the 2026 call ran on Sessionize, so expect the same channel
   - name: PyCon DE & PyData
     url: https://2027.pycon.de/
-    checked: 2026-09-06
+    checked: 2026-09-27
     status: tracked
     tier: cfp-track
     next_edition: 2027-04-20 to 2027-04-22, Heidelberg, DE
-    cfp: not open yet - deadline listed as TBA on pythondeadlin.es
+    cfp: not open yet - deadline still TBA on pythondeadlin.es (2026-09-27); the 2026 call ran in the autumn, so an opening in the next few weeks is likely (inference)
   - name: EuroPython
-    checked: 2026-08-15
+    checked: 2026-09-27
     status: tracked
     tier: cfp-track
-    next_edition: 2027 not announced; 2026 ran 13-19 July, Kraków
+    next_edition: 2027 not announced; 2026 ran 13-19 July, Kraków; EuroPython Society was still soliciting 2027 host proposals
     cfp: not open yet
   - name: NDC London
     url: https://ndclondon.com/
@@ -246,6 +259,32 @@ scouted:
     status: watching
     reason: Nordic applied data/analytics/AI flagship, 12th edition 2027-05-18 to 2027-05-20 at Kistamassan, Stockholm; organiser reports 3,500+ delegates, 300+ speakers, 15 stages for the 2026 edition. Speaker nominations run rolling via hyperight.com/nominate with no published deadline. Scale sits at the code.talks tier, so cfp-track rather than an events.yaml addition
     note: recommended as a cfp-track watchlist addition in the issue-404 report
+  - name: PyTorch Conference Europe
+    url: https://events.linuxfoundation.org/pytorch-conference-europe/
+    checked: 2026-09-27
+    status: watching
+    reason: Linux Foundation / PyTorch Foundation European edition; first edition ran 2026-04-07 to 2026-04-08 in Paris, full AI stack from infrastructure to agents. 2027 edition not announced (2026-09-27); no attendance figure published
+    note: recommended as a feature watchlist addition in the issue-406 report
+  - name: case - Agentic Software Engineering Conference
+    url: https://www.case-conf.com/
+    checked: 2026-09-27
+    status: rejected
+    reason: Berlin, 2027-02-24 to 2027-02-25, AMANO Grand Central hotel; good practitioner lineup and no sponsored talks, but boutique scale (hotel venue, ticket tranches of 30) - below the flagship bar; no CFP
+  - name: AI DevWorld
+    url: https://sessionize.com/aidevworld-2027/
+    checked: 2026-09-27
+    status: rejected
+    reason: US (Silicon Valley), 2027-02-09 to 2027-02-11, ~3,000 attendees; DevNetwork expo-style event, not a unique flagship that earns a non-European exception
+  - name: Enterprise AI Europe (we.CONECT)
+    url: https://www.we-conect.com/events/enterprise-ai-europe-2027/
+    checked: 2026-09-27
+    status: rejected
+    reason: we.CONECT B2B summit, same organiser and class as the AI Infrastructure Summit Berlin record; sponsor-led stages, not a flagship
+  - name: AI Accelerator Institute summit series (Agentic AI Summit Berlin/London, Generative AI Summit London)
+    url: https://world.aiacceleratorinstitute.com/location/agenticaiberlin
+    checked: 2026-09-27
+    status: rejected
+    reason: multi-city franchise summit series with vendor-driven agendas; not a flagship
   - name: Agent Conference
     url: https://www.agentconference.com/
     checked: 2026-09-19
@@ -324,9 +363,10 @@ scouted:
     reason: fourth edition announced for April 2027 in Münster with a self-reported ~17,000 participants, 6 stages and 350+ speakers; still celebrity-skewed German headliners, so tier remains unclear
   - name: AI Summit Barcelona
     url: https://aisummitbarcelona.com/
-    checked: 2026-08-30
+    checked: 2026-09-27
     status: watching
-    reason: 2026 edition surfaced as 2026-09-22 to 2026-09-23, WTC Barcelona, self-claimed ~10k target (own marketing, unverified); early edition, clashes with HumanX EMEA dates; keep watching until scale/lineup is proven
+    checked_note: rechecked 2026-09-27 - the 2026 edition has passed and the site says "see you next year" with no 2027 dates
+    reason: 2026 edition ran 2026-09-22 to 2026-09-23, WTC Barcelona, self-claimed ~10k target (own marketing, unverified); early edition; keep watching until a 2027 edition and scale/lineup are proven
   - name: NDC AI Oslo
     checked: 2026-08-15
     status: watching
