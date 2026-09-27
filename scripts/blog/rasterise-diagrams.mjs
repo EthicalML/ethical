@@ -10,44 +10,40 @@
 // derivatives of committed sources and regenerating them is one command. Nothing is
 // hosted, because the copy payloads carry the bytes inline as data URIs.
 //
+// The copy component runs this with --stale whenever a post's PNGs are missing or older
+// than their SVGs, so it normally runs on its own. It runs as a separate process because
+// Playwright cannot be loaded through Vite's module runner.
+//
 //   node scripts/blog/rasterise-diagrams.mjs            # every post
 //   node scripts/blog/rasterise-diagrams.mjs --only whose-memory-is-it-part-2
+//   node scripts/blog/rasterise-diagrams.mjs --only <post-dir> --stale
 
-import { mkdirSync, readdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { chromium } from '../verify/playwright.mjs';
+import { BLOG_DIR, OUT_DIR, pngFor, svgsOf, isStale } from './diagram-cache.mjs';
 
-const BLOG_DIR = 'src/content/blog';
-const OUT_DIR = 'tmp/diagrams';
 // Two device pixels per CSS pixel, so the diagrams stay sharp on the retina displays these
 // articles are read on.
 const SCALE = 2;
 
-const only = process.argv.includes('--only')
-  ? process.argv[process.argv.indexOf('--only') + 1]
-  : undefined;
+async function rasterise(posts, { onlyStale = false } = {}) {
+  const jobs = posts.flatMap((post) =>
+    svgsOf(post)
+      .filter((svg) => !onlyStale || isStale(post, svg))
+      .map((svg) => [post, svg]),
+  );
+  if (jobs.length === 0) return 0;
 
-const posts = readdirSync(BLOG_DIR, { withFileTypes: true })
-  .filter((entry) => entry.isDirectory())
-  .map((entry) => entry.name)
-  .filter((name) => !only || name.includes(only));
+  const browser = await chromium.launch();
+  const page = await browser.newPage({
+    viewport: { width: 1400, height: 900 },
+    deviceScaleFactor: SCALE,
+  });
 
-const browser = await chromium.launch();
-const page = await browser.newPage({
-  viewport: { width: 1400, height: 900 },
-  deviceScaleFactor: SCALE,
-});
-
-let written = 0;
-for (const post of posts) {
-  const svgs = readdirSync(join(BLOG_DIR, post)).filter((file) => file.endsWith('.svg'));
-  if (svgs.length === 0) continue;
-
-  const outDir = join(OUT_DIR, post);
-  mkdirSync(outDir, { recursive: true });
-
-  for (const svg of svgs) {
-    const out = join(outDir, svg.replace(/\.svg$/, '.png'));
+  let written = 0;
+  for (const [post, svg] of jobs) {
+    mkdirSync(join(OUT_DIR, post), { recursive: true });
     const markup = readFileSync(join(BLOG_DIR, post, svg), 'utf8');
     // The diagrams are authored for the dark article surface and declare a transparent
     // background, so they are composited on the site's own plate rather than on white.
@@ -57,12 +53,21 @@ for (const post of posts) {
       console.warn(`${post}/${svg}: no <svg> element found, skipped`);
       continue;
     }
-    writeFileSync(out, await element.screenshot({ type: 'png' }));
+    writeFileSync(pngFor(post, svg), await element.screenshot({ type: 'png' }));
     written += 1;
-    console.log(`${post}/${svg} -> ${out}`);
+    console.log(`${post}/${svg} -> ${pngFor(post, svg)}`);
   }
+
+  await browser.close();
+  return written;
 }
 
-await browser.close();
+const only = process.argv.includes('--only')
+  ? process.argv[process.argv.indexOf('--only') + 1]
+  : undefined;
+const posts = readdirSync(BLOG_DIR, { withFileTypes: true })
+  .filter((entry) => entry.isDirectory())
+  .map((entry) => entry.name)
+  .filter((name) => !only || name.includes(only));
+const written = await rasterise(posts, { onlyStale: process.argv.includes('--stale') });
 console.log(`\n${written} diagram(s) rasterised into ${OUT_DIR}`);
-if (!existsSync(OUT_DIR)) console.warn('nothing written: no blog post carries an SVG diagram');

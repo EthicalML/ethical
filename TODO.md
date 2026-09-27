@@ -89,8 +89,6 @@ Three findings that shape whatever the solution turns out to be:
 
 Direction to explore rather than a decided plan: hard-wrap the oversized blocks in source, then gate rasterisation on the blocks where indentation actually carries meaning (roughly 12-15 of the 48 here) and leave one-liners as text, which would put the payload near 1-1.5 MB at 1x. The measurement script used for the numbers above is throwaway and was not kept.
 
-Related and separately actionable: `inlineDiagrams()` resolves rasterised PNGs from `tmp/diagrams/<post-dir>/`, keyed on the post directory name. Renaming a post folder when publishing it, which the date-prefix convention requires, silently orphans its diagrams; part 4's payload carries zero inlined images for exactly this reason until `scripts/blog/rasterise-diagrams.mjs` is re-run. Either key the cache on the slug instead of the directory, or have the copy buttons warn when a referenced diagram has no PNG.
-
 ## Deferred
 
 - Anti-LLM style pass — needs owner to supply the style guidance it was waiting on, or downgrade to a plain owner-led copy review
