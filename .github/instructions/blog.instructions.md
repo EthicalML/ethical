@@ -15,7 +15,7 @@ Posts live as `src/content/blog/<YYYY-MM-DD->slug/index.md` with colocated asset
 - Every post requires a featured `image` (schema-enforced; drives archive showcases and social cards).
 - Listing consumers read the collection only through `publishedBlogEntries` in `src/utils/blog.ts`; only the post page's path generation uses `renderableBlogEntries`.
 - Republished posts set `source` and `url` (the off-site canonical) and record other appearances in `syndication`.
-- Mermaid diagrams are pre-rendered to committed SVGs beside the post (dark theme, transparent background); no Mermaid runtime ships to the browser.
+- Diagrams are hand-written SVGs committed beside the post, in the house style of the agentic security series: mono eyebrow, serif title with an italic green accent, mono labels, grey structure, green for the chosen path and red for the rejected one, on a transparent background. No diagram runtime ships to the browser, and the copy buttons rasterise them to PNG on demand.
 
 ## Voice
 
