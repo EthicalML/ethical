@@ -190,7 +190,8 @@ async function fetchBrevo() {
     const rows = page.campaigns ?? [];
     for (const campaign of rows) {
       const issue = campaignIssue(campaign.name ?? '');
-      if (!issue || !campaign.shareLink) continue;
+      // Brevo puts an error sentence in shareLink for unsent classic campaigns.
+      if (!issue || !/^https?:\/\//.test(campaign.shareLink ?? '')) continue;
       const current = campaigns.get(issue);
       campaigns.set(issue, current ? chooseCampaign(issue, current, campaign) : campaign);
     }
