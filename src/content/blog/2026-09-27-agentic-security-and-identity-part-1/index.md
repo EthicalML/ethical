@@ -1,6 +1,6 @@
 ---
 title: "Agentic Security & Identity: Who Are You, Who's Your Agent, And What Should They Be Allowed To Do? (Part 1)"
-date: 2026-12-31
+date: 2026-09-27
 image: './featured.png'
 summary: 'This is a 2-part series on agent identity and security: who the user is, who the agent is, and what each of them should be allowed to reach. Part 1 covers the delegation problem, the standards to build on, and the Agentic Identity Broker that Zalando has just open sourced.'
 tags: [agents, identity, security, oauth, kubernetes]

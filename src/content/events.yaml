@@ -3,6 +3,16 @@
 # One event is one conference: several talks or several per-track CFPs live in the arrays.
 # Sorted by `start`, newest first.
 
+- slug: humanx-emea-2027
+  name: HumanX EMEA 2027
+  series: humanx-emea
+  url: https://www.humanx.co/europe
+  image: https://builder-proxy.humanx.co/api/v1/image/assets%2Fadc0d67ce0454723815e3ad2e67ed85d%2F0dd491e5e748404588ecf652315a24ec?width=1985
+  start: 2027-09-20
+  end: 2027-09-22
+  location: Amsterdam, NL
+  topics: [ai-policy, llms, general-tech]
+
 - slug: agntcon-mcpcon-europe-2027
   name: AGNTCon + MCPCon Europe 2027
   series: agntcon-mcpcon-europe
@@ -26,6 +36,16 @@
     - url: https://sessionize.com/wearedevelopers-world-congress-2026-europe/
       # no deadline: the official call has closed, late submissions are rolling
 
+- slug: raise-summit-2027
+  name: RAISE Summit 2027
+  series: raise-summit
+  url: https://www.raisesummit.com/
+  image: https://cdn.prod.website-files.com/66f11b59c8366f8c2c21551f/697767079575d3625d1a13ba_Open%20graph.png
+  start: 2027-07-06
+  end: 2027-07-08
+  location: Paris, FR
+  topics: [general-tech, llms, ai-infrastructure]
+
 - slug: ai-engineer-worlds-fair-2027
   name: AI Engineer World's Fair 2027
   series: ai-engineer-worlds-fair
@@ -35,6 +55,16 @@
   end: 2027-07-02
   location: San Francisco, US
   topics: [ai-agents, llms]
+
+- slug: ai-summit-london-2027
+  name: The AI Summit London 2027
+  series: ai-summit-london
+  url: https://london.theaisummit.com/
+  image: https://knect365.imgix.net/uploads/AISummitLondon-2025-2919-1aac9cfa10d367f98fb5c1b8591dd454.jpg?auto=format&fit=max
+  start: 2027-06-09
+  end: 2027-06-10
+  location: London, UK
+  topics: [general-tech, ai-policy, llms]
 
 - slug: mlsys-2027
   name: MLSys 2027
@@ -46,6 +76,16 @@
   cfps:
     - url: https://openreview.net/group?id=MLSys.org/2027/Conference
       # no deadline announced yet
+
+- slug: qcon-london-2027
+  name: QCon London 2027
+  series: qcon-london
+  url: https://qconlondon.com/
+  image: https://qconlondon.com/modules/custom/qcon_common/images/og/og-london-27.jpg
+  start: 2027-04-13
+  end: 2027-04-15
+  location: London, UK
+  topics: [general-tech, ai-infrastructure, llms]
 
 - slug: kubecon-cloudnativecon-europe-2027
   name: KubeCon + CloudNativeCon Europe 2027
@@ -59,6 +99,16 @@
   cfps:
     - url: https://sessionize.com/kubecon-cloudnativecon-europe-2027/
       deadline: 2026-10-11
+
+- slug: waicf-2027
+  name: World AI Cannes Festival 2027
+  series: waicf
+  url: https://waicf.com/
+  image: https://knect365.imgix.net/uploads/81fdef13-2ad8-4cdd-ba10-67f3eac9808b-ffea6a4ebea26a1784401117af075be8.JPG?auto=format&fit=max
+  start: 2027-02-10
+  end: 2027-02-11
+  location: Cannes, FR
+  topics: [general-tech, ai-policy]
 
 - slug: mlops-world-2026
   name: MLOps World 2026
@@ -360,6 +410,7 @@
       image: /images/talks/ml-evaluation-kubecon-2021.jpg
 
 # FOSDEM 2021 ran online rather than in Brussels, so no `location` is asserted.
+
 - slug: fosdem-2021
   name: FOSDEM 2021
   series: fosdem
