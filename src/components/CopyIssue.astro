@@ -3,9 +3,11 @@
 // can be pasted straight into a LinkedIn article or the newsletter editor, both of which
 // reconstruct real bold, links and rules from a text/html clipboard flavour. Payloads are
 // built here rather than by each page, so the two surfaces stay in step.
+import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { toClipboardHtml, inlineDiagrams } from '../utils/IssueClipboard';
+import { OUT_DIR, svgsOf, isStale } from '../../scripts/blog/diagram-cache.mjs';
 
 interface Props {
   body: string;
@@ -17,6 +19,13 @@ interface Props {
 const { body, summary, post } = Astro.props;
 const site = Astro.site?.href ?? 'https://ethical.institute/';
 
+// Renders any missing or outdated PNG first, so the copy never falls back to an SVG that
+// the editors would drop. A no-op once the PNGs are current.
+if (post && svgsOf(post).some((svg) => isStale(post, svg))) {
+  execFileSync('node', ['scripts/blog/rasterise-diagrams.mjs', '--only', post, '--stale'], {
+    stdio: 'inherit',
+  });
+}
 const source = post ? inlineDiagrams(body, readDiagram) : body;
 const linkedin = await toClipboardHtml({ body: source, summary, site, mode: 'linkedin' });
 const newsletter = await toClipboardHtml({ body: source, summary, site, mode: 'newsletter' });
@@ -25,11 +34,11 @@ const newsletter = await toClipboardHtml({ body: source, summary, site, mode: 'n
 // JSON.parse rather than being reconstructed from the DOM.
 const payloads = JSON.stringify({ linkedin, newsletter }).replace(/</g, '\\u003c');
 
-// Rasterised by scripts/blog/rasterise-diagrams.mjs. A diagram not yet generated is left
-// as its original reference rather than dropped, so a gap is visible instead of silent.
+// Rasterised by scripts/blog/rasterise-diagrams.mjs. A diagram that failed to render is
+// left as its original reference rather than dropped, so a gap is visible instead of silent.
 function readDiagram(name: string) {
   try {
-    return readFileSync(join('tmp/diagrams', post ?? '', name));
+    return readFileSync(join(OUT_DIR, post ?? '', name));
   } catch {
     return undefined;
   }
