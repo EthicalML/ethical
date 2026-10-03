@@ -13,25 +13,25 @@
       {
         "emoji": "🧮",
         "name": "Computation & Communication Optimisation",
-        "count": 58,
+        "count": 55,
         "anchor": "#computation-and-communication-optimisation"
       },
       {
         "emoji": "🏷️",
         "name": "Data Annotation & Synthesis",
-        "count": 16,
+        "count": 15,
         "anchor": "#data-annotation-and-synthesis"
       },
       {
         "emoji": "🧵",
         "name": "Data Pipeline",
-        "count": 25,
+        "count": 23,
         "anchor": "#data-pipeline"
       },
       {
         "emoji": "📓",
         "name": "Data Science Notebook",
-        "count": 10,
+        "count": 9,
         "anchor": "#data-science-notebook"
       },
       {
@@ -55,7 +55,7 @@
       {
         "emoji": "📈",
         "name": "Evaluation & Monitoring",
-        "count": 68,
+        "count": 65,
         "anchor": "#evaluation-and-monitoring"
       },
       {
@@ -79,19 +79,19 @@
       {
         "emoji": "👁️",
         "name": "Industry-strength Computer Vision",
-        "count": 13,
+        "count": 11,
         "anchor": "#industry-strength-computer-vision"
       },
       {
         "emoji": "🔥",
         "name": "Industry-strength Information Retrieval",
-        "count": 24,
+        "count": 20,
         "anchor": "#industry-strength-information-retrieval"
       },
       {
         "emoji": "🔠",
         "name": "Industry-strength Natural Language Processing",
-        "count": 45,
+        "count": 42,
         "anchor": "#industry-strength-nlp"
       },
       {
@@ -103,7 +103,7 @@
       {
         "emoji": "🍕",
         "name": "Industry-strength Reinforcement Learning",
-        "count": 39,
+        "count": 37,
         "anchor": "#industry-strength-reinforcement-learning"
       },
       {
@@ -121,25 +121,25 @@
       {
         "emoji": "📅",
         "name": "Metadata Management",
-        "count": 6,
+        "count": 5,
         "anchor": "#metadata-management"
       },
       {
         "emoji": "📜",
         "name": "Model, Data & Experiment Management",
-        "count": 16,
+        "count": 15,
         "anchor": "#model-data-and-experiment-management"
       },
       {
         "emoji": "🔩",
         "name": "Model Storage Optimisation",
-        "count": 10,
+        "count": 8,
         "anchor": "#model-storage-optimisation"
       },
       {
         "emoji": "🏁",
         "name": "Model Training & Orchestration",
-        "count": 27,
+        "count": 26,
         "anchor": "#model-training-and-orchestration"
       },
       {
@@ -250,19 +250,19 @@
       {
         "emoji": "🔍",
         "name": "High Level Frameworks & Principles",
-        "count": 21,
+        "count": 22,
         "anchor": "#high-level-frameworks-and-principles"
       },
       {
         "emoji": "📜",
         "name": "Industry standards initiatives",
-        "count": 5,
+        "count": 6,
         "anchor": "#industry-standards-initiatives"
       },
       {
         "emoji": "🔨",
         "name": "Interactive & Practical Tools",
-        "count": 25,
+        "count": 33,
         "anchor": "#interactive-and-practical-tools"
       },
       {
@@ -280,7 +280,7 @@
       {
         "emoji": "🤖",
         "name": "Research and Industry Newsletters",
-        "count": 7,
+        "count": 8,
         "anchor": "#research-and-industry-newsletters"
       }
     ]

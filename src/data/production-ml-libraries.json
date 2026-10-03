@@ -1,7 +1,7 @@
 {
   "repository": "https://github.com/EthicalML/awesome-production-machine-learning",
   "source": "https://raw.githubusercontent.com/EthicalML/awesome-production-machine-learning/master/README.md",
-  "libraryCount": 545,
+  "libraryCount": 519,
   "categories": [
     {
       "name": "AutoML",
@@ -114,11 +114,6 @@
           "description": "Adapters is a unified library for parameter-efficient and modular transfer learning."
         },
         {
-          "name": "BitBLAS",
-          "href": "https://github.com/microsoft/BitBLAS",
-          "description": "BitBLAS is a library to support mixed-precision BLAS operations on GPUs"
-        },
-        {
           "name": "Cache-DiT",
           "href": "https://github.com/vipshop/cache-dit",
           "description": "Cache-DiT is built on top of Diffusers and supports nearly all DiTs, providing hybrid cache acceleration (DBCache, TaylorSeer, SCM, etc.) and comprehensive parallelism optimizations including Context Parallelism, Tensor Parallelism, and hybrid 2D/3D parallelism, with compatibility for compilation, CPU offloading, and quantization."
@@ -135,12 +130,12 @@
         },
         {
           "name": "CuDF",
-          "href": "https://github.com/rapidsai/cudf",
+          "href": "https://github.com/NVIDIA/cudf",
           "description": "Built based on the Apache Arrow columnar memory format, cuDF is a GPU DataFrame library for loading, joining, aggregating, filtering, and otherwise manipulating data."
         },
         {
           "name": "CuML",
-          "href": "https://github.com/rapidsai/cuml",
+          "href": "https://github.com/NVIDIA/cuml",
           "description": "cuML is a suite of libraries that implement machine learning algorithms and mathematical primitives functions that share compatible APIs with other RAPIDS projects."
         },
         {
@@ -180,7 +175,7 @@
         },
         {
           "name": "FlagGems",
-          "href": "https://github.com/FlagOpen/FlagGems",
+          "href": "https://github.com/flagos-ai/FlagGems",
           "description": "FlagGems is a high-performance general operator library implemented in OpenAI Triton. It builds on a collection of backend neutral kernels that aims to accelerate LLM training and inference across diverse hardware platforms."
         },
         {
@@ -204,11 +199,6 @@
           "description": "Decentralized deep learning in PyTorch."
         },
         {
-          "name": "Horovod",
-          "href": "https://github.com/horovod/horovod",
-          "description": "Uber's distributed training framework for TensorFlow, Keras, and PyTorch."
-        },
-        {
           "name": "Jax",
           "href": "https://github.com/jax-ml/jax",
           "description": "Composable transformations of Python+NumPy programs: differentiate, vectorize, JIT to GPU/TPU, and more."
@@ -219,18 +209,13 @@
           "description": "Blazing fast, lightweight and mobile phone-enabled Vulkan compute framework optimized for advanced GPU data processing usecases."
         },
         {
-          "name": "Lava",
-          "href": "https://github.com/lava-nc/lava",
-          "description": "Lava is an open source framework to develop applications for neuromorphic hardware architectures."
-        },
-        {
           "name": "Liger Kernel",
           "href": "https://github.com/linkedin/Liger-Kernel",
           "description": "Liger Kernel is a collection of Triton kernels designed specifically for LLM training."
         },
         {
           "name": "LightGBM",
-          "href": "https://github.com/microsoft/LightGBM",
+          "href": "https://github.com/lightgbm-org/LightGBM",
           "description": "LightGBM is a gradient boosting framework that uses tree based learning algorithms."
         },
         {
@@ -425,11 +410,6 @@
           "description": "Open source text annotation tools for humans, providing functionality for sentiment analysis, named entity recognition, and machine translation."
         },
         {
-          "name": "Gretel Synthetics",
-          "href": "https://github.com/gretelai/gretel-synthetics",
-          "description": "Gretel Synthetics is a synthetic data generators for structured and unstructured text, featuring differentially private learning."
-        },
-        {
           "name": "Label Studio",
           "href": "https://github.com/HumanSignal/label-studio",
           "description": "Multi-domain data labeling and annotation tool with standardized output format."
@@ -441,7 +421,7 @@
         },
         {
           "name": "NeMo Curator",
-          "href": "https://github.com/NVIDIA/NeMo-Curator",
+          "href": "https://github.com/NVIDIA-NeMo/Curator",
           "description": "NeMo Curator is a GPU-accelerated framework for efficient large language model data curation."
         },
         {
@@ -476,7 +456,7 @@
         },
         {
           "name": "YData Synthetic",
-          "href": "https://github.com/ydataai/ydata-synthetic",
+          "href": "https://github.com/Data-Centric-AI-Community/fg-data-synthetic",
           "description": "YData Synthetic is a package to generate synthetic tabular and time-series data leveraging the state of the art generative models."
         }
       ]
@@ -494,11 +474,6 @@
           "name": "Apache Nifi",
           "href": "https://github.com/apache/nifi",
           "description": "Apache NiFi was made for dataflow. It supports highly configurable directed graphs of data routing, transformation, and system mediation logic."
-        },
-        {
-          "name": "Apache Oozie",
-          "href": "https://github.com/apache/oozie",
-          "description": "Workflow scheduler for Hadoop jobs."
         },
         {
           "name": "Argo Workflows",
@@ -522,7 +497,7 @@
         },
         {
           "name": "DBT",
-          "href": "https://github.com/dbt-labs/dbt-core",
+          "href": "https://github.com/dbt-labs/dbt",
           "description": "ETL tool for running transformations inside data warehouses."
         },
         {
@@ -537,7 +512,7 @@
         },
         {
           "name": "Hamilton",
-          "href": "https://github.com/dagworks-inc/hamilton",
+          "href": "https://github.com/apache/hamilton",
           "description": "Hamilton is a micro-orchestration framework for defining dataflows. Runs anywhere python runs (e.g. jupyter, fastAPI, spark, ray, dask). Brings software engineering best practices without you knowing it. Use it to define feature engineering transforms, end-to-end model pipelines, and LLM workflows. It complements macro-orchestration systems (e.g. kedro, luigi, airflow, dbt, etc.) as it replaces the code within those macro tasks. Comes with a self-hostable UI that captures lineage & provenance, execution telemetry & data summaries, and builds a self-populating catalog; usable in development as well as production."
         },
         {
@@ -547,7 +522,7 @@
         },
         {
           "name": "Instructor",
-          "href": "https://github.com/instructor-ai/instructor",
+          "href": "https://github.com/567-labs/instructor",
           "description": "Instructor makes it easy to get structured data like JSON from LLMs like GPT-3.5, GPT-4, GPT-4-Vision, and open-source models."
         },
         {
@@ -569,11 +544,6 @@
           "name": "Pachyderm",
           "href": "https://github.com/pachyderm/pachyderm",
           "description": "Open source distributed processing framework build on Kubernetes focused mainly on dynamic building of production machine learning pipelines - (Video)."
-        },
-        {
-          "name": "Ploomber",
-          "href": "https://github.com/ploomber/ploomber",
-          "description": "The fastest way to build data pipelines. Develop iteratively, deploy anywhere."
         },
         {
           "name": "Pixeltable",
@@ -660,11 +630,6 @@
           "name": "Voilà",
           "href": "https://github.com/voila-dashboards/voila",
           "description": "Voilà turns Jupyter notebooks into standalone web applications that can e.g. be used as dashboards."
-        },
-        {
-          "name": ".NET Interactive",
-          "href": "https://github.com/dotnet/interactive",
-          "description": ".NET Interactive takes the power of .NET and embeds it into your interactive experiences."
         }
       ]
     },
@@ -719,7 +684,7 @@
         },
         {
           "name": "Casibase",
-          "href": "https://github.com/casibase/casibase",
+          "href": "https://github.com/the-open-agent/openagent",
           "description": "Casibase is a LangChain-like RAG (Retrieval-Augmented Generation) knowledge database with web UI and Enterprise SSO."
         },
         {
@@ -779,7 +744,7 @@
         },
         {
           "name": "Safetensors",
-          "href": "https://github.com/huggingface/safetensors",
+          "href": "https://github.com/safetensors/safetensors",
           "description": "Simple, safe way to store and distribute tensors."
         },
         {
@@ -835,7 +800,7 @@
         },
         {
           "name": "FastStream",
-          "href": "https://github.com/airtai/faststream",
+          "href": "https://github.com/ag2ai/faststream",
           "description": "A modern broker-agnostic streaming Python framework supporting Apache Kafka, RabbitMQ and NATS protocols, inspired by FastAPI and easily integratable with other web frameworks."
         },
         {
@@ -885,9 +850,19 @@
           "description": "BentoML is an open source framework for high performance ML model serving."
         },
         {
+          "name": "Bifrost",
+          "href": "https://github.com/maximhq/bifrost",
+          "description": "AI gateway providing a single OpenAI-compatible API across 23+ LLM providers, with automatic fallbacks, load balancing, semantic caching, budget governance and Prometheus metrics."
+        },
+        {
           "name": "BISHENG",
           "href": "https://github.com/dataelement/bisheng",
           "description": "BISHENG is an open LLM application devops platform, focusing on enterprise scenarios."
+        },
+        {
+          "name": "CosmoEdge",
+          "href": "https://github.com/cosmo-wander-ai/cosmo-edge",
+          "description": "A C++ edge video AI engine for production deployments, combining RTSP ingestion, CV/VLM inference, visual orchestration, alarms, and event delivery across Sophon and Rockchip NPUs."
         },
         {
           "name": "DeepDetect",
@@ -906,7 +881,7 @@
         },
         {
           "name": "Genkit",
-          "href": "https://github.com/firebase/genkit",
+          "href": "https://github.com/genkit-ai/genkit",
           "description": "Genkit is an open source framework for building AI-powered apps with familiar code-centric patterns. Genkit makes it easy to develop, integrate, and test AI features with observability and evaluations."
         },
         {
@@ -923,11 +898,6 @@
           "name": "Infinity",
           "href": "https://github.com/michaelfeil/infinity",
           "description": "Infinity is a high-throughput, low-latency REST API for serving text-embeddings, reranking models and clip."
-        },
-        {
-          "name": "IPEX-LLM",
-          "href": "https://github.com/intel/ipex-llm",
-          "description": "IPEX-LLM is a PyTorch library for running LLM on Intel CPU and GPU (e.g., local PC with iGPU, discrete GPU such as Arc, Flex and Max) with very low latency."
         },
         {
           "name": "LiteLLM",
@@ -948,6 +918,11 @@
           "name": "LitServe",
           "href": "https://github.com/Lightning-AI/LitServe",
           "description": "LitServe is a flexible serving engine for AI models built on FastAPI. It supports custom inference engines for models, agents, multi-modal systems, RAG, and complex ML pipelines."
+        },
+        {
+          "name": "jevos",
+          "href": "https://github.com/feder-cr/jev",
+          "description": "jevos is an open-source alternative to TypeSafe's Jev for yes/no decisions: a 1B-parameter binary classifier (GGUF, llama.cpp) served over a Jev-compatible FastAPI HTTP API, running CPU-only on a laptop."
         },
         {
           "name": "Jina-serve",
@@ -1016,7 +991,7 @@
         },
         {
           "name": "MindsDB",
-          "href": "https://github.com/mindsdb/mindsdb",
+          "href": "https://github.com/mindsdb/mindshub",
           "description": "MindsDB is the platform to create, serve, and fine-tune models in real-time from your database, vector store, and application data."
         },
         {
@@ -1081,7 +1056,7 @@
         },
         {
           "name": "PowerInfer",
-          "href": "https://github.com/SJTU-IPADS/PowerInfer",
+          "href": "https://github.com/Tiiny-AI/PowerInfer",
           "description": "PowerInfer is a CPU/GPU LLM inference engine leveraging activation locality for your device."
         },
         {
@@ -1123,16 +1098,6 @@
           "name": "Tensorflow Serving",
           "href": "https://github.com/tensorflow/serving",
           "description": "High-performant framework to serve Tensorflow models via grpc protocol able to handle 100k requests per second per core."
-        },
-        {
-          "name": "text-generation-inference",
-          "href": "https://github.com/huggingface/text-generation-inference",
-          "description": "Large Language Model Text Generation Inference."
-        },
-        {
-          "name": "TorchServe",
-          "href": "https://github.com/pytorch/serve",
-          "description": "TorchServe is a flexible and easy to use tool for serving PyTorch models."
         },
         {
           "name": "torchtune",
@@ -1216,11 +1181,6 @@
           "description": "DeepEval is a simple-to-use, open-source evaluation framework for LLM applications."
         },
         {
-          "name": "DomainBed",
-          "href": "https://github.com/facebookresearch/DomainBed",
-          "description": "DomainBed is a test suite containing benchmark datasets and algorithms for domain generalization"
-        },
-        {
           "name": "EvalAI",
           "href": "https://github.com/Cloud-CV/EvalAI",
           "description": "EvalAI is an open-source platform for evaluating and comparing AI algorithms at scale."
@@ -1267,7 +1227,7 @@
         },
         {
           "name": "Giskard",
-          "href": "https://github.com/Giskard-AI/giskard",
+          "href": "https://github.com/Giskard-AI/giskard-oss",
           "description": "Giskard is an open-source Python library that automatically detects performance, bias & security issues in AI applications."
         },
         {
@@ -1322,7 +1282,7 @@
         },
         {
           "name": "LangTest",
-          "href": "https://github.com/JohnSnowLabs/langtest",
+          "href": "https://github.com/PacificAI/langtest",
           "description": "LangTest is a comprehensive evaluation toolkit for NLP models."
         },
         {
@@ -1344,11 +1304,6 @@
           "name": "LightEval",
           "href": "https://github.com/huggingface/lighteval",
           "description": "LightEval is a lightweight LLM evaluation suite."
-        },
-        {
-          "name": "LLMPerf",
-          "href": "https://github.com/ray-project/llmperf",
-          "description": "LLMPerf is a tool for evaluating the performance of LLM APIs."
         },
         {
           "name": "lmms-eval",
@@ -1431,11 +1386,6 @@
           "description": "Phoenix is an open-source AI observability platform designed for experimentation, evaluation, and troubleshooting."
         },
         {
-          "name": "PromptBench",
-          "href": "https://github.com/microsoft/promptbench",
-          "description": "PromptBench is a unified evaluation framework for large language models"
-        },
-        {
           "name": "Promptfoo",
           "href": "https://github.com/promptfoo/promptfoo",
           "description": "LLM red teaming and evaluation framework for testing jailbreaks, prompt injection, and other vulnerabilities with CI/CD integration."
@@ -1452,7 +1402,7 @@
         },
         {
           "name": "Ragas",
-          "href": "https://github.com/explodinggradients/ragas",
+          "href": "https://github.com/vibrantlabsai/ragas",
           "description": "Ragas is a framework to evaluate RAG pipelines."
         },
         {
@@ -1538,7 +1488,7 @@
         },
         {
           "name": "captum",
-          "href": "https://github.com/pytorch/captum",
+          "href": "https://github.com/meta-pytorch/captum",
           "description": "model interpretability and understanding library for PyTorch developed by Facebook. It contains general purpose implementations of integrated gradients, saliency maps, smoothgrad, vargrad and others for PyTorch models."
         },
         {
@@ -1646,7 +1596,7 @@
       "entries": [
         {
           "name": "CameraTraps",
-          "href": "https://github.com/microsoft/CameraTraps",
+          "href": "https://github.com/microsoft/Biodiversity",
           "description": "CameraTraps (PyTorch Wildlife) is a collaborative deep learning framework for wildlife image analysis, providing detection and classification models trained on large-scale camera trap datasets."
         },
         {
@@ -1665,19 +1615,9 @@
           "description": "Detectron2 is Facebook AI Research's next generation library that provides state-of-the-art detection and segmentation algorithms."
         },
         {
-          "name": "KerasCV",
-          "href": "https://github.com/keras-team/keras-cv",
-          "description": "KerasCV is a library of modular computer vision oriented Keras components."
-        },
-        {
           "name": "Kornia",
           "href": "https://github.com/kornia/kornia",
           "description": "Kornia is a differentiable computer vision library built on PyTorch that provides a rich set of differentiable image processing and geometric vision algorithms."
-        },
-        {
-          "name": "LAVIS",
-          "href": "https://github.com/salesforce/LAVIS",
-          "description": "LAVIS is a deep learning library for LAnguage-and-VISion intelligence research and applications."
         },
         {
           "name": "libcom",
@@ -1726,16 +1666,6 @@
           "description": "BGE builds one-stop retrieval toolkit for search and RAG."
         },
         {
-          "name": "Cognita",
-          "href": "https://github.com/truefoundry/cognita",
-          "description": "Cognita is a RAG framework for building modular and production-ready applications."
-        },
-        {
-          "name": "DocArray",
-          "href": "https://github.com/docarray/docarray",
-          "description": "DocArray is a library for nested, unstructured, multimodal data in transit, including text, image, audio, video, 3D mesh, etc. It allows deep-learning engineers to efficiently process, embed, search, recommend, store, and transfer multimodal data with a Pythonic API."
-        },
-        {
           "name": "EmbedAnything",
           "href": "https://github.com/StarlightSearch/EmbedAnything",
           "description": "EmbedAnything is a minimalist, lightweight, and high-performance embedding pipeline built in Rust for generating embeddings from text, images, audio, PDFs, and other media, with support for dense, sparse, ONNX, and late-interaction embeddings."
@@ -1744,11 +1674,6 @@
           "name": "Faiss",
           "href": "https://github.com/facebookresearch/faiss",
           "description": "Faiss is a library for efficient similarity search and clustering of dense vectors."
-        },
-        {
-          "name": "fastRAG",
-          "href": "https://github.com/IntelLabs/fastRAG",
-          "description": "fastRAG is a research framework for efficient and optimized retrieval augmented generative pipelines, incorporating state-of-the-art LLMs and Information Retrieval."
         },
         {
           "name": "GraphRAG",
@@ -1787,7 +1712,7 @@
         },
         {
           "name": "NGT",
-          "href": "https://github.com/yahoojapan/NGT",
+          "href": "https://github.com/NGT-labs/NGT",
           "description": "NGT provides commands and a library for performing high-speed approximate nearest neighbor searches against a large volume of data in high dimensional vector data space."
         },
         {
@@ -1826,11 +1751,6 @@
           "description": "TextWorld is a text-based game generator and extensible sandbox learning environment for training and testing reinforcement learning (RL) agents."
         },
         {
-          "name": "Vanna",
-          "href": "https://github.com/vanna-ai/vanna",
-          "description": "Vanna is a RAG framework for SQL generation and related functionality."
-        },
-        {
           "name": "Zvec",
           "href": "https://github.com/alibaba/zvec",
           "description": "Zvec is an open-source, in-process vector database for low-latency similarity search."
@@ -1858,13 +1778,8 @@
         },
         {
           "name": "Burr",
-          "href": "https://github.com/dagworks-inc/burr",
+          "href": "https://github.com/apache/burr",
           "description": "Burr helps you develop applications that make decisions (chatbot, agent, simulation). It comes with production-ready features (telemetry, persistence, deployment, etc.) and the open-source, free, and local-first Burr UI."
-        },
-        {
-          "name": "CodeTF",
-          "href": "https://github.com/salesforce/CodeTF",
-          "description": "CodeTF is a one-stop Python transformer-based library for code large language models (Code LLMs) and code intelligence, provides a seamless interface for training and inferencing on code intelligence tasks like code summarization, translation, code generation and so on."
         },
         {
           "name": "Context7",
@@ -1908,7 +1823,7 @@
         },
         {
           "name": "Fun-ASR",
-          "href": "https://github.com/FunAudioLLM/Fun-ASR",
+          "href": "https://github.com/QwenAudio/Fun-ASR",
           "description": "LLM-based ASR supporting 31 languages including Chinese dialects with native punctuation, timestamps, and speaker diarization."
         },
         {
@@ -1920,11 +1835,6 @@
           "name": "gpt-fast",
           "href": "https://github.com/meta-pytorch/gpt-fast",
           "description": "Simple and efficient pytorch-native transformer text generation."
-        },
-        {
-          "name": "h2oGPT",
-          "href": "https://github.com/h2oai/h2ogpt",
-          "description": "h2oGPT is an open source generative AI, gives organizations like yours the power to own large language models while preserving your data ownership."
         },
         {
           "name": "Haystack",
@@ -1963,7 +1873,7 @@
         },
         {
           "name": "LLaMA-Factory",
-          "href": "https://github.com/hiyouga/LLaMA-Factory",
+          "href": "https://github.com/hiyouga/LlamaFactory",
           "description": "LLaMA-Factory makes it easy to fine-tunes 100+ large language models with zero-code CLI and Web UI"
         },
         {
@@ -1988,7 +1898,7 @@
         },
         {
           "name": "MindNLP",
-          "href": "https://github.com/mindspore-lab/mindnlp",
+          "href": "https://github.com/candle-org/MindAct",
           "description": "MindNLP is an easy-to-use and high-performance NLP and LLM framework based on MindSpore, compatible with models and datasets of Huggingface."
         },
         {
@@ -2022,18 +1932,13 @@
           "description": "Promptise Foundry is a production Python framework for agentic AI and MCP servers, covering autonomous runtime, memory, tool integration, governance (budget, health, mission, secrets), guardrails, semantic caching, and observability."
         },
         {
-          "name": "PyLLMs",
-          "href": "https://github.com/kagisearch/pyllms",
-          "description": "PyLLMs is a minimal Python library to connect to various Language Models (LLMs) with a built-in model performance benchmark."
-        },
-        {
           "name": "Semantic Kernel",
           "href": "https://github.com/microsoft/semantic-kernel",
           "description": "Semantic Kernel is an SDK that integrates Large Language Models (LLMs) like OpenAI, Azure OpenAI, and Hugging Face with conventional programming languages like C#, Python, and Java. Semantic Kernel achieves this by allowing you to define plugins that can be chained together in just a few lines of code."
         },
         {
           "name": "Sentence Transformers",
-          "href": "https://github.com/UKPLab/sentence-transformers",
+          "href": "https://github.com/huggingface/sentence-transformers",
           "description": "Sentence Transformers provides an easy method to compute dense vector representations for sentences, paragraphs, and images."
         },
         {
@@ -2110,7 +2015,7 @@
         },
         {
           "name": "AReaL",
-          "href": "https://github.com/inclusionAI/AReaL",
+          "href": "https://github.com/areal-project/AReaL",
           "description": "AReaL is a reinforcement learning library."
         },
         {
@@ -2122,11 +2027,6 @@
           "name": "CleanRL",
           "href": "https://github.com/vwxyzjn/cleanrl",
           "description": "CleanRL is a Deep Reinforcement Learning library that provides high-quality single-file implementation with research-friendly features. The implementation is clean and simple, yet we can scale it to run thousands of experiments using AWS Batch."
-        },
-        {
-          "name": "CompilerGym",
-          "href": "https://github.com/facebookresearch/CompilerGym",
-          "description": "CompilerGym is a library of easy to use and performant reinforcement learning environments for compiler tasks."
         },
         {
           "name": "d3rlpy",
@@ -2202,11 +2102,6 @@
           "name": "ML-Agents",
           "href": "https://github.com/Unity-Technologies/ml-agents",
           "description": "ML-Agents is an open-source project that enables games and simulations to serve as environments for training reinforcement learning intelligent agents."
-        },
-        {
-          "name": "MLGym",
-          "href": "https://github.com/facebookresearch/MLGym",
-          "description": "MLGym is a gym environment enabling research on reinforcement learning (RL) algorithms for training such agents for ML tasks."
         },
         {
           "name": "MushroomRL",
@@ -2295,7 +2190,7 @@
         },
         {
           "name": "veRL",
-          "href": "https://github.com/volcengine/veRL",
+          "href": "https://github.com/verl-project/verl",
           "description": "veRL (HybridFlow) is a flexible, efficient and industrial-level RL(HF) training framework designed for LLMs."
         }
       ]
@@ -2362,12 +2257,12 @@
         },
         {
           "name": "Bread Dataset Viewer",
-          "href": "https://github.com/Bread-Technologies/mle_vscode_extension",
+          "href": "https://github.com/Bread-Technologies/Bread-Dataset-Viewer",
           "description": "A VS Code extension for viewing and exploring large machine learning datasets (CSV, JSON, Parquet, etc.) directly within the editor without the IDE crashing."
         },
         {
           "name": "Bread WandB Viewer",
-          "href": "https://github.com/Bread-Technologies/bread_wandb_viewer_extension",
+          "href": "https://github.com/Bread-Technologies/Bread-WandB-Viewer",
           "description": "A VS Code extension to view Weights & Biases experiments, logs, and artifacts within the IDE, eliminating the need to switch to the web UI & preserving data privacy by being 100% offline."
         },
         {
@@ -2407,7 +2302,7 @@
         },
         {
           "name": "Perspective",
-          "href": "https://github.com/finos/perspective",
+          "href": "https://github.com/perspective-dev/perspective",
           "description": "Streaming pivot visualization via WebAssembly."
         },
         {
@@ -2467,7 +2362,7 @@
         },
         {
           "name": "ydata-profiling",
-          "href": "https://github.com/ydataai/ydata-profiling",
+          "href": "https://github.com/Data-Centric-AI-Community/fg-data-profiling",
           "description": "ydata-profiling provides a one-line Exploratory Data Analysis (EDA) experience in a consistent and fast solution."
         }
       ]
@@ -2476,11 +2371,6 @@
       "name": "Metadata Management",
       "emoji": "📅",
       "entries": [
-        {
-          "name": "Amundsen",
-          "href": "https://github.com/amundsen-io/amundsen",
-          "description": "Amundsen is a metadata driven application for improving the productivity of data analysts, data scientists and engineers when interacting with data."
-        },
         {
           "name": "Apache Atlas",
           "href": "https://github.com/apache/atlas",
@@ -2534,7 +2424,7 @@
         },
         {
           "name": "DVC",
-          "href": "https://github.com/iterative/dvc",
+          "href": "https://github.com/treeverse/dvc",
           "description": "DVC (Data Version Control) is a git fork that allows for version management of models."
         },
         {
@@ -2549,7 +2439,7 @@
         },
         {
           "name": "KitOps",
-          "href": "https://github.com/jozu-ai/kitops",
+          "href": "https://github.com/kitops-ml/kitops",
           "description": "KitOps is an open and standards-based packaging and versioning system for AI/ML projects that works with all the AI/ML, development, and DevOps tools you are already using."
         },
         {
@@ -2561,11 +2451,6 @@
           "name": "MLflow",
           "href": "https://github.com/mlflow/mlflow",
           "description": "Open source platform to manage the ML lifecycle, including experimentation, reproducibility and deployment."
-        },
-        {
-          "name": "Neptune",
-          "href": "https://github.com/neptune-ai/neptune-client",
-          "description": "Neptune is a scalable experiment tracker for teams that train foundation models."
         },
         {
           "name": "Polyaxon",
@@ -2649,11 +2534,6 @@
           "description": "Machine learning development environment for data science and AI/ML engineering teams."
         },
         {
-          "name": "Fairseq",
-          "href": "https://github.com/facebookresearch/fairseq",
-          "description": "Fairseq(-py) is a sequence modeling toolkit that allows researchers and developers to train custom models for translation, summarization, language modeling and other text generation tasks."
-        },
-        {
           "name": "Fire-Flyer File System",
           "href": "https://github.com/deepseek-ai/3FS",
           "description": "The Fire-Flyer File System (3FS) is a high-performance distributed file system designed to address the challenges of AI training and inference workloads. It leverages modern SSDs and RDMA networks to provide a shared storage layer that simplifies development of distributed applications."
@@ -2700,7 +2580,7 @@
         },
         {
           "name": "NeMo",
-          "href": "https://github.com/NVIDIA/NeMo",
+          "href": "https://github.com/NVIDIA-NeMo/Speech",
           "description": "NVIDIA NeMo is a scalable and cloud-native generative AI framework built for researchers and PyTorch developers working on Large Language Models (LLMs), Multimodal Models (MMs), Automatic Speech Recognition (ASR), Text to Speech (TTS), and Computer Vision (CV) domains. It is designed to help you efficiently create, customize, and deploy new generative AI models by leveraging existing code and pre-trained model checkpoints."
         },
         {
@@ -2739,16 +2619,6 @@
       "name": "Model Training & Orchestration",
       "emoji": "🏁",
       "entries": [
-        {
-          "name": "AutoAWQ",
-          "href": "https://github.com/casper-hansen/AutoAWQ",
-          "description": "AutoAWQ is an easy-to-use package for 4-bit quantized models."
-        },
-        {
-          "name": "AutoGPTQ",
-          "href": "https://github.com/AutoGPTQ/AutoGPTQ",
-          "description": "An easy-to-use LLMs quantization package with user-friendly apis, based on GPTQ algorithm."
-        },
         {
           "name": "AWQ",
           "href": "https://github.com/mit-han-lab/llm-awq",
@@ -2827,7 +2697,7 @@
         },
         {
           "name": "Flower",
-          "href": "https://github.com/adap/flower",
+          "href": "https://github.com/flwrlabs/flower",
           "description": "Flower is a Federated Learning Framework with a unified approach. It enables the federation of any ML workload, with any ML framework, and any programming language."
         },
         {
@@ -2842,7 +2712,7 @@
         },
         {
           "name": "NeMo Guardrails",
-          "href": "https://github.com/NVIDIA/NeMo-Guardrails",
+          "href": "https://github.com/NVIDIA-NeMo/Guardrails",
           "description": "NeMo Guardrails is an open-source toolkit for easily adding programmable guardrails to LLM-based conversational systems."
         },
         {
@@ -2852,7 +2722,7 @@
         },
         {
           "name": "OpenFL",
-          "href": "https://github.com/securefederatedai/openfl",
+          "href": "https://github.com/securefederatedai/openfederatedlearning",
           "description": "OpenFL is a Python framework for Federated Learning. OpenFL is designed to be a flexible, extensible and easily learnable tool for data scientists. OpenFL is developed by Intel Internet of Things Group (IOTG) and Intel Labs."
         },
         {
