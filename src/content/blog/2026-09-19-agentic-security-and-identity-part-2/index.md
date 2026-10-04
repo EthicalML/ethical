@@ -1,36 +1,40 @@
 ---
 title: "Agentic Security & Identity: Who Are You, Who's Your Agent, And What Should They Be Allowed To Do? (Part 2)"
-date: 2026-12-31
+date: 2026-10-04
 image: './featured.png'
 summary: 'This is a 2-part series on agent identity and security: who the user is, who the agent is, and what each of them should be allowed to reach. Part 2 runs the design end to end on a cluster, with two users, two agents, a tool, a model and a third-party service.'
 tags: [agents, identity, security, oauth, kubernetes]
 series: 'Agentic Security & Identity'
 ---
 
-Alice and Bob both work at the same company and both have access to the same agent platform. Alice is in the `researchers` group and Bob is in `support`. They send the same request to the same agent, and one of them should get an answer and the other should be refused.
+In [Part 1](/blog/agentic-security-and-identity-part-1/) I designed how agent identity can work on a platform where agent-delegation is enabled, and how we decide (+ enforce) what they and their users are allowed to reach. In this second and final part I deploy that design on a cluster and check whether it actually holds up.
 
-Then Alice asks that agent to touch GitHub on her behalf. The request should go out carrying Alice's own credential, with Alice's permissions, landing in Alice's audit log, and she should be able to withdraw it without affecting Bob.
+In this Part 2 blog post, I go through a hands-on use-case with 2 users of the same agent platform at the same company: Alice is in the `researchers` group and Bob is in the `support` group. Throughout this I will show the good, the bad and the ugly of agentic identity and security, especially when dealing with autonomous agents, and with users delegating permissions to an agent.
 
-In [Part 1](/blog/agentic-security-and-identity-part-1/) I designed a system where all of that holds. In this second and final part I deploy it on a cluster and check whether it actually does:
+The walkthrough answers 4 questions:
 
-- Does a user in the wrong group actually get refused at the door?
-- When an agent reaches its own tool and model, what authorizes that hop, and did anyone have to write it down?
+- Does an agent requesting a tool for a user in the wrong group actually get refused?
+- When an agent calls its own tool and model, how do we authorize (+ verify) the hops?
 - What happens to an autonomous agent that has no user behind it at all?
-- And when Alice asks for GitHub, does the request really go out as Alice? Let's find out!
+- When Alice asks for a 3rd party service (i.e. github) via an agent, does the request go out as Alice?
 
-> If the design is right, bob gets refused and alice gets her GitHub. The denied requests are the interesting ones, so there are plenty of them below.
+Most of what I learnt came from the requests that got denied (+ from the complexities and lessons learned), so you'll see plenty of those below.
 
-This is the hands-on half of the work I did adding agent identity and authorization to the [Kubernetes Agent Orchestration System (KAOS)](https://github.com/axsaucedo/kaos); part 1 has the research and the 6 architecture decisions behind what you'll see here. Everything below runs against the public [Agentic Identity Broker](https://github.com/zalando-incubator/agentic-identity-broker) release, pinned at `v0.1.8`, on a local KIND cluster. One honest caveat up front: on a local cluster the GitHub side is a mock, so the consent screen is completed automatically and not in a browser. Every identity and access-control decision in the walkthrough is real, and the third-party endpoint receiving the result isn't.
+This is the hands-on half of the work I did adding agent identity and authorization to the [Kubernetes Agent Orchestration System (KAOS)](https://github.com/axsaucedo/kaos), and Part 1 has the research and the 6 architecture decisions behind it.
+
+Everything below runs on a local KIND cluster against the public [Agentic Identity Broker](https://github.com/zalando-incubator/agentic-identity-broker) release, pinned at `v0.1.8`. On a local cluster GitHub is a mock, so the consent screen gets completed automatically instead of in a browser, but every identity and access-control decision you'll see is real.
 
 ## The Series So Far
 
-Part 1 covered the ground you need before writing any of this, so here's a brief refresher before we run it.
+Here's a quick refresher of what we covered in Part 1 before we run it.
 
-I started from the shared bot token, the credential every platform reaches for first and the one that fails on attribution, then on least privilege, then on revocation. Closing that gap needs a component holding each user's real third-party credential, obtained with their consent, which is what the Agentic Identity Broker does and why I adopted it instead of writing my own.
+I started with the challenges we all phase when agents have to access 3rd party services on behalf of a user. Here I showed how just giving an API token falls short, as you can't tell which user an action was for, it has more access than any single user needs, and you can't revoke it for just one user.
 
-Then I separated the two identities that every protected call carries. The **subject** is the human the work is being done for, and the **actor** is the agent doing the work. I decide resource access on the actor and use the subject for what the user personally delegated, which is the distinction that keeps multi-agent chains honest.
+Fixing that needed a component that holds each user's own third-party credential, obtained with their consent. The Agentic Identity Broker does exactly that, so I adopted it instead of writing my own.
 
-Finally I made 6 architecture decisions, of which 3 matter most for what follows:
+Then I separated the 2 identities that every protected call carries. The **subject** is the human the work is being done for, and the **actor** is the agent doing the work. This is how the system enforces resource access on the actor and use the subject for what the user personally delegated, which keeps permissions correct when agents call other agents.
+
+Finally I made 6 architecture decisions, and 3 of them matter most for what follows:
 
 | Decision                      | What I chose                                                                                                                                                                 | What I turned down                                                               |
 | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
@@ -52,7 +56,7 @@ The **control plane** is the set of components that establish identity and decid
 
 There are quite a few components in this overview, so let's walk through them:
 
-- **Gateway Mesh**: The single gateway every request passes through, including agent-to-tool, agent-to-model and agent-to-agent calls, which is what makes it a mesh.
+- **Gateway Mesh**: This is the single gateway every request passes through, including agent-to-tool, agent-to-model and agent-to-agent calls, which is what makes it a mesh.
 - **User Identity Service**: Authenticates users, proves who they are and which groups they belong to; supports OIDC compatible services so we use [Keycloak](https://www.keycloak.org/) here.
 - **Agent Identity Service**: Gives each agent their identity through secure credentials; the default uses k8s Service Accounts, but also supports OIDC compatible services; we also configure Keycloak in this example.
 - **KAOS Authz Service**: This is the authorization (authz) service that KAOS uses to allow/deny requests based on the "user" calling the "agent" accessing the "resource".
