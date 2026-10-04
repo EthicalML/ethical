@@ -7,28 +7,32 @@ tags: [agents, identity, security, oauth, kubernetes]
 series: 'Agentic Security & Identity'
 ---
 
-In [Part 1](/blog/agentic-security-and-identity-part-1/) I designed how agents on a platform get their own identity, and how we decide what they and their users are allowed to reach. In this second and final part I deploy that design on a cluster and check whether it actually holds up.
+In [Part 1](/blog/agentic-security-and-identity-part-1/) I designed how agent identity can work on a platform where agent-delegation is enabled, and how we decide (+ enforce) what they and their users are allowed to reach. In this second and final part I deploy that design on a cluster and check whether it actually holds up.
 
-To test it I use 2 users of the same agent platform at the same company: Alice is in the `researchers` group and Bob is in `support`. When they send the same request to the same agent, I want Alice to get an answer and Bob to get refused. When Alice then asks the agent to do something on GitHub for her, I want the request to go out with Alice's own credential and permissions, so it shows up in her audit log and she can revoke it without affecting Bob.
+In this Part 2 blog post, I go through a hands-on use-case with 2 users of the same agent platform at the same company: Alice is in the `researchers` group and Bob is in the `support` group. Throughout this I will show the good, the bad and the ugly of agentic identity and security, especially when dealing with autonomous agents, and with users delegating permissions to an agent.
 
 The walkthrough answers 4 questions:
 
-- Does a user in the wrong group actually get refused at the door?
-- When an agent calls its own tool and model, what authorizes that hop, and does anyone have to write that rule down?
+- Does an agent requesting a tool for a user in the wrong group actually get refused?
+- When an agent calls its own tool and model, how do we authorize (+ verify) the hops?
 - What happens to an autonomous agent that has no user behind it at all?
-- When Alice asks for GitHub, does the request really go out as Alice?
+- When Alice asks for a 3rd party service (i.e. github) via an agent, does the request go out as Alice?
 
-Most of what I learnt came from the requests that got denied, so you'll see plenty of those below.
+Most of what I learnt came from the requests that got denied (+ from the complexities and lessons learned), so you'll see plenty of those below.
 
-This is the hands-on half of the work I did adding agent identity and authorization to the [Kubernetes Agent Orchestration System (KAOS)](https://github.com/axsaucedo/kaos), and Part 1 has the research and the 6 architecture decisions behind it. Everything below runs on a local KIND cluster against the public [Agentic Identity Broker](https://github.com/zalando-incubator/agentic-identity-broker) release, pinned at `v0.1.8`. On a local cluster GitHub is a mock, so the consent screen gets completed automatically instead of in a browser, but every identity and access-control decision you'll see is real.
+This is the hands-on half of the work I did adding agent identity and authorization to the [Kubernetes Agent Orchestration System (KAOS)](https://github.com/axsaucedo/kaos), and Part 1 has the research and the 6 architecture decisions behind it.
+
+Everything below runs on a local KIND cluster against the public [Agentic Identity Broker](https://github.com/zalando-incubator/agentic-identity-broker) release, pinned at `v0.1.8`. On a local cluster GitHub is a mock, so the consent screen gets completed automatically instead of in a browser, but every identity and access-control decision you'll see is real.
 
 ## The Series So Far
 
 Here's a quick refresher of what we covered in Part 1 before we run it.
 
-I started from the shared bot token, which is the credential most platforms reach for first, and showed where it falls short: you can't tell which user an action was for, it has more access than any single user needs, and you can't revoke it for just one user. Fixing that needs a component that holds each user's own third-party credential, obtained with their consent. The Agentic Identity Broker does exactly that, so I adopted it instead of writing my own.
+I started with the challenges we all phase when agents have to access 3rd party services on behalf of a user. Here I showed how just giving an API token falls short, as you can't tell which user an action was for, it has more access than any single user needs, and you can't revoke it for just one user.
 
-Then I separated the 2 identities that every protected call carries. The **subject** is the human the work is being done for, and the **actor** is the agent doing the work. I decide resource access on the actor and use the subject for what the user personally delegated, which keeps permissions correct when agents call other agents.
+Fixing that needed a component that holds each user's own third-party credential, obtained with their consent. The Agentic Identity Broker does exactly that, so I adopted it instead of writing my own.
+
+Then I separated the 2 identities that every protected call carries. The **subject** is the human the work is being done for, and the **actor** is the agent doing the work. This is how the system enforces resource access on the actor and use the subject for what the user personally delegated, which keeps permissions correct when agents call other agents.
 
 Finally I made 6 architecture decisions, and 3 of them matter most for what follows:
 
@@ -52,7 +56,7 @@ The **control plane** is the set of components that establish identity and decid
 
 There are quite a few components in this overview, so let's walk through them:
 
-- **Gateway Mesh**: The single gateway every request passes through, including agent-to-tool, agent-to-model and agent-to-agent calls, which is what makes it a mesh.
+- **Gateway Mesh**: This is the single gateway every request passes through, including agent-to-tool, agent-to-model and agent-to-agent calls, which is what makes it a mesh.
 - **User Identity Service**: Authenticates users, proves who they are and which groups they belong to; supports OIDC compatible services so we use [Keycloak](https://www.keycloak.org/) here.
 - **Agent Identity Service**: Gives each agent their identity through secure credentials; the default uses k8s Service Accounts, but also supports OIDC compatible services; we also configure Keycloak in this example.
 - **KAOS Authz Service**: This is the authorization (authz) service that KAOS uses to allow/deny requests based on the "user" calling the "agent" accessing the "resource".
