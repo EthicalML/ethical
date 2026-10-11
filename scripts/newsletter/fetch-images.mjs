@@ -38,6 +38,7 @@ import {
 } from '../lib/harvest-image.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const videoExtensions = new Set(['.mp4', '.mov', '.webm']);
 const issueDir = path.join(root, 'src/content/newsletter');
 
 // An issue's article sections are the only h2s that wrap their whole title in one link; the
@@ -547,8 +548,13 @@ async function applyChoices(articles, { imagesDir, postsDir }) {
 
     // Normalised only in size. Recompressing somebody's clean 1200px card to hit a round
     // number costs quality for nothing, so an image already within bounds is copied as it is.
+    // A video (a reel, a screen recording) is copied untouched: sharp cannot read it.
+    const target = path.join(dir, `image${path.extname(sourcePath).toLowerCase()}`);
+    if (videoExtensions.has(path.extname(sourcePath).toLowerCase())) {
+      copyFileSync(sourcePath, target);
+      continue;
+    }
     const sharp = await loadSharp();
-    const target = path.join(dir, `image${path.extname(sourcePath)}`);
     const meta = sharp ? await sharp(sourcePath).metadata() : null;
     if (sharp && meta?.width > 1600) {
       await sharp(sourcePath).resize({ width: 1600 }).toFile(target);

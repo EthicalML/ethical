@@ -11,7 +11,7 @@ Produce the next issue: five article sections plus frontmatter, boilerplate carr
 
 Run `node scripts/newsletter/new-issue.mjs --dry-run` to get the issue number and date. State both to the owner before continuing.
 
-Then kick off the events scout in the background so it runs while the issue is drafted: spawn a subagent with the prompt "Read .claude/skills/newsletter-issue/workflows/events-scout.md and execute it for issue <N>." Its report is picked up at step 9.
+Then kick off the events scout in the background so it runs while the issue is drafted: spawn a subagent with the prompt "Read .claude/skills/newsletter-issue/workflows/events-scout.md and execute it for issue <N>." Its report is picked up at step 10.
 
 Determine which mode applies for the articles:
 
@@ -130,7 +130,7 @@ node scripts/newsletter/fetch-images.mjs --issue <N>
 
 It reads the five article headings out of the assembled issue, so it runs after step 5 and not before, and it takes the post text from the same place. For each article it collects the site's og and twitter images, a page-1 render where the link is a paper or a PDF, the largest images on the rendered page, and three screenshots off one page load: the hero, the biggest figure cropped to itself, and a mid-article frame. The screenshots are the floor, and the figure shot is the only thing here that catches a diagram drawn as inline SVG or canvas. Logos and funder strips sort last rather than out. Articles run concurrently. Everything lands in `tmp/issue-<N>/images/` and is listed in `tmp/issue-<N>/posts.md`.
 
-Choose nothing, and write nothing. The document exists to be annotated by the owner, two fields per article: `Choice:` for the picture (a candidate number, `gif`, a path or URL of his own, or `skip`) and a `Text:` fence pre-filled with the section as published plus the link on the last line. Hand it over at step 9 alongside the sections.
+Choose nothing, and write nothing. The document exists to be annotated by the owner, two fields per article: `Choice:` for the picture (a candidate number, `gif`, a path or URL of his own, or `skip`) and a `Text:` fence pre-filled with the section as published plus the link on the last line. Hand it over at step 10 alongside the sections.
 
 Once it comes back annotated:
 
@@ -155,15 +155,66 @@ Buffer's API is not involved and nothing is hosted, because its assets attach by
 
 Nothing from this step is ever committed. `tmp/` is gitignored, and these images are somebody else's artwork borrowed for the length of one post.
 
-## 9. Hand over
+## 9. Offer motion reels (optional)
+
+A post can carry a short motion reel instead of a still, and the issue as a whole can get one main video. Both are optional and both cost real money, so this step starts with a proposal rather than with work. Offer the owner a main issue video and a reel for each post that would gain from one, each as a one-line concept naming the mechanism it would act out, and build only what he says yes to. A post whose best picture is already a strong figure does not need a reel; say so rather than proposing one.
+
+Lay out the working folder once per issue:
+
+```
+node scripts/newsletter/reels/setup.mjs --issue <N>
+```
+
+It creates `tmp/issue-<N>/reels/` with the shared `vendor/` every reel references (the preview scaler, the Sound buttons, three.js, and links to the procedural audio library of the `z-motion-reel` skill), the review gallery and a Python venv for the sound scripts. The audio library is found through `--audio-lib`, then `REEL_AUDIO_LIB`, then the newest installed skill, and is linked rather than copied, so nothing of it is ever committed. Setup stops with a clear message when uv, ffmpeg or the library is missing; install the missing piece rather than working around it.
+
+Each reel gets its own folder under `tmp/issue-<N>/reels/` and its own worker. A post gets three folders, `<n>a`, `<n>b` and `<n>c`, each with a different direction from the style menu chosen to suit that post's content, because the owner picks between finished options far better than he describes a look in advance. Put `post.txt`, the post's current picture as `image.*`, and the source's logos and site screenshots under `assets/` into each folder before the worker starts. The main video gets one folder with the issue's five sections as `issue.md`.
+
+Every worker is a durable headless Opus session, launched from inside its own folder so its working directory is the reel:
+
+```
+cd tmp/issue-<N>/reels/<folder>
+nohup command claude -p "$(cat brief.md)" --model claude-opus-5-5 --permission-mode auto --output-format json > ../<folder>.log 2>&1 &
+```
+
+Build each `brief.md` from `references/reels.md`: the shared reel contract, then the post reel brief or the issue reel brief, then the one style paragraph that worker gets. Give each about 35 minutes. Launches fail silently, so a minute after starting them, check that the processes are alive and the logs exist before telling the owner they are running.
+
+Review happens on the live HTML, never on mp4s, which take minutes each and show nothing the page does not. Serve the reels folder over http and give the owner the gallery link, one post's three styles side by side:
+
+```
+cd tmp/issue-<N>/reels && python3 -m http.server 8765
+```
+
+```
+http://localhost:8765/gallery.html?reels=<n>a,<n>b,<n>c&cols=3
+```
+
+Feedback goes back as rounds. When a worker has finished, resume its own session with a short delta rather than starting a fresh one, so it keeps everything it learned about its reel; the session id is in the JSON its log ends with. Never interrupt a worker that is still running: wait for it to finish, then resume.
+
+```
+cd tmp/issue-<N>/reels/<folder>
+nohup command claude --resume <session_id> -p "<delta>" --permission-mode auto --output-format json > ../<folder>-r2.log 2>&1 &
+```
+
+Sound comes last and only for the reels the owner picks. Resume each picked worker with the sound brief from `references/reels.md`; it writes three soundtracks, `audio-a.mp3` to `audio-c.mp3`, which appear in the preview as Sound A, B and C buttons, and the owner chooses one by listening in the gallery. Copy the chosen one to `audio.mp3` in the reel folder and render, all picks in parallel:
+
+```
+cp audio-b.mp3 audio.mp3
+node ../../../../scripts/newsletter/reels/render.mjs .
+```
+
+The renderer reads the size from the page, muxes `audio.mp3` in, and writes `reel.mp4` in the reel folder, an H.264 file Buffer accepts. Point that post's `Choice:` at it (`tmp/issue-<N>/reels/<folder>/reel.mp4`) and re-run `--apply`, which copies it into the post folder as `image.mp4` for Buffer.
+
+Be honest about the cost when proposing. Twelve post workers over three rounds, plus sound for the picks, cost about $109 on 2026-10-11. Three styles is the default for a post that genuinely benefits from motion; propose one, or none, when it does not.
+
+## 10. Hand over
 
 The scout reads whatever checkout it runs in, which is usually the main one and is often behind `origin/master`. Its carry-forward claims about what is "still unmerged" are therefore claims about that checkout, not about master: check each one against `origin/master` before repeating it to the owner. Its ledger writes land there too, so they have to be carried into the issue worktree (as a patch, since the file's base may differ) or they are lost when the branch merges.
 
-Show the owner one review document: the five drafted sections, flagging any article whose grounding notes recorded a weak or failed fetch tier, followed by the events scout report from `tmp/issue-<N>/events-scout.md` — tracker update recommendations, proposed additions, proposed updates, and the rejects it dropped. If the scout found nothing, say so; an empty week is normal. If the scout has not returned yet, hand over the sections and bring the events report as soon as it lands. Link `tmp/issue-<N>/posts.md` in the same handover so the pictures are chosen in one pass with everything else.
+Show the owner one review document: the five drafted sections, flagging any article whose grounding notes recorded a weak or failed fetch tier, followed by the events scout report from `tmp/issue-<N>/events-scout.md` — tracker update recommendations, proposed additions, proposed updates, and the rejects it dropped. If the scout found nothing, say so; an empty week is normal. If the scout has not returned yet, hand over the sections and bring the events report as soon as it lands. Link `tmp/issue-<N>/posts.md` in the same handover so the pictures are chosen in one pass with everything else, and when step 9 built reels, the gallery link for each post's styles and the main video alongside it.
 
 Stop. Publishing the issue and approving events are both the owner's call, and each event proposal needs its own explicit yes — a comment on one proposal is not approval of the rest.
 
-## 10. Apply approved events
+## 11. Apply approved events
 
 Only for proposals the owner approved:
 
@@ -173,7 +224,7 @@ Only for proposals the owner approved:
 4. If a new event or newly opened CFP belongs in the issue's events block and the issue is not yet published, add it there too.
 5. `npm run check` must pass — the schema rejects an unknown topic.
 
-## 11. After the owner publishes
+## 12. After the owner publishes
 
 ```
 node scripts/newsletter/candidates.mjs mark used <url>...
