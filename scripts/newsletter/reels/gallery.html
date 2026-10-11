@@ -1,0 +1,92 @@
+<!doctype html>
+<!--
+  Review page for motion reels, copied next to the reel folders by setup.mjs and served over
+  http from there (python3 -m http.server). Name the folders to compare in the query string:
+
+    gallery.html?reels=408s-3a,408s-3b,408s-3c&cols=3
+
+  Number keys 1-9 focus one reel, Esc returns to the grid. Each reel runs live, with its own
+  Sound buttons when audio files exist.
+-->
+<meta charset="utf-8" />
+<title>Reels</title>
+<style>
+  body {
+    margin: 0;
+    font:
+      14px/1.4 system-ui,
+      sans-serif;
+    background: #111;
+    color: #eee;
+  }
+  header {
+    padding: 10px 16px;
+    display: flex;
+    gap: 14px;
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
+  h1 {
+    font-size: 17px;
+    margin: 0;
+  }
+  .hint {
+    color: #888;
+  }
+  .grid {
+    display: grid;
+    gap: 10px;
+    padding: 0 10px 10px;
+    height: calc(100vh - 56px);
+  }
+  figure {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  figcaption {
+    padding: 3px 2px;
+    font-size: 13px;
+    color: #aaa;
+  }
+  figcaption a {
+    color: #9cf;
+  }
+  iframe {
+    flex: 1;
+    width: 100%;
+    border: 0;
+    background: #000;
+  }
+</style>
+<header>
+  <h1>Reels</h1>
+  <span class="hint">Keys: 1-9 focus a reel, Esc back to the grid.</span>
+</header>
+<div class="grid" id="grid"></div>
+<script>
+  const query = new URLSearchParams(location.search);
+  const reels = (query.get('reels') ?? '').split(',').filter(Boolean);
+  const cols = Number(query.get('cols')) || Math.min(reels.length, 3) || 1;
+  const grid = document.getElementById('grid');
+  function render() {
+    const one = location.hash.slice(1);
+    const shown = reels.includes(one) ? [one] : reels;
+    grid.style.gridTemplateColumns = `repeat(${shown.length === 1 ? 1 : cols}, 1fr)`;
+    grid.innerHTML = shown.length ? '' : '<p>Name the reel folders: gallery.html?reels=a,b,c</p>';
+    for (const name of shown) {
+      const index = reels.indexOf(name) + 1;
+      grid.insertAdjacentHTML(
+        'beforeend',
+        `<figure><figcaption>${index}. ${name} - <a href="#${name}">focus</a> - <a href="${name}/index.html" target="_blank">open alone</a></figcaption><iframe src="${name}/index.html"></iframe></figure>`,
+      );
+    }
+  }
+  addEventListener('hashchange', render);
+  addEventListener('keydown', (event) => {
+    if (/^[1-9]$/.test(event.key) && reels[event.key - 1]) location.hash = reels[event.key - 1];
+    else if (event.key === 'Escape') location.hash = '';
+  });
+  render();
+</script>
