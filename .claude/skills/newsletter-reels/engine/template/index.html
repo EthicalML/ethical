@@ -1,0 +1,138 @@
+<!doctype html>
+<!-- z-motion-reel player. reel.py build inlines every <script src> below into ONE file, so it works by double-click from file://.
+     Keys: Space play/pause · ←/→ previous/next beat · Shift+←/→ previous/next scene · Home restart · f fullscreen · m mute music · s mute SFX.
+     ?t=12 starts at 12 s · ?render hides every overlay (frame capture) · ?nograin skips grain. -->
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Motion reel</title><link rel="icon" href="data:,">
+<style>
+:root{--ink:#0e0e12;--paper:#f4f3ef;--acc:#ff5a1e;--mid:#8b8b8b}
+html,body{margin:0;height:100%;background:#000;overflow:hidden;font:600 12px Menlo,'SF Mono',monospace;color:var(--paper)}
+body{display:grid;place-items:center}
+canvas{display:block;width:min(100vw,calc(100vh * var(--ar,1.7778)));aspect-ratio:var(--ar,16/9);height:auto;background:var(--ink)}
+#start{all:unset;position:fixed;inset:0;margin:auto;width:280px;height:64px;z-index:9;border-radius:32px;background:var(--acc);color:#fff;text-align:center;
+  font:600 18px 'Helvetica Neue',Arial,sans-serif;letter-spacing:.04em;cursor:pointer;box-shadow:0 10px 40px rgba(0,0,0,.45)}
+#ui{position:fixed;left:0;right:0;bottom:0;padding:18px 24px 16px;background:linear-gradient(transparent,rgba(0,0,0,.75));display:flex;align-items:center;gap:16px;transition:opacity .35s}
+#ui.hide{opacity:0;pointer-events:none}
+.b{all:unset;cursor:pointer;height:34px;padding:0 12px;display:grid;place-items:center;border:1.5px solid var(--paper);border-radius:17px;flex:none;letter-spacing:.12em}
+.b:hover,.b:focus-visible{border-color:var(--acc);color:var(--acc)}#pp{width:34px;padding:0;border-radius:50%}
+#bar{position:relative;flex:1;height:26px;cursor:pointer}
+#track{position:absolute;left:0;right:0;top:12px;height:2px;background:rgba(244,243,239,.25)}
+#fill{position:absolute;left:0;top:12px;height:2px;background:var(--acc);width:0}
+.tick{position:absolute;top:6px;width:2px;height:14px;background:rgba(244,243,239,.55);transform:translateX(-1px)}
+.tick:hover::after{content:attr(data-n);position:absolute;bottom:18px;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--acc);color:var(--ink);padding:3px 6px;letter-spacing:.1em}
+#time{flex:none;letter-spacing:.12em;min-width:120px;text-align:right}
+#mix{flex:none;display:flex;gap:10px;letter-spacing:.12em;font-size:10px}#mix span.off{opacity:.35;text-decoration:line-through}
+#exp{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.72);z-index:10}#exp.on{display:grid}
+#exp div{width:min(560px,80vw);letter-spacing:.14em}#exp i{display:block;height:4px;margin:14px 0;background:rgba(244,243,239,.2)}#exp b{display:block;height:100%;width:0;background:var(--acc)}
+@media (max-width:640px){#ui{padding:12px 16px;gap:10px}#time,#mix{display:none}}
+</style></head>
+<body><canvas id="c" width="1920" height="1080" aria-label="Motion film"><!-- engine.js resizes it to the film format --></canvas>
+<button id="start">▶&nbsp; Start with audio</button>
+<div id="ui"><button class="b" id="pp" aria-label="Play">▶</button><div id="bar" role="slider" aria-label="Scrub" tabindex="0"><div id="track"></div><div id="fill"></div></div>
+<div id="mix" title="m mutes the music, s mutes the SFX"></div><div id="time">00:00 / 00:00</div>
+<button class="b" id="q">STANDARD</button><button class="b" id="ex">EXPORT MP4</button></div>
+<div id="exp" role="dialog" aria-label="Export"><div><span id="el">RENDERING</span><i><b id="eb"></b></i><button class="b" id="ec">CANCEL</button></div></div>
+<script src="vendor/mp4-muxer.min.js"></script>
+<script src="data.js"></script>
+<script src="engine.js"></script>
+<script src="film.js"></script>
+<script>
+(() => {
+  const q = new URLSearchParams(location.search), $ = id => document.getElementById(id), ui = $('ui'), startB = $('start');
+  const slug = window.SLUG || 'reel';
+  let s = +(q.get('t') || 0), playing = false, last = performance.now(), exporting = false, drag = false;
+  // export presets: motion blur S and video bitrate. STANDARD is verified clean at 1080p60 and the portrait formats; SMALL halves the file.
+  const PRESETS = [['STANDARD', 5, 8], ['SMALL', 5, 4], ['HIGH', 5, 16], ['FAST', 1, 8]]; let preset = 0;
+  const snd = Soundtrack(), DUR = FILM.DUR, BEAT = FILM.BEAT, cv = $('c'), TL = () => Math.max(DUR, snd.dur || 0);
+  window.PLAYER = { snd, time: () => s, playing: () => playing, exportMP4, preset: i => { preset = i; showQ(); } };   // for the headless checks
+  if (q.has('render')) { ui.remove(); startB.remove(); render(s); return; }
+
+  // ---- transport
+  const ticks = () => { document.querySelectorAll('.tick').forEach(d => d.remove());
+    FILM.SCENES.forEach(([at, n], i) => { if (!i) return; const d = document.createElement('div'); d.className = 'tick'; d.style.left = (at / TL() * 100) + '%'; d.dataset.n = n; $('bar').appendChild(d); }); };
+  const fmt = x => `${String(Math.floor(x / 60)).padStart(2, '0')}:${String(Math.floor(x % 60)).padStart(2, '0')}`;
+  const showMix = () => { $('mix').innerHTML = snd.ready ? snd.stems.map(n => `<span class="${snd.muted(n) ? 'off' : ''}">${n[0].toUpperCase()} ${n.toUpperCase()}</span>`).join('') : 'NO AUDIO'; };
+  const setPlay = p => { playing = p; snd.ready && (p ? snd.play() : snd.pause()); $('pp').textContent = p ? '❚❚' : '▶'; $('pp').setAttribute('aria-label', p ? 'Pause' : 'Play'); last = performance.now(); };
+  const seek = x => { s = ((x % TL()) + TL()) % TL(); snd.ready && snd.seek(s); };
+  const jump = (dir, marks) => { const i = marks.findIndex(b => b > s + .05), cur = i < 0 ? marks.length - 1 : i - 1;
+    seek(dir > 0 ? (marks[cur + 1] ?? 0) : (s - marks[cur] > .6 ? marks[cur] : marks[Math.max(0, cur - 1)])); };
+  const beats = () => Array.from({ length: Math.ceil(TL() / BEAT) }, (_, i) => i * BEAT), scenes = () => FILM.SCENES.map(x => x[0]);
+  ticks();
+  const go = () => { startB.remove(); ticks(); seek(s); setPlay(true); showMix(); };
+  startB.onclick = () => { startB.textContent = 'Loading…'; snd.load ? snd.load().then(go, go) : go(); };
+  if (!window.AUDIO) startB.textContent = '▶  Play';
+  $('pp').onclick = () => startB.isConnected ? startB.onclick() : setPlay(!playing);
+  const scrub = e => { const r = $('bar').getBoundingClientRect(); seek(clamp((e.clientX - r.left) / r.width) * TL()); };
+  $('bar').addEventListener('pointerdown', e => { drag = true; $('bar').setPointerCapture(e.pointerId); scrub(e); });
+  $('bar').addEventListener('pointermove', e => drag && scrub(e)); $('bar').addEventListener('pointerup', () => drag = false);
+  addEventListener('keydown', e => {
+    if (exporting) return;
+    if (e.code === 'Space' || e.key === 'k') { e.preventDefault(); $('pp').onclick(); }
+    else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); jump(e.key === 'ArrowRight' ? 1 : -1, e.shiftKey ? scenes() : beats()); }
+    else if (e.key === 'Home') seek(0); else if (e.key === 'f') document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.();
+    else if (e.key === 'm' || e.key === 's') { snd.ready && snd.mute(e.key === 'm' ? 'music' : 'sfx'); showMix(); }
+    poke();
+  });
+  let hideT; const poke = () => { ui.classList.remove('hide'); clearTimeout(hideT); hideT = setTimeout(() => ui.classList.add('hide'), 2500); };
+  addEventListener('pointermove', poke); poke(); showMix();
+  function showQ() { const [n, S, m] = PRESETS[preset]; $('q').textContent = `${n} · ${m} MBPS`; $('q').title = `Export: motion blur S=${S}, ${m} Mbps (about ${Math.round(m * DUR / 8)} MB). Click to change.`; }
+  showQ(); $('q').onclick = () => { preset = (preset + 1) % PRESETS.length; showQ(); };
+  $('ex').onclick = () => exportMP4({ S: PRESETS[preset][1], mbps: PRESETS[preset][2] }).catch(e => { $('el').textContent = 'EXPORT FAILED: ' + e.message; window.EXPORT = { error: e.message }; setTimeout(() => $('exp').classList.remove('on'), 6000); });
+  (function loop(now) {
+    if (!exporting) {
+      if (snd.ready && !snd.paused()) { if (!drag) s = snd.time(); }
+      else if (playing && !drag) s = (s + Math.min(.1, (now - last) / 1000)) % TL();
+      render(Math.min(s, DUR - 1e-4), 1); $('fill').style.width = (s / TL() * 100) + '%'; $('time').textContent = `${fmt(s)} / ${fmt(TL())}`;
+    }
+    last = now; requestAnimationFrame(loop);
+  })(performance.now());
+
+  // ---- export: renders the film OFFLINE, frame by frame (motion blur S), encodes H.264 + AAC with WebCodecs, muxes with mp4-muxer.
+  async function exportMP4({ S = 5, mbps = 8, fps = FPS } = {}) {
+    if (!window.VideoEncoder || !window.AudioEncoder) throw new Error('this browser has no WebCodecs: use Chrome, or run reel.py export');
+    let handle = null;                                        // ask where to save first, while the click still counts as a gesture
+    if (window.showSaveFilePicker) try { handle = await showSaveFilePicker({ suggestedName: slug + '.mp4', startIn: 'desktop', types: [{ description: 'MP4 video', accept: { 'video/mp4': ['.mp4'] } }] }); }
+      catch (e) { if (e.name === 'AbortError') return; handle = null; }
+    const wasPlaying = playing; setPlay(false); exporting = true; let cancel = false;
+    const dlg = $('exp'), bar = $('eb'), label = $('el'); dlg.classList.add('on'); $('ec').onclick = () => cancel = true;
+    const say = (txt, p) => { label.textContent = txt; bar.style.width = (p * 100).toFixed(1) + '%'; window.EXPORT = { phase: txt, p }; };
+    try {
+      const N = Math.round(DUR * fps), rate = 48000;
+      const codecs = ['avc1.640034', 'avc1.64002A', 'avc1.4D402A', 'avc1.42E02A'], vcfg = { width: W, height: H, bitrate: mbps * 1e6, framerate: fps, avc: { format: 'avc' } };
+      let codec = null; for (const c of codecs) if ((await VideoEncoder.isConfigSupported({ ...vcfg, codec: c })).supported) { codec = c; break; }
+      if (!codec) throw new Error('no H.264 encoder in this browser: run reel.py export');
+      const acfg = { codec: 'mp4a.40.2', sampleRate: rate, numberOfChannels: 2, bitrate: 192000 };
+      if (!(await AudioEncoder.isConfigSupported(acfg)).supported) throw new Error('no AAC encoder in this browser: run reel.py export');
+      const muxer = new Mp4Muxer.Muxer({ target: new Mp4Muxer.ArrayBufferTarget(), fastStart: 'in-memory', firstTimestampBehavior: 'offset',
+        video: { codec: 'avc', width: W, height: H, frameRate: fps }, audio: { codec: 'aac', numberOfChannels: 2, sampleRate: rate } });
+      let err = null; const fail = e => err = err || e;
+      // audio: the live mix, rendered offline, trimmed to the film
+      say('MIXING AUDIO', 0);
+      const aenc = new AudioEncoder({ output: (c, m) => muxer.addAudioChunk(c, m), error: fail }); aenc.configure(acfg);
+      if (window.AUDIO) { const mixb = await offlineMix(N / fps, rate), L = mixb.getChannelData(0), R = mixb.getChannelData(1);
+        for (let i = 0; i < L.length; i += 4800) { const n = Math.min(4800, L.length - i), d = new Float32Array(n * 2); d.set(L.subarray(i, i + n)); d.set(R.subarray(i, i + n), n);
+          const ad = new AudioData({ format: 'f32-planar', sampleRate: rate, numberOfFrames: n, numberOfChannels: 2, timestamp: Math.round(i * 1e6 / rate), data: d }); aenc.encode(ad); ad.close(); } }
+      else { const d = new Float32Array(N / fps * rate * 2 | 0), ad = new AudioData({ format: 'f32-planar', sampleRate: rate, numberOfFrames: d.length / 2, numberOfChannels: 2, timestamp: 0, data: d }); aenc.encode(ad); ad.close(); }
+      await aenc.flush();
+      // video: every frame rendered offline, so the export is frame-exact however slow the machine is
+      const venc = new VideoEncoder({ output: (c, m) => muxer.addVideoChunk(c, m), error: fail }); venc.configure({ ...vcfg, codec });
+      const t0 = performance.now();
+      for (let n = 0; n < N; n++) {
+        if (cancel) throw new Error('cancelled'); if (err) throw err;
+        render(n / fps, S);
+        const vf = new VideoFrame(cv, { timestamp: Math.round(n * 1e6 / fps), duration: Math.round(1e6 / fps) }); venc.encode(vf, { keyFrame: n % (fps * 2) === 0 }); vf.close();
+        while (venc.encodeQueueSize > 4) await new Promise(r => setTimeout(r, 2));
+        if (n % 6 === 0) { const el = (performance.now() - t0) / 1000, eta = el / (n + 1) * (N - n - 1); say(`RENDERING ${n + 1}/${N} · S=${S} · ${Math.ceil(eta)}s LEFT`, (n + 1) / N); await new Promise(r => setTimeout(r)); }
+      }
+      await venc.flush(); if (err) throw err; muxer.finalize();
+      const blob = new Blob([muxer.target.buffer], { type: 'video/mp4' });
+      say('SAVING', 1);
+      if (handle) { const w = await handle.createWritable(); await w.write(blob); await w.close(); }
+      else { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = slug + '.mp4'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 60000); }
+      window.EXPORT = { done: true, bytes: blob.size, codec, S, mbps, frames: N, saved: handle ? 'picker' : 'download' };
+      label.textContent = `SAVED ${slug}.mp4 · ${(blob.size / 1e6).toFixed(1)} MB`; await new Promise(r => setTimeout(r, 1500));
+    } finally { exporting = false; dlg.classList.remove('on'); if (wasPlaying) setPlay(true); }
+  }
+})();
+</script>
+</body></html>

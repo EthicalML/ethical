@@ -9,7 +9,7 @@ Produce the next issue: five article sections plus frontmatter, boilerplate carr
 
 ## 1. Establish the inputs
 
-Run `node scripts/newsletter/new-issue.mjs --dry-run` to get the issue number and date. State both to the owner before continuing.
+Run `node scripts/newsletter/new-issue.mjs --dry-run` to get the issue number and date. State both to the owner before continuing, together with the plan for the run: the steps below, and whether this week gets motion reels (step 10) on top of the post pictures. Ask when the owner hasn't said; the answer only matters once the text is final, so it never blocks the start.
 
 Then kick off the events scout in the background so it runs while the issue is drafted: spawn a subagent with the prompt "Read .claude/skills/newsletter-issue/workflows/events-scout.md and execute it for issue <N>." Its report is picked up at step 9.
 
@@ -155,6 +155,8 @@ Buffer's API is not involved and nothing is hosted, because its assets attach by
 
 Nothing from this step is ever committed. `tmp/` is gitignored, and these images are somebody else's artwork borrowed for the length of one post.
 
+Motion reels are a separate pass at step 10, once the owner has signed off the text.
+
 ## 9. Hand over
 
 The scout reads whatever checkout it runs in, which is usually the main one and is often behind `origin/master`. Its carry-forward claims about what is "still unmerged" are therefore claims about that checkout, not about master: check each one against `origin/master` before repeating it to the owner. Its ledger writes land there too, so they have to be carried into the issue worktree (as a patch, since the file's base may differ) or they are lost when the branch merges.
@@ -163,7 +165,13 @@ Show the owner one review document: the five drafted sections, flagging any arti
 
 Stop. Publishing the issue and approving events are both the owner's call, and each event proposal needs its own explicit yes — a comment on one proposal is not approval of the rest.
 
-## 10. Apply approved events
+## 10. Make the reels (optional)
+
+Only when the owner wants reels this week, and only once they have signed off the issue text: the reels quote the sections, so an edit after this point means rebuilding them. Run the `newsletter-reels` skill for issue <N>. It builds one 1920x1080 reel for the issue itself and one 1080x1350 reel per post, five directions each, for the owner to pick from in a local gallery, and ends with the picks exported to `tmp/issue-<N>/posts/<n>-<slug>/reel.mp4` and to `~/Desktop/newsletter-<N>-reels/`. It has its own gates (the launch, the picks, the music, the final export); follow them rather than these steps.
+
+Ask the owner to download a few new tracks for the music library before the run: the reels sound repetitive when every week draws from the same handful.
+
+## 11. Apply approved events
 
 Only for proposals the owner approved:
 
@@ -173,7 +181,7 @@ Only for proposals the owner approved:
 4. If a new event or newly opened CFP belongs in the issue's events block and the issue is not yet published, add it there too.
 5. `npm run check` must pass — the schema rejects an unknown topic.
 
-## 11. After the owner publishes
+## 12. After the owner publishes
 
 ```
 node scripts/newsletter/candidates.mjs mark used <url>...
