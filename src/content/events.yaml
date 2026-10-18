@@ -3,6 +3,16 @@
 # One event is one conference: several talks or several per-track CFPs live in the arrays.
 # Sorted by `start`, newest first.
 
+- slug: world-summit-ai-europe-2027
+  name: World Summit AI Europe 2027
+  series: world-summit-ai-europe
+  url: https://worldsummit.ai/
+  image: https://worldsummit.ai/wp-content/uploads/sites/4/2025/10/WSAI25_Karen-Hao_Main-Stage_Wide-Audience-scaled.jpg
+  start: 2027-10-06
+  end: 2027-10-07
+  location: Amsterdam, NL
+  topics: [ai-agents, ai-policy, llms]
+
 - slug: humanx-emea-2027
   name: HumanX EMEA 2027
   series: humanx-emea
@@ -99,6 +109,16 @@
   cfps:
     - url: https://sessionize.com/kubecon-cloudnativecon-europe-2027/
       deadline: 2026-10-11
+
+- slug: ai-engineer-europe-2027
+  name: AI Engineer Europe 2027
+  series: ai-engineer-europe
+  url: https://ai.engineer/europe/2027
+  image: https://ai.engineer/hero-image.png
+  start: 2027-02-17
+  end: 2027-02-19
+  location: London, UK
+  topics: [ai-agents, llms, ai-infrastructure]
 
 - slug: waicf-2027
   name: World AI Cannes Festival 2027
