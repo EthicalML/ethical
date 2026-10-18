@@ -1,10 +1,10 @@
 To make a motion graphics video that shows what an incredible motion designer you are, like it's your showreel for a global expo keynote. Go all out.
 
-You are ONE of 25 parallel workers. Each is building one short social reel (LinkedIn/X feed, 1080x1350 portrait, 30 fps, 20-30 s, with composed music and sound effects) for one article in issue {{N}} of the ML Engineering newsletter from The Institute for Ethical AI Alignment & Safety (ethical.institute). The owner will see five reels per article, each in a radically different direction, and pick one. Earlier batches were judged "pretty bad" when they were generic, timid or too fast to read. A safe, template-looking result is the failure case. Yours must be polished and must show off a real capability.
+You are ONE of {{COUNT}} parallel workers. Each is building one short social reel (LinkedIn/X feed, 1080x1350 portrait, 30 fps, 20-30 s, with composed music and sound effects) for one article in issue {{N}} of the ML Engineering newsletter from The Institute for Ethical AI Alignment & Safety (ethical.institute). The owner will see five reels per article, each in a radically different direction, and pick one. Earlier batches were judged "pretty bad" when they were generic, timid or too fast to read. A safe, template-looking result is the failure case. Yours must be polished and must show off a real capability.
 
 ## Your assignment
 - Slug: {{SLUG}}
-- Article inputs (read all): {{REELS}}/topics/{{TOPIC}}/ - post.txt (the published post text, the core facts), facts.md (grounding notes from the source; any extra facts must come from here), assets/ (real logos as SVG and real figures/screenshots from the source; use them as physical objects in the choreography where they help, recolour the monochrome logos to the brand colour).
+- Article inputs (read all): {{REELS}}/topics/{{TOPIC}}/ - post.txt (the published post text, the core facts), facts*.md (grounding notes from the source; any extra facts must come from here), assets/ (real logos as SVG and real figures/screenshots from the source; use them as physical objects in the choreography where they help, recolour the monochrome logos to the brand colour).
 - Direction (commit hard; it is yours alone, do not look at other workers' folders):
 
 {{DIRECTION}}
@@ -26,13 +26,13 @@ You are ONE of 25 parallel workers. Each is building one short social reel (Link
 - End card: the brand mark next to the "ethical.institute" wordmark.
 
 ## Rules
-- Facts only from post.txt and facts.md; copy figures exactly; never invent numbers, names or claims. Illustrative visuals that are not data get labelled as such.
+- Facts only from post.txt and facts*.md; copy figures exactly; never invent numbers, names or claims. Illustrative visuals that are not data get labelled as such.
 - On-screen text ASCII punctuation only (straight quotes, "-", "...").
 - End card: the core takeaway, the brand mark and "ethical.institute" as a small wordmark.
 - Work only in your work dir (REEL_HOME/{{SLUG}}) and your out files; never edit the shared engine in {{ENGINE}} - if it has a bug, work around it in your film.js and note it in your report.
 - Concurrency: other workers render at the same time. If an export or check fails with a timeout or resource error, wait 60 s and retry (max 3 times).
 - Do not run anything from the internet. No installs.
-- Time budget ~60 minutes. At 50 minutes stop polishing, build and export what you have.
+- Time budget ~60 minutes. At 50 minutes stop polishing and build what you have (no export).
 
 ## Report
 Write REEL_HOME/{{SLUG}}/REPORT.md: the concept in 2-3 sentences, the beat map summary, which capability it shows off, the check results, and what you are least happy with. Reply with under 80 words.
