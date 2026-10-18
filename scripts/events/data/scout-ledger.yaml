@@ -78,11 +78,11 @@ scouted:
   # Watchlist state (status: tracked) - what lets later runs skip the sweep.
   - name: KubeCon + CloudNativeCon Europe
     url: https://events.linuxfoundation.org/kubecon-cloudnativecon-europe-2027/
-    checked: 2026-10-11
+    checked: 2026-10-17
     status: tracked
     next_edition: 2027-03-15 to 2027-03-18, Barcelona, ES
-    cfp: OPEN until tonight - closes 2026-10-11 23:59 CEST (https://sessionize.com/kubecon-cloudnativecon-europe-2027/); reconfirmed 2026-10-11 ("13 hours left") - FLAGGED in the issue-406, 407 and 408 reports; after today the main CFP is closed, next window is the 2028 edition
-    colocated_cfp: OPEN - CNCF-hosted co-located events (2027-03-15, incl. Cloud Native AI + Inference Day, Agentics Day MCP + Agents, Platform Engineering Day) close 2026-10-18 23:59 CEST (https://sessionize.com/cncf-hosted-co-located-events-europe-2027), reconfirmed 2026-10-11, 7 days out - FLAGGED; second cfps row proposed in the issue-407 report, still not on origin/master, re-proposed in the issue-408 report
+    cfp: closed - the main CFP closed 2026-10-11 23:59 CEST; notifications 2026-12-07; next window is the 2028 edition
+    colocated_cfp: OPEN for the last time - CNCF-hosted co-located events (2027-03-15) close 2026-10-18 23:59 CEST (https://sessionize.com/cncf-hosted-co-located-events-europe-2027), reconfirmed 2026-10-17 ("36 hours left"); the second cfps row was proposed in the issue-407 and 408 reports and never reached origin/master - after 2026-10-18 it is moot, do not re-propose
     owner: keen to submit - CFP now open, flagged in issue-401 scout report
     note: added to events.yaml on 2026-09-06
   - name: AGNTCon + MCPCon Europe
@@ -94,11 +94,11 @@ scouted:
     note: proposed into events.yaml on 2026-09-19 (issue-405 report)
   - name: AI Engineer Europe
     url: https://ai.engineer/europe/2027
-    checked: 2026-10-11
+    checked: 2026-10-17
     status: tracked
     next_edition: 2027-02-17 to 2027-02-19, ExCeL London, UK - confirmed on the organiser's /europe/2027 page (workshops Wed, keynotes and tracks Thu-Fri)
-    cfp: not open yet - "Speaker applications ... will be announced after programming opens" (reconfirmed 2026-10-11)
-    note: proposed into events.yaml on 2026-10-04 (issue-407 report); still not on origin/master 2026-10-11, re-proposed in the issue-408 report
+    cfp: not open yet - "Speaker applications ... will be announced after programming opens" (reconfirmed 2026-10-17)
+    note: proposed into events.yaml on 2026-10-04 (issue-407 report); still not on origin/master 2026-10-17, re-proposed in the issue-408 and 409 reports
     owner: keen to submit - flag the week the CFP opens (2026-08-16)
   - name: World Summit AI Amsterdam
     url: https://worldsummit.ai/
@@ -106,7 +106,7 @@ scouted:
     status: tracked
     next_edition: 2027-10-06 to 2027-10-07, Taets Art & Event Park, Amsterdam, NL - confirmed on the organiser site; the 2026 edition (7-8 Oct) has passed
     cfp: n/a (curated) - no speaker submission process on the site
-    note: 2027 edition proposed into events.yaml on 2026-10-11 (issue-408 report)
+    note: 2027 edition proposed into events.yaml on 2026-10-11 (issue-408 report); still not on origin/master 2026-10-17, re-proposed in the issue-409 report
   - name: WeAreDevelopers World Congress Berlin
     url: https://www.wearedevelopers.com/world-congress
     checked: 2026-09-06
@@ -269,6 +269,28 @@ scouted:
     status: watching
     reason: Linux Foundation / PyTorch Foundation European edition; first edition ran 2026-04-07 to 2026-04-08 in Paris, full AI stack from infrastructure to agents. 2027 edition still not announced (2026-10-11); no attendance figure published
     note: recommended as a feature watchlist addition in the issue-406 report
+  - name: AI Engineering Summit Berlin (Software & Support Media)
+    url: https://sessionize.com/ai-engineering-summit
+    checked: 2026-10-17
+    status: rejected
+    reason: 2026-11-16 to 2026-11-20, Maritim proArte Hotel, Berlin; paid training event (workshops, bootcamps, tickets from 999 EUR) from the MLcon organiser - same training-conference class as the rejected MLcon; CFP closed 2026-07-14
+  - name: European Chatbot & Agentic AI Summit
+    checked: 2026-10-17
+    status: rejected
+    reason: Edinburgh, March 2027, aggregator listing only (no official page found); industry summit outside the priority hubs, submissions closed 2026-10-01
+  - name: AI4X Accelerate 2027
+    url: https://constructor.university/lp/ai4x-accelerate-conference-2027
+    checked: 2026-10-17
+    status: rejected
+    reason: Bremen, June 2027 (organiser pages disagree on dates); academic AI-for-science conference, research venue rather than a speaking flagship
+  - name: Academic AI venues (ECAI 2027 Athens, CAIN 2027 Dublin)
+    checked: 2026-10-17
+    status: rejected
+    reason: peer-reviewed paper venues surfaced via aggregators; same class as the rejected MLSys/SaTML group
+  - name: AI in Production Newcastle 2027
+    checked: 2026-10-17
+    status: rejected
+    reason: June 2027, aggregator listing only; regional community conference, below the flagship bar
   - name: ContainerDays AI Context Warsaw
     url: https://sessionize.com/containerdays-ai-context-warsaw-2027
     checked: 2026-10-11
@@ -410,9 +432,9 @@ scouted:
     reason: quality ~1,200 software stage, AI one track among many
   - name: Machine Learning Prague
     url: https://www.mlprague.com/
-    checked: 2026-10-11
-    status: watching
-    reason: strong regional cfp candidate; below watchlist bar for now. 2027 edition 2027-05-03 to 2027-05-05, O2 Universum, Prague, CZ, "800+ attendees"; call for workshops open until 2026-10-15 (4 days out on 2026-10-11, flagged in the issue-408 report), speaker call linked without a deadline (organiser site, reconfirmed 2026-10-11)
+    checked: 2026-10-18
+    status: rejected
+    reason: owner not interested (2026-10-18, issue 409) - regional lineup (5 of 45 speakers announced, mostly Czech), ~800 attendees, workshop prep not worth it; do not re-propose unless the lineup changes markedly. Previously 2027 edition 2027-05-03 to 2027-05-05, O2 Universum, Prague, CZ, "800+ attendees"; call for workshops extended to October 22 (organiser site 2026-10-17, was 2026-10-15; flagged in the issue-408 and 409 reports), speaker call linked without a deadline
   - name: MLcon Munich / Berlin / Amsterdam
     url: https://mlconference.ai/
     checked: 2026-09-06
