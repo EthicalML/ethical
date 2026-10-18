@@ -40,6 +40,7 @@ def main() -> None:
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--slug", help="export only this selected slug")
     parser.add_argument("--output-dir", type=Path, help="copy exports here instead of issue post folders")
+    parser.add_argument("--desktop", type=Path, help="owner-facing copy folder (default ~/Desktop/newsletter-<N>-reels)")
     args = parser.parse_args()
     root = reels_dir(args.issue)
     selections_path = root / "selections.json"
@@ -56,8 +57,11 @@ def main() -> None:
 
     issue_posts = repo_root() / "tmp" / f"issue-{args.issue}" / "posts"
     export_out = (args.output_dir or root / "final").resolve()
+    # The owner uploads from the Desktop; tmp/ inside the repo is too hard to reach.
+    desktop = (args.desktop or Path.home() / "Desktop" / f"newsletter-{args.issue}-reels").resolve()
     if not args.dry_run:
         export_out.mkdir(parents=True, exist_ok=True)
+        desktop.mkdir(parents=True, exist_ok=True)
     for topic, slug in picks:
         choice = audio.get(topic, "score")
         export_slug = slug if choice == "score" else f"{slug}-{choice}"
@@ -67,7 +71,9 @@ def main() -> None:
             destination = issue_posts / "0-issue" / "reel.mp4"
         elif not args.output_dir and post_dirs:
             destination = post_dirs[0] / "reel.mp4"
-        print(f"{topic}: {export_slug} [{reel_format(root, export_slug)}] -> {destination}")
+        topic_dirs = sorted((root / "topics").glob(f"{topic}-*"))
+        desktop_name = f"{topic_dirs[0].name}.mp4" if topic_dirs else f"{export_slug}.mp4"
+        print(f"{topic}: {export_slug} [{reel_format(root, export_slug)}] -> {destination}, {desktop / desktop_name}")
         if args.dry_run:
             continue
         env = dict(os.environ, REEL_HOME=str(root / "work"), REEL_OUT=str(export_out))
@@ -82,6 +88,7 @@ def main() -> None:
         destination.parent.mkdir(parents=True, exist_ok=True)
         if generated != destination:
             shutil.copy2(generated, destination)
+        shutil.copy2(generated, desktop / desktop_name)
         print(f"ffprobe {destination}: {probe(destination)}")
 
 
