@@ -155,6 +155,8 @@ Buffer's API is not involved and nothing is hosted, because its assets attach by
 
 Nothing from this step is ever committed. `tmp/` is gitignored, and these images are somebody else's artwork borrowed for the length of one post.
 
+When the owner wants motion reels instead of (or as well as) the pictures, the `newsletter-reels` skill takes over from here: one landscape reel for the issue itself and one per post, landing as `reel.mp4` in the same post folders.
+
 ## 9. Hand over
 
 The scout reads whatever checkout it runs in, which is usually the main one and is often behind `origin/master`. Its carry-forward claims about what is "still unmerged" are therefore claims about that checkout, not about master: check each one against `origin/master` before repeating it to the owner. Its ledger writes land there too, so they have to be carried into the issue worktree (as a patch, since the file's base may differ) or they are lost when the branch merges.
