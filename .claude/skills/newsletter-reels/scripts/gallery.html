@@ -1,0 +1,50 @@
+<!doctype html><meta charset="utf-8"><title>Newsletter reels</title>
+<style>
+body{background:#0d0d0d;color:#eee;font:14px system-ui;margin:24px}h1{font-size:20px;margin:0 0 4px}p.hint{color:#999;margin:0 0 16px}
+h2{font-size:16px;margin:26px 0 10px;display:flex;gap:12px;align-items:center}h2 button{font-size:12px;padding:4px 10px;border-radius:7px;border:1px solid #444;background:#1a1a1a;color:#aaa;cursor:pointer}
+.row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}.row.one{grid-template-columns:minmax(0,320px)}
+.card{background:#181818;border:2px solid #222;border-radius:10px;overflow:hidden;display:flex;flex-direction:column}.card.sel{border-color:#ffd43b}
+.thumb{position:relative;aspect-ratio:4/5;background:#000 center/cover;cursor:pointer}
+.thumb span{position:absolute;inset:auto 10px 10px 10px;padding:10px;border-radius:8px;background:#ffd43b;color:#111;font-weight:700;text-align:center}
+.thumb.pending{display:grid;place-items:center;color:#777;cursor:default}
+.meta{padding:8px 10px;flex:1}.meta b{color:#ffd43b}.meta .d{color:#aaa;font-size:12px;margin-top:4px;max-height:4.2em;overflow:hidden}
+.pick{margin:0 10px 10px;padding:8px;border:1px solid #444;border-radius:8px;background:none;color:#eee;cursor:pointer}
+.aud{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}.aud button{flex:1;padding:6px 6px;border-radius:7px;border:1px solid #444;background:#222;color:#ccc;cursor:pointer;font-size:12px}
+.aud button.on{background:#ffd43b;color:#111;border-color:#ffd43b;font-weight:700}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.94);display:none;place-items:center;z-index:9}#modal.on{display:grid}
+.box{display:flex;flex-direction:column;align-items:center;gap:10px}iframe{border:0;height:82vh;aspect-ratio:4/5;background:#000;border-radius:8px}
+.bar{display:flex;gap:8px;align-items:center}.bar>button{padding:8px 14px;border-radius:8px;border:1px solid #555;background:#222;color:#eee;cursor:pointer}#cap{color:#ccc;min-width:220px;text-align:center}
+</style>
+<h1 id="title">Newsletter reels</h1><p class="hint">Pick one reel per topic and the row collapses to it, with its audio options (score / m1 / m2, saved). "Show all 5" reopens the row. Click a reel to play it with sound; Esc closes, Space pauses.</p>
+<div id="rows"></div>
+<div id="modal"><div class="box"><iframe id="fr" allow="autoplay; fullscreen"></iframe>
+<div class="bar"><button id="prev">prev</button><span id="cap"></span><span id="pa" class="aud"></span><button id="next">next</button><button id="close">close (Esc)</button></div></div></div>
+<script src="gallery-data.js"></script>
+<script>
+let have=new Set(), music=new Set(), S={}, TR={}, open_={}, cur=null; const $=id=>document.getElementById(id), V=()=>Date.now(), item=s=>ITEMS.find(i=>i.slug===s), short=s=>s.split('-').slice(-1)[0];
+$('title').textContent=`Issue ${ISSUE} reels`; document.title=`${ISSUE} reels`;
+async function refresh(){ const r=await (await fetch('/list')).json(); have=new Set(r.html); music=new Set(r.music||[]); S=r.selections||{}; S.audio=S.audio||{};
+  try{ (await (await fetch('music-variants.txt')).text()).trim().split('\n').forEach(l=>{const [s,g,f]=l.split(' ');TR[s+'-'+g]=f.replace(/-\d+\.mp3$/,'');}); }catch(e){} draw(); }
+const aud=t=>S.audio[t]||'score';
+function audButtons(t){ const pk=S[t]; return [['score','score']].concat(['m1','m2'].filter(m=>music.has(pk+'-'+m)).map(m=>[m,m+': '+(TR[pk+'-'+m]||'').split('-').slice(0,3).join(' ')]))
+  .map(([k,l])=>`<button class="${aud(t)===k?'on':''}" onclick="event.stopPropagation();setAud('${t}','${k}')">${l}</button>`).join(''); }
+function card(i,collapsed){ const ok=have.has(i.slug), t=i.topic, isSel=S[t]===i.slug;
+  return `<div class="card ${isSel?'sel':''}">`+(ok?`<div class="thumb" style="background-image:url(posters/${i.slug}.png?v=${V()})" onclick="play('${i.slug}')"><span>▶ Play with audio</span></div>`:`<div class="thumb pending">rendering...</div>`)+
+   `<div class="meta"><b>${short(i.slug)}</b> ${i.name}`+(collapsed?`<div class="aud">${audButtons(t)}</div>`:`<div class="d">${i.desc}</div>`)+`</div>`+
+   (!collapsed&&ok?`<button class="pick" onclick="pick('${i.slug}')">${isSel?'★ Picked':'☆ Pick this one'}</button>`:'')+`</div>`; }
+function draw(){ $('rows').innerHTML=Object.entries(TOPICS).map(([t,name])=>{ const collapsed=S[t]&&!open_[t], its=ITEMS.filter(i=>i.topic===t);
+  return `<h2>${t}. ${name}`+(S[t]?`<button onclick="open_['${t}']=!open_['${t}'];draw()">${collapsed?'show all 5':'collapse to pick'}</button>`:'')+`</h2>`+
+   `<div class="row ${collapsed?'one':''}">`+(collapsed?card(its.find(i=>i.slug===S[t]),true):its.map(i=>card(i,false)).join(''))+`</div>`; }).join(''); }
+async function save(){ await fetch('/select',{method:'POST',body:JSON.stringify(S)}); }
+async function pick(slug){ const t=item(slug).topic; if(S[t]===slug){ delete S[t]; } else { S[t]=slug; open_[t]=false; } await save(); draw(); }
+async function setAud(t,k){ S.audio[t]=k; await save(); draw(); if(cur&&cur[4]===t&&S[t]===cur) play(cur); }
+function play(slug){ cur=slug; const t=item(slug).topic, a=S[t]===slug?aud(t):'score', fr=$('fr');
+  fr.onload=()=>{ try{ fr.contentWindow.addEventListener('keydown',e=>{ if(e.key==='Escape') close_(); }); const b=fr.contentDocument.getElementById('start'); b&&b.click(); fr.contentWindow.focus(); }catch(e){} };
+  fr.src=`out/${slug}${a==='score'?'':'-'+a}.html?v=${V()}`; $('modal').classList.add('on');
+  $('cap').textContent=`${short(slug)} | ${item(slug).name}${a!=='score'?' | '+a:''}`; $('pa').innerHTML=S[t]===slug?audButtons(t):''; }
+function step(d){ const list=ITEMS.filter(i=>have.has(i.slug)&&(!S[i.topic]||open_[i.topic]||S[i.topic]===i.slug)).map(i=>i.slug); let k=list.indexOf(cur); play(list[(k+d+list.length)%list.length]); }
+function close_(){ $('fr').src='about:blank'; $('modal').classList.remove('on'); cur=null; refresh(); }
+$('close').onclick=close_; $('prev').onclick=()=>step(-1); $('next').onclick=()=>step(1);
+addEventListener('keydown',e=>{ if(e.key==='Escape'&&cur) close_(); });
+refresh(); setInterval(()=>{ if(!cur) refresh(); },20000);
+</script>
