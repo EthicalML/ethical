@@ -28,7 +28,7 @@ def main() -> None:
     if destination.exists():
         shutil.rmtree(destination)
     shutil.copytree(source, destination, ignore=shutil.ignore_patterns("check", "tmp", "*.r?.js"), copy_function=shutil.copy2)
-    duration = json.load(open(destination / "music.json"))["dur"] + 2.0
+    duration = json.load(open(destination / "music.json"))["dur"]  # exactly the film: a longer track freezes the last frame
     sample_rate = 11025
     raw = subprocess.run(
         ["ffmpeg", "-v", "quiet", "-i", track, "-ac", "1", "-ar", str(sample_rate), "-f", "f32le", "-"],
@@ -53,7 +53,7 @@ def main() -> None:
     subprocess.run(
         [
             "ffmpeg", "-v", "error", "-y", "-ss", f"{start:.3f}", "-t", f"{duration:.3f}", "-i", track,
-            "-af", f"afade=t=in:d=0.03,afade=t=out:st={duration - 3.0:.3f}:d=3.0,loudnorm=I=-14:TP=-1.5",
+            "-af", f"afade=t=in:d=0.03,afade=t=out:st={duration - 2.5:.3f}:d=2.5,loudnorm=I=-14:TP=-1.5",
             "-ar", "48000", "-ac", "2", str(music),
         ],
         check=True,
@@ -68,9 +68,8 @@ def main() -> None:
         check=True,
         stdin=subprocess.DEVNULL,
     )
-    print(f"{new_slug}: {os.path.basename(track)} from {start:.2f}s, {duration:.1f}s, fade out last 3s -> out/{new_slug}.html")
+    print(f"{new_slug}: {os.path.basename(track)} from {start:.2f}s, {duration:.1f}s, fade out last 2.5s -> out/{new_slug}.html")
 
 
 if __name__ == "__main__":
     main()
-
