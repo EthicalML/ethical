@@ -37,7 +37,7 @@ function draw(){ $('rows').innerHTML=Object.entries(TOPICS).map(([t,name])=>{ co
    `<div class="row ${collapsed?'one':''}">`+(collapsed?card(its.find(i=>i.slug===S[t]),true):its.map(i=>card(i,false)).join(''))+`</div>`; }).join(''); }
 async function save(){ await fetch('/select',{method:'POST',body:JSON.stringify(S)}); }
 async function pick(slug){ const t=item(slug).topic; if(S[t]===slug){ delete S[t]; } else { S[t]=slug; open_[t]=false; } await save(); draw(); }
-async function setAud(t,k){ S.audio[t]=k; await save(); draw(); if(cur&&cur[4]===t&&S[t]===cur) play(cur); }
+async function setAud(t,k){ S.audio[t]=k; await save(); draw(); if(cur&&item(cur).topic===t&&S[t]===cur) play(cur); }
 function play(slug){ cur=slug; const t=item(slug).topic, a=S[t]===slug?aud(t):'score', fr=$('fr');
   fr.onload=()=>{ try{ fr.contentWindow.addEventListener('keydown',e=>{ if(e.key==='Escape') close_(); }); const b=fr.contentDocument.getElementById('start'); b&&b.click(); fr.contentWindow.focus(); }catch(e){} };
   fr.src=`out/${slug}${a==='score'?'':'-'+a}.html?v=${V()}`; $('modal').classList.add('on');

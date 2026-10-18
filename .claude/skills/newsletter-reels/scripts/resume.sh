@@ -26,7 +26,7 @@ if [ "${1:-}" = "--worker" ]; then
   (
     cd "$script_dir/../engine"
     REEL_HOME="$reels_dir/work" REEL_OUT="$reels_dir/out" \
-      "$claude_bin" --resume "$session" -p "$(cat "$delta")" --model claude-opus-5-5 --permission-mode auto --output-format json \
+      command "$claude_bin" --resume "$session" -p "$(cat "$delta")" --model claude-opus-5-5 --permission-mode auto --output-format json \
       > "$reels_dir/logs/$slug.r$round.log" 2>&1 < /dev/null
   )
   rc=$?
@@ -68,6 +68,6 @@ if ! mkdir "$lock" 2>/dev/null; then
 fi
 round=1
 while [ -e "$reels_dir/logs/$slug.r$round.log" ]; do round=$((round + 1)); done
-nohup "$0" --worker "$issue" "$slug" "$delta" "$rebuild" "$round" \
+nohup "$script_dir/resume.sh" --worker "$issue" "$slug" "$delta" "$rebuild" "$round" \
   >> "$reels_dir/logs/resume.out" 2>&1 < /dev/null &
 echo "resuming $slug as r$round pid=$!"

@@ -2,7 +2,6 @@
 """Fetch, validate and render logo candidates for a reel topic."""
 
 import argparse
-import html
 import os
 import re
 import subprocess
@@ -20,6 +19,7 @@ BAD = [
 ]
 HREF = re.compile(r"(?:href|xlink:href)\s*=\s*(['\"])(.*?)\1", re.I | re.S)
 SVG = re.compile(r"<svg\b.*?</svg\s*>", re.I | re.S)
+HEADER = re.compile(r"<header\b.*?</header\s*>", re.I | re.S)
 
 
 def fetch(url: str) -> str:
@@ -84,7 +84,8 @@ def main() -> None:
         candidates.append((f"wikimedia-{Path(args.wikimedia).stem}.svg", fetch(f"https://commons.wikimedia.org/wiki/Special:FilePath/{quoted}")))
     if args.site:
         page = fetch(args.site)
-        for number, match in enumerate(SVG.findall(page), 1):
+        header = HEADER.search(page)
+        for number, match in enumerate(SVG.findall(header.group(0) if header else ""), 1):
             candidates.append((f"site-{number}.svg", match))
     if not candidates:
         raise SystemExit("provide at least one of --site, --wikimedia or --simpleicons")

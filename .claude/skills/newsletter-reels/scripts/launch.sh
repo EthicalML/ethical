@@ -29,7 +29,7 @@ if [ "${1:-}" = "--controller" ]; then
     (
       cd "$engine_dir"
       REEL_HOME="$reels_dir/work" REEL_OUT="$reels_dir/out" \
-        "$claude_bin" -p "$(cat "$brief")" --model claude-opus-5-5 --permission-mode auto --output-format json \
+        command "$claude_bin" -p "$(cat "$brief")" --model claude-opus-5-5 --permission-mode auto --output-format json \
         > "$log" 2>&1 < /dev/null
     )
     rc=$?
@@ -69,5 +69,5 @@ if [ "$#" -eq 0 ]; then
   exit 1
 fi
 mkdir -p "$reels_dir/logs"
-nohup "$0" --controller "$issue" "$@" >> "$reels_dir/logs/queue.log" 2>&1 < /dev/null &
+nohup "$script_dir/launch.sh" --controller "$issue" "$@" >> "$reels_dir/logs/queue.log" 2>&1 < /dev/null &
 echo "launched issue $issue controller pid=$! for $# reel(s)"
