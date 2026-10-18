@@ -4,6 +4,7 @@
 import argparse
 import json
 import os
+import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -24,6 +25,13 @@ def probe(path: Path) -> str:
         stdin=subprocess.DEVNULL,
     )
     return " ".join(result.stdout.split())
+
+
+def reel_format(root: Path, slug: str) -> str:
+    beats = root / "work" / slug / "beats.json"
+    if not beats.exists() and re.match(r".*-m\d+$", slug):
+        beats = root / "work" / slug.rsplit("-", 1)[0] / "beats.json"
+    return json.loads(beats.read_text()).get("format", "1920x1080") if beats.exists() else "unknown"
 
 
 def main() -> None:
@@ -55,9 +63,11 @@ def main() -> None:
         export_slug = slug if choice == "score" else f"{slug}-{choice}"
         post_dirs = sorted(issue_posts.glob(f"{topic}-*")) if issue_posts.exists() else []
         destination = export_out / f"{export_slug}.mp4"
-        if not args.output_dir and post_dirs:
+        if not args.output_dir and topic == "0" and issue_posts.exists():
+            destination = issue_posts / "0-issue" / "reel.mp4"
+        elif not args.output_dir and post_dirs:
             destination = post_dirs[0] / "reel.mp4"
-        print(f"{topic}: {export_slug} -> {destination}")
+        print(f"{topic}: {export_slug} [{reel_format(root, export_slug)}] -> {destination}")
         if args.dry_run:
             continue
         env = dict(os.environ, REEL_HOME=str(root / "work"), REEL_OUT=str(export_out))

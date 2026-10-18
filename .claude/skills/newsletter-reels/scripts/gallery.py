@@ -80,10 +80,20 @@ class GalleryHandler(http.server.SimpleHTTPRequestHandler):
             base = re.compile(rf"{re.escape(self.issue)}-\d+[a-z]\.html$")
             music = re.compile(rf"{re.escape(self.issue)}-\d+[a-z]-m\d+\.html$")
             names = [entry.name for entry in out.iterdir()] if out.exists() else []
+            formats = {}
+            for directory in work.iterdir() if work.exists() else []:
+                beats = directory / "beats.json"
+                if not beats.exists():
+                    continue
+                try:
+                    formats[directory.name] = json.loads(beats.read_text()).get("format", "1920x1080")
+                except (json.JSONDecodeError, OSError):
+                    continue
             selections = self.reels / "selections.json"
             self.send_json({
                 "html": sorted(name[:-5] for name in names if base.fullmatch(name)),
                 "music": sorted(name[:-5] for name in names if music.fullmatch(name)),
+                "formats": formats,
                 "selections": json.loads(selections.read_text()) if selections.exists() else {},
             })
             return
@@ -145,4 +155,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
