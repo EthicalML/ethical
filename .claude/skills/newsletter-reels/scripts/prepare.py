@@ -47,6 +47,8 @@ def topic_dir(output: Path, number: int, heading: str) -> Path:
 def refresh_issue_logos(output: Path, branding: Path) -> int:
     logos = output / "0-issue" / "assets" / "logos"
     logos.mkdir(parents=True, exist_ok=True)
+    for existing in logos.glob("*.svg"):
+        existing.unlink()
     for name in INSTITUTE_LOGOS:
         source = branding / name
         if not source.exists():
