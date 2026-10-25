@@ -20,9 +20,6 @@ Mixing: buses high-passed (ui 250, move 180, tone 200, hit 110 Hz); only the boo
 ~110 Hz, and it is ducked by the music's kick. The stem sits TARGET_UNDER dB under the music (integrated),
 <= -2 dBTP, and a sum limiter pulls the stem down only where music + stem, as the player mixes them, would
 pass -2 dBFS. The stem is the same length as the music. Unknown cue kinds are skipped with a warning.
-
-SFX_PALETTE=b|c|d swaps the voices for another sound world (sfx_palettes.py) on the same buses, times and levels;
-unset or a, it is the palette above.
 """
 
 import hashlib
@@ -220,13 +217,6 @@ def build(work):
     N = music.shape[1]
     tonic, mode = M.parse_key(info.get("key", "A minor"))
     P = Palette(tonic, mode, M._seed(info.get("key", "")) + len(events), float(info.get("root_hz", 55.0)))
-    V = None
-    if os.environ.get("SFX_PALETTE", "a") != "a":
-        from sfx_palettes import PALETTES
-
-        V = PALETTES[os.environ["SFX_PALETTE"]](
-            tonic, mode, M._seed(info.get("key", "")) + len(events), float(info.get("root_hz", 55.0))
-        )
     rng = P.rng
     deg = P.deg
     bus = {k: np.zeros((2, N), np.float32) for k in ("ui", "move", "hit", "low", "tone")}
@@ -305,8 +295,6 @@ def build(work):
         k, s = e.get("k"), float(e.get("t", 0))
         d = float(e.get("d", 0.6))
         counts[k] = counts.get(k, 0) + 1
-        if V and V.voice(k, e, s, d, put, xpan, lands, FW):
-            continue
         if k == "type":
             txt, n, rate = str(e.get("s", "")), int(e.get("n", len(str(e.get("s", ""))))), float(e.get("rate", 0.016))
             if samples.get("type"):
