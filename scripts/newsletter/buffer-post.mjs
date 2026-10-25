@@ -29,7 +29,7 @@
  */
 
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -191,6 +191,13 @@ async function main() {
   ];
   const present = new Set(readdirSync(dir));
   const media = mediaOrder.find((name) => present.has(name));
+  // jsDelivr refuses files over 20 MB with a 403, which Buffer reports only as "Video could not
+  // be read from its URL", and it caches that 403 for the path. Fail before pushing anything.
+  if (media && statSync(path.join(dir, media)).size >= 20_000_000) {
+    throw new Error(
+      `${slugDir}/${media} is over jsDelivr's 20 MB limit; re-encode it smaller first (e.g. ffmpeg -b:v 5000k)`,
+    );
+  }
   const wanted = options.channel ? String(options.channel).split(',') : ['linkedin'];
   const available = await channels();
 
