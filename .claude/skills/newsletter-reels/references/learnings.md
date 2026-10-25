@@ -2,6 +2,14 @@
 
 Newest first. Fold a rule into the step or brief where it applies once it has held; keep here why it exists.
 
+## Issue 410 (2026-10-25)
+
+- **Never play the generated score.** The gallery defaulted to each worker's composed score and the m1/m2 stock variants were only built for picks, so the owner reviewed every reel with generated music and the first issue-reel export defaulted to `score`. The owner's rule is absolute: stock tracks only. The gallery now has no score option, export refuses it, and `stock_music.sh` builds both variants for all 30 reels as they land.
+- **A stale gallery server serves the wrong issue.** Last week's gallery server was still bound to 8767, the new one died with "Address already in use", and the browser showed 409's reels. Check the port before starting.
+- **The issue reel is the one that earns reach.** From Buffer's metrics: the 409 issue reel got ~56k LinkedIn impressions, about 25x the earlier issue posts, while the story reels sat around the image-post median. Only the photo-finish race held viewers (92% of impressions became views against 27-38% for the rest). Briefs now carry both points; the issue reel keeps the 409 skeleton.
+- **Pull the issue reel forward.** The owner wanted to post the issue reel as soon as it existed: export it on its own (`export.py <N> --slug <slug>`) once picked, without waiting for the story reels.
+- **Workers read their brief at launch,** so a brief edited while the launcher is running reaches every worker not yet started. That is how the motion-reference techniques reached 20 of 30 reels mid-run.
+
 ## Issue 409 (2026-10-18), first run
 
 - **Two formats.** The newsletter's own reel posts as LinkedIn's landscape feed video: 1920x1080. The five story reels stay 1080x1350 (the owner confirmed both after comparing against a real LinkedIn post).
