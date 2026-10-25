@@ -63,8 +63,11 @@ def main() -> None:
         export_out.mkdir(parents=True, exist_ok=True)
         desktop.mkdir(parents=True, exist_ok=True)
     for topic, slug in picks:
-        choice = audio.get(topic, "score")
-        export_slug = slug if choice == "score" else f"{slug}-{choice}"
+        # The owner's rule: always one of the stock tracks, never the generated score.
+        choice = audio.get(topic, "m1")
+        if choice == "score":
+            raise SystemExit(f"{slug}: the generated score is never exported; choose m1 or m2")
+        export_slug = f"{slug}-{choice}"
         post_dirs = sorted(issue_posts.glob(f"{topic}-*")) if issue_posts.exists() else []
         destination = export_out / f"{export_slug}.mp4"
         if not args.output_dir and topic == "0" and issue_posts.exists():
