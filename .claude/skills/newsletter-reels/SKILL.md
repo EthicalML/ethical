@@ -20,7 +20,7 @@ In the commands below `$SK` is this skill's directory and `$R` is `tmp/reels/<N>
 
 ## 2. Write the directions
 
-Read `references/directions.md` and `references/learnings.md`. Write `$R/directions.md` in the same format: per topic a palette line and five directions `- **<n><a-e> Name (capability):** mechanism`. Each direction names the mechanism the film acts out, and the five per topic show off different capabilities (3D, UI simulation, data viz, kinetic type, particles, hand-made). Directions are written for the article, never reused across topics.
+Read `references/directions.md` and `references/learnings.md`. Write `$R/directions.md` in the same format: per topic a palette line and five directions `- **<n><a-e> Name (capability):** mechanism`. Each direction names the mechanism the film acts out, and the five per topic each commit to a different primary style from the worker brief's Motion-first menu (kinetic type, HUD/technical, 3D camera fly-through, generative/organic, device in scene), so the owner compares five genuinely different films. Directions are written for the article, never reused across topics. Do not write a calm explainer direction: the worker brief's Motion-first section is the default because the owner picked it over the calm reels in four of five topics on 410.
 
 Then run `python3 $SK/scripts/briefs.py <N>`. It renders one brief per direction from `briefs/worker.md` into `$R/briefs/<N>-<n><a-e>.md`; the `0-issue` briefs get `briefs/issue-reel.md` appended and the 1920x1080 format. Existing briefs are kept unless you pass `--force` (`--only 3a` renders one).
 
