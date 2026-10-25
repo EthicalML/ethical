@@ -22,7 +22,9 @@ Mixing: buses high-passed (ui 250, move 180, tone 200, hit 110 Hz); only the boo
 pass -2 dBFS. The stem is the same length as the music. Unknown cue kinds are skipped with a warning.
 """
 
+import hashlib
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -38,6 +40,7 @@ CEIL_DBTP = -2.0
 PLAYER_GAIN = 0.8  # engine.js MIX: music 1, sfx 1, master .8 -> each stem reaches the output at 0.8
 BUS_HP = {"ui": 250, "move": 180, "tone": 200, "hit": 110}
 BUS_GAIN = {"ui": 1.6, "move": 1.25, "tone": 1.25, "hit": 0.8, "low": 0.7}  # booms own the peaks, not the loudness
+SAMPLE_GAIN = 10 ** (-4 / 20)
 EASE = {
     "linear": lambda x: x,
     "outCubic": lambda x: 1 - (1 - x) ** 3,
@@ -219,6 +222,24 @@ def build(work):
     bus = {k: np.zeros((2, N), np.float32) for k in ("ui", "move", "hit", "low", "tone")}
     send = np.zeros((2, N), np.float32)
 
+    sample_root = Path(os.environ["SFX_LIB"]).expanduser().resolve() if os.environ.get("SFX_LIB") else None
+    samples = {}
+    sample_rng = None
+    sample_last = {}
+    sample_used = {}
+    if sample_root:
+        try:
+            sample_index = json.loads((sample_root / "index.json").read_text())
+            samples = {
+                role: sorted(sample_root / item["file"] for item in items if (sample_root / item["file"]).is_file())
+                for role, items in sample_index.get("roles", {}).items()
+            }
+            seed_text = work.name + "\n" + json.dumps(cues, sort_keys=True, separators=(",", ":"))
+            sample_rng = np.random.default_rng(int(hashlib.sha256(seed_text.encode()).hexdigest()[:16], 16))
+        except (OSError, ValueError, TypeError, KeyError) as exc:
+            print(f"sfx: warning: could not load sample library {sample_root}: {exc}; using synthesis")
+            sample_root = None
+
     def put(b, sig, t0, gain=1.0, pan=0.0, rev=0.0):
         i = int(round(t0 * SR))
         sig = np.atleast_2d(sig)
@@ -236,6 +257,27 @@ def build(work):
 
     def xpan(e, amt=0.55):
         return ((e.get("x", FW / 2) / FW) * 2 - 1) * amt
+
+    def put_sample(kind, role, b, t0, gain=1.0, pan=0.0, rev=0.0, max_d=None, also=None):
+        choices = samples.get(role, [])
+        if not choices:
+            return False
+        previous = sample_last.get((kind, role))
+        available = [path for path in choices if path != previous] or choices
+        path = available[int(sample_rng.integers(len(available)))]
+        sample_last[(kind, role)] = path
+        relative = path.relative_to(sample_root).as_posix()
+        if relative not in sample_used.setdefault(kind, []):
+            sample_used[kind].append(relative)
+        sig = M.read_audio(path).mean(axis=0)
+        if max_d and len(sig) > int(max_d * SR):
+            sig = sig[: int(max_d * SR)].copy()
+            fade = min(len(sig), int(0.006 * SR))
+            sig[-fade:] *= np.linspace(1, 0, fade)
+        put(b, sig, t0, gain * SAMPLE_GAIN, pan, rev)
+        if also:
+            put(also[0], sig, t0, also[1] * SAMPLE_GAIN, also[2], also[3])
+        return True
 
     popf = {
         "pill": deg(4),
@@ -255,17 +297,26 @@ def build(work):
         counts[k] = counts.get(k, 0) + 1
         if k == "type":
             txt, n, rate = str(e.get("s", "")), int(e.get("n", len(str(e.get("s", ""))))), float(e.get("rate", 0.016))
-            for i in range(n):
-                if i < len(txt) and txt[i] == " ":
-                    continue
-                put(
-                    "ui",
-                    P.click(0.005, 3000, 8000, seed=int(s * 1000) + i),
-                    s + i * rate,
-                    0.09 * (0.6 + 0.4 * rng.random()),
-                    xpan(e) + (i / max(n, 1) - 0.5) * 0.2,
-                )
-            put("ui", P.tick(deg(9 + n % 3), 0.04), s + n * rate, 0.025, xpan(e))
+            if samples.get("type"):
+                for i in range(n):
+                    if i < len(txt) and txt[i] == " ":
+                        continue
+                    put_sample(
+                        k, "type", "ui", s + i * rate, 0.09 * (0.6 + 0.4 * sample_rng.random()),
+                        xpan(e) + (i / max(n, 1) - 0.5) * 0.2, max_d=min(0.09, rate * 1.8),
+                    )
+            else:
+                for i in range(n):
+                    if i < len(txt) and txt[i] == " ":
+                        continue
+                    put(
+                        "ui",
+                        P.click(0.005, 3000, 8000, seed=int(s * 1000) + i),
+                        s + i * rate,
+                        0.09 * (0.6 + 0.4 * rng.random()),
+                        xpan(e) + (i / max(n, 1) - 0.5) * 0.2,
+                    )
+                put("ui", P.tick(deg(9 + n % 3), 0.04), s + n * rate, 0.025, xpan(e))
         elif k == "slam":
             n, st, size = (
                 int(e.get("n", len(str(e.get("s", "x"))))),
@@ -273,6 +324,10 @@ def build(work):
                 float(e.get("size", 90)),
             )
             big = size >= 90
+            if samples.get("whoosh") and samples.get("impact"):
+                put_sample(k, "whoosh", "move", s, 0.10 if big else 0.05, xpan(e), rev=0.15)
+                put_sample(k, "impact", "hit", s + 0.06, 0.35 if size >= 150 else 0.18, xpan(e), rev=0.12)
+                continue
             put(
                 "move",
                 P.swish(n * st + 0.35, 1500, 6000 if big else 4500, 0.8, 0.25, seed=int(s * 997)),
@@ -292,53 +347,64 @@ def build(work):
             if size >= 150:
                 put("hit", P.thock(150 if size > 200 else 190), s + 0.06, 0.35, xpan(e))
         elif k == "para":
-            put("move", P.swish(0.35, 2500, 5000, 0.9, 0.3, seed=int(s * 71)), s, 0.025, xpan(e))
+            if not put_sample(k, "whoosh", "move", s, 0.025, xpan(e)):
+                put("move", P.swish(0.35, 2500, 5000, 0.9, 0.3, seed=int(s * 71)), s, 0.025, xpan(e))
         elif k == "pop":
-            put("ui", P.pop(popf.get(e.get("s"), deg(5))), s, 0.16, xpan(e, 0.3), rev=0.12)
+            if not put_sample(k, "ui", "ui", s, 0.16, xpan(e, 0.3), rev=0.12):
+                put("ui", P.pop(popf.get(e.get("s"), deg(5))), s, 0.16, xpan(e, 0.3), rev=0.12)
         elif k == "ring":
             if e.get("r", 100) < 40:
                 continue
-            put(
-                "tone",
-                P.bell(deg(10 + int(e.get("r", 100) > 300) * 2), 0.9, 0.6, 2.0),
-                s,
-                0.035,
-                xpan(e, 0.4),
-                rev=0.35,
-            )
+            if not put_sample(k, "sheen", "tone", s, 0.035, xpan(e, 0.4), rev=0.35):
+                put(
+                    "tone",
+                    P.bell(deg(10 + int(e.get("r", 100) > 300) * 2), 0.9, 0.6, 2.0),
+                    s,
+                    0.035,
+                    xpan(e, 0.4),
+                    rev=0.35,
+                )
         elif k == "heart":
             put("hit", P.heart(), s, 0.5)
         elif k == "drop":  # outBounce contacts
             for x, a in [(1 / 2.75, 1), (2 / 2.75, 0.35), (2.5 / 2.75, 0.15), (1, 0.06)]:
                 put("hit", P.thock(180), s + x * d, 0.45 * a)
         elif k == "whoosh":
-            put(
-                "move",
-                P.whoosh(d, float(e.get("s", 0.6)), e.get("dir", "side"), seed=int(s * 313)),
-                s - (0.02 if e.get("dir") != "in" else 0),
-                0.22,
-                rev=0.12,
-            )
+            if not put_sample(k, "whoosh", "move", s - (0.02 if e.get("dir") != "in" else 0), 0.22, rev=0.12):
+                put(
+                    "move",
+                    P.whoosh(d, float(e.get("s", 0.6)), e.get("dir", "side"), seed=int(s * 313)),
+                    s - (0.02 if e.get("dir") != "in" else 0),
+                    0.22,
+                    rev=0.12,
+                )
         elif k == "riser":
-            put("move", P.riser(max(d, 0.3)), s, 0.18, rev=0.2)
+            if not put_sample(k, "riser", "move", s, 0.18, rev=0.2, max_d=max(d, 0.3)):
+                put("move", P.riser(max(d, 0.3)), s, 0.18, rev=0.2)
         elif k == "shock":
             put("move", P.swish(0.55, 400, 2500, 1.2, 0.08, seed=int(s * 17)), s, 0.10)
             put("hit", P.thock(130, 0.2), s, 0.25)
         elif k == "impact":
             st = float(e.get("s", 1.0))
-            if st >= 0.95:
+            if put_sample(k, "impact", "hit", s, 0.55 * max(0.3, st), rev=0.18):
+                pass
+            elif st >= 0.95:
                 put("hit", P.impact(1), s, 0.55, rev=0.18)
             elif st >= 0.5:
                 put("hit", P.impact(0.6), s, 0.5 * st, rev=0.12)
             else:
                 put("hit", P.thock(180, 0.12), s, 0.5 * st + 0.1)
         elif k == "boom":
+            if samples.get("boom"):
+                put_sample(k, "boom", "hit", s, 0.75, rev=0.3, also=("low", 0.9, 0.0, 0.0))
+                continue
             st, sub = P.boom(min(1.2, float(e.get("s", 1.2)) / 1.2))
             put("hit", st, s, 0.75, rev=0.3)
             put("low", sub, s, 0.9)
             put("move", P.swish(0.9, 9000, 3000, 1.0, 0.02, seed=int(s)), s, 0.08, rev=0.3)
         elif k == "flip":
-            put("ui", P.flip(), s, 0.22 if e.get("to") != "ink" else 0.13, rev=0.08)
+            if not put_sample(k, "glitch", "ui", s, 0.22 if e.get("to") != "ink" else 0.13, rev=0.08):
+                put("ui", P.flip(), s, 0.22 if e.get("to") != "ink" else 0.13, rev=0.08)
         elif k == "sweep":
             n = int(d * SR)
             t = np.arange(n) / SR
@@ -408,8 +474,9 @@ def build(work):
                 )
             put("move", P.whoosh(d, 0.5, "down" if e.get("dir") == "down" else "side", seed=77), s, 0.15)
         elif k == "strike":
-            put("move", P.swish(d + 0.12, 2000, 9000, 0.6, 0.8, seed=81), s, 0.22, rev=0.1)
-            put("ui", P.click(0.006, 1500, 9000, 82), s + d, 0.35)
+            if not put_sample(k, "whoosh", "move", s, 0.22, rev=0.1, max_d=d + 0.12):
+                put("move", P.swish(d + 0.12, 2000, 9000, 0.6, 0.8, seed=81), s, 0.22, rev=0.1)
+                put("ui", P.click(0.006, 1500, 9000, 82), s + d, 0.35)
         elif k == "shimmer":
             for i in range(22):
                 put(
@@ -421,6 +488,8 @@ def build(work):
                     rev=0.5,
                 )
         elif k == "bells":
+            if put_sample(k, "sheen", "tone", s, 0.10, rev=0.6):
+                continue
             final = bool(e.get("final"))
             for i, m in enumerate([0, 4, 7, 9, 12] if final else [0, 2, 4, 5, 7, 9]):
                 put(
@@ -449,6 +518,8 @@ def build(work):
                 put("ui", P.click(0.0025, 2500, 9000, 200 + j), s + j / 30, 0.03, xpan(e, 0.4))
             put("ui", P.thock(900, 0.04), s + d, 0.06, xpan(e, 0.4))
         elif k == "burst":
+            if put_sample(k, "glitch", "ui", s, 0.22, rev=0.12):
+                continue
             for i in range(90):
                 put(
                     "ui",
@@ -461,6 +532,8 @@ def build(work):
             put("move", P.swish(0.7, 7000, 1500, 0.9, 0.05, seed=301), s, 0.1, 0.3, rev=0.15)
         elif k == "swirl":
             g = float(e.get("s", 1.0))
+            if put_sample(k, "sheen", "tone", s, 0.07 * g, rev=0.35, max_d=d):
+                continue
             p0, p1 = (e.get("from", FW / 2) / FW) * 2 - 1, (e.get("to", FW / 2) / FW) * 2 - 1
             nn = int(60 + 90 * d)
             for i in range(nn):
@@ -487,13 +560,17 @@ def build(work):
             )
         elif k == "sheen":
             g = float(e.get("s", 1.0)) if isinstance(e.get("s"), (int, float)) else 1.0
-            put("move", P.swish(d, 3500, 11000, 0.6, 0.7, seed=321), s, 0.07 * g, -0.4, rev=0.2)
-            for j, m in enumerate((12, 14)):
-                put("tone", P.bell(deg(m), 1.4, 0.8, 2.0), s + d * 0.6 + j * 0.06, 0.035 * g, 0.4, rev=0.5)
+            if not put_sample(k, "sheen", "tone", s, 0.07 * g, -0.4, rev=0.35, max_d=d):
+                put("move", P.swish(d, 3500, 11000, 0.6, 0.7, seed=321), s, 0.07 * g, -0.4, rev=0.2)
+                for j, m in enumerate((12, 14)):
+                    put("tone", P.bell(deg(m), 1.4, 0.8, 2.0), s + d * 0.6 + j * 0.06, 0.035 * g, 0.4, rev=0.5)
         elif k == "lock":
-            put("ui", P.click(0.006, 2000, 10000, 331), s, 0.3)
-            put("move", P.swish(0.5, 9000, 2500, 0.9, 0.02, seed=332), s, 0.08, rev=0.3)
+            if not put_sample(k, "ui", "ui", s, 0.3, rev=0.2):
+                put("ui", P.click(0.006, 2000, 10000, 331), s, 0.3)
+                put("move", P.swish(0.5, 9000, 2500, 0.9, 0.02, seed=332), s, 0.08, rev=0.3)
         elif k == "halo":
+            if put_sample(k, "drone", "tone", s, 0.025, rev=0.4, max_d=d):
+                continue
             n = int(d * SR)
             t = np.arange(n) / SR
             env = np.minimum(1, t / 0.6) * np.minimum(1, np.maximum(0, d - t) / 0.4)
@@ -507,8 +584,9 @@ def build(work):
             )
             put("tone", np.stack([pad * env, np.roll(pad, 300) * env]), s, 0.025, rev=0.4)
         elif k == "blip":
-            put("tone", P.bell(deg(10), 1.6, 0.8, 2.0), s, 0.12, rev=0.6)
-            put("ui", P.tick(deg(10), 0.06), s, 0.08)
+            if not put_sample(k, "ui", "ui", s, 0.12, rev=0.4):
+                put("tone", P.bell(deg(10), 1.6, 0.8, 2.0), s, 0.12, rev=0.6)
+                put("ui", P.tick(deg(10), 0.06), s, 0.08)
         elif (
             k == "count"
         ):  # pitched ticks climbing the scale with the value, thinned to >= 30 ms, a bell on the final value
@@ -529,18 +607,24 @@ def build(work):
                     continue
                 last = tk
                 frac = min(1, float(v) / to) if to else 0.5
-                put("ui", P.tick(deg(int(frac * 9)), 0.03), tk, 0.07 + 0.05 * frac, xpan(e, 0.35))
-            if ticks and ("to" in e or "d" in e):
+                if not put_sample(k, "ui", "ui", tk, 0.07 + 0.05 * frac, xpan(e, 0.35), max_d=0.05):
+                    put("ui", P.tick(deg(int(frac * 9)), 0.03), tk, 0.07 + 0.05 * frac, xpan(e, 0.35))
+            if not samples.get("ui") and ticks and ("to" in e or "d" in e):
                 for m, a in [(10, 0.12), (14, 0.07)]:
                     put("tone", P.bell(deg(m), 1.8, 1.4), ticks[-1][0], a, 0, rev=0.4)
         elif k == "land":
             j = lands.index(e)
             f = deg(5 + int(j / max(len(lands), 1) * 10))
-            put("ui", P.pop(f * (1 + 0.02 * rng.standard_normal()), 0.03), s, 0.028, xpan(e, 0.6))
+            if not put_sample(k, "ui", "ui", s, 0.028, xpan(e, 0.6), max_d=0.06):
+                put("ui", P.pop(f * (1 + 0.02 * rng.standard_normal()), 0.03), s, 0.028, xpan(e, 0.6))
         else:
             unknown[k] = unknown.get(k, 0) + 1
     for k, n in unknown.items():
         print(f"sfx: warning: skipped {n} '{k}' cue(s): unknown kind")
+    if sample_used and os.environ.get("SFX_REPORT_SAMPLES"):
+        print("sfx samples:")
+        for kind, paths in sorted(sample_used.items()):
+            print(f"  {kind} -> {', '.join(paths)}")
 
     # ---- mix: carve, duck the sub under the music's kick, reverb, level
     stem = {b: M.fftfilt(bus[b].astype(np.float64), M.hpg(fc, 2)) for b, fc in BUS_HP.items()}
