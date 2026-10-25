@@ -181,6 +181,7 @@ async function main() {
   // Best format first, not whatever readdir hands back: a folder holding both a walk and its
   // GIF fallback would otherwise post the fallback, purely because "gif" sorts before "mp4".
   const mediaOrder = [
+    'reel.mp4',
     'image.mp4',
     'image.gif',
     'image.png',
