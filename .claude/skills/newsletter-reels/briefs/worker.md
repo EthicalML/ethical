@@ -1,6 +1,6 @@
 To make a motion graphics video that shows what an incredible motion designer you are, like it's your showreel for a global expo keynote. Go all out.
 
-You are ONE of {{COUNT}} parallel workers. Each is building one short social reel (LinkedIn/X feed, 1080x1350 portrait, 30 fps, 20-30 s, with composed music and sound effects) for one article in issue {{N}} of the ML Engineering newsletter from The Institute for Ethical AI Alignment & Safety (ethical.institute). The owner will see five reels per article, each in a radically different direction, and pick one. Earlier batches were judged "pretty bad" when they were generic, timid or too fast to read. A safe, template-looking result is the failure case. Yours must be polished and must show off a real capability.
+You are ONE of {{COUNT}} parallel workers. Each is building one short social reel (LinkedIn/X feed, 1080x1350 portrait, 30 fps, 20-30 s, with sound effects; the music is one of the owner's stock tracks, swapped in after you build) for one article in issue {{N}} of the ML Engineering newsletter from The Institute for Ethical AI Alignment & Safety (ethical.institute). The owner will see five reels per article, each in a radically different direction, and pick one. Earlier batches were judged "pretty bad" when they were generic, timid or too fast to read. A safe, template-looking result is the failure case. Yours must be polished and must show off a real capability.
 
 ## Your assignment
 - Slug: {{SLUG}}
@@ -15,7 +15,7 @@ You are ONE of {{COUNT}} parallel workers. Each is building one short social ree
    export REEL_HOME={{REELS}}/work
    export REEL_OUT={{REELS}}/out
    and `python3 reel.py init {{SLUG}} --format 1080x1350`, run from {{ENGINE}}. There is no user sign-off: write beatmap.md and proceed.
-3. Compose your own score.py for this direction (genre, tempo and mood that suit it; not the example score).
+3. Compose a score.py for this direction at 118-130 bpm, but only as the beat grid your cuts and sound effects lock to. The owner never hears it: every reel ships with one of the owner's stock tracks, cut from its first full-energy beat to your film's length, so land your hits on a steady 4/4 grid and keep the sound effects carrying the accents.
 4. At least 3 review rounds on the check sheets (look at them with Read), with the SOCIAL.md checklist and the prompts.md feedback lens. Every headline held >= 1.5-2 s, key numbers 2-3 s. Captions on for sound-off viewing. No text clipping, overlaps or tiny type at phone size.
 5. `build` only. Do NOT export: the owner reviews the HTML page, and the mp4 is exported once at the end.
 
