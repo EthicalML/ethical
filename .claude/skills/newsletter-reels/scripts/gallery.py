@@ -78,7 +78,7 @@ class GalleryHandler(http.server.SimpleHTTPRequestHandler):
                         shutil.copy2(source, destination)
             out = self.reels / "out"
             base = re.compile(rf"{re.escape(self.issue)}-\d+[a-z]\.html$")
-            music = re.compile(rf"{re.escape(self.issue)}-\d+[a-z]-m[123]\.html$")
+            music = re.compile(rf"{re.escape(self.issue)}-\d+[a-z]-m\d+\.html$")
             names = [entry.name for entry in out.iterdir()] if out.exists() else []
             formats = {}
             for directory in work.iterdir() if work.exists() else []:

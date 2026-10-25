@@ -15,7 +15,7 @@ h2{font-size:16px;margin:26px 0 10px;display:flex;gap:12px;align-items:center}h2
 .box{display:flex;flex-direction:column;align-items:center;gap:10px}iframe{border:0;width:65.6vh;max-width:92vw;aspect-ratio:var(--w,4)/var(--h,5);background:#000;border-radius:8px}
 .bar{display:flex;gap:8px;align-items:center}.bar>button{padding:8px 14px;border-radius:8px;border:1px solid #555;background:#222;color:#eee;cursor:pointer}#cap{color:#ccc;min-width:220px;text-align:center}
 </style>
-<h1 id="title">Newsletter reels</h1><p class="hint">Pick one reel per topic and the row collapses to it, with its stock-track and recorded-SFX options (m1 / m2 / m3, saved; the generated score is never played). "Show all 5" reopens the row. Click a reel to play it with sound; Esc closes, Space pauses.</p>
+<h1 id="title">Newsletter reels</h1><p class="hint">Pick one reel per topic and the row collapses to it, with its two stock-track options (m1 / m2, saved; the generated score is never played). "Show all 5" reopens the row. Click a reel to play it with sound; Esc closes, Space pauses.</p>
 <div id="rows"></div>
 <div id="modal"><div class="box"><iframe id="fr" allow="autoplay; fullscreen"></iframe>
 <div class="bar"><button id="prev">prev</button><span id="cap"></span><span id="pa" class="aud"></span><button id="next">next</button><button id="close">close (Esc)</button></div></div></div>
@@ -29,7 +29,7 @@ const aud=t=>S.audio[t]||'m1';
 function dims(slug){ const f=formats[slug]||formats[slug.replace(/-m\d+$/,'')]||'1080x1350', m=f.match(/^(\d+)x(\d+)$/); return m?[Number(m[1]),Number(m[2]),f]:[4,5,f]; }
 function ratio(slug){ const [w,h]=dims(slug); return `--w:${w};--h:${h}`; }
 function fitFrame(fr,w,h){ fr.style.width=Math.min(innerWidth*.92,innerHeight*.82*w/h)+'px'; fr.style.setProperty('--w',w); fr.style.setProperty('--h',h); fr.dataset.w=w; fr.dataset.h=h; }
-function audButtons(t){ const pk=S[t]; return [].concat(['m1','m2'].filter(m=>music.has(pk+'-'+m)).map(m=>[m,m+': '+(TR[pk+'-'+m]||'').split('-').slice(0,3).join(' ')]),music.has(pk+'-m3')?[['m3','m1 + recorded sfx']]:[])
+function audButtons(t){ const pk=S[t]; return [].concat(['m1','m2'].filter(m=>music.has(pk+'-'+m)).map(m=>[m,m+': '+(TR[pk+'-'+m]||'').split('-').slice(0,3).join(' ')]))
   .map(([k,l])=>`<button class="${aud(t)===k?'on':''}" onclick="event.stopPropagation();setAud('${t}','${k}')">${l}</button>`).join(''); }
 function card(i,collapsed){ const ok=have.has(i.slug), t=i.topic, isSel=S[t]===i.slug;
   return `<div class="card ${isSel?'sel':''}">`+(ok?`<div class="thumb" style="${ratio(i.slug)};background-image:url(posters/${i.slug}.png?v=${V()})" onclick="play('${i.slug}')"><span>▶ Play with audio</span></div>`:`<div class="thumb pending" style="${ratio(i.slug)}">rendering...</div>`)+
@@ -41,12 +41,11 @@ function draw(){ $('rows').innerHTML=Object.entries(TOPICS).map(([t,name])=>{ co
 async function save(){ await fetch('/select',{method:'POST',body:JSON.stringify(S)}); }
 async function pick(slug){ const t=item(slug).topic; if(S[t]===slug){ delete S[t]; } else { S[t]=slug; open_[t]=false; } await save(); draw(); }
 async function setAud(t,k){ S.audio[t]=k; await save(); draw(); if(cur&&item(cur).topic===t&&S[t]===cur) play(cur); }
-function playButtons(slug,a){ const t=item(slug).topic; return ['m1','m2','m3'].filter(m=>music.has(slug+'-'+m)).map(m=>`<button class="${a===m?'on':''}" onclick="event.stopPropagation();${S[t]===slug?`setAud('${t}','${m}')`:`play('${slug}','${m}')`}">${m==='m3'?'m3: m1 + recorded sfx':m+': '+(TR[slug+'-'+m]||'').split('-').slice(0,3).join(' ')}</button>`).join(''); }
-function play(slug,a0){ cur=slug; const t=item(slug).topic, a=a0||(S[t]===slug?aud(t):'m1'), fr=$('fr');
+function play(slug){ cur=slug; const t=item(slug).topic, a=S[t]===slug?aud(t):'m1', fr=$('fr');
   fr.onload=()=>{ try{ fr.contentWindow.addEventListener('keydown',e=>{ if(e.key==='Escape') close_(); }); const b=fr.contentDocument.getElementById('start'); b&&b.click(); fr.contentWindow.focus(); }catch(e){} };
   const playSlug=slug+'-'+a, [w,h,format]=dims(playSlug); fitFrame(fr,w,h);
   fr.src=`out/${playSlug}.html?v=${V()}`; $('modal').classList.add('on');
-  $('cap').textContent=`${short(slug)} | ${item(slug).name} | ${format}${' | '+a}`; $('pa').innerHTML=playButtons(slug,a); }
+  $('cap').textContent=`${short(slug)} | ${item(slug).name} | ${format}${' | '+a}`; $('pa').innerHTML=S[t]===slug?audButtons(t):''; }
 function step(d){ const list=ITEMS.filter(i=>have.has(i.slug)&&(!S[i.topic]||open_[i.topic]||S[i.topic]===i.slug)).map(i=>i.slug); let k=list.indexOf(cur); play(list[(k+d+list.length)%list.length]); }
 function close_(){ $('fr').src='about:blank'; $('modal').classList.remove('on'); cur=null; refresh(); }
 $('close').onclick=close_; $('prev').onclick=()=>step(-1); $('next').onclick=()=>step(1);
