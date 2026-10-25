@@ -56,7 +56,7 @@ Before you resume, explain to the owner which reels you will resume and with wha
 
 ## 7. Export and hand over
 
-Only when the owner says the set is final, run `python3 $SK/scripts/export.py <N>`. It exports each pick with its chosen audio, sequentially, and copies it to `tmp/issue-<N>/posts/<n>-<slug>/reel.mp4` next to the post text Buffer takes (the issue reel to `posts/0-issue/`). It also copies every reel, named by topic, to `~/Desktop/newsletter-<N>-reels/`, which is where the owner uploads from. Look at one frame of each mp4, then `open` that Desktop folder for the owner.
+Only when the owner says the set is final, run `python3 $SK/scripts/export.py <N>`. It exports each pick with its chosen audio, sequentially, and copies it to `tmp/issue-<N>/posts/<n>-<slug>/reel.mp4` next to the post text Buffer takes (the issue reel to `posts/0-issue/`). It also copies every reel, named by topic, to `~/Desktop/newsletter-<N>-reels/`, which is where the owner uploads from. Buffer fetches the post copy through jsDelivr, which refuses anything over 20 MB, and the exports run 25-30 MB: re-encode each `posts/<n>-<slug>/reel.mp4` to about 18 MB (`ffmpeg -c:v libx264 -preset slow -b:v 5000k -c:a aac -b:a 160k -movflags +faststart`), keeping the full-quality Desktop copy for direct uploads. `buffer-post.mjs` refuses a file over the limit. Look at one frame of each mp4, then `open` that Desktop folder for the owner.
 
 Nothing from this skill is committed: `tmp/` and `.music/` are gitignored, and the logos and tracks are other people's work borrowed for the post.
 
