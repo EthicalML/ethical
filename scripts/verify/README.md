@@ -113,7 +113,7 @@ Every entry is echoed with its reason into the JSON report and cropped into `<di
 - Homepage structure: asserts the three hero modes, principle layout, survey card/bars, and viewport-appropriate KAOS feature mount remain wired after refactors.
 - KAOS mount bounds: asserts route and preview graph hosts stay between 220px and 500px, covering both the compact threshold and the prior infinite-height bug class.
 - Text contrast delta: samples every visible text element's composited contrast ratio, records it in the dark run and fails the light run on invisible text or a ratio that lost more than 10% of its dark value.
-- Deterministic full-page screenshots: disables animation and transition timing, scrolls once to activate lazy content, returns to the top, and masks canvases so refactor comparisons measure stable layout rather than animation frames.
+- Deterministic full-page screenshots: disables animation and transition timing, hides the remote talk player and its network-driven loading cue, scrolls once to activate lazy content, returns to the top, and masks canvases so refactor comparisons measure stable layout rather than animation frames.
 - Hero typewriter: asserts sequential initial typing across all three fixed lines, cursor movement, pill-matched type, accent colour, 9-second headline phase lock, stable geometry, changing initial and rotation frames, the underline comparison crops, mobile containment, and a static reduced-motion state without a cursor.
 
 ## Style-ownership drift

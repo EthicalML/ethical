@@ -74,6 +74,9 @@ for (const route of routes) {
         transition: none !important;
       }
       html { scroll-behavior: auto !important; }
+      /* The player and cue depend on a remote iframe that screenshots block.
+         Keep the local talk still visible instead of capturing load timing. */
+      [data-live-embed], [data-loading-slot] { display: none !important; }
     `,
   });
 
