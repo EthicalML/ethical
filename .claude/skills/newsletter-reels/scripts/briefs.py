@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Render one worker brief per direction in tmp/reels/<N>/directions.md into tmp/reels/<N>/briefs/<N>-<n><a-e>.md.
+"""Render one worker brief per direction in tmp/reels/<N>/directions.md into tmp/reels/<N>/briefs/<N>-<n><letter>.md.
 
-usage: briefs.py <N> [--only <n><a-e>...] [--force]
+usage: briefs.py <N> [--only <n><letter>...] [--force]
 Topic 0 (the issue reel) gets briefs/issue-reel.md appended and the 1920x1080 format; the stories stay 1080x1350.
+Directions whose name carries "(motion-max" get briefs/motion-max.md appended (the experiment arm).
 """
 
 import argparse
@@ -14,7 +15,7 @@ from _common import engine_dir, reels_dir
 
 SKILL = Path(__file__).resolve().parent.parent
 TOPIC = re.compile(r"^## (\d)-(\S+)\s*(?:\((.*)\))?\s*$")
-ITEM = re.compile(r"^- (?:\[PICKED\] )?\*\*(\d)([a-e]) (.+?)\*\*\s*(.*)$")
+ITEM = re.compile(r"^- (?:\[PICKED\] )?\*\*(\d)([a-z]) (.+?)\*\*\s*(.*)$")
 
 
 def parse(text: str):
@@ -42,6 +43,7 @@ def main() -> None:
         sys.exit(f"no directions found in {directions}: expected lines like '- **1a Name (capability):** mechanism'")
     worker = (SKILL / "briefs" / "worker.md").read_text()
     issue_extra = (SKILL / "briefs" / "issue-reel.md").read_text()
+    max_extra = (SKILL / "briefs" / "motion-max.md").read_text()
     out = root / "briefs"
     out.mkdir(parents=True, exist_ok=True)
     written = 0
@@ -62,8 +64,10 @@ def main() -> None:
         text = worker
         if n == "0":
             text = text.replace("--format 1080x1350", "--format 1920x1080") + issue_extra
+        if "(motion-max" in name.lower():
+            text += max_extra
         for key, value in {"{{SLUG}}": slug, "{{TOPIC}}": topic_dir, "{{DIRECTION}}": direction, "{{REELS}}": str(root),
-                           "{{ENGINE}}": str(engine_dir()), "{{N}}": str(args.issue), "{{COUNT}}": str(len(items))}.items():
+                           "{{ENGINE}}": str(engine_dir()), "{{N}}": str(args.issue), "{{COUNT}}": str(len(items)), "{{SKILL}}": str(SKILL)}.items():
             text = text.replace(key, value)
         if "{{" in text:
             sys.exit(f"{path.name}: unfilled placeholder {re.search(r'{{[A-Z]+}}', text).group(0)}")

@@ -4,6 +4,16 @@ Each direction names the MECHANISM the film acts out, in one line, and the five 
 
 Capabilities to rotate through: force-directed or 3D graph, infinite zoom, UI simulation (terminal, Slack, GitHub PR), particles to order, blueprint draw-on, data viz as sport, oscilloscope/HUD, Swiss kinetic type, 3D terrain flythrough, leaderboard tower, isometric exploded architecture, counter avalanche, cut-paper explainer, layered parallax, one transforming object, scaling-law sculpture, mechanical sorting machine, hand-drawn notebook, infinite wall.
 
+## Issue 410 (2026-10-25), motion-first wins
+
+The owner's picks, in motion-first mode unless marked:
+- **1g Phone call, motion-first (kinetic type):** live call captions turned into a lyric video, words leaping out of the phone and slamming full screen on the beat, the waveform driving the type.
+- **2f Dive through the containment (3D camera fly-through):** the camera dives through the nested sandbox, microVM, host and perimeter layers as a corridor; alarms on the escape, a covert cache-timing signal between two glass rooms, HUD readouts.
+- **3g Word doc, motion-first (3D camera fly-through):** the contract in Word as a tilted 3D set the camera flies across, whip-panning between tracked changes, the agent pane extruding into slabs.
+- **4d Manual flip-through (paper 3D, calm batch):** the 144-page manual riffling and stopping on its key pages, with comet-drawn lines and odometers.
+- **5f Cog to die (3D + kinetic):** the Rust cog extruded in 3D unfolding into a GPU die the camera flies over, borrow-checker error stamps on the beat, 1,024 threads snapping into tiles.
+- **0d Terminal digest (UI simulation, calm batch):** posted as the issue reel before the motion-first batch existed.
+
 ## Issue 409 (2026-10-18), the first run
 
 Winners marked [PICKED]; the owner picked them for the mechanism, not the polish.

@@ -2,6 +2,18 @@
 
 Newest first. Fold a rule into the step or brief where it applies once it has held; keep here why it exists.
 
+## Issue 410 (2026-10-25)
+
+- **Motion-first beats the calm explainer.** The first 30 reels all followed the same structure because SOCIAL.md hardcodes it: 5-7 scenes of 4 s, held headlines, a caption per scene, and "no decorative motion". The owner compared them against motion-design reels on TikTok that change every 1-2 s and asked why ours were so much calmer. A second batch of 12 ran with those rules switched off (1-2 s beats, one claim, decorative layers allowed, camera moves, a style menu of kinetic type, HUD, 3D fly-through, generative and device-in-scene), as six new directions plus six motion-first revisions of the picks. He picked motion-first reels in four of five topics (1g, 2f, 3g, 5f; 4d stayed). The worker brief's Motion-first section is now the default.
+- **jsDelivr caps files at 20 MB.** The 410 reels exported at 25-30 MB, and Buffer rejected all three channels with "Video could not be read from its URL". jsDelivr was answering 403 "File size exceeded the configured limit of 20 MB" and cached that answer, so the URL had to be purged after re-encoding the post copies to 16-19 MB.
+- **Optional menus at the bottom of a brief get ignored.** The motion references were first appended as an optional "pick 2-3" list under the hard rules, and only 2 of the 6 picks used them visibly. Rules that change the result belong in the body of the brief, stated as overrides.
+
+- **Never play the generated score.** The gallery defaulted to each worker's composed score and the m1/m2 stock variants were only built for picks, so the owner reviewed every reel with generated music and the first issue-reel export defaulted to `score`. The owner's rule is absolute: stock tracks only. The gallery now has no score option, export refuses it, and `stock_music.sh` builds both variants for all 30 reels as they land.
+- **A stale gallery server serves the wrong issue.** Last week's gallery server was still bound to 8767, the new one died with "Address already in use", and the browser showed 409's reels. Check the port before starting.
+- **The issue reel is the one that earns reach.** From Buffer's metrics: the 409 issue reel got ~56k LinkedIn impressions, about 25x the earlier issue posts, while the story reels sat around the image-post median. Only the photo-finish race held viewers (92% of impressions became views against 27-38% for the rest). Briefs now carry both points; the issue reel keeps the 409 skeleton.
+- **Pull the issue reel forward.** The owner wanted to post the issue reel as soon as it existed: export it on its own (`export.py <N> --slug <slug>`) once picked, without waiting for the story reels.
+- **Workers read their brief at launch,** so a brief edited while the launcher is running reaches every worker not yet started. That is how the motion-reference techniques reached 20 of 30 reels mid-run.
+
 ## Issue 409 (2026-10-18), first run
 
 - **Two formats.** The newsletter's own reel posts as LinkedIn's landscape feed video: 1920x1080. The five story reels stay 1080x1350 (the owner confirmed both after comparing against a real LinkedIn post).
