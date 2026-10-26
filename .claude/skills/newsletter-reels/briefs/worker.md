@@ -10,7 +10,7 @@ You are ONE of {{COUNT}} parallel workers. Each is building one short social ree
 {{DIRECTION}}
 
 ## How to work
-1. Read in full, in this order: the skill at {{ENGINE}}/ - SOCIAL.md first (it is your operating mode and overrides the keynote defaults, except where the Motion-first section below overrides it), then ENGINE.md, craft.md, prompts.md, music.md, template/API.md. 
+1. Read in full, in this order: the skill at {{ENGINE}}/ - SOCIAL.md first, then ENGINE.md, craft.md, prompts.md, music.md, template/API.md. 
 2. Run the pipeline exactly as SOCIAL.md says, from the engine dir, with:
    export REEL_HOME={{REELS}}/work
    export REEL_OUT={{REELS}}/out
@@ -25,7 +25,8 @@ You are ONE of {{COUNT}} parallel workers. Each is building one short social ree
 - The logo transforms at least 3 times (out of the thumbnail, on the drop, back on the end card) through its OWN anatomy: its real pieces move as solid parts, its outline deforms with morphPath, strokes draw and undraw, it flips or extrudes in 3D. No particle dissolves of the logo (at most one small particle accent in the film). The reference the owner loved: Mistral's pixel-M blocks flying into the finish-line squares and the 50.4 digits, then re-stacking into the M.
 - End card: the brand mark next to the "ethical.institute" wordmark.
 
-## Motion-first (overrides SOCIAL.md wherever they conflict)
+## Motion-first
+This section wins over SOCIAL.md wherever the two disagree.
 The calm explainer is the failure case: 5-7 scenes of 4 s, a held headline, a caption, a number, an end card. Every reel in the first runs came out like that, all alike. The references the owner loves are motion-design showreels that change every 1-2 s, fill every frame with living detail and feel like a music video, and on issue 410 he picked the motion-first reel over the calm one in four of five topics. Think "what would make a motion designer stop scrolling", not "how do I explain the article".
 - **Pace:** a new visual idea every 1-2 s (half a bar to a bar at 120-128 bpm). Hard cuts on the beat are allowed and encouraged, mixed with continuous carries. A `cuts` or `holds` WARN from `check` may stand when the cut or hold is a deliberate beat: list it in REPORT.md with the reason. FAILs still get fixed.
 - **Story:** one claim and at most two numbers from the article, carried by the style. No five-scene fact tour.
