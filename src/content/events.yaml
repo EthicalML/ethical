@@ -135,8 +135,8 @@
   series: mlops-world
   url: https://mlopsworld.com/
   image: https://mlopsworld.com/wp-content/uploads/2025/07/MLOps-Gen-AI-2025.webp
-  start: 2026-11-17 # unverified - organiser listings disagree between 16-18 and 17-18 November
-  end: 2026-11-18 # unverified
+  start: 2026-11-17
+  end: 2026-11-18
   location: Austin, US
   topics: [mlops, llms]
 

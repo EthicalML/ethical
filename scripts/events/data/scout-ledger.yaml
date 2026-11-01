@@ -45,6 +45,8 @@ watchlist:
     - name: PyTorch Conference Europe
       note: Linux Foundation / PyTorch Foundation; first edition Paris Apr 2026, full AI-infra stack; watch for 2027
   cfp-track:
+    - name: IASEAI '27
+      note: International Association for Safe and Ethical AI, UNESCO House Paris, 2027-02-09 to 02-12 (unverified, site JS-only); academic/policy, submissions-based
     - name: FastAPI Conf
       note: official FastAPI-team event, Amsterdam; first edition invited-speakers only, watch for a real CFP
     - name: Rise of AI Berlin
