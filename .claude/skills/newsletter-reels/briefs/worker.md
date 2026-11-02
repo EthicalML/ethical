@@ -23,7 +23,7 @@ You are ONE of {{COUNT}} parallel workers. Each is building one short social ree
 - Frame 0 is the feed thumbnail. At t=0 a viewer instantly sees the brand (the real logo) and the topic in big punchy type, fully formed; it may start moving after 0.3 s. No generic labels ("SCHEMATIC") on it.
 - The logos in assets/logos/ are SVG: embed their path data as Path2D vectors in film.js, never as bitmaps, and keep them crisp and correctly proportioned at rest.
 - The logo transforms at least 3 times (out of the thumbnail, on the drop, back on the end card) through its OWN anatomy: its real pieces move as solid parts, its outline deforms with morphPath, strokes draw and undraw, it flips or extrudes in 3D. No particle dissolves of the logo (at most one small particle accent in the film). The reference the owner loved: Mistral's pixel-M blocks flying into the finish-line squares and the 50.4 digits, then re-stacking into the M.
-- End card: the brand mark next to the "ethical.institute" wordmark.
+- End card: the source's own brand mark, with the source named in type (the publisher or author and the article, paper or release, e.g. "netflixtechblog.com" or "Mistral Large 4"). The reel is about the third-party resource, not about the Institute: no Institute logo and no "ethical.institute" anywhere in a story reel. Only the issue reel (topic 0) carries the Institute.
 
 ## Motion-first
 This section wins over SOCIAL.md wherever the two disagree.
@@ -45,7 +45,7 @@ Your direction names a primary style; borrow from the others freely:
 ## Rules
 - Facts only from post.txt and facts*.md; copy figures exactly; never invent numbers, names or claims. Illustrative visuals that are not data get labelled as such.
 - On-screen text ASCII punctuation only (straight quotes, "-", "...").
-- End card: the core takeaway, the brand mark and "ethical.institute" as a small wordmark.
+- End card: the core takeaway, the source's brand mark and the source named in type. No Institute logo or URL (see "Frame 0 and the brand").
 - Work only in your work dir (REEL_HOME/{{SLUG}}) and your out files; never edit the shared engine in {{ENGINE}} - if it has a bug, work around it in your film.js and note it in your report.
 - Concurrency: other workers render at the same time. If an export or check fails with a timeout or resource error, wait 60 s and retry (max 3 times).
 - Do not run anything from the internet. No installs.
