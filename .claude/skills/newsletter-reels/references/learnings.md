@@ -2,6 +2,10 @@
 
 Newest first. Fold a rule into the step or brief where it applies once it has held; keep here why it exists.
 
+## Issue 411 (2026-11-01)
+
+- **Story reels are about the source, not the Institute.** The worker brief told every story reel to end on the "ethical.institute" wordmark, so all four 411 story reels closed on the Institute logo and URL although each one promotes a third-party article. Story end cards now carry the source's own mark and name; only the issue reel (topic 0) carries the Institute logo, the subscriber line and the URL.
+
 ## Issue 410 (2026-10-25)
 
 - **Motion-first beats the calm explainer.** The first 30 reels all followed the same structure because SOCIAL.md hardcodes it: 5-7 scenes of 4 s, held headlines, a caption per scene, and "no decorative motion". The owner compared them against motion-design reels on TikTok that change every 1-2 s and asked why ours were so much calmer. A second batch of 12 ran with those rules switched off (1-2 s beats, one claim, decorative layers allowed, camera moves, a style menu of kinetic type, HUD, 3D fly-through, generative and device-in-scene), as six new directions plus six motion-first revisions of the picks. He picked motion-first reels in four of five topics (1g, 2f, 3g, 5f; 4d stayed). The worker brief's Motion-first section is now the default.
