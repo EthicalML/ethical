@@ -38,3 +38,7 @@ GA4 reuses `G-L2HXV1W6H6` from `BaseLayout.astro`. The tag loads asynchronously 
 `public/keynotes/ai-enterprise-2026/` contains the 24-stop enterprise presentation, including the final gathering galaxy and live-deck QR. Editable source is in the `enterprise-ai-2026/site/` directory of the KAOS docs repository. Build with `npm run build -- --base=/keynotes/ai-enterprise-2026/`; the production environment sets the live deck URL. The portrait enters with its slide without a second reveal reset. Sharing metadata uses the opening-slide `preview.jpg`.
 
 The former `/keynote/` address redirects to `/keynotes/signals-2026/`. Both talks use the existing Institute analytics property, disabled on localhost and presenter views. Browser verification intercepts analytics requests.
+
+## eTail Germany Connect 2026
+
+`public/keynotes/etail-2026/index.html` is the opening keynote of eTail Germany Connect 2026 in Berlin (14 Oct 2026), "Winning with Agentic Commerce": 31 stops in one self-contained HTML file with no external requests. Editable source is `~/Programming/agentic/etail-conf` (private); the file is a copy of its built `unified/index.html` with the title and sharing metadata replaced, and the PaaS film removed (`const PAAS = false;` and the reel iframe's `create()` made a no-op), so `unified/reel/` is not shipped. To update, rebuild there with `make build-unified` and reapply those three edits.
