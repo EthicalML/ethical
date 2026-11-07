@@ -45,6 +45,8 @@ watchlist:
     - name: PyTorch Conference Europe
       note: Linux Foundation / PyTorch Foundation; first edition Paris Apr 2026, full AI-infra stack; watch for 2027
   cfp-track:
+    - name: IASEAI '27
+      note: International Association for Safe and Ethical AI, UNESCO House Paris, 2027-02-09 to 02-12 (unverified, site JS-only); academic/policy, submissions-based
     - name: FastAPI Conf
       note: official FastAPI-team event, Amsterdam; first edition invited-speakers only, watch for a real CFP
     - name: Rise of AI Berlin
@@ -94,10 +96,10 @@ scouted:
     note: proposed into events.yaml on 2026-09-19 (issue-405 report)
   - name: AI Engineer Europe
     url: https://ai.engineer/europe/2027
-    checked: 2026-10-24
+    checked: 2026-10-31
     status: tracked
     next_edition: 2027-02-17 to 2027-02-19, ExCeL London, UK - confirmed on the organiser's /europe/2027 page (workshops Wed, keynotes and tracks Thu-Fri)
-    cfp: not open yet - "Speaker applications ... will be announced after programming opens" (reconfirmed 2026-10-24)
+    cfp: not open yet - page says "Our 2027 speaker lineup is coming together" with the speaker section marked "Coming Soon" and no application link (2026-10-31); under four months to the event, so a curated or very short window is likely (inference)
     note: on origin/master (ai-engineer-europe-2027) as of 2026-10-24
     owner: keen to submit - flag the week the CFP opens (2026-08-16)
   - name: World Summit AI Amsterdam
@@ -163,10 +165,10 @@ scouted:
     cfp: not open yet (no speaker call visible 2026-08-23)
     note: added to events.yaml on 2026-09-06
   - name: MLOps World
-    url: https://mlopsworld.com/call-for-speakers/
-    checked: 2026-09-06
+    url: https://mlopsworld.com/
+    checked: 2026-10-31
     status: tracked
-    next_edition: Austin, US - already in events.yaml; organiser page now says 2026-11-16 to 2026-11-19 (16th virtual, 17th-19th in person), Eventbrite still lists 17-18, so the end date stays disputed
+    next_edition: Austin, US - already in events.yaml; organiser homepage (2026-10-31) gives in-person 2026-11-17 to 2026-11-18 at the Etter-Harbin Alumni Center, a free virtual day 2026-11-16 and workshops 2026-11-19 - settles the dispute; update proposed in the issue-411 report; the 2027 edition is not announced
     cfp: organiser still publishes no speaker deadline; the page carries a "Submit to Speak" link only
   - name: Rise of AI Berlin
     url: https://riseof.ai/conference-2027/
@@ -223,16 +225,17 @@ scouted:
     cfp: none published - the 2026 call ran on Sessionize, so expect the same channel
   - name: PyCon DE & PyData
     url: https://2027.pycon.de/
-    checked: 2026-10-24
+    checked: 2026-10-31
     status: tracked
     tier: cfp-track
     next_edition: 2027-04-20 to 2027-04-22 (masterclasses 04-19, sprints 04-23 to 04-24), HCC Heidelberg, DE
-    cfp: opens 2026-11-04, closes 2026-12-20 - organiser key dates "4 Nov - 20 Dec 2026 Call for Proposals"; accepted talks announced 2027-02-10 (https://pycon.de/, 2026-10-24); flagged in the issue-410 report
+    cfp: opens 2026-11-04, closes 2026-12-20 - organiser key dates "4 Nov - 20 Dec 2026 Call for Proposals"; accepted talks announced 2027-02-10 (https://pycon.de/, reconfirmed 2026-10-31); flagged in the issue-410 report and as opening this week in the issue-411 report
   - name: EuroPython
-    checked: 2026-09-27
+    url: https://europython.eu/
+    checked: 2026-10-31
     status: tracked
     tier: cfp-track
-    next_edition: 2027 not announced; 2026 ran 13-19 July, Kraków; EuroPython Society was still soliciting 2027 host proposals
+    next_edition: 2027 still not announced (search 2026-10-31); 2026 ran 13-19 July, Kraków; EuroPython Society was still soliciting 2027 host proposals
     cfp: not open yet
   - name: NDC London
     url: https://ndclondon.com/
@@ -253,8 +256,9 @@ scouted:
   # One-off candidates.
   - name: FastAPI Conf
     url: https://fastapiconf.com/
-    checked: 2026-09-06
+    checked: 2026-10-31
     status: watching
+    checked_note: rechecked 2026-10-31 - the 2026 edition (2026-10-28) has passed; organiser site announces no 2027 edition or CFP
     reason: owner-supplied lead (2026-09-06). First edition 2026-10-28, Transformatorhuis Amsterdam, single day, single track, official FastAPI-team event with Samuel Colvin among the speakers. No CFP - the 2026 line-up is invited speakers only - and seats are capped, so it sits at community-conference tier rather than the events.yaml flagship bar
     note: recommended as a cfp-track watchlist addition in the issue-403 report; not proposed into events.yaml
   - name: Data Innovation Summit
@@ -269,6 +273,21 @@ scouted:
     status: watching
     reason: Linux Foundation / PyTorch Foundation European edition; first edition ran 2026-04-07 to 2026-04-08 in Paris, full AI stack from infrastructure to agents. 2027 edition still not announced (2026-10-24, organiser page only shows the passed 2026 edition); no attendance figure published
     note: recommended as a feature watchlist addition in the issue-406 report
+  - name: IASEAI '27 (International Association for Safe and Ethical AI)
+    url: https://www.iaseai.org/our-programs/iaseai27
+    checked: 2026-10-31
+    status: watching
+    reason: third annual IASEAI conference, 2027-02-09 to 2027-02-12, UNESCO House, Paris - from the organiser's LinkedIn save-the-date and a press write-up; the organiser site is JS-rendered and would not fetch, so dates and deadlines are unverified. Submission portal said to open 2026-09-18 (statements of interest, proposals, new model-policy track); deadline unknown - 2026 edition's statements-of-interest deadline was late January. Direct mission fit (safety, alignment, governance) but academic/policy association format with no published attendance figure
+    note: recommended as a cfp-track watchlist addition in the issue-411 report
+  - name: ContainerDays & AI Context London 2027
+    url: https://sessionize.com/london-containerdays-and-ai-context-2027/
+    checked: 2026-10-31
+    status: rejected
+    reason: London, 2027-02-10 to 2027-02-11, CFP to 2026-12-01 (search snippet); ContainerDays spin-off at community scale, and the owner declined the ContainerDays series (2026-08-16) - same class as the Warsaw edition
+  - name: NeoCloudCon Europe 2027
+    checked: 2026-10-31
+    status: rejected
+    reason: one-day GPU-cloud event the day before KubeCon Europe (2027-03-15, Barcelona) per aggregator listings only, no official page found; co-located satellite, not a standalone flagship
   - name: AI Engineer Paris
     url: https://sessionize.com/ai-engineer-paris-2026/
     checked: 2026-10-24
@@ -297,8 +316,8 @@ scouted:
     checked: 2026-10-17
     status: rejected
     reason: Bremen, June 2027 (organiser pages disagree on dates); academic AI-for-science conference, research venue rather than a speaking flagship
-  - name: Academic AI venues (ECAI 2027 Athens, CAIN 2027 Dublin)
-    checked: 2026-10-17
+  - name: Academic AI venues (ECAI 2027 Athens, CAIN 2027 Dublin, AGENT'27 and SEAMS 2027 at ICSE Dublin, ICAART 2027)
+    checked: 2026-10-31
     status: rejected
     reason: peer-reviewed paper venues surfaced via aggregators; same class as the rejected MLSys/SaTML group
   - name: AI in Production Newcastle 2027
@@ -324,7 +343,7 @@ scouted:
     url: https://iapp.org/conference/iapp-aigg-europe
     checked: 2026-10-11
     status: rejected
-    reason: privacy/compliance-professional association conference (2026 ran in Dublin; a London April 2027 edition appears only on aggregators); legal audience, not the network's stage
+    reason: privacy/compliance-professional association conference (2026 ran in Dublin; a London 2027-04-05 to 2027-04-08 "UK Intensive + AI Governance Global" appears only on aggregators, resurfaced 2026-10-31); legal audience, not the network's stage
   - name: AI Regulations & Technology Summit Barcelona
     checked: 2026-10-11
     status: rejected
